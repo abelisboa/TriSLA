@@ -1,0 +1,63 @@
+{
+    "STATE": {
+        "status": "OK",
+        "details": [
+            "STATE\\000_INDEX.md",
+            "STATE\\001_TEMPLATE_WU.md",
+            "STATE\\Checklist_Pre_Deploy_TriSLA_NASP.md",
+            "STATE\\Guia_Melhores_Pratica_Execucao_TriSLA_NASP.md",
+            "STATE\\WU-000_pre_check.md",
+            "STATE\\WU-001_Bootstrap_TriSLA_NASP.md",
+            "STATE\\WU-002_Deploy_Core_Modules_TriSLA_NASP.md",
+            "STATE\\WU-003_Integration_NASP_Core_TriSLA.md",
+            "STATE\\WU-004_Tests_and_Observability_TriSLA.md",
+            "STATE\\WU-005_Avaliacao_Experimental_TriSLA.md"
+        ]
+    },
+    "PROMPTS": {
+        "status": "OK",
+        "details": [
+            "PROMPTS\\Automation_Continuity_Guide.md",
+            "PROMPTS\\Automation_Master_Prompt.md",
+            "PROMPTS\\Automation_Supervisor_Prompt.md",
+            "PROMPTS\\CODEGEN_TEMPLATE.md",
+            "PROMPTS\\Generate_UI_and_ControlLayer.md",
+            "PROMPTS\\GITHUB_MANAGEMENT_GUIDE.md",
+            "PROMPTS\\HELM_DEPLOY_TEMPLATE.md",
+            "PROMPTS\\MASTER_PROMPT.md",
+            "PROMPTS\\PROMPT_MESTRE_UNIFICADO.md",
+            "PROMPTS\\SESSION_TEMPLATE.md",
+            "PROMPTS\\Starter_Prompt.md",
+            "PROMPTS\\supervisor_TEMPLATE.md",
+            "PROMPTS\\TASK_SPEC_TEMPLATE.md",
+            "PROMPTS\\TESTS_CONTRACT_TEMPLATE.md"
+        ]
+    },
+    "docs": {
+        "status": "OK",
+        "details": [
+            "docs\\AI_EXECUTION_STRATEGY.md",
+            "docs\\EXECUTION_READINESS_CHECKLIST.md",
+            "docs\\Referencia_Tecnica_TriSLA.md",
+            "docs\\Workflow_Oficial_TriSLA_NASP.md",
+            "docs\\evidencias\\README_Evidencias.md"
+        ]
+    },
+    "automation": {
+        "status": "OK",
+        "details": [
+            "automation\\auto_validator.py",
+            "automation\\deploy_watcher.py",
+            "automation\\README_AUTOMATION.md",
+            "automation\\supervisor_check.py"
+        ]
+    },
+    "helm": {
+        "status": "OK",
+        "details": []
+    },
+    "src": {
+        "status": "OK",
+        "details": []
+    }
+}

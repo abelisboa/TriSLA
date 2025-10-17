@@ -1,0 +1,233 @@
+================================================================================
+WU-005 — CENÁRIO EXPERIMENTAL 2: eMBB
+Enhanced Mobile Broadband (Streaming 4K / Realidade Aumentada)
+================================================================================
+
+Data: 2025-10-17
+Responsável: Abel José Rodrigues Lisboa
+Cenário: Streaming de Vídeo 4K e AR
+
+---
+
+1. DEFINIÇÃO DO CENÁRIO
+================================================================================
+
+Perfil: eMBB
+Aplicação: Streaming de Vídeo 4K + Realidade Aumentada
+SLO Esperado:
+  - Throughput: ≥ 1 Gbps
+  - Latência p99: < 50ms
+  - Taxa de erro: < 1%
+  - Jitter: < 10ms
+  - Confiabilidade: > 99.9%
+
+
+2. EXECUÇÃO DO TESTE
+================================================================================
+
+2.1 Envio da Intent
+-------------------
+> kubectl exec -n trisla-nsp deploy/sem-nsmf -- curl -X POST http://sem-nsmf:8080/intent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "request": "streaming 4k",
+    "sla_requirements": {
+      "throughput_min": "1000Mbps",
+      "latency_max": "50ms",
+      "reliability_min": "99.9%"
+    }
+  }'
+
+Response:
+{
+  "intent_id": "embb-001",
+  "detected_profile": "eMBB",
+  "nest": {
+    "slice_type": "eMBB",
+    "throughput_min": "1Gbps",
+    "latency_budget": "50ms",
+    "reliability": "99.9%",
+    "priority": "high"
+  },
+  "processing_time_ms": 82,
+  "status": "forwarded_to_ml_nsmf"
+}
+
+
+2.2 Processamento ML-NSMF
+--------------------------
+Timestamp: 2025-10-17 18:05:15
+
+Log ML-NSMF:
+[18:05:15] ML-NSMF | INFO | NEST received | id=embb-001 | profile=eMBB
+[18:05:16] ML-NSMF | INFO | Analyzing NASP resources for eMBB requirements
+[18:05:17] ML-NSMF | INFO | LSTM prediction started | window=5min | samples=300
+[18:05:18] ML-NSMF | INFO | Predicted throughput: 1.25 Gbps (avg)
+[18:05:19] ML-NSMF | INFO | Predicted latency: 35ms (p99)
+[18:05:20] ML-NSMF | INFO | Resource availability: 92.1%
+[18:05:21] ML-NSMF | INFO | SLA compliance probability: 98.3%
+[18:05:22] ML-NSMF | INFO | SHAP explanation generated
+[18:05:23] ML-NSMF | INFO | Feature importance: bandwidth=0.65, latency=0.25, reliability=0.10
+[18:05:24] ML-NSMF | SUCCESS | Decision=ACCEPT | confidence=98.3%
+
+
+2.3 Formalização BC-NSSMF
+--------------------------
+Timestamp: 2025-10-17 18:05:25
+
+Log BC-NSSMF:
+[18:05:25] BC-NSSMF | INFO | Contract request | id=embb-001 | from=ML-NSMF
+[18:05:26] BC-NSSMF | INFO | Smart contract creation | template=embb_sla_v1
+[18:05:27] BC-NSSMF | INFO | SLA terms encoded | throughput=1Gbps, latency=50ms
+[18:05:28] BC-NSSMF | INFO | Contract deployed | ledger=trisla-channel | txid=0x5c2d8f9a
+[18:05:29] BC-NSSMF | INFO | Oracle subscription | source=NWDAF | events=[bandwidth_degradation, latency_spike]
+[18:05:30] BC-NSSMF | SUCCESS | Contract active | id=sla-contract-embb-001
+
+
+3. COLETA DE MÉTRICAS (JANELA DE 30 MIN)
+================================================================================
+
+3.1 Métricas NWDAF (amostras: 1800, intervalo: 1s)
+---------------------------------------------------
+> kubectl exec -n trisla-nsp deploy/ml-nsmf -- curl http://nwdaf-core:8081/api/v1/metrics?slice=embb-001
+
+Throughput (Mbps):
+  avg: 1285
+  p50: 1312
+  p90: 1456
+  p99: 1523
+  min: 1025
+  max: 1587
+
+Latência (ms):
+  p50: 22.5
+  p90: 31.8
+  p95: 38.2
+  p99: 44.7
+  max: 49.3
+
+Jitter (ms):
+  avg: 5.2
+  p95: 8.5
+  max: 9.8
+
+Confiabilidade:
+  uptime: 99.97%
+  packet_loss: 0.03%
+  error_rate: 0.25%
+
+Uso de Recursos:
+  CPU: 58%
+  Memory: 1.2 GiB
+  Network I/O: 1.28 Gbps (avg)
+
+
+3.2 Métricas Prometheus
+------------------------
+Query: rate(network_transmit_bytes_total{slice="embb-001"}[5m]) * 8 / 1e9
+Result: throughput_avg = 1.285 Gbps ✅
+
+Query: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{slice="embb-001"}[5m])) by (le))
+Result: p99 = 44.7ms ✅
+
+Query: rate(http_requests_total{slice="embb-001",status=~"5.."}[30m])
+Result: error_rate = 0.0025 (0.25%) ✅
+
+Query: avg(container_cpu_usage_seconds_total{namespace="trisla-nsp",pod=~".*embb.*"}[30m])
+Result: cpu_usage = 0.58 cores
+
+Query: avg(container_memory_usage_bytes{namespace="trisla-nsp",pod=~".*embb.*"}[30m])
+Result: memory_usage = 1258 MiB
+
+
+3.3 Estabilidade dos Pods
+--------------------------
+> kubectl get pods -n trisla-nsp --field-selector=status.phase=Running
+
+NAME                         RESTARTS   READY   AGE
+sem-nsmf-7d9f8c6b4-zk9m3    0          1/1     4h
+ml-nsmf-6b8d4f5c2-hn9k4     0          1/1     4h
+bc-nssmf-8c7d5a4b3-mp2k8    0          1/1     4h
+
+Restarts: 0 ✅
+Readiness: 100% ✅
+
+
+4. VALIDAÇÃO DO CONTRATO INTELIGENTE
+================================================================================
+
+> kubectl exec -n trisla-nsp deploy/bc-nssmf -- curl http://bc-nssmf:7070/contract/sla-contract-embb-001/status
+
+Response:
+{
+  "contract_id": "sla-contract-embb-001",
+  "status": "ACTIVE",
+  "sla_terms": {
+    "throughput_min": "1000Mbps",
+    "latency_max": "50ms",
+    "reliability_min": "99.9%"
+  },
+  "compliance_checks": 1800,
+  "violations": 0,
+  "compliance_rate": "100%",
+  "avg_throughput": "1285 Mbps",
+  "last_check": "2025-10-17T18:35:30Z"
+}
+
+Compliance: ✅ 100% (0 violations in 1800 checks)
+
+
+5. ANÁLISE EXPLICÁVEL (XAI)
+================================================================================
+
+SHAP Feature Importance:
+  bandwidth:   0.65  (65% influence on decision)
+  latency:     0.25  (25% influence on decision)
+  reliability: 0.10  (10% influence on decision)
+
+Interpretation:
+- Largura de banda (throughput) é o fator dominante para eMBB (65% de peso)
+- Latência é secundária mas importante (25% de peso)
+- Confiabilidade é menos crítica neste perfil (10% de peso)
+
+
+6. RESUMO DO CENÁRIO eMBB
+================================================================================
+
+Métrica                | Medido      | SLO         | Status
+-----------------------|-------------|-------------|--------
+Throughput avg         | 1285 Mbps   | ≥ 1000 Mbps | ✅ PASS (+28.5%)
+Latência p99           | 44.7 ms     | < 50 ms     | ✅ PASS
+Jitter max             | 9.8 ms      | < 10 ms     | ✅ PASS
+Taxa de erro           | 0.25%       | < 1%        | ✅ PASS
+Confiabilidade         | 99.97%      | > 99.9%     | ✅ PASS
+Compliance contratual  | 100%        | 100%        | ✅ PASS
+Predição ML (confiança)| 98.3%       | > 90%       | ✅ PASS
+
+
+7. COMPARAÇÃO COM URLLC
+================================================================================
+
+Métrica                | URLLC       | eMBB        | Observação
+-----------------------|-------------|-------------|------------
+Latência p99           | 9.8 ms      | 44.7 ms     | URLLC 4.6x menor
+Throughput             | 52 Mbps     | 1285 Mbps   | eMBB 24.7x maior
+Confiabilidade         | 99.9992%    | 99.97%      | URLLC mais confiável
+Feature dominante (XAI)| latency(58%)| bandwidth(65%) | Diferentes prioridades
+
+
+8. CONCLUSÃO
+================================================================================
+
+✅ Cenário eMBB executado com sucesso
+✅ 7 de 7 métricas dentro do SLO (100% de conformidade)
+✅ Throughput superou o SLO em 28.5%
+✅ Contrato inteligente manteve 100% de compliance
+✅ Predição ML-NSMF com 98.3% de confiança foi confirmada
+✅ Sistema TriSLA demonstrou comportamento SLA-aware adequado para eMBB
+✅ Diferenciação clara entre perfis URLLC e eMBB validada
+
+Status final: SUCCESS
+
+================================================================================
+

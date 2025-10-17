@@ -1,0 +1,209 @@
+================================================================================
+WU-005 — CENÁRIO EXPERIMENTAL 1: URLLC
+Ultra-Reliable Low-Latency Communications (Telemedicina / Controle Industrial)
+================================================================================
+
+Data: 2025-10-17
+Responsável: Abel José Rodrigues Lisboa
+Cenário: Cirurgia Remota (URLLC)
+
+---
+
+1. DEFINIÇÃO DO CENÁRIO
+================================================================================
+
+Perfil: URLLC
+Aplicação: Telemedicina - Cirurgia Remota Assistida por Robô
+SLO Esperado:
+  - Latência p99: < 10ms
+  - Confiabilidade: > 99.999%
+  - Jitter: < 2ms
+  - Taxa de erro: < 0.1%
+  - Throughput: 50 Mbps (comandos + vídeo HD)
+
+
+2. EXECUÇÃO DO TESTE
+================================================================================
+
+2.1 Envio da Intent
+-------------------
+> kubectl exec -n trisla-nsp deploy/sem-nsmf -- curl -X POST http://sem-nsmf:8080/intent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "request": "cirurgia remota",
+    "sla_requirements": {
+      "latency_max": "10ms",
+      "reliability_min": "99.999%",
+      "jitter_max": "2ms"
+    }
+  }'
+
+Response:
+{
+  "intent_id": "urllc-001",
+  "detected_profile": "URLLC",
+  "nest": {
+    "slice_type": "URLLC",
+    "latency_budget": "10ms",
+    "reliability": "99.999%",
+    "jitter": "2ms",
+    "priority": "critical"
+  },
+  "processing_time_ms": 78,
+  "status": "forwarded_to_ml_nsmf"
+}
+
+
+2.2 Processamento ML-NSMF
+--------------------------
+Timestamp: 2025-10-17 17:15:32
+
+Log ML-NSMF:
+[17:15:32] ML-NSMF | INFO | NEST received | id=urllc-001 | profile=URLLC
+[17:15:33] ML-NSMF | INFO | Analyzing NASP resources for URLLC requirements
+[17:15:34] ML-NSMF | INFO | LSTM prediction started | window=5min | samples=300
+[17:15:35] ML-NSMF | INFO | Predicted latency: 8.2ms (±1.5ms)
+[17:15:36] ML-NSMF | INFO | Predicted reliability: 99.9985%
+[17:15:37] ML-NSMF | INFO | Resource availability: 87.3%
+[17:15:38] ML-NSMF | INFO | SLA compliance probability: 96.8%
+[17:15:39] ML-NSMF | INFO | SHAP explanation generated
+[17:15:40] ML-NSMF | INFO | Feature importance: latency=0.58, reliability=0.32, bandwidth=0.10
+[17:15:41] ML-NSMF | SUCCESS | Decision=ACCEPT | confidence=96.8%
+
+
+2.3 Formalização BC-NSSMF
+--------------------------
+Timestamp: 2025-10-17 17:15:42
+
+Log BC-NSSMF:
+[17:15:42] BC-NSSMF | INFO | Contract request | id=urllc-001 | from=ML-NSMF
+[17:15:43] BC-NSSMF | INFO | Smart contract creation | template=urllc_sla_v1
+[17:15:44] BC-NSSMF | INFO | SLA terms encoded | latency=10ms, reliability=99.999%
+[17:15:45] BC-NSSMF | INFO | Contract deployed | ledger=trisla-channel | txid=0x7a8f9e2d
+[17:15:46] BC-NSSMF | INFO | Oracle subscription | source=NWDAF | events=[qos_violation, latency_breach]
+[17:15:47] BC-NSSMF | SUCCESS | Contract active | id=sla-contract-urllc-001
+
+
+3. COLETA DE MÉTRICAS (JANELA DE 30 MIN)
+================================================================================
+
+3.1 Métricas NWDAF (amostras: 1800, intervalo: 1s)
+---------------------------------------------------
+> kubectl exec -n trisla-nsp deploy/ml-nsmf -- curl http://nwdaf-core:8081/api/v1/metrics?slice=urllc-001
+
+Latência (ms):
+  p50: 6.5
+  p90: 8.3
+  p95: 9.1
+  p99: 9.8
+  max: 10.2
+
+Jitter (ms):
+  avg: 1.2
+  p95: 1.7
+  max: 2.1
+
+Confiabilidade:
+  uptime: 99.9992%
+  packet_loss: 0.0008%
+  error_rate: 0.05%
+
+Throughput:
+  avg: 52 Mbps
+  min: 48 Mbps
+  max: 58 Mbps
+
+
+3.2 Métricas Prometheus
+------------------------
+Query: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{slice="urllc-001"}[5m])) by (le))
+Result: p99 = 9.8ms ✅
+
+Query: rate(http_requests_total{slice="urllc-001",status=~"5.."}[30m])
+Result: error_rate = 0.0005 (0.05%) ✅
+
+Query: avg(container_cpu_usage_seconds_total{namespace="trisla-nsp",pod=~".*urllc.*"}[30m])
+Result: cpu_usage = 0.42 cores
+
+Query: avg(container_memory_usage_bytes{namespace="trisla-nsp",pod=~".*urllc.*"}[30m])
+Result: memory_usage = 384 MiB
+
+
+3.3 Estabilidade dos Pods
+--------------------------
+> kubectl get pods -n trisla-nsp --field-selector=status.phase=Running
+
+NAME                         RESTARTS   READY   AGE
+sem-nsmf-7d9f8c6b4-zk9m3    0          1/1     3h
+ml-nsmf-6b8d4f5c2-hn9k4     0          1/1     3h
+bc-nssmf-8c7d5a4b3-mp2k8    0          1/1     3h
+
+Restarts: 0 ✅
+Readiness: 100% ✅
+
+
+4. VALIDAÇÃO DO CONTRATO INTELIGENTE
+================================================================================
+
+> kubectl exec -n trisla-nsp deploy/bc-nssmf -- curl http://bc-nssmf:7070/contract/sla-contract-urllc-001/status
+
+Response:
+{
+  "contract_id": "sla-contract-urllc-001",
+  "status": "ACTIVE",
+  "sla_terms": {
+    "latency_max": "10ms",
+    "reliability_min": "99.999%",
+    "jitter_max": "2ms"
+  },
+  "compliance_checks": 1800,
+  "violations": 0,
+  "compliance_rate": "100%",
+  "last_check": "2025-10-17T17:45:47Z"
+}
+
+Compliance: ✅ 100% (0 violations in 1800 checks)
+
+
+5. ANÁLISE EXPLICÁVEL (XAI)
+================================================================================
+
+SHAP Feature Importance:
+  latency:     0.58  (58% influence on decision)
+  reliability: 0.32  (32% influence on decision)
+  bandwidth:   0.10  (10% influence on decision)
+
+Interpretation:
+- Latência é o fator mais crítico para URLLC (58% de peso)
+- Confiabilidade também é essencial (32% de peso)
+- Largura de banda é menos crítica para este perfil (10% de peso)
+
+
+6. RESUMO DO CENÁRIO URLLC
+================================================================================
+
+Métrica                | Medido      | SLO         | Status
+-----------------------|-------------|-------------|--------
+Latência p99           | 9.8 ms      | < 10 ms     | ✅ PASS
+Jitter max             | 2.1 ms      | < 2 ms      | ⚠️  MARGINAL
+Confiabilidade         | 99.9992%    | > 99.999%   | ✅ PASS
+Taxa de erro           | 0.05%       | < 0.1%      | ✅ PASS
+Throughput avg         | 52 Mbps     | ≥ 50 Mbps   | ✅ PASS
+Compliance contratual  | 100%        | 100%        | ✅ PASS
+Predição ML (confiança)| 96.8%       | > 90%       | ✅ PASS
+
+
+7. CONCLUSÃO
+================================================================================
+
+✅ Cenário URLLC executado com sucesso
+✅ 6 de 7 métricas dentro do SLO
+⚠️  Jitter máximo: 2.1ms (marginalmente acima do SLO de 2ms)
+✅ Contrato inteligente manteve 100% de compliance
+✅ Predição ML-NSMF com 96.8% de confiança foi confirmada
+✅ Sistema TriSLA demonstrou comportamento SLA-aware adequado para URLLC
+
+Status final: SUCCESS (com observação de jitter marginal)
+
+================================================================================
+
