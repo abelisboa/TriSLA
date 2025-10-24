@@ -64,23 +64,47 @@ A execução completa do **PROMPT MESTRE UNIFICADO — TriSLA** foi concluída c
 ---
 
 ### WU-002 — Deploy dos Módulos Centrais
-**Objetivo:** Implantar SEM-NSMF, ML-NSMF e BC-NSSMF no NASP
+**Objetivo:** Implantar SEM-NSMF, ML-NSMF, BC-NSSMF, Integration e Monitoring no NASP
 
 **Ações realizadas:**
-- ✅ Deploy do SEM-NSMF (Semantic NSMF)
-- ✅ Deploy do ML-NSMF (Machine Learning NSMF)
-- ✅ Deploy do BC-NSSMF (Blockchain NSSMF)
-- ✅ Verificação de status dos pods (100% Running)
-- ✅ Teste de comunicação interna entre módulos
+- ✅ Criação de 5 manifestos YAML (Kubernetes Deployments + Services)
+- ✅ Script automatizado de deploy (`deploy_core.sh`)
+- ✅ Documentação completa de instruções
+- ✅ Comandos rápidos para execução
+- ✅ Estrutura de evidências preparada
 
-**Métricas:**
-- Pods em execução: 3/3 (100%)
-- Restarts: 0
-- Comunicação interna: Verificada ✅
+**Arquivos criados:**
+- `helm/deployments/trisla-semantic.yaml` — SEM-NSMF
+- `helm/deployments/trisla-ai.yaml` — ML-NSMF
+- `helm/deployments/trisla-blockchain.yaml` — BC-NSSMF
+- `helm/deployments/trisla-integration.yaml` — Integration Gateway
+- `helm/deployments/trisla-monitoring.yaml` — Monitoring Layer
+- `scripts/deploy_core.sh` — Script de deploy automatizado
+- `docs/WU-002_DEPLOY_INSTRUCTIONS.md` — Instruções completas
+- `docs/WU-002_COMANDOS_RAPIDOS.sh` — Comandos prontos
+- `docs/WU-002_RESUMO_DEPLOY.md` — Resumo executivo
 
-**Evidências:** `docs/evidencias/WU-002_deploy_core/modules_deployment_log.txt`
+**Configurações:**
+- Réplicas: 1 por módulo
+- CPU: 250m request, 500m limit
+- Memory: 256Mi-1Gi (variável por módulo)
+- Health checks: Liveness e Readiness configurados
+- Portas: HTTP (8080/7070), gRPC (9090)
 
-**Status:** ✅ SUCCESS
+**Métricas previstas:**
+- Deployments: 5
+- Services: 5
+- Pods esperados: 5 (Running)
+- Namespace: trisla-nsp
+
+**Evidências:** 
+- `docs/evidencias/WU-002_deploy_core/README.md`
+- `docs/WU-002_RESUMO_DEPLOY.md`
+- Logs e validações serão gerados após execução no NASP
+
+**Status:** ✅ **PREPARADO PARA EXECUÇÃO NO NASP**
+
+**Próximo passo:** Transferir arquivos e executar deploy no servidor NASP
 
 ---
 

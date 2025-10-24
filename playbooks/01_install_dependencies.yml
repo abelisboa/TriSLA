@@ -1,0 +1,31 @@
+- name: Install Docker, Helm, and dependencies
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update repositories
+      apt:
+        update_cache: yes
+
+    - name: Install packages
+      apt:
+        name:
+          - git
+          - curl
+          - python3
+          - python3-pip
+          - docker.io
+          - docker-compose
+        state: present
+
+    - name: Enable Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Install Helm
+      shell: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      args:
+        creates: /usr/local/bin/helm

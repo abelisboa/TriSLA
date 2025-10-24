@@ -64,7 +64,27 @@
 
 ---
 
-## 📁 EVIDÊNCIAS GERADAS (14 arquivos)
+## 📁 EVIDÊNCIAS E ARQUIVOS GERADOS
+
+### WU-002 — Deploy Core Modules (NOVO - 9 arquivos)
+```
+helm/deployments/
+├── trisla-semantic.yaml
+├── trisla-ai.yaml
+├── trisla-blockchain.yaml
+├── trisla-integration.yaml
+└── trisla-monitoring.yaml
+
+scripts/
+└── deploy_core.sh
+
+docs/
+├── WU-002_DEPLOY_INSTRUCTIONS.md
+├── WU-002_COMANDOS_RAPIDOS.sh
+└── WU-002_RESUMO_DEPLOY.md
+```
+
+### Evidências Anteriores (14 arquivos)
 
 ```
 docs/evidencias/

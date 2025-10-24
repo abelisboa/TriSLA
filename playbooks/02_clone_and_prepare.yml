@@ -1,0 +1,20 @@
+- name: Clone and prepare TriSLA
+  hosts: all
+  become: yes
+
+  vars:
+    trisla_repo: "https://github.com/abelisboa/trisla-deploy.git"
+
+  tasks:
+    - name: Clone TriSLA repository
+      git:
+        repo: "{{ trisla_repo }}"
+        dest: /home/porvir5g/gtp5g/trisla-portal
+        version: main
+        force: yes
+
+    - name: Ensure build scripts are executable
+      file:
+        path: /home/porvir5g/gtp5g/trisla-portal/ghcr_sync_workflow.sh
+        mode: "0755"
+        state: file

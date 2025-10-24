@@ -125,3 +125,14 @@ O ambiente está pronto para a **WU‑004 — Testes Detalhados, KPIs e Observab
 📅 **Data:** 16/10/2025  
 👤 **Autor:** Abel José Rodrigues Lisboa  
 🏛️ **Projeto:** TriSLA@NASP — UNISINOS / Mestrado em Computação Aplicada
+
+---
+
+## 🔧 Script de Validação Ativado
+O script `scripts/run_WU-003_validation.sh` foi gerado e está pronto para execução no NASP.
+
+### 📘 Execução recomendada
+```bash
+cd /home/porvir5g/gtp5g/trisla-nsp
+chmod +x scripts/run_WU-003_validation.sh
+./scripts/run_WU-003_validation.sh

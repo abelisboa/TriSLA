@@ -1,0 +1,7 @@
+fabric_version: "2.5"
+fabric_ca_version: "1.5"
+channel_name: "trisla-channel"
+cc_name: "sla_chaincode"
+cc_lang: "golang"
+cc_version: "1.0"
+cc_sequence: 1

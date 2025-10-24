@@ -1,0 +1,37 @@
+- name: Ensure base packages
+  become: true
+  apt:
+    name: [docker.io, docker-compose-plugin, git]
+    state: present
+    update_cache: yes
+
+- name: Create project dir
+  file:
+    path: "{{ project_dir }}"
+    state: directory
+
+- name: Sync repo files (rsync-like)
+  copy:
+    src: "{{ playbook_dir }}/.."
+    dest: "{{ project_dir }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Start Fabric basic network (CA, Orderer, CouchDB, Peer, CLI)
+  args:
+    chdir: "{{ project_dir }}/fabric-network"
+  shell: |
+    bash scripts/start.sh
+
+- name: Create channel and join
+  args:
+    chdir: "{{ project_dir }}/fabric-network"
+  shell: |
+    bash scripts/createChannel.sh
+
+- name: Deploy chaincode
+  args:
+    chdir: "{{ project_dir }}/fabric-network"
+  shell: |
+    bash scripts/deployCC.sh

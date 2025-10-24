@@ -1,0 +1,7 @@
+Item,Comando Principal,Status Atual,Data Última Atualização
+API,docker build -t ghcr.io/abelisboa/trisla-api:latest ./apps/api && docker push ghcr.io/abelisboa/trisla-api:latest,✅,2025-10-23
+UI,docker build -t ghcr.io/abelisboa/trisla-ui:latest ./apps/ui && docker push ghcr.io/abelisboa/trisla-ui:latest,✅,2025-10-23
+AI,docker build -t ghcr.io/abelisboa/trisla-ai:latest ./apps/ai && docker push ghcr.io/abelisboa/trisla-ai:latest,❌,
+Semantic,docker build -t ghcr.io/abelisboa/trisla-semantic:latest ./apps/semantic && docker push ghcr.io/abelisboa/trisla-semantic:latest,❌,
+Blockchain,docker build -t ghcr.io/abelisboa/trisla-blockchain:latest ./apps/blockchain && docker push ghcr.io/abelisboa/trisla-blockchain:latest,❌,
+Monitoring,docker build -t ghcr.io/abelisboa/trisla-monitoring:latest ./apps/monitoring && docker push ghcr.io/abelisboa/trisla-monitoring:latest,❌,

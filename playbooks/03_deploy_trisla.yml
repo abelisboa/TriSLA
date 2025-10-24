@@ -1,0 +1,17 @@
+- name: Deploy TriSLA via Helm
+  hosts: node1
+  become: yes
+
+  vars:
+    namespace: trisla
+
+  tasks:
+    - name: Create namespace if not exists
+      shell: kubectl create ns {{ namespace }} || true
+
+    - name: Helm deploy TriSLA
+      shell: |
+        cd /home/porvir5g/gtp5g/trisla-portal
+        helm upgrade --install trisla-portal ./helm/trisla-portal/ \
+          -n {{ namespace }} -f ./nasp/values-nasp.yaml \
+          --atomic --cleanup-on-fail --timeout 5m

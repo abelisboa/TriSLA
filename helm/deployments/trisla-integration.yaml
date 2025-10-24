@@ -1,0 +1,102 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-integration-layer
+  namespace: trisla-nsp
+  labels:
+    app: trisla-integration
+    component: integration-gateway
+    tier: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-integration
+  template:
+    metadata:
+      labels:
+        app: trisla-integration
+        component: integration-gateway
+        tier: gateway
+    spec:
+      containers:
+      - name: integration-gateway
+        image: ghcr.io/trisla/trisla-integration:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: grpc
+          containerPort: 9090
+          protocol: TCP
+        env:
+        - name: MODULE_NAME
+          value: "Integration-Gateway"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: SEM_NSMF_URL
+          value: "http://trisla-semantic:8080"
+        - name: ML_NSMF_URL
+          value: "http://trisla-ai:8080"
+        - name: BC_NSSMF_URL
+          value: "http://trisla-blockchain:7070"
+        - name: SMO_URL
+          value: "http://smo.nasp-core:8080"
+        - name: NONRTRIC_URL
+          value: "http://nonrtric.a1-interface:8085"
+        - name: NEARRTRIC_URL
+          value: "http://nearrtric.e2-interface:8086"
+        - name: NWDAF_URL
+          value: "http://nwdaf-core:8081"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-integration
+  namespace: trisla-nsp
+  labels:
+    app: trisla-integration
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: grpc
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  selector:
+    app: trisla-integration
+
+
+
+

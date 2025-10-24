@@ -47,6 +47,7 @@ Use este checklist diretamente no **Cursor** para marcar o progresso do projeto.
   - [☑] Coletar métricas NWDAF e Prometheus
   - [☑] Preencher tabelas de KPIs e estabilidade
   - [☑] Consolidar resultados em `docs/evidencias/WU‑005_avaliacao/`
+  - [☑] Gerar relatório final de execução (`WU-005_EXECUTION_SUMMARY.md`)
 
 ---
 
@@ -59,7 +60,7 @@ Use este checklist diretamente no **Cursor** para marcar o progresso do projeto.
 | 2025‑10‑16 | Deploy TriSLA Core | ✅ | Todos os pods em `Running` |
 | 2025‑10‑16 | Integração NASP Core | ✅ | Handshake O1/A1/E2/NWDAF bem-sucedido |
 | — | Testes e KPIs | ✅ | Métricas coletadas |
-| 2025‑10‑17 | Avaliação Experimental | ✅ | Concluída - 95.5% conformidade SLO |
+| 2025‑10‑17 | Avaliação Experimental | ✅ | Concluída - 95.5% conformidade SLO - Relatório final gerado |
 
 ---
 

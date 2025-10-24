@@ -27,6 +27,7 @@
             "PROMPTS\\MASTER_PROMPT.md",
             "PROMPTS\\PROMPT_MESTRE_UNIFICADO.md",
             "PROMPTS\\SESSION_TEMPLATE.md",
+            "PROMPTS\\SESSION_WU005_INIT.md",
             "PROMPTS\\Starter_Prompt.md",
             "PROMPTS\\supervisor_TEMPLATE.md",
             "PROMPTS\\TASK_SPEC_TEMPLATE.md",
@@ -39,8 +40,30 @@
             "docs\\AI_EXECUTION_STRATEGY.md",
             "docs\\EXECUTION_READINESS_CHECKLIST.md",
             "docs\\Referencia_Tecnica_TriSLA.md",
+            "docs\\STATUS_FINAL.md",
             "docs\\Workflow_Oficial_TriSLA_NASP.md",
-            "docs\\evidencias\\README_Evidencias.md"
+            "docs\\WU-002_COMANDOS_RAPIDOS.sh",
+            "docs\\WU-002_DEPLOY_INSTRUCTIONS.md",
+            "docs\\WU-002_RESUMO_DEPLOY.md",
+            "docs\\WU-002_STATUS.md",
+            "docs\\WU-005_EXPERIMENTAL_GUIDE.md",
+            "docs\\WU-005_STATUS.md",
+            "docs\\evidencias\\final_pods_state.txt",
+            "docs\\evidencias\\README_Evidencias.md",
+            "docs\\evidencias\\resource_usage.txt",
+            "docs\\evidencias\\WU-000_pre_check\\nasp_state_validation.txt",
+            "docs\\evidencias\\WU-001_bootstrap\\bootstrap_gitops_log.txt",
+            "docs\\evidencias\\WU-002_deploy_core\\modules_deployment_log.txt",
+            "docs\\evidencias\\WU-002_deploy_core\\README.md",
+            "docs\\evidencias\\WU-003_integration_core\\nasp_integration_log.txt",
+            "docs\\evidencias\\WU-004_tests\\observability_tests_log.txt",
+            "docs\\evidencias\\WU-005_avaliacao\\execution_summary.md",
+            "docs\\evidencias\\WU-005_avaliacao\\nwdaf_metrics.json",
+            "docs\\evidencias\\WU-005_avaliacao\\prometheus_metrics.txt",
+            "docs\\evidencias\\WU-005_avaliacao\\resumo_resultados.txt",
+            "docs\\evidencias\\WU-005_avaliacao\\scenario_embb_log.txt",
+            "docs\\evidencias\\WU-005_avaliacao\\scenario_mmtc_log.txt",
+            "docs\\evidencias\\WU-005_avaliacao\\scenario_urllc_log.txt"
         ]
     },
     "automation": {
@@ -54,10 +77,30 @@
     },
     "helm": {
         "status": "OK",
-        "details": []
+        "details": [
+            "helm\\deployments\\trisla-ai.yaml",
+            "helm\\deployments\\trisla-blockchain.yaml",
+            "helm\\deployments\\trisla-integration.yaml",
+            "helm\\deployments\\trisla-monitoring.yaml",
+            "helm\\deployments\\trisla-semantic.yaml"
+        ]
     },
     "src": {
         "status": "OK",
-        "details": []
+        "details": [
+            "src\\ai\\Dockerfile",
+            "src\\ai\\main.py",
+            "src\\ai\\requirements.txt",
+            "src\\blockchain\\Dockerfile",
+            "src\\blockchain\\entrypoint.sh",
+            "src\\integration\\Dockerfile",
+            "src\\integration\\main.py",
+            "src\\integration\\requirements.txt",
+            "src\\monitoring\\Dockerfile",
+            "src\\monitoring\\prometheus.yml",
+            "src\\semantic\\Dockerfile",
+            "src\\semantic\\main.py",
+            "src\\semantic\\requirements.txt"
+        ]
     }
 }
