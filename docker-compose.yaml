@@ -7,10 +7,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - SEMANTIC_URL=http://trisla-semantic:8081
-      - AI_URL=http://trisla-ai:8080
-      - BLOCKCHAIN_URL=http://trisla-blockchain:8051
-      - MONITORING_URL=http://trisla-monitoring:8090
+      - SEMANTIC_URL=${SEMANTIC_URL:-http://trisla-semantic:8081}
+      - AI_URL=${AI_URL:-http://trisla-ai:8080}
+      - BLOCKCHAIN_URL=${BLOCKCHAIN_URL:-http://trisla-blockchain:8051}
+      - MONITORING_URL=${MONITORING_URL:-http://trisla-monitoring:8090}
     networks:
       - trisla-net
 

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-portal
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: trisla-portal
+  template:
+    metadata:
+      labels:
+        app: trisla-portal
+    spec:
+      containers:
+      - name: trisla-api
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SEMANTIC_URL
+          value: "{{ .Values.env.SEMANTIC_URL }}"
+        - name: AI_URL
+          value: "{{ .Values.env.AI_URL }}"
+        - name: BLOCKCHAIN_URL
+          value: "{{ .Values.env.BLOCKCHAIN_URL }}"
+        - name: MONITORING_URL
+          value: "{{ .Values.env.MONITORING_URL }}"
+      - name: trisla-ui
+        image: "{{ .Values.uiImage.repository }}:{{ .Values.uiImage.tag }}"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-portal
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: trisla-portal
+  ports:
+    - name: api
+      port: 8000
+      targetPort: 8000
+      nodePort: {{ .Values.service.ports.api }}
+    - name: ui
+      port: 80
+      targetPort: 80
+      nodePort: {{ .Values.service.ports.ui }}

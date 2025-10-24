@@ -1,7 +1,6 @@
 #!/bin/bash
 # ===========================================================
-# 🔍 TriSLA Portal Verification Script
-# Verifica a comunicação entre UI, API e módulos Core reais
+# 🔍 TriSLA Portal Verification Script (Corrected)
 # ===========================================================
 
 API_URL="http://localhost:8000"
@@ -33,11 +32,11 @@ curl -s -X POST "$API_URL/api/v1/semantic" \
   -H "Content-Type: application/json" \
   -d '{"descricao":"cirurgia remota 5G"}' | jq || echo "❌ Semantic module not responding"
 
-# 3️⃣ AI prediction
+# 3️⃣ AI prediction (fixed body)
 echo -n "🤖 Testing ML-NSMF (AI prediction) → "
 curl -s -X POST "$API_URL/api/v1/predict" \
   -H "Content-Type: application/json" \
-  -d '{"slice_type":"URLLC","qos":{"latency":5}}' | jq || echo "❌ AI module not responding"
+  -d '{"descricao":"teste","slice_type":"URLLC","qos":{"latency":5}}' | jq || echo "❌ AI module not responding"
 
 # 4️⃣ Blockchain contract
 echo -n "🔗 Testing BC-NSSMF (blockchain contract) → "
