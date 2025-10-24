@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  trisla-api:
+    build: ./apps/api
+    container_name: trisla-api
+    ports:
+      - "8000:8000"
+    environment:
+      - SEMANTIC_URL=http://trisla-semantic:8081
+      - AI_URL=http://trisla-ai:8080
+      - BLOCKCHAIN_URL=http://trisla-blockchain:8051
+      - MONITORING_URL=http://trisla-monitoring:8090
+    networks:
+      - trisla-net
+
+  trisla-ui:
+    build: ./apps/ui
+    container_name: trisla-ui
+    ports:
+      - "5173:80"
+    depends_on:
+      - trisla-api
+    networks:
+      - trisla-net
+
+networks:
+  trisla-net:
+    driver: bridge
