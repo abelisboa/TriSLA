@@ -6,6 +6,11 @@ inventory.yaml
 *.env
 .env*
 
+# Permitir arquivos de exemplo
+!values-example.yaml
+!inventory-example.yaml
+!*-example.*
+
 # Credenciais e secrets
 secrets/
 *.pem
@@ -204,6 +209,11 @@ archived/
 *.md
 *.rtf
 
+# Permitir documentação do projeto
+!docs/*.md
+!README.md
+!*.md
+
 # Arquivos de código
 *.c
 *.cpp
@@ -225,6 +235,11 @@ archived/
 *.ts
 *.jsx
 *.tsx
+
+# Permitir scripts do projeto
+!scripts/*.sh
+!scripts/*.py
+!scripts/*.ps1
 
 # Arquivos de configuração
 *.ini
