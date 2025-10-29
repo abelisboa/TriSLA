@@ -1,8 +1,9 @@
 version: "3.9"
 
 services:
-  trisla-api:
+  api:
     build: ./apps/api
+    image: ghcr.io/abelisboa/trisla-api:latest
     container_name: trisla-api
     ports:
       - "8000:8000"
@@ -14,13 +15,14 @@ services:
     networks:
       - trisla-net
 
-  trisla-ui:
+  ui:
     build: ./apps/ui
+    image: ghcr.io/abelisboa/trisla-ui:latest
     container_name: trisla-ui
     ports:
       - "5173:80"
     depends_on:
-      - trisla-api
+      - api
     networks:
       - trisla-net
 

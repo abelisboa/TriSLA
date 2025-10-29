@@ -1,0 +1,107 @@
+# TriSLA Portal - Helm Values Example
+# Copy this file to values.yaml and customize for your environment
+
+# Configurações principais
+namespace: trisla-nsp
+replicaCount: 1
+
+# Backend (FastAPI)
+backend:
+  image: ghcr.io/abelisboa/trisla-api:latest
+  pullPolicy: IfNotPresent
+  containerPort: 8000
+  env:
+    PYTHONPATH: "/app/apps/api"
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
+
+# Frontend (Nginx)
+frontend:
+  image: nginx:alpine
+  pullPolicy: IfNotPresent
+  containerPort: 80
+  service:
+    port: 5173
+
+# Redis
+redis:
+  image: redis:7.4.6-alpine
+  pullPolicy: IfNotPresent
+  containerPort: 6379
+
+# RQ Worker
+rqWorker:
+  image: ghcr.io/abelisboa/trisla-api:latest
+  pullPolicy: IfNotPresent
+  command: ["python3", "-c"]
+  args: ["import rq; from rq import Worker; import redis; r = redis.Redis(host='redis', port=6379); w = Worker(['default'], connection=r); w.work()"]
+
+# Recursos
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Image Pull Secrets (para GHCR)
+# IMPORTANTE: Configure suas credenciais antes do deploy
+imagePullSecrets:
+  - name: ghcr-creds
+
+# Configurações de rede
+service:
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+
+# Configurações de ingress (opcional)
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: trisla.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Configurações de persistência (opcional)
+persistence:
+  enabled: false
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+# Configurações de monitoramento
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    path: /metrics
+
+# Configurações de segurança
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+# Configurações de health check
+healthCheck:
+  livenessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 6
+  readinessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 4

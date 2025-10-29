@@ -174,3 +174,6 @@ echo "  docker run -p 80:80 ghcr.io/abelisboa/trisla-ui:latest"
 
 
 
+
+
+

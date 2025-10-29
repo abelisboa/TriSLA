@@ -53,4 +53,12 @@ def metrics():
 
 @app.get("/api/v1/health")
 def health():
-    return {"status": "TriSLA Portal API running"}
+    return {
+        "status": "TriSLA Portal API running",
+        "phase": 2,
+        "components": {
+            "semantic": "active",
+            "ai": "standby",
+            "blockchain": "standby"
+        }
+    }
