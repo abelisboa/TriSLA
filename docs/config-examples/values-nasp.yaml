@@ -1,0 +1,18 @@
+namespace: trisla
+imagePullPolicy: IfNotPresent
+
+environment:
+  SEMANTIC_URL: "http://trisla-semantic.trisla.svc.cluster.local:8081"
+  AI_URL: "http://trisla-ai.trisla.svc.cluster.local:8080"
+  BLOCKCHAIN_URL: "http://trisla-blockchain.trisla.svc.cluster.local:8051"
+  MONITORING_URL: "http://trisla-monitoring.trisla.svc.cluster.local:8090"
+
+nodeSelectors:
+  api: node1
+  ui: node2
+
+service:
+  type: NodePort
+  ports:
+    api: 30800
+    ui: 30173
