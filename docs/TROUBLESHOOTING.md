@@ -402,3 +402,4 @@ Se você encontrar um problema que não está listado aqui:
 - [Helm Troubleshooting](https://helm.sh/docs/troubleshooting/)
 - [Prometheus Troubleshooting](https://prometheus.io/docs/guides/troubleshooting/)
 - [Redis Troubleshooting](https://redis.io/docs/management/troubleshooting/)
+

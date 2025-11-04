@@ -306,3 +306,7 @@ def create_trace_manager(module_name: str) -> TraceManager:
 def create_trace_propagator() -> TracePropagator:
     """Criar propagador de contexto de trace"""
     return TracePropagator()
+
+
+
+

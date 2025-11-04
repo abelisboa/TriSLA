@@ -1,0 +1,24 @@
+---
+- name: 🚀 Implantar TriSLA Portal no NASP
+  hosts: nasp_nodes
+  become: yes
+  tasks:
+    - name: Criar namespace trisla se não existir
+      ansible.builtin.shell: kubectl create ns trisla --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Criar secret GHCR se variáveis definidas
+      ansible.builtin.shell: |
+        kubectl -n trisla create secret docker-registry ghcr-creds \
+          --docker-server=ghcr.io \
+          --docker-username={{ lookup('env','GHCR_USER') }} \
+          --docker-password={{ lookup('env','GHCR_TOKEN') }} \
+          --docker-email="trisla@nasp.local" \
+          --dry-run=client -o yaml | kubectl apply -f -
+      when: lookup('env','GHCR_USER') != "" and lookup('env','GHCR_TOKEN') != ""
+
+    - name: Implantar com Helm
+      ansible.builtin.shell: |
+        helm upgrade --install trisla-portal ./helm/trisla-portal/ \
+          -n trisla \
+          -f ./docs/config-examples/values-nasp.yaml \
+          --atomic --cleanup-on-fail

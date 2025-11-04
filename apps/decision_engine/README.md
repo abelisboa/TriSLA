@@ -221,3 +221,4 @@ curl -X POST http://localhost:8080/api/v1/decide \
 ---
 
 **TriSLA Decision Engine** - Motor de Decisão Central para Redes 5G/O-RAN 🧠
+

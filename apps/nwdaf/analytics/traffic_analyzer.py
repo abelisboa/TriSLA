@@ -769,3 +769,7 @@ class TrafficAnalyzer:
         except Exception as e:
             self.logger.error(f"Erro ao obter estatísticas de tráfego: {str(e)}")
             return {"status": "error"}
+
+
+
+

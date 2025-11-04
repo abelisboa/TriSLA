@@ -345,3 +345,7 @@ Para suporte e dúvidas:
 ---
 
 **TriSLA NWDAF** - Network Data Analytics Function para 5G
+
+
+
+

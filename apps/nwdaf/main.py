@@ -596,3 +596,7 @@ if __name__ == "__main__":
         await nwdaf.stop()
     
     asyncio.run(test_nwdaf())
+
+
+
+

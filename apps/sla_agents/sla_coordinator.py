@@ -367,3 +367,4 @@ async def main():
 if __name__ == "__main__":
     # Executar coordenador
     asyncio.run(main())
+

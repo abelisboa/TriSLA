@@ -814,3 +814,7 @@ class NetworkAnalyzer:
         except Exception as e:
             self.logger.error(f"Erro ao obter status de saúde: {str(e)}")
             return {"status": "error", "score": 0.0}
+
+
+
+

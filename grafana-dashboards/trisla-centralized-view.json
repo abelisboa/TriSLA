@@ -1,0 +1,252 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "trisla-centralized",
+    "title": "TriSLA - Visão Centralizada",
+    "tags": ["trisla", "centralized", "overview"],
+    "style": "dark",
+    "timezone": "browser",
+    "refresh": "10s",
+    "schemaVersion": 38,
+    "version": 1,
+    "panels": [
+      {
+        "id": 1,
+        "title": "Sistema TriSLA - Status Geral",
+        "type": "stat",
+        "gridPos": {"h": 3, "w": 24, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "count(up{job=~\"trisla.*\"} == 1)",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 5}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "TriSLA Portal",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 3},
+        "targets": [
+          {
+            "expr": "up{job=\"trisla-portal\"}",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Decision Engine",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 3},
+        "targets": [
+          {
+            "expr": "up{job=\"decision-engine\"}",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "NWDAF",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 3},
+        "targets": [
+          {
+            "expr": "up{job=\"nwdaf\"}",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "SLA Agents",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 3},
+        "targets": [
+          {
+            "expr": "up{job=\"sla-agents\"}",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Métricas de Performance (Consolidado)",
+        "type": "timeseries",
+        "gridPos": {"h": 10, "w": 12, "x": 0, "y": 7},
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"trisla-portal\"}[5m])",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "API Requests"
+          },
+          {
+            "expr": "rate(decision_engine_predictions_total[5m])",
+            "refId": "B",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "Decisions"
+          },
+          {
+            "expr": "rate(nwdaf_qos_predictions_total[5m])",
+            "refId": "C",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "NWDAF Predictions"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops"
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Latência End-to-End",
+        "type": "timeseries",
+        "gridPos": {"h": 10, "w": 12, "x": 12, "y": 7},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"trisla-portal\"}[5m]))",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "API p95"
+          },
+          {
+            "expr": "decision_engine_latency_ms",
+            "refId": "B",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "Decision Engine"
+          },
+          {
+            "expr": "nwdaf_prediction_latency_ms",
+            "refId": "C",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "NWDAF"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms"
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Slices Ativos",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 8, "x": 0, "y": 17},
+        "targets": [
+          {
+            "expr": "count(trisla_slices_active)",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Jobs Processados",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 8, "x": 8, "y": 17},
+        "targets": [
+          {
+            "expr": "trisla_jobs_completed_total",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Taxa de Sucesso",
+        "type": "gauge",
+        "gridPos": {"h": 4, "w": 8, "x": 16, "y": 17},
+        "targets": [
+          {
+            "expr": "(trisla_jobs_completed_total / (trisla_jobs_completed_total + trisla_jobs_failed_total)) * 100",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "id": 11,
+        "title": "Distribuição de Slices",
+        "type": "piechart",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 21},
+        "targets": [
+          {
+            "expr": "sum by (slice_type) (trisla_slices_active{slice_type=~\"URLLC|eMBB|mMTC\"})",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "{{slice_type}}"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Uso de Recursos",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 21},
+        "targets": [
+          {
+            "expr": "sum(rate(container_cpu_usage_seconds_total{pod=~\"trisla.*\"}[5m])) * 100",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "CPU Total"
+          },
+          {
+            "expr": "sum(container_memory_usage_bytes{pod=~\"trisla.*\"}) / 1024 / 1024",
+            "refId": "B",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "Memory Total (MB)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        },
+        "fieldOverrides": [
+          {
+            "matcher": {"id": "byName", "options": "Memory Total (MB)"},
+            "properties": [{"id": "unit", "value": "MB"}]
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}
+
+
+
+

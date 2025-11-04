@@ -349,3 +349,7 @@ python apps/decision_engine/interfaces/i07_nasp_api.py
 ---
 
 **TriSLA Interfaces** - Comunicação Interna da Arquitetura TriSLA 🔗
+
+
+
+

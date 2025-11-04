@@ -373,3 +373,4 @@ if __name__ == "__main__":
         print(f"Recursos: {resources}")
     
     asyncio.run(test_interface())
+

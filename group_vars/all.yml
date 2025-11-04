@@ -1,4 +1,0 @@
-ghcr_user: "abelisboa"
-ghcr_token: "{{ lookup('env', 'CR_PAT') }}"
-helm_chart_path: "/home/porvir5g/gtp5g/trisla-portal/helm/trisla-portal/"
-nasp_namespace: "trisla"

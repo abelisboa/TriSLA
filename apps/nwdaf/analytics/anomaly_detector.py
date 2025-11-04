@@ -719,3 +719,7 @@ class AnomalyDetector:
         except Exception as e:
             self.logger.error(f"Erro ao obter tendências de anomalias: {str(e)}")
             return {"status": "error"}
+
+
+
+

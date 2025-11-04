@@ -242,3 +242,7 @@ kubectl logs -n trisla-nsp -l app.kubernetes.io/name=sla-agents | grep -i "viola
 ---
 
 **TriSLA SLA-Agent Layer** - Camada Federada de Agentes SLA para Redes 5G/O-RAN 🔍
+
+
+
+

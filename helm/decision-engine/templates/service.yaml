@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "decision-engine.fullname" . }}
+  labels:
+    {{- include "decision-engine.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: http
+    - port: {{ .Values.service.grpcPort }}
+      targetPort: {{ .Values.service.grpcTargetPort }}
+      protocol: TCP
+      name: grpc
+  selector:
+    {{- include "decision-engine.selectorLabels" . | nindent 4 }}
+

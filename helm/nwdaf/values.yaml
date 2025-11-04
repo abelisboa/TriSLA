@@ -1,0 +1,147 @@
+# Default values for nwdaf
+replicaCount: 1
+
+image:
+  repository: ghcr.io/abelisboa/trisla-nwdaf
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets:
+  - name: ghcr-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: nwdaf.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# NWDAF specific configuration
+nwdaf:
+  config:
+    analysisInterval: 30
+    cacheSize: 1000
+    maxHistorySize: 10000
+    enablePredictions: true
+    enableAnomalyDetection: true
+    enableTrafficAnalysis: true
+    enablePerformanceAnalysis: true
+  
+  endpoints:
+    decisionEngine: "http://decision-engine:8080"
+    mlNsmf: "http://ml-nsmf:8080"
+    slaAgents: "http://sla-agents:8080"
+    prometheus: "http://prometheus:9090"
+    grafana: "http://grafana:3000"
+  
+  thresholds:
+    cpuUsage: 80
+    memoryUsage: 85
+    latency: 50
+    packetLoss: 0.01
+    throughput: 0.8
+    availability: 99.0
+  
+  qosProfiles:
+    urllc:
+      latencyRequirement: 1.0
+      reliabilityRequirement: 99.999
+      throughputRequirement: 1.0
+      jitterRequirement: 0.1
+      packetLossRequirement: 0.00001
+    embb:
+      latencyRequirement: 10.0
+      reliabilityRequirement: 99.9
+      throughputRequirement: 1000.0
+      jitterRequirement: 1.0
+      packetLossRequirement: 0.001
+    mmtc:
+      latencyRequirement: 100.0
+      reliabilityRequirement: 99.0
+      throughputRequirement: 1.0
+      jitterRequirement: 10.0
+      packetLossRequirement: 0.01
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
+    annotations: {}
+
+# Logging configuration
+logging:
+  level: INFO
+  format: json
+  output: stdout
+
+# Environment variables
+env:
+  - name: NWDAF_ID
+    value: "nwdaf-001"
+  - name: LOG_LEVEL
+    value: "INFO"
+  - name: ANALYSIS_INTERVAL
+    value: "30"
+  - name: CACHE_SIZE
+    value: "1000"
+  - name: MAX_HISTORY_SIZE
+    value: "10000"
+
+
+
+

@@ -523,3 +523,7 @@ class SLAPolicyManager:
 def create_sla_policy_manager() -> SLAPolicyManager:
     """Criar gerenciador de políticas SLA"""
     return SLAPolicyManager()
+
+
+
+

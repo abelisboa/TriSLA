@@ -500,3 +500,7 @@ class NWDAFInterface:
         except Exception as e:
             self.logger.error(f"Erro ao testar conectividade com {endpoint_name}: {str(e)}")
             return False
+
+
+
+

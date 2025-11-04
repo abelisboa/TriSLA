@@ -228,3 +228,7 @@ def auto_setup_telemetry() -> None:
         otel_endpoint=otel_endpoint,
         environment=environment
     )
+
+
+
+

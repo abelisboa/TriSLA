@@ -1,0 +1,170 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "trisla-create-slices",
+    "title": "TriSLA - Criar Slices (LNP & Templates)",
+    "tags": ["trisla", "slices", "create", "lnp", "templates"],
+    "style": "dark",
+    "timezone": "browser",
+    "refresh": "30s",
+    "schemaVersion": 38,
+    "version": 1,
+    "templating": {
+      "list": [
+        {
+          "name": "slice_type",
+          "type": "query",
+          "label": "Tipo de Slice",
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "current": {
+            "selected": false,
+            "text": "URLLC",
+            "value": "URLLC"
+          },
+          "options": [
+            {"text": "URLLC", "value": "URLLC", "selected": true},
+            {"text": "eMBB", "value": "eMBB", "selected": false},
+            {"text": "mMTC", "value": "mMTC", "selected": false}
+          ],
+          "query": {
+            "query": "label_values(trisla_slices_active, slice_type)",
+            "refId": "StandardVariableQuery"
+          }
+        },
+        {
+          "name": "bandwidth",
+          "type": "custom",
+          "label": "Bandwidth (Mbps)",
+          "current": {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          "options": [
+            {"text": "50", "value": "50"},
+            {"text": "100", "value": "100", "selected": true},
+            {"text": "200", "value": "200"},
+            {"text": "500", "value": "500"},
+            {"text": "1000", "value": "1000"}
+          ]
+        },
+        {
+          "name": "latency",
+          "type": "custom",
+          "label": "Latência (ms)",
+          "current": {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          "options": [
+            {"text": "1", "value": "1", "selected": true},
+            {"text": "5", "value": "5"},
+            {"text": "10", "value": "10"},
+            {"text": "50", "value": "50"}
+          ]
+        }
+      ]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Criar Slice via API",
+        "type": "text",
+        "gridPos": {"h": 6, "w": 24, "x": 0, "y": 0},
+        "options": {
+          "content": "# 🔧 Criar Slice via API\n\n## Via LNP (Linguagem Natural)\n```bash\ncurl -X POST http://192.168.10.16:8092/api/v1/slices \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"description\": \"Criar slice URLLC com latência de 1ms e banda de 100Mbps\"}'\n```\n\n## Via Template\n```bash\ncurl -X POST http://192.168.10.16:8092/api/v1/slices \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"slice_type\": \"${slice_type}\",\n    \"bandwidth\": ${bandwidth},\n    \"latency\": ${latency},\n    \"description\": \"Slice criado via template\"\n  }'\n```\n\n## 🔗 Links Rápidos\n- [UI TriSLA Portal](http://192.168.10.16:8092) - Interface web completa\n- [API Docs](http://192.168.10.16:8092/docs) - Documentação Swagger\n- [Health Check](http://192.168.10.16:8092/api/v1/health) - Status da API",
+          "mode": "markdown"
+        }
+      },
+      {
+        "id": 2,
+        "title": "Slices Criados Recentemente",
+        "type": "table",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+        "targets": [
+          {
+            "expr": "trisla_slices_created_total",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "format": "table",
+            "instant": true
+          }
+        ],
+        "options": {
+          "showHeader": true,
+          "sortBy": [{"desc": true, "displayName": "Value"}]
+        }
+      },
+      {
+        "id": 3,
+        "title": "Status da Criação",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+        "targets": [
+          {
+            "expr": "rate(trisla_slices_created_total[5m])",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          },
+          {
+            "expr": "rate(trisla_jobs_completed_total{job=\"trisla-portal\"}[5m])",
+            "refId": "B",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          },
+          {
+            "expr": "rate(trisla_jobs_failed_total{job=\"trisla-portal\"}[5m])",
+            "refId": "C",
+            "datasource": {"type": "prometheus", "uid": "prometheus"}
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Templates Disponíveis",
+        "type": "text",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 14},
+        "options": {
+          "content": "## 📋 Templates de Slices\n\n### URLLC Template\n```json\n{\n  \"slice_type\": \"URLLC\",\n  \"bandwidth\": 100,\n  \"latency\": 1,\n  \"description\": \"Template URLLC\"\n}\n```\n\n### eMBB Template\n```json\n{\n  \"slice_type\": \"eMBB\",\n  \"bandwidth\": 500,\n  \"latency\": 5,\n  \"description\": \"Template eMBB\"\n}\n```\n\n### mMTC Template\n```json\n{\n  \"slice_type\": \"mMTC\",\n  \"bandwidth\": 50,\n  \"latency\": 10,\n  \"description\": \"Template mMTC\"\n}\n```",
+          "mode": "markdown"
+        }
+      },
+      {
+        "id": 5,
+        "title": "Distribuição de Slices por Tipo",
+        "type": "piechart",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 22},
+        "targets": [
+          {
+            "expr": "sum by (slice_type) (trisla_slices_active{slice_type=~\"URLLC|eMBB|mMTC\"})",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "{{slice_type}}"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Tendência de Criação",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 22},
+        "targets": [
+          {
+            "expr": "rate(trisla_slices_created_total[1h])",
+            "refId": "A",
+            "datasource": {"type": "prometheus", "uid": "prometheus"},
+            "legendFormat": "Taxa de Criação"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    }
+  }
+}
+
+
+
+

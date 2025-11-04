@@ -613,3 +613,7 @@ class QoSPredictor:
         except Exception as e:
             self.logger.error(f"Erro ao remover perfil de QoS: {str(e)}")
             raise
+
+
+
+

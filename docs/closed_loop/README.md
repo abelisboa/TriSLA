@@ -339,3 +339,7 @@ kubectl logs -n trisla-nsp --all-containers=true | grep -i "action\|automatic"
 ---
 
 **TriSLA Closed Loop** - Orquestração SLA-Aware Automática 🔄
+
+
+
+

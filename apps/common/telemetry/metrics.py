@@ -338,3 +338,7 @@ class Gauge:
 def create_trisla_metrics(service_name: str) -> TriSLAMetrics:
     """Criar instância de métricas TriSLA"""
     return TriSLAMetrics(service_name)
+
+
+
+

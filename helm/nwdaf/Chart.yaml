@@ -1,0 +1,23 @@
+apiVersion: v2
+name: nwdaf
+description: TriSLA NWDAF (Network Data Analytics Function)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - nwdaf
+  - 5g
+  - analytics
+  - network
+  - trisla
+home: https://github.com/abelisboa/TriSLA-Portal
+sources:
+  - https://github.com/abelisboa/TriSLA-Portal
+maintainers:
+  - name: TriSLA Team
+    email: trisla@example.com
+dependencies: []
+
+
+
+
