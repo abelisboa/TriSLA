@@ -1,5 +1,5 @@
 # 🧩 Automation_Supervisor_Prompt.md
-## Agente Supervisor — Auditoria e Validação do Projeto TriSLA@NASP
+## Agente Supervisor — Auditoria e Validação do Projeto TriSLA
 
 ---
 

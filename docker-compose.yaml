@@ -1,0 +1,61 @@
+services:
+  api:
+    image: ghcr.io/abelisboa/trisla-api:latest
+    build: ./apps/api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=production
+    restart: always
+
+  ui:
+    image: ghcr.io/abelisboa/trisla-ui:latest
+    build: ./apps/ui
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    restart: always
+
+  blockchain:
+    image: ghcr.io/abelisboa/trisla-blockchain:latest
+    build: ./apps/blockchain
+    restart: always
+
+  semantic:
+    image: ghcr.io/abelisboa/trisla-semantic:latest
+    build: ./apps/semantic
+    restart: always
+
+  ai:
+    image: ghcr.io/abelisboa/trisla-ai:latest
+    build: ./apps/ai
+    restart: always
+
+  monitoring:
+    image: ghcr.io/abelisboa/trisla-monitoring:latest
+    build: ./apps/monitoring
+    restart: always
+
+  # --- DASHBOARD (Opcional) ---
+  dashboard-backend:
+    image: ghcr.io/abelisboa/trisla-dashboard-backend:latest
+    build: ./apps/dashboard/backend
+    ports:
+      - "7070:5000"
+    environment:
+      - ENABLE_DASHBOARD=${ENABLE_DASHBOARD:-true}
+    depends_on:
+      - api
+    restart: always
+
+  dashboard-frontend:
+    image: ghcr.io/abelisboa/trisla-dashboard-frontend:3.2.4
+    build: ./apps/dashboard/frontend
+    ports:
+      - "5174:80"
+    environment:
+      - ENABLE_DASHBOARD=${ENABLE_DASHBOARD:-true}
+    depends_on:
+      - dashboard-backend
+    restart: always

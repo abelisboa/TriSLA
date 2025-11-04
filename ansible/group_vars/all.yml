@@ -1,0 +1,19 @@
+---
+# TriSLA Fabric Network Configuration
+fabric_network_name: "trisla-network"
+fabric_channel_name: "trisla-channel"
+fabric_chaincode_name: "sla_chaincode"
+fabric_chaincode_version: "1.0"
+
+# Docker images
+trisla_semantic_image: "ghcr.io/abelisboa/trisla-semantic:latest"
+trisla_ai_image: "ghcr.io/abelisboa/trisla-ai:latest"
+trisla_blockchain_image: "ghcr.io/abelisboa/trisla-blockchain:latest"
+trisla_monitoring_image: "ghcr.io/abelisboa/trisla-monitoring:latest"
+
+# Network configuration
+network_ports:
+  semantic: 8081
+  ai: 8080
+  blockchain: 8051
+  monitoring: 8090

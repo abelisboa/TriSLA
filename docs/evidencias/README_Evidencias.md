@@ -1,4 +1,4 @@
-# Guia de Evidências — TriSLA@NASP
+# Guia de Evidências — TriSLA
 
 Este diretório armazena **todas as evidências visuais e textuais** relacionadas às Unidades de Trabalho (WUs) do projeto **TriSLA@NASP**.
 

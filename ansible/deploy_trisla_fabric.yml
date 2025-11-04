@@ -1,0 +1,6 @@
+- hosts: nasp
+  become: yes
+  tasks:
+    - name: Deploy Fabric Network for TriSLA
+      include_role:
+        name: fabric

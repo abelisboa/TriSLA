@@ -1,4 +1,4 @@
-# 📘 Índice de Controle de Execução — Projeto TriSLA@NASP
+# 📘 Índice de Controle de Execução — Projeto TriSLA
 ## Estado Atual das Unidades de Trabalho (WU)
 
 ---

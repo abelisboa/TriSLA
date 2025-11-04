@@ -1,4 +1,4 @@
-# 🧾 Checklist de Pré-Implantação — TriSLA@NASP
+# 🧾 Checklist de Pré-Implantação — TriSLA
 ## Diagnóstico, Limpeza e Preparação Segura do Ambiente
 
 ---

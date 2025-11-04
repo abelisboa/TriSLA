@@ -1,5 +1,5 @@
 # 🤖 Automation_Master_Prompt.md
-## Automação Completa do Projeto TriSLA@NASP
+## Automação Completa do Projeto TriSLA
 *(Executa o fluxo do README.md com base na estrutura real do repositório)*
 
 ---

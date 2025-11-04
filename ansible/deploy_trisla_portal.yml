@@ -1,0 +1,96 @@
+---
+- name: 🚀 Deploy TriSLA Portal on NASP (Auto-detect Local or Remote)
+  hosts: localhost
+  connection: local
+  become: yes
+
+  vars:
+    trisla_namespace: trisla
+    release_name: trisla-portal
+    helm_chart_path: ./helm/trisla-portal/
+    values_file: ./docs/config-examples/values-nasp.yaml
+    helm_timeout: 900  # 15 min
+    ansible_ssh_common_args: '-o ServerAliveInterval=30 -o ServerAliveCountMax=60 -o TCPKeepAlive=yes -o Compression=yes'
+
+  tasks:
+
+    - name: 🧭 Detect environment mode (local vs remote)
+      shell: |
+        if hostname | grep -q "node1"; then
+          echo "local"
+        else
+          echo "remote"
+        fi
+      register: mode
+
+    - name: 📋 Show detected mode
+      debug:
+        msg: "TriSLA deployment mode detected: {{ mode.stdout }}"
+
+    - name: 🧱 Ensure namespace exists
+      shell: kubectl get ns {{ trisla_namespace }} || kubectl create ns {{ trisla_namespace }}
+      register: ns_result
+      changed_when: "'created' in ns_result.stdout"
+
+    - name: 🔐 Create GHCR secret (if credentials provided)
+      when: lookup('env','GHCR_USER') | length > 0 and lookup('env','GHCR_TOKEN') | length > 0
+      shell: |
+        echo "🔑 Applying GHCR credentials..."
+        kubectl create secret docker-registry ghcr-creds \
+          --docker-server=ghcr.io \
+          --docker-username={{ lookup('env','GHCR_USER') }} \
+          --docker-password={{ lookup('env','GHCR_TOKEN') }} \
+          --namespace {{ trisla_namespace }} \
+          --dry-run=client -o yaml | kubectl apply -f -
+      register: secret_result
+      changed_when: "'created' in secret_result.stdout"
+
+    - name: 🧹 Detect and remove Helm locks automatically
+      shell: |
+        echo "🔍 Checking for Helm locks..."
+        if helm list -n {{ trisla_namespace }} | grep -q {{ release_name }}; then
+          if helm list -n {{ trisla_namespace }} | grep -E 'pending|failed'; then
+            echo "⚠️ Found Helm lock — cleaning..."
+            kubectl get secret -n {{ trisla_namespace }} -o name | grep "sh.helm.release.v1.{{ release_name }}" | xargs -r kubectl delete -n {{ trisla_namespace }}
+          else
+            echo "✅ No locks found."
+          fi
+        else
+          echo "ℹ️ No previous release found."
+        fi
+
+    - name: 🛰️ Deploy TriSLA Portal via Helm (real-time feedback)
+      shell: |
+        echo "🚀 Starting Helm deployment on $(hostname)..."
+        echo "===================================================="
+        helm upgrade --install {{ release_name }} {{ helm_chart_path }} \
+          -n {{ trisla_namespace }} \
+          -f {{ values_file }} \
+          --atomic \
+          --timeout {{ helm_timeout }}s \
+          --cleanup-on-fail \
+          --debug | tee /tmp/helm_{{ release_name }}.log
+      args:
+        chdir: /home/porvir5g/gtp5g/trisla-portal
+      register: helm_result
+      ignore_errors: yes
+
+    - name: 🔎 Verify TriSLA Portal deployment
+      shell: |
+        echo "📦 Pods in namespace {{ trisla_namespace }}:"
+        kubectl get pods -n {{ trisla_namespace }} -o wide
+        echo ""
+        echo "�� Services exposed:"
+        kubectl get svc -n {{ trisla_namespace }}
+      register: verify_output
+      ignore_errors: yes
+
+    - name: ✅ Final summary
+      debug:
+        msg: |
+          ✅ TriSLA Portal deployment completed
+          Mode: {{ mode.stdout }}
+          Logs:
+          {{ helm_result.stdout | default('No logs available') }}
+          Status:
+          {{ verify_output.stdout | default('No status available') }}

@@ -1,4 +1,4 @@
-# ⚙️ Guia de Continuidade de Execução com IA — TriSLA@NASP
+# ⚙️ Guia de Continuidade de Execução com IA — TriSLA
 
 ## 🎯 Objetivo
 Este guia explica **como iniciar, pausar e continuar** o desenvolvimento do projeto **TriSLA@NASP** utilizando IAs (ChatGPT, Claude, Gemini, etc.) com o **Automation_Master_Prompt.md**.  

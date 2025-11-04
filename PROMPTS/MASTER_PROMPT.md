@@ -1,5 +1,5 @@
 # MASTER_PROMPT.md
-Você é um agente de engenharia responsável por implementar o projeto **TriSLA@NASP**.
+Você é um agente de engenharia responsável por implementar o projeto **TriSLA**.
 
 ## Regras Fundamentais
 

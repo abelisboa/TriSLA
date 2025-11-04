@@ -1,7 +1,7 @@
 # SESSION_TEMPLATE.md
 [SESSION HEADER]
 
-**Project:** TriSLA@NASP (UNISINOS)  
+**Project:** TriSLA (UNISINOS)  
 **Authority:** Proposta_de_Dissertação_Abel-6.pdf (Cap. 4–7 + Apêndices)  
 **Branch:** feature/<id-curto>-<topico>  
 **Commit-base:** <hash ou tag>  

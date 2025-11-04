@@ -1,4 +1,4 @@
-# 🧭 Guia de Melhores Práticas — Execução e Implantação TriSLA@NASP
+# 🧭 Guia de Melhores Práticas — Execução e Implantação TriSLA
 
 ## 📍 Contexto Atual
 

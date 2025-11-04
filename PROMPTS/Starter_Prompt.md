@@ -1,5 +1,5 @@
 # 🚀 Starter_Prompt.md
-## Inicialização Automática do Projeto TriSLA@NASP
+## Inicialização Automática do Projeto TriSLA
 
 ---
 
@@ -16,7 +16,7 @@ Ele reconhece a estrutura do projeto e ativa a automação conforme o `README.md
 2. Cole **todo o conteúdo deste arquivo** no início da conversa.  
 3. Diga:  
    ```
-   Leia a pasta TriSLA@NASP e execute automaticamente a próxima WU conforme o README.md.
+   Leia a pasta TriSLA e execute automaticamente a próxima WU conforme o README.md.
    ```
 4. A IA fará a leitura da estrutura e executará a próxima **Unidade de Trabalho (WU)** de acordo com o `STATE/000_INDEX.md`.
 

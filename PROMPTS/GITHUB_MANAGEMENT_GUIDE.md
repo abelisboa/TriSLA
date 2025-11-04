@@ -1,4 +1,4 @@
-# 🧭 Guia de Gestão GitHub — TriSLA@NASP
+# 🧭 Guia de Gestão GitHub — TriSLA
 ## Estratégia de Governança, Autoria e Execução entre Laptop, GitHub e NASP
 
 ---

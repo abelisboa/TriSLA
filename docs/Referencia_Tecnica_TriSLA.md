@@ -1,4 +1,4 @@
-# Referência Técnica – TriSLA@NASP
+# Referência Técnica – TriSLA
 *(Baseada nos Capítulos 4, 5, 6, 7 e Apêndices A–H da Proposta_de_Dissertação_Abel-6.pdf)*
 
 ---

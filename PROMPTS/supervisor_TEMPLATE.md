@@ -1,5 +1,5 @@
 # 🧩 TEMPLATE — Relatório de Supervisão Técnica
-## Projeto: TriSLA@NASP — Auditoria de WUs e Conformidade Geral
+## Projeto: TriSLA — Auditoria de WUs e Conformidade Geral
 
 ---
 

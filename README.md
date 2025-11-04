@@ -1,230 +1,300 @@
-# 🚀 TriSLA — Trustworthy, Reasoned, and Intelligent SLA-Aware Architecture for 5G/O-RAN
+# 🛰️ TriSLA v3.3.0  
 
-**Full AI-Driven, Ontology-Based, and Blockchain-Enabled SLA Orchestration Framework**
-
----
-
-## 🧠 1️⃣ Overview
-
-**TriSLA (Trustworthy, Reasoned, Intelligent SLA-Aware Architecture)** is a modular, SLA-aware system designed to ensure **semantic interpretation**, **intelligent decision-making**, and **automated contractual enforcement** of SLAs for **Network Slicing** in **5G/O-RAN** environments.
-
-The proposal is validated on the **NASP (Network Automation and Slicing Platform)** infrastructure from **UNISINOS**.
+### Uma Arquitetura SLA-Aware Baseada em IA, Ontologia e Contratos Inteligentes para Garantia de SLA em Redes 5G/O-RAN
 
 ---
 
-## ⚙️ 2️⃣ Architecture and Components
+##  **1. Visão Geral**
 
-| Pillar | Component | Module | Technology |
-|--------|------------|---------|-------------|
-| **Trustworthy** | Contract execution | **BC-NSSMF** | Hyperledger Fabric 2.5 |
-| **Reasoned** | Semantic interpretation | **SEM-NSMF** | OWL + spaCy (pt_core_news_lg) |
-| **Intelligent** | Predictive decision | **ML-NSMF** | Scikit-Learn + SHAP |
-| **Aware** | Observability | **NWDAF-like** | Prometheus + FastAPI |
-| **Interface** | Orchestration + UI | **TriSLA Portal** | FastAPI + React |
+O **TriSLA (Trustworthy, Reasoned, and Intelligent SLA-Aware Architecture)** é uma arquitetura unificada voltada à **automação inteligente do ciclo de vida de SLAs** em redes **5G/O-RAN**, permitindo prever, aceitar, monitorar e auditar contratos de slice de rede.
+
+É composta por três módulos principais:
+
+- **SEM-NSMF (Ontologia e PLN)**  Interpreta pedidos de SLA em linguagem natural e converte para modelos técnicos (URLLC, eMBB, mMTC).  
+
+- **ML-NSMF (IA Explicável)**  Prediz viabilidade de recursos e decisão de aceitação.  
+
+- **BC-NSSMF (Blockchain)**  Valida e audita SLAs por meio de contratos inteligentes.
+
+Pode ser executada em **modo local (Docker Compose)** ou **modo NASP (Kubernetes + Ansible + Helm)**.
 
 ---
 
-## 🧱 3️⃣ Repository Structure
+##  **2. Requisitos e Dependências**
+
+| Componente | Versão mínima | Descrição |
+|-------------|---------------|------------|
+| **Ubuntu** | 22.04 LTS+ | Sistema base recomendado |
+| **Docker / BuildKit** | 27+ | Build local e GHCR |
+| **Node.js / npm** | 18+ | Frontend (UI e Dashboard) |
+| **Python** | 3.10+ | Backend AI, Semantic, Blockchain |
+| **Helm** | 3.14+ | Orquestração Kubernetes |
+| **kubectl** | 1.28+ | Gerenciamento de pods e namespaces |
+| **Ansible** | 2.16+ | Automação multi-nó no NASP |
+| **Prometheus / Grafana** | Latest | Monitoramento |
+| **GitHub CLI / ghcr.io login** | 2.45+ | Publicação de imagens |
+| **Kubernetes Cluster** |  2 nós | Implantação NASP (node1/node2) |
+
+---
+
+##  **3. Estrutura e Arquitetura do Projeto**
 
 ```
-trisla/
-├── apps/
-│   ├── ai/ → ML-NSMF (Predictive decision engine)
-│   ├── semantic/ → SEM-NSMF (Ontology + NLP)
-│   ├── blockchain/ → BC-NSSMF (Fabric SDK)
-│   ├── monitoring/ → NWDAF-like (Observability)
-│   └── integration/ → API Gateway / Decision Engine
-│
-├── fabric-network/ → Hyperledger Fabric network (CA, Peer, Orderer, Chaincode)
-├── ansible/ → NASP automation (Playbooks, Inventory, Roles)
-├── helm/ → Helm charts for deployment
-├── automation/ → CI/CD + GHCR publishing scripts
-├── scripts/ → Validation & metrics collection
-└── docs/ → Technical evidence & reports
+TriSLA/
+ apps/                      # Módulos principais
+    api/                   # API Gateway (FastAPI)
+    ui/                    # Interface Web (React)
+    semantic/              # SEM-NSMF (Ontologia + PLN)
+    ai/                    # ML-NSMF (IA Explicável)
+    blockchain/            # BC-NSSMF (Hyperledger Fabric)
+    monitoring/            # NWDAF-like (Prometheus)
+    dashboard/             # Visualização e métricas
+        backend/
+        frontend/
+
+ ansible/                   # Automação NASP
+    playbooks/
+       deploy_trisla_portal.yaml
+    inventory.yml
+    roles/
+
+ helm/                      # Helm Charts para Kubernetes
+    trisla-portal/
+    trisla-dashboard/
+    sla-agents/
+    decision-engine/
+
+ monitoring/                # Configuração Prometheus / Grafana
+ fabric-network/            # Hyperledger Fabric (chaincode, config)
+ docs/                      # Documentação técnica
+ tools/                     # Scripts auxiliares (validação, logs)
+ docker-compose.yaml        # Execução local completa
 ```
 
 ---
 
-## 🧰 4️⃣ Infrastructure Requirements
+##  **4. Instalação e Configuração**
 
-### 🔹 Minimum 2-Node Cluster (NASP-Compatible Example)
+###  **Execução Local (Docker Compose)**
 
-| Node | Role | IP | OS | SSH User | Resources |
-|------|------|----|----|-----------|-----------|
-| **node1** | Control-Plane + SMO | `<node1_ip>` | Ubuntu 22.04 | `<user>` | 8 vCPU / 16 GB RAM / 100 GB SSD |
-| **node2** | Worker + Data-Plane | `<node2_ip>` | Ubuntu 22.04 | `<user>` | 8 vCPU / 16 GB RAM / 100 GB SSD |
-
-**Both nodes must have:**
-- Docker ≥ 27 and containerd active  
-- kubectl & helm configured with shared K8s context  
-- Same CNI (Calico or Cilium)  
-- NTP synchronization (critical for Fabric timestamps)
-
----
-
-### 🔹 DNS / Hosts Configuration
-
-`/etc/hosts` on each node:
-
-```
-<node1_ip> node1.cluster.local node1
-<node2_ip> node2.cluster.local node2
-```
-
-### 🔹 SSH Access
 ```bash
-ssh <user>@<node1_ip>
-ssh <user>@<node2_ip>
+# Clonar o repositório
+git clone https://github.com/abelisboa/TriSLA.git
+cd TriSLA
+
+# Build das imagens
+./release/build.sh
+
+# Subir stack completa
+docker compose up -d
 ```
 
-Ansible automations use these credentials, defined in `ansible/group_vars/all.yml`.
+**Acesse:**
 
----
+- UI  http://localhost:5173
+- API  http://localhost:8000/docs
+- Dashboard  http://localhost:5174
+- Grafana  http://localhost:3000
 
-## 🧩 5️⃣ Critical Configuration — values-nasp.yaml
+###  **Execução NASP (Ansible + Helm)**
 
-⚠️ **This file defines internal pod communication.**  
-Any wrong namespace, port, or URL will break TriSLA ↔ NASP interoperability.
+#### 4.1 Inventário (inventory.yml)
 
 ```yaml
-namespace: trisla
-imagePullPolicy: IfNotPresent
+all:
+  hosts:
+    node1:
+      ansible_host: <NODE1_IP>
+      ansible_user: <ANSIBLE_USER>
+    node2:
+      ansible_host: <NODE2_IP>
+      ansible_user: <ANSIBLE_USER>
+  children:
+    trisla_nodes:
+      hosts:
+        node1:
+        node2:
+```
 
-environment:
-  SEMANTIC_URL: "http://trisla-semantic.trisla.svc.cluster.local:8081"
-  AI_URL: "http://trisla-ai.trisla.svc.cluster.local:8080"
-  BLOCKCHAIN_URL: "http://trisla-blockchain.trisla.svc.cluster.local:8051"
-  MONITORING_URL: "http://trisla-monitoring.trisla.svc.cluster.local:8090"
+#### 4.2 Playbook de Deploy (deploy_trisla_portal.yaml)
 
-nodeSelectors:
-  api: node1
-  ui: node2
+```yaml
+- name: Deploy TriSLA Portal no NASP
+  hosts: trisla_nodes
+  become: yes
+  tasks:
+    - name: Copiar chart TriSLA
+      copy:
+        src: ./helm/trisla-portal/
+        dest: /home/<USER>/tri-charts/trisla-portal
+    - name: Aplicar helm install
+      command: >
+        helm upgrade --install trisla-portal ./tri-charts/trisla-portal
+        -n trisla --create-namespace
+        -f /home/<USER>/tri-charts/trisla-portal/values-nasp.yaml
+```
+
+#### 4.3 Exemplo de values-nasp.yaml
+
+```yaml
+global:
+  imagePullSecrets: 
+    - name: ghcr-secret
+  domain: nasp.example.com
+
+image:
+  repository: ghcr.io/abelisboa/trisla-api
+  tag: "latest"
 
 service:
-  type: NodePort
-  ports:
-    api: 30800
-    ui: 30173
+  type: ClusterIP
+  port: 8000
+
+env:
+  - name: SEMANTIC_ENDPOINT
+    value: "http://trisla-semantic.trisla.svc.cluster.local:8001"
+  - name: AI_ENDPOINT
+    value: "http://trisla-ai.trisla.svc.cluster.local:8002"
+  - name: ENABLE_BLOCKCHAIN
+    value: "true"
 ```
 
-### 🔍 Common Misconfigurations
+#### 4.4 Execução via Ansible
 
-| Issue | Impact | Fix |
-|-------|--------|-----|
-| Wrong namespace (default instead of trisla) | API cannot reach modules | Set `namespace: trisla` |
-| Wrong port (8081 → 8080) | SEM-NSMF not responding | Check `SEMANTIC_URL` |
-| Broken DNS | Pods unreachable | Run `kubectl exec curl <svc>` |
-| NodePort outside range | UI inaccessible | Use 30000–32767 |
-| Missing Fabric volume | Contracts not persisted | Mount `/var/hyperledger/production` |
-
----
-
-## ☁️ 6️⃣ Ansible Playbooks — Automated NASP Deployment
-
-| Playbook | Purpose |
-|----------|---------|
-| `01_install_dependencies.yml` | Installs Docker, Helm, dependencies |
-| `02_clone_and_prepare.yml` | Clones repos, generates Fabric certs |
-| `03_deploy_trisla.yml` | Deploys TriSLA modules via Helm |
-| `04_verify_and_monitor.yml` | Health checks + metrics collection |
-
-**Run example:**
 ```bash
-ansible-playbook -i ansible/hosts.ini playbooks/03_deploy_trisla.yml
+cd ansible
+ansible-playbook -i inventory.yml playbooks/deploy_trisla_portal.yaml
+```
+
+**Saída esperada:**
+
+```
+TASK [Copiar chart TriSLA] ************************************
+ok: [node1]
+ok: [node2]
+
+TASK [Aplicar helm install] ***********************************
+changed: [node1]
+changed: [node2]
+
+PLAY RECAP ****************************************************
+node1 : ok=3 changed=1 failed=0
+node2 : ok=3 changed=1 failed=0
 ```
 
 ---
 
-## 🧠 7️⃣ Hyperledger Fabric Initialization
+##  **5. Dependências de Cada Módulo (requirements.txt)**
+
+###  apps/api/requirements.txt
 
 ```
-fabric-network/
-├── configtx.yaml
-├── crypto-config.yaml
-├── docker-compose.yaml
-└── chaincode/sla_chaincode/
+fastapi==0.111.0
+uvicorn==0.29.0
+pydantic==2.7.1
+requests==2.32.0
 ```
 
-**Deploy sequence:**
+###  apps/semantic/requirements.txt
+
+```
+spacy==3.7.4
+rdflib==7.0.0
+flask==3.0.2
+```
+
+###  apps/ai/requirements.txt
+
+```
+scikit-learn==1.5.1
+pandas==2.2.2
+joblib==1.4.2
+numpy==1.26.4
+```
+
+###  apps/blockchain/requirements.txt
+
+```
+flask==3.0.2
+requests==2.32.0
+cryptography==42.0.7
+```
+
+---
+
+##  **6. Observabilidade e Dashboard**
+
 ```bash
-cd fabric-network
-./scripts/start.sh
-./scripts/createChannel.sh
-./scripts/deployCC.sh
-docker ps | grep hyperledger
+kubectl port-forward -n monitoring svc/grafana 3000:3000
 ```
+
+**Login:**
+
+- Usuário: admin
+- Senha: admin
+
+**Métricas monitoradas:**
+
+- SLA Aceitos / Rejeitados
+- Latência / Throughput API
+- Utilização CPU e RAM
+- Blockchain Transactions
 
 ---
 
-## 🧪 8️⃣ End-to-End Validation
+##  **7. Validação e Resultados Esperados**
 
-### 1️⃣ Semantic Input
 ```bash
-curl -X POST http://<NODE_IP>:30173/semantic/interpret \
--H "Content-Type: application/json" \
--d '{"descricao":"remote surgery 5G"}'
+./tools/validate_trisla.sh
 ```
 
-### 2️⃣ AI Decision
-```bash
-curl -X POST http://<NODE_IP>:30800/decision \
--H "Content-Type: application/json" \
--d '{"slice_type":"URLLC","qos":{"latency":5}}'
+**Saída esperada:**
+
+```
+ API online
+ Semantic operacional
+ AI conectado
+ Blockchain validado
+ Prometheus ativo
 ```
 
-### 3️⃣ Blockchain Contract
-```bash
-curl -X POST http://<NODE_IP>:30800/contracts/new \
--H "Content-Type: application/json" \
--d '{"sla_id":"SLA001","decision":true}'
-```
-
-### 4️⃣ Metrics
-```bash
-curl http://<NODE_IP>:30800/metrics
-```
+Os resultados experimentais utilizados estão documentados em:
+`docs/evidencias/WU-005_Avaliacao_Experimental_TriSLA.md`
 
 ---
 
-## 📈 9️⃣ Expected Results
+##  **8. Troubleshooting e Diagnóstico**
 
-| Metric | Source | Expected Value | Validation |
-|--------|--------|----------------|------------|
-| URLLC Latency | NWDAF-like | 1 – 5 ms | `curl /metrics` |
-| AI Decision | ML-NSMF | `true` | `POST /decision` |
-| Fabric Contract | BC-NSSMF | `"registered"` | Fabric logs |
-| Ontology Mapping | SEM-NSMF | `"critical latency"` | JSON output |
-
----
-
-## ⚠️ 10️⃣ Common Issues
-
-| Symptom | Cause | Solution |
-|---------|------|----------|
-| API OK but AI fails | Wrong AI_URL | Fix `values-nasp.yaml` |
-| Contracts missing | Fabric CA not started | Restart Fabric stack |
-| Metrics not updating | NWDAF CrashLoopBackOff | `kubectl logs` |
-| Parse error | Bad JSON test data | Validate with `jq .` |
+| Erro | Causa | Solução |
+|------|-------|---------|
+|  Namespace ausente | Deploy incompleto | `kubectl create ns trisla` |
+|  API 502 | Variável VITE_API_URL incorreta | Corrigir `.env` |
+|  Blockchain não conecta | peer inativo | `docker restart blockchain` |
+|  Grafana vazio | CRDs ausentes | `kubectl apply -f monitoring/crds/` |
 
 ---
 
-## 🧩 11️⃣ TriSLA Portal — Public Interface
+##  **9. Autor e Licença**
 
-**Public repository:**  
-🔗 https://github.com/abelisboa/TriSLA-Portal
+**Abel Lisboa**  
+Mestrando em Computação Aplicada  UNISINOS  
+ abelisboa@gmail.com
 
-Contains UI + API + Helm chart.  
-Communicates with core TriSLA modules via the NASP values configuration.
-
----
-
-## 🪪 12️⃣ License & Usage
-
-Restricted to academic research – PPGCA UNISINOS (2025).  
-For public deployment, use the TriSLA Portal repository.
+ https://github.com/abelisboa
 
 ---
 
-## ✅ Conclusion
+**UNIVERSIDADE DO VALE DO RIO DOS SINOS  UNISINOS**  
+**UNIDADE ACADÊMICA DE PESQUISA E PÓS-GRADUAÇÃO**  
+**PROGRAMA DE PÓS-GRADUAÇÃO EM COMPUTAÇÃO APLICADA  PPGCA**  
+São Leopoldo  Rio Grande do Sul  Brasil
 
-This repository provides the complete, production-ready infrastructure to build, deploy, and validate TriSLA on any Kubernetes-compatible cluster, preserving full integration between AI, Ontology, Blockchain, and Automation via Ansible + Helm.
+**TriSLA: Uma Arquitetura SLA-Aware Baseada em IA, Ontologia e Contratos Inteligentes para Garantia de SLA em Redes 5G/O-RAN**
+
+Dissertação apresentada como requisito parcial para obtenção do título de Mestre em Computação Aplicada.
+
+---
+
+**Licença:** MIT  veja LICENSE
+
+**Repositório oficial:** https://github.com/abelisboa/TriSLA

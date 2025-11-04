@@ -1,5 +1,5 @@
 # TEMPLATE — Registro de Unidade de Trabalho (WU)
-# Projeto: TriSLA@NASP
+# Projeto: TriSLA
 # Base: Workflow Oficial TriSLA_NASP + Referência Técnica (docs/Referencia_Tecnica_TriSLA.md)
 
 ---
