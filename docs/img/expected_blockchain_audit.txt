@@ -1,0 +1,14 @@
+PLACEHOLDER IMAGE: Blockchain Audit Log
+Dimensions: 1093x585 pixels
+
+Content:
+- Title: "Blockchain Audit Log"
+- Subtitle: "Registro de execução e compliance via smart contracts"
+- Description: "Confirmação das cláusulas SLA no ledger do BC-NSSMF"
+
+This placeholder should be replaced with an actual dashboard showing:
+- Blockchain transaction log
+- Smart contract execution records
+- SLA compliance verification
+- Audit trail of SLA commitments
+

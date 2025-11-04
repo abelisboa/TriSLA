@@ -1,0 +1,13 @@
+PLACEHOLDER IMAGE: TriSLA Dashboard Overview
+Dimensions: 1093x585 pixels
+
+Content:
+- Title: "TriSLA Dashboard Overview"
+- Subtitle: "Visão geral dos módulos SEM-NSMF, ML-NSMF e BC-NSSMF"
+- Indicators: "SLA Success | Resource Usage | API Latency"
+
+This placeholder should be replaced with an actual screenshot of the TriSLA dashboard showing:
+- Overview of all three modules (SEM-NSMF, ML-NSMF, BC-NSSMF)
+- Key performance indicators
+- Real-time status of services
+

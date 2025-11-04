@@ -1,0 +1,14 @@
+PLACEHOLDER IMAGE: SLA Success Ratio
+Dimensions: 1093x585 pixels
+
+Content:
+- Title: "SLA Success Ratio"
+- Subtitle: "Percentual de SLAs atendidos vs rejeitados"
+- Expected: ">95% de sucesso em ambiente estável"
+
+This placeholder should be replaced with an actual Grafana dashboard showing:
+- SLA success rate percentage
+- Accepted vs rejected SLAs
+- Success rate trends over time
+- Breakdown by SLA type (URLLC, eMBB, mMTC)
+

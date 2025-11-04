@@ -1,0 +1,14 @@
+PLACEHOLDER IMAGE: Resource Domains View
+Dimensions: 1093x585 pixels
+
+Content:
+- Title: "Resource Domains View"
+- Subtitle: "Distribuição de recursos nos domínios RAN | Core | Transporte"
+- Description: "Mostra balanceamento de carga e disponibilidade"
+
+This placeholder should be replaced with an actual Grafana dashboard showing:
+- Resource distribution across RAN, Core, and Transport domains
+- Load balancing indicators
+- Availability status per domain
+- Resource allocation visualization
+

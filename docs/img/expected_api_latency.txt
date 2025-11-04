@@ -1,0 +1,13 @@
+PLACEHOLDER IMAGE: TriSLA API Latency (p95/p99)
+Dimensions: 1093x585 pixels
+
+Content:
+- Title: "TriSLA API Latency (p95/p99)"
+- Subtitle: "Distribuição de latências das requisições /api/v1/sla"
+- Expected values: "<50ms URLLC | <200ms eMBB | <500ms mMTC"
+
+This placeholder should be replaced with an actual Grafana dashboard showing:
+- API latency distribution (p95, p99)
+- Latency breakdown by SLA type (URLLC, eMBB, mMTC)
+- Time series graph showing latency trends
+

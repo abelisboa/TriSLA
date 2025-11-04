@@ -1,0 +1,13 @@
+PLACEHOLDER IMAGE: Pod Resource Usage
+Dimensions: 1093x585 pixels
+
+Content:
+- Title: "Pod Resource Usage"
+- Subtitle: "CPU e memória por pod (trisla-api, trisla-ui, trisla-decider)"
+- Indicators: "Indicadores de estabilidade e eficiência"
+
+This placeholder should be replaced with an actual Grafana dashboard showing:
+- CPU usage per pod (trisla-api, trisla-ui, trisla-decider)
+- Memory usage per pod
+- Resource utilization trends over time
+
