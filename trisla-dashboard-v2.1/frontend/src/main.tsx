@@ -1,0 +1,12 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import './index.css'
+import Dashboard from './pages/Dashboard'
+import SlicesIndex from './pages/Slices'
+import NPLCreate from './pages/Slices/NPLCreate'
+import GSTCreate from './pages/Slices/GSTCreate'
+import MetricsPage from './pages/Metrics'
+import TemplatesPage from './pages/Templates'
+import AdminPage from './pages/Admin'
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><BrowserRouter><Routes><Route path="/" element={<Dashboard/>}/><Route path="/slices" element={<SlicesIndex/>}/><Route path="/slices-npl" element={<NPLCreate/>}/><Route path="/slices-gst" element={<GSTCreate/>}/><Route path="/metrics" element={<MetricsPage/>}/><Route path="/templates" element={<TemplatesPage/>}/><Route path="/admin" element={<AdminPage/>}/></Routes></BrowserRouter></React.StrictMode>)

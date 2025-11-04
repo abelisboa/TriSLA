@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decision-engine
+  labels:
+    app.kubernetes.io/name: decision-engine
+    app.kubernetes.io/instance: decision-engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: decision-engine
+      app.kubernetes.io/instance: decision-engine
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: decision-engine
+        app.kubernetes.io/instance: decision-engine
+    spec:
+      containers:
+        - name: decision-engine
+          image: "ghcr.io/abelisboa/trisla-decision-engine:1.0.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi

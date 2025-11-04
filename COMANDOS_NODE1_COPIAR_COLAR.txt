@@ -1,0 +1,199 @@
+# Comandos para Copiar e Colar Diretamente no Node1
+# Execute sequencialmente, um bloco por vez
+
+# ============================================================
+# BLOCO 1: Configuração Inicial
+# ============================================================
+
+export NAMESPACE=trisla-nsp
+export API_SERVICE=trisla-portal-api
+export API_PORT=8000
+export API_URL=http://${API_SERVICE}.${NAMESPACE}.svc.cluster.local:${API_PORT}
+export PROMETHEUS_URL=http://prometheus.monitoring.svc.cluster.local:9090
+mkdir -p ~/trisla-tests/$(date +%Y%m%d_%H%M%S)
+export TEST_DIR=~/trisla-tests/$(date +%Y%m%d_%H%M%S)
+cd $TEST_DIR
+echo "Diretório: $TEST_DIR"
+
+# ============================================================
+# BLOCO 2: Verificar Conectividade
+# ============================================================
+
+kubectl run -it --rm test-curl --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s $API_URL/api/v1/health | jq .
+
+# ============================================================
+# BLOCO 3: Criar Slice URLLC
+# ============================================================
+
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+kubectl run -it --rm create-slice-urllc-$TIMESTAMP --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -X POST $API_URL/api/v1/slices -H "Content-Type: application/json" -d '{"descricao":"cirurgia remota 5G com latência ultra baixa e alta confiabilidade para telemedicina"}' > ${TEST_DIR}/urllc_create_${TIMESTAMP}.json
+cat ${TEST_DIR}/urllc_create_${TIMESTAMP}.json | jq .
+
+# ============================================================
+# BLOCO 4: Criar Slice eMBB
+# ============================================================
+
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+kubectl run -it --rm create-slice-embb-$TIMESTAMP --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -X POST $API_URL/api/v1/slices -H "Content-Type: application/json" -d '{"descricao":"streaming 4K e realidade aumentada com alta vazão de banda"}' > ${TEST_DIR}/embb_create_${TIMESTAMP}.json
+cat ${TEST_DIR}/embb_create_${TIMESTAMP}.json | jq .
+
+# ============================================================
+# BLOCO 5: Criar Slice mMTC
+# ============================================================
+
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+kubectl run -it --rm create-slice-mmtc-$TIMESTAMP --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -X POST $API_URL/api/v1/slices -H "Content-Type: application/json" -d '{"descricao":"sensores IoT industriais massivos com milhares de dispositivos"}' > ${TEST_DIR}/mmtc_create_${TIMESTAMP}.json
+cat ${TEST_DIR}/mmtc_create_${TIMESTAMP}.json | jq .
+
+# ============================================================
+# BLOCO 6: Teste de Estresse URLLC (10 requisições simultâneas)
+# ============================================================
+
+CONCURRENT=10
+TOTAL_REQUESTS=30
+DELAY=0.2
+seq 1 $TOTAL_REQUESTS | xargs -n1 -P$CONCURRENT -I{} bash -c 'TIMESTAMP=$(date +%s%N); RESPONSE=$(kubectl run --rm --restart=Never -i test-urllc-{}-${TIMESTAMP} --image=curlimages/curl:latest -n '$NAMESPACE' -- curl -s -X POST '$API_URL'/api/v1/slices -H "Content-Type: application/json" -d "{\"descricao\":\"cirurgia remota 5G (stress #{})\"}" -w "\n%{http_code}\n%{time_total}"); HTTP_CODE=$(echo "$RESPONSE" | tail -n2 | head -n1); TIME_TOTAL=$(echo "$RESPONSE" | tail -n1); echo "Request {}: HTTP $HTTP_CODE, Time: ${TIME_TOTAL}s" >> '${TEST_DIR}'/stress_urllc.log; sleep '$DELAY
+SUCCESS=$(grep "HTTP 200\|HTTP 201\|HTTP 202" ${TEST_DIR}/stress_urllc.log | wc -l)
+TOTAL=$(wc -l < ${TEST_DIR}/stress_urllc.log)
+echo "URLLC: $SUCCESS / $TOTAL sucessos"
+
+# ============================================================
+# BLOCO 7: Teste de Estresse eMBB (10 requisições simultâneas)
+# ============================================================
+
+CONCURRENT=10
+TOTAL_REQUESTS=30
+DELAY=0.2
+seq 1 $TOTAL_REQUESTS | xargs -n1 -P$CONCURRENT -I{} bash -c 'TIMESTAMP=$(date +%s%N); RESPONSE=$(kubectl run --rm --restart=Never -i test-embb-{}-${TIMESTAMP} --image=curlimages/curl:latest -n '$NAMESPACE' -- curl -s -X POST '$API_URL'/api/v1/slices -H "Content-Type: application/json" -d "{\"descricao\":\"streaming 4K alta vazão (stress #{})\"}" -w "\n%{http_code}\n%{time_total}"); HTTP_CODE=$(echo "$RESPONSE" | tail -n2 | head -n1); TIME_TOTAL=$(echo "$RESPONSE" | tail -n1); echo "Request {}: HTTP $HTTP_CODE, Time: ${TIME_TOTAL}s" >> '${TEST_DIR}'/stress_embb.log; sleep '$DELAY
+SUCCESS=$(grep "HTTP 200\|HTTP 201\|HTTP 202" ${TEST_DIR}/stress_embb.log | wc -l)
+TOTAL=$(wc -l < ${TEST_DIR}/stress_embb.log)
+echo "eMBB: $SUCCESS / $TOTAL sucessos"
+
+# ============================================================
+# BLOCO 8: Teste de Estresse mMTC (10 requisições simultâneas)
+# ============================================================
+
+CONCURRENT=10
+TOTAL_REQUESTS=30
+DELAY=0.2
+seq 1 $TOTAL_REQUESTS | xargs -n1 -P$CONCURRENT -I{} bash -c 'TIMESTAMP=$(date +%s%N); RESPONSE=$(kubectl run --rm --restart=Never -i test-mmtc-{}-${TIMESTAMP} --image=curlimages/curl:latest -n '$NAMESPACE' -- curl -s -X POST '$API_URL'/api/v1/slices -H "Content-Type: application/json" -d "{\"descricao\":\"sensores IoT massivos (stress #{})\"}" -w "\n%{http_code}\n%{time_total}"); HTTP_CODE=$(echo "$RESPONSE" | tail -n2 | head -n1); TIME_TOTAL=$(echo "$RESPONSE" | tail -n1); echo "Request {}: HTTP $HTTP_CODE, Time: ${TIME_TOTAL}s" >> '${TEST_DIR}'/stress_mmtc.log; sleep '$DELAY
+SUCCESS=$(grep "HTTP 200\|HTTP 201\|HTTP 202" ${TEST_DIR}/stress_mmtc.log | wc -l)
+TOTAL=$(wc -l < ${TEST_DIR}/stress_mmtc.log)
+echo "mMTC: $SUCCESS / $TOTAL sucessos"
+
+# ============================================================
+# BLOCO 9: Coletar Métricas - CPU Usage
+# ============================================================
+
+kubectl run -it --rm prometheus-client --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=rate(container_cpu_usage_seconds_total{namespace=\"${NAMESPACE}\"}[1m])" > ${TEST_DIR}/prometheus_cpu_usage.json
+cat ${TEST_DIR}/prometheus_cpu_usage.json | jq '.data.result[] | {pod: .metric.pod, cpu_rate: .value[1]}'
+
+# ============================================================
+# BLOCO 10: Coletar Métricas - Memory Usage
+# ============================================================
+
+kubectl run -it --rm prometheus-client-mem --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=container_memory_usage_bytes{namespace=\"${NAMESPACE}\"}" > ${TEST_DIR}/prometheus_memory_usage.json
+cat ${TEST_DIR}/prometheus_memory_usage.json | jq -r '.data.result[] | "Pod: \(.metric.pod), Memory: \(.value[1] | tonumber / 1024 / 1024 | floor) MB"'
+
+# ============================================================
+# BLOCO 11: Coletar Métricas - Latência p99
+# ============================================================
+
+kubectl run -it --rm prometheus-client-lat --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace=\"${NAMESPACE}\"}[5m])) by (le, pod))" > ${TEST_DIR}/prometheus_latency_p99.json
+cat ${TEST_DIR}/prometheus_latency_p99.json | jq -r '.data.result[] | if .value[1] != null then "Pod: \(.metric.pod), Latência p99: \(.value[1] | tonumber * 1000 | floor) ms" else "Pod: \(.metric.pod), Latência p99: N/A" end'
+
+# ============================================================
+# BLOCO 12: Coletar Métricas - Latência p90 e p50
+# ============================================================
+
+kubectl run -it --rm prometheus-client-lat90 --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=histogram_quantile(0.90, sum(rate(http_request_duration_seconds_bucket{namespace=\"${NAMESPACE}\"}[5m])) by (le, pod))" > ${TEST_DIR}/prometheus_latency_p90.json
+kubectl run -it --rm prometheus-client-lat50 --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{namespace=\"${NAMESPACE}\"}[5m])) by (le, pod))" > ${TEST_DIR}/prometheus_latency_p50.json
+
+# ============================================================
+# BLOCO 13: Coletar Métricas - Taxa de Erros HTTP
+# ============================================================
+
+kubectl run -it --rm prometheus-client-errors --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=rate(http_requests_total{namespace=\"${NAMESPACE}\",status=~\"5..\"}[5m])" > ${TEST_DIR}/prometheus_http_errors.json
+cat ${TEST_DIR}/prometheus_http_errors.json | jq -r '.data.result[] | if .value[1] != null then "Pod: \(.metric.pod), Taxa de Erro 5xx: \(.value[1]) req/s" else "Pod: \(.metric.pod), Taxa de Erro 5xx: 0 req/s" end'
+
+# ============================================================
+# BLOCO 14: Coletar Métricas - Taxa Total de Requisições
+# ============================================================
+
+kubectl run -it --rm prometheus-client-total --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=rate(http_requests_total{namespace=\"${NAMESPACE}\"}[5m])" > ${TEST_DIR}/prometheus_http_total.json
+cat ${TEST_DIR}/prometheus_http_total.json | jq -r '.data.result[] | "Pod: \(.metric.pod), Método: \(.metric.method // "N/A"), Taxa: \(.value[1]) req/s"'
+
+# ============================================================
+# BLOCO 15: Coletar Métricas - Restarts de Pods
+# ============================================================
+
+kubectl run -it --rm prometheus-client-restarts --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query" --data-urlencode "query=kube_pod_container_status_restarts_total{namespace=\"${NAMESPACE}\"}" > ${TEST_DIR}/prometheus_pod_restarts.json
+cat ${TEST_DIR}/prometheus_pod_restarts.json | jq -r '.data.result[] | "Pod: \(.metric.pod), Container: \(.metric.container}, Restarts: \(.value[1])"'
+
+# ============================================================
+# BLOCO 16: Coletar Séries Temporais - CPU (últimos 30 min)
+# ============================================================
+
+END_TIME=$(date +%s)
+START_TIME=$((END_TIME - 1800))
+STEP=15s
+kubectl run -it --rm prometheus-client-timeseries --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query_range" --data-urlencode "query=rate(container_cpu_usage_seconds_total{namespace=\"${NAMESPACE}\"}[1m])" --data-urlencode "start=${START_TIME}" --data-urlencode "end=${END_TIME}" --data-urlencode "step=${STEP}" > ${TEST_DIR}/prometheus_cpu_timeseries.json
+echo "Série temporal de CPU coletada"
+
+# ============================================================
+# BLOCO 17: Coletar Séries Temporais - Memory (últimos 30 min)
+# ============================================================
+
+END_TIME=$(date +%s)
+START_TIME=$((END_TIME - 1800))
+STEP=15s
+kubectl run -it --rm prometheus-client-mem-ts --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query_range" --data-urlencode "query=container_memory_usage_bytes{namespace=\"${NAMESPACE}\"}" --data-urlencode "start=${START_TIME}" --data-urlencode "end=${END_TIME}" --data-urlencode "step=${STEP}" > ${TEST_DIR}/prometheus_memory_timeseries.json
+echo "Série temporal de memória coletada"
+
+# ============================================================
+# BLOCO 18: Coletar Séries Temporais - Latência p99 (últimos 30 min)
+# ============================================================
+
+END_TIME=$(date +%s)
+START_TIME=$((END_TIME - 1800))
+STEP=15s
+kubectl run -it --rm prometheus-client-lat-ts --image=curlimages/curl:latest --restart=Never -n $NAMESPACE -- curl -s -G "${PROMETHEUS_URL}/api/v1/query_range" --data-urlencode "query=histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace=\"${NAMESPACE}\"}[5m])) by (le, pod))" --data-urlencode "start=${START_TIME}" --data-urlencode "end=${END_TIME}" --data-urlencode "step=${STEP}" > ${TEST_DIR}/prometheus_latency_timeseries.json
+echo "Série temporal de latência p99 coletada"
+
+# ============================================================
+# BLOCO 19: Resumo Final dos Resultados
+# ============================================================
+
+echo "==============================================="
+echo "📊 RESUMO DOS TESTES - TriSLA@NASP"
+echo "==============================================="
+echo "Data: $(date)"
+echo "Diretório: $TEST_DIR"
+echo ""
+echo "=== Criação de Slices ==="
+echo "URLLC: $(ls -1 ${TEST_DIR}/urllc_create_*.json 2>/dev/null | wc -l) arquivo(s)"
+echo "eMBB:  $(ls -1 ${TEST_DIR}/embb_create_*.json 2>/dev/null | wc -l) arquivo(s)"
+echo "mMTC:  $(ls -1 ${TEST_DIR}/mmtc_create_*.json 2>/dev/null | wc -l) arquivo(s)"
+echo ""
+echo "=== Testes de Estresse ==="
+if [ -f ${TEST_DIR}/stress_urllc.log ]; then SUCCESS_URLLC=$(grep "HTTP 200\|HTTP 201\|HTTP 202" ${TEST_DIR}/stress_urllc.log | wc -l); TOTAL_URLLC=$(wc -l < ${TEST_DIR}/stress_urllc.log); echo "URLLC: $SUCCESS_URLLC / $TOTAL_URLLC sucessos"; fi
+if [ -f ${TEST_DIR}/stress_embb.log ]; then SUCCESS_EMBB=$(grep "HTTP 200\|HTTP 201\|HTTP 202" ${TEST_DIR}/stress_embb.log | wc -l); TOTAL_EMBB=$(wc -l < ${TEST_DIR}/stress_embb.log); echo "eMBB:  $SUCCESS_EMBB / $TOTAL_EMBB sucessos"; fi
+if [ -f ${TEST_DIR}/stress_mmtc.log ]; then SUCCESS_MMTC=$(grep "HTTP 200\|HTTP 201\|HTTP 202" ${TEST_DIR}/stress_mmtc.log | wc -l); TOTAL_MMTC=$(wc -l < ${TEST_DIR}/stress_mmtc.log); echo "mMTC:  $SUCCESS_MMTC / $TOTAL_MMTC sucessos"; fi
+echo ""
+echo "=== Arquivos Gerados ==="
+ls -lh ${TEST_DIR}/
+echo "==============================================="
+
+# ============================================================
+# BLOCO 20: Verificar Logs dos Pods
+# ============================================================
+
+kubectl logs -n $NAMESPACE -l app.kubernetes.io/name=sem-nsmf --tail=50 > ${TEST_DIR}/logs_sem_nsmf.txt
+kubectl logs -n $NAMESPACE -l app.kubernetes.io/name=ml-nsmf --tail=50 > ${TEST_DIR}/logs_ml_nsmf.txt
+kubectl logs -n $NAMESPACE -l app.kubernetes.io/name=bc-nssmf --tail=50 > ${TEST_DIR}/logs_bc_nssmf.txt
+echo "Logs salvos em $TEST_DIR"
+
+
+
+
+

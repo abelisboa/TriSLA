@@ -1,174 +1,62 @@
 # ============================================================
 # 🛰️ TriSLA Public .gitignore (v3.3.0)
-# Somente arquivos de produção, implantação e documentação técnica
 # ============================================================
 
-# --- SISTEMA E AMBIENTE ---
+# Ambiente e cache
 .env*
 *.log
 *.bak
 *.tmp
-*.swp
-*.DS_Store
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
 node_modules/
 dist/
 build/
-cache/
-.idea/
 .vscode/
-*.code-workspace
+.idea/
 
-# --- BACKUP E EVIDÊNCIAS ---
+# Backups e evidências
 backup_*/
 docs/evidencias/
 docs/WU-*/
-docs/academico/
 trisla_dissertacao_completo/
 ARTIGO_*/
-ATUALIZACAO_*/
-RESUMO_*/
-MAPEAMENTO_*/
-REFERENCIAS_*/
-*_FINAL_*.md
-*_COMPLETO.md
-*_DEFINITIVO*.md
-docs/apendices/*.tex
 Overleaf/
 Dissertacao_*/
 
-# --- AMBIENTE LOCAL / TESTES ---
-local/
-release/
-frontend/
-backend/
-scripts-wsl/
-*.ps1
-*.sh.bak
-*.txt
-*.md.bak
-*.old
-test_*.py
-test_*.sh
-
-# --- INFRA / CLUSTERS PRIVADOS ---
-ansible/inventory*
-ansible/group_vars/all.yml
-ansible/inventory.yaml
-ansible/deploy_trisla_node1_detailed.yml
-ansible/deploy_trisla_nasp.yml
-group_vars/
-nasp/
-private_*/
-logs/
-tmp/
-data/
-monitoring/alertmanager/
-monitoring/prometheus-rules/
-helm/deployments/
-
-# --- ARTEFATOS INTERNOS ---
+# Scripts e anotações internas
 PROMPTS/
 ANALISE_*/
 COMANDOS_*/
 EXECUTAR_*/
 SETUP_*/
-GUIA_*/
 README_TRISLA_PRIVATE.md
 README_EXEC.md
 README_WSL.md
-README_TRISLA_DASHBOARD.md
 
-# --- MANTER ESTES (PÚBLICOS) ---
+# Inventários e segredos
+ansible/inventory*
+ansible/group_vars/*
+group_vars/
+nasp/
+
+# Submódulos privados
+trisla/
+trisla-portal/
+trisla-portal-public/
+trisla-public/
+
+# Binários grandes
+buildx-v0.29.1.linux-amd64
+
+# Mantém apenas o necessário
 !apps/
 !helm/
 !docs/
 !scripts/
 !monitoring/
-!package.json
 !README.md
 !LICENSE
 !CHANGELOG.md
 !docker-compose.yaml
-!docs/apendices/*.md
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-venv/
-env/
-ENV/
-.venv
-
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-dist/
-dist-ssr/
-*.local
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Environment
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Logs
-*.log
-logs/
-backend.log
-frontend.log
-
-# Docker
-*.pid
-*.seed
-*.pid.lock
-
-# Helm
-*.tgz
-
-# OS
-Thumbs.db
-.DS_Store
-
-# Temporary files
-*.tmp
-*.bak
-*.swp
-
-# Build artifacts
-*.zip
-*.tar.gz

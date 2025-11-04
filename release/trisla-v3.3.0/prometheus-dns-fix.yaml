@@ -1,0 +1,11 @@
+spec:
+  template:
+    spec:
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        nameservers:
+          - 10.233.0.3
+        searches:
+          - monitoring.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local

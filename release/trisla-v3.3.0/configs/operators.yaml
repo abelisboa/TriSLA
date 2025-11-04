@@ -1,0 +1,5 @@
+operators:
+  - id: opA
+    name: Operator A
+  - id: opB
+    name: Operator B

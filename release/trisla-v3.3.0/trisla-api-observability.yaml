@@ -1,0 +1,18 @@
+# ===============================================================
+# Service interno exclusivo para o backend TriSLA API
+# ===============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-api-observability
+  namespace: trisla
+  labels:
+    app: trisla-api
+spec:
+  type: ClusterIP
+  selector:
+    app: trisla-portal
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

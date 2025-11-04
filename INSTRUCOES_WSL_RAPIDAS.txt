@@ -1,0 +1,56 @@
+==============================================================================
+INSTRUÇÕES RÁPIDAS PARA WSL
+==============================================================================
+
+Você está no WSL e os arquivos de documentação podem não estar visíveis ainda.
+
+OPÇÃO 1: Copiar arquivos do Windows (se necessário)
+-----------------------------------------------------
+cp -r /mnt/c/Users/USER/Documents/trisla-deploy/trisla-dashboard-local/* .
+
+OU use o script:
+./scripts-wsl/copy-from-windows.sh
+
+OPÇÃO 2: Setup completo automático
+------------------------------------
+chmod +x scripts-wsl/*.sh
+./scripts-wsl/setup-complete.sh
+
+Este script irá:
+- Verificar estrutura
+- Instalar dependências do sistema (se necessário)
+- Instalar dependências do projeto
+- Verificar SSH
+
+OPÇÃO 3: Passos manuais rápidos
+--------------------------------
+
+1. Instalar dependências do sistema:
+   sudo apt update
+   sudo apt install -y python3 python3-pip python3-venv curl git build-essential
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+
+2. Instalar dependências do projeto:
+   ./scripts-wsl/install-dependencies.sh
+
+3. Configurar SSH (opcional):
+   ./scripts-wsl/setup-ssh.sh
+
+4. Iniciar dashboard:
+   ./scripts-wsl/start-all.sh
+
+VERIFICAR ARQUIVOS
+------------------
+./scripts-wsl/list-files-to-copy.sh
+
+ACESSAR DASHBOARD
+-----------------
+http://localhost:5173
+
+==============================================================================
+
+
+
+
+

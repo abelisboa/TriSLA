@@ -1,0 +1,123 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-monitoring-layer
+  namespace: trisla-nsp
+  labels:
+    app: trisla-monitoring
+    component: observability
+    tier: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-monitoring
+  template:
+    metadata:
+      labels:
+        app: trisla-monitoring
+        component: observability
+        tier: monitoring
+    spec:
+      containers:
+      - name: monitoring-collector
+        image: ghcr.io/trisla/trisla-monitoring:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        - name: traces
+          containerPort: 14268
+          protocol: TCP
+        env:
+        - name: MODULE_NAME
+          value: "Monitoring-Layer"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: PROMETHEUS_URL
+          value: "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
+        - name: GRAFANA_URL
+          value: "http://grafana.monitoring:3000"
+        - name: JAEGER_AGENT_HOST
+          value: "jaeger-agent.monitoring"
+        - name: JAEGER_AGENT_PORT
+          value: "6831"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.monitoring:4317"
+        - name: TRISLA_NAMESPACE
+          value: "trisla-nsp"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-monitoring
+  namespace: trisla-nsp
+  labels:
+    app: trisla-monitoring
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  - name: traces
+    port: 14268
+    targetPort: 14268
+    protocol: TCP
+  selector:
+    app: trisla-monitoring
+
+---
+apiVersion: v1
+kind: ServiceMonitor
+metadata:
+  name: trisla-monitoring
+  namespace: trisla-nsp
+  labels:
+    app: trisla-monitoring
+spec:
+  selector:
+    matchLabels:
+      app: trisla-monitoring
+  endpoints:
+  - port: metrics
+    interval: 30s
+
+
+
+

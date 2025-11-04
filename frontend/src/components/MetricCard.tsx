@@ -1,0 +1,10 @@
+import React from 'react'
+export default function MetricCard({title,value,suffix,icon}:{title:string;value:string|number|null|undefined;suffix?:string;icon?:React.ReactNode;}){
+  return(<div className="bg-white rounded-xl shadow-soft p-6">
+    <div className="flex items-center justify-between mb-2">
+      <div className="text-sm text-gray-500">{title}</div>
+      <div className="text-brand-600">{icon}</div>
+    </div>
+    <div className="text-2xl font-semibold text-brand-900">{value==null?'N/A':value}{suffix}</div>
+  </div>)
+}

@@ -1,0 +1,22 @@
+replicas: 1
+
+version: "3.2.4"
+
+backend:
+  image: ghcr.io/abelisboa/trisla-public/trisla-dashboard-backend:latest
+  port: 5000
+  pullPolicy: IfNotPresent
+
+frontend:
+  image: ghcr.io/abelisboa/trisla-public/trisla-dashboard-frontend:latest
+  port: 5174
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+

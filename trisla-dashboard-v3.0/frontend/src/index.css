@@ -1,0 +1,1 @@
+@tailwind base;@tailwind components;@tailwind utilities;:root{--brand:#7b82ad;}a{@apply text-brand-700 hover:text-brand-500;}h1,h2,h3{@apply text-brand-800;}

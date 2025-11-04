@@ -1,0 +1,92 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-semantic-layer
+  namespace: trisla-nsp
+  labels:
+    app: trisla-semantic
+    component: sem-nsmf
+    tier: management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-semantic
+  template:
+    metadata:
+      labels:
+        app: trisla-semantic
+        component: sem-nsmf
+        tier: management
+    spec:
+      containers:
+      - name: sem-nsmf
+        image: ghcr.io/trisla/trisla-semantic:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: grpc
+          containerPort: 9090
+          protocol: TCP
+        env:
+        - name: MODULE_NAME
+          value: "SEM-NSMF"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: ONTOLOGY_PATH
+          value: "/app/ontology/trisla_sla_ontology.owl"
+        - name: NLP_MODEL
+          value: "sentence-transformers/all-MiniLM-L6-v2"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-semantic
+  namespace: trisla-nsp
+  labels:
+    app: trisla-semantic
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: grpc
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  selector:
+    app: trisla-semantic
+
+
+
+

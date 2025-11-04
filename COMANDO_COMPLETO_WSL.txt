@@ -1,0 +1,123 @@
+═══════════════════════════════════════════════════════════════
+  COMANDO COMPLETO PARA COPIAR E COLAR NO WSL
+═══════════════════════════════════════════════════════════════
+
+Copie TODO este comando e cole no terminal WSL:
+
+───────────────────────────────────────────────────────────────
+
+cd ~/trisla-dashboard-local/scripts-wsl && cat > dashboard-menu.sh << 'MENUEOF'
+#!/bin/bash
+# Script interativo para gerenciar TriSLA Dashboard
+set -e
+DASHBOARD_DIR=~/trisla-dashboard-local
+BACKEND_PORT=5000
+FRONTEND_PORT=5173
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+cd "$DASHBOARD_DIR" 2>/dev/null || { echo -e "${RED}❌ Erro: Diretório não encontrado${NC}"; exit 1; }
+check_port() { lsof -Pi :$1 -sTCP:LISTEN -t >/dev/null 2>&1; }
+get_pid() { pgrep -f "$1" | head -1; }
+open_browser() {
+    local url=$1
+    if command -v wslview > /dev/null; then wslview "$url" 2>/dev/null &;
+    elif command -v cmd.exe > /dev/null; then cmd.exe /c start "$url" 2>/dev/null &;
+    elif command -v xdg-open > /dev/null; then xdg-open "$url" 2>/dev/null &;
+    else echo -e "${YELLOW}⚠️  Abra manualmente: $url${NC}"; fi
+}
+start_backend() {
+    if check_port $BACKEND_PORT; then echo -e "${YELLOW}⚠️  Backend já rodando${NC}"; return 1; fi
+    if [ ! -d "backend/venv" ]; then echo -e "${RED}❌ venv não encontrado${NC}"; return 1; fi
+    cd backend && source venv/bin/activate
+    uvicorn main:app --host 0.0.0.0 --port $BACKEND_PORT --reload > ../backend.log 2>&1 & echo $! > ../backend.pid
+    cd .. && sleep 2 && check_port $BACKEND_PORT && echo -e "${GREEN}✅ Backend iniciado${NC}" || echo -e "${RED}❌ Erro${NC}"
+}
+stop_backend() {
+    local pid=$(get_pid "uvicorn.*main:app")
+    [ -n "$pid" ] && kill $pid 2>/dev/null && rm -f backend.pid && echo -e "${GREEN}✅ Backend parado${NC}" || echo -e "${YELLOW}ℹ️  Não está rodando${NC}"
+}
+start_frontend() {
+    if check_port $FRONTEND_PORT; then echo -e "${YELLOW}⚠️  Frontend já rodando${NC}"; return 1; fi
+    if [ ! -d "frontend/node_modules" ]; then echo -e "${RED}❌ node_modules não encontrado${NC}"; return 1; fi
+    cd frontend && npm run dev > ../frontend.log 2>&1 & echo $! > ../frontend.pid
+    cd .. && sleep 2 && check_port $FRONTEND_PORT && echo -e "${GREEN}✅ Frontend iniciado${NC}" || echo -e "${RED}❌ Erro${NC}"
+}
+stop_frontend() {
+    local pid=$(get_pid "vite")
+    [ -n "$pid" ] && kill $pid 2>/dev/null && rm -f frontend.pid && echo -e "${GREEN}✅ Frontend parado${NC}" || echo -e "${YELLOW}ℹ️  Não está rodando${NC}"
+}
+show_status() {
+    echo -e "${CYAN}📊 Status:${NC}"
+    check_port $BACKEND_PORT && echo -e "${GREEN}✅ Backend: Rodando - http://localhost:$BACKEND_PORT${NC}" || echo -e "${RED}❌ Backend: Parado${NC}"
+    check_port $FRONTEND_PORT && echo -e "${GREEN}✅ Frontend: Rodando - http://localhost:$FRONTEND_PORT${NC}" || echo -e "${RED}❌ Frontend: Parado${NC}"
+    echo ""
+}
+show_menu() {
+    clear
+    echo -e "${CYAN}╔════════════════════════════════════════╗${NC}"
+    echo -e "${CYAN}║   TriSLA Dashboard - Menu Principal   ║${NC}"
+    echo -e "${CYAN}╚════════════════════════════════════════╝${NC}"
+    echo ""
+    show_status
+    echo -e "${CYAN}🌐 ABRIR:${NC}"
+    echo "  1) Frontend (http://localhost:$FRONTEND_PORT)"
+    echo "  2) Backend API (http://localhost:$BACKEND_PORT)"
+    echo "  3) Swagger Docs (http://localhost:$BACKEND_PORT/docs)"
+    echo "  4) Health Check (http://localhost:$BACKEND_PORT/health)"
+    echo ""
+    echo -e "${CYAN}🚀 INICIAR:${NC}"
+    echo "  5) Backend  6) Frontend  7) Tudo"
+    echo ""
+    echo -e "${CYAN}🛑 PARAR:${NC}"
+    echo "  8) Backend  9) Frontend  10) Tudo"
+    echo ""
+    echo -e "${CYAN}🔄 REINICIAR:${NC}"
+    echo "  11) Backend  12) Frontend  13) Tudo"
+    echo ""
+    echo -e "${CYAN}📋 INFO:${NC}"
+    echo "  14) Logs Backend  15) Logs Frontend  16) Status"
+    echo ""
+    echo -e "${YELLOW}  0) Sair${NC}"
+    echo ""
+}
+while true; do
+    show_menu
+    read -p "Escolha (0-16): " choice
+    echo ""
+    case $choice in
+        1) open_browser "http://localhost:$FRONTEND_PORT"; echo -e "${GREEN}✅ Aberto${NC}" ;;
+        2) open_browser "http://localhost:$BACKEND_PORT"; echo -e "${GREEN}✅ Aberto${NC}" ;;
+        3) open_browser "http://localhost:$BACKEND_PORT/docs"; echo -e "${GREEN}✅ Aberto${NC}" ;;
+        4) open_browser "http://localhost:$BACKEND_PORT/health"; echo -e "${GREEN}✅ Aberto${NC}" ;;
+        5) start_backend ;;
+        6) start_frontend ;;
+        7) start_backend; sleep 1; start_frontend; echo -e "${GREEN}✅ Tudo iniciado!${NC}" ;;
+        8) stop_backend ;;
+        9) stop_frontend ;;
+        10) stop_backend; stop_frontend; echo -e "${GREEN}✅ Tudo parado${NC}" ;;
+        11) stop_backend; sleep 1; start_backend ;;
+        12) stop_frontend; sleep 1; start_frontend ;;
+        13) stop_backend; stop_frontend; sleep 2; start_backend; sleep 1; start_frontend; echo -e "${GREEN}✅ Tudo reiniciado!${NC}" ;;
+        14) [ -f "backend.log" ] && tail -n 50 backend.log || echo -e "${YELLOW}ℹ️  Log não encontrado${NC}" ;;
+        15) [ -f "frontend.log" ] && tail -n 50 frontend.log || echo -e "${YELLOW}ℹ️  Log não encontrado${NC}" ;;
+        16) show_status; [ -f "backend.pid" ] && echo "Backend PID: $(cat backend.pid)"; [ -f "frontend.pid" ] && echo "Frontend PID: $(cat frontend.pid)" ;;
+        0) echo -e "${GREEN}👋 Até logo!${NC}"; exit 0 ;;
+        *) echo -e "${RED}❌ Inválido!${NC}" ;;
+    esac
+    echo ""
+    read -p "ENTER para continuar..."
+done
+MENUEOF
+chmod +x dashboard-menu.sh && echo "✅ Menu criado!" && echo "🚀 Execute: ./dashboard-menu.sh"
+
+───────────────────────────────────────────────────────────────
+
+Após copiar e colar, o menu será criado automaticamente e você poderá executá-lo!
+
+
+
+
+

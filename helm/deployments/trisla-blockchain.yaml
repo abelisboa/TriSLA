@@ -1,0 +1,109 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-blockchain-layer
+  namespace: trisla-nsp
+  labels:
+    app: trisla-blockchain
+    component: bc-nssmf
+    tier: enforcement
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-blockchain
+  template:
+    metadata:
+      labels:
+        app: trisla-blockchain
+        component: bc-nssmf
+        tier: enforcement
+    spec:
+      containers:
+      - name: bc-nssmf
+        image: ghcr.io/trisla/trisla-blockchain:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 7070
+          protocol: TCP
+        - name: grpc
+          containerPort: 9090
+          protocol: TCP
+        - name: fabric-peer
+          containerPort: 7051
+          protocol: TCP
+        env:
+        - name: MODULE_NAME
+          value: "BC-NSSMF"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: FABRIC_NETWORK
+          value: "trisla-channel"
+        - name: CHAINCODE_NAME
+          value: "sla-contracts"
+        - name: CHAINCODE_VERSION
+          value: "1.0"
+        - name: FABRIC_CA_URL
+          value: "http://fabric-ca:7054"
+        - name: FABRIC_PEER_URL
+          value: "peer0.trisla-nsp:7051"
+        - name: FABRIC_ORDERER_URL
+          value: "orderer.trisla-nsp:7050"
+        - name: NWDAF_ORACLE_URL
+          value: "http://nwdaf-core.nasp-core:8081"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 7070
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 7070
+          initialDelaySeconds: 45
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-blockchain
+  namespace: trisla-nsp
+  labels:
+    app: trisla-blockchain
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 7070
+    targetPort: 7070
+    protocol: TCP
+  - name: grpc
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  - name: fabric-peer
+    port: 7051
+    targetPort: 7051
+    protocol: TCP
+  selector:
+    app: trisla-blockchain
+
+
+
+

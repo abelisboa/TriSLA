@@ -1,0 +1,98 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-ai-layer
+  namespace: trisla-nsp
+  labels:
+    app: trisla-ai
+    component: ml-nsmf
+    tier: intelligence
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-ai
+  template:
+    metadata:
+      labels:
+        app: trisla-ai
+        component: ml-nsmf
+        tier: intelligence
+    spec:
+      containers:
+      - name: ml-nsmf
+        image: ghcr.io/trisla/trisla-ai:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: grpc
+          containerPort: 9090
+          protocol: TCP
+        env:
+        - name: MODULE_NAME
+          value: "ML-NSMF"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: MODEL_PATH
+          value: "/app/models/trisla_sla_predictor.h5"
+        - name: XAI_ENABLED
+          value: "true"
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka.nasp-core:9092"
+        - name: KAFKA_TOPIC
+          value: "nasp-metrics"
+        - name: PROMETHEUS_URL
+          value: "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-ai
+  namespace: trisla-nsp
+  labels:
+    app: trisla-ai
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: grpc
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  selector:
+    app: trisla-ai
+
+
+
+
