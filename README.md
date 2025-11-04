@@ -297,4 +297,4 @@ Dissertação apresentada como requisito parcial para obtenção do título de M
 
 **Licença:** MIT  veja LICENSE
 
-**Repositório oficial:** https://github.com/abelisboa/TriSLA
+**Repositório oficial:** https://github.com/abelisboa/TriSLA# README atualizado
