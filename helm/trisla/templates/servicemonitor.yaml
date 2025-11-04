@@ -1,7 +1,7 @@
 # ======================================================================
 # ServiceMonitor — TriSLA Portal (corrigido v3.5)
 # ----------------------------------------------------------------------
-# Corrige conflito de nome fixo "trisla-portal-servicemonitor"
+# Corrige conflito de nome fixo "trisla-servicemonitor"
 # Substituído por nome dinâmico baseado no release e namespace Helm
 # Garante compatibilidade com Prometheus Operator (monitoring.coreos.com/v1)
 # ======================================================================
@@ -9,11 +9,11 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "trisla-portal.fullname" . }}-servicemonitor-{{ .Release.Revision }}
+  name: {{ include "trisla.fullname" . }}-servicemonitor-{{ .Release.Revision }}
   namespace: {{ .Release.Namespace }}
   labels:
     release: {{ .Release.Name }}
-    app.kubernetes.io/name: {{ include "trisla-portal.name" . }}
+    app.kubernetes.io/name: {{ include "trisla.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -21,7 +21,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "trisla-portal.name" . }}
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   namespaceSelector:
     matchNames:
@@ -38,7 +38,7 @@ spec:
           regex: (.*)
           replacement: "{{ .Release.Name }}"
           targetLabel: release
-  jobLabel: {{ include "trisla-portal.name" . }}
+  jobLabel: {{ include "trisla.name" . }}
   sampleLimit: 10000
   targetLimit: 10
   namespaceSelector:

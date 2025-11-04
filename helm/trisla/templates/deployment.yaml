@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: trisla-portal
+  name: {{ include "trisla.fullname" . }}
   labels:
-    app: trisla-portal
+    app: {{ include "trisla.name" . }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
-      app: trisla-portal
+      app: {{ include "trisla.name" . }}
   template:
     metadata:
       labels:
-        app: trisla-portal
+        app: {{ include "trisla.name" . }}
         {{- with .Values.labels }}
         {{ toYaml . | nindent 8 }}
         {{- end }}

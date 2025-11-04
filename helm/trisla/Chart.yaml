@@ -1,0 +1,4 @@
+apiVersion: v2
+name: trisla
+version: 0.1.0
+description: Helm chart para implantação do TriSLA (Frontend + Backend)

@@ -1,16 +1,16 @@
 ---
-- name: Implantação automatizada do TriSLA Portal (v3.6-logsafe)
+- name: Implantação automatizada do TriSLA (v3.6-logsafe)
   hosts: localhost
   connection: local
   become: true
   vars:
     namespace: "trisla"
-    helm_chart_path: "/home/porvir5g/gtp5g/trisla-portal/helm/trisla-portal"
-    values_file: "/home/porvir5g/gtp5g/trisla-portal/docs/config-examples/values-nasp.yaml"
+    helm_chart_path: "/home/porvir5g/gtp5g/trisla/helm/trisla"
+    values_file: "/home/porvir5g/gtp5g/trisla/docs/config-examples/values-nasp.yaml"
     backend_image: "ghcr.io/abelisboa/trisla-api:latest"
     frontend_image: "ghcr.io/abelisboa/trisla-ui:latest"
-    log_dir: "/home/porvir5g/gtp5g/trisla-portal/ansible/logs"
-    log_file: "/home/porvir5g/gtp5g/trisla-portal/ansible/logs/trisla_preflight.log"
+    log_dir: "/home/porvir5g/gtp5g/trisla/ansible/logs"
+    log_file: "/home/porvir5g/gtp5g/trisla/ansible/logs/trisla_preflight.log"
 
   pre_tasks:
     - name: Criar diretório de logs, se não existir
@@ -59,8 +59,8 @@
     - name: Remover release Helm anterior (se bloqueada)
       ansible.builtin.shell: |
         echo "[Helm] Removendo release antiga (se existir) — $(date '+%H:%M:%S')" >> {{ log_file }}
-        helm uninstall trisla-portal -n {{ namespace }} --wait || true
-        kubectl delete secret -n {{ namespace }} -l "owner=helm,name=trisla-portal" --ignore-not-found
+        helm uninstall trisla -n {{ namespace }} --wait || true
+        kubectl delete secret -n {{ namespace }} -l "owner=helm,name=trisla" --ignore-not-found
       register: helm_uninstall
       changed_when: "'uninstalled' in helm_uninstall.stdout or 'deleted' in helm_uninstall.stdout"
       ignore_errors: true
@@ -69,9 +69,9 @@
       ansible.builtin.shell: |
         echo "[ServiceMonitor] Limpando antigos em $(date '+%H:%M:%S')" >> {{ log_file }}
         for ns in $(kubectl get ns -o jsonpath='{.items[*].metadata.name}'); do
-          if kubectl get servicemonitor -n $ns 2>/dev/null | grep -q trisla-portal-servicemonitor; then
+          if kubectl get servicemonitor -n $ns 2>/dev/null | grep -q trisla-servicemonitor; then
             echo "Removendo ServiceMonitor existente em $ns" >> {{ log_file }}
-            kubectl delete servicemonitor trisla-portal-servicemonitor -n $ns --ignore-not-found
+            kubectl delete servicemonitor trisla-servicemonitor -n $ns --ignore-not-found
           fi
         done
       args:
@@ -83,13 +83,13 @@
     - name: 🔍 Pré-checagem e Liberação de Locks Helm
       ansible.builtin.shell: |
         echo "[Preflight] Executando pré-checagem e liberação de locks — $(date '+%H:%M:%S')" >> {{ log_file }}
-        helm history trisla-portal -n {{ namespace }} || true
+        helm history trisla -n {{ namespace }} || true
         echo "🧹 Limpando secrets Helm antigos..." >> {{ log_file }}
-        kubectl delete secret -n {{ namespace }} -l "owner=helm,name=trisla-portal" --ignore-not-found
+        kubectl delete secret -n {{ namespace }} -l "owner=helm,name=trisla" --ignore-not-found
         echo "🧹 Removendo possíveis ServiceMonitors órfãos..." >> {{ log_file }}
         for ns in $(kubectl get ns -o jsonpath='{.items[*].metadata.name}'); do
-          kubectl get servicemonitor -n $ns 2>/dev/null | grep -q trisla-portal && \
-          kubectl delete servicemonitor trisla-portal-servicemonitor -n $ns --ignore-not-found || true
+          kubectl get servicemonitor -n $ns 2>/dev/null | grep -q trisla && \
+          kubectl delete servicemonitor trisla-servicemonitor -n $ns --ignore-not-found || true
         done
         echo "[Preflight] Concluído — $(date '+%H:%M:%S')" >> {{ log_file }}
       args:
@@ -101,7 +101,7 @@
     - name: Recriar deployment via Helm (v3.6)
       ansible.builtin.shell: |
         echo "[Helm] Iniciando upgrade/install em $(date '+%H:%M:%S')" >> {{ log_file }}
-        helm upgrade --install trisla-portal {{ helm_chart_path }} \
+        helm upgrade --install trisla {{ helm_chart_path }} \
           -n {{ namespace }} \
           -f {{ values_file }} \
           --set backend.image="{{ backend_image }}" \
@@ -118,7 +118,7 @@
     - name: Exibir resultado final e local do log
       ansible.builtin.debug:
         msg: |
-          ✅ Implantação TriSLA Portal concluída
+          ✅ Implantação TriSLA concluída
           - Namespace: {{ namespace }}
-          - Release: trisla-portal
+          - Release: trisla
           - Log salvo em: {{ log_file }}

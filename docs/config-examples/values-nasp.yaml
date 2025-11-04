@@ -1,5 +1,5 @@
 # ==========================================
-# TriSLA Portal - NASP Deployment Values
+# TriSLA - NASP Deployment Values
 # ==========================================
 
 backend:
@@ -43,7 +43,7 @@ tolerations:
 replicaCount: 1
 
 labels:
-  app: trisla-portal
+  app: trisla
 annotations:
   maintainer: "TriSLA NASP Project (Abel Lisboa)"
 

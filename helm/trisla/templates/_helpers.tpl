@@ -1,22 +1,22 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "trisla-portal.name" -}}
-trisla-portal
+{{- define "trisla.name" -}}
+trisla
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
 */}}
-{{- define "trisla-portal.fullname" -}}
-{{- printf "%s" (include "trisla-portal.name" .) -}}
+{{- define "trisla.fullname" -}}
+{{- printf "%s" (include "trisla.name" .) -}}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "trisla-portal.labels" -}}
-app.kubernetes.io/name: {{ include "trisla-portal.name" . }}
+{{- define "trisla.labels" -}}
+app.kubernetes.io/name: {{ include "trisla.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}

@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: trisla-portal
+  name: {{ include "trisla.fullname" . }}
   labels:
-    app: trisla-portal
+    app: {{ include "trisla.name" . }}
   {{- with .Values.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -11,7 +11,7 @@ metadata:
 spec:
   type: {{ default "NodePort" .Values.service.type }}
   selector:
-    app: trisla-portal
+    app: {{ include "trisla.name" . }}
   ports:
     # ===========================
     # Backend (FastAPI)

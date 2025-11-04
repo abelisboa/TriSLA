@@ -1,13 +1,13 @@
 ---
-- name: 🚀 Deploy TriSLA Portal on NASP (Auto-detect Local or Remote)
+- name: 🚀 Deploy TriSLA on NASP (Auto-detect Local or Remote)
   hosts: localhost
   connection: local
   become: yes
 
   vars:
     trisla_namespace: trisla
-    release_name: trisla-portal
-    helm_chart_path: ./helm/trisla-portal/
+    release_name: trisla
+    helm_chart_path: ./helm/trisla/
     values_file: ./docs/config-examples/values-nasp.yaml
     helm_timeout: 900  # 15 min
     ansible_ssh_common_args: '-o ServerAliveInterval=30 -o ServerAliveCountMax=60 -o TCPKeepAlive=yes -o Compression=yes'
@@ -59,7 +59,7 @@
           echo "ℹ️ No previous release found."
         fi
 
-    - name: 🛰️ Deploy TriSLA Portal via Helm (real-time feedback)
+    - name: 🛰️ Deploy TriSLA via Helm (real-time feedback)
       shell: |
         echo "🚀 Starting Helm deployment on $(hostname)..."
         echo "===================================================="
@@ -71,11 +71,11 @@
           --cleanup-on-fail \
           --debug | tee /tmp/helm_{{ release_name }}.log
       args:
-        chdir: /home/porvir5g/gtp5g/trisla-portal
+        chdir: /home/porvir5g/gtp5g/trisla
       register: helm_result
       ignore_errors: yes
 
-    - name: 🔎 Verify TriSLA Portal deployment
+    - name: 🔎 Verify TriSLA deployment
       shell: |
         echo "📦 Pods in namespace {{ trisla_namespace }}:"
         kubectl get pods -n {{ trisla_namespace }} -o wide
@@ -88,7 +88,7 @@
     - name: ✅ Final summary
       debug:
         msg: |
-          ✅ TriSLA Portal deployment completed
+          ✅ TriSLA deployment completed
           Mode: {{ mode.stdout }}
           Logs:
           {{ helm_result.stdout | default('No logs available') }}

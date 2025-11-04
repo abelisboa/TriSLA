@@ -1,5 +1,5 @@
 # ====================================================
-# Default values for TriSLA Portal (base Helm Chart)
+# Default values for TriSLA (base Helm Chart)
 # Used for linting, CI, and fallback when values-example.yaml not provided
 # ====================================================
 
@@ -124,5 +124,5 @@ tolerations: []
 
 # Labels e annotations
 labels:
-  app: trisla-portal
+  app: trisla
 annotations: {}
