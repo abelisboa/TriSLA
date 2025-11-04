@@ -1,671 +1,174 @@
-# TriSLA Portal - .gitignore
+# ============================================================
+# 🛰️ TriSLA Public .gitignore (v3.3.0)
+# Somente arquivos de produção, implantação e documentação técnica
+# ============================================================
 
-# Arquivos de configuração sensíveis
-values.yaml
-inventory.yaml
-*.env
+# --- SISTEMA E AMBIENTE ---
 .env*
-
-# Permitir arquivos de exemplo
-!values-example.yaml
-!inventory-example.yaml
-!*-example.*
-
-# Credenciais e secrets
-secrets/
-*.pem
-*.key
-*.crt
-*.p12
-*.pfx
-
-# Logs
 *.log
-logs/
-nohup.out
-
-# Arquivos temporários
-*.tmp
-*.temp
 *.bak
+*.tmp
 *.swp
-*.swo
-*~
-
-# Arquivos de sistema
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Arquivos de IDE
-.vscode/
-.idea/
-*.sublime-*
-
-# Arquivos de build
-build/
-dist/
-*.egg-info/
+*.DS_Store
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Arquivos de teste
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Arquivos de documentação gerados
-docs/generated/
-docs/build/
-
-# Arquivos de backup
-*.backup
-*.bak
-backup/
-
-# Arquivos de dados
-data/
-*.db
-*.sqlite
-*.sqlite3
-
-# Arquivos de cache
-.cache/
-*.cache
-
-# Arquivos de dependências
 node_modules/
+dist/
+build/
+cache/
+.idea/
+.vscode/
+*.code-workspace
+
+# --- BACKUP E EVIDÊNCIAS ---
+backup_*/
+docs/evidencias/
+docs/WU-*/
+docs/academico/
+trisla_dissertacao_completo/
+ARTIGO_*/
+ATUALIZACAO_*/
+RESUMO_*/
+MAPEAMENTO_*/
+REFERENCIAS_*/
+*_FINAL_*.md
+*_COMPLETO.md
+*_DEFINITIVO*.md
+docs/apendices/*.tex
+Overleaf/
+Dissertacao_*/
+
+# --- AMBIENTE LOCAL / TESTES ---
+local/
+release/
+frontend/
+backend/
+scripts-wsl/
+*.ps1
+*.sh.bak
+*.txt
+*.md.bak
+*.old
+test_*.py
+test_*.sh
+
+# --- INFRA / CLUSTERS PRIVADOS ---
+ansible/inventory*
+ansible/group_vars/all.yml
+ansible/inventory.yaml
+ansible/deploy_trisla_node1_detailed.yml
+ansible/deploy_trisla_nasp.yml
+group_vars/
+nasp/
+private_*/
+logs/
+tmp/
+data/
+monitoring/alertmanager/
+monitoring/prometheus-rules/
+helm/deployments/
+
+# --- ARTEFATOS INTERNOS ---
+PROMPTS/
+ANALISE_*/
+COMANDOS_*/
+EXECUTAR_*/
+SETUP_*/
+GUIA_*/
+README_TRISLA_PRIVATE.md
+README_EXEC.md
+README_WSL.md
+README_TRISLA_DASHBOARD.md
+
+# --- MANTER ESTES (PÚBLICOS) ---
+!apps/
+!helm/
+!docs/
+!scripts/
+!monitoring/
+!package.json
+!README.md
+!LICENSE
+!CHANGELOG.md
+!docker-compose.yaml
+!docs/apendices/*.md
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 venv/
 env/
-.venv/
+ENV/
+.venv
 
-# Arquivos de Kubernetes
-*.kubeconfig
-kubeconfig
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+dist-ssr/
+*.local
 
-# Arquivos de Helm
-charts/
-Chart.lock
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
 
-# Arquivos de Ansible
-*.retry
-.ansible/
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Arquivos de Docker
-.dockerignore
+# Logs
+*.log
+logs/
+backend.log
+frontend.log
 
-# Arquivos de CI/CD
-.github/workflows/secrets.yml
-.gitlab-ci.yml
+# Docker
+*.pid
+*.seed
+*.pid.lock
 
-# Arquivos de monitoramento
-prometheus_data/
-grafana_data/
+# Helm
+*.tgz
 
-# Arquivos de blockchain
-fabric-network/crypto/
-fabric-network/artifacts/
-fabric-network/organizations/
+# OS
+Thumbs.db
+.DS_Store
 
-# Arquivos de dissertação
-trisla_dissertacao_completo/
-trisla_dissertacao_completo.tar.gz
-trisla_dissertacao_completo.zip
+# Temporary files
+*.tmp
+*.bak
+*.swp
 
-# Arquivos de evidências
-docs/evidencias/*.txt
-docs/evidencias/*.json
-docs/evidencias/*.log
-
-# Arquivos de estado
-STATE/*.log
-STATE/*.txt
-
-# Arquivos de relatórios
-*.report
-*.summary
-
-# Arquivos de métricas
-metrics/
-*.metrics
-
-# Arquivos de performance
-performance/
-*.perf
-
-# Arquivos de teste
-test_results/
-test_output/
-
-# Arquivos de validação
-validation/
-*.validation
-
-# Arquivos de configuração local
-local/
-local_*
-
-# Arquivos de desenvolvimento
-dev/
-development/
-
-# Arquivos de staging
-staging/
-stage/
-
-# Arquivos de produção
-production/
-prod/
-
-# Arquivos de arquivo
-archive/
-archived/
-
-# Arquivos de compressão
+# Build artifacts
 *.zip
-*.tar
 *.tar.gz
-*.tar.bz2
-*.rar
-*.7z
-
-# Arquivos de imagem
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.bmp
-*.tiff
-*.svg
-
-# Arquivos de vídeo
-*.mp4
-*.avi
-*.mov
-*.wmv
-*.flv
-*.webm
-
-# Arquivos de áudio
-*.mp3
-*.wav
-*.flac
-*.aac
-*.ogg
-
-# Arquivos de documento
-*.pdf
-*.doc
-*.docx
-*.xls
-*.xlsx
-*.ppt
-*.pptx
-
-# Arquivos de texto
-*.txt
-*.md
-*.rtf
-
-# Permitir documentação do projeto
-!docs/*.md
-!README.md
-!*.md
-
-# Arquivos de código
-*.c
-*.cpp
-*.h
-*.hpp
-*.java
-*.class
-*.jar
-*.war
-*.ear
-
-# Arquivos de script
-*.sh
-*.bat
-*.cmd
-*.ps1
-*.vbs
-*.js
-*.ts
-*.jsx
-*.tsx
-
-# Permitir scripts do projeto
-!scripts/*.sh
-!scripts/*.py
-!scripts/*.ps1
-
-# Arquivos de configuração
-*.ini
-*.cfg
-*.conf
-*.config
-*.properties
-*.xml
-*.json
-*.yaml
-*.yml
-*.toml
-*.toml
-
-# Arquivos de banco de dados
-*.sql
-*.dump
-*.backup
-
-# Arquivos de rede
-*.pcap
-*.cap
-*.net
-
-# Arquivos de sistema operacional
-*.dll
-*.exe
-*.so
-*.dylib
-*.a
-*.lib
-
-# Arquivos de compilação
-*.o
-*.obj
-*.elf
-*.bin
-*.hex
-
-# Arquivos de debug
-*.dmp
-*.core
-*.stack
-
-# Arquivos de perfil
-*.prof
-*.gprof
-
-# Arquivos de cobertura
-*.gcov
-*.gcda
-*.gcno
-
-# Arquivos de valgrind
-*.valgrind
-*.memcheck
-
-# Arquivos de sanitizer
-*.sanitizer
-*.address
-*.memory
-*.thread
-
-# Arquivos de fuzzing
-*.fuzz
-*.crash
-*.hangs
-
-# Arquivos de benchmark
-*.benchmark
-*.bench
-
-# Arquivos de stress test
-*.stress
-*.load
-
-# Arquivos de performance test
-*.perf
-*.profile
-
-# Arquivos de memory test
-*.memtest
-*.leak
-
-# Arquivos de unit test
-*.unittest
-*.test
-
-# Arquivos de integration test
-*.integration
-*.itest
-
-# Arquivos de system test
-*.system
-*.stest
-
-# Arquivos de acceptance test
-*.acceptance
-*.atest
-
-# Arquivos de regression test
-*.regression
-*.rtest
-
-# Arquivos de smoke test
-*.smoke
-*.smoketest
-
-# Arquivos de sanity test
-*.sanity
-*.sanitytest
-
-# Arquivos de compatibility test
-*.compatibility
-*.ctest
-
-# Arquivos de security test
-*.security
-*.sectest
-
-# Arquivos de accessibility test
-*.accessibility
-*.atest
-
-# Arquivos de usability test
-*.usability
-*.utest
-
-# Arquivos de performance test
-*.performance
-*.ptest
-
-# Arquivos de load test
-*.load
-*.ltest
-
-# Arquivos de stress test
-*.stress
-*.stest
-
-# Arquivos de volume test
-*.volume
-*.vtest
-
-# Arquivos de endurance test
-*.endurance
-*.etest
-
-# Arquivos de reliability test
-*.reliability
-*.rtest
-
-# Arquivos de availability test
-*.availability
-*.atest
-
-# Arquivos de maintainability test
-*.maintainability
-*.mtest
-
-# Arquivos de portability test
-*.portability
-*.ptest
-
-# Arquivos de scalability test
-*.scalability
-*.stest
-
-# Arquivos de compatibility test
-*.compatibility
-*.ctest
-
-# Arquivos de interoperability test
-*.interoperability
-*.itest
-
-# Arquivos de conformance test
-*.conformance
-*.ctest
-
-# Arquivos de compliance test
-*.compliance
-*.ctest
-
-# Arquivos de certification test
-*.certification
-*.ctest
-
-# Arquivos de validation test
-*.validation
-*.vtest
-
-# Arquivos de verification test
-*.verification
-*.vtest
-
-# Arquivos de acceptance test
-*.acceptance
-*.atest
-
-# Arquivos de user acceptance test
-*.useracceptance
-*.uatest
-
-# Arquivos de business acceptance test
-*.businessacceptance
-*.batest
-
-# Arquivos de system acceptance test
-*.systemacceptance
-*.satest
-
-# Arquivos de integration acceptance test
-*.integrationacceptance
-*.iatest
-
-# Arquivos de performance acceptance test
-*.performanceacceptance
-*.patest
-
-# Arquivos de security acceptance test
-*.securityacceptance
-*.satest
-
-# Arquivos de accessibility acceptance test
-*.accessibilityacceptance
-*.aatest
-
-# Arquivos de usability acceptance test
-*.usabilityacceptance
-*.uatest
-
-# Arquivos de compatibility acceptance test
-*.compatibilityacceptance
-*.catest
-
-# Arquivos de interoperability acceptance test
-*.interoperabilityacceptance
-*.iatest
-
-# Arquivos de conformance acceptance test
-*.conformanceacceptance
-*.catest
-
-# Arquivos de compliance acceptance test
-*.complianceacceptance
-*.catest
-
-# Arquivos de certification acceptance test
-*.certificationacceptance
-*.catest
-
-# Arquivos de validation acceptance test
-*.validationacceptance
-*.vatest
-
-# Arquivos de verification acceptance test
-*.verificationacceptance
-*.vatest
-
-# Arquivos de test data
-test_data/
-testdata/
-test-data/
-
-# Arquivos de test results
-test_results/
-testresults/
-test-results/
-
-# Arquivos de test output
-test_output/
-testoutput/
-test-output/
-
-# Arquivos de test logs
-test_logs/
-testlogs/
-test-logs/
-
-# Arquivos de test reports
-test_reports/
-testreports/
-test-reports/
-
-# Arquivos de test coverage
-test_coverage/
-testcoverage/
-test-coverage/
-
-# Arquivos de test metrics
-test_metrics/
-testmetrics/
-test-metrics/
-
-# Arquivos de test performance
-test_performance/
-testperformance/
-test-performance/
-
-# Arquivos de test security
-test_security/
-testsecurity/
-test-security/
-
-# Arquivos de test accessibility
-test_accessibility/
-testaccessibility/
-test-accessibility/
-
-# Arquivos de test usability
-test_usability/
-testusability/
-test-usability/
-
-# Arquivos de test compatibility
-test_compatibility/
-testcompatibility/
-test-compatibility/
-
-# Arquivos de test interoperability
-test_interoperability/
-testinteroperability/
-test-interoperability/
-
-# Arquivos de test conformance
-test_conformance/
-testconformance/
-test-conformance/
-
-# Arquivos de test compliance
-test_compliance/
-testcompliance/
-test-compliance/
-
-# Arquivos de test certification
-test_certification/
-testcertification/
-test-certification/
-
-# Arquivos de test validation
-test_validation/
-testvalidation/
-test-validation/
-
-# Arquivos de test verification
-test_verification/
-testverification/
-test-verification/
-
-# Arquivos de test acceptance
-test_acceptance/
-testacceptance/
-test-acceptance/
-
-# Arquivos de test user acceptance
-test_user_acceptance/
-testuseracceptance/
-test-user-acceptance/
-
-# Arquivos de test business acceptance
-test_business_acceptance/
-testbusinessacceptance/
-test-business-acceptance/
-
-# Arquivos de test system acceptance
-test_system_acceptance/
-testsystemacceptance/
-test-system-acceptance/
-
-# Arquivos de test integration acceptance
-test_integration_acceptance/
-testintegrationacceptance/
-test-integration-acceptance/
-
-# Arquivos de test performance acceptance
-test_performance_acceptance/
-testperformanceacceptance/
-test-performance-acceptance/
-
-# Arquivos de test security acceptance
-test_security_acceptance/
-testsecurityacceptance/
-test-security-acceptance/
-
-# Arquivos de test accessibility acceptance
-test_accessibility_acceptance/
-testaccessibilityacceptance/
-test-accessibility-acceptance/
-
-# Arquivos de test usability acceptance
-test_usability_acceptance/
-testusabilityacceptance/
-test-usability-acceptance/
-
-# Arquivos de test compatibility acceptance
-test_compatibility_acceptance/
-testcompatibilityacceptance/
-test-compatibility-acceptance/
-
-# Arquivos de test interoperability acceptance
-test_interoperability_acceptance/
-testinteroperabilityacceptance/
-test-interoperability-acceptance/
-
-# Arquivos de test conformance acceptance
-test_conformance_acceptance/
-testconformanceacceptance/
-test-conformance-acceptance/
-
-# Arquivos de test compliance acceptance
-test_compliance_acceptance/
-testcomplianceacceptance/
-test-compliance-acceptance/
-
-# Arquivos de test certification acceptance
-test_certification_acceptance/
-testcertificationacceptance/
-test-certification-acceptance/
-
-# Arquivos de test validation acceptance
-test_validation_acceptance/
-testvalidationacceptance/
-test-validation-acceptance/
-
-# Arquivos de test verification acceptance
-test_verification_acceptance/
-testverificationacceptance/
-test-verification-acceptance/
