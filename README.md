@@ -1,4 +1,4 @@
-# 🛰️ TriSLA v3.3.0  
+# 🛰️ TriSLA v3.3.3  
 
 ### Uma Arquitetura SLA-Aware Baseada em IA, Ontologia e Contratos Inteligentes para Garantia de SLA em Redes 5G/O-RAN
 
@@ -59,7 +59,7 @@ TriSLA/
     roles/
 
  helm/                      # Helm Charts para Kubernetes
-    trisla-portal/
+    trisla/
     trisla-dashboard/
     sla-agents/
     decision-engine/
@@ -125,13 +125,13 @@ all:
   tasks:
     - name: Copiar chart TriSLA
       copy:
-        src: ./helm/trisla-portal/
-        dest: /home/<USER>/tri-charts/trisla-portal
+        src: ./helm/trisla/
+        dest: /home/<USER>/tri-charts/trisla
     - name: Aplicar helm install
       command: >
-        helm upgrade --install trisla-portal ./tri-charts/trisla-portal
+        helm upgrade --install trisla ./tri-charts/trisla
         -n trisla --create-namespace
-        -f /home/<USER>/tri-charts/trisla-portal/values-nasp.yaml
+        -f /home/<USER>/tri-charts/trisla/values-nasp.yaml
 ```
 
 #### 4.3 Exemplo de values-nasp.yaml
@@ -298,3 +298,4 @@ Dissertação apresentada como requisito parcial para obtenção do título de M
 **Licença:** MIT  veja LICENSE
 
 **Repositório oficial:** https://github.com/abelisboa/TriSLA# README atualizado
+
