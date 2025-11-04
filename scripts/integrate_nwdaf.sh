@@ -337,3 +337,7 @@ echo "1. Executar: ./scripts/test_nwdaf.sh"
 echo "2. Configurar dashboards no Grafana"
 echo "3. Testar integração end-to-end"
 echo "4. Continuar para a Fase 6 da implementação"
+
+
+
+

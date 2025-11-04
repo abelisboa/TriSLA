@@ -250,3 +250,4 @@ main() {
 
 # Executar teste
 main "$@"
+

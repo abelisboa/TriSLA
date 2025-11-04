@@ -399,3 +399,7 @@ echo "1. Acessar Grafana: http://localhost:3000 (admin/admin)"
 echo "2. Verificar dashboards do NWDAF"
 echo "3. Configurar alertas se necessário"
 echo "4. Continuar para a Fase 6 da implementação"
+
+
+
+

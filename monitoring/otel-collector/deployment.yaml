@@ -1,0 +1,140 @@
+# OpenTelemetry Collector Deployment
+# Deploy do OpenTelemetry Collector para coleta centralizada
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  namespace: trisla-nsp
+  labels:
+    app: otel-collector
+    component: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+        component: monitoring
+    spec:
+      containers:
+      - name: otel-collector
+        image: otel/opentelemetry-collector-contrib:0.88.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4317
+          name: otlp-grpc
+          protocol: TCP
+        - containerPort: 4318
+          name: otlp-http
+          protocol: TCP
+        - containerPort: 8889
+          name: prometheus
+          protocol: TCP
+        - containerPort: 8888
+          name: metrics
+          protocol: TCP
+        env:
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=otel-collector,service.version=0.88.0"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://jaeger:14250"
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+        - name: otel-collector-config
+          mountPath: /etc/otelcol-contrib
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+      volumes:
+      - name: otel-collector-config
+        configMap:
+          name: otel-collector-config
+          items:
+          - key: otel-collector-config.yaml
+            path: otel-collector.yaml
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  namespace: trisla-nsp
+  labels:
+    app: otel-collector
+    component: monitoring
+spec:
+  type: ClusterIP
+  ports:
+  - name: otlp-grpc
+    port: 4317
+    targetPort: 4317
+    protocol: TCP
+  - name: otlp-http
+    port: 4318
+    targetPort: 4318
+    protocol: TCP
+  - name: prometheus
+    port: 8889
+    targetPort: 8889
+    protocol: TCP
+  - name: metrics
+    port: 8888
+    targetPort: 8888
+    protocol: TCP
+  selector:
+    app: otel-collector
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector-headless
+  namespace: trisla-nsp
+  labels:
+    app: otel-collector
+    component: monitoring
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: otlp-grpc
+    port: 4317
+    targetPort: 4317
+    protocol: TCP
+  - name: otlp-http
+    port: 4318
+    targetPort: 4318
+    protocol: TCP
+  selector:
+    app: otel-collector
+
+
+
+

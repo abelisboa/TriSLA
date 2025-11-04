@@ -130,3 +130,7 @@ echo "1. Executar: ./scripts/deploy_to_nasp.sh"
 echo "2. Configurar NASP node1 e node2"
 echo "3. Testar integração com NASP real"
 echo "4. Monitorar em produção"
+
+
+
+

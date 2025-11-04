@@ -169,3 +169,7 @@ echo "  Monitorar logs: journalctl -u trisla -f"
 echo "  Status pods: kubectl get pods -n trisla"
 echo "  Restart serviço: systemctl restart trisla"
 echo "  Backup: /opt/trisla/backups/"
+
+
+
+
