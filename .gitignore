@@ -1,62 +1,73 @@
-# ============================================================
-# 🛰️ TriSLA Public .gitignore (v3.3.0)
-# ============================================================
+# ==========================================
+# TriSLA — Public Repository Clean Rules
+# ==========================================
 
-# Ambiente e cache
-.env*
+# 🔸 Ignore binários, backups e temporários
+*.zip
+*.tar.gz
 *.log
-*.bak
-*.tmp
+nohup.out
+venv/
 __pycache__/
-*.pyc
-*.pyo
-node_modules/
-dist/
-build/
-.vscode/
-.idea/
+backup*/
+*.pid
 
-# Backups e evidências
-backup_*/
-docs/evidencias/
-docs/WU-*/
-trisla_dissertacao_completo/
-ARTIGO_*/
-Overleaf/
-Dissertacao_*/
+# 🔸 Ignore arquivos locais e rascunhos
+ANALISE_*.md
+COMANDOS_*.md
+COMANDO_*.txt
+Artigo_*
+ATUALIZACAO_*
+RESUMO_*
+RELATORIO_*
+REFERENCIAS_*.md
+*.pptx
+*.pdf
+*.tex
+*.bib
+*.sh.bak*
 
-# Scripts e anotações internas
-PROMPTS/
-ANALISE_*/
-COMANDOS_*/
-EXECUTAR_*/
-SETUP_*/
-README_TRISLA_PRIVATE.md
-README_EXEC.md
-README_WSL.md
+# 🔸 Ignore pacotes locais de dashboard
+trisla-dashboard-local*/
+trisla-dashboard-v2*/
+trisla-dashboard-v3.0*/
+trisla-dashboard-v3.2*/
+trisla-dashboard-v3.2.*/
+trisla-dashboard-v3.1.*/
+trisla-dashboard-*.zip
 
-# Inventários e segredos
-ansible/inventory*
-ansible/group_vars/*
-group_vars/
-nasp/
-
-# Submódulos privados
-trisla/
-trisla-portal/
-trisla-portal-public/
+# 🔸 Ignore diretórios privados
 trisla-public/
+trisla-portal.bak/
+trisla-portal-public/
+trisla_dissertacao_completo/
+backup_git/
+backup/
+PROMPTS/
+docs_evidencias/
+STATE/
+WU-*/
+data/
 
-# Binários grandes
-buildx-v0.29.1.linux-amd64
+# 🔸 Manter somente as pastas oficiais
+!/ansible/
+!/apps/
+!/automation/
+!/backend/
+!/docs/
+!/fabric-network/
+!/frontend/
+!/grafana-dashboards/
+!/helm/
+!/monitoring/
+!/playbooks/
+!/release/
+!/scripts/
+!/scripts-wsl/
+!/src/
 
-# Mantém apenas o necessário
-!apps/
-!helm/
-!docs/
-!scripts/
-!monitoring/
+# 🔸 Manter arquivos de documentação e controle
+!.gitignore
 !README.md
-!LICENSE
 !CHANGELOG.md
-!docker-compose.yaml
+!LICENSE
