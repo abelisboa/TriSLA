@@ -1,0 +1,43 @@
+name: 🛰️ TriSLA Helm Label Validator
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate-helm-labels:
+    name: 🧠 Validate Helm Labels Before Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: 🐍 Setup Python (for auxiliary scripts)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies (if any)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y grep coreutils bash
+
+      - name: 🔎 Run TriSLA Helm Label Validator
+        run: |
+          chmod +x scripts/check_helm_labels.sh
+          ./scripts/check_helm_labels.sh || { 
+            echo "❌ Helm label validation failed. Please fix the issues above.";
+            exit 1;
+          }
+
+      - name: ✅ Success confirmation
+        if: success()
+        run: echo "✅ All Helm templates validated successfully — ready for deploy!"
