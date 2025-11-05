@@ -1,11 +1,61 @@
 % =====================================================
-% APÊNDICE H — PLANO DE EXECUÇÃO E LOGS DE OBSERVABILIDADE
+% APÊNDICE H — PLANO DE EXECUÇÃO E LOGS DE OBSERVABILIDADE (PREPARAÇÃO)
 % =====================================================
 \chapter{Plano de Execução e Logs de Observabilidade (Preparação)}
 \label{ap:resultados-observabilidade}
 
-Este apêndice apresenta o plano experimental de coleta e registro de resultados da arquitetura \ac{trisla} a ser executado no ambiente \ac{nasp}.  
-Os artefatos aqui descritos compõem a estrutura metodológica de validação prática.
+Este apêndice apresenta o \textbf{plano experimental} de coleta e registro de resultados da arquitetura \ac{trisla} a ser executado no ambiente \ac{nasp}.  
+Os artefatos aqui descritos compõem a estrutura metodológica de validação prática, ainda em fase de preparação, e deverão ser empregados na etapa de experimentação e análise de resultados (Cap.~7).  
 
-(Conteúdo integral conforme versão enviada — seções 1 a 4 completas)
+Os procedimentos seguem as diretrizes do Apêndice~\ref{ap:observabilidade} e utilizam o pipeline baseado em \textit{OpenTelemetry}, \textit{Prometheus}, \textit{Grafana} e \textit{Kafka}, garantindo observabilidade ponta a ponta e rastreabilidade de eventos.
+
+% ------------------------------------------------------
+\section{Planejamento do Ambiente Experimental}
+\label{sec:contexto-execucao}
+
+A execução ocorrerá no ambiente \ac{nasp}, composto por três nós \textit{worker} e um nó de controle, em configuração compatível com o modelo descrito na Seção~\ref{sec:cenarios-metricas}.  
+Serão implantados contêineres dedicados aos módulos \ac{sem-csmf}, \ac{ml-nsmf}, \ac{bc-nssmf}, \textit{Decision Engine} e \ac{sla-agent-layer}, permitindo a observação integrada do ciclo de \textit{closed-loop assurance}.  
+
+As métricas previstas incluem latência p99, taxa de erro, disponibilidade e indicadores de \ac{xai}.  
+Essas métricas serão comparadas aos \acp{SLO} definidos no Apêndice~\ref{ap:observabilidade}, servindo como referência para a análise quantitativa posterior.
+
+% ------------------------------------------------------
+\section{Modelo de Registro e Coleta}
+\label{sec:coleta-planejada}
+
+Os registros de execução serão exportados via protocolo \textit{OTLP} para o \textit{Prometheus} e visualizados no \textit{Grafana}.  
+A Listagem~\ref{lst:exemplo-log-planejado} ilustra o formato planejado de log em JSON, utilizado para rastrear decisões, métricas e ações corretivas durante o experimento.
+
+\begin{lstlisting}[language=JSON, caption={Exemplo de formato de log planejado para observabilidade da execução.}, label={lst:exemplo-log-planejado}]
+{
+  "timestamp": "2025-08-20T14:32:11Z",
+  "traceId": "<gerado automaticamente>",
+  "module": "bc-nssmf",
+  "metric": { "latencyMs": 176, "thresholdMs": 200 },
+  "decision": "ACCEPT",
+  "action": "notify_agent_core",
+  "slo": "latency_p99",
+  "explanation": "Latencia dentro do limite previsto de 200ms."
+}
+\end{lstlisting}
+
+Este modelo de log servirá para validar a integração entre os módulos de decisão, contrato e agentes federados, assegurando rastreabilidade ponta a ponta durante a execução real dos testes.
+
+% ------------------------------------------------------
+\section{Resultados Esperados e Próximos Passos}
+\label{sec:resultados-esperados}
+
+Os resultados esperados incluem a verificação da estabilidade operacional dos módulos, a conformidade com os \acp{SLO} definidos e a confirmação de que o ciclo de \textit{closed-loop assurance} se completa sem intervenção manual.  
+Após a implantação experimental no \ac{nasp}, os dados coletados substituirão este plano descritivo por métricas reais de desempenho e logs efetivos.  
+
+A versão final deste apêndice será atualizada com:  
+(i) séries temporais extraídas do \textit{Prometheus};  
+(ii) gráficos de \textit{dashboard} do \textit{Grafana}; e  
+(iii) amostras de logs gerados pelos módulos \ac{ml-nsmf}, \ac{bc-nssmf} e \ac{sla-agent-layer}.  
+
+% ------------------------------------------------------
+\section*{Considerações Finais do Apêndice}
+
+O presente apêndice consolida a preparação para a fase de experimentação prática da arquitetura \ac{trisla}.  
+Sua função é estabelecer um protocolo metodológico reprodutível, definindo métricas, ferramentas e formatos de log que garantirão a consistência e a auditabilidade dos resultados quando o ambiente \ac{nasp} estiver totalmente operacional.
 \FloatBarrier
