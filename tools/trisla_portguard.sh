@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================
-# TriSLA NASP — PortGuard Utility (AutoWatch Daemon Version)
+# TriSLA Híbrido — PortGuard Utility (AutoWatch Daemon Version)
 # Autor: Abel Lisboa
 # Última atualização: $(date +"%F")
 # =============================================================
@@ -65,7 +65,7 @@ test_api_health() {
 # Execução principal
 # =============================================================
 
-echo "🚀 TriSLA PortGuard — NASP Auto Recovery Daemon"
+echo "🚀 TriSLA PortGuard — Híbrido Auto Recovery Daemon"
 echo "------------------------------------------------------------"
 
 # 1️⃣ Checa dependências
@@ -129,5 +129,5 @@ if [[ "$1" == "--watch" ]]; then
   done
 fi
 
-echo "🎯 PortGuard concluído com sucesso — ambiente NASP estável!"
+echo "🎯 PortGuard concluído com sucesso — ambiente Híbrido estável!"
 

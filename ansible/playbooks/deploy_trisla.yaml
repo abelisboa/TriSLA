@@ -6,7 +6,7 @@
   vars:
     namespace: "trisla"
     helm_chart_path: "/home/porvir5g/gtp5g/trisla-portal/helm/trisla-portal"
-    values_file: "/home/porvir5g/gtp5g/trisla-portal/docs/config-examples/values-nasp.yaml"
+    values_file: "/home/porvir5g/gtp5g/trisla-portal/docs/config-examples/values-hibrido.yaml"
     backend_image: "ghcr.io/abelisboa/trisla-api:latest"
     frontend_image: "ghcr.io/abelisboa/trisla-ui:latest"
     log_dir: "/home/porvir5g/gtp5g/trisla-portal/ansible/logs"

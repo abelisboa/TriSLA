@@ -1,4 +1,4 @@
-- hosts: nasp
+- hosts: hibrido
   become: yes
   tasks:
     - name: Deploy Fabric Network for TriSLA

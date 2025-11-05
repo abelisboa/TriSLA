@@ -1,7 +1,7 @@
 # ==========================================
-# 🧩 TriSLA Portal — Docker Compose Repair + Hybrid NASP Fix
+# 🧩 TriSLA Portal — Docker Compose Repair + Hybrid Híbrido Fix
 # ==========================================
-# Corrige formatação YAML e garante compatibilidade com modo híbrido NASP.
+# Corrige formatação YAML e garante compatibilidade com modo híbrido Híbrido.
 # ==========================================
 
 echo "🛠️ Repairing docker-compose.yaml..."
@@ -19,7 +19,7 @@ services:
       - "8000:8000"
     environment:
       - TRISLA_MODE=auto
-      - PROM_URL=http://nasp-prometheus.monitoring.svc.cluster.local:9090/api/v1/query
+      - PROM_URL=http://hibrido-prometheus.monitoring.svc.cluster.local:9090/api/v1/query
     depends_on:
       - redis
     networks:

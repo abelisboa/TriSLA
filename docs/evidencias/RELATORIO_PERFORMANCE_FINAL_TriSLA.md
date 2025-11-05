@@ -1,4 +1,4 @@
-# RELATÓRIO DE PERFORMANCE FINAL - TriSLA@NASP
+# RELATÓRIO DE PERFORMANCE FINAL - TriSLA@Híbrido
 ## Análise Detalhada de Recursos e Performance
 
 ### 📊 RESUMO EXECUTIVO

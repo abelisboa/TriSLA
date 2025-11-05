@@ -11,12 +11,12 @@ scrape_configs:
     static_configs:
       - targets: ['trisla-worker:8000']
 
-  - job_name: 'nasp-prometheus'
+  - job_name: 'hibrido-prometheus'
     metrics_path: /metrics
     static_configs:
-      - targets: ['nasp-prometheus.monitoring.svc.cluster.local:9090']
+      - targets: ['hibrido-prometheus.monitoring.svc.cluster.local:9090']
         labels:
-          source: "NASP"
+          source: "Híbrido"
 
   - job_name: 'trisla-local-metrics'
     metrics_path: /metrics

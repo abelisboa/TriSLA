@@ -5,5 +5,5 @@
 | Python | ≥ 3.11 | FastAPI / AI modules |
 | Node | ≥ 18 | React UI build |
 | Redis | 7 | Job queue |
-| Helm | ≥ 3.15 | NASP deployment |
+| Helm | ≥ 3.15 | Híbrido deployment |
 | Kubernetes | 1.28+ | 2 nodes, Calico CNI |

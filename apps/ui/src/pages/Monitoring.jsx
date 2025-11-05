@@ -9,7 +9,7 @@ export default function Monitoring() {
 
   const fetchMetrics = async () => {
     try {
-      const res = await fetch("http://localhost:8000/nasp/metrics")
+      const res = await fetch("http://localhost:8000/hibrido/metrics")
       const json = await res.json()
       if (json.status === "success") {
         const now = new Date().toLocaleTimeString()
@@ -29,7 +29,7 @@ export default function Monitoring() {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-2xl font-bold">TriSLA Portal — NASP Metrics ({mode})</h2>
+      <h2 className="text-2xl font-bold">TriSLA Portal — Híbrido Metrics ({mode})</h2>
       <div className="flex space-x-2">
         <button onClick={() => setStreaming(true)} className="bg-green-500 text-white px-4 py-2 rounded">Start Stream</button>
         <button onClick={() => setStreaming(false)} className="bg-red-500 text-white px-4 py-2 rounded">Stop Stream</button>

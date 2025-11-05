@@ -1,0 +1,12 @@
+# Arquivos privados
+AUDITORIA_ESTRUTURA.md
+RELATORIO_AUDITORIA.md
+CONSOLIDACAO_COMPLETA.md
+LIMPEZA_CONCLUIDA.md
+DEPLOYMENT_STATUS.md
+WORKFLOW_SUMMARY.md
+inventory_local.yml
+local/
+release/
+*.log
+*.bak

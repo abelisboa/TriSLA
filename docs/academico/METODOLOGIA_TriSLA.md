@@ -1,10 +1,10 @@
-# Metodologia de Implementação TriSLA@NASP
+# Metodologia de Implementação TriSLA@Híbrido
 ## Análise Quantitativa e Qualitativa
 
 ### 1. Metodologia Experimental
 - Cenários: URLLC, eMBB, mMTC
 - Métricas: Latência, throughput, confiabilidade
-- Ambiente: Cluster NASP-UNISINOS
+- Ambiente: Cluster Híbrido-UNISINOS
 
 ### 2. Resultados Quantitativos
 - Jobs processados: 25+ (incluindo teste de estresse)
@@ -14,6 +14,6 @@
 
 ### 3. Contribuições Científicas
 - Implementação prática de arquitetura TriSLA
-- Integração com NASP Core
+- Integração com Híbrido Core
 - Observabilidade em tempo real
 - Otimização baseada em métricas

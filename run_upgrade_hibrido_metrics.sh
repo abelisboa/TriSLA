@@ -1,27 +1,27 @@
 # ==========================================
-# 🚀 TriSLA Portal NASP Metrics Integration Upgrade
+# 🚀 TriSLA Portal Híbrido Metrics Integration Upgrade
 # ==========================================
-# Author: Abel Lisboa (TriSLA NASP Project)
-# Purpose: Integrate NASP metrics into TriSLA Portal (Prometheus + REST)
+# Author: Abel Lisboa (TriSLA Híbrido Project)
+# Purpose: Integrate Híbrido metrics into TriSLA Portal (Prometheus + REST)
 # ==========================================
 
-echo "🚀 Starting NASP Metrics Integration upgrade..."
+echo "🚀 Starting Híbrido Metrics Integration upgrade..."
 
 # 1️⃣ Criar pastas necessárias
-mkdir -p apps/api/nasp apps/ui/src/pages apps/ui/src/components/charts
+mkdir -p apps/api/hibrido apps/ui/src/pages apps/ui/src/components/charts
 
-# 2️⃣ Criar endpoint FastAPI para importação de métricas NASP
-cat > apps/api/nasp/metrics.py <<'PYCODE'
+# 2️⃣ Criar endpoint FastAPI para importação de métricas Híbrido
+cat > apps/api/hibrido/metrics.py <<'PYCODE'
 from fastapi import APIRouter
 import httpx
 
-router = APIRouter(prefix="/nasp", tags=["NASP"])
+router = APIRouter(prefix="/hibrido", tags=["Híbrido"])
 
 @router.get("/metrics")
-async def get_nasp_metrics():
-    """Importa métricas reais do NASP via Prometheus API"""
+async def get_hibrido_metrics():
+    """Importa métricas reais do Híbrido via Prometheus API"""
     try:
-        prometheus_url = "http://nasp-prometheus.monitoring.svc.cluster.local:9090/api/v1/query"
+        prometheus_url = "http://hibrido-prometheus.monitoring.svc.cluster.local:9090/api/v1/query"
         metrics = {}
 
         async with httpx.AsyncClient(timeout=5) as client:
@@ -41,18 +41,18 @@ async def get_nasp_metrics():
             r = await client.get(prometheus_url, params={"query": "avg(availability)"})
             metrics["availability"] = r.json()["data"]["result"][0]["value"][1]
 
-        return {"status": "success", "source": "NASP Prometheus", "metrics": metrics}
+        return {"status": "success", "source": "Híbrido Prometheus", "metrics": metrics}
 
     except Exception as e:
         return {"status": "error", "detail": str(e)}
 PYCODE
 
-# 3️⃣ Atualizar main.py da API para incluir o roteador NASP
-if ! grep -q "from nasp import metrics" apps/api/main.py; then
+# 3️⃣ Atualizar main.py da API para incluir o roteador Híbrido
+if ! grep -q "from hibrido import metrics" apps/api/main.py; then
 cat >> apps/api/main.py <<'PYCODE'
 
-# NASP metrics endpoint
-from nasp import metrics
+# Híbrido metrics endpoint
+from hibrido import metrics
 app.include_router(metrics.router)
 PYCODE
 fi
@@ -69,14 +69,14 @@ export default function Monitoring() {
 
   const fetchMetrics = async () => {
     try {
-      const res = await fetch("http://localhost:8000/nasp/metrics")
+      const res = await fetch("http://localhost:8000/hibrido/metrics")
       const json = await res.json()
       if (json.status === "success") {
         const now = new Date().toLocaleTimeString()
         setData(prev => [...prev.slice(-20), { time: now, ...json.metrics }])
       }
     } catch (err) {
-      console.error("Failed to fetch NASP metrics:", err)
+      console.error("Failed to fetch Híbrido metrics:", err)
     }
   }
 
@@ -90,7 +90,7 @@ export default function Monitoring() {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-2xl font-bold">NASP Metrics Monitoring</h2>
+      <h2 className="text-2xl font-bold">Híbrido Metrics Monitoring</h2>
       <div className="flex space-x-2">
         <button onClick={() => setStreaming(true)} className="bg-green-500 text-white px-4 py-2 rounded">Start Stream</button>
         <button onClick={() => setStreaming(false)} className="bg-red-500 text-white px-4 py-2 rounded">Stop Stream</button>
@@ -128,6 +128,6 @@ YAML
 fi
 
 # 6️⃣ Finalização
-echo "✅ NASP Metrics Integration upgrade completed."
+echo "✅ Híbrido Metrics Integration upgrade completed."
 echo "➡️  Access http://localhost:5173/monitoring"
-echo "➡️  Check API metrics at http://localhost:8000/nasp/metrics"
+echo "➡️  Check API metrics at http://localhost:8000/hibrido/metrics"

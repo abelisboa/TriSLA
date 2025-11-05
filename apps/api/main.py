@@ -5,7 +5,7 @@
 # Data: 2025-10-28
 # Descrição:
 #   Backend unificado do TriSLA Portal (v3.2), com exportador
-#   de métricas Prometheus embutido e suporte NASP nativo.
+#   de métricas Prometheus embutido e suporte Híbrido nativo.
 #   Integra endpoints de controle de slices e observabilidade
 #   para os módulos SEM-NSMF, ML-NSMF e BC-NSSMF.
 # =============================================================
@@ -13,7 +13,7 @@
 """
 Módulo principal da TriSLA Portal API.
 Responsável pela orquestração semântica e pela exposição de métricas
-Prometheus compatíveis com o Prometheus Operator no ambiente NASP.
+Prometheus compatíveis com o Prometheus Operator no ambiente Híbrido.
 """
 
 from fastapi import FastAPI, WebSocket
@@ -51,7 +51,7 @@ queue = Queue(connection=redis_conn)
 def health():
     """
     Retorna o estado operacional do backend.
-    Usado por probes do Kubernetes e scripts de validação NASP.
+    Usado por probes do Kubernetes e scripts de validação Híbrido.
     """
     return {"status": "TriSLA Portal API running", "phase": 3}
 
@@ -112,7 +112,7 @@ trisla_cpu_load = Gauge('trisla_cpu_load', 'mMTC CPU load (%)')
 def update_metrics():
     """
     Atualiza métricas TriSLA de forma simulada a cada 10 segundos.
-    Em ambiente NASP, estas métricas são substituídas por coletas reais.
+    Em ambiente Híbrido, estas métricas são substituídas por coletas reais.
     """
     while True:
         # URLLC
@@ -143,7 +143,7 @@ threading.Thread(target=update_metrics, daemon=True).start()
 def metrics():
     """
     Exporta as métricas TriSLA no formato Prometheus.
-    Endpoint coletado pelo Prometheus Operator no NASP.
+    Endpoint coletado pelo Prometheus Operator no Híbrido.
     """
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 

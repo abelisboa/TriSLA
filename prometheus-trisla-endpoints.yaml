@@ -6,7 +6,7 @@ metadata:
 data:
   additional-scrape-configs.yaml: |
     # =========================================================
-    # TriSLA@NASP - Configuração Oficial de Scrape Prometheus
+    # TriSLA@Híbrido - Configuração Oficial de Scrape Prometheus
     # Fonte: Referência Técnica TriSLA (Apêndice A, Cap. 6–7)
     # =========================================================
 
@@ -20,7 +20,7 @@ data:
           target_label: instance
           replacement: "trisla-portal"
 
-    - job_name: 'nasp-prometheus'
+    - job_name: 'hibrido-prometheus'
       metrics_path: /metrics
       scrape_interval: 30s
       static_configs:
@@ -28,4 +28,4 @@ data:
       relabel_configs:
         - source_labels: [__address__]
           target_label: instance
-          replacement: "nasp-prometheus"
+          replacement: "hibrido-prometheus"

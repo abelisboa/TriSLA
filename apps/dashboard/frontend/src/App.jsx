@@ -24,7 +24,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>🧩 TriSLA Dashboard v3.2.4</h1>
-        <p>Monitoramento e Observabilidade NASP</p>
+        <p>Monitoramento e Observabilidade Híbrido</p>
       </header>
       <main className="app-main">
         {status.loading && <p>Carregando...</p>}

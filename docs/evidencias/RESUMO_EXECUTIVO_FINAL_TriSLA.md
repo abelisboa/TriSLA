@@ -1,8 +1,8 @@
-# RESUMO EXECUTIVO FINAL - TriSLA@NASP
+# RESUMO EXECUTIVO FINAL - TriSLA@Híbrido
 ## SUCESSO ABSOLUTO NA IMPLEMENTAÇÃO E VALIDAÇÃO
 
 ### 🎯 MISSÃO CUMPRIDA
-Sistema TriSLA implementado com **SUCESSO ABSOLUTO** no cluster NASP-UNISINOS.
+Sistema TriSLA implementado com **SUCESSO ABSOLUTO** no cluster Híbrido-UNISINOS.
 
 ### 📊 RESULTADOS QUANTITATIVOS
 - **Taxa de sucesso**: 100% (8/8 jobs)
@@ -20,7 +20,7 @@ Sistema TriSLA implementado com **SUCESSO ABSOLUTO** no cluster NASP-UNISINOS.
 
 ### 🎓 CONTRIBUIÇÕES CIENTÍFICAS
 1. Implementação prática de TriSLA
-2. Integração com NASP Core
+2. Integração com Híbrido Core
 3. Observabilidade em tempo real
 4. Validação experimental de cenários 5G
 5. Sistema de filas para processamento assíncrono
@@ -31,5 +31,5 @@ Sistema TriSLA implementado com **SUCESSO ABSOLUTO** no cluster NASP-UNISINOS.
 
 **Responsável**: Abel José Rodrigues Lisboa  
 **Data**: 29/10/2025  
-**Cluster**: NASP-UNISINOS  
+**Cluster**: Híbrido-UNISINOS  
 **Resultado**: ✅ SUCESSO ABSOLUTO

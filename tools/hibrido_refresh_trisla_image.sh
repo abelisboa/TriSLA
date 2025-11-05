@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================
-# TriSLA NASP — Image Refresh & Redeploy Utility
+# TriSLA Híbrido — Image Refresh & Redeploy Utility
 # Autor: Abel Lisboa
 # Atualizado: 2025-10-27
 # =============================================================
@@ -11,7 +11,7 @@ RELEASE="trisla-portal"
 GHCR_USER="${GHCR_USER:-abelisboa}"
 GHCR_TOKEN="${GHCR_TOKEN:-}"
 CHART_PATH="./helm/trisla-portal"
-VALUES_PATH="./docs/config-examples/values-nasp.yaml"
+VALUES_PATH="./docs/config-examples/values-hibrido.yaml"
 
 # Cores ANSI
 GREEN='\033[1;32m'
@@ -20,12 +20,12 @@ RED='\033[1;31m'
 BLUE='\033[1;34m'
 NC='\033[0m'
 
-echo -e "${BLUE}🚀 TriSLA NASP Refresh Utility${NC}"
+echo -e "${BLUE}🚀 TriSLA Híbrido Refresh Utility${NC}"
 echo "------------------------------------------------------------"
 
 # 1️⃣ Verificação inicial
 if ! command -v nerdctl >/dev/null 2>&1; then
-  echo -e "${RED}❌ nerdctl não encontrado. Execute em um node NASP com containerd.${NC}"
+  echo -e "${RED}❌ nerdctl não encontrado. Execute em um node Híbrido com containerd.${NC}"
   exit 1
 fi
 if ! command -v helm >/dev/null 2>&1; then
@@ -94,7 +94,7 @@ FRONTEND_PORT=$(kubectl get svc -n "$NAMESPACE" trisla-portal -o jsonpath='{.spe
 BACKEND_PORT=$(kubectl get svc -n "$NAMESPACE" trisla-portal -o jsonpath='{.spec.ports[?(@.name=="backend")].nodePort}')
 
 echo "------------------------------------------------------------"
-echo -e "${GREEN}🎯 TriSLA Portal atualizado com sucesso no NASP!${NC}"
+echo -e "${GREEN}🎯 TriSLA Portal atualizado com sucesso no Híbrido!${NC}"
 echo -e "🌐 Frontend: ${BLUE}http://${NODE_IP}:${FRONTEND_PORT}/${NC}"
 echo -e "⚙️  Backend:  ${BLUE}http://${NODE_IP}:${BACKEND_PORT}/api/v1/health${NC}"
 echo "------------------------------------------------------------"

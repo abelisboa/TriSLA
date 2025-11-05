@@ -10,7 +10,7 @@ data:
       "uid": "trisla-dashboard",
       "title": "TriSLA Dashboard v3.2.4",
       "refresh": "10s",
-      "tags": ["TriSLA","NASP","Monitoring"],
+      "tags": ["TriSLA","Híbrido","Monitoring"],
       "schemaVersion": 36,
       "version": 1,
       "panels": [

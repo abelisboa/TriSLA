@@ -1,5 +1,5 @@
 ---
-- name: 🚀 Deploy TriSLA Portal on NASP (Auto-detect Local or Remote)
+- name: 🚀 Deploy TriSLA Portal on Híbrido (Auto-detect Local or Remote)
   hosts: localhost
   connection: local
   become: yes
@@ -8,7 +8,7 @@
     trisla_namespace: trisla
     release_name: trisla-portal
     helm_chart_path: ./helm/trisla-portal/
-    values_file: ./docs/config-examples/values-nasp.yaml
+    values_file: ./docs/config-examples/values-hibrido.yaml
     helm_timeout: 900  # 15 min
     ansible_ssh_common_args: '-o ServerAliveInterval=30 -o ServerAliveCountMax=60 -o TCPKeepAlive=yes -o Compression=yes'
 

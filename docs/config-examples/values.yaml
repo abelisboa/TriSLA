@@ -1,5 +1,5 @@
 # ==========================================
-# TriSLA Portal - NASP Deployment Values
+# TriSLA Portal - Híbrido Deployment Values
 # ==========================================
 
 backend:
@@ -45,7 +45,7 @@ replicaCount: 1
 labels:
   app: trisla-portal
 annotations:
-  maintainer: "TriSLA NASP Project (Abel Lisboa)"
+  maintainer: "TriSLA Híbrido Project (Abel Lisboa)"
 
 imagePullSecrets:
   - name: ghcr-creds

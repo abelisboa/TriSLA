@@ -11,7 +11,7 @@ router = APIRouter(prefix="/prometheus", tags=["Prometheus"])
 
 PROMETHEUS_URL = os.getenv(
     "PROM_URL", 
-    "http://nasp-prometheus.monitoring.svc.cluster.local:9090"
+    "http://hibrido-prometheus.monitoring.svc.cluster.local:9090"
 ).replace("/api/v1/query", "")
 
 async def query_prometheus(query: str) -> List[Dict]:

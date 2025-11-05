@@ -1,4 +1,4 @@
-# ÍNDICE DE ARQUIVOS PARA DISSERTAÇÃO - TriSLA@NASP
+# ÍNDICE DE ARQUIVOS PARA DISSERTAÇÃO - TriSLA@Híbrido
 
 ## 📋 ESTRUTURA DE ARQUIVOS
 
@@ -36,5 +36,5 @@
 
 **Data**: 29/10/2025  
 **Responsável**: Abel José Rodrigues Lisboa  
-**Cluster**: NASP-UNISINOS  
+**Cluster**: Híbrido-UNISINOS  
 **Resultado**: ✅ SUCESSO ABSOLUTO

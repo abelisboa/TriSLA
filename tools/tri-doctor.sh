@@ -5,7 +5,7 @@
 set -euo pipefail
 
 CHART_DIR="./helm/trisla-portal"
-VALUES_FILE="./docs/config-examples/values-nasp.yaml"
+VALUES_FILE="./docs/config-examples/values-hibrido.yaml"
 NAMESPACE="trisla"
 
 echo ""
@@ -51,9 +51,9 @@ fi
 echo ""
 
 # ------------------------------------------------------
-# 3️⃣ Checagem de coerência values-nasp.yaml
+# 3️⃣ Checagem de coerência values-hibrido.yaml
 # ------------------------------------------------------
-echo "3) Coerência de values-nasp.yaml"
+echo "3) Coerência de values-hibrido.yaml"
 grep -q "8000" "$VALUES_FILE" && echo "✅ Backend.port = 8000" || echo "⚠️  backend.service.port não definido corretamente"
 grep -q "5173" "$VALUES_FILE" && echo "✅ Frontend.port = 5173" || echo "⚠️  frontend.service.port diferente de 5173"
 grep -q "ghcr-creds" "$VALUES_FILE" && echo "✅ imagePullSecrets encontrado" || echo "⚠️  imagePullSecrets ausente"

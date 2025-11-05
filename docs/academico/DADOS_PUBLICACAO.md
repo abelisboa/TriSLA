@@ -1,4 +1,4 @@
-# Dados para Publicação Científica - TriSLA@NASP
+# Dados para Publicação Científica - TriSLA@Híbrido
 
 ## Métricas Coletadas
 - Latência média: 5 segundos
@@ -20,6 +20,6 @@
 
 ## Contribuições
 - Implementação prática de TriSLA
-- Integração com NASP Core
+- Integração com Híbrido Core
 - Observabilidade em tempo real
 - Otimização baseada em métricas

@@ -1,8 +1,8 @@
-# Relatório Final - TriSLA@NASP
+# Relatório Final - TriSLA@Híbrido
 ## Implementação, Testes e Observabilidade
 
 ### Resumo Executivo
-Sistema TriSLA implementado com sucesso no cluster NASP-UNISINOS.
+Sistema TriSLA implementado com sucesso no cluster Híbrido-UNISINOS.
 
 ### Work Units Executadas
 - WU-005: Avaliação Experimental ✅

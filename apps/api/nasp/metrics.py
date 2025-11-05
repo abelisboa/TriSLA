@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 import httpx, os, random
 
-router = APIRouter(prefix="/nasp", tags=["NASP"])
+router = APIRouter(prefix="/hibrido", tags=["Híbrido"])
 
 @router.get("/metrics")
-async def get_nasp_metrics():
-    """Importa métricas do NASP, ou simula se offline (modo híbrido)."""
+async def get_hibrido_metrics():
+    """Importa métricas do Híbrido, ou simula se offline (modo híbrido)."""
     metrics = {}
     env_mode = os.getenv("TRISLA_MODE", "auto")
-    prometheus_url = os.getenv("PROM_URL", "http://nasp-prometheus.monitoring.svc.cluster.local:9090/api/v1/query")
+    prometheus_url = os.getenv("PROM_URL", "http://hibrido-prometheus.monitoring.svc.cluster.local:9090/api/v1/query")
 
     async def fetch_real_metrics():
         async with httpx.AsyncClient(timeout=5) as client:
@@ -34,13 +34,13 @@ async def get_nasp_metrics():
         if env_mode == "local":
             metrics = await generate_simulated()
             mode = "Local Simulation"
-        elif env_mode == "nasp":
+        elif env_mode == "hibrido":
             metrics = await fetch_real_metrics()
-            mode = "NASP (Real Data)"
+            mode = "Híbrido (Real Data)"
         else:
             try:
                 metrics = await fetch_real_metrics()
-                mode = "NASP (Auto)"
+                mode = "Híbrido (Auto)"
             except Exception:
                 metrics = await generate_simulated()
                 mode = "Local Fallback"

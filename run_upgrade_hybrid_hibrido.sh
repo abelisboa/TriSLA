@@ -1,8 +1,8 @@
 # ==========================================
-# ⚙️ TriSLA Portal Hybrid NASP Integration
+# ⚙️ TriSLA Portal Hybrid Híbrido Integration
 # ==========================================
-# Author: Abel Lisboa (TriSLA NASP Project)
-# Purpose: Add hybrid auto-detection mode (local ↔ NASP) + fix compose
+# Author: Abel Lisboa (TriSLA Híbrido Project)
+# Purpose: Add hybrid auto-detection mode (local ↔ Híbrido) + fix compose
 # ==========================================
 
 echo "🚀 Starting TriSLA Portal Hybrid Mode upgrade..."
@@ -22,19 +22,19 @@ YAML
 fi
 echo "✅ docker-compose.yaml fix applied."
 
-# 2️⃣ Atualizar endpoint NASP com modo híbrido
-cat > apps/api/nasp/metrics.py <<'PYCODE'
+# 2️⃣ Atualizar endpoint Híbrido com modo híbrido
+cat > apps/api/hibrido/metrics.py <<'PYCODE'
 from fastapi import APIRouter
 import httpx, os, random
 
-router = APIRouter(prefix="/nasp", tags=["NASP"])
+router = APIRouter(prefix="/hibrido", tags=["Híbrido"])
 
 @router.get("/metrics")
-async def get_nasp_metrics():
-    """Importa métricas do NASP, ou simula se offline (modo híbrido)."""
+async def get_hibrido_metrics():
+    """Importa métricas do Híbrido, ou simula se offline (modo híbrido)."""
     metrics = {}
     env_mode = os.getenv("TRISLA_MODE", "auto")
-    prometheus_url = os.getenv("PROM_URL", "http://nasp-prometheus.monitoring.svc.cluster.local:9090/api/v1/query")
+    prometheus_url = os.getenv("PROM_URL", "http://hibrido-prometheus.monitoring.svc.cluster.local:9090/api/v1/query")
 
     async def fetch_real_metrics():
         async with httpx.AsyncClient(timeout=5) as client:
@@ -60,13 +60,13 @@ async def get_nasp_metrics():
         if env_mode == "local":
             metrics = await generate_simulated()
             mode = "Local Simulation"
-        elif env_mode == "nasp":
+        elif env_mode == "hibrido":
             metrics = await fetch_real_metrics()
-            mode = "NASP (Real Data)"
+            mode = "Híbrido (Real Data)"
         else:
             try:
                 metrics = await fetch_real_metrics()
-                mode = "NASP (Auto)"
+                mode = "Híbrido (Auto)"
             except Exception:
                 metrics = await generate_simulated()
                 mode = "Local Fallback"
@@ -76,7 +76,7 @@ async def get_nasp_metrics():
         return {"status": "error", "detail": str(e)}
 PYCODE
 
-echo "✅ Hybrid NASP metrics API ready."
+echo "✅ Hybrid Híbrido metrics API ready."
 
 # 3️⃣ Atualizar página Monitoring.jsx com detecção automática
 cat > apps/ui/src/pages/Monitoring.jsx <<'JSX'
@@ -91,7 +91,7 @@ export default function Monitoring() {
 
   const fetchMetrics = async () => {
     try {
-      const res = await fetch("http://localhost:8000/nasp/metrics")
+      const res = await fetch("http://localhost:8000/hibrido/metrics")
       const json = await res.json()
       if (json.status === "success") {
         const now = new Date().toLocaleTimeString()
@@ -111,7 +111,7 @@ export default function Monitoring() {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-2xl font-bold">TriSLA Portal — NASP Metrics ({mode})</h2>
+      <h2 className="text-2xl font-bold">TriSLA Portal — Híbrido Metrics ({mode})</h2>
       <div className="flex space-x-2">
         <button onClick={() => setStreaming(true)} className="bg-green-500 text-white px-4 py-2 rounded">Start Stream</button>
         <button onClick={() => setStreaming(false)} className="bg-red-500 text-white px-4 py-2 rounded">Stop Stream</button>
@@ -141,11 +141,11 @@ if ! grep -q "TRISLA_MODE" docker-compose.yaml; then
 cat >> docker-compose.yaml <<'YAML'
     environment:
       - TRISLA_MODE=auto
-      - PROM_URL=http://nasp-prometheus.monitoring.svc.cluster.local:9090/api/v1/query
+      - PROM_URL=http://hibrido-prometheus.monitoring.svc.cluster.local:9090/api/v1/query
 YAML
 fi
 
 # 5️⃣ Finalização
-echo "✅ Hybrid NASP upgrade completed!"
+echo "✅ Hybrid Híbrido upgrade completed!"
 echo "➡️  Access http://localhost:5173/monitoring"
-echo "➡️  API: http://localhost:8000/nasp/metrics"
+echo "➡️  API: http://localhost:8000/hibrido/metrics"
