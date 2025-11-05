@@ -1,0 +1,111 @@
+% =====================================================
+% APÊNDICE C — CONTRATOS DE API E EXEMPLOS
+% =====================================================
+\chapter{Contratos de API e Exemplos}
+\label{ap:schemas}
+
+Este apêndice reúne contratos de API em formatos \textit{OpenAPI} (REST), \textit{Protobuf} (gRPC) e \textit{Kafka Event Schema}, utilizados pelas interfaces internas I-* catalogadas no Apêndice~\ref{ap:catalogo-interfaces}.  
+
+\section{REST (OpenAPI)}
+\label{ap:schemas-rest}
+
+\begin{lstlisting}[language=YAML, caption={Esboço OpenAPI (I-06) para reconfiguração por agente.}]
+openapi: 3.0.3
+info:
+  title: TriSLA Agent Control API
+  version: 1.0.0
+paths:
+  /v1/agent/{domain}/reconfigure:
+    post:
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema: { type: string, enum: [ran, core, tn] }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReconfRequest'
+      responses:
+        '200': { description: Accepted }
+components:
+  schemas:
+    ReconfRequest:
+      type: object
+      properties:
+        policyId: { type: string }
+        params: { type: object, additionalProperties: true }
+        deadlineMs: { type: integer, minimum: 0 }
+\end{lstlisting}
+
+\begin{lstlisting}[language=YAML, caption={Esboço OpenAPI (I-07) TriSLA–NASP para integração experimental.}]
+openapi: 3.0.3
+info:
+  title: TriSLA-NASP Integration API
+  version: 1.0.0
+paths:
+  /v1/nasp/telemetry:
+    post:
+      summary: Recebe métricas e eventos de SLA do ambiente NASP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NaspTelemetry'
+      responses:
+        '200': { description: Accepted }
+components:
+  schemas:
+    NaspTelemetry:
+      type: object
+      properties:
+        traceId: { type: string }
+        module: { type: string, enum: [sem, ml, bc, agent] }
+        metric: { type: object }
+        timestamp: { type: string, format: date-time }
+\end{lstlisting}
+
+\section{gRPC (Protobuf)}
+\label{ap:schemas-grpc}
+
+\begin{lstlisting}[language=protobuf, caption={Esboço Protobuf (I-01/I-02/I-04).}]
+syntax = "proto3";
+package trisla.v1;
+
+message EvaluateIntentRequest {
+  string intentText = 1;
+}
+message EvaluateIntentReply {
+  string nestJson = 1; // NEST serializado
+}
+
+message RiskReport {
+  string nsiId = 1;
+  double riskScore = 2; // 0..1
+  string explanation = 3; // XAI resumo
+}
+
+service SemCsmfService {
+  rpc EvaluateIntent(EvaluateIntentRequest) returns (EvaluateIntentReply);
+}
+service DecisionEngineService {
+  rpc CreateContract(EvaluateIntentReply) returns (google.protobuf.Empty);
+}
+\end{lstlisting}
+
+\section{Eventos (Kafka)}
+\label{ap:schemas-kafka}
+
+\begin{lstlisting}[language=JSON, caption={Evento de risco (I-03/I-05) - exemplo JSON.}]
+{
+  "eventType": "risk.report",
+  "nsiId": "nsi-001",
+  "riskScore": 0.82,
+  "features": { "utilization": 0.91, "latencyP95": 18.3 },
+  "traceId": "b3b6f7c9d4...",
+  "ts": "2025-08-20T10:22:31Z"
+}
+\end{lstlisting}
+\FloatBarrier
