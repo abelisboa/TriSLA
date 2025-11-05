@@ -1,0 +1,29 @@
+% =====================================================
+% APÊNDICE B — MAPEAMENTO NWDAF ↔ NASP
+% =====================================================
+\chapter{Mapeamento Compatível NWDAF $\leftrightarrow$ NASP}
+\label{ap:nwdaf-nasp}
+
+Este apêndice apresenta o mapeamento dos artefatos analíticos compatíveis entre a função \ac{nwdaf}, definida pelo \ac{3gpp}, e a implementação experimental \ac{nasp}.  
+O objetivo é preservar equivalência semântica suficiente para alimentar os módulos \ac{ml-nsmf} e \textit{Decision Engine}.
+
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{L{2.8cm} L{3.6cm} L{2.0cm} L{2.3cm} L{1.8cm} L{2.1cm}}
+\toprule
+\textbf{Artefato (conceito)} & \textbf{Endpoint/Tópico NASP} & \textbf{Método} & \textbf{Schema ref.} & \textbf{Janela} & \textbf{SLO (meta)} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Artefato (conceito)} & \textbf{Endpoint/Tópico NASP} & \textbf{Método} & \textbf{Schema ref.} & \textbf{Janela} & \textbf{SLO (meta)} \\
+\midrule
+\endhead
+Carga NSI (\textit{nsi-load}) & \texttt{/analytics/nsi-load} & GET & \S\ref{ap:schemas-rest} & 1\,min & p99 $\leq$ 300\,ms \\
+Risco de SLA (\textit{sla-risk}) & \texttt{/analytics/sla-risk} & GET & \S\ref{ap:schemas-rest} & 1\,min & p99 $\leq$ 300\,ms \\
+Sustentabilidade QoS & \texttt{/analytics/qos-sustain} & GET & \S\ref{ap:schemas-rest} & 5\,min & p99 $\leq$ 400\,ms \\
+Padrões de mobilidade (agg) & \texttt{kafka://mobility.agg} & Pub/Sub & \S\ref{ap:schemas-kafka} & 5\,min & atraso $\leq$ 2\,s \\
+Detecção de anomalias & \texttt{kafka://anomaly.event} & Pub/Sub & \S\ref{ap:schemas-kafka} & evento & atraso $\leq$ 1\,s \\
+\bottomrule
+\end{longtable}
+}
+\FloatBarrier
