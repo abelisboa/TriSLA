@@ -1,0 +1,9 @@
+apiVersion: nasp.unisinos/v1
+kind: NetworkSlice
+metadata: {name: {{ slice_id }} }
+spec:
+  type: {{ slice_type }}
+  qos:
+    gbr_dl: {{ gbr_dl }}
+    gbr_ul: {{ gbr_ul }}
+    delay: {{ delay }}

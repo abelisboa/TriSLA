@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-portal
+  labels:
+    app: trisla-portal
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: trisla-portal
+  template:
+    metadata:
+      labels:
+        app: trisla-portal
+        {{- with .Values.labels }}
+        {{ toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.annotations }}
+      annotations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      # Image Pull Secrets (configure conforme necessário)
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      containers:
+        # =========================
+        # Backend — TriSLA API
+        # =========================
+        - name: trisla-api
+          image: "{{ .Values.backend.image }}"
+          imagePullPolicy: {{ .Values.backend.pullPolicy | default "IfNotPresent" }}
+          command: ["uvicorn"]
+          args: ["main:app", "--host", "0.0.0.0", "--port", "8000"]
+          ports:
+            - containerPort: {{ .Values.backend.containerPort | default 8000 }}
+              protocol: TCP
+          env:
+            {{- range $k, $v := .Values.backend.env }}
+            - name: {{ $k }}
+              value: "{{ $v }}"
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: {{ .Values.backend.containerPort | default 8000 }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: {{ .Values.backend.containerPort | default 8000 }}
+            initialDelaySeconds: 40
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
+
+        # =========================
+        # Frontend — TriSLA UI (Nginx)
+        # =========================
+        - name: trisla-ui
+          image: "{{ .Values.frontend.image }}"
+          imagePullPolicy: {{ .Values.frontend.pullPolicy | default "IfNotPresent" }}
+          command: ["/bin/sh","-c"]
+          args: ["nginx -g 'daemon off;'"]
+          ports:
+            - containerPort: {{ .Values.frontend.containerPort | default 80 }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.frontend.containerPort | default 80 }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.frontend.containerPort | default 80 }}
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+
+        # =========================
+        # Redis Sidecar
+        # =========================
+        - name: redis
+          image: {{ .Values.redis.image | default "redis:7.4.6-alpine" }}
+          imagePullPolicy: {{ .Values.redis.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: {{ .Values.redis.containerPort | default 6379 }}
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "0.2"
+              memory: "256Mi"
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.redis.containerPort | default 6379 }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.redis.containerPort | default 6379 }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+
+        # =========================
+        # RQ Worker
+        # =========================
+        - name: rq-worker
+          image: "{{ .Values.rqWorker.image }}"
+          imagePullPolicy: {{ .Values.rqWorker.pullPolicy | default "IfNotPresent" }}
+          command: {{ .Values.rqWorker.command }}
+          args: {{ .Values.rqWorker.args }}
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+          resources:
+            limits:
+              cpu: "0.3"
+              memory: "256Mi"
+            requests:
+              cpu: "0.1"
+              memory: "128Mi"

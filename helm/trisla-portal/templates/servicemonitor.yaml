@@ -1,0 +1,54 @@
+# ======================================================================
+# ServiceMonitor — TriSLA Portal (corrigido v3.5)
+# ----------------------------------------------------------------------
+# Corrige conflito de nome fixo "trisla-portal-servicemonitor"
+# Substituído por nome dinâmico baseado no release e namespace Helm
+# Garante compatibilidade com Prometheus Operator (monitoring.coreos.com/v1)
+# ======================================================================
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "trisla-portal.fullname" . }}-servicemonitor-{{ .Release.Revision }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ include "trisla-portal.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "monitoring"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "trisla-portal.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: http
+      interval: 15s
+      scrapeTimeout: 10s
+      path: /metrics
+      scheme: http
+      honorLabels: true
+      metricRelabelings:
+        - action: replace
+          regex: (.*)
+          replacement: "{{ .Release.Name }}"
+          targetLabel: release
+  jobLabel: {{ include "trisla-portal.name" . }}
+  sampleLimit: 10000
+  targetLimit: 10
+  namespaceSelector:
+    any: false
+  attachMetadata:
+    node: false
+
+# ======================================================================
+# Notas:
+# - O nome dinâmico inclui o número da revisão Helm (garante unicidade).
+# - Caso queira nomes mais estáveis, remova "-{{ .Release.Revision }}".
+# - Compatível com Prometheus Operator >= v0.67.
+# ======================================================================

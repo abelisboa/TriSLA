@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-additional-scrape-configs
+  namespace: monitoring
+data:
+  additional-scrape-configs.yaml: |
+    # =========================================================
+    # TriSLA@NASP - Configuração Oficial de Scrape Prometheus
+    # Fonte: Referência Técnica TriSLA (Apêndice A, Cap. 6–7)
+    # =========================================================
+
+    - job_name: 'trisla-portal'
+      metrics_path: /metrics
+      scrape_interval: 10s
+      static_configs:
+        - targets: ['trisla-portal.trisla.svc.cluster.local:8000']
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: instance
+          replacement: "trisla-portal"
+
+    - job_name: 'nasp-prometheus'
+      metrics_path: /metrics
+      scrape_interval: 30s
+      static_configs:
+        - targets: ['prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090']
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: instance
+          replacement: "nasp-prometheus"

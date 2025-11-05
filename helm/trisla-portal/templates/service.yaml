@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-portal
+  labels:
+    app: trisla-portal
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ default "NodePort" .Values.service.type }}
+  selector:
+    app: trisla-portal
+  ports:
+    # ===========================
+    # Backend (FastAPI)
+    # ===========================
+    - name: backend
+      protocol: TCP
+      port: {{ default 8000 (index .Values.service.ports 0).port }}
+      targetPort: {{ default 8000 (index .Values.service.ports 0).targetPort }}
+      nodePort: {{ default 30800 (index .Values.service.ports 0).nodePort }}
+
+    # ===========================
+    # Frontend (UI/Nginx)
+    # ===========================
+    - name: frontend
+      protocol: TCP
+      port: {{ default 5173 (index .Values.service.ports 1).port }}
+      targetPort: {{ default 80 (index .Values.service.ports 1).targetPort }}
+      nodePort: {{ default 30173 (index .Values.service.ports 1).nodePort }}

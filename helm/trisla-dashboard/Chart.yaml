@@ -1,0 +1,7 @@
+apiVersion: v2
+name: trisla-dashboard
+description: Helm chart for TriSLA Dashboard (frontend + backend + observability)
+version: 3.2.4
+appVersion: "3.2.4"
+
+
