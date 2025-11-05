@@ -1,27 +1,23 @@
 # ============================================================
-# .gitignore — Proteção de conteúdo interno TriSLA (v3.3.4)
+# .gitignore — Publicação acadêmica TriSLA v3.3.4
 # ============================================================
-
-# 🔧 Scripts e automação
 *.sh
 *.ps1
 *.yaml
 *.yml
-
-# 🔐 Inventários e variáveis sensíveis
 inventory
-ansible/*
-helm/*
-nasp/*
-monitoring/*
-templates/*
-tools/*
-apps/*
-scripts/*
-
-# 📦 Logs e arquivos temporários
+ansible/
+helm/
+monitoring/
+nasp/
+tools/
+apps/
+scripts/
+templates/
+__pycache__/
 *.log
 *.tmp
 *.bak
-__pycache__/
-*.swp
+# Permitidos
+!docs/
+!README.md
