@@ -1,0 +1,109 @@
+% =====================================================
+% APÊNDICE E — DIRETRIZES DE OBSERVABILIDADE E SLOs
+% =====================================================
+\chapter{Diretrizes de Observabilidade e SLOs}
+\label{ap:observabilidade}
+
+A arquitetura \ac{trisla} implementa um plano de observabilidade unificado baseado no padrão \textit{OpenTelemetry} (OTLP), abrangendo \textit{traces}, \textit{logs} e métricas em todos os domínios de rede.  
+A observabilidade é fundamental para a garantia de \acp{sla}, permitindo o rastreamento ponta a ponta de fluxos e a detecção de anomalias.
+
+\section{Configuração do Pipeline}
+\begin{lstlisting}[language=YAML, caption={Configuração mínima do OpenTelemetry Collector.}]
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:9464"
+  logging: {}
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [logging]
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheus, logging]
+\end{lstlisting}
+
+\section{Consultas e Indicadores}
+\begin{lstlisting}[language=bash, caption={Consultas PromQL para latência e taxa de erro.}]
+# Latencia p99 por interface
+histogram_quantile(0.99, sum(rate(trisla_request_duration_bucket[5m])) by (le, interface))
+
+# Taxa de erro por interface
+sum(rate(trisla_requests_total{status=~"5.."}[5m])) by (interface) /
+sum(rate(trisla_requests_total[5m])) by (interface)
+\end{lstlisting}
+
+\section{SLOs por Interface}
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{L{1.6cm} L{2.4cm} L{2.2cm} L{2.8cm} L{4.0cm}}
+\toprule
+\textbf{Interface} & \textbf{Latência p99} & \textbf{Erro máx.} & \textbf{Disponibilidade} & \textbf{Métricas/Traços mínimos} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Interface} & \textbf{Latência p99} & \textbf{Erro máx.} & \textbf{Disponibilidade} & \textbf{Métricas/Traços mínimos} \\
+\midrule
+\endhead
+I-01 & $\leq$ 100\,ms & $\leq$ 0.1\% & $\geq$ 99.9\% & \texttt{trisla.req.duration}, \texttt{trisla.req.error}, traceId \\
+I-02 & $\leq$ 150\,ms & $\leq$ 0.1\% & $\geq$ 99.9\% & idem \\
+I-03 & atraso $\leq$ 1\,s & perda $\leq$ 0.1\% & $\geq$ 99.9\% & \texttt{trisla.event.delay}, \texttt{trisla.event.loss}, traceId \\
+I-04 & $\leq$ 200\,ms & $\leq$ 0.1\% & $\geq$ 99.9\% & \texttt{trisla.req.duration}, \texttt{trisla.req.error} \\
+I-05 & atraso $\leq$ 2\,s & perda $\leq$ 0.5\% & $\geq$ 99.5\% & \texttt{trisla.event.delay}, \texttt{trisla.event.loss} \\
+I-06 & $\leq$ 200\,ms & $\leq$ 0.5\% & $\geq$ 99.5\% & \texttt{trisla.req.duration}, \texttt{trisla.req.error} \\
+I-07 & $\leq$ 300\,ms & $\leq$ 0.5\% & $\geq$ 99.5\% & \texttt{trisla.telemetry.status}, \texttt{trisla.telemetry.latency} \\
+\bottomrule
+\end{longtable}
+}
+
+\section{Métricas Específicas dos Agentes Federados}
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{L{3.2cm} L{4.5cm} L{7.0cm}}
+\toprule
+\textbf{Agente} & \textbf{Métrica OTLP/Prometheus} & \textbf{Descrição} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Agente} & \textbf{Métrica OTLP/Prometheus} & \textbf{Descrição} \\
+\midrule
+\endhead
+\textbf{Agent-RAN} &
+\texttt{trisla\_ran\_prb\_utilization} &
+Taxa de utilização de PRBs por célula; indica eficiência de alocação. \\
+&
+\texttt{trisla\_ran\_tx\_power\_dbm} &
+Potência média de transmissão aplicada após reconfiguração. \\
+&
+\texttt{trisla\_ran\_qos\_profile\_active} &
+Identificador do perfil de QoS em uso. \\ \midrule
+\textbf{Agent-Transport} &
+\texttt{trisla\_transport\_bw\_usage} &
+Uso médio da largura de banda por enlace. \\
+&
+\texttt{trisla\_transport\_latency\_ms} &
+Latência média observada por enlace. \\
+&
+\texttt{trisla\_transport\_priority\_class} &
+Classe de prioridade ativa em cada enlace. \\ \midrule
+\textbf{Agent-Core} &
+\texttt{trisla\_core\_sessions\_active} &
+Número total de sessões ativas. \\
+&
+\texttt{trisla\_core\_throughput\_mbps} &
+Taxa de throughput agregado (Mbps). \\
+&
+\texttt{trisla\_core\_policy\_applied} &
+Identificador da política ativa (\texttt{PolicyID}). \\
+\bottomrule
+\end{longtable}
+}
+
+\section*{Considerações Finais}
+A inclusão das métricas específicas dos agentes federados permite rastreabilidade ponta a ponta e reforça o princípio de \textit{closed-loop assurance}, garantindo explicabilidade das decisões automatizadas.
+\FloatBarrier
