@@ -4,6 +4,283 @@
 \chapter{Listagens de Código}
 \label{ap:code-listings}
 
-Este apêndice apresenta as listagens de código-fonte dos principais componentes da arquitetura \ac{trisla}, complementando os Capítulos~\ref{cap:arquitetura} e~\ref{cap:metodologia}.
-(Conteúdo completo igual ao que você forneceu originalmente, com todas as listagens Python e Solidity)
+Este apêndice apresenta as listagens de código-fonte dos principais componentes da arquitetura \ac{trisla}, complementando os capítulos~\ref{cap:arquitetura} e~\ref{cap:metodologia}.
+
+% ------------------------------------------------------
+\section{Módulo SEM-CSMF}
+\begin{lstlisting}[language=Python, caption={Parser semântico do módulo SEM-CSMF.}, label={lst:sem_csmf_parser}]
+class SemanticParser:
+    def __init__(self, ontology):
+        self.ontology = ontology
+
+    def parse_intent(self, user_input):
+        """
+        Converte uma intencao em linguagem natural
+        em um conjunto de parametros tecnicos NEST.
+        """
+        intents = self.ontology.match(user_input)
+        return intents
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Geração de Subset Operacional (TriSLA–NASP)}
+\begin{lstlisting}[language=Python, caption={Conversão de NEST canônico TriSLA em subset operacional compatível com o NASP.}, label={lst:generate_subset}]
+def generate_subset(nest):
+    """Converte o NEST canonico TriSLA em um subset operacional compativel com o NASP."""
+    subset = {
+        "NST": {
+            "name": f"TriSLA-Subset-{nest['sliceType']}",
+            "N3GPP_Support": True,
+            "Slice_Attributes": {
+                "sNSSAI": nest["sNSSAI"],
+                "SSQ": {
+                    "Packet_Delay_Budget_s": nest["serviceProfile"]["latency"]["targetMs"] / 1000,
+                    "Guaranteed_Flow_Bit_Rate_Downlink_kbps": nest["serviceProfile"]["throughput"]["minMbps"] * 1000,
+                    "Guaranteed_Flow_Bit_Rate_Uplink_kbps": nest["serviceProfile"]["throughput"]["minMbps"] * 1000,
+                    "Packet_Error_Rate": nest["serviceProfile"]["packetErrorRate"]
+                },
+                "availability": nest["serviceProfile"]["availability"]["targetMonthly"],
+                "Supported_Data_Network": "internet"
+            }
+        }
+    }
+    return subset
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Módulo ML-NSMF}
+\begin{lstlisting}[language=Python, caption={Modelo LSTM para previsão de viabilidade de SLA.}, label={lst:ml_nsmf_forecast}]
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+
+def predict_sla_viability(metrics):
+    """
+    Prediz se o SLA pode ser aceito com base nas metricas de utilizacao.
+    """
+    model = Sequential([
+        LSTM(32, input_shape=(metrics.shape[1], metrics.shape[2])),
+        Dense(1, activation='sigmoid')
+    ])
+    model.compile(loss='binary_crossentropy', optimizer='adam')
+    prediction = model.predict(metrics)
+    return prediction
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Decision Engine (Motor de Decisão)}
+\begin{lstlisting}[language=Python, caption={Fluxo decisório do módulo Decision Engine.}, label={lst:decision_engine}]
+class DecisionEngine:
+    def __init__(self, model, threshold=0.7):
+        self.model = model
+        self.threshold = threshold
+
+    def evaluate_sla(self, metrics):
+        """
+        Avalia a viabilidade do SLA com base na previsao
+        de risco e nas metricas observadas em tempo real.
+        """
+        risk = self.model.predict(metrics)
+        if risk < self.threshold:
+            decision = "ACCEPT"
+        elif self.threshold <= risk < 0.9:
+            decision = "RENEGOTIATE"
+        else:
+            decision = "REJECT"
+        return {"risk": float(risk), "decision": decision}
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Módulo BC-NSSMF}
+\begin{lstlisting}[language=Solidity, caption={Contrato inteligente de verificação de latência.}, label={lst:bc_nssmf_contract}]
+pragma solidity ^0.8.0;
+
+contract SLAContract {
+    address public provider;
+    address public tenant;
+    uint public latencyThreshold;
+    bool public violationDetected;
+
+    constructor(uint _latencyThreshold) {
+        provider = msg.sender;
+        latencyThreshold = _latencyThreshold;
+        violationDetected = false;
+    }
+
+    function reportMetric(uint latency) public {
+        if (latency > latencyThreshold) {
+            violationDetected = true;
+        }
+    }
+
+    function checkViolation() public view returns (bool) {
+        return violationDetected;
+    }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Integração Experimental com NASP}
+\begin{lstlisting}[language=Python, caption={Exemplo de integração entre TriSLA e NASP via REST API.}, label={lst:nasp_integration}]
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/metrics', methods=['POST'])
+def receive_metrics():
+    data = request.get_json()
+    latency = data.get('latency')
+    throughput = data.get('throughput')
+
+    if latency < 5 and throughput > 100:
+        status = "OK"
+    else:
+        status = "ALERTA"
+    return jsonify({"status": status})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Adaptador TriSLA–NASP (I-07)}
+\begin{lstlisting}[language=Python, caption={Adaptador TriSLA–NASP para registro de telemetria via REST (I-07).}, label={lst:trisla_nasp_adapter}]
+import requests, json
+from datetime import datetime
+
+def send_to_nasp(trace_id, module, metrics):
+    payload = {
+        "traceId": trace_id,
+        "module": module,
+        "metric": metrics,
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+    response = requests.post(
+        "https://nasp.local/v1/nasp/telemetry",
+        headers={"Content-Type": "application/json"},
+        data=json.dumps(payload),
+        timeout=3
+    )
+    return response.status_code
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Agent RAN — Reconfiguração e Controle de PRBs (I-06)}
+\begin{lstlisting}[language=Python, caption={Função do Agent RAN para aplicação de políticas de potência, QoS e controle de PRBs.}, label={lst:agent_ran_prb}]
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/v1/agent/ran/reconfigure', methods=['POST'])
+def reconfigure_ran():
+    """
+    Recebe comandos do Decision Engine (I-06 REST)
+    e aplica ajustes em parametros do dominio RAN,
+    incluindo potencia de transmissao, QoS e controle de PRBs.
+    """
+    data = request.get_json()
+    cell_id = data['params'].get('cellId')
+    tx_power = data['params'].get('txPower')
+    qos_profile = data['params'].get('qosProfile')
+    prb_allocation = data['params'].get('prbAllocation')
+
+    print(f"[RAN] Celula {cell_id} ajustada  Potencia={tx_power} dBm, "
+          f"QoS={qos_profile}, PRBs={prb_allocation}")
+
+    return jsonify({
+        "status": "ACK",
+        "domain": "RAN",
+        "applied": {
+            "cellId": cell_id,
+            "txPower": tx_power,
+            "qosProfile": qos_profile,
+            "prbAllocation": prb_allocation
+        }
+    }), 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8090)
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Agent Transport — Controle de Largura de Banda e Latência (I-06)}
+\begin{lstlisting}[language=Python, caption={Função do Agent Transport para ajuste de largura de banda, latência e priorização de rotas.}, label={lst:agent_transport}]
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/v1/agent/transport/reconfigure', methods=['POST'])
+def reconfigure_transport():
+    """
+    Recebe comandos do Decision Engine (I-06 REST)
+    e aplica ajustes no dominio de transporte,
+    incluindo largura de banda, latencia e priorizacao de rotas.
+    """
+    data = request.get_json()
+    link_id = data['params'].get('linkId')
+    bandwidth = data['params'].get('bandwidthMbps')
+    latency_target = data['params'].get('latencyMs')
+    priority = data['params'].get('priorityClass')
+
+    print(f"[TRANSPORT] Link {link_id}  Bandwidth={bandwidth} Mbps, "
+          f"Latencia={latency_target} ms, Prioridade={priority}")
+
+    return jsonify({
+        "status": "ACK",
+        "domain": "TRANSPORT",
+        "applied": {
+            "linkId": link_id,
+            "bandwidthMbps": bandwidth,
+            "latencyMs": latency_target,
+            "priorityClass": priority
+        }
+    }), 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8091)
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section{Agent Core — Gerenciamento de Sessões e Políticas (I-06)}
+\begin{lstlisting}[language=Python, caption={Função do Agent Core para ajuste de políticas de sessão, throughput e perfis de mobilidade.}, label={lst:agent_core}]
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/v1/agent/core/reconfigure', methods=['POST'])
+def reconfigure_core():
+    """
+    Recebe comandos do Decision Engine (I-06 REST)
+    e aplica ajustes no dominio do nucleo,
+    como parametros de sessso, throughput e mobilidade.
+    """
+    data = request.get_json()
+    session_id = data['params'].get('sessionId')
+    throughput = data['params'].get('throughputMbps')
+    mobility_profile = data['params'].get('mobilityProfile')
+    policy_id = data['params'].get('policyId')
+
+    print(f"[CORE] Sessao {session_id}  Throughput={throughput} Mbps, "
+          f"Mobilidade={mobility_profile}, Politica={policy_id}")
+
+    return jsonify({
+        "status": "ACK",
+        "domain": "CORE",
+        "applied": {
+            "sessionId": session_id,
+            "throughputMbps": throughput,
+            "mobilityProfile": mobility_profile,
+            "policyId": policy_id
+        }
+    }), 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8092)
+\end{lstlisting}
+
+% ------------------------------------------------------
+\section*{Considerações Finais do Apêndice}
+As Listagens~\ref{lst:agent_ran_prb},~\ref{lst:agent_transport} e~\ref{lst:agent_core}
+exemplificam a implementação simplificada dos agentes federados da arquitetura \ac{trisla}.
+Cada agente opera como um microserviço autônomo, recebendo comandos do Decision Engine e aplicando reconfigurações específicas em seus respectivos domínios — RAN, Transporte e Core.
 \FloatBarrier
