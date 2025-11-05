@@ -1,12 +1,27 @@
-# Arquivos privados
-AUDITORIA_ESTRUTURA.md
-RELATORIO_AUDITORIA.md
-CONSOLIDACAO_COMPLETA.md
-LIMPEZA_CONCLUIDA.md
-DEPLOYMENT_STATUS.md
-WORKFLOW_SUMMARY.md
-inventory_local.yml
-local/
-release/
+# ============================================================
+# .gitignore — Proteção de conteúdo interno TriSLA (v3.3.4)
+# ============================================================
+
+# 🔧 Scripts e automação
+*.sh
+*.ps1
+*.yaml
+*.yml
+
+# 🔐 Inventários e variáveis sensíveis
+inventory
+ansible/*
+helm/*
+nasp/*
+monitoring/*
+templates/*
+tools/*
+apps/*
+scripts/*
+
+# 📦 Logs e arquivos temporários
 *.log
+*.tmp
 *.bak
+__pycache__/
+*.swp
