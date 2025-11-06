@@ -7,6 +7,7 @@
 A arquitetura \ac{trisla} implementa um plano de observabilidade unificado baseado no padrão \textit{OpenTelemetry} (OTLP), abrangendo \textit{traces}, \textit{logs} e métricas em todos os domínios de rede.  
 A observabilidade é fundamental para a garantia de \acp{sla}, permitindo o rastreamento ponta a ponta de fluxos e a detecção de anomalias.
 
+% ------------------------------------------------------
 \section{Configuração do Pipeline}
 \begin{lstlisting}[language=YAML, caption={Configuração mínima do OpenTelemetry Collector.}]
 receivers:
@@ -28,6 +29,7 @@ service:
       exporters: [prometheus, logging]
 \end{lstlisting}
 
+% ------------------------------------------------------
 \section{Consultas e Indicadores}
 \begin{lstlisting}[language=bash, caption={Consultas PromQL para latência e taxa de erro.}]
 # Latencia p99 por interface
@@ -38,6 +40,7 @@ sum(rate(trisla_requests_total{status=~"5.."}[5m])) by (interface) /
 sum(rate(trisla_requests_total[5m])) by (interface)
 \end{lstlisting}
 
+% ------------------------------------------------------
 \section{SLOs por Interface}
 {\scriptsize
 \setlength{\tabcolsep}{3pt}
@@ -61,6 +64,7 @@ I-07 & $\leq$ 300\,ms & $\leq$ 0.5\% & $\geq$ 99.5\% & \texttt{trisla.telemetry.
 \end{longtable}
 }
 
+% ------------------------------------------------------
 \section{Métricas Específicas dos Agentes Federados}
 {\scriptsize
 \setlength{\tabcolsep}{3pt}
@@ -75,35 +79,37 @@ I-07 & $\leq$ 300\,ms & $\leq$ 0.5\% & $\geq$ 99.5\% & \texttt{trisla.telemetry.
 \endhead
 \textbf{Agent-RAN} &
 \texttt{trisla\_ran\_prb\_utilization} &
-Taxa de utilização de PRBs por célula; indica eficiência de alocação. \\
+Taxa de utilização de \textit{Physical Resource Blocks} (\ac{prb}) por célula; indica eficiência de alocação. \\
 &
 \texttt{trisla\_ran\_tx\_power\_dbm} &
-Potência média de transmissão aplicada após reconfiguração. \\
+Potência média de transmissão aplicada após reconfiguração (dBm). \\
 &
 \texttt{trisla\_ran\_qos\_profile\_active} &
-Identificador do perfil de QoS em uso. \\ \midrule
+Identificador do perfil de QoS em uso após decisão do \textit{Decision Engine}. \\ \midrule
 \textbf{Agent-Transport} &
 \texttt{trisla\_transport\_bw\_usage} &
-Uso médio da largura de banda por enlace. \\
+Percentual de uso médio da largura de banda por enlace. \\
 &
 \texttt{trisla\_transport\_latency\_ms} &
-Latência média observada por enlace. \\
+Latência média observada por enlace após ajuste de prioridade. \\
 &
 \texttt{trisla\_transport\_priority\_class} &
-Classe de prioridade ativa em cada enlace. \\ \midrule
+Classe de prioridade ativa em cada enlace de transporte. \\ \midrule
 \textbf{Agent-Core} &
 \texttt{trisla\_core\_sessions\_active} &
-Número total de sessões ativas. \\
+Número total de sessões ativas controladas pelo domínio de núcleo. \\
 &
 \texttt{trisla\_core\_throughput\_mbps} &
-Taxa de throughput agregado (Mbps). \\
+Taxa de \textit{throughput} agregado por sessão (Mbps). \\
 &
 \texttt{trisla\_core\_policy\_applied} &
-Identificador da política ativa (\texttt{PolicyID}). \\
+Identificador da política ativa (\texttt{PolicyID}) associada à sessão. \\
 \bottomrule
 \end{longtable}
 }
 
+% ------------------------------------------------------
 \section*{Considerações Finais}
-A inclusão das métricas específicas dos agentes federados permite rastreabilidade ponta a ponta e reforça o princípio de \textit{closed-loop assurance}, garantindo explicabilidade das decisões automatizadas.
-\FloatBarrier
+
+A inclusão das métricas específicas dos agentes federados permite à \ac{trisla} realizar correlação direta entre as decisões do \textit{Decision Engine}, a execução local nos domínios \ac{ran}, Transporte e Núcleo, e a observabilidade global via \ac{nasp}.  
+Esse plano integrado de telemetria e \acp{SLO} reforça o princípio de \textit{closed-loop assurance}, garantindo rastreabilidade ponta a ponta e explicabilidade das decisões automatizadas.
