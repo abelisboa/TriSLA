@@ -165,6 +165,7 @@ def send_to_nasp(trace_id, module, metrics):
 \end{lstlisting}
 
 % ------------------------------------------------------
+% ------------------------------------------------------
 \section{Agent RAN — Reconfiguração e Controle de PRBs (I-06)}
 \begin{lstlisting}[language=Python, caption={Função do Agent RAN para aplicação de políticas de potência, QoS e controle de PRBs.}, label={lst:agent_ran_prb}]
 from flask import Flask, request, jsonify
@@ -203,6 +204,7 @@ if __name__ == '__main__':
 \end{lstlisting}
 
 % ------------------------------------------------------
+% ------------------------------------------------------
 \section{Agent Transport — Controle de Largura de Banda e Latência (I-06)}
 \begin{lstlisting}[language=Python, caption={Função do Agent Transport para ajuste de largura de banda, latência e priorização de rotas.}, label={lst:agent_transport}]
 from flask import Flask, request, jsonify
@@ -240,6 +242,7 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8091)
 \end{lstlisting}
 
+% ------------------------------------------------------
 % ------------------------------------------------------
 \section{Agent Core — Gerenciamento de Sessões e Políticas (I-06)}
 \begin{lstlisting}[language=Python, caption={Função do Agent Core para ajuste de políticas de sessão, throughput e perfis de mobilidade.}, label={lst:agent_core}]
@@ -280,7 +283,17 @@ if __name__ == '__main__':
 
 % ------------------------------------------------------
 \section*{Considerações Finais do Apêndice}
-As Listagens~\ref{lst:agent_ran_prb},~\ref{lst:agent_transport} e~\ref{lst:agent_core}
+
+As \textbf{Listagens~\ref{lst:agent_ran}},~\textbf{\ref{lst:agent_transport}} e~\textbf{\ref{lst:agent_core}}
 exemplificam a implementação simplificada dos agentes federados da arquitetura \ac{trisla}.
-Cada agente opera como um microserviço autônomo, recebendo comandos do Decision Engine e aplicando reconfigurações específicas em seus respectivos domínios — RAN, Transporte e Core.
-\FloatBarrier
+Cada agente opera como um \textit{microserviço} autônomo, recebendo comandos do
+\textit{Decision Engine} (interface I-06, REST) e aplicando reconfigurações específicas
+em seus respectivos domínios — \ac{ran}, Transporte e Core.
+
+Os artefatos apresentados neste apêndice sustentam, de forma reprodutível,
+as decisões arquiteturais descritas no Capítulo~\ref{cap:arquitetura}.
+O encadeamento entre o catálogo de interfaces (Apêndice~\ref{ap:catalogo-interfaces}),
+o mapeamento \ac{nwdaf}$\leftrightarrow$\ac{nasp} (Apêndice~\ref{ap:nwdaf-nasp}),
+os contratos e testes (Apêndices~\ref{ap:schemas} e~\ref{ap:testes-contrato}),
+e as diretrizes de observabilidade (Apêndice~\ref{ap:observabilidade})
+é consolidado pela matriz de rastreabilidade (Apêndice~\ref{ap:rastreabilidade}).
