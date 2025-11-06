@@ -1,0 +1,35 @@
+% =====================================================
+% APÊNDICE A — CATÁLOGO DE INTERFACES INTERNAS
+% =====================================================
+\chapter{Catálogo de Interfaces Internas I-*}
+\label{ap:catalogo-interfaces}
+
+Este apêndice consolida o catálogo das interfaces internas (I-*) da arquitetura \ac{trisla}, conforme descrito no Capítulo~\ref{cap:arquitetura}.  
+As interfaces I-* representam ligações \textit{intra}-\ac{smo} entre os módulos \ac{sem-csmf}, \ac{ml-nsmf}, \ac{bc-nssmf}, \textit{Decision Engine}, \ac{sla-agent-layer} e o ambiente \ac{nasp}.  
+Interfaces normativas O-RAN (O1/A1/E2) não são incluídas, pois seguem as especificações da O-RAN Alliance e do \ac{3gpp}.
+
+\medskip
+\noindent\textbf{Convenções}: Classe \{sync, async\}; Protocolo \{gRPC, REST, Kafka\}; Esquema \{Protobuf, OpenAPI/JSON\}; Segurança \{mTLS, JWT/OAuth2, Políticas (OPA/ABAC)\}; Observabilidade \{OTLP traces/logs/métricas\}; SLOs (metas p99 e taxa de erro).
+
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{L{1.2cm} L{2.6cm} L{2.6cm} L{1.1cm} L{1.4cm} L{1.8cm} L{2.1cm} L{2.0cm} L{2.2cm}}
+\toprule
+\textbf{Código} & \textbf{Origem} & \textbf{Destino} & \textbf{Classe} & \textbf{Protocolo} & \textbf{Esquema} & \textbf{Segurança} & \textbf{Observabilidade} & \textbf{SLO (meta)} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Código} & \textbf{Origem} & \textbf{Destino} & \textbf{Classe} & \textbf{Protocolo} & \textbf{Esquema} & \textbf{Segurança} & \textbf{Observabilidade} & \textbf{SLO (meta)} \\
+\midrule
+\endhead
+I-01 & Decision Engine & SEM-CSMF & sync & gRPC & Protobuf & mTLS; JWT & OTLP (trace+metric) & p99 $\leq$ 100\,ms; erro $\leq$ 0.1\% \\
+I-02 & SEM-CSMF & ML-NSMF & sync & gRPC & Protobuf & mTLS; JWT & OTLP (trace) & p99 $\leq$ 150\,ms; erro $\leq$ 0.1\% \\
+I-03 & ML-NSMF & Decision Engine & async & Kafka & JSON (Avro) & mTLS; ACL tópico & OTLP (log+metric) & atraso $\leq$ 1\,s; perda $\leq$ 0.1\% \\
+I-04 & Decision Engine & BC-NSSMF & sync & gRPC & Protobuf & mTLS; JWT & OTLP (trace) & p99 $\leq$ 200\,ms; erro $\leq$ 0.1\% \\
+I-05 & SLA-Agent (RAN/Core/TN) & Decision Engine & async & Kafka & JSON & mTLS; ACL tópico & OTLP (trace+log) & atraso $\leq$ 2\,s; perda $\leq$ 0.5\% \\
+I-06 & Decision Engine & SLA-Agent (RAN/Core/TN) & sync & REST & OpenAPI/JSON & mTLS; OAuth2 & OTLP (metric) & p99 $\leq$ 200\,ms; erro $\leq$ 0.5\% \\
+I-07 & Decision Engine (TriSLA) & NASP REST Gateway & sync & REST & OpenAPI/JSON & mTLS; API-Key & OTLP (metric+log) & p99 $\leq$ 300\,ms; erro $\leq$ 0.5\% \\
+\bottomrule
+\end{longtable}
+}
+\FloatBarrier
