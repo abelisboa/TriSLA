@@ -4,12 +4,12 @@
 \chapter{Contratos de API e Exemplos}
 \label{ap:contratos-api}
 
-Este apêndice reúne contratos de API em formatos \textit{OpenAPI} (REST), \textit{Protobuf} (gRPC) e \textit{Kafka Event Schema}, utilizados pelas interfaces internas I-* catalogadas no Apêndice~\ref{ap:catalogo-interfaces}.  
+Este apendice reune contratos de API em formatos \textit{OpenAPI} (REST), \textit{Protobuf} (gRPC) e \textit{Kafka Event Schema}, utilizados pelas interfaces internas I-* catalogadas no Apendice~\ref{ap:catalogo-interfaces}.  
 
 \section{REST (OpenAPI)}
 \label{ap:schemas-rest}
 
-\begin{lstlisting}[language=YAML, caption={Esboço OpenAPI (I-06) para reconfiguração por agente.}]
+\begin{lstlisting}[language=YAML, caption={Esboco OpenAPI (I-06) para reconfiguracao por agente.}]
 openapi: 3.0.3
 info:
   title: TriSLA Agent Control API
@@ -40,7 +40,7 @@ components:
         deadlineMs: { type: integer, minimum: 0 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=YAML, caption={Esboço OpenAPI (I-07) TriSLA–NASP para integração experimental.}]
+\begin{lstlisting}[language=YAML, caption={Esboco OpenAPI (I-07) TriSLA-NASP para integracao experimental.}]
 openapi: 3.0.3
 info:
   title: TriSLA-NASP Integration API
@@ -48,7 +48,7 @@ info:
 paths:
   /v1/nasp/telemetry:
     post:
-      summary: Recebe métricas e eventos de SLA do ambiente NASP
+      summary: Recebe metricas e eventos de SLA do ambiente NASP
       requestBody:
         content:
           application/json:
@@ -70,7 +70,7 @@ components:
 \section{gRPC (Protobuf)}
 \label{ap:schemas-grpc}
 
-\begin{lstlisting}[language=protobuf, caption={Esboço Protobuf (I-01/I-02/I-04).}]
+\begin{lstlisting}[language=protobuf, caption={Esboco Protobuf (I-01/I-02/I-04).}]
 syntax = "proto3";
 package trisla.v1;
 
@@ -108,4 +108,5 @@ service DecisionEngineService {
   "ts": "2025-08-20T10:22:31Z"
 }
 \end{lstlisting}
+
 \FloatBarrier
