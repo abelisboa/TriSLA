@@ -5,7 +5,8 @@
 \chapter{Matriz de Rastreabilidade}
 \label{ap:rastreabilidade}
 
-Este apêndice estabelece a correlação entre as interfaces internas I-*, os elementos arquiteturais descritos no Capítulo~\ref{cap:arquitetura}, as listagens de código e os testes de conformidade.
+Este apendice estabelece a correlacao entre as interfaces internas I-*, os elementos arquiteturais descritos no Capitulo~\ref{cap:arquitetura}, as listagens de codigo e os testes de conformidade.  
+O objetivo e garantir rastreabilidade fim a fim entre requisitos tecnicos, implementacoes e validacoes, assegurando consistencia e reproducibilidade dos resultados.
 
 {\scriptsize
 \setlength{\tabcolsep}{3pt}
@@ -18,6 +19,7 @@ Este apêndice estabelece a correlação entre as interfaces internas I-*, os el
 \textbf{I-*} & \textbf{Figuras (ref.)} & \textbf{Listagens (ref.)} & \textbf{Schemas (ref.)} & \textbf{Testes (ref.)} & \textbf{Observ. (ref.)} \\
 \midrule
 \endhead
+
 I-01 & Fig.~\ref{fig:arquitetura-trisla} & \ref{lst:sem_csmf_parser} & \ref{ap:schemas-grpc} & gRPC: \ref{ap:testes-contrato} & \ref{ap:observabilidade} \\
 I-02 & Fig.~\ref{fig:arquitetura-trisla} & \ref{lst:ml_nsmf_forecast} & \ref{ap:schemas-grpc} & gRPC: \ref{ap:testes-contrato} & \ref{ap:observabilidade} \\
 I-03 & Fig.~\ref{fig:sla-agent} & \ref{lst:nasp_integration} & \ref{ap:schemas-kafka} & Kafka: \ref{ap:testes-contrato} & \ref{ap:observabilidade} \\
@@ -25,7 +27,9 @@ I-04 & Fig.~\ref{fig:arquitetura-trisla}, \ref{fig:trisla-smo} & \ref{lst:bc_nss
 I-05 & Fig.~\ref{fig:sla-agent} & \ref{lst:nasp_integration} & \ref{ap:schemas-kafka} & Kafka: \ref{ap:testes-contrato} & \ref{ap:observabilidade} \\
 I-06 & Fig.~\ref{fig:trisla-smo} & — & \ref{ap:schemas-rest} & REST: \ref{ap:testes-contrato} & \ref{ap:observabilidade} \\
 I-07 & Fig.~\ref{fig:trisla-nasp-integration} & \ref{lst:trisla_nasp_adapter} & \ref{ap:schemas-rest} & REST: \ref{ap:testes-contrato} & \ref{ap:observabilidade} \\
+
 \bottomrule
 \end{longtable}
 }
 \FloatBarrier
+
