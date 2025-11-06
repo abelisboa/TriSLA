@@ -5,7 +5,7 @@
 \label{ap:testes-contrato}
 
 Os testes de contrato asseguram a conformidade entre produtores e consumidores de API.  
-Os exemplos a seguir demonstram o uso reprodutível de cada tipo de interface da arquitetura.
+Os exemplos a seguir demonstram o uso reprodutivel de cada tipo de interface da arquitetura.
 
 \section*{REST}
 \begin{lstlisting}[language=bash, caption={Teste REST (I-06) via curl.}]
@@ -22,10 +22,12 @@ grpcurl -d '{"intentText":"URLLC 1ms for NSI-001"}' \
 \end{lstlisting}
 
 \section*{Kafka}
-\begin{lstlisting}[language=bash, caption={Publicação/consumo de evento (I-03/I-05) via kcat.}]
+\begin{lstlisting}[language=bash, caption={Publicacao/consumo de evento (I-03/I-05) via kcat.}]
 # Produzir
 kcat -b kafka:9092 -t risk.report -k nsi-001 -P risk.json
 # Consumir
 kcat -b kafka:9092 -t risk.report -C -o -1 -c 1 -J
 \end{lstlisting}
+
 \FloatBarrier
+
