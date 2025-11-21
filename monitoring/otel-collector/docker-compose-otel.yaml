@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./config.yaml:/etc/otelcol/config.yaml:ro
+    hostname: localhost
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "8889:8889"   # Prometheus metrics endpoint
+      - "8888:8888"   # Prometheus exporter (opcional)
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=trisla-otel-collector,deployment.environment=development
+    networks:
+      - trisla-network
+    restart: unless-stopped
+
+networks:
+  trisla-network:
+    driver: bridge
+

@@ -1,0 +1,169 @@
+# ============================================
+# Prometheus Alert Rules - TriSLA
+# ============================================
+
+groups:
+  - name: trisla_health
+    interval: 30s
+    rules:
+      # Alerta: Módulo não está saudável
+      - alert: ModuleDown
+        expr: up{job=~"trisla-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: health
+        annotations:
+          summary: "Módulo TriSLA está inacessível"
+          description: "O módulo {{ $labels.job }} está inacessível há mais de 1 minuto."
+
+      # Alerta: Múltiplos módulos down
+      - alert: MultipleModulesDown
+        expr: count(up{job=~"trisla-.*"} == 0) > 2
+        for: 2m
+        labels:
+          severity: critical
+          component: health
+        annotations:
+          summary: "Múltiplos módulos TriSLA estão inacessíveis"
+          description: "{{ $value }} módulos estão inacessíveis."
+
+  - name: trisla_performance
+    interval: 30s
+    rules:
+      # Alerta: Alta latência de requisições
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job=~"trisla-.*"}[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          component: performance
+        annotations:
+          summary: "Alta latência de requisições"
+          description: "Latência p99 do módulo {{ $labels.job }} está acima de 1s (atual: {{ $value }}s)."
+
+      # Alerta: Alta taxa de erros
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{job=~"trisla-.*",status=~"5.."}[5m]) / rate(http_requests_total{job=~"trisla-.*"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: performance
+        annotations:
+          summary: "Alta taxa de erros"
+          description: "Taxa de erros 5xx do módulo {{ $labels.job }} está acima de 5% (atual: {{ $value | humanizePercentage }})."
+
+  - name: trisla_grpc
+    interval: 30s
+    rules:
+      # Alerta: Falhas na comunicação gRPC
+      - alert: GRPCCommunicationFailure
+        expr: increase(grpc_client_errors_total{job="trisla-sem-csmf"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: critical
+          component: grpc
+        annotations:
+          summary: "Falhas na comunicação gRPC"
+          description: "{{ $value }} falhas de comunicação gRPC nos últimos 5 minutos."
+
+      # Alerta: Alta latência gRPC
+      - alert: HighGRPCLatency
+        expr: histogram_quantile(0.99, rate(grpc_client_duration_seconds_bucket{job="trisla-sem-csmf"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: grpc
+        annotations:
+          summary: "Alta latência gRPC"
+          description: "Latência p99 de comunicação gRPC está acima de 2s (atual: {{ $value }}s)."
+
+  - name: trisla_database
+    interval: 30s
+    rules:
+      # Alerta: Problemas de conexão com banco
+      - alert: DatabaseConnectionFailure
+        expr: increase(database_connection_errors_total{job="trisla-sem-csmf"}[5m]) > 5
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Falhas de conexão com banco de dados"
+          description: "{{ $value }} falhas de conexão com PostgreSQL nos últimos 5 minutos."
+
+      # Alerta: Banco de dados lento
+      - alert: SlowDatabaseQueries
+        expr: histogram_quantile(0.95, rate(database_query_duration_seconds_bucket{job="trisla-sem-csmf"}[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Consultas ao banco de dados lentas"
+          description: "Latência p95 de consultas ao banco está acima de 1s (atual: {{ $value }}s)."
+
+  - name: trisla_sla
+    interval: 30s
+    rules:
+      # Alerta: Violação de SLA
+      - alert: SLAViolation
+        expr: sla_compliance_rate < 0.95
+        for: 5m
+        labels:
+          severity: critical
+          component: sla
+        annotations:
+          summary: "Violação de SLA detectada"
+          description: "Taxa de compliance com SLA está abaixo de 95% (atual: {{ $value | humanizePercentage }})."
+
+      # Alerta: Múltiplas violações de SLA
+      - alert: MultipleSLAViolations
+        expr: count(sla_compliance_rate < 0.95) > 2
+        for: 5m
+        labels:
+          severity: critical
+          component: sla
+        annotations:
+          summary: "Múltiplas violações de SLA"
+          description: "{{ $value }} domínios com violação de SLA."
+
+  - name: trisla_resources
+    interval: 30s
+    rules:
+      # Alerta: Alto uso de CPU
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total{job=~"trisla-.*"}[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: resources
+        annotations:
+          summary: "Alto uso de CPU"
+          description: "Uso de CPU do módulo {{ $labels.job }} está acima de 80% (atual: {{ $value | humanizePercentage }})."
+
+      # Alerta: Alto uso de memória
+      - alert: HighMemoryUsage
+        expr: (process_resident_memory_bytes{job=~"trisla-.*"} / process_virtual_memory_max_bytes{job=~"trisla-.*"}) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: resources
+        annotations:
+          summary: "Alto uso de memória"
+          description: "Uso de memória do módulo {{ $labels.job }} está acima de 90% (atual: {{ $value | humanizePercentage }})."
+
+  - name: trisla_kafka
+    interval: 30s
+    rules:
+      # Alerta: Falhas no Kafka
+      - alert: KafkaConnectionFailure
+        expr: increase(kafka_producer_errors_total{job=~"trisla-.*"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: critical
+          component: kafka
+        annotations:
+          summary: "Falhas na comunicação com Kafka"
+          description: "{{ $value }} falhas de comunicação com Kafka nos últimos 5 minutos."
+

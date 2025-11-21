@@ -1,0 +1,93 @@
+---
+# ============================================
+# Playbook: Deploy TriSLA no NASP
+# ============================================
+# Deploy completo do TriSLA no ambiente NASP em produção real
+# ============================================
+
+- name: Deploy TriSLA no NASP (Produção Real)
+  hosts: control_plane
+  become: yes
+  gather_facts: yes
+  
+  vars:
+    namespace: "{{ trisla.namespace }}"
+    helm_chart_path: "{{ trisla_helm_chart_path }}"
+    values_file: "{{ helm_chart_path }}/values.yaml"
+  
+  tasks:
+    - name: Validar pré-requisitos
+      include_tasks: validate-prerequisites.yml
+    
+    - name: Criar namespace
+      include_tasks: setup-namespace.yml
+    
+    - name: Configurar secrets
+      include_tasks: setup-secrets.yml
+    
+    - name: Adicionar repositório Helm (se necessário)
+      command: helm repo add trisla {{ trisla_image_registry }}
+      when: false  # Ajustar conforme necessário
+    
+    - name: Atualizar repositórios Helm
+      command: helm repo update
+      when: false  # Ajustar conforme necessário
+    
+    - name: Validar Helm chart
+      command: helm lint {{ helm_chart_path }}
+      register: helm_lint
+      changed_when: false
+    
+    - name: Exibir resultado do lint
+      debug:
+        msg: "{{ helm_lint.stdout_lines }}"
+    
+    - name: Dry-run do deploy
+      command: >
+        helm install trisla {{ helm_chart_path }}
+        --namespace {{ namespace }}
+        --values {{ values_file }}
+        --dry-run
+        --debug
+      register: helm_dry_run
+      changed_when: false
+    
+    - name: Deploy real do TriSLA
+      command: >
+        helm upgrade --install trisla {{ helm_chart_path }}
+        --namespace {{ namespace }}
+        --values {{ values_file }}
+        --create-namespace
+        --wait
+        --timeout 10m
+      register: helm_deploy
+    
+    - name: Verificar status do deploy
+      command: kubectl get pods -n {{ namespace }}
+      register: pods_status
+      changed_when: false
+      until: pods_status.rc == 0
+      retries: 10
+      delay: 30
+    
+    - name: Exibir status dos pods
+      debug:
+        msg: "{{ pods_status.stdout_lines }}"
+    
+    - name: Aguardar pods estarem prontos
+      command: kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=trisla -n {{ namespace }} --timeout=600s
+      register: wait_result
+      failed_when: wait_result.rc != 0
+    
+    - name: Verificar serviços
+      command: kubectl get svc -n {{ namespace }}
+      register: svc_status
+      changed_when: false
+    
+    - name: Exibir serviços
+      debug:
+        msg: "{{ svc_status.stdout_lines }}"
+    
+    - name: Validar deploy
+      include_tasks: validate-deploy.yml
+

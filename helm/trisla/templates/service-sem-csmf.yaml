@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trisla.name" . }}-sem-csmf
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (merge . (dict "component" "sem-csmf")) | nindent 4 }}
+spec:
+  type: {{ .Values.semCsmf.service.type }}
+  ports:
+  - port: {{ .Values.semCsmf.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "trisla.selectorLabels" (merge . (dict "component" "sem-csmf")) | nindent 4 }}
+

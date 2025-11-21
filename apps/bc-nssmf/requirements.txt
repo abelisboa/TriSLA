@@ -1,0 +1,23 @@
+# BC-NSSMF Requirements
+
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Blockchain (exemplo - ajustar conforme blockchain escolhido)
+# web3==6.11.0  # Para Ethereum
+# # ou
+# # Hyperledger Fabric SDK
+
+# Kafka
+kafka-python==2.0.2
+
+# OpenTelemetry
+opentelemetry-api==1.21.0
+opentelemetry-sdk==1.21.0
+opentelemetry-instrumentation-fastapi==0.42b0
+opentelemetry-exporter-otlp-proto-grpc==1.21.0
+
+python-dateutil==2.8.2
+requests==2.31.0
+

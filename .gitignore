@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# venv
+.venv/
+env/
+venv/
+
+# Logs
+logs/
+*.log
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node UI
+node_modules/
+dist/
+build/
+
+# Docker
+*.pid
+*.tar
+*.img
+
+# Tests
+.pytest_cache/
+
+# Local-only artifacts
+apps/bc-nssmf/src/contracts/contract_address.json
+pipeline_output.log
+trisla_build.log
+
+# Backups
+*.bak
+*.old
+*.backup
+
+# Cursor artifacts
+*cursor_backup*

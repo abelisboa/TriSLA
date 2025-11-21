@@ -1,0 +1,66 @@
+# ============================================
+# Inventory Ansible YAML - TriSLA NASP
+# ============================================
+# Formato alternativo YAML do inventory
+# ============================================
+
+all:
+  children:
+    nasp_nodes:
+      hosts:
+        node1:
+          ansible_host: <INSERIR_IP_NODE1>
+          iface: my5g
+        node2:
+          ansible_host: <INSERIR_IP_NODE2>
+          iface: my5g
+    
+    control_plane:
+      hosts:
+        node1: {}
+        node2: {}
+    
+    workers:
+      hosts: {}
+      # Adicionar workers aqui se necessário
+      # node3:
+      #   ansible_host: <INSERIR_IP_NODE3>
+      #   iface: my5g
+    
+    kubernetes:
+      children:
+        nasp_nodes: {}
+    
+    trisla_services:
+      hosts: {}
+  
+  vars:
+    # Usuário SSH
+    ansible_user: root
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    
+    # Configurações de rede NASP
+    trisla_interface: my5g
+    trisla_node_ip: 192.168.10.16
+    trisla_gateway: 192.168.10.1
+    
+    # Configurações do Kubernetes
+    kubeconfig_path: /etc/kubernetes/admin.conf
+    
+    # Configurações do TriSLA
+    trisla_namespace: trisla
+    trisla_image_registry: ghcr.io/abelisboa
+    
+    # Configurações de deploy
+    trisla_deploy_method: helm
+    trisla_helm_chart_path: ./helm/trisla
+    
+    # Configurações de observabilidade
+    trisla_observability_enabled: true
+    trisla_prometheus_enabled: true
+    trisla_grafana_enabled: true
+    
+    # Configurações de produção
+    trisla_production_mode: true
+    trisla_simulation_mode: false
+
