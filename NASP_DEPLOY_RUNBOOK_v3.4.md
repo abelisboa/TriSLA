@@ -46,6 +46,27 @@ cd TriSLA
 git checkout v3.4.0
 ```
 
+### 1.2 Executar Pré-Check do Cluster NASP
+
+**⚠️ IMPORTANTE:** Execute este script no node1 do NASP antes de iniciar o deploy.
+
+```bash
+# No node1 do NASP
+bash scripts/pre-check-nasp.sh
+```
+
+Este script realiza:
+- ✅ Verificação dos nodes do cluster
+- ✅ Criação de StorageClass (NFS) se necessário
+- ✅ Correção de CoreDNS pendente
+- ✅ Habilitação do node2 (uncordon)
+- ✅ Criação do namespace `trisla`
+- ✅ Criação de ServiceAccount e RBAC
+- ✅ Validação/reinstalação do stack Prometheus/Grafana
+- ✅ Validação final do cluster
+
+**Nota:** Ajuste o IP do servidor NFS (`NFS_SERVER`) no script se necessário.
+
 ### 1.2 Configurar Acesso ao GHCR
 
 ```bash
