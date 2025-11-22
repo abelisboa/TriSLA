@@ -16,15 +16,22 @@ __pycache__/
 # === Pastas que NUNCA devem ir para o GitHub ===
 PROMPTS_*/
 PROMPTS_EXPORT/
-PROMPTS_V3/
+PROMPTS_V3*/
 TriSLA_PROMPTS_REORG/
 TriSLA-Prompts*/
+TriSLA_PROMPTS/
 cleanup*/
 audit*/
 RELATORIO*/
 docs/*INTERNAL*
 scripts/.venv/
 src/**/__pycache__/
+
+# === Arquivos privados e temporários ===
+*.patch
+*.bak
+*.bak2
+validation-results.json
 
 # === Testes e cargas ===
 tests/load/*.json

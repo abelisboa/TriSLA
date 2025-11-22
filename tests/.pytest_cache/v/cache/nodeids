@@ -1,0 +1,15 @@
+[
+  "integration/test_module_integration.py::TestModuleIntegration::test_all_modules_health",
+  "integration/test_module_integration.py::TestModuleIntegration::test_cross_module_data_flow",
+  "integration/test_module_integration.py::TestModuleIntegration::test_sem_csmf_to_nest_flow",
+  "integration/test_module_integration.py::TestModuleIntegration::test_sla_agent_metrics_collection",
+  "integration/test_module_integration.py::TestModuleIntegration::test_sla_agent_slos_monitoring",
+  "integration/test_persistence_flow.py::test_full_persistence_flow",
+  "integration/test_persistence_flow.py::test_intent_persistence",
+  "integration/test_persistence_flow.py::test_nest_persistence",
+  "integration/test_persistence_flow.py::test_nest_retrieval",
+  "integration/test_persistence_flow.py::test_network_slice_persistence",
+  "unit/test_sem_csmf.py::TestIntentProcessor::test_generate_gst",
+  "unit/test_sem_csmf.py::TestIntentProcessor::test_validate_semantic",
+  "unit/test_sem_csmf.py::TestNESTGenerator::test_generate_nest"
+]
