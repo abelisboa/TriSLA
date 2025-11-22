@@ -40,6 +40,14 @@ TriSLA_PROMPTS_REORG/
 *.bak
 *.bak2
 
+# Audit temporary files
+forbidden_found.txt
+github_*.json
+local_files.txt
+root_orphans.txt
+diff_github_local.txt
+modules_missing.txt
+
 # Database and ontology files
 *.db
 *.jsonld
