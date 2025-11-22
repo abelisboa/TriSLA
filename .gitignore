@@ -45,3 +45,4 @@ TriSLA_PROMPTS_REORG/
 *.jsonld
 *.owl
 *.ttl
+FULL_DIFF_BEFORE_PUSH.patch
