@@ -28,3 +28,20 @@ apps/*/env/
 # OS files
 Thumbs.db
 .DS_Store
+
+# Private prompts and internal documentation
+TriSLA_PROMPTS/
+PROMPTS_*/
+PROMPTS_V3*/
+TriSLA_PROMPTS_REORG/
+
+# Backup and patch files
+*.patch
+*.bak
+*.bak2
+
+# Database and ontology files
+*.db
+*.jsonld
+*.owl
+*.ttl
