@@ -1,41 +1,30 @@
-# === Python virtual environments ===
-.venv/
-*/.venv/
-
-# === Python caches ===
+# Python
 __pycache__/
 *.pyc
+*.pyo
 
-# === Dados locais ===
-*.db
-*.sqlite
-*.jsonld
-*.owl
-*.ttl
+# Virtual envs
+venv/
+env/
+.env/
+.venv/
+apps/*/venv/
+apps/*/env/
 
-# === Pastas que NUNCA devem ir para o GitHub ===
-PROMPTS_*/
-PROMPTS_EXPORT/
-PROMPTS_V3*/
-TriSLA_PROMPTS_REORG/
-TriSLA-Prompts*/
-TriSLA_PROMPTS/
-cleanup*/
-audit*/
-RELATORIO*/
-docs/*INTERNAL*
-scripts/.venv/
-src/**/__pycache__/
+# Pytest cache
+.pytest_cache/
 
-# === Arquivos privados e temporários ===
-*.patch
-*.bak
-*.bak2
-validation-results.json
-
-# === Testes e cargas ===
-tests/load/*.json
-
-# === IDE ===
+# IDEs
 .vscode/
 .idea/
+
+# Logs
+*.log
+
+# Docker
+.dockerignore
+*.pid
+
+# OS files
+Thumbs.db
+.DS_Store
