@@ -1,0 +1,160 @@
+# ============================================================
+# Decision Rules Configuration - Decision Engine
+# Regras de decisão para SLA (ACCEPT, REJECT, NEGOTIATE, ESCALATE)
+# ============================================================
+
+# Thresholds globais
+thresholds:
+  latency_max:
+    URLLC: 10.0  # ms
+    eMBB: 50.0   # ms
+    mMTC: 1000.0 # ms
+  throughput_min:
+    URLLC: 1.0   # Mbps
+    eMBB: 100.0  # Mbps
+    mMTC: 0.00016 # Mbps (160bps)
+  reliability_min:
+    URLLC: 0.99999
+    eMBB: 0.99
+    mMTC: 0.9
+  packet_loss_max:
+    URLLC: 0.00001  # 0.001%
+    eMBB: 0.01      # 1%
+    mMTC: 0.1       # 10%
+  sla_compliance_min: 0.95  # 95%
+
+# Regras de decisão (ordenadas por prioridade - menor número = maior prioridade)
+rules:
+  # ============================================================
+  # REGRAS DE REJEIÇÃO (Prioridade ALTA)
+  # ============================================================
+  
+  - id: "rule-reject-high-risk"
+    description: "Rejeita requisições com risco ALTO do ML-NSMF"
+    condition:
+      risk_level: ["high"]
+      risk_score: "> 0.7"
+    action: "REJECT"
+    priority: 1
+    reasoning_template: "SLA {service_type} rejeitado. ML prevê risco ALTO (score: {risk_score:.2f}, nível: {risk_level}). {explanation}"
+  
+  - id: "rule-reject-sla-non-compliant"
+    description: "Rejeita SLAs que não atendem aos requisitos mínimos"
+    condition:
+      sla_compliance: "< 0.9"
+    action: "REJECT"
+    priority: 2
+    reasoning_template: "SLA rejeitado. Compliance abaixo do mínimo (compliance: {sla_compliance:.2%}). Requisitos não atendidos."
+  
+  - id: "rule-reject-urllc-latency-exceeded"
+    description: "Rejeita URLLC com latência acima do máximo permitido"
+    condition:
+      service_type: ["URLLC"]
+      latency: "> 10.0"  # ms
+    action: "REJECT"
+    priority: 3
+    reasoning_template: "SLA URLLC rejeitado. Latência {latency}ms excede máximo permitido (10ms)."
+  
+  - id: "rule-reject-embb-throughput-below-min"
+    description: "Rejeita eMBB com throughput abaixo do mínimo"
+    condition:
+      service_type: ["eMBB"]
+      throughput: "< 100.0"  # Mbps
+    action: "REJECT"
+    priority: 4
+    reasoning_template: "SLA eMBB rejeitado. Throughput {throughput}Mbps abaixo do mínimo (100Mbps)."
+  
+  # ============================================================
+  # REGRAS DE ACEITAÇÃO (Prioridade MÉDIA-ALTA)
+  # ============================================================
+  
+  - id: "rule-accept-low-risk-viable"
+    description: "Aceita requisições com risco BAIXO e SLA viável"
+    condition:
+      risk_level: ["low"]
+      risk_score: "< 0.4"
+      sla_compliance: ">= 0.95"
+    action: "ACCEPT"
+    priority: 10
+    reasoning_template: "SLA {service_type} aceito. ML prevê risco BAIXO (score: {risk_score:.2f}). SLOs viáveis. Domínios: {domains}."
+  
+  - id: "rule-accept-urllc-low-latency-low-risk"
+    description: "Aceita URLLC com latência crítica viável e risco baixo"
+    condition:
+      service_type: ["URLLC"]
+      risk_level: ["low"]
+      latency: "<= 10.0"  # ms
+    action: "ACCEPT"
+    priority: 11
+    reasoning_template: "SLA URLLC aceito. Latência crítica ({latency}ms) viável. ML prevê risco BAIXO (score: {risk_score:.2f}). Domínios: {domains}."
+  
+  - id: "rule-accept-embb-high-throughput-low-risk"
+    description: "Aceita eMBB com alto throughput e risco baixo"
+    condition:
+      service_type: ["eMBB"]
+      risk_level: ["low"]
+      throughput: ">= 100.0"  # Mbps
+    action: "ACCEPT"
+    priority: 12
+    reasoning_template: "SLA eMBB aceito. Alto throughput ({throughput}Mbps). ML prevê risco BAIXO (score: {risk_score:.2f}). Domínios: {domains}."
+  
+  # ============================================================
+  # REGRAS DE NEGOCIAÇÃO (Prioridade MÉDIA)
+  # ============================================================
+  
+  - id: "rule-negotiate-medium-risk"
+    description: "Negocia SLAs com risco MÉDIO do ML-NSMF"
+    condition:
+      risk_level: ["medium"]
+      risk_score: ">= 0.4"
+      risk_score_max: "<= 0.7"
+    action: "NEGOTIATE"
+    priority: 20
+    reasoning_template: "SLA {service_type} requer renegociação. ML prevê risco MÉDIO (score: {risk_score:.2f}). Recomenda-se ajustar SLOs ou recursos. Domínios: {domains}. {explanation}"
+  
+  - id: "rule-negotiate-sla-marginal"
+    description: "Negocia SLAs com compliance marginal"
+    condition:
+      sla_compliance: ">= 0.9"
+      sla_compliance_max: "< 0.95"
+    action: "NEGOTIATE"
+    priority: 21
+    reasoning_template: "SLA requer renegociação. Compliance marginal ({sla_compliance:.2%}). Ajustes recomendados."
+  
+  - id: "rule-negotiate-urllc-medium-latency"
+    description: "Negocia URLLC com latência no limite"
+    condition:
+      service_type: ["URLLC"]
+      risk_level: ["medium"]
+      latency: "> 5.0"
+      latency_max: "<= 10.0"  # ms
+    action: "NEGOTIATE"
+    priority: 22
+    reasoning_template: "SLA URLLC requer renegociação. Latência no limite ({latency}ms). ML prevê risco MÉDIO (score: {risk_score:.2f})."
+  
+  # ============================================================
+  # REGRAS DE ESCALAÇÃO (Prioridade BAIXA)
+  # ============================================================
+  
+  - id: "rule-escalate-uncertain"
+    description: "Escala decisões com confiança baixa do ML"
+    condition:
+      confidence: "< 0.5"
+      risk_score: ">= 0.4"
+      risk_score_max: "<= 0.7"
+    action: "ESCALATE"
+    priority: 30
+    reasoning_template: "SLA {service_type} escalado para revisão manual. Confiança do ML baixa ({confidence:.2%}). Risco MÉDIO (score: {risk_score:.2f})."
+  
+  # ============================================================
+  # REGRA PADRÃO (Prioridade MUITO BAIXA)
+  # ============================================================
+  
+  - id: "rule-default-accept"
+    description: "Regra padrão: aceita se nenhuma outra regra aplicar"
+    condition:
+      always: true
+    action: "ACCEPT"
+    priority: 100
+    reasoning_template: "SLA {service_type} aceito (padrão). ML score: {risk_score:.2f}. Domínios: {domains}."
+

@@ -1,7 +1,13 @@
 # ============================================
-# Values para PRODUÇÃO REAL
+# Values para PRODUÇÃO REAL - NASP Node1
 # ============================================
 # ⚠️ IMPORTANTE: Substituir placeholders pelos valores reais do seu ambiente NASP
+# 
+# ANTES DO DEPLOY:
+# 1. Execute: ./scripts/discover-nasp-services.sh (ou equivalente)
+# 2. Substitua TODOS os placeholders <...> pelos valores reais
+# 3. Valide com: helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --debug
+# 4. Siga o checklist: docs/NASP_PREDEPLOY_CHECKLIST.md
 # ============================================
 
 # Network Configuration (substituir pelos valores reais)
@@ -18,22 +24,32 @@ production:
   executeRealActions: true  # ⚠️ Executar ações REAIS
 
 # Endpoints do NASP (substituir pelos endpoints reais descobertos no seu ambiente)
+# 
+# Para descobrir endpoints, execute no cluster NASP:
+#   kubectl get svc -n <ran-namespace> | grep -i ran
+#   kubectl get svc -n <core-namespace> | grep -E "upf|amf|smf"
+#   kubectl get svc -n <transport-namespace> | grep -i transport
+#
+# Formato esperado: http://<SERVICE_NAME>.<NAMESPACE>.svc.cluster.local:<PORT>
 naspAdapter:
   naspEndpoints:
     # RAN - substituir pelo endpoint real do RAN controller
+    # Exemplo: "http://ran-controller.ran-namespace.svc.cluster.local:8080"
     ran: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_PORT>"
     ran_metrics: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_METRICS_PORT>"
     
     # Core - substituir pelos endpoints reais do Core (UPF, AMF, SMF)
+    # Exemplo: "http://upf.core-namespace.svc.cluster.local:8080"
     core_upf: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_PORT>"
     core_upf_metrics: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_METRICS_PORT>"
     core_amf: "http://<AMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<AMF_PORT>"
     core_smf: "http://<SMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<SMF_PORT>"
     
     # Transport - substituir pelo endpoint real do Transport controller
+    # Exemplo: "http://transport-controller.transport-namespace.svc.cluster.local:8080"
     transport: "http://<TRANSPORT_SERVICE>.<TRANSPORT_NAMESPACE>.svc.cluster.local:<TRANSPORT_PORT>"
     
-    # Endpoint principal
+    # Endpoint principal (opcional, se houver)
     main: "http://<MAIN_SERVICE>.<MAIN_NAMESPACE>.svc.cluster.local:<MAIN_PORT>"
   authentication:
     enabled: true

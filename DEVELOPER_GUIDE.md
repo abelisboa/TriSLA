@@ -1889,10 +1889,165 @@ ENVIRONMENT=production
 
 ---
 
+## 12. Fluxo de Teste E2E Local vs. Deploy NASP
+
+### 12.1 Teste E2E Local
+
+**Objetivo:** Validar o fluxo completo I-01 → I-07 em ambiente local com Docker Compose.
+
+**Iniciar ambiente:**
+```bash
+# Linux/macOS
+./scripts/start-local-e2e.sh
+
+# Windows PowerShell
+.\scripts\start-local-e2e.ps1
+```
+
+**Executar testes:**
+```bash
+pytest tests/e2e/test_trisla_e2e.py -v
+```
+
+**Cenários de teste:**
+- URLLC (cirurgia remota / missão crítica)
+- eMBB (vídeo 4K / banda larga móvel)
+- mMTC (IoT massivo)
+
+**Arquivo de configuração:** `tests/e2e/scenarios_e2e_trisla.yaml`
+
+### 12.2 Deploy NASP Node1
+
+**Objetivo:** Deploy controlado no ambiente NASP real.
+
+**Pré-requisitos:**
+- Seguir `docs/NASP_PREDEPLOY_CHECKLIST.md`
+- Descoberta de endpoints NASP
+- Configuração de `helm/trisla/values-production.yaml`
+
+**Deploy:**
+```bash
+helm upgrade --install trisla ./helm/trisla \
+  --namespace trisla \
+  --create-namespace \
+  -f ./helm/trisla/values-production.yaml \
+  --wait \
+  --timeout 10m
+```
+
+**Validação:**
+- Health checks de todos os módulos
+- Teste E2E no cluster NASP
+- Verificação de conectividade com NASP
+
+### 12.3 Diferenças entre Local e NASP
+
+| Aspecto | Local (Docker Compose) | NASP (Kubernetes) |
+|---------|------------------------|-------------------|
+| **NASP Adapter** | Modo mock controlado | Modo real (endpoints reais) |
+| **Blockchain** | Besu dev local | Besu permissionado no cluster |
+| **Kafka** | Container local | Kafka do cluster NASP |
+| **Observabilidade** | Prometheus/Grafana local | Stack do cluster NASP |
+| **Network** | Bridge network Docker | CNI do cluster (Calico) |
+| **Storage** | Volumes Docker | StorageClass Kubernetes |
+
+### 12.4 Troubleshooting E2E
+
+**Problemas comuns:**
+
+1. **Serviços não iniciam:**
+   - Verificar logs: `docker compose logs <service-name>`
+   - Verificar dependências no `docker-compose.yml`
+
+2. **Kafka topics não criados:**
+   - Executar manualmente: `docker exec trisla-kafka kafka-topics --create ...`
+
+3. **Besu não conecta:**
+   - Verificar se Besu está rodando: `curl http://localhost:8545`
+   - Verificar variáveis de ambiente: `BESU_RPC_URL`, `BESU_CHAIN_ID`
+
+4. **Testes E2E falham:**
+   - Verificar se todos os serviços estão saudáveis
+   - Verificar logs dos módulos
+   - Verificar mensagens no Kafka
+
+---
+
+## 13. Integração com NASP e Fluxo Dev→NASP
+
+### 13.1 Diferença entre Testes Locais e NASP
+
+**Ambiente Local (Docker Compose):**
+- Desenvolvimento e testes rápidos
+- NASP Adapter em modo mock controlado
+- Besu dev local
+- Kafka container local
+- Observabilidade local (Prometheus/Grafana)
+
+**Ambiente NASP (Kubernetes):**
+- Produção real
+- NASP Adapter conectado a serviços NASP reais
+- Besu permissionado no cluster
+- Kafka do cluster NASP
+- Observabilidade do cluster NASP
+
+### 13.2 Onde Ajustar values-production.yaml
+
+**Localização:** `helm/trisla/values-production.yaml`
+
+**Guia completo:** `docs/VALUES_PRODUCTION_GUIDE.md`
+
+**Script de preenchimento:** `scripts/fill_values_production.sh`
+
+**⚠️ IMPORTANTE:**
+- Nunca colocar IPs reais em documentação Markdown
+- Usar FQDNs Kubernetes: `http://<SERVICE>.<NS>.svc.cluster.local:<PORT>`
+- Valores reais apenas no arquivo YAML local (não versionado)
+
+### 13.3 Playbooks Ansible e Scripts Auxiliares
+
+**Localização dos Playbooks:** `ansible/playbooks/`
+
+**Playbooks principais:**
+- `pre-flight.yml` — Validações pré-deploy
+- `setup-namespace.yml` — Criação de namespace
+- `deploy-trisla-nasp.yml` — Deploy Helm
+- `validate-cluster.yml` — Validação pós-deploy
+
+**Inventory:** `ansible/inventory.yaml`
+- Configurar nodes NASP (usar placeholders em docs)
+- Variáveis de grupo para automação
+
+**Scripts auxiliares:**
+- `scripts/discover_nasp_endpoints.sh` — Descoberta de endpoints
+- `scripts/fill_values_production.sh` — Preenchimento guiado
+- `scripts/audit_ghcr_images.py` — Auditoria de imagens GHCR
+
+### 13.4 Recomendação: Não Colocar IPs Reais em Markdown
+
+**❌ NUNCA faça:**
+```markdown
+# Documentação
+Endpoint: http://192.168.10.16:8080
+```
+
+**✅ SEMPRE faça:**
+```markdown
+# Documentação
+Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
+```
+
+**Valores reais apenas em:**
+- `helm/trisla/values-production.yaml` (arquivo local, não versionado)
+- `ansible/inventory.yaml` (arquivo local, não versionado)
+- Variáveis de ambiente
+
+---
+
 ## Conclusão
 
 Este guia fornece todas as informações necessárias para desenvolvedores contribuírem com o TriSLA. Para dúvidas adicionais, consulte a documentação específica de cada módulo ou abra uma issue no GitHub.
 
-**Última atualização:** 2025-01-XX  
+**Última atualização:** 2025-11-22  
 **Versão do documento:** 1.0.0
 

@@ -9,9 +9,10 @@ CONTRACT_PATH = os.path.join(BASE_DIR, "contracts", "SLAContract.sol")
 OUTPUT_JSON = os.path.join(BASE_DIR, "contracts", "contract_address.json")
 
 # -------------------------------------------------------------------
-# Configuração de RPC
+# Configuração de RPC - Ethereum Permissionado (GoQuorum/Besu)
+# Conforme dissertação TriSLA: usar infraestrutura Ethereum permissionada
 # -------------------------------------------------------------------
-RPC_URL = os.environ.get("TRISLA_RPC_URL", "http://127.0.0.1:8545")
+RPC_URL = os.environ.get("BESU_RPC_URL", os.environ.get("TRISLA_RPC_URL", "http://besu-dev:8545"))
 
 # -------------------------------------------------------------------
 # CHAVE PRIVADA
@@ -105,7 +106,10 @@ def deploy() -> None:
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
     if not w3.is_connected():
-        raise RuntimeError(f"Erro: RPC Besu não conectado em {RPC_URL}.")
+        raise RuntimeError(
+            f"❌ Erro: RPC Besu (Ethereum permissionado) não conectado em {RPC_URL}. "
+            f"Verifique se o nó GoQuorum/Besu está rodando."
+        )
 
     private_key = get_private_key()
     acct = w3.eth.account.from_key(private_key)
@@ -143,7 +147,7 @@ def deploy() -> None:
     else:
         print("[TriSLA][BC] Conta NÃO é a DEV padrão — cenário compatível com produção.")
 
-    chain_id_str = os.environ.get("TRISLA_CHAIN_ID", "1337")
+    chain_id_str = os.environ.get("BESU_CHAIN_ID", os.environ.get("TRISLA_CHAIN_ID", "1337"))
     try:
         chain_id = int(chain_id_str)
     except ValueError:

@@ -47,3 +47,6 @@ trisla_build.log
 
 # Cursor artifacts
 *cursor_backup*
+
+# TriSLA_PROMPTS (material interno, não versionar)
+TriSLA_PROMPTS/

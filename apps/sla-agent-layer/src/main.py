@@ -9,15 +9,21 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from contextlib import asynccontextmanager
 
 import sys
 import os
+import asyncio
+import logging
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from agent_ran import AgentRAN
 from agent_transport import AgentTransport
 from agent_core import AgentCore
 from kafka_consumer import ActionConsumer
+from kafka_producer import EventProducer
+
+logger = logging.getLogger(__name__)
 
 # OpenTelemetry
 trace.set_tracer_provider(TracerProvider())
@@ -27,14 +33,75 @@ otlp_exporter = OTLPSpanExporter(endpoint="http://otlp-collector:4317", insecure
 span_processor = BatchSpanProcessor(otlp_exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
 
-app = FastAPI(title="TriSLA SLA-Agent Layer", version="1.0.0")
-FastAPIInstrumentor.instrument_app(app)
+# Variáveis globais para agentes e tasks
+agent_ran = None
+agent_transport = None
+agent_core = None
+action_consumer = None
+autonomous_tasks = []
 
-# Inicializar agentes
-agent_ran = AgentRAN()
-agent_transport = AgentTransport()
-agent_core = AgentCore()
-action_consumer = ActionConsumer([agent_ran, agent_transport, agent_core])
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan handler para iniciar e parar loops autônomos
+    """
+    global agent_ran, agent_transport, agent_core, action_consumer, autonomous_tasks
+    
+    # Inicializar Event Producer compartilhado
+    event_producer = EventProducer()
+    
+    # Inicializar agentes com Event Producer
+    agent_ran = AgentRAN(event_producer=event_producer)
+    agent_transport = AgentTransport(event_producer=event_producer)
+    agent_core = AgentCore(event_producer=event_producer)
+    
+    # Inicializar consumer I-05
+    action_consumer = ActionConsumer([agent_ran, agent_transport, agent_core])
+    
+    logger.info("✅ Agentes inicializados")
+    
+    # Iniciar loops autônomos
+    autonomous_tasks = [
+        asyncio.create_task(agent_ran.run_autonomous_loop()),
+        asyncio.create_task(agent_transport.run_autonomous_loop()),
+        asyncio.create_task(agent_core.run_autonomous_loop()),
+        asyncio.create_task(action_consumer.start_consuming_loop())
+    ]
+    
+    logger.info("🔄 Loops autônomos iniciados")
+    
+    yield
+    
+    # Parar loops autônomos
+    logger.info("🛑 Parando loops autônomos...")
+    
+    agent_ran.stop_autonomous_loop()
+    agent_transport.stop_autonomous_loop()
+    agent_core.stop_autonomous_loop()
+    action_consumer.stop_consuming()
+    
+    # Cancelar tasks
+    for task in autonomous_tasks:
+        task.cancel()
+    
+    # Aguardar tasks finalizarem
+    await asyncio.gather(*autonomous_tasks, return_exceptions=True)
+    
+    # Fechar consumers/producers
+    action_consumer.close()
+    event_producer.close()
+    
+    logger.info("✅ Loops autônomos parados")
+
+
+app = FastAPI(
+    title="TriSLA SLA-Agent Layer",
+    description="Agentes autônomos federados para RAN, Transport e Core",
+    version="1.0.0",
+    lifespan=lifespan
+)
+FastAPIInstrumentor.instrument_app(app)
 
 
 @app.get("/health")

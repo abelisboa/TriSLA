@@ -3,7 +3,7 @@ Processador de Intents - SEM-CSMF
 Pipeline: Intent → Ontology → GST
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from opentelemetry import trace
 
 import sys
@@ -20,9 +20,15 @@ tracer = trace.get_tracer(__name__)
 class IntentProcessor:
     """Processa intents através do pipeline semântico"""
     
-    def __init__(self):
-        self.ontology_parser = OntologyParser()
-        self.semantic_matcher = SemanticMatcher()
+    def __init__(self, ontology_path: Optional[str] = None):
+        """
+        Inicializa processador de intents com ontologia OWL real
+        
+        Args:
+            ontology_path: Caminho para arquivo .owl (opcional, usa padrão se None)
+        """
+        self.ontology_parser = OntologyParser(ontology_path=ontology_path)
+        self.semantic_matcher = SemanticMatcher(ontology_parser=self.ontology_parser)
     
     async def validate_semantic(self, intent: Intent) -> Intent:
         """
@@ -61,27 +67,45 @@ class IntentProcessor:
             return gst
     
     def _create_gst_template(self, intent: Intent) -> Dict[str, Any]:
-        """Cria template GST baseado no tipo de slice"""
+        """
+        Cria template GST baseado no tipo de slice e requisitos validados
+        Usa informações da ontologia OWL para gerar template correto
+        """
         base_template = {
             "slice_type": intent.service_type.value,
             "sla": intent.sla_requirements.dict()
         }
         
-        # Templates específicos por tipo
+        # Mapear tipo de slice para SST conforme 3GPP TS 28.541
+        sst_map = {
+            "eMBB": 1,
+            "URLLC": 2,
+            "mMTC": 3
+        }
+        
+        sst = sst_map.get(intent.service_type.value, 0)
+        base_template["sst"] = sst
+        base_template["sd"] = f"{intent.service_type.value.lower()}-{intent.intent_id}"
+        
+        # Templates específicos por tipo baseados na ontologia
+        sla = intent.sla_requirements
+        
         if intent.service_type.value == "eMBB":
             base_template.update({
                 "priority": "high_throughput",
                 "qos": {
-                    "guaranteed_bitrate": "100Mbps",
-                    "maximum_bitrate": "1Gbps"
+                    "guaranteed_bitrate": sla.throughput or "100Mbps",
+                    "maximum_bitrate": "1Gbps",
+                    "latency": sla.latency or "50ms"
                 }
             })
         elif intent.service_type.value == "URLLC":
             base_template.update({
                 "priority": "low_latency",
                 "qos": {
-                    "latency": "1ms",
-                    "reliability": "0.99999"
+                    "latency": sla.latency or "1ms",
+                    "reliability": sla.reliability or 0.99999,
+                    "jitter": sla.jitter or "1ms"
                 }
             })
         elif intent.service_type.value == "mMTC":
@@ -89,7 +113,8 @@ class IntentProcessor:
                 "priority": "high_density",
                 "qos": {
                     "device_density": "1000000/km²",
-                    "data_rate": "160bps"
+                    "data_rate": "160bps",
+                    "latency": sla.latency or "1000ms"
                 }
             })
         

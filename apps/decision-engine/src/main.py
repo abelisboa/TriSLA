@@ -22,11 +22,13 @@ from kafka_consumer import DecisionConsumer
 from kafka_producer import DecisionProducer
 from kafka_producer_retry import DecisionProducerWithRetry
 from grpc_server import serve as serve_grpc
+import logging
 
 # Novos módulos integrados
 from service import DecisionService
 from models import DecisionResult
 from config import config
+from typing import Dict, Any
 
 # OpenTelemetry
 trace.set_tracer_provider(TracerProvider())
@@ -40,6 +42,9 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 
 # Variável global para thread do gRPC
 grpc_thread = None
+
+# Configurar logging
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -110,14 +115,49 @@ decision_maker = DecisionMaker(rule_engine)  # Mantido para compatibilidade
 # Novo serviço integrado (usa SEM-CSMF, ML-NSMF, BC-NSSMF)
 decision_service = DecisionService()
 
-decision_consumer = DecisionConsumer(decision_maker)
 # Usar producer com retry se habilitado
 USE_KAFKA_RETRY = os.getenv("USE_KAFKA_RETRY", "true").lower() == "true"
+kafka_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:29092,kafka:9092").split(",")
 if USE_KAFKA_RETRY:
-    kafka_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092").split(",")
     decision_producer = DecisionProducerWithRetry(kafka_servers)
 else:
     decision_producer = DecisionProducer()
+
+# Consumer Kafka para I-03 (ML-NSMF predictions)
+async def process_ml_prediction(prediction_data: Dict[str, Any]):
+    """
+    Callback para processar predição do ML-NSMF recebida via I-03
+    """
+    try:
+        intent_id = prediction_data.get("intent_id")
+        nest_id = prediction_data.get("nest_id")
+        
+        if not intent_id:
+            logger.warning("⚠️ Predição I-03 sem intent_id, ignorando")
+            return
+        
+        # Processar decisão usando o serviço integrado
+        decision_result = await decision_service.process_decision(
+            intent_id=intent_id,
+            nest_id=nest_id,
+            context={"ml_prediction": prediction_data}
+        )
+        
+        # Publicar decisão em I-04 e I-05
+        decision_dict = decision_result.dict()
+        await decision_producer.send_to_bc_nssmf(decision_dict)  # I-04
+        await decision_producer.send_to_sla_agents(decision_dict)  # I-05
+        
+        logger.info(f"✅ Decisão processada: {decision_result.action.value} para intent {intent_id}")
+        
+    except Exception as e:
+        logger.error(f"❌ Erro ao processar predição I-03: {e}", exc_info=True)
+
+# Inicializar consumer com callback
+decision_consumer = DecisionConsumer(
+    decision_callback=process_ml_prediction,
+    bootstrap_servers=kafka_servers
+)
 
 # Fallback: Iniciar gRPC quando o módulo é importado
 # Isso garante que o servidor gRPC inicie mesmo se o lifespan não funcionar

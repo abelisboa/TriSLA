@@ -1626,11 +1626,149 @@ TriSLA-clean/
 
 ---
 
+## 7. Pré-Deploy NASP Node1
+
+### 7.1 Checklist de Pré-Deploy
+
+Antes de fazer o deploy no NASP Node1, siga o checklist completo em:
+
+**📋 [docs/NASP_PREDEPLOY_CHECKLIST.md](../docs/NASP_PREDEPLOY_CHECKLIST.md)**
+
+O checklist inclui:
+- Pré-requisitos no cluster NASP
+- Descoberta de endpoints NASP
+- Configuração de Helm values
+- Deploy e validação pós-deploy
+- Troubleshooting
+
+### 7.2 Descoberta de Endpoints NASP
+
+Execute o script de descoberta (se disponível):
+```bash
+./scripts/discover-nasp-services.sh
+```
+
+Ou manualmente:
+```bash
+# Listar serviços RAN
+kubectl get svc -n <ran-namespace> | grep -i ran
+
+# Listar serviços Core
+kubectl get svc -n <core-namespace> | grep -E "upf|amf|smf"
+
+# Listar serviços Transport
+kubectl get svc -n <transport-namespace> | grep -i transport
+```
+
+### 7.3 Configuração de values-production.yaml
+
+1. **Substituir placeholders:**
+   - Editar `helm/trisla/values-production.yaml`
+   - Substituir todos os `<...>` pelos valores reais descobertos
+   - Validar com: `helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --debug`
+
+2. **Verificar imagens GHCR:**
+   - Todas as imagens devem apontar para `ghcr.io/abelisboa/trisla-*:latest` ou versão específica
+   - Secret `ghcr-secret` deve estar criado no namespace `trisla`
+
+### 7.4 Deploy no NASP Node1
+
+```bash
+# 1. Criar namespace
+kubectl create namespace trisla
+
+# 2. Criar secret GHCR (se ainda não criado)
+kubectl create secret docker-registry ghcr-secret \
+  --docker-server=ghcr.io \
+  --docker-username=<GITHUB_USERNAME> \
+  --docker-password=<GITHUB_PAT> \
+  --namespace=trisla
+
+# 3. Deploy com Helm
+helm upgrade --install trisla ./helm/trisla \
+  --namespace trisla \
+  --create-namespace \
+  -f ./helm/trisla/values-production.yaml \
+  --wait \
+  --timeout 10m
+
+# 4. Verificar deploy
+kubectl get pods -n trisla
+kubectl get svc -n trisla
+```
+
+### 7.5 Validação Pós-Deploy
+
+Siga a seção "5. Validação Pós-Deploy" do checklist em `docs/NASP_PREDEPLOY_CHECKLIST.md`.
+
+---
+
+## 8. Fluxo de Operação em NASP (Visão Resumida)
+
+### 8.1 Documentação de Deploy NASP
+
+Para realizar um deploy controlado do TriSLA no ambiente NASP, siga a documentação completa:
+
+**Documentos principais:**
+
+1. **`docs/NASP_CONTEXT_REPORT.md`** — Relatório de contexto do cluster NASP
+   - Gerado por: `scripts/discover_nasp_endpoints.sh`
+   - Contém: Visão geral do cluster, serviços detectados, diagnóstico de saúde
+
+2. **`docs/VALUES_PRODUCTION_GUIDE.md`** — Guia de preenchimento de `values-production.yaml`
+   - Explicação conceitual de values.yaml vs values-production.yaml
+   - Tabela de parâmetros críticos
+   - Erros comuns e como evitar
+
+3. **`docs/IMAGES_GHCR_MATRIX.md`** — Matriz de imagens Docker no GHCR
+   - Gerado por: `python3 scripts/audit_ghcr_images.py`
+   - Contém: Status de cada imagem, dependências, como publicar imagens faltantes
+
+4. **`docs/NASP_PREDEPLOY_CHECKLIST_v2.md`** — Checklist completo de pré-deploy
+   - Infraestrutura NASP
+   - Dependências técnicas do TriSLA
+   - Configuração de Helm
+   - Imagens e registro
+   - Segurança e conformidade
+
+5. **`docs/NASP_DEPLOY_RUNBOOK.md`** — Runbook operacional de deploy
+   - Fluxo de execução passo a passo
+   - Comandos de rollback
+   - Validação pós-deploy
+   - Troubleshooting
+
+### 8.2 Scripts Auxiliares
+
+**Descoberta de Endpoints:**
+```bash
+./scripts/discover_nasp_endpoints.sh
+```
+
+**Preenchimento Guiado:**
+```bash
+./scripts/fill_values_production.sh
+```
+
+**Auditoria de Imagens:**
+```bash
+python3 scripts/audit_ghcr_images.py
+```
+
+### 8.3 Fluxo Recomendado
+
+1. **Descoberta:** Executar `scripts/discover_nasp_endpoints.sh`
+2. **Configuração:** Preencher `values-production.yaml` com `scripts/fill_values_production.sh`
+3. **Publicação de Imagens:** Publicar imagens no GHCR com `scripts/publish_all_images_ghcr.sh` (ver `docs/GHCR_PUBLISH_GUIDE.md`)
+4. **Validação:** Executar `python3 scripts/audit_ghcr_images.py`
+5. **Deploy:** Seguir `docs/NASP_DEPLOY_RUNBOOK.md`
+
+---
+
 ## Conclusão
 
 Este guia fornece todas as informações necessárias para operar o TriSLA em produção no ambiente NASP. Para suporte adicional, consulte a documentação técnica em `README.md` ou entre em contato através do repositório GitHub.
 
-**Última atualização:** 2025-01-XX  
+**Última atualização:** 2025-11-22  
 **Versão do documento:** 1.0.0  
 **Versão do TriSLA:** 1.0.0
 

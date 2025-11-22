@@ -6,13 +6,21 @@
 
 all:
   children:
-    nasp_nodes:
+    nasp_cluster:
+      hosts:
+        nasp_node1:
+          ansible_host: <NASP_NODE1_HOST>
+          iface: my5g
+        nasp_node2:
+          ansible_host: <NASP_NODE2_HOST>
+          iface: my5g
+    nasp_nodes:  # Alias para compatibilidade
       hosts:
         node1:
-          ansible_host: <INSERIR_IP_NODE1>
+          ansible_host: <NASP_NODE1_HOST>
           iface: my5g
         node2:
-          ansible_host: <INSERIR_IP_NODE2>
+          ansible_host: <NASP_NODE2_HOST>
           iface: my5g
     
     control_plane:
@@ -39,10 +47,10 @@ all:
     ansible_user: root
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
     
-    # Configurações de rede NASP
+    # Configurações de rede NASP (usar placeholders em documentação)
     trisla_interface: my5g
-    trisla_node_ip: 192.168.10.16
-    trisla_gateway: 192.168.10.1
+    trisla_node_ip: <NODE1_IP>  # Substituir pelo IP real apenas no arquivo local
+    trisla_gateway: <GATEWAY_IP>  # Substituir pelo IP real apenas no arquivo local
     
     # Configurações do Kubernetes
     kubeconfig_path: /etc/kubernetes/admin.conf

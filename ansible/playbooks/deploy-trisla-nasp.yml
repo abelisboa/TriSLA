@@ -11,19 +11,24 @@
   gather_facts: yes
   
   vars:
-    namespace: "{{ trisla.namespace }}"
-    helm_chart_path: "{{ trisla_helm_chart_path }}"
-    values_file: "{{ helm_chart_path }}/values.yaml"
+    namespace: "{{ trisla_namespace | default('trisla') }}"
+    helm_chart_path: "{{ trisla_helm_chart_path | default('./helm/trisla') }}"
+    values_file: "{{ helm_chart_path }}/values-production.yaml"
   
   tasks:
-    - name: Validar pré-requisitos
-      include_tasks: validate-prerequisites.yml
+    - name: Verificar se namespace existe
+      command: kubectl get namespace {{ namespace }}
+      register: ns_check
+      changed_when: false
+      failed_when: false
     
-    - name: Criar namespace
-      include_tasks: setup-namespace.yml
-    
-    - name: Configurar secrets
-      include_tasks: setup-secrets.yml
+    - name: Criar namespace se não existir
+      kubernetes.core.k8s:
+        name: "{{ namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+      when: ns_check.rc != 0
     
     - name: Adicionar repositório Helm (se necessário)
       command: helm repo add trisla {{ trisla_image_registry }}
@@ -52,6 +57,16 @@
       register: helm_dry_run
       changed_when: false
     
+    - name: Verificar se values-production.yaml existe
+      stat:
+        path: "{{ values_file }}"
+      register: values_file_stat
+    
+    - name: Falhar se values-production.yaml não existir
+      fail:
+        msg: "Arquivo values-production.yaml não encontrado: {{ values_file }}. Execute scripts/fill_values_production.sh primeiro."
+      when: not values_file_stat.stat.exists
+    
     - name: Deploy real do TriSLA
       command: >
         helm upgrade --install trisla {{ helm_chart_path }}
@@ -61,6 +76,8 @@
         --wait
         --timeout 10m
       register: helm_deploy
+      args:
+        chdir: "{{ project_root | default('.') }}"
     
     - name: Verificar status do deploy
       command: kubectl get pods -n {{ namespace }}

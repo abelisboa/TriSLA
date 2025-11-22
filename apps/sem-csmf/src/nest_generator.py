@@ -99,33 +99,55 @@ class NESTGenerator:
         return slices
     
     def _calculate_resources(self, template: Dict[str, Any]) -> Dict[str, Any]:
-        """Calcula recursos necessários baseado no template"""
+        """
+        Calcula recursos necessários baseado no template GST
+        Usa valores do template (que vem da ontologia) em vez de hardcoded
+        """
+        slice_type = template.get("slice_type", "eMBB")
+        qos = template.get("qos", {})
+        sla = template.get("sla", {})
+        
+        # Recursos base (podem ser ajustados conforme necessidade)
         resources = {
             "cpu": "2",
             "memory": "4Gi",
             "storage": "10Gi"
         }
         
-        # Ajustar baseado no tipo de slice
-        slice_type = template.get("slice_type")
+        # Usar valores do template GST (que vem da ontologia validada)
+        # Ajustar baseado no tipo de slice e requisitos reais
         if slice_type == "eMBB":
+            # eMBB: alta taxa de dados
             resources.update({
-                "bandwidth": template.get("qos", {}).get("maximum_bitrate", "1Gbps"),
-                "cpu": "4",
-                "memory": "8Gi"
+                "bandwidth": qos.get("maximum_bitrate") or sla.get("throughput") or "1Gbps",
+                "cpu": "4",  # Mais CPU para processamento de alta taxa
+                "memory": "8Gi",  # Mais memória para buffers
+                "latency": sla.get("latency") or qos.get("latency") or "50ms"
             })
         elif slice_type == "URLLC":
+            # URLLC: baixa latência e alta confiabilidade
             resources.update({
-                "latency": template.get("qos", {}).get("latency", "1ms"),
-                "cpu": "2",
-                "memory": "4Gi"
+                "latency": qos.get("latency") or sla.get("latency") or "1ms",
+                "reliability": qos.get("reliability") or sla.get("reliability") or 0.99999,
+                "jitter": qos.get("jitter") or sla.get("jitter") or "1ms",
+                "cpu": "2",  # CPU suficiente para processamento rápido
+                "memory": "4Gi"  # Memória para buffers de baixa latência
             })
         elif slice_type == "mMTC":
+            # mMTC: alta densidade de dispositivos
             resources.update({
-                "device_density": template.get("qos", {}).get("device_density", "1000000/km²"),
-                "cpu": "1",
-                "memory": "2Gi"
+                "device_density": qos.get("device_density") or "1000000/km²",
+                "data_rate": qos.get("data_rate") or "160bps",
+                "latency": sla.get("latency") or "1000ms",  # Latência pode ser maior
+                "cpu": "1",  # Menos CPU (dispositivos de baixa taxa)
+                "memory": "2Gi"  # Menos memória
             })
+        
+        # Adicionar outros recursos do SLA se especificados
+        if sla.get("coverage"):
+            resources["coverage"] = sla["coverage"]
+        if sla.get("reliability"):
+            resources["reliability"] = sla["reliability"]
         
         return resources
     

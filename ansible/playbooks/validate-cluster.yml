@@ -73,4 +73,26 @@
       debug:
         msg: "Helm version: {{ helm_version.stdout }}"
       when: helm_version.rc == 0
+    
+    - name: Verificar pods TriSLA (se deployado)
+      command: kubectl get pods -n {{ trisla_namespace | default('trisla') }}
+      register: trisla_pods
+      changed_when: false
+      failed_when: false
+    
+    - name: Exibir pods TriSLA
+      debug:
+        msg: "{{ trisla_pods.stdout_lines }}"
+      when: trisla_pods.rc == 0
+    
+    - name: Verificar serviços TriSLA (se deployado)
+      command: kubectl get svc -n {{ trisla_namespace | default('trisla') }}
+      register: trisla_svc
+      changed_when: false
+      failed_when: false
+    
+    - name: Exibir serviços TriSLA
+      debug:
+        msg: "{{ trisla_svc.stdout_lines }}"
+      when: trisla_svc.rc == 0
 
