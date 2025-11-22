@@ -1,0 +1,226 @@
+# ============================================
+# TriSLA v3.4.0 - Values para Deploy NASP
+# ============================================
+# ⚠️ IMPORTANTE: Substituir placeholders pelos valores reais do ambiente NASP
+# Versão: 3.4.0
+# Data: 2025-01-22
+
+global:
+  imageRegistry: ghcr.io/abelisboa
+  imagePullSecrets:
+    - name: ghcr-secret
+  namespace: trisla
+  version: "3.4.0"
+
+# Network Configuration NASP
+network:
+  interface: "<NASP_NETWORK_INTERFACE>"
+  nodeIP: "<NASP_NODE_IP>"
+  gateway: "<NASP_GATEWAY>"
+
+# SEM-CSMF Configuration
+semCsmf:
+  enabled: true
+  image:
+    repository: trisla-sem-csmf
+    tag: "3.4.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# ML-NSMF Configuration
+mlNsmf:
+  enabled: true
+  image:
+    repository: trisla-ml-nsmf
+    tag: "3.4.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8081
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+  replicas: 2
+
+# Decision Engine Configuration
+decisionEngine:
+  enabled: true
+  image:
+    repository: trisla-decision-engine
+    tag: "3.4.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8082
+  grpc:
+    port: 50051
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# BC-NSSMF Configuration
+bcNssmf:
+  enabled: true
+  image:
+    repository: trisla-bc-nssmf
+    tag: "3.4.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8083
+  blockchain:
+    network: "nasp"
+    besuRpcUrl: "http://<BESU_SERVICE>.<BESU_NAMESPACE>.svc.cluster.local:8545"
+    chainId: 1337
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# SLA-Agent Layer Configuration
+slaAgentLayer:
+  enabled: true
+  image:
+    repository: trisla-sla-agent-layer
+    tag: "3.4.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8084
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# NASP-Adapter Configuration
+naspAdapter:
+  enabled: true
+  image:
+    repository: trisla-nasp-adapter
+    tag: "3.4.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8085
+  naspEndpoints:
+    # RAN - substituir pelo endpoint real do RAN controller
+    ran: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_PORT>"
+    ran_metrics: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_METRICS_PORT>"
+    # Core - substituir pelos endpoints reais do Core (UPF, AMF, SMF)
+    core_upf: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_PORT>"
+    core_upf_metrics: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_METRICS_PORT>"
+    core_amf: "http://<AMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<AMF_PORT>"
+    core_smf: "http://<SMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<SMF_PORT>"
+    # Transport - substituir pelo endpoint real do Transport controller
+    transport: "http://<TRANSPORT_SERVICE>.<TRANSPORT_NAMESPACE>.svc.cluster.local:<TRANSPORT_PORT>"
+    # Endpoint principal (opcional, se houver)
+    main: "http://<MAIN_SERVICE>.<MAIN_NAMESPACE>.svc.cluster.local:<MAIN_PORT>"
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# UI Dashboard Configuration
+uiDashboard:
+  enabled: true
+  image:
+    repository: trisla-ui-dashboard
+    tag: "3.4.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - host: trisla.<NASP_DOMAIN>
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: trisla-tls
+        hosts:
+          - trisla.<NASP_DOMAIN>
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  replicas: 1
+
+# Kafka Configuration
+kafka:
+  enabled: true
+  bootstrapServers: "kafka.<KAFKA_NAMESPACE>.svc.cluster.local:9092"
+  topics:
+    - name: "intent-requests"
+      partitions: 3
+      replicationFactor: 2
+    - name: "viability-predictions"
+      partitions: 3
+      replicationFactor: 2
+    - name: "sla-violations"
+      partitions: 3
+      replicationFactor: 2
+
+# PostgreSQL Configuration
+postgresql:
+  enabled: true
+  host: "postgresql.<POSTGRES_NAMESPACE>.svc.cluster.local"
+  port: 5432
+  database: "trisla"
+  username: "trisla"
+  # Password deve ser configurado via Secret
+  passwordSecret: "trisla-postgres-secret"
+
+# Observability Configuration
+observability:
+  otlp:
+    endpoint: "http://otel-collector.<OBSERVABILITY_NAMESPACE>.svc.cluster.local:4317"
+  prometheus:
+    endpoint: "http://prometheus.<OBSERVABILITY_NAMESPACE>.svc.cluster.local:9090"
+  grafana:
+    endpoint: "http://grafana.<OBSERVABILITY_NAMESPACE>.svc.cluster.local:3000"
+
+# Security Configuration
+security:
+  jwtSecretKey: "<JWT_SECRET_KEY>"  # Substituir por secret real
+  rateLimitEnabled: true
+  enableAuth: true
+
