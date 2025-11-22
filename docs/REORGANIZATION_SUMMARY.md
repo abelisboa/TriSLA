@@ -1,6 +1,6 @@
 # Relatório de Reorganização do Repositório TriSLA
 
-**Data:** 2025-11-22 13:02:18
+**Data:** 2025-11-22 13:03:55
 **Objetivo:** Padronizar estrutura do repositório para open-source
 
 ---
@@ -66,7 +66,7 @@ docs/
 
 
 ### docs/troubleshooting/
-
+- (nenhum arquivo)
 
 ### docs/deployment/
 - INSTALL_FULL_PROD.md
