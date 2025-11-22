@@ -122,7 +122,42 @@ helm lint helm/trisla -f nasp/values-nasp.yaml
 
 ---
 
-## 🚀 Passo 3: Deploy com Ansible
+## 🚀 Passo 3: Deploy Automático (Recomendado)
+
+### 3.1 Deploy com Script Automatizado
+
+**⚠️ RECOMENDADO:** Use o script automatizado que faz deploy, detecta erros e corrige automaticamente.
+
+```bash
+# No node1 do NASP
+bash scripts/deploy-trisla-nasp-auto.sh
+```
+
+Este script:
+- ✅ Valida todos os pré-requisitos
+- ✅ Corrige erros automaticamente (namespace, secrets, storage, etc.)
+- ✅ Monitora pods em tempo real
+- ✅ Valida logs de cada módulo
+- ✅ Gera relatório completo em Markdown
+
+**Log completo:** `/tmp/trisla-deploy.log`  
+**Relatório:** `/tmp/trisla-deploy-report-*.md`
+
+### 3.2 Deploy Manual com Helm (Alternativa)
+
+Se preferir fazer deploy manual:
+
+```bash
+helm upgrade --install trisla-portal \
+  ./helm/trisla \
+  -n trisla \
+  -f ./nasp/values-nasp.yaml \
+  --timeout 15m \
+  --wait \
+  --debug
+```
+
+## 🚀 Passo 4: Deploy com Ansible (Opcional)
 
 ### 3.1 Configurar Inventory
 
