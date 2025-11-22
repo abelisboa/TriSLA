@@ -303,3 +303,4 @@ echo "   3. Preencher helm/trisla/values-production.yaml"
 echo "   4. Executar scripts/fill_values_production.sh"
 echo ""
 
+

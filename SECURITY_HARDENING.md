@@ -1935,3 +1935,4 @@ Este guia fornece uma base sólida para implementar segurança e hardening no Tr
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
 - [CIS Kubernetes Benchmark](https://www.cisecurity.org/benchmark/kubernetes)
 
+

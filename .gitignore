@@ -1,20 +1,21 @@
-# Python
+# Global venv ignore
+venv/
+*/venv/
+**/venv/
+
+# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
 *.pyd
-*.pdb
 
-# venv
-.venv/
-env/
-venv/
+# Build & dist
+build/
+dist/
+*.egg-info/
+*.eggs/
 
-# Logs
-logs/
-*.log
-
-# Editor
+# IDE
 .vscode/
 .idea/
 
@@ -22,31 +23,32 @@ logs/
 .DS_Store
 Thumbs.db
 
-# Node UI
-node_modules/
-dist/
-build/
+# Logs
+*.log
 
-# Docker
-*.pid
-*.tar
-*.img
+# Environment / secrets
+.env
+.env.*
 
-# Tests
+# Local temporary scripts
+*.bak
+*.tmp
+
+# pytest
 .pytest_cache/
 
-# Local-only artifacts
-apps/bc-nssmf/src/contracts/contract_address.json
-pipeline_output.log
-trisla_build.log
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
 
-# Backups
-*.bak
-*.old
-*.backup
+# Docker artifacts
+**/.dockerignore
+**/Dockerfile.*
 
-# Cursor artifacts
-*cursor_backup*
+# Kubernetes / Helm generated
+apps/**/charts/
+apps/**/manifests/
 
-# TriSLA_PROMPTS (material interno, não versionar)
-TriSLA_PROMPTS/
+# Node artifacts (if any)
+node_modules/

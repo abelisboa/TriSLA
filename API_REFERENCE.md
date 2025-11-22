@@ -1778,3 +1778,4 @@ Este documento fornece a referência completa das APIs do TriSLA. Para integraç
 - `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
 - `SECURITY_HARDENING.md`: Guia de segurança
 
+

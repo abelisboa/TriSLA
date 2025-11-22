@@ -1251,3 +1251,4 @@ Este guia fornece múltiplos métodos para instalar o TriSLA em produção. Esco
 - `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
 - `SECURITY_HARDENING.md`: Guia de segurança
 
+

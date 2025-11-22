@@ -1265,3 +1265,4 @@ A arquitetura é projetada para ser modular, extensível e mantível, permitindo
 - `SECURITY_HARDENING.md`: Guia de segurança
 - `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
 
+

@@ -2088,3 +2088,4 @@ Este documento fornece a documentação completa das interfaces internas I-01 a 
 - `README_OPERATIONS_PROD.md`: Guia de operações
 - `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
 
+

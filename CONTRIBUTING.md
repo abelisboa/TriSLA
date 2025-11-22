@@ -1276,3 +1276,4 @@ Abra uma issue no GitHub com a tag `question` ou entre em contato com os mantene
 **Última atualização:** 2025-01-XX  
 **Versão do documento:** 1.0.0
 
+

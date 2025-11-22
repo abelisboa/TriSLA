@@ -238,3 +238,4 @@ if __name__ == "__main__":
     print(f"\n📈 Distribuição por tipo de slice:")
     print(dataset["slice_type"].value_counts())
 
+

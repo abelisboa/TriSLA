@@ -495,3 +495,4 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 **Data:** 2025-11-22  
 **ENGINE MASTER:** Sistema de Deploy NASP TriSLA
 
+

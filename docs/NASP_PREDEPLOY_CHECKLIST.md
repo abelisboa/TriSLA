@@ -433,3 +433,4 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --deb
 **Data:** 2025-11-22  
 **ENGINE MASTER:** Sistema de Pré-Deploy TriSLA
 
+

@@ -66,7 +66,7 @@ def main() -> None:
 
     check_docker_available()
 
-    now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     rows = []
     ok_count = 0

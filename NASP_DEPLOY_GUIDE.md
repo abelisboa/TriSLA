@@ -1683,3 +1683,4 @@ Este guia fornece instruções completas para implantar o TriSLA no ambiente NAS
 - `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
 - `SECURITY_HARDENING.md`: Guia de segurança e hardening
 
+

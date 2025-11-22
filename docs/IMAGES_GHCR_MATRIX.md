@@ -1,6 +1,6 @@
 # Matriz de Imagens GHCR — TriSLA
 
-**Data:** 2025-11-22 13:48:32 UTC
+**Data:** 2025-11-22 14:36:16 UTC
 **Gerado por:** scripts/audit_ghcr_images.py
 **GHCR User:** abelisboa
 
@@ -41,7 +41,7 @@ Uma imagem é considerada **OK** se o comando acima retornar código de saída 0
 
 ## Status de Auditoria
 
-**Última auditoria:** 2025-11-22 13:48:32 UTC
+**Última auditoria:** 2025-11-22 14:36:16 UTC
 
 **Resumo:**
 - ✅ Imagens OK: 7

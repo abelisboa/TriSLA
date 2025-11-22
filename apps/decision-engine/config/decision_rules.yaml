@@ -158,3 +158,4 @@ rules:
     priority: 100
     reasoning_template: "SLA {service_type} aceito (padrão). ML score: {risk_score:.2f}. Domínios: {domains}."
 
+
