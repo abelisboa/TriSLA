@@ -1,54 +1,34 @@
-# Global venv ignore
-venv/
-*/venv/
-**/venv/
+# === Python virtual environments ===
+.venv/
+*/.venv/
 
-# Python cache
+# === Python caches ===
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
 
-# Build & dist
-build/
-dist/
-*.egg-info/
-*.eggs/
+# === Dados locais ===
+*.db
+*.sqlite
+*.jsonld
+*.owl
+*.ttl
 
-# IDE
+# === Pastas que NUNCA devem ir para o GitHub ===
+PROMPTS_*/
+PROMPTS_EXPORT/
+PROMPTS_V3/
+TriSLA_PROMPTS_REORG/
+TriSLA-Prompts*/
+cleanup*/
+audit*/
+RELATORIO*/
+docs/*INTERNAL*
+scripts/.venv/
+src/**/__pycache__/
+
+# === Testes e cargas ===
+tests/load/*.json
+
+# === IDE ===
 .vscode/
 .idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Environment / secrets
-.env
-.env.*
-
-# Local temporary scripts
-*.bak
-*.tmp
-
-# pytest
-.pytest_cache/
-
-# Coverage
-htmlcov/
-.coverage
-.coverage.*
-
-# Docker artifacts
-**/.dockerignore
-**/Dockerfile.*
-
-# Kubernetes / Helm generated
-apps/**/charts/
-apps/**/manifests/
-
-# Node artifacts (if any)
-node_modules/
