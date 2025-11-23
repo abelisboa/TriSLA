@@ -17,14 +17,22 @@ NODE2_IP="${NODE2_IP:-}"
 echo "🔧 Configurando valores reais do NASP..."
 echo ""
 
-# 1. Atualizar helm/trisla/values-production.yaml
-echo "1️⃣ Atualizando helm/trisla/values-production.yaml..."
+# Verificar se está no diretório correto
+if [ ! -f "README.md" ] || [ ! -d "helm" ] || [ ! -d "scripts" ]; then
+    echo "❌ Erro: Execute este script no diretório raiz do projeto TriSLA"
+    echo "   cd ~/gtp5g/trisla"
+    exit 1
+fi
+
+# 1. Atualizar helm/trisla/values-nasp.yaml
+echo "1️⃣ Atualizando helm/trisla/values-nasp.yaml..."
 
 # Criar backup
-cp helm/trisla/values-production.yaml helm/trisla/values-production.yaml.bak 2>/dev/null || true
+cp helm/trisla/values-nasp.yaml helm/trisla/values-nasp.yaml.bak 2>/dev/null || true
 
-# Atualizar valores conhecidos
-cat > helm/trisla/values-production.yaml <<EOF
+# Atualizar valores conhecidos (mantendo estrutura existente e atualizando apenas valores conhecidos)
+# Usar yq ou sed para atualizar valores específicos, ou criar arquivo completo se necessário
+cat > helm/trisla/values-nasp.yaml <<EOF
 # ============================================
 # Values para PRODUÇÃO REAL
 # ============================================
@@ -123,7 +131,7 @@ monitoring:
     enabled: true
 EOF
 
-echo "✅ values-production.yaml atualizado"
+echo "✅ values-nasp.yaml atualizado"
 echo ""
 
 # 2. Atualizar ansible/inventory.yaml
@@ -171,7 +179,7 @@ fi
 echo ""
 echo "⚠️  AÇÕES NECESSÁRIAS:"
 echo "   1. Executar no NASP: ./scripts/discover-nasp-endpoints.sh"
-echo "   2. Preencher endpoints reais em helm/trisla/values-production.yaml:"
+echo "   2. Preencher endpoints reais em helm/trisla/values-nasp.yaml:"
 echo "      - RAN controller endpoint"
 echo "      - Transport controller endpoint"
 echo "      - Core controller endpoint"

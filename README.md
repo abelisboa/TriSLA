@@ -364,7 +364,7 @@ kubectl logs -n trisla <pod-name> -f
 kubectl get all -n trisla
 
 # Verificar Helm release
-helm status trisla-portal -n trisla
+helm status trisla -n trisla
 ```
 
 ### Deploy Manual (Alternativo)
@@ -387,7 +387,7 @@ kubectl create secret docker-registry ghcr-secret \
   --dry-run=client -o yaml | kubectl apply -f -
 
 # Deploy via Helm
-helm upgrade --install trisla-portal ./helm/trisla \
+helm upgrade --install trisla ./helm/trisla \
   -n trisla \
   -f ./helm/trisla/values-nasp.yaml \
   --create-namespace \
@@ -602,6 +602,652 @@ Para mais informações sobre Ansible, consulte:
 
 ---
 
+## 🔌 Interfaces TriSLA (I-01 a I-07)
+
+O TriSLA implementa **7 interfaces padronizadas** que definem o fluxo completo de processamento de SLAs, desde a recepção de intenções até a execução de ações nos controladores NASP.
+
+### Visão Geral das Interfaces
+
+```
+┌─────────────┐
+│   Tenant    │
+│   Portal    │
+└──────┬──────┘
+       │ I-01 (HTTP/gRPC)
+       ▼
+┌─────────────┐
+│  SEM-CSMF   │ ──I-02 (Kafka)──> ┌─────────────┐
+│ (Intent →   │                    │   ML-NSMF   │
+│   NEST)     │                    │ (Prediction)│
+└─────────────┘                    └──────┬──────┘
+                                           │ I-03 (Kafka)
+                                           ▼
+                                    ┌─────────────┐
+                                    │  Decision   │
+                                    │   Engine    │
+                                    │  (Actions)  │
+                                    └──────┬──────┘
+                                           │ I-04 (Kafka)
+                                           ├───I-05 (gRPC)──> ┌─────────────┐
+                                           │                  │  BC-NSSMF   │
+                                           │                  │ (Blockchain)│
+                                           ├───I-06 (Kafka)──> └─────────────┘
+                                           │                  ┌─────────────┐
+                                           │                  │ SLA-Agent   │
+                                           │                  │   Layer     │
+                                           └───I-07 (REST)──> └──────┬──────┘
+                                                                     │
+                                                                     ▼
+                                                              ┌─────────────┐
+                                                              │   NASP      │
+                                                              │  Adapter    │
+                                                              └──────┬──────┘
+                                                                     │
+                                                                     ▼
+                                                              ┌─────────────┐
+                                                              │    NASP     │
+                                                              │ (RAN/Core/  │
+                                                              │ Transport)  │
+                                                              └─────────────┘
+```
+
+### Interface I-01: Recepção de Intenções
+
+**Módulo:** SEM-CSMF  
+**Protocolo:** HTTP REST / gRPC  
+**Endpoint:** `POST /api/v1/intents`
+
+**Descrição:** Interface de entrada do TriSLA. Recebe intenções de alto nível dos tenants e inicia o processamento semântico.
+
+**Payload de Entrada:**
+```json
+{
+  "intent_id": "urllc-slice-001",
+  "tenant_id": "tenant-abc",
+  "service_type": "URLLC",
+  "sla_requirements": {
+    "latency": "5ms",
+    "throughput": "10Mbps",
+    "reliability": 0.99999,
+    "availability": 0.999
+  },
+  "slice_config": {
+    "domain": "RAN",
+    "priority": "high"
+  }
+}
+```
+
+**Resposta:**
+```json
+{
+  "intent_id": "urllc-slice-001",
+  "status": "accepted",
+  "nest_id": "nest-urllc-001",
+  "message": "Intent recebido e processado"
+}
+```
+
+**Validação:**
+- ✅ Sintaxe JSON válida
+- ✅ Campos obrigatórios presentes
+- ✅ Valores de SLA dentro de limites aceitáveis
+
+---
+
+### Interface I-02: Processamento Semântico → ML
+
+**Módulo:** SEM-CSMF → ML-NSMF  
+**Protocolo:** Kafka  
+**Topic:** `I-02-intent-to-ml`
+
+**Descrição:** Interface assíncrona que transmite NEST (Network Slice Template) gerado pelo SEM-CSMF para o ML-NSMF para predição de viabilidade.
+
+**Mensagem Kafka:**
+```json
+{
+  "nest_id": "nest-urllc-001",
+  "intent_id": "urllc-slice-001",
+  "tenant_id": "tenant-abc",
+  "nest": {
+    "slice_type": "URLLC",
+    "requirements": {
+      "latency_ms": 5,
+      "throughput_mbps": 10,
+      "reliability": 0.99999
+    },
+    "domain_config": {
+      "ran": {
+        "cell_density": "high",
+        "mimo_layers": 4
+      },
+      "core": {
+        "upf_location": "edge",
+        "amf_pool_size": 2
+      }
+    }
+  },
+  "timestamp": "2025-01-27T10:00:00Z"
+}
+```
+
+**Validação:**
+- ✅ NEST válido conforme ontologia OWL
+- ✅ Requisitos de SLA coerentes
+- ✅ Configuração de domínios válida
+
+---
+
+### Interface I-03: Predição ML → Decisão
+
+**Módulo:** ML-NSMF → Decision Engine  
+**Protocolo:** Kafka  
+**Topic:** `I-03-ml-predictions`
+
+**Descrição:** Interface que transmite predições de viabilidade de SLA (com explicações XAI) do ML-NSMF para o Decision Engine.
+
+**Mensagem Kafka:**
+```json
+{
+  "prediction_id": "pred-urllc-001",
+  "nest_id": "nest-urllc-001",
+  "intent_id": "urllc-slice-001",
+  "viability": {
+    "is_viable": true,
+    "confidence": 0.92,
+    "predicted_latency_ms": 4.2,
+    "predicted_throughput_mbps": 11.5,
+    "predicted_reliability": 0.99995
+  },
+  "xai_explanation": {
+    "key_factors": [
+      {
+        "factor": "cell_density",
+        "impact": "high",
+        "reason": "Alta densidade de células garante latência baixa"
+      },
+      {
+        "factor": "upf_location",
+        "impact": "medium",
+        "reason": "UPF no edge reduz latência de transporte"
+      }
+    ],
+    "risk_factors": [
+      {
+        "factor": "network_congestion",
+        "risk_level": "low",
+        "mitigation": "Monitorar carga de rede"
+      }
+    ]
+  },
+  "timestamp": "2025-01-27T10:00:05Z"
+}
+```
+
+**Validação:**
+- ✅ Predição contém viabilidade e confiança
+- ✅ Explicação XAI presente
+- ✅ Fatores de risco identificados
+
+---
+
+### Interface I-04: Decisão → Ações
+
+**Módulo:** Decision Engine → BC-NSSMF / SLA-Agent Layer  
+**Protocolo:** Kafka  
+**Topics:** `trisla-i04-decisions`, `trisla-i05-actions`
+
+**Descrição:** Interface que transmite decisões automatizadas do Decision Engine para registro em blockchain (I-05) e execução via SLA-Agent Layer (I-06).
+
+**Mensagem Kafka (Decisão):**
+```json
+{
+  "decision_id": "dec-urllc-001",
+  "prediction_id": "pred-urllc-001",
+  "nest_id": "nest-urllc-001",
+  "intent_id": "urllc-slice-001",
+  "decision": {
+    "action": "approve",
+    "reason": "SLA viável com alta confiança (0.92)",
+    "conditions": [
+      "Monitorar latência a cada 5 minutos",
+      "Alertar se latência > 6ms",
+      "Escalar recursos se necessário"
+    ]
+  },
+  "actions": [
+    {
+      "type": "provision_slice",
+      "domain": "RAN",
+      "config": {
+        "cell_density": "high",
+        "mimo_layers": 4
+      }
+    },
+    {
+      "type": "provision_slice",
+      "domain": "Core",
+      "config": {
+        "upf_location": "edge",
+        "amf_pool_size": 2
+      }
+    }
+  ],
+  "timestamp": "2025-01-27T10:00:10Z"
+}
+```
+
+**Validação:**
+- ✅ Decisão clara (approve/reject/modify)
+- ✅ Ações específicas por domínio
+- ✅ Condições de monitoramento definidas
+
+---
+
+### Interface I-05: Registro em Blockchain
+
+**Módulo:** Decision Engine → BC-NSSMF  
+**Protocolo:** gRPC / Kafka  
+**Endpoint:** `RegisterSLA`
+
+**Descrição:** Interface que registra SLAs aprovados no blockchain (Hyperledger Besu/GoQuorum) para auditoria imutável.
+
+**Chamada gRPC:**
+```protobuf
+service BC_NSSMF {
+  rpc RegisterSLA(SLARegistrationRequest) returns (SLARegistrationResponse);
+}
+
+message SLARegistrationRequest {
+  string intent_id = 1;
+  string nest_id = 2;
+  string decision_id = 3;
+  SLARequirements sla_requirements = 4;
+  repeated Action actions = 5;
+}
+```
+
+**Resposta:**
+```json
+{
+  "transaction_hash": "0x1234...",
+  "block_number": 12345,
+  "contract_address": "0xabcd...",
+  "status": "registered",
+  "timestamp": "2025-01-27T10:00:15Z"
+}
+```
+
+**Validação:**
+- ✅ Transação blockchain confirmada
+- ✅ Hash de transação retornado
+- ✅ Endereço do contrato válido
+
+---
+
+### Interface I-06: Execução via SLA-Agent Layer
+
+**Módulo:** Decision Engine → SLA-Agent Layer  
+**Protocolo:** Kafka  
+**Topic:** `trisla-i06-agent-events`
+
+**Descrição:** Interface que transmite eventos e comandos do Decision Engine para os agentes SLA federados (RAN, Transport, Core).
+
+**Mensagem Kafka:**
+```json
+{
+  "event_id": "evt-urllc-001",
+  "decision_id": "dec-urllc-001",
+  "intent_id": "urllc-slice-001",
+  "domain": "RAN",
+  "event_type": "provision_slice",
+  "action": {
+    "type": "provision_slice",
+    "config": {
+      "cell_density": "high",
+      "mimo_layers": 4,
+      "bandwidth_mhz": 20
+    }
+  },
+  "slo_monitoring": {
+    "latency_ms": {
+      "target": 5,
+      "threshold": 6,
+      "check_interval_seconds": 300
+    }
+  },
+  "timestamp": "2025-01-27T10:00:20Z"
+}
+```
+
+**Validação:**
+- ✅ Domínio especificado (RAN/Transport/Core)
+- ✅ Ação clara e executável
+- ✅ SLOs de monitoramento definidos
+
+---
+
+### Interface I-07: Provisionamento NASP
+
+**Módulo:** SLA-Agent Layer → NASP Adapter  
+**Protocolo:** REST HTTP  
+**Endpoint:** `POST /api/v1/provision`
+
+**Descrição:** Interface final que executa ações reais nos controladores NASP (RAN, Transport, Core) através do NASP Adapter.
+
+**Requisição HTTP:**
+```json
+{
+  "event_id": "evt-urllc-001",
+  "domain": "RAN",
+  "action": {
+    "type": "provision_slice",
+    "slice_id": "slice-urllc-001",
+    "config": {
+      "cell_density": "high",
+      "mimo_layers": 4,
+      "bandwidth_mhz": 20
+    }
+  },
+  "sla_requirements": {
+    "latency_ms": 5,
+    "throughput_mbps": 10,
+    "reliability": 0.99999
+  }
+}
+```
+
+**Resposta:**
+```json
+{
+  "provision_id": "prov-urllc-001",
+  "status": "success",
+  "slice_id": "slice-urllc-001",
+  "endpoints": {
+    "ran_controller": "http://ran-controller.nasp.svc.cluster.local:8080",
+    "metrics": "http://ran-metrics.nasp.svc.cluster.local:9090"
+  },
+  "timestamp": "2025-01-27T10:00:25Z"
+}
+```
+
+**Validação:**
+- ✅ Slice provisionado com sucesso
+- ✅ Endpoints retornados
+- ✅ Status de provisionamento confirmado
+
+---
+
+### Fluxo Completo das Interfaces
+
+**Sequência temporal:**
+1. **I-01** (t=0s): Tenant envia intent → SEM-CSMF
+2. **I-02** (t=1s): SEM-CSMF gera NEST → ML-NSMF (Kafka)
+3. **I-03** (t=5s): ML-NSMF prediz viabilidade → Decision Engine (Kafka)
+4. **I-04** (t=10s): Decision Engine decide → BC-NSSMF + SLA-Agent (Kafka)
+5. **I-05** (t=15s): BC-NSSMF registra no blockchain (gRPC)
+6. **I-06** (t=20s): SLA-Agent Layer recebe comando → NASP Adapter (Kafka)
+7. **I-07** (t=25s): NASP Adapter provisiona slice no NASP (REST)
+
+**Tempo total estimado:** ~25-30 segundos (end-to-end)
+
+---
+
+### Documentação de Interfaces
+
+Para especificações técnicas completas, consulte:
+
+- **Especificações de Interfaces**: [`docs/architecture/interfaces/`](docs/architecture/interfaces/)
+- **Diagramas de Sequência**: Diagramas Draw.io em `docs/architecture/`
+
+---
+
+## 🐛 Troubleshooting Básico
+
+Esta seção cobre problemas comuns durante o deploy e operação do TriSLA no NASP.
+
+### Problemas de Deploy
+
+#### 1. Pods em ImagePullBackOff
+
+**Sintoma:**
+```bash
+kubectl get pods -n trisla
+# NAME                    READY   STATUS             RESTARTS   AGE
+# trisla-sem-csmf-xxx     0/1     ImagePullBackOff   0          5m
+```
+
+**Causa:** Secret GHCR não configurado ou token inválido.
+
+**Solução:**
+```bash
+# 1. Verificar secret
+kubectl get secret ghcr-secret -n trisla
+
+# 2. Criar/atualizar secret
+kubectl create secret docker-registry ghcr-secret \
+  --docker-server=ghcr.io \
+  --docker-username=<GITHUB_USERNAME> \
+  --docker-password=<GITHUB_PAT> \
+  --namespace=trisla
+
+# 3. Verificar imagens no values-nasp.yaml
+grep -A 2 "image:" helm/trisla/values-nasp.yaml
+
+# 4. Reiniciar pods
+kubectl delete pods -n trisla -l app.kubernetes.io/name=trisla
+```
+
+---
+
+#### 2. Pods em CrashLoopBackOff
+
+**Sintoma:**
+```bash
+kubectl get pods -n trisla
+# NAME                    READY   STATUS             RESTARTS   AGE
+# trisla-sem-csmf-xxx     0/1     CrashLoopBackOff   5          10m
+```
+
+**Causa:** Erro na aplicação, variáveis de ambiente incorretas, ou dependências não disponíveis.
+
+**Solução:**
+```bash
+# 1. Ver logs do pod
+kubectl logs -n trisla <pod-name> --previous
+
+# 2. Ver eventos do pod
+kubectl describe pod -n trisla <pod-name>
+
+# 3. Verificar variáveis de ambiente
+kubectl exec -n trisla <pod-name> -- env | grep -E "KAFKA|DATABASE|NASP"
+
+# 4. Verificar dependências (Kafka, PostgreSQL, etc.)
+kubectl get pods -n <kafka-namespace>
+kubectl get pods -n <postgres-namespace>
+```
+
+---
+
+#### 3. Helm Chart Validation Failed
+
+**Sintoma:**
+```bash
+helm lint ./helm/trisla
+# ERROR: values file does not exist
+```
+
+**Causa:** Arquivo `values-nasp.yaml` não encontrado ou com sintaxe inválida.
+
+**Solução:**
+```bash
+# 1. Verificar se arquivo existe
+ls -la helm/trisla/values-nasp.yaml
+
+# 2. Validar sintaxe YAML
+yamllint helm/trisla/values-nasp.yaml
+
+# 3. Validar template Helm
+helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
+```
+
+---
+
+### Problemas de Conectividade
+
+#### 4. Kafka Topics Não Criados
+
+**Sintoma:**
+```bash
+kubectl logs -n trisla <sem-csmf-pod> | grep -i kafka
+# ERROR: Topic 'I-02-intent-to-ml' does not exist
+```
+
+**Causa:** Kafka não configurado ou tópicos não criados automaticamente.
+
+**Solução:**
+```bash
+# 1. Verificar Kafka
+kubectl get pods -n <kafka-namespace> | grep kafka
+
+# 2. Criar tópicos manualmente
+kubectl exec -n <kafka-namespace> <kafka-pod> -- \
+  kafka-topics --create \
+    --bootstrap-server localhost:9092 \
+    --topic I-02-intent-to-ml \
+    --partitions 3 \
+    --replication-factor 1
+
+# 3. Verificar tópicos criados
+kubectl exec -n <kafka-namespace> <kafka-pod> -- \
+  kafka-topics --list --bootstrap-server localhost:9092
+```
+
+---
+
+#### 5. Conectividade com NASP Falhando
+
+**Sintoma:**
+```bash
+kubectl logs -n trisla <nasp-adapter-pod> | grep -i error
+# ERROR: Connection refused to http://ran-controller.nasp.svc.cluster.local:8080
+```
+
+**Causa:** Endpoints NASP incorretos ou serviços não disponíveis.
+
+**Solução:**
+```bash
+# 1. Verificar endpoints no values-nasp.yaml
+grep -A 5 "naspEndpoints:" helm/trisla/values-nasp.yaml
+
+# 2. Testar conectividade
+kubectl run -it --rm test-pod --image=curlimages/curl --restart=Never -- \
+  curl -v http://ran-controller.nasp.svc.cluster.local:8080/health
+
+# 3. Descobrir endpoints corretos
+./scripts/discover-nasp-endpoints.sh
+
+# 4. Atualizar values-nasp.yaml com endpoints corretos
+vim helm/trisla/values-nasp.yaml
+```
+
+---
+
+### Problemas de Performance
+
+#### 6. Alta Latência nas Interfaces
+
+**Sintoma:** Interfaces I-01 a I-07 demoram mais de 30 segundos.
+
+**Causa:** Recursos insuficientes ou gargalos de rede.
+
+**Solução:**
+```bash
+# 1. Verificar recursos dos pods
+kubectl top pods -n trisla
+
+# 2. Verificar recursos do cluster
+kubectl top nodes
+
+# 3. Ajustar recursos no values-nasp.yaml
+vim helm/trisla/values-nasp.yaml
+# Aumentar CPU/memory limits
+
+# 4. Aplicar mudanças
+helm upgrade trisla ./helm/trisla \
+  -n trisla \
+  -f ./helm/trisla/values-nasp.yaml
+```
+
+---
+
+### Problemas de Observabilidade
+
+#### 7. Métricas Não Aparecem no Prometheus
+
+**Sintoma:** Grafana não mostra métricas do TriSLA.
+
+**Causa:** ServiceMonitor não configurado ou Prometheus não scraping.
+
+**Solução:**
+```bash
+# 1. Verificar ServiceMonitor
+kubectl get servicemonitor -n trisla
+
+# 2. Verificar targets no Prometheus
+kubectl port-forward -n monitoring svc/prometheus 9090:9090
+# Acessar http://localhost:9090/targets
+
+# 3. Verificar métricas expostas
+kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080
+curl http://localhost:8080/metrics
+```
+
+---
+
+### Comandos Úteis de Diagnóstico
+
+```bash
+# Ver todos os recursos do TriSLA
+kubectl get all -n trisla
+
+# Ver eventos recentes
+kubectl get events -n trisla --sort-by='.lastTimestamp'
+
+# Ver logs de todos os pods
+kubectl logs -n trisla -l app.kubernetes.io/part-of=trisla --tail=100
+
+# Verificar health checks
+for pod in $(kubectl get pods -n trisla -o name); do
+  echo "=== $pod ==="
+  kubectl exec -n trisla $pod -- curl -s http://localhost:8080/health || echo "Health check failed"
+done
+
+# Verificar conectividade Kafka
+kubectl exec -n <kafka-ns> <kafka-pod> -- \
+  kafka-broker-api-versions --bootstrap-server localhost:9092
+
+# Verificar blockchain
+kubectl logs -n trisla <bc-nssmf-pod> | grep -i "blockchain\|besu\|transaction"
+```
+
+---
+
+### Documentação de Troubleshooting
+
+Para troubleshooting avançado, consulte:
+
+- **Guia Completo**: [`docs/reports/TROUBLESHOOTING_TRISLA.md`](docs/reports/TROUBLESHOOTING_TRISLA.md)
+- **Relatórios Técnicos**: [`docs/reports/`](docs/reports/)
+
+---
+
+## 📄 Arquivo Canônico values-nasp.yaml
+
+- **README Ansible**: [`ansible/README.md`](ansible/README.md)
+
+---
+
 ## ⚙️ Arquivo Canônico values-nasp.yaml
 
 O arquivo **`helm/trisla/values-nasp.yaml`** é o arquivo de configuração **canônico e padrão** para deploy no ambiente NASP. Este arquivo contém todas as configurações necessárias para o TriSLA operar no ambiente NASP.
@@ -699,7 +1345,7 @@ yamllint helm/trisla/values-nasp.yaml
 helm lint ./helm/trisla -f ./helm/trisla/values-nasp.yaml
 
 # Template dry-run
-helm template trisla-portal ./helm/trisla -f ./helm/trisla/values-nasp.yaml
+helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml
 ```
 
 ### Documentação Completa

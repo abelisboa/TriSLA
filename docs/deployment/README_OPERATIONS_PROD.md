@@ -1715,9 +1715,8 @@ Para realizar um deploy controlado do TriSLA no ambiente NASP, siga a documenta�
    - Gerado por: `scripts/discover_nasp_endpoints.sh`
    - Contém: Visão geral do cluster, serviços detectados, diagnóstico de saúde
 
-2. **`docs/VALUES_PRODUCTION_GUIDE.md`** — Guia de preenchimento de `values-production.yaml` (produção genérica)
-   - Explicação conceitual de values.yaml vs values-production.yaml vs values-nasp.yaml
-   - Para NASP, usar `helm/trisla/values-nasp.yaml` conforme `docs/nasp/NASP_DEPLOY_RUNBOOK.md`
+2. **`docs/VALUES_PRODUCTION_GUIDE.md`** — Guia de preenchimento de `values-production.yaml`
+   - Explicação conceitual de values.yaml vs values-production.yaml
    - Tabela de parâmetros críticos
    - Erros comuns e como evitar
 
@@ -1758,9 +1757,7 @@ python3 scripts/audit_ghcr_images.py
 ### 8.3 Fluxo Recomendado
 
 1. **Descoberta:** Executar `scripts/discover_nasp_endpoints.sh`
-2. **Configuração:** 
-   - Para NASP: Preencher `helm/trisla/values-nasp.yaml` com `TRISLA_ENV=nasp scripts/fill_values_production.sh`
-   - Para produção genérica: Preencher `helm/trisla/values-production.yaml` com `scripts/fill_values_production.sh`
+2. **Configuração:** Preencher `values-production.yaml` com `scripts/fill_values_production.sh`
 3. **Publicação de Imagens:** Publicar imagens no GHCR com `scripts/publish_all_images_ghcr.sh` (ver `docs/GHCR_PUBLISH_GUIDE.md`)
 4. **Validação:** Executar `python3 scripts/audit_ghcr_images.py`
 5. **Deploy:** Seguir `docs/NASP_DEPLOY_RUNBOOK.md`

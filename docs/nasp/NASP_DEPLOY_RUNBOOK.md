@@ -94,7 +94,7 @@ cd ~/gtp5g/trisla
 **Validação:**
 ```bash
 # Validar sintaxe e valores
-helm template trisla-portal ./helm/trisla \
+helm template trisla ./helm/trisla \
   -f ./helm/trisla/values-nasp.yaml \
   --debug
 ```
@@ -199,7 +199,7 @@ kubectl get secret ghcr-secret -n trisla
 ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
 
 # OU manualmente
-helm upgrade --install trisla-portal ./helm/trisla \
+helm upgrade --install trisla ./helm/trisla \
   --namespace trisla \
   --create-namespace \
   -f ./helm/trisla/values-nasp.yaml \
@@ -354,12 +354,42 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
        }'
    ```
 
-2. **Verificar mensagens Kafka:**
+2. **Verificar mensagens Kafka (I-02):**
    ```bash
    kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
      kafka-console-consumer \
        --bootstrap-server localhost:9092 \
        --topic I-02-intent-to-ml \
+       --from-beginning \
+       --max-messages 1
+   ```
+
+3. **Verificar mensagens Kafka (I-03):**
+   ```bash
+   kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
+     kafka-console-consumer \
+       --bootstrap-server localhost:9092 \
+       --topic I-03-ml-predictions \
+       --from-beginning \
+       --max-messages 1
+   ```
+
+4. **Verificar mensagens Kafka (I-04):**
+   ```bash
+   kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
+     kafka-console-consumer \
+       --bootstrap-server localhost:9092 \
+       --topic trisla-i04-decisions \
+       --from-beginning \
+       --max-messages 1
+   ```
+
+5. **Verificar mensagens Kafka (I-06):**
+   ```bash
+   kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
+     kafka-console-consumer \
+       --bootstrap-server localhost:9092 \
+       --topic trisla-i06-agent-events \
        --from-beginning \
        --max-messages 1
    ```

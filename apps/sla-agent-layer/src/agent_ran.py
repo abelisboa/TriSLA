@@ -29,9 +29,8 @@ except ImportError:
     NASP_AVAILABLE = False
     print("⚠️ NASP Adapter não disponível. Agent RAN usará fallback limitado.")
 
-from slo_evaluator import SLOEvaluator, SLOStatus
+from slo_evaluator import SLOEvaluator
 from config_loader import load_slo_config
-from kafka_producer import EventProducer
 
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
@@ -48,19 +47,13 @@ class AgentRAN:
     - Publica eventos via Kafka (I-06)
     """
     
-    def __init__(
-        self,
-        nasp_client: Optional[NASPClient] = None,
-        agent_id: str = "agent-ran-1",
-        event_producer: Optional[EventProducer] = None
-    ):
+    def __init__(self, nasp_client: Optional[NASPClient] = None, agent_id: str = "agent-ran-1"):
         """
         Inicializa agente RAN
         
         Args:
             nasp_client: Cliente NASP (padrão: cria novo se disponível)
             agent_id: ID único do agente
-            event_producer: Producer Kafka para eventos I-06 e I-07
         """
         self.domain = "RAN"
         self.agent_id = agent_id
@@ -74,9 +67,6 @@ class AgentRAN:
             self.nasp_client = None
             logger.warning("⚠️ Agent RAN sem NASP Adapter - funcionalidade limitada")
         
-        # Inicializar Event Producer
-        self.event_producer = event_producer or EventProducer()
-        
         # Carregar configuração de SLOs
         try:
             slo_config = load_slo_config(self.domain)
@@ -89,10 +79,6 @@ class AgentRAN:
                 "domain": self.domain,
                 "slos": []
             })
-        
-        # Estado interno para loop autônomo
-        self.running = False
-        self.poll_interval = float(os.getenv("AGENT_POLL_INTERVAL_SECONDS", "10.0"))
     
     async def collect_metrics(self) -> Dict[str, Any]:
         """
@@ -207,7 +193,7 @@ class AgentRAN:
                     span.set_attribute("action.executed", executed)
                     span.set_attribute("action.result", str(result))
                     
-                    action_result = {
+                    return {
                         "domain": self.domain,
                         "agent_id": self.agent_id,
                         "action_type": action.get("type"),
@@ -215,20 +201,6 @@ class AgentRAN:
                         "result": result,
                         "timestamp": self._get_timestamp()
                     }
-                    
-                    # Publicar evento I-07 (resultado de ação)
-                    await self.event_producer.send_i07_action_result(
-                        domain=self.domain,
-                        agent_id=self.agent_id,
-                        action=action,
-                        result=action_result
-                    )
-                    logger.info(
-                        f"📢 Evento I-07 publicado: domain={self.domain}, "
-                        f"action={action.get('type')}, executed={executed}"
-                    )
-                    
-                    return action_result
                     
                 except Exception as e:
                     span.record_exception(e)
@@ -254,7 +226,7 @@ class AgentRAN:
     
     async def evaluate_slos(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Avalia métricas contra SLOs configurados e publica eventos I-06 se necessário
+        Avalia métricas contra SLOs configurados
         
         Args:
             metrics: Métricas coletadas
@@ -268,30 +240,6 @@ class AgentRAN:
             span.set_attribute("slo.status", evaluation.get("status"))
             span.set_attribute("slo.compliance_rate", evaluation.get("compliance_rate"))
             span.set_attribute("slo.violations_count", len(evaluation.get("violations", [])))
-            
-            # Publicar eventos I-06 para violações e riscos
-            status = evaluation.get("status")
-            if status in [SLOStatus.RISK, SLOStatus.VIOLATED]:
-                # Publicar evento para cada SLO com problema
-                for slo in evaluation.get("slos", []):
-                    if slo.get("status") in [SLOStatus.RISK, SLOStatus.VIOLATED]:
-                        await self.event_producer.send_i06_event(
-                            domain=self.domain,
-                            agent_id=self.agent_id,
-                            status=slo.get("status"),
-                            slo={
-                                "name": slo.get("name"),
-                                "target": slo.get("target"),
-                                "current": slo.get("current"),
-                                "unit": slo.get("unit")
-                            },
-                            slice_id=metrics.get("slice_id"),
-                            sla_id=metrics.get("sla_id")
-                        )
-                        logger.info(
-                            f"📢 Evento I-06 publicado: domain={self.domain}, "
-                            f"slo={slo.get('name')}, status={slo.get('status')}"
-                        )
             
             return evaluation
     
@@ -322,49 +270,6 @@ class AgentRAN:
             "risks": evaluation.get("risks", []),
             "timestamp": self._get_timestamp()
         }
-    
-    async def run_autonomous_loop(self):
-        """
-        Loop autônomo de coleta de métricas, avaliação de SLOs e publicação de eventos
-        
-        Executa continuamente:
-        1. Coleta métricas do NASP
-        2. Avalia SLOs
-        3. Publica eventos I-06 se houver violações/riscos
-        """
-        self.running = True
-        logger.info(f"🔄 Iniciando loop autônomo do Agent RAN (intervalo: {self.poll_interval}s)")
-        
-        import asyncio
-        
-        while self.running:
-            try:
-                # 1. Coletar métricas
-                metrics = await self.collect_metrics()
-                
-                # 2. Avaliar SLOs (já publica eventos I-06 internamente)
-                evaluation = await self.evaluate_slos(metrics)
-                
-                # Log resumo
-                status = evaluation.get("status")
-                if status != SLOStatus.OK:
-                    logger.warning(
-                        f"⚠️ SLOs em {status}: domain={self.domain}, "
-                        f"violations={len(evaluation.get('violations', []))}, "
-                        f"risks={len(evaluation.get('risks', []))}"
-                    )
-                
-                # Aguardar próximo ciclo
-                await asyncio.sleep(self.poll_interval)
-                
-            except Exception as e:
-                logger.error(f"❌ Erro no loop autônomo: {e}", exc_info=True)
-                await asyncio.sleep(self.poll_interval)
-    
-    def stop_autonomous_loop(self):
-        """Para o loop autônomo"""
-        self.running = False
-        logger.info("🛑 Parando loop autônomo do Agent RAN")
     
     def _get_timestamp(self) -> str:
         """Retorna timestamp atual"""

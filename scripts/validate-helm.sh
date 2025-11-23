@@ -13,9 +13,16 @@ echo "🔍 Validando Helm Chart..."
 echo "1️⃣ Executando helm lint..."
 helm lint "$CHART_PATH"
 
+# Verificar se está no diretório correto
+if [ ! -f "README.md" ] || [ ! -d "helm" ] || [ ! -d "scripts" ]; then
+    echo "❌ Erro: Execute este script no diretório raiz do projeto TriSLA"
+    echo "   cd ~/gtp5g/trisla"
+    exit 1
+fi
+
 # 2. Template
 echo "2️⃣ Gerando templates..."
-helm template trisla "$CHART_PATH" --debug > /tmp/trisla-templates.yaml
+helm template trisla "$CHART_PATH" -f "$CHART_PATH/values-nasp.yaml" --debug > /tmp/trisla-templates.yaml
 echo "✅ Templates gerados em /tmp/trisla-templates.yaml"
 
 # 3. Validação de sintaxe

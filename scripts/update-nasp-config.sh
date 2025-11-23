@@ -32,10 +32,10 @@ EOF
 echo "✅ inventory.yaml atualizado"
 echo ""
 
-# 2. Atualizar helm/trisla/values-production.yaml (valores conhecidos)
-echo "2️⃣ Atualizando helm/trisla/values-production.yaml..."
+# 2. Atualizar helm/trisla/values-nasp.yaml (valores conhecidos)
+echo "2️⃣ Atualizando helm/trisla/values-nasp.yaml..."
 # Manter valores conhecidos e adicionar node2
-cat >> helm/trisla/values-production.yaml <<EOF
+cat >> helm/trisla/values-nasp.yaml <<EOF
 
 # Node IPs descobertos
 nodes:
@@ -47,7 +47,7 @@ nodes:
     interface: $INTERFACE
 EOF
 
-echo "✅ values-production.yaml atualizado com IPs dos nodes"
+echo "✅ values-nasp.yaml atualizado com IPs dos nodes"
 echo ""
 
 echo "=========================================="
@@ -62,6 +62,6 @@ echo ""
 echo "⚠️  PRÓXIMOS PASSOS:"
 echo "   1. Executar: ./scripts/discover-nasp-services.sh"
 echo "   2. Identificar endpoints dos controladores (RAN, Transport, Core)"
-echo "   3. Atualizar helm/trisla/values-production.yaml com endpoints"
+echo "   3. Atualizar helm/trisla/values-nasp.yaml com endpoints"
 echo "   4. Atualizar apps/nasp-adapter/src/nasp_client.py com endpoints"
 echo ""

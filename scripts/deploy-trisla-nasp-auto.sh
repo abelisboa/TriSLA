@@ -34,7 +34,7 @@ if ! kubectl cluster-info &>/dev/null; then
 fi
 
 NAMESPACE="trisla"
-RELEASE_NAME="trisla-portal"
+RELEASE_NAME="trisla"
 VALUES_FILE="helm/trisla/values-nasp.yaml"
 
 echo -e "${YELLOW}📋 Configuração:${NC}"

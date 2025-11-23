@@ -1,10 +1,7 @@
-# Guia de Preenchimento de values-production.yaml
-
-> **⚠️ IMPORTANTE:** Este guia é focado em `values-production.yaml` para **produção genérica (fora NASP)**.  
-> Para deploy no **ambiente NASP-UNISINOS**, utilize `helm/trisla/values-nasp.yaml` conforme `docs/nasp/NASP_DEPLOY_RUNBOOK.md`. — TriSLA
+# Guia de Preenchimento de values-nasp.yaml — TriSLA
 
 **Versão:** 1.0  
-**Objetivo:** Explicar como preencher corretamente o arquivo `helm/trisla/values-production.yaml` para deploy no NASP
+**Objetivo:** Explicar como preencher corretamente o arquivo `helm/trisla/values-nasp.yaml` para deploy no NASP
 
 ---
 
@@ -23,9 +20,9 @@ O arquivo `helm/trisla/values.yaml` contém **valores padrão** para desenvolvim
 - Endpoints mockados ou locais
 - Configurações mínimas de recursos
 
-### 1.2 Papel do values-production.yaml (Produção NASP)
+### 1.2 Papel do values-nasp.yaml (Produção NASP)
 
-O arquivo `helm/trisla/values-production.yaml` contém **valores específicos** para produção no ambiente NASP. Ele **sobrescreve** valores do `values.yaml` durante o deploy.
+O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** para produção no ambiente NASP. Ele **sobrescreve** valores do `values.yaml` durante o deploy.
 
 **Características:**
 - Valores específicos do ambiente NASP
@@ -35,7 +32,7 @@ O arquivo `helm/trisla/values-production.yaml` contém **valores específicos** 
 
 ### 1.3 Perigos de Subir Valores Genéricos
 
-⚠️ **NUNCA faça commit de `values-production.yaml` com:**
+⚠️ **NUNCA faça commit de `values-nasp.yaml` com:**
 
 - IPs reais de nodes ou serviços
 - Tokens ou credenciais hardcoded
@@ -110,7 +107,7 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 
 **Problema:**
 - `docker-compose.yml` usa porta `8080`
-- `values-production.yaml` usa porta `8081`
+- `values-nasp.yaml` usa porta `8081`
 - Resultado: Incompatibilidade
 
 **Solução:**
@@ -185,21 +182,21 @@ cat docs/NASP_CONTEXT_REPORT.md
 cat tmp/nasp_context_raw.txt
 ```
 
-### Passo 3: Preencher values-production.yaml
+### Passo 3: Preencher values-nasp.yaml
 
 ```bash
 # Preenchimento guiado
 ./scripts/fill_values_production.sh
 ```
 
-Ou manualmente, editando `helm/trisla/values-production.yaml`.
+Ou manualmente, editando `helm/trisla/values-nasp.yaml`.
 
 ### Passo 4: Validar
 
 ```bash
 # Validar sintaxe e valores
 helm template trisla ./helm/trisla \
-  -f ./helm/trisla/values-production.yaml \
+  -f ./helm/trisla/values-nasp.yaml \
   --debug
 ```
 
@@ -212,7 +209,7 @@ helm template trisla ./helm/trisla \
 
 ---
 
-## 5. Exemplo de values-production.yaml Completo
+## 5. Exemplo de values-nasp.yaml Completo
 
 ```yaml
 # ============================================

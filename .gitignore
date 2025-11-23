@@ -1,56 +1,49 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
+*.pyd
+*.pdb
 
-# Virtual envs
-venv/
-env/
-.env/
+# venv
 .venv/
-apps/*/venv/
-apps/*/env/
-
-# Pytest cache
-.pytest_cache/
-
-# IDEs
-.vscode/
-.idea/
+env/
+venv/
 
 # Logs
+logs/
 *.log
 
-# Docker
-.dockerignore
-*.pid
-
-# OS files
-Thumbs.db
+# Editor
+.vscode/
+.idea/
+# OS
 .DS_Store
+Thumbs.db
 
-# Private prompts and internal documentation
-TriSLA_PROMPTS/
-PROMPTS_*/
-PROMPTS_V3*/
-TriSLA_PROMPTS_REORG/
+# Node UI
+node_modules/
+dist/
+build/
 
-# Backup and patch files
-*.patch
+# Docker
+*.pid
+*.tar
+*.img
+
+# Tests
+.pytest_cache/
+
+# Local-only artifacts
+apps/bc-nssmf/src/contracts/contract_address.json
+pipeline_output.log
+trisla_build.log
+
+# Backups
 *.bak
-*.bak2
+*.old
+*.backup
 
-# Audit temporary files
-forbidden_found.txt
-github_*.json
-local_files.txt
-root_orphans.txt
-diff_github_local.txt
-modules_missing.txt
+# Cursor artifacts
+*cursor_backup*
 
-# Database and ontology files
-*.db
-*.jsonld
-*.owl
-*.ttl
-FULL_DIFF_BEFORE_PUSH.patch

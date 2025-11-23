@@ -82,7 +82,7 @@ kubectl get svc -n <transport-namespace> | grep -i transport
 
 ### 2.2 Documentar Endpoints
 
-Preencher em `helm/trisla/values-production.yaml`:
+Preencher em `helm/trisla/values-nasp.yaml`:
 
 - [ ] **RAN Endpoint:** `http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_PORT>`
 - [ ] **RAN Metrics Endpoint:** `http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_METRICS_PORT>`
@@ -104,7 +104,7 @@ Preencher em `helm/trisla/values-production.yaml`:
 
 ## 3. Configuração de Helm Values
 
-### 3.1 Revisar `values-production.yaml`
+### 3.1 Revisar `values-nasp.yaml`
 
 - [ ] **Substituir placeholders:**
   - `<INTERFACE_NAME>` → Interface real (ex: `my5g`)
@@ -127,7 +127,7 @@ Preencher em `helm/trisla/values-production.yaml`:
 ### 3.2 Validar Configuração
 
 ```bash
-helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --debug
+helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 ```
 
 ---
@@ -160,9 +160,9 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --deb
   helm upgrade --install trisla ./helm/trisla \
     --namespace trisla \
     --create-namespace \
-    -f ./helm/trisla/values-production.yaml \
+    -f ./helm/trisla/values-nasp.yaml \
     --wait \
-    --timeout 10m
+    --timeout 15m
   ```
 
 ### 4.3 Verificar Deploy

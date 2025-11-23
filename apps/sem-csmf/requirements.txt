@@ -30,9 +30,5 @@ python-multipart==0.0.6
 python-dateutil==2.8.2
 requests==2.31.0
 
-# Kafka (Interface I-02)
-kafka-python==2.0.2
-
 # Ontologia OWL
 rdflib==7.0.0
-owlready2>=0.40

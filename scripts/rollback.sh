@@ -5,6 +5,13 @@
 
 set -e
 
+# Verificar se está no diretório correto
+if [ ! -f "README.md" ] || [ ! -d "helm" ] || [ ! -d "scripts" ]; then
+    echo "❌ Erro: Execute este script no diretório raiz do projeto TriSLA"
+    echo "   cd ~/gtp5g/trisla"
+    exit 1
+fi
+
 RELEASE_NAME="trisla"
 NAMESPACE="trisla"
 

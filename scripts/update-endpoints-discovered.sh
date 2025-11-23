@@ -27,8 +27,15 @@ echo "   Core SMF: $CORE_SMF"
 echo "   Transport: $TRANSPORT_ENDPOINT"
 echo ""
 
+# Verificar se está no diretório correto
+if [ ! -f "README.md" ] || [ ! -d "helm" ] || [ ! -d "scripts" ]; then
+    echo "❌ Erro: Execute este script no diretório raiz do projeto TriSLA"
+    echo "   cd ~/gtp5g/trisla"
+    exit 1
+fi
+
 echo "✅ Configurações atualizadas nos arquivos:"
-echo "   - helm/trisla/values-production.yaml"
+echo "   - helm/trisla/values-nasp.yaml"
 echo "   - apps/nasp-adapter/src/nasp_client.py"
 echo ""
 

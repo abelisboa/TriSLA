@@ -149,7 +149,7 @@ echo -e "🎉 AMBIENTE NASP PRONTO PARA INSTALAÇÃO DO TRISLA"
 echo -e "=================================================\n"
 
 echo "➡️ Agora você pode rodar:"
-echo "helm upgrade --install trisla-portal ./helm/trisla \\"
+echo "helm upgrade --install trisla ./helm/trisla \\"
 echo "  -n trisla -f ./helm/trisla/values-nasp.yaml \\"
 echo "  --atomic --cleanup-on-fail"
 echo ""

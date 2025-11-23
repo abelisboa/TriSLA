@@ -60,7 +60,7 @@
         --values {{ values_file }}
         --create-namespace
         --wait
-        --timeout 10m
+        --timeout 15m
       register: helm_deploy
     
     - name: Verificar status do deploy

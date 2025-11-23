@@ -17,10 +17,10 @@ NC='\033[0m' # No Color
 
 # Configurações
 NAMESPACE="${TRISLA_NAMESPACE:-trisla}"
-HELM_RELEASE="${TRISLA_HELM_RELEASE:-trisla-prod}"
+HELM_RELEASE="${TRISLA_HELM_RELEASE:-trisla}"
 HELM_CHART_VERSION="${TRISLA_CHART_VERSION:-v1.0.0}"
 GHCR_REGISTRY="${GHCR_REGISTRY:-ghcr.io/abelisboa}"
-VALUES_FILE="${TRISLA_VALUES_FILE:-helm/trisla/values-production.yaml}"
+VALUES_FILE="${TRISLA_VALUES_FILE:-helm/trisla/values-nasp.yaml}"
 
 # Flags
 DO_PRE_FLIGHT=false
@@ -300,10 +300,10 @@ Opções:
 
 Variáveis de Ambiente:
   TRISLA_NAMESPACE          Namespace Kubernetes (padrão: trisla)
-  TRISLA_HELM_RELEASE       Nome do Helm release (padrão: trisla-prod)
+  TRISLA_HELM_RELEASE       Nome do Helm release (padrão: trisla)
   TRISLA_CHART_VERSION      Versão do Helm chart (padrão: v1.0.0)
   GHCR_REGISTRY            Registry GHCR (padrão: ghcr.io/abelisboa)
-  TRISLA_VALUES_FILE       Arquivo values.yaml (padrão: helm/trisla/values-production.yaml)
+  TRISLA_VALUES_FILE       Arquivo values.yaml (padrão: helm/trisla/values-nasp.yaml)
   GITHUB_TOKEN             Token do GitHub para GHCR (opcional)
   GITHUB_USER              Usuário do GitHub para GHCR (opcional)
 

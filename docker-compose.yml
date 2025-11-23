@@ -268,8 +268,6 @@ services:
       - OTLP_ENDPOINT=http://otlp-collector:4317
       - LOG_LEVEL=INFO
       - BLOCKCHAIN_NETWORK=local
-      - BESU_RPC_URL=http://besu-dev:8545
-      - BESU_CHAIN_ID=1337
     networks:
       - trisla-network
     depends_on:
@@ -277,8 +275,6 @@ services:
         condition: service_healthy
       otlp-collector:
         condition: service_started
-      besu-dev:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8083/health', timeout=2)"]
       interval: 10s
@@ -403,36 +399,6 @@ services:
       }' > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
   # ============================================
-  # Blockchain (Besu / GoQuorum)
-  # ============================================
-  besu-dev:
-    image: hyperledger/besu:latest
-    container_name: trisla-besu-dev
-    command:
-      - "--network=dev"
-      - "--rpc-http-enabled=true"
-      - "--rpc-http-port=8545"
-      - "--rpc-http-host=0.0.0.0"
-      - "--rpc-http-api=ETH,NET,WEB3"
-      - "--rpc-http-cors-origins=*"
-      - "--rpc-http-hosts=*"
-      - "--host-allowlist=*"
-    ports:
-      - "8545:8545"
-    volumes:
-      - besu-data:/opt/besu/data
-      - ./blockchain/besu/genesis.json:/genesis.json:ro
-    networks:
-      - trisla-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8545 || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-    restart: unless-stopped
-
-  # ============================================
   # UI Dashboard
   # ============================================
   ui-dashboard:
@@ -469,5 +435,4 @@ volumes:
   prometheus-data:
   grafana-data:
   alertmanager-data:
-  besu-data:
 

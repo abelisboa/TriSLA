@@ -210,7 +210,7 @@ cp configs/generated/trisla_values_autogen.yaml helm/trisla/values-nasp.yaml
 ```bash
 # Configurar variáveis antes de executar
 export TRISLA_NAMESPACE=trisla
-export TRISLA_HELM_RELEASE=trisla-prod
+export TRISLA_HELM_RELEASE=trisla
 export TRISLA_VALUES_FILE=helm/trisla/values-nasp.yaml
 export GHCR_REGISTRY=ghcr.io/abelisboa
 
@@ -581,7 +581,7 @@ helm upgrade --install trisla ./helm/trisla \
   --namespace trisla \
   --values ./helm/trisla/values.yaml \
   --values ./helm/trisla/values-nasp.yaml \
-  --values ./helm/trisla/values-production.yaml
+  --values ./helm/trisla/values-nasp.yaml
 ```
 
 **Instalação com set de valores:**
@@ -785,7 +785,7 @@ jobs:
           helm upgrade --install trisla ./helm/trisla \
             --namespace trisla \
             --create-namespace \
-            --values ./helm/trisla/values-production.yaml \
+            --values ./helm/trisla/values-nasp.yaml \
             --wait \
             --timeout 15m
       

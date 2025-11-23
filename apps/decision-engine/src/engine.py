@@ -126,13 +126,15 @@ class DecisionEngine:
         context: Optional[dict]
     ) -> tuple:
         """
-        Aplica regras de decisão usando RuleEngine (YAML-based, sem hardcoded)
+        Aplica regras de decisão baseadas em:
+        - Tipo de slice (URLLC/eMBB/mMTC)
+        - Previsão do ML (risk_score, risk_level)
+        - Thresholds de SLOs
+        - Domínios afetados (RAN/Transporte/Core)
         
         Returns:
             (action, reasoning, slos, domains)
         """
-        from rule_engine import RuleEngine
-        
         # Extrair SLOs do intent
         slos = []
         sla_reqs = intent.sla_requirements
@@ -180,50 +182,61 @@ class DecisionEngine:
         service_type = intent.service_type
         
         if service_type == SliceType.URLLC:
-            domains = ["RAN", "Transporte", "Core"]
+            domains = ["RAN", "Transporte", "Core"]  # URLLC requer todos os domínios
         elif service_type == SliceType.EMBB:
-            domains = ["RAN", "Transporte"]
+            domains = ["RAN", "Transporte"]  # eMBB foca em RAN e transporte
         elif service_type == SliceType.MMTC:
-            domains = ["RAN", "Core"]
+            domains = ["RAN", "Core"]  # mMTC foca em RAN e core
         
-        # Calcular SLA compliance (simplificado - pode ser melhorado)
-        sla_compliance = 0.95  # Padrão
-        if slos:
-            # Calcular compliance baseado em quantos SLOs são viáveis
-            # (Em produção, isso seria mais complexo)
-            sla_compliance = min(1.0, 0.95 + (len(slos) * 0.01))
+        # Aplicar regras de decisão
         
-        # Construir contexto para RuleEngine
-        rule_context = {
-            "risk_level": ml_prediction.risk_level.value,
-            "risk_score": ml_prediction.risk_score,
-            "service_type": service_type.value,
-            "sla_compliance": sla_compliance,
-            "latency": slos[0].value if slos and slos[0].name == "latency" else 0.0,
-            "throughput": next((slo.value for slo in slos if slo.name == "throughput"), 0.0),
-            "reliability": next((slo.value for slo in slos if slo.name == "reliability"), 0.99),
-            "confidence": ml_prediction.confidence,
-            "domains": domains,
-            "explanation": ml_prediction.explanation or ""
-        }
+        # REGRA 1: Risco ALTO → REJETAR
+        if ml_prediction.risk_level == RiskLevel.HIGH or ml_prediction.risk_score > 0.7:
+            reasoning = (
+                f"SLA {service_type.value} rejeitado. ML prevê risco ALTO "
+                f"(score: {ml_prediction.risk_score:.2f}, nível: {ml_prediction.risk_level.value}). "
+                f"Dominios: {', '.join(domains)}. "
+                f"{ml_prediction.explanation or ''}"
+            )
+            return (DecisionAction.REJECT, reasoning, slos, domains)
         
-        # Usar RuleEngine para avaliar regras (YAML-based, sem hardcoded)
-        rule_engine = RuleEngine()
-        import asyncio
-        rules_result = asyncio.run(rule_engine.evaluate(rule_context))
+        # REGRA 2: URLLC com latência muito baixa e risco médio → ACEITAR
+        if (service_type == SliceType.URLLC and
+            ml_prediction.risk_level == RiskLevel.LOW and
+            any(slo.name == "latency" and slo.value <= 10 for slo in slos)):
+            reasoning = (
+                f"SLA URLLC aceito. Latência crítica ({slos[0].value}ms) viável. "
+                f"ML prevê risco BAIXO (score: {ml_prediction.risk_score:.2f}). "
+                f"Dominios: {', '.join(domains)}."
+            )
+            return (DecisionAction.ACCEPT, reasoning, slos, domains)
         
-        # Converter ação string para enum
-        action_str = rules_result.get("action", "ACCEPT")
-        if action_str == "REJECT":
-            action = DecisionAction.REJECT
-        elif action_str == "NEGOTIATE" or action_str == "RENEGOTIATE":
-            action = DecisionAction.RENEGOTIATE
-        else:
-            action = DecisionAction.ACCEPT
+        # REGRA 3: Risco MÉDIO → RENEGOCIAR
+        if ml_prediction.risk_level == RiskLevel.MEDIUM or 0.4 <= ml_prediction.risk_score <= 0.7:
+            reasoning = (
+                f"SLA {service_type.value} requer renegociação. ML prevê risco MÉDIO "
+                f"(score: {ml_prediction.risk_score:.2f}). "
+                f"Recomenda-se ajustar SLOs ou recursos. Dominios: {', '.join(domains)}. "
+                f"{ml_prediction.explanation or ''}"
+            )
+            return (DecisionAction.RENEGOTIATE, reasoning, slos, domains)
         
-        reasoning = rules_result.get("reasoning", "Decisão baseada em regras")
+        # REGRA 4: Risco BAIXO e SLOs viáveis → ACEITAR
+        if ml_prediction.risk_level == RiskLevel.LOW and ml_prediction.risk_score < 0.4:
+            reasoning = (
+                f"SLA {service_type.value} aceito. ML prevê risco BAIXO "
+                f"(score: {ml_prediction.risk_score:.2f}). "
+                f"SLOs viáveis. Dominios: {', '.join(domains)}."
+            )
+            return (DecisionAction.ACCEPT, reasoning, slos, domains)
         
-        return (action, reasoning, slos, domains)
+        # REGRA PADRÃO: ACEITAR (com aviso)
+        reasoning = (
+            f"SLA {service_type.value} aceito (padrão). "
+            f"ML score: {ml_prediction.risk_score:.2f}. "
+            f"Dominios: {', '.join(domains)}."
+        )
+        return (DecisionAction.ACCEPT, reasoning, slos, domains)
     
     async def _create_fallback_intent(self, intent_id: str, context: Optional[dict]) -> 'SLAIntent':
         """Cria intent de fallback se não encontrar no SEM-CSMF"""

@@ -66,8 +66,8 @@
 
 1. **Revisar relatório raw:** `tmp/nasp_context_raw.txt`
 2. **Identificar endpoints NASP:** Use FQDNs no formato Kubernetes
-3. **Preencher values-production.yaml:** Execute `scripts/fill_values_production.sh`
-4. **Validar configuração:** `helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --debug`
+3. **Preencher values-nasp.yaml:** Execute `scripts/fill_values_production.sh`
+4. **Validar configuração:** `helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug`
 
 ---
 

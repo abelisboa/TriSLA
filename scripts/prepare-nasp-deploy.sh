@@ -23,7 +23,7 @@ if ! kubectl cluster-info &>/dev/null; then
     exit 1
 fi
 
-NAMESPACE="trisla-nsp"
+NAMESPACE="trisla"
 GHCR_USER="${GHCR_USER:-abelisboa}"
 GHCR_TOKEN="${GHCR_TOKEN}"
 
@@ -68,24 +68,24 @@ else
 fi
 
 # 4. Verificar valores de produção
-if [ -f "helm/trisla/values-production.yaml" ]; then
-    echo -e "${YELLOW}📋 Verificando values-production.yaml...${NC}"
+if [ -f "helm/trisla/values-nasp.yaml" ]; then
+    echo -e "${YELLOW}📋 Verificando values-nasp.yaml...${NC}"
     
     # Verificar se production.enabled está true
-    if grep -q "enabled: true" helm/trisla/values-production.yaml; then
+    if grep -q "enabled: true" helm/trisla/values-nasp.yaml; then
         echo -e "${GREEN}✅ Production enabled${NC}"
     else
         echo -e "${RED}⚠️  Atenção: production.enabled pode não estar true${NC}"
     fi
     
     # Verificar se simulationMode está false
-    if grep -q "simulationMode: false" helm/trisla/values-production.yaml; then
+    if grep -q "simulationMode: false" helm/trisla/values-nasp.yaml; then
         echo -e "${GREEN}✅ Simulation mode desabilitado${NC}"
     else
         echo -e "${RED}⚠️  Atenção: simulationMode pode não estar false${NC}"
     fi
 else
-    echo -e "${YELLOW}⚠️  values-production.yaml não encontrado${NC}"
+    echo -e "${YELLOW}⚠️  values-nasp.yaml não encontrado${NC}"
 fi
 
 echo ""
@@ -93,6 +93,6 @@ echo -e "${GREEN}✅ Preparação concluída!${NC}"
 echo ""
 echo "📋 Próximos passos:"
 echo "   1. Validar Helm chart: helm lint ./helm/trisla"
-echo "   2. Dry-run: helm template trisla ./helm/trisla --values ./helm/trisla/values-production.yaml"
-echo "   3. Deploy: helm upgrade --install trisla ./helm/trisla --namespace $NAMESPACE --values ./helm/trisla/values-production.yaml --wait"
+echo "   2. Dry-run: helm template trisla ./helm/trisla --values ./helm/trisla/values-nasp.yaml"
+echo "   3. Deploy: helm upgrade --install trisla ./helm/trisla --namespace $NAMESPACE --values ./helm/trisla/values-nasp.yaml --wait"
 

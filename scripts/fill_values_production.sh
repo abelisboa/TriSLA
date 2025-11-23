@@ -1,34 +1,37 @@
 #!/bin/bash
 # ============================================
-# Script para Preencher values-production.yaml
+# Script para Preparar values-nasp.yaml
 # ============================================
-# Preenche valores reais do NASP no arquivo values-production.yaml
+# Prepara o arquivo canônico values-nasp.yaml para deploy no NASP
 # ============================================
 
 set -e
 
-VALUES_FILE="helm/trisla/values-nasp.yaml"
-VALUES_PROD_FILE="helm/trisla/values-production.yaml"
+# Verificar se está no diretório correto
+if [ ! -f "README.md" ] || [ ! -d "helm" ] || [ ! -d "scripts" ]; then
+    echo "❌ Erro: Execute este script no diretório raiz do projeto TriSLA"
+    echo "   cd ~/gtp5g/trisla"
+    exit 1
+fi
 
-echo "🔧 Preenchendo valores de produção..."
+VALUES_FILE="helm/trisla/values-nasp.yaml"
+
+echo "🔧 Preparando values-nasp.yaml para deploy no NASP..."
 echo ""
 
 # Verificar se o arquivo existe
 if [ ! -f "$VALUES_FILE" ]; then
     echo "❌ Arquivo não encontrado: $VALUES_FILE"
-    echo "   Execute este script no diretório raiz do projeto TriSLA"
+    echo "   O arquivo values-nasp.yaml deve existir em helm/trisla/"
     exit 1
 fi
 
-# Copiar values-nasp.yaml para values-production.yaml
-echo "📋 Copiando $VALUES_FILE para $VALUES_PROD_FILE..."
-cp "$VALUES_FILE" "$VALUES_PROD_FILE"
-
-echo "✅ Arquivo $VALUES_PROD_FILE atualizado"
+echo "✅ Arquivo canônico encontrado: $VALUES_FILE"
 echo ""
 echo "⚠️  IMPORTANTE:"
 echo "   1. Execute: ./scripts/discover-nasp-endpoints.sh"
-echo "   2. Preencha os endpoints reais em $VALUES_PROD_FILE"
-echo "   3. Valide: helm lint ./helm/trisla -f $VALUES_PROD_FILE"
+echo "   2. Preencha os endpoints reais em $VALUES_FILE"
+echo "   3. Valide: helm lint ./helm/trisla -f $VALUES_FILE"
+echo "   4. Deploy: ./scripts/deploy-trisla-nasp-auto.sh"
 echo ""
 
