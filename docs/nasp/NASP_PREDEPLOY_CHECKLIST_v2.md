@@ -1,8 +1,8 @@
-# Checklist de Pré-Deploy NASP Node1 — TriSLA (Versão 2)
+# Checklist de Pré-Deploy NASP — TriSLA (Versão 2)
 
 **Data:** 2025-11-22  
 **Versão:** 2.0  
-**Objetivo:** Garantir que o TriSLA está pronto para deploy controlado no NASP Node1 (cluster com 2 nodes)
+**Objetivo:** Garantir que o TriSLA está pronto para deploy controlado no NASP (deploy local no node1)
 
 ---
 
@@ -44,7 +44,7 @@ kubectl get namespaces
   - Verificar Dockerfile: Ontologia copiada para container
 
 - [ ] **PostgreSQL acessível**
-  - Verificar: Configuração de `DATABASE_URL` em `helm/trisla/values-nasp.yaml`
+  - Verificar: Configuração de `DATABASE_URL` em `values-production.yaml`
   - Verificar: Namespace e serviço PostgreSQL existem
 
 ### 2.2 ML-NSMF
@@ -63,17 +63,17 @@ kubectl get namespaces
   - Verificar: Contrato deployado via `deploy_contracts.py`
 
 - [ ] **Configuração do BC-NSSMF aponta para o RPC correto**
-  - Verificar: `bcNssmf.besu.rpcUrl` em `helm/trisla/values-nasp.yaml`
+  - Verificar: `bcNssmf.besu.rpcUrl` em `values-production.yaml`
   - Formato esperado: `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545`
   - ⚠️ **NÃO expor IP real em documentação**
 
 - [ ] **Chain ID configurado corretamente**
-  - Verificar: `bcNssmf.besu.chainId` em `helm/trisla/values-nasp.yaml`
+  - Verificar: `bcNssmf.besu.chainId` em `values-production.yaml`
 
 ### 2.4 SLA-Agent Layer
 
 - [ ] **Agentes SLA estão configurados para apontar para o NASP Adapter**
-  - Verificar: `naspAdapter.naspEndpoints.*` em `helm/trisla/values-nasp.yaml`
+  - Verificar: `naspAdapter.naspEndpoints.*` em `values-production.yaml`
   - Verificar: Agentes não usam métricas hardcoded (conforme FASE 5)
 
 - [ ] **Configuração de SLOs por domínio**
@@ -91,15 +91,15 @@ kubectl get namespaces
 - [ ] **Endpoints NASP descobertos e configurados**
   - Executar: `scripts/discover_nasp_endpoints.sh`
   - Revisar: `docs/NASP_CONTEXT_REPORT.md`
-  - Preencher: `naspAdapter.naspEndpoints.*` em `helm/trisla/values-nasp.yaml`
+  - Preencher: `naspAdapter.naspEndpoints.*` em `values-production.yaml`
 
 ---
 
 ## 3. Configuração de Helm
 
-### 3.1 helm/trisla/values-nasp.yaml (Arquivo Canônico para NASP)
+### 3.1 values-production.yaml
 
-- [ ] **`helm/trisla/values-nasp.yaml` preenchido conforme template `docs/nasp/values-nasp.yaml`**
+- [ ] **`helm/trisla/values-production.yaml` preenchido conforme `docs/VALUES_PRODUCTION_GUIDE.md`**
   - Executar: `scripts/fill_values_production.sh` (ou preencher manualmente)
   - Revisar: Todos os placeholders substituídos por valores válidos
 
@@ -120,7 +120,7 @@ kubectl get namespaces
 - [ ] **Helm chart validado**
   ```bash
   helm lint ./helm/trisla
-  helm template trisla-portal ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
+  helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --debug
   ```
 
 - [ ] **Nenhum erro crítico no template**
@@ -249,7 +249,7 @@ kubectl get namespaces
 
 - [ ] Todos os itens acima marcados como concluídos
 - [ ] Nenhum IP real em documentação Markdown
-- [ ] `helm/trisla/values-nasp.yaml` preenchido e validado
+- [ ] `values-production.yaml` preenchido e validado
 - [ ] Todas as imagens críticas disponíveis no GHCR
 - [ ] Playbooks Ansible testados
 - [ ] Documentação completa e auditável

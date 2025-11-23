@@ -6,9 +6,10 @@
 # ============================================
 
 - name: Configurar Namespace TriSLA
-  hosts: control_plane
+  hosts: nasp
+  connection: local
   become: yes
-  gather_facts: yes
+  gather_facts: no
   
   vars:
     namespace: "{{ trisla.namespace }}"

@@ -28,7 +28,7 @@ echo "   Transport: $TRANSPORT_ENDPOINT"
 echo ""
 
 echo "✅ Configurações atualizadas nos arquivos:"
-echo "   - helm/trisla/values-nasp.yaml"
+echo "   - helm/trisla/values-production.yaml"
 echo "   - apps/nasp-adapter/src/nasp_client.py"
 echo ""
 

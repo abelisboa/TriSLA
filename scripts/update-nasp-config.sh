@@ -2,7 +2,7 @@
 # ============================================
 # Script para Atualizar Configurações com Valores Descobertos
 # ============================================
-# Atualiza arquivos com valores descobertos no NASP
+# Atualiza arquivos com valores descobertos no NASP (local)
 # ============================================
 
 set -e
@@ -16,73 +16,26 @@ GATEWAY="192.168.10.1"
 echo "🔧 Atualizando configurações com valores descobertos..."
 echo ""
 
-# 1. Atualizar ansible/inventory.ini
-echo "1️⃣ Atualizando ansible/inventory.ini..."
-cat > ansible/inventory.ini <<EOF
+# 1. Atualizar ansible/inventory.yaml
+echo "1️⃣ Atualizando ansible/inventory.yaml..."
+cat > ansible/inventory.yaml <<EOF
 # ============================================
-# Inventory Ansible - TriSLA NASP
+# Inventory Ansible YAML - TriSLA NASP
 # ============================================
-# ⚠️ IMPORTANTE: Configurado com valores reais do NASP
-# Valores descobertos automaticamente
+# Inventário para deploy local 127.0.0.1
 # ============================================
 
-[nasp_nodes]
-node1 ansible_host=node006 ansible_ssh_common_args='-o ProxyJump=porvir5g@ppgca.unisinos.br' iface=$INTERFACE
-node2 ansible_host=$NODE2_IP ansible_ssh_common_args='-o ProxyJump=porvir5g@ppgca.unisinos.br' iface=$INTERFACE
-
-[control_plane]
-node1
-node2
-
-[workers]
-# Adicionar workers aqui se necessário
-
-[kubernetes:children]
-nasp_nodes
-
-# ============================================
-# Variáveis Globais
-# ============================================
-[all:vars]
-ansible_user=porvir5g
-ansible_ssh_common_args='-o ProxyJump=porvir5g@ppgca.unisinos.br'
-
-# Configurações de rede NASP (valores reais descobertos)
-trisla_interface=$INTERFACE
-trisla_node_ip=$NODE1_IP
-trisla_gateway=$GATEWAY
-trisla_node1_ip=$NODE1_IP
-trisla_node2_ip=$NODE2_IP
-
-# Configurações do Kubernetes
-kubeconfig_path=/etc/kubernetes/admin.conf
-
-# Configurações do TriSLA
-trisla_namespace=trisla
-trisla_image_registry=ghcr.io/abelisboa
-
-# Configurações de deploy
-trisla_deploy_method=helm
-trisla_helm_chart_path=./helm/trisla
-
-# Configurações de observabilidade
-trisla_observability_enabled=true
-trisla_prometheus_enabled=true
-trisla_grafana_enabled=true
-
-# Configurações de produção REAL
-trisla_production_mode=true
-trisla_simulation_mode=false
+[nasp]
+127.0.0.1 ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 EOF
 
-echo "✅ inventory.ini atualizado"
+echo "✅ inventory.yaml atualizado"
 echo ""
 
-# 2. Atualizar helm/trisla/values-nasp.yaml (valores conhecidos)
-VALUES_FILE="helm/trisla/values-nasp.yaml"
-echo "2️⃣ Atualizando $VALUES_FILE..."
+# 2. Atualizar helm/trisla/values-production.yaml (valores conhecidos)
+echo "2️⃣ Atualizando helm/trisla/values-production.yaml..."
 # Manter valores conhecidos e adicionar node2
-cat >> "$VALUES_FILE" <<EOF
+cat >> helm/trisla/values-production.yaml <<EOF
 
 # Node IPs descobertos
 nodes:
@@ -94,7 +47,7 @@ nodes:
     interface: $INTERFACE
 EOF
 
-echo "✅ $VALUES_FILE atualizado com IPs dos nodes"
+echo "✅ values-production.yaml atualizado com IPs dos nodes"
 echo ""
 
 echo "=========================================="
@@ -107,9 +60,8 @@ echo "   Interface: $INTERFACE"
 echo "   Gateway: $GATEWAY"
 echo ""
 echo "⚠️  PRÓXIMOS PASSOS:"
-echo "   1. No NASP, executar: ./scripts/discover-nasp-services.sh"
+echo "   1. Executar: ./scripts/discover-nasp-services.sh"
 echo "   2. Identificar endpoints dos controladores (RAN, Transport, Core)"
-echo "   3. Atualizar helm/trisla/values-nasp.yaml com endpoints"
+echo "   3. Atualizar helm/trisla/values-production.yaml com endpoints"
 echo "   4. Atualizar apps/nasp-adapter/src/nasp_client.py com endpoints"
 echo ""
-

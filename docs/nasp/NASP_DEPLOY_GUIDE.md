@@ -37,13 +37,11 @@ Este guia fornece instruções passo a passo para implantar o **TriSLA** no ambi
 - **Função**: Control plane e worker
 - **Recursos**: Mínimo 8 cores CPU, 16 GiB RAM, 100 GiB storage
 - **Serviços**: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, kube-proxy
+- **Deploy**: O deploy do TriSLA é executado localmente neste nó
 
-**Verificação:**
+**Verificação (executar localmente no node1):**
 
 ```bash
-# Conectar via SSH
-ssh root@<NODE1_IP>
-
 # Verificar status do Kubernetes
 kubectl get nodes
 kubectl get pods -n kube-system
@@ -57,16 +55,7 @@ kubectl get pods -n kube-system
 - **Recursos**: Mínimo 8 cores CPU, 16 GiB RAM, 100 GiB storage
 - **Serviços**: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, kube-proxy
 
-**Verificação:**
-
-```bash
-# Conectar via SSH
-ssh root@<NODE2_IP>
-
-# Verificar status do Kubernetes
-kubectl get nodes
-kubectl get pods -n kube-system
-```
+**Nota:** O deploy é feito localmente no node1, mas o cluster inclui o node2 como parte do control plane.
 
 ### 2.2 Kubespray
 
@@ -227,27 +216,21 @@ kubectl port-forward -n monitoring svc/grafana 3000:3000
 
 Antes de iniciar o deploy, o operador deve possuir:
 
-- **Acesso SSH** aos nós Node1 e Node2 com privilégios de root
+- **Acesso local ao node1 do NASP** (você já está dentro do node1)
 - **Acesso ao kubeconfig** do cluster (arquivo `/etc/kubernetes/admin.conf` ou equivalente)
 - **Acesso à rede NASP** para comunicação com endpoints RAN, Transport e Core
 - **Credenciais do GitHub** para acesso ao GHCR (GitHub Container Registry)
 
 ### 3.2 Requisitos de Software
 
-**Na máquina do operador:**
+**No node1 do NASP (onde o deploy é executado):**
 
-- **kubectl** versão ≥ 1.26
-- **Helm** versão ≥ 3.12
+- **kubectl** versão ≥ 1.26 (já instalado via Kubespray)
+- **Helm** versão ≥ 3.12 (instalar se não estiver presente)
 - **Ansible** versão ≥ 2.14 (opcional, para automação)
-- **SSH client** para acesso aos nós
-- **Git** para clonar o repositório TriSLA
-
-**Nos nós do cluster:**
-
-- **kubectl** (já instalado via Kubespray)
-- **Helm** (instalar se não estiver presente)
 - **Docker** ou **containerd** (já configurado)
 - **Calico CNI** (já instalado)
+- **Python 3** (para scripts auxiliares)
 
 ### 3.3 Requisitos de Recursos
 
@@ -272,53 +255,35 @@ Antes de iniciar o deploy, o operador deve possuir:
 
 ## 4. Preparação
 
-### 4.1 Acesso SSH
+### 4.1 Acesso Local
 
-**Configurar acesso SSH aos nós:**
+**O deploy do TriSLA é feito localmente no node1 do NASP.**
 
-```bash
-# Testar conectividade SSH
-ssh root@<NODE1_IP>
-ssh root@<NODE2_IP>
+Você já está dentro do node1 do NASP.
 
-# Configurar chave SSH (opcional, mas recomendado)
-ssh-copy-id root@<NODE1_IP>
-ssh-copy-id root@<NODE2_IP>
-
-# Testar acesso sem senha
-ssh root@<NODE1_IP> "hostname"
-ssh root@<NODE2_IP> "hostname"
-```
-
-**Configurar SSH config (opcional):**
+**Verificar acesso ao cluster:**
 
 ```bash
-# ~/.ssh/config
-Host nasp-node1
-    HostName <NODE1_IP>
-    User root
-    IdentityFile ~/.ssh/id_rsa
+# Verificar se kubectl está configurado
+kubectl cluster-info
 
-Host nasp-node2
-    HostName <NODE2_IP>
-    User root
-    IdentityFile ~/.ssh/id_rsa
+# Verificar nós do cluster
+kubectl get nodes
+
+# Verificar acesso ao kubeconfig
+kubectl config view
 ```
 
 ### 4.2 Kubectl
 
-**Copiar kubeconfig do Node1:**
+**O kubeconfig já está disponível localmente no node1:**
 
 ```bash
-# Copiar kubeconfig do Node1
-scp root@<NODE1_IP>:/etc/kubernetes/admin.conf ~/.kube/nasp-config
+# Verificar kubeconfig padrão
+kubectl config view
 
-# Configurar KUBECONFIG
-export KUBECONFIG=~/.kube/nasp-config
-
-# Ou adicionar ao kubeconfig padrão
-mkdir -p ~/.kube
-scp root@<NODE1_IP>:/etc/kubernetes/admin.conf ~/.kube/config
+# Se necessário, configurar KUBECONFIG
+export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Verificar acesso
 kubectl cluster-info
@@ -344,7 +309,7 @@ kubectl config use-context <context-name>
 
 ```bash
 # Conectar ao Node1
-ssh root@<NODE1_IP>
+# Executar localmente no node1
 
 # Baixar e instalar Helm
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -413,15 +378,17 @@ kubectl create namespace trisla
 
 ### 4.5 Testes de Conectividade
 
-**Testar conectividade entre nós:**
+**Testar conectividade entre nós (executar localmente no node1):**
 
 ```bash
-# Do Node1, testar Node2
-ssh root@<NODE1_IP> "ping -c 3 <NODE2_IP>"
+# Verificar nós do cluster
+kubectl get nodes -o wide
 
-# Do Node2, testar Node1
-ssh root@<NODE2_IP> "ping -c 3 <NODE1_IP>"
+# Testar conectividade via pod de teste
+kubectl run -it --rm test-ping --image=busybox --restart=Never -- ping -c 3 <NODE2_IP>
 ```
+<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
+grep
 
 **Testar conectividade com NASP:**
 
@@ -814,20 +781,15 @@ kubectl logs -n trisla -l app=sla-agent-layer --tail=50
 
 ## 7. Deploy Completo com Helm
 
-### 7.1 Preparar helm/trisla/values-nasp.yaml
+### 7.1 Preparar values-nasp.yaml
 
-**⚠️ IMPORTANTE:** O arquivo canônico para deploy NASP é `helm/trisla/values-nasp.yaml`.  
-O arquivo `docs/nasp/values-nasp.yaml` é apenas um template/exemplo.
-
-**Criar/editar arquivo de valores específico para NASP:**
+**Criar arquivo de valores específico para NASP:**
 
 ```bash
-# Se o arquivo não existir, copiar do template
-if [ ! -f "helm/trisla/values-nasp.yaml" ]; then
-    cp docs/nasp/values-nasp.yaml helm/trisla/values-nasp.yaml
-fi
+# Copiar values.yaml como base
+cp helm/trisla/values.yaml helm/trisla/values-nasp.yaml
 
-# Editar o arquivo canônico
+# Editar values-nasp.yaml
 vim helm/trisla/values-nasp.yaml
 ```
 
@@ -1537,8 +1499,9 @@ kubectl get storageclass
 kubectl describe nodes | grep -A 5 "Allocated resources"
 
 # Verificar volumes locais (se usando local-path)
-ssh root@<NODE1_IP> "df -h /opt/local-path-provisioner"
-ssh root@<NODE2_IP> "df -h /opt/local-path-provisioner"
+# Verificar storage localmente
+df -h /opt/local-path-provisioner
+kubectl get nodes -o jsonpath='{.items[*].status.capacity.storage}'
 ```
 
 ### 11.4 Problemas com Prometheus no NASP
@@ -1604,7 +1567,7 @@ helm upgrade trisla ./helm/trisla \
 
 ### 12.1 Pré-Deploy
 
-- [ ] Acesso SSH configurado para Node1 e Node2
+- [ ] Acesso local ao node1 configurado (você já está dentro do node1)
 - [ ] kubectl configurado e conectado ao cluster
 - [ ] Helm instalado e funcionando
 - [ ] GHCR secret criado no namespace trisla

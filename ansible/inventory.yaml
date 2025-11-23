@@ -1,74 +1,8 @@
 # ============================================
 # Inventory Ansible YAML - TriSLA NASP
 # ============================================
-# Formato alternativo YAML do inventory
+# Inventário para deploy local 127.0.0.1
 # ============================================
 
-all:
-  children:
-    nasp_cluster:
-      hosts:
-        nasp_node1:
-          ansible_host: <NASP_NODE1_HOST>
-          iface: my5g
-        nasp_node2:
-          ansible_host: <NASP_NODE2_HOST>
-          iface: my5g
-    nasp_nodes:  # Alias para compatibilidade
-      hosts:
-        node1:
-          ansible_host: <NASP_NODE1_HOST>
-          iface: my5g
-        node2:
-          ansible_host: <NASP_NODE2_HOST>
-          iface: my5g
-    
-    control_plane:
-      hosts:
-        node1: {}
-        node2: {}
-    
-    workers:
-      hosts: {}
-      # Adicionar workers aqui se necessário
-      # node3:
-      #   ansible_host: <INSERIR_IP_NODE3>
-      #   iface: my5g
-    
-    kubernetes:
-      children:
-        nasp_nodes: {}
-    
-    trisla_services:
-      hosts: {}
-  
-  vars:
-    # Usuário SSH
-    ansible_user: root
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-    
-    # Configurações de rede NASP (usar placeholders em documentação)
-    trisla_interface: my5g
-    trisla_node_ip: <NODE1_IP>  # Substituir pelo IP real apenas no arquivo local
-    trisla_gateway: <GATEWAY_IP>  # Substituir pelo IP real apenas no arquivo local
-    
-    # Configurações do Kubernetes
-    kubeconfig_path: /etc/kubernetes/admin.conf
-    
-    # Configurações do TriSLA
-    trisla_namespace: trisla
-    trisla_image_registry: ghcr.io/abelisboa
-    
-    # Configurações de deploy
-    trisla_deploy_method: helm
-    trisla_helm_chart_path: ./helm/trisla
-    
-    # Configurações de observabilidade
-    trisla_observability_enabled: true
-    trisla_prometheus_enabled: true
-    trisla_grafana_enabled: true
-    
-    # Configurações de produção
-    trisla_production_mode: true
-    trisla_simulation_mode: false
-
+[nasp]
+127.0.0.1 ansible_connection=local ansible_python_interpreter=/usr/bin/python3

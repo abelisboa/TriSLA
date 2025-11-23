@@ -40,9 +40,12 @@ Antes de iniciar o deploy, certifique-se de que:
 
 **Execução:**
 ```bash
-# No node1 do NASP (ou máquina com acesso ao cluster)
-./scripts/discover_nasp_endpoints.sh
+# No node1 do NASP (executar localmente)
+cd ~/gtp5g/trisla
+./scripts/discover-nasp-endpoints.sh
 ```
+<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
+read_file
 
 **Validação:**
 - [ ] Arquivo `tmp/nasp_context_raw.txt` gerado
@@ -69,27 +72,23 @@ cat tmp/nasp_context_raw.txt
 - [ ] Serviços NASP mapeados (RAN, Transport, Core)
 - [ ] Problemas de saúde identificados (se houver)
 
-**Próximo passo:** Preencher `helm/trisla/values-nasp.yaml` com endpoints descobertos.
+**Próximo passo:** Preencher `values-nasp.yaml` com endpoints descobertos.
 
 ---
 
-### Passo 3: Preencher helm/trisla/values-nasp.yaml
+### Passo 3: Preencher values-nasp.yaml
 
-**Objetivo:** Configurar valores específicos do ambiente NASP no arquivo canônico.
-
-**⚠️ IMPORTANTE:** O arquivo oficial para deploy NASP é `helm/trisla/values-nasp.yaml`.  
-O arquivo `docs/nasp/values-nasp.yaml` é apenas um template/exemplo.
+**Objetivo:** Configurar valores de produção específicos do ambiente NASP.
 
 **Execução (método guiado):**
 ```bash
-# Para NASP, definir variável de ambiente
-export TRISLA_ENV=nasp
+cd ~/gtp5g/trisla
 ./scripts/fill_values_production.sh
 ```
 
 **Ou manualmente:**
-1. Editar `helm/trisla/values-nasp.yaml` (arquivo canônico)
-2. Seguir guia: `docs/VALUES_PRODUCTION_GUIDE.md` (conceitos aplicáveis)
+1. Editar `helm/trisla/values-nasp.yaml`
+2. Seguir guia: `docs/deployment/VALUES_PRODUCTION_GUIDE.md`
 3. Substituir todos os placeholders `<...>` por valores reais
 
 **Validação:**
@@ -200,12 +199,12 @@ kubectl get secret ghcr-secret -n trisla
 ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
 
 # OU manualmente
-helm upgrade --install trisla ./helm/trisla \
+helm upgrade --install trisla-portal ./helm/trisla \
   --namespace trisla \
   --create-namespace \
   -f ./helm/trisla/values-nasp.yaml \
   --wait \
-  --timeout 10m
+  --timeout 15m
 ```
 
 **Validação:**
@@ -467,12 +466,12 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 1. **Preparação:**
    - Executar `scripts/discover_nasp_endpoints.sh`
    - Revisar `docs/NASP_CONTEXT_REPORT.md`
-   - Preencher `helm/trisla/values-nasp.yaml` com `scripts/fill_values_production.sh` (com TRISLA_ENV=nasp)
+   - Preencher `values-nasp.yaml` com `scripts/fill_values_production.sh`
 
 2. **Validação:**
    - Executar `python3 scripts/audit_ghcr_images.py`
    - Revisar `docs/IMAGES_GHCR_MATRIX.md`
-   - Validar `values-production.yaml` com `helm template`
+   - Validar `values-nasp.yaml` com `helm template`
 
 3. **Deploy:**
    - Executar `ansible-playbook -i inventory.yaml playbooks/pre-flight.yml`

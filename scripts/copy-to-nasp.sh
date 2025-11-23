@@ -1,53 +1,18 @@
 #!/bin/bash
 # ============================================
-# Script para Copiar Arquivos para o NASP
+# Script para Copiar Arquivos (DEPRECADO - Deploy Local)
 # ============================================
-# Copia arquivos via ppgca.unisinos.br → node006
+# Este script foi descontinuado pois o deploy é feito localmente
 # ============================================
 
 set -e
 
-PPGCA_HOST="ppgca.unisinos.br"
-PPGCA_USER="porvir5g"
-NODE1_HOST="node006"
-NODE1_USER="porvir5g"
-NODE1_PATH="~/gtp5g"
-
-echo "📋 Copiando arquivos para o NASP..."
+echo "⚠️  Este script foi descontinuado."
 echo ""
-echo "Caminho: Local → ppgca.unisinos.br → node006 (node1)"
+echo "O deploy do TriSLA é feito localmente no NASP (node1)."
+echo "Você já está dentro do node1 do NASP."
 echo ""
-
-# Arquivo a copiar
-FILE="${1:-scripts/discover-nasp-endpoints.sh}"
-
-if [ ! -f "$FILE" ]; then
-    echo "❌ Arquivo não encontrado: $FILE"
-    exit 1
-fi
-
-echo "📁 Arquivo: $FILE"
+echo "Para executar scripts localmente:"
+echo "   cd /home/porvir5g/gtp5g/trisla"
+echo "   bash scripts/<script-name>.sh"
 echo ""
-
-# Opção 1: Copiar via ppgca (2 etapas)
-echo "1️⃣ Copiando para ppgca primeiro..."
-scp "$FILE" ${PPGCA_USER}@${PPGCA_HOST}:~/
-
-if [ $? -eq 0 ]; then
-    echo "✅ Arquivo copiado para ppgca"
-    echo ""
-    echo "2️⃣ Próximos passos:"
-    echo "   ssh ${PPGCA_USER}@${PPGCA_HOST}"
-    echo "   scp $(basename $FILE) ${NODE1_USER}@${NODE1_HOST}:${NODE1_PATH}/"
-    echo "   ssh ${NODE1_HOST}"
-    echo "   cd ${NODE1_PATH}"
-    echo "   chmod +x $(basename $FILE)"
-    echo "   ./$(basename $FILE)"
-else
-    echo "❌ Erro ao copiar para ppgca"
-    exit 1
-fi
-
-echo ""
-echo "✅ Processo iniciado!"
-

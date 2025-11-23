@@ -175,6 +175,6 @@ echo ""
 echo "📋 Próximos passos:"
 echo "   1. Revisar /tmp/nasp-endpoints-discovered.yaml"
 echo "   2. Preencher endpoints reais dos controladores"
-echo "   3. Usar os valores para configurar helm/trisla/values-nasp.yaml"
+echo "   3. Usar os valores para configurar helm/trisla/values-production.yaml"
 echo ""
 

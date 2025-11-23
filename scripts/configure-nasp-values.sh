@@ -17,28 +17,14 @@ NODE2_IP="${NODE2_IP:-}"
 echo "🔧 Configurando valores reais do NASP..."
 echo ""
 
-# 1. Atualizar helm/trisla/values-nasp.yaml
-VALUES_FILE="helm/trisla/values-nasp.yaml"
-echo "1️⃣ Atualizando $VALUES_FILE..."
-
-# Criar arquivo se não existir (copiar de template)
-if [ ! -f "$VALUES_FILE" ]; then
-    if [ -f "docs/nasp/values-nasp.yaml" ]; then
-        echo "   Criando $VALUES_FILE a partir do template..."
-        cp docs/nasp/values-nasp.yaml "$VALUES_FILE"
-    elif [ -f "helm/trisla/values.yaml" ]; then
-        echo "   Criando $VALUES_FILE a partir de values.yaml..."
-        cp helm/trisla/values.yaml "$VALUES_FILE"
-    else
-        echo "   ⚠️  Nenhum template encontrado, criando arquivo básico..."
-    fi
-fi
+# 1. Atualizar helm/trisla/values-production.yaml
+echo "1️⃣ Atualizando helm/trisla/values-production.yaml..."
 
 # Criar backup
-cp "$VALUES_FILE" "${VALUES_FILE}.bak" 2>/dev/null || true
+cp helm/trisla/values-production.yaml helm/trisla/values-production.yaml.bak 2>/dev/null || true
 
 # Atualizar valores conhecidos
-cat > "$VALUES_FILE" <<EOF
+cat > helm/trisla/values-production.yaml <<EOF
 # ============================================
 # Values para PRODUÇÃO REAL
 # ============================================
@@ -137,79 +123,24 @@ monitoring:
     enabled: true
 EOF
 
-echo "✅ $VALUES_FILE atualizado"
+echo "✅ values-production.yaml atualizado"
 echo ""
 
-# 2. Atualizar ansible/inventory.ini
-echo "2️⃣ Atualizando ansible/inventory.ini..."
+# 2. Atualizar ansible/inventory.yaml
+echo "2️⃣ Atualizando ansible/inventory.yaml..."
 
-cat > ansible/inventory.ini <<EOF
+cat > ansible/inventory.yaml <<EOF
 # ============================================
-# Inventory Ansible - TriSLA NASP
+# Inventory Ansible YAML - TriSLA NASP
 # ============================================
-# ⚠️ IMPORTANTE: Configurado com valores reais do NASP
+# Inventário para deploy local 127.0.0.1
 # ============================================
 
-[nasp_nodes]
-node1 ansible_host=$NODE1_IP iface=$INTERFACE
+[nasp]
+127.0.0.1 ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 EOF
 
-if [ -n "$NODE2_IP" ]; then
-    echo "node2 ansible_host=$NODE2_IP iface=$INTERFACE" >> ansible/inventory.ini
-fi
-
-cat >> ansible/inventory.ini <<EOF
-
-[control_plane]
-node1
-EOF
-
-if [ -n "$NODE2_IP" ]; then
-    echo "node2" >> ansible/inventory.ini
-fi
-
-cat >> ansible/inventory.ini <<EOF
-
-[workers]
-# Adicionar workers aqui se necessário
-
-[kubernetes:children]
-nasp_nodes
-
-# ============================================
-# Variáveis Globais
-# ============================================
-[all:vars]
-ansible_user=root
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-
-# Configurações de rede NASP (valores reais)
-trisla_interface=$INTERFACE
-trisla_node_ip=$NODE_IP
-trisla_gateway=$GATEWAY
-
-# Configurações do Kubernetes
-kubeconfig_path=/etc/kubernetes/admin.conf
-
-# Configurações do TriSLA
-trisla_namespace=trisla
-trisla_image_registry=ghcr.io/abelisboa
-
-# Configurações de deploy
-trisla_deploy_method=helm
-trisla_helm_chart_path=./helm/trisla
-
-# Configurações de observabilidade
-trisla_observability_enabled=true
-trisla_prometheus_enabled=true
-trisla_grafana_enabled=true
-
-# Configurações de produção REAL
-trisla_production_mode=true
-trisla_simulation_mode=false
-EOF
-
-echo "✅ inventory.ini atualizado"
+echo "✅ inventory.yaml atualizado"
 echo ""
 
 # 3. Atualizar apps/nasp-adapter/src/nasp_client.py
@@ -240,7 +171,7 @@ fi
 echo ""
 echo "⚠️  AÇÕES NECESSÁRIAS:"
 echo "   1. Executar no NASP: ./scripts/discover-nasp-endpoints.sh"
-    echo "   2. Preencher endpoints reais em helm/trisla/values-nasp.yaml:"
+echo "   2. Preencher endpoints reais em helm/trisla/values-production.yaml:"
 echo "      - RAN controller endpoint"
 echo "      - Transport controller endpoint"
 echo "      - Core controller endpoint"

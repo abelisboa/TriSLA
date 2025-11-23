@@ -6,31 +6,25 @@
 # ============================================
 
 - name: Deploy TriSLA no NASP (Produção Real)
-  hosts: control_plane
+  hosts: nasp
+  connection: local
   become: yes
-  gather_facts: yes
+  gather_facts: no
   
   vars:
-    namespace: "{{ trisla_namespace | default('trisla') }}"
-    helm_release: "{{ trisla_helm_release | default('trisla-portal') }}"
-    helm_chart_path: "{{ trisla_helm_chart_path | default('./helm/trisla') }}"
-    # Para deploy NASP, usar values-nasp.yaml; para produção genérica, usar values-production.yaml
-    values_file: "{{ trisla_values_file | default(helm_chart_path + '/values-nasp.yaml') }}"
+    namespace: "{{ trisla.namespace }}"
+    helm_chart_path: "{{ trisla_helm_chart_path }}"
+    values_file: "{{ helm_chart_path }}/values-nasp.yaml"
   
   tasks:
-    - name: Verificar se namespace existe
-      command: kubectl get namespace {{ namespace }}
-      register: ns_check
-      changed_when: false
-      failed_when: false
+    - name: Validar pré-requisitos
+      include_tasks: validate-prerequisites.yml
     
-    - name: Criar namespace se não existir
-      kubernetes.core.k8s:
-        name: "{{ namespace }}"
-        api_version: v1
-        kind: Namespace
-        state: present
-      when: ns_check.rc != 0
+    - name: Criar namespace
+      include_tasks: setup-namespace.yml
+    
+    - name: Configurar secrets
+      include_tasks: setup-secrets.yml
     
     - name: Adicionar repositório Helm (se necessário)
       command: helm repo add trisla {{ trisla_image_registry }}
@@ -51,34 +45,23 @@
     
     - name: Dry-run do deploy
       command: >
-        helm template {{ helm_release }} {{ helm_chart_path }}
+        helm install trisla {{ helm_chart_path }}
         --namespace {{ namespace }}
         --values {{ values_file }}
+        --dry-run
         --debug
       register: helm_dry_run
       changed_when: false
     
-    - name: Verificar se values-production.yaml existe
-      stat:
-        path: "{{ values_file }}"
-      register: values_file_stat
-    
-    - name: Falhar se values file não existir
-      fail:
-        msg: "Arquivo values não encontrado: {{ values_file }}. Para NASP, execute scripts/fill_values_production.sh com TRISLA_ENV=nasp ou configure helm/trisla/values-nasp.yaml."
-      when: not values_file_stat.stat.exists
-    
     - name: Deploy real do TriSLA
       command: >
-        helm upgrade --install {{ helm_release }} {{ helm_chart_path }}
+        helm upgrade --install trisla {{ helm_chart_path }}
         --namespace {{ namespace }}
         --values {{ values_file }}
         --create-namespace
         --wait
         --timeout 10m
       register: helm_deploy
-      args:
-        chdir: "{{ project_root | default('.') }}"
     
     - name: Verificar status do deploy
       command: kubectl get pods -n {{ namespace }}
@@ -93,8 +76,7 @@
         msg: "{{ pods_status.stdout_lines }}"
     
     - name: Aguardar pods estarem prontos
-      command: kubectl wait --for=condition=ready pod -l app.kubernetes.io/name={{ helm_release }} -n {{ namespace }} --timeout=600s
-      ignore_errors: yes
+      command: kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=trisla -n {{ namespace }} --timeout=600s
       register: wait_result
       failed_when: wait_result.rc != 0
     

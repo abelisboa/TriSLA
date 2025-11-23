@@ -54,7 +54,7 @@ kubectl get namespaces
 
 - [ ] **kubectl:** Instalado e configurado (versão ≥ 1.26)
 - [ ] **Helm:** Instalado (versão ≥ 3.12)
-- [ ] **Acesso SSH:** Configurado para Node1/Node2
+- [ ] **Acesso local:** Você já está dentro do node1 do NASP
 - [ ] **Conectividade:** Testada entre operador e cluster
 
 ---

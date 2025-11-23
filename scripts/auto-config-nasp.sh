@@ -57,39 +57,20 @@ EOF
 echo "✔ values.yaml gerado: configs/generated/trisla_values_autogen.yaml"
 
 # 🔧 Gerando trecho de inventário Ansible
-cat <<EOF > configs/generated/inventory_autogen.ini
+cat <<EOF > configs/generated/inventory_autogen.yaml
 # ============================================
 # Inventory Ansible Auto-gerado para TriSLA
 # ============================================
 # Gerado automaticamente por auto-config-nasp.sh
 # Data: $(date)
 # ============================================
-# ⚠️ IMPORTANTE: Substituir <INSERIR_IP_NODE1> e <INSERIR_IP_NODE2> pelos IPs reais
+# Deploy local 127.0.0.1
 
-[nasp_nodes]
-node1 ansible_host=<INSERIR_IP_NODE1> iface=$PRIMARY_IFACE
-node2 ansible_host=<INSERIR_IP_NODE2> iface=$PRIMARY_IFACE
-
-[control_plane]
-node1
-node2
-
-[workers]
-# Adicionar workers aqui se necessário
-# node3 ansible_host=<INSERIR_IP_NODE3> iface=$PRIMARY_IFACE
-
-[kubernetes:children]
-nasp_nodes
-
-[all:vars]
-ansible_user=root
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-trisla_interface=$PRIMARY_IFACE
-trisla_node_ip=$PRIMARY_IP
-trisla_gateway=$PRIMARY_GW
+[nasp]
+127.0.0.1 ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 EOF
 
-echo "✔ Inventory gerado: configs/generated/inventory_autogen.ini"
+echo "✔ Inventory gerado: configs/generated/inventory_autogen.yaml"
 
 # 🔧 Gerando script de integração TriSLA ↔ NASP
 cat <<EOF > scripts/trisla_nasp_env.sh
@@ -125,7 +106,7 @@ echo "  - configs/generated/inventory_autogen.ini"
 echo "  - scripts/trisla_nasp_env.sh"
 echo ""
 echo "⚠️  PRÓXIMOS PASSOS:"
-echo "  1. Editar inventory_autogen.ini e substituir <INSERIR_IP_NODE1> e <INSERIR_IP_NODE2>"
-echo "  2. Revisar trisla_values_autogen.yaml"
-echo "  3. Executar scripts de validação da infraestrutura"
+echo "  1. Revisar trisla_values_autogen.yaml"
+echo "  2. Executar scripts de validação da infraestrutura"
+echo "  3. O deploy é feito localmente em 127.0.0.1"
 

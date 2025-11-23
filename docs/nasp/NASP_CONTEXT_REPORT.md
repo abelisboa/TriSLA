@@ -32,7 +32,7 @@
 
 **Como descobrir endpoints reais:**
 
-1. Execute `scripts/discover_nasp_endpoints.sh` no node1 do NASP
+1. Execute `scripts/discover-nasp-endpoints.sh` localmente no node1 do NASP (você já está dentro do node1)
 2. Revise o arquivo `tmp/nasp_context_raw.txt` gerado
 3. Use os FQDNs no formato: `http://<SERVICE>.<NAMESPACE>.svc.cluster.local:<PORT>`
 
@@ -66,8 +66,8 @@
 
 1. **Revisar relatório raw:** `tmp/nasp_context_raw.txt`
 2. **Identificar endpoints NASP:** Use FQDNs no formato Kubernetes
-3. **Preencher helm/trisla/values-nasp.yaml:** Execute `TRISLA_ENV=nasp scripts/fill_values_production.sh`
-4. **Validar configuração:** `helm template trisla-portal ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug`
+3. **Preencher values-production.yaml:** Execute `scripts/fill_values_production.sh`
+4. **Validar configuração:** `helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --debug`
 
 ---
 
