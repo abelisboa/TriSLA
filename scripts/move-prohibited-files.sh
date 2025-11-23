@@ -43,6 +43,10 @@ declare -A FILES_TO_MOVE=(
     ["RELEASE_v3.5.0_SUMMARY.md"]="docs/reports/"
     ["VALIDATION_REPORT_FINAL.md"]="docs/reports/"
     ["ROOT_PROTECTION_REPORT.md"]="docs/reports/"
+    ["PUSH_COMPLETO_SUCESSO.md"]="docs/reports/"
+    ["PUSH_LOCAL_WINDOWS.md"]="docs/reports/"
+    ["PUSH_TO_GITHUB_v3.5.0.md"]="docs/reports/"
+    ["RELEASE_COMMANDS_v3.5.0.md"]="docs/reports/"
     ["docker-compose.yml"]="configs/"
 )
 

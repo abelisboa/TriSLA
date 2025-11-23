@@ -38,7 +38,19 @@
 /*.tar
 /*.gz
 
-# Bloquear docker-compose na raiz (se não for necessário)
+# Bloquear arquivos de token, secret e chaves
+/*.token
+/*.secret
+/*.pem
+/*.key
+/*.p12
+/*.pfx
+/*.crt
+/*.cer
+/*.jks
+/*.keystore
+
+# Bloquear docker-compose na raiz (deve estar em /configs)
 /docker-compose.yml
 /docker-compose.yaml
 
