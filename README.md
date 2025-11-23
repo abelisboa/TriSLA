@@ -1,6 +1,6 @@
 # TriSLA — Trustworthy, Reasoned and Intelligent SLA Architecture
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/abelisboa/TriSLA)
+[![Version](https://img.shields.io/badge/version-3.5.0-blue.svg)](https://github.com/abelisboa/TriSLA)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-1.29%2B-blue.svg)](https://kubernetes.io/)
 [![Helm](https://img.shields.io/badge/helm-3.14%2B-blue.svg)](https://helm.sh/)
@@ -206,8 +206,7 @@ TriSLA/
 │   └── trisla/                   # Chart principal
 │       ├── Chart.yaml            # Metadados do chart
 │       ├── values.yaml           # Valores padrão
-│       ├── values-nasp.yaml      # ⭐ Valores para NASP (canônico)
-│       ├── values-production.yaml # Valores de produção
+│       ├── values-nasp.yaml      # ⭐ Valores canônicos para NASP
 │       └── templates/            # Templates Kubernetes
 │           ├── deployment-*.yaml
 │           ├── service-*.yaml
@@ -229,7 +228,7 @@ TriSLA/
 │
 ├── scripts/                       # Scripts de automação
 │   ├── deploy-trisla-nasp-auto.sh    # ⭐ Deploy automático
-│   ├── fill_values_production.sh     # ⭐ Preencher values
+│   ├── fill_values_production.sh     # Preparar values-nasp.yaml
 │   ├── discover-nasp-endpoints.sh    # Descobrir endpoints NASP
 │   ├── prepare-nasp-deploy.sh        # Preparar ambiente
 │   ├── pre-check-nasp.sh             # Pré-verificações
@@ -301,14 +300,17 @@ helm version
 
 #### 2. Preparar Valores
 
+O arquivo canônico `helm/trisla/values-nasp.yaml` já está configurado com valores padrão do NASP.
+
+**Se necessário, descobrir endpoints NASP:**
 ```bash
-./scripts/fill_values_production.sh
+./scripts/discover-nasp-endpoints.sh
 ```
 
-**O que este script faz:**
-- Copia `helm/trisla/values-nasp.yaml` para `helm/trisla/values-production.yaml`
-- Prepara o arquivo com valores padrão do ambiente NASP
-- Mantém placeholders para endpoints que devem ser descobertos
+**Editar valores manualmente (se necessário):**
+```bash
+vim helm/trisla/values-nasp.yaml
+```
 
 **Se necessário, descobrir endpoints NASP:**
 ```bash
@@ -599,6 +601,189 @@ ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml -vvv
 Para mais informações sobre Ansible, consulte:
 
 - **README Ansible**: [`ansible/README.md`](ansible/README.md)
+
+---
+
+## 🔄 Fluxo de Automação DevOps
+
+O TriSLA implementa um fluxo DevOps completo e automatizado que integra scripts, Ansible e Helm para garantir deploy consistente e reproduzível.
+
+### Visão Geral do Fluxo
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           Fluxo DevOps TriSLA - Deploy NASP             │
+└─────────────────────────────────────────────────────────┘
+
+FASE 0: Pré-Checks
+├── Verificar cluster Kubernetes
+├── Verificar kubectl e helm
+└── Verificar conectividade NASP
+
+FASE 1: Preparação
+├── Criar namespace trisla
+├── Configurar secrets (GHCR)
+└── Validar ambiente
+
+FASE 2: Configuração
+├── Descobrir endpoints NASP (opcional)
+├── Preparar values-nasp.yaml
+└── Validar configuração
+
+FASE 3: Validação
+├── helm lint
+├── helm template (dry-run)
+└── Verificar recursos
+
+FASE 4: Deploy
+├── helm upgrade --install trisla
+├── Aguardar pods prontos
+└── Verificar status
+
+FASE 5: Validação Pós-Deploy
+├── Health checks
+├── Testes E2E básicos
+└── Verificar interfaces I-01 a I-07
+```
+
+### Métodos de Deploy Disponíveis
+
+#### 1. Script Automatizado (Recomendado)
+
+**Comando único:**
+```bash
+cd ~/gtp5g/trisla
+./scripts/deploy-trisla-nasp-auto.sh
+```
+
+**O que executa:**
+- ✅ FASE 1: Preparação (namespace, secrets)
+- ✅ FASE 2: Validação Helm (lint + template)
+- ✅ FASE 3: Deploy (helm upgrade --install)
+- ✅ FASE 4: Validação pós-deploy (pods, serviços)
+
+#### 2. Scripts Individuais
+
+**Fluxo passo a passo:**
+```bash
+cd ~/gtp5g/trisla
+
+# FASE 0: Pré-checks
+./scripts/pre-check-nasp.sh
+
+# FASE 1: Preparação
+./scripts/prepare-nasp-deploy.sh
+
+# FASE 2: Configuração (se necessário)
+./scripts/discover-nasp-endpoints.sh
+vim helm/trisla/values-nasp.yaml
+
+# FASE 3: Validação
+./scripts/validate-helm.sh
+
+# FASE 4: Deploy
+./scripts/deploy-trisla-nasp.sh --helm-install
+
+# FASE 5: Validação
+./scripts/validate-production-real.sh
+```
+
+#### 3. Ansible Playbooks
+
+**Deploy completo via Ansible:**
+```bash
+cd ~/gtp5g/trisla
+
+# FASE 0: Pre-flight
+cd ansible
+ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
+
+# FASE 1: Setup namespace
+ansible-playbook -i inventory.yaml playbooks/setup-namespace.yml
+
+# FASE 2-4: Deploy completo
+ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
+```
+
+#### 4. Helm Manual
+
+**Deploy direto via Helm:**
+```bash
+cd ~/gtp5g/trisla
+
+# FASE 3: Validação
+helm lint ./helm/trisla -f ./helm/trisla/values-nasp.yaml
+helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
+
+# FASE 4: Deploy
+helm upgrade --install trisla ./helm/trisla \
+  -n trisla \
+  -f ./helm/trisla/values-nasp.yaml \
+  --create-namespace \
+  --wait \
+  --timeout 15m
+```
+
+### Scripts Principais do Fluxo DevOps
+
+| Script | Fase | Descrição |
+|--------|------|-----------|
+| `pre-check-nasp.sh` | 0 | Pré-verificações do cluster NASP |
+| `prepare-nasp-deploy.sh` | 1 | Preparação (namespace, secrets) |
+| `discover-nasp-endpoints.sh` | 2 | Descobrir endpoints NASP |
+| `fill_values_production.sh` | 2 | Preparar values-nasp.yaml |
+| `validate-helm.sh` | 3 | Validar Helm chart |
+| `deploy-trisla-nasp-auto.sh` | 1-4 | Deploy automático completo |
+| `deploy-trisla-nasp.sh` | 4 | Deploy manual via Helm |
+| `validate-production-real.sh` | 5 | Validação pós-deploy |
+| `complete-e2e-test.sh` | 5 | Testes E2E completos |
+
+### Integração Scripts ↔ Ansible ↔ Helm
+
+**Ordem de execução recomendada:**
+
+1. **Scripts de preparação** → Preparam ambiente e valores
+2. **Ansible playbooks** → Validam e configuram infraestrutura
+3. **Helm charts** → Deployem aplicação
+
+**Exemplo de fluxo integrado:**
+```bash
+cd ~/gtp5g/trisla
+
+# Preparação via scripts
+./scripts/prepare-nasp-deploy.sh
+./scripts/discover-nasp-endpoints.sh
+
+# Validação via Ansible
+cd ansible
+ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
+
+# Deploy via Helm (via script ou Ansible)
+cd ..
+./scripts/deploy-trisla-nasp-auto.sh
+# OU
+cd ansible
+ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
+```
+
+### Validações Automáticas
+
+O fluxo DevOps inclui validações automáticas em cada fase:
+
+- ✅ **Pré-checks**: Cluster, kubectl, helm, conectividade
+- ✅ **Preparação**: Namespace, secrets, recursos
+- ✅ **Configuração**: Sintaxe YAML, valores obrigatórios
+- ✅ **Validação**: Helm lint, template validation
+- ✅ **Deploy**: Status dos pods, health checks
+- ✅ **Pós-deploy**: Interfaces I-01 a I-07, E2E tests
+
+### Documentação do Fluxo DevOps
+
+Para mais informações sobre o fluxo DevOps:
+
+- **Guia de Deploy**: [`docs/nasp/NASP_DEPLOY_GUIDE.md`](docs/nasp/NASP_DEPLOY_GUIDE.md)
+- **Runbook Operacional**: [`docs/nasp/NASP_DEPLOY_RUNBOOK.md`](docs/nasp/NASP_DEPLOY_RUNBOOK.md)
+- **Guia de Valores**: [`docs/deployment/VALUES_PRODUCTION_GUIDE.md`](docs/deployment/VALUES_PRODUCTION_GUIDE.md)
 
 ---
 
@@ -1457,6 +1642,378 @@ Para questões, sugestões ou colaborações, entre em contato através do repos
 
 ---
 
+## 🔒 Proteção de Repositório e Regras de Publicação
+
+O repositório TriSLA implementa proteções rigorosas para garantir que **nunca** seja publicado conteúdo privado, sensível ou não-produtivo no GitHub.
+
+### Diretórios e Arquivos Protegidos
+
+Os seguintes diretórios e arquivos **NUNCA** devem ser commitados:
+
+#### Diretórios Proibidos
+- ❌ `TriSLA_PROMPTS/` - Prompts privados e documentação interna
+- ❌ `private/` - Arquivos privados
+- ❌ `sandbox/` - Ambiente de testes local
+- ❌ `tmp/` - Arquivos temporários
+- ❌ `venv/`, `.venv/`, `env/` - Ambientes virtuais Python
+- ❌ `node_modules/` - Dependências Node.js
+
+#### Arquivos Proibidos
+- ❌ `*.log` - Arquivos de log
+- ❌ `*.key`, `*.pem`, `*.token` - Chaves e tokens
+- ❌ `*.secret`, `*.password` - Credenciais
+- ❌ `.env.local`, `*.env.*.local` - Variáveis de ambiente locais
+- ❌ `__pycache__/`, `*.pyc` - Cache Python
+- ❌ `*.bak`, `*.old`, `*.backup` - Backups
+
+### Proteções Implementadas
+
+#### 1. `.gitignore` Oficial
+
+O arquivo `.gitignore` está configurado para bloquear automaticamente:
+- Diretórios privados
+- Arquivos de log
+- Secrets e credenciais
+- Cache e temporários
+- Ambientes virtuais
+
+**Localização:** `.gitignore` na raiz do repositório
+
+#### 2. GitHub Actions - Push Safety Check
+
+Um workflow automático valida **todos os pushes** para garantir que:
+- ✅ Nenhum diretório proibido seja commitado
+- ✅ Nenhum arquivo de log seja publicado
+- ✅ Nenhum arquivo sensível seja exposto
+- ✅ Nenhum `node_modules` seja versionado
+- ✅ Nenhum cache Python seja commitado
+- ✅ A estrutura do repositório esteja correta
+
+**Localização:** `.github/workflows/push-safety-check.yml`
+
+#### 3. Script de Limpeza Segura
+
+Script para remover arquivos privados do cache Git sem deletar localmente:
+
+```bash
+cd ~/gtp5g/trisla
+./scripts/clean-git-history-safe.sh
+```
+
+**O que faz:**
+- Remove diretórios proibidos do cache Git
+- Remove arquivos de log do cache Git
+- Remove `node_modules` do cache Git
+- Remove `__pycache__` do cache Git
+- Verifica arquivos sensíveis
+- Mantém arquivos localmente (não deleta)
+
+### Estrutura Autorizada do Repositório
+
+Apenas os seguintes diretórios devem estar na raiz:
+
+- ✅ `README.md` - Documentação principal
+- ✅ `LICENSE` - Licença do projeto
+- ✅ `helm/` - Helm charts
+- ✅ `apps/` - Código-fonte das aplicações
+- ✅ `scripts/` - Scripts de automação
+- ✅ `ansible/` - Playbooks Ansible
+- ✅ `docs/` - Documentação técnica
+- ✅ `monitoring/` - Configurações de monitoramento
+- ✅ `tests/` - Testes automatizados
+- ✅ `.gitignore` - Proteção do repositório
+- ✅ `.github/` - GitHub Actions e templates
+
+### Regras de Publicação
+
+#### ✅ O que PODE ser publicado:
+- Código-fonte de produção
+- Documentação técnica pública
+- Scripts de deploy e automação
+- Configurações de Helm e Ansible
+- Testes e validações
+- Arquivos de configuração (sem secrets)
+
+#### ❌ O que NUNCA deve ser publicado:
+- Prompts e documentação privada
+- Logs e arquivos temporários
+- Secrets, tokens e credenciais
+- Ambientes virtuais e dependências
+- Arquivos de backup
+- Cache e artefatos de build
+
+### Comandos de Verificação
+
+#### Verificar arquivos rastreados pelo Git:
+```bash
+cd ~/gtp5g/trisla
+git ls-files | grep -E "(TriSLA_PROMPTS|\.log|venv|node_modules)"
+```
+
+#### Verificar se há arquivos sensíveis:
+```bash
+cd ~/gtp5g/trisla
+git ls-files | grep -E "(\.key|\.pem|\.token|\.secret|\.password)"
+```
+
+#### Limpar histórico Git (seguro):
+```bash
+cd ~/gtp5g/trisla
+./scripts/clean-git-history-safe.sh
+```
+
+### Troubleshooting
+
+#### Problema: Arquivo privado foi commitado
+
+**Solução:**
+1. Execute o script de limpeza: `./scripts/clean-git-history-safe.sh`
+2. Revise as mudanças: `git status`
+3. Commit: `git commit -m "chore: remove private files from git cache"`
+4. Push: `git push origin <branch>`
+
+#### Problema: GitHub Actions falhou no push
+
+**Causa:** Arquivo proibido detectado no commit
+
+**Solução:**
+1. Revise o erro no GitHub Actions
+2. Remova o arquivo do commit: `git rm --cached <arquivo>`
+3. Adicione ao `.gitignore` se necessário
+4. Commit e push novamente
+
+### Documentação Adicional
+
+Para mais informações sobre segurança do repositório:
+- **GitHub Actions**: `.github/workflows/push-safety-check.yml`
+- **Script de Limpeza**: `scripts/clean-git-history-safe.sh`
+- **.gitignore**: `.gitignore` na raiz
+
+---
+
+## 🔒 Proteção de Estrutura (Root Clean Policy)
+
+O repositório TriSLA implementa uma **política rigorosa de estrutura limpa** que garante que apenas arquivos e pastas autorizados existam na raiz do repositório.
+
+### Estrutura Permitida na Raiz
+
+#### Arquivos Permitidos
+
+Apenas os seguintes arquivos são permitidos na raiz:
+
+- ✅ `README.md` - Documentação principal
+- ✅ `LICENSE` - Licença do projeto
+- ✅ `.gitignore` - Proteção do repositório
+- ✅ `CHANGELOG.md` - Histórico de mudanças
+
+#### Pastas Permitidas
+
+Apenas as seguintes pastas são permitidas na raiz:
+
+- ✅ `helm/` - Helm charts
+- ✅ `ansible/` - Playbooks Ansible
+- ✅ `scripts/` - Scripts de automação
+- ✅ `docs/` - Documentação técnica
+- ✅ `monitoring/` - Configurações de monitoramento
+- ✅ `tests/` - Testes automatizados
+- ✅ `apps/` - Código-fonte das aplicações
+- ✅ `configs/` - Configurações (se aplicável)
+- ✅ `nasp/` - Configurações NASP (se aplicável)
+- ✅ `tools/` - Ferramentas utilitárias (se aplicável)
+- ✅ `.github/` - GitHub Actions e templates
+
+### Regras de Proteção
+
+#### ❌ Arquivos Proibidos na Raiz
+
+- ❌ Qualquer arquivo `.md` exceto `README.md` e `CHANGELOG.md`
+- ❌ Qualquer arquivo `.sh` (devem estar em `/scripts`)
+- ❌ Qualquer arquivo `.yaml` ou `.yml` (devem estar em `/helm` ou `/configs`)
+- ❌ Arquivos soltos: `.txt`, `.log`, `.json`, `.pdf`, imagens
+- ❌ Arquivos de configuração: `.env`, `.ini`, `.conf`
+
+#### ❌ Pastas Proibidas na Raiz
+
+- ❌ `TriSLA_PROMPTS/` - Prompts privados
+- ❌ `private/`, `sandbox/`, `tmp/` - Diretórios privados
+- ❌ `venv/`, `.venv/`, `env/` - Ambientes virtuais
+- ❌ Qualquer pasta não listada acima
+
+### Tri-Camada de Proteção
+
+O repositório implementa **três camadas de proteção** para garantir estrutura limpa:
+
+#### Camada 1: `.gitignore` Definitivo
+
+O arquivo `.gitignore` bloqueia automaticamente:
+- Arquivos `.md` na raiz (exceto `README.md` e `CHANGELOG.md`)
+- Arquivos `.sh` na raiz
+- Arquivos `.yaml/.yml` na raiz
+- Arquivos soltos (`.txt`, `.log`, `.json`, etc.)
+- Diretórios privados (`TriSLA_PROMPTS/`, `venv/`, etc.)
+
+**Localização:** `.gitignore` na raiz
+
+#### Camada 2: GitHub Actions Workflow
+
+O workflow `root-protection.yml` valida **todos os pushes**:
+- Escaneia a raiz do repositório
+- Detecta arquivos/pastas proibidos
+- **Bloqueia o push** se encontrar itens não permitidos
+- Fornece mensagens de erro claras
+
+**Localização:** `.github/workflows/root-protection.yml`
+
+**Comportamento:**
+- Executa em push e pull requests
+- Falha automaticamente se estrutura inválida
+- Gera relatório de itens proibidos
+
+#### Camada 3: Script Local de Enforcement
+
+O script `enforce-clean-root.sh` permite limpeza local:
+- Escaneia a raiz do repositório
+- Lista itens proibidos encontrados
+- Oferece opções:
+  - **(a)** Mover automaticamente para pasta correta
+  - **(b)** Remover do índice Git (mantém localmente)
+  - **(c)** Abortar e revisar manualmente
+
+**Localização:** `scripts/enforce-clean-root.sh`
+
+**Uso:**
+```bash
+cd ~/gtp5g/trisla
+./scripts/enforce-clean-root.sh
+```
+
+### Como Rodar o Script Local
+
+```bash
+cd ~/gtp5g/trisla
+
+# Executar script de enforcement
+./scripts/enforce-clean-root.sh
+```
+
+**O que o script faz:**
+1. Escaneia a raiz do repositório
+2. Identifica arquivos/pastas proibidos
+3. Oferece opções de correção:
+   - **Mover**: Move arquivos `.md` para `docs/reports/`, `.sh` para `scripts/`, etc.
+   - **Remover do Git**: Remove do índice Git mantendo localmente
+   - **Abortar**: Permite revisão manual
+
+### Como Interpretar Erros de Push
+
+Se o GitHub Actions falhar com erro de root protection:
+
+**Mensagem de erro:**
+```
+❌ ROOT inválido: arquivos ou pastas não permitidos foram detectados.
+```
+
+**Ação necessária:**
+1. Executar script local: `./scripts/enforce-clean-root.sh`
+2. Mover ou remover itens proibidos
+3. Commit e push novamente
+
+**Exemplo de erro:**
+```
+❌ ERRO: Arquivo proibido na raiz: AUDIT_REPORT_COMPLETE.md
+   Arquivos permitidos na raiz: README.md LICENSE .gitignore CHANGELOG.md
+```
+
+**Solução:**
+```bash
+# Mover para docs/reports/
+mv AUDIT_REPORT_COMPLETE.md docs/reports/
+
+# Ou usar o script
+./scripts/enforce-clean-root.sh
+# Escolher opção (a) para mover automaticamente
+```
+
+### Boas Práticas DevOps
+
+#### ✅ O que fazer:
+
+- **Organizar arquivos**: Colocar arquivos nas pastas apropriadas
+  - Relatórios → `docs/reports/`
+  - Scripts → `scripts/`
+  - Configs → `helm/` ou `configs/`
+
+- **Usar o script**: Executar `enforce-clean-root.sh` antes de commits importantes
+
+- **Revisar antes de push**: Verificar estrutura localmente
+
+#### ❌ O que NÃO fazer:
+
+- **Não commitar arquivos soltos na raiz**
+- **Não criar pastas privadas na raiz**
+- **Não ignorar erros do GitHub Actions**
+- **Não remover proteções** (`.gitignore`, workflows)
+
+### Estrutura Recomendada
+
+```
+TriSLA/
+├── README.md              ✅ Permitido
+├── LICENSE                ✅ Permitido
+├── .gitignore             ✅ Permitido
+├── CHANGELOG.md           ✅ Permitido
+├── helm/                  ✅ Permitido
+├── ansible/               ✅ Permitido
+├── scripts/               ✅ Permitido
+├── docs/                  ✅ Permitido
+│   └── reports/           ✅ Relatórios aqui
+├── monitoring/            ✅ Permitido
+├── tests/                 ✅ Permitido
+├── apps/                  ✅ Permitido
+└── .github/               ✅ Permitido
+```
+
+### Troubleshooting
+
+#### Problema: GitHub Actions falha no push
+
+**Causa:** Arquivo/pasta proibido na raiz
+
+**Solução:**
+```bash
+cd ~/gtp5g/trisla
+./scripts/enforce-clean-root.sh
+# Escolher opção (a) para mover ou (b) para remover do Git
+git add .
+git commit -m "chore: clean root structure"
+git push
+```
+
+#### Problema: Script não encontra arquivos proibidos mas GitHub Actions falha
+
+**Causa:** Arquivos podem estar no staging mas não no filesystem
+
+**Solução:**
+```bash
+# Verificar staging
+git status
+
+# Remover do staging se necessário
+git reset HEAD <arquivo-proibido>
+
+# Executar script novamente
+./scripts/enforce-clean-root.sh
+```
+
+### Documentação Adicional
+
+Para mais informações sobre proteção de estrutura:
+- **GitHub Actions**: `.github/workflows/root-protection.yml`
+- **Script de Enforcement**: `scripts/enforce-clean-root.sh`
+- **.gitignore**: `.gitignore` na raiz
+
+---
+
 ## 📄 Licença
 
 Este projeto está licenciado sob a **MIT License**.
@@ -1543,7 +2100,27 @@ Veja o arquivo completo: [`LICENSE`](LICENSE)
 
 ---
 
-## 🏷️ TriSLA v1.0.0 — Release Oficial
+## 🏷️ TriSLA v3.5.0 — Release Estável NASP Local
+
+### Release v3.5.0
+
+A **TriSLA v3.5.0** representa uma consolidação completa do repositório para operação em produção no ambiente NASP, com deploy totalmente automatizado e local.
+
+**Principais características:**
+- ✅ Deploy 100% local no NASP (127.0.0.1)
+- ✅ `values-nasp.yaml` como arquivo canônico
+- ✅ Release name padronizado: `trisla`
+- ✅ Proteções GitHub implementadas
+- ✅ Documentação completa e sincronizada
+- ✅ Auditoria DevOps completa
+
+**Para mais informações:**
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **Relatório de Alinhamento**: [docs/reports/FINAL_ALIGNMENT_REPORT_v3.5.0.md](docs/reports/FINAL_ALIGNMENT_REPORT_v3.5.0.md)
+
+---
+
+## 🏷️ TriSLA v1.0.0 — Release Inicial
 
 Esta é a primeira versão pública e consolidada do TriSLA, alinhada à dissertação de mestrado e ao ambiente operacional NASP.
 

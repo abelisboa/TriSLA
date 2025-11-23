@@ -783,13 +783,15 @@ kubectl logs -n trisla -l app=sla-agent-layer --tail=50
 
 ### 7.1 Preparar values-nasp.yaml
 
-**Criar arquivo de valores específico para NASP:**
+O arquivo `helm/trisla/values-nasp.yaml` é o arquivo canônico para deploy no NASP e já existe no repositório.
+
+**Se necessário, descobrir endpoints NASP:**
 
 ```bash
-# Copiar values.yaml como base
-cp helm/trisla/values.yaml helm/trisla/values-nasp.yaml
+# Descobrir endpoints reais do NASP
+./scripts/discover-nasp-endpoints.sh
 
-# Editar values-nasp.yaml
+# Editar values-nasp.yaml com endpoints descobertos
 vim helm/trisla/values-nasp.yaml
 ```
 

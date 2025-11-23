@@ -1,0 +1,212 @@
+name: Root Protection
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  root-protection:
+    name: Validate Root Structure
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Validate root structure
+        run: |
+          echo "🔍 Validando estrutura da raiz do repositório..."
+          echo ""
+          
+          # Arquivos permitidos na raiz
+          ALLOWED_FILES=(
+            "README.md"
+            "LICENSE"
+            ".gitignore"
+            "CHANGELOG.md"
+          )
+          
+          # Pastas permitidas na raiz
+          ALLOWED_DIRS=(
+            "helm"
+            "ansible"
+            "scripts"
+            "docs"
+            "monitoring"
+            "tests"
+            "apps"
+            "configs"
+            "nasp"
+            "tools"
+            ".github"
+          )
+          
+          ERRORS=0
+          FOUND_PROHIBITED=false
+          
+          # Listar todos os itens na raiz
+          ROOT_ITEMS=$(find . -maxdepth 1 -not -path '*/\.*' -not -path '.' | sed 's|^\./||' | sort)
+          
+          echo "📋 Itens encontrados na raiz:"
+          echo "$ROOT_ITEMS" | while read -r item; do
+            echo "  - $item"
+          done
+          echo ""
+          
+          # Verificar cada item na raiz
+          echo "🔍 Verificando itens na raiz..."
+          echo "$ROOT_ITEMS" | while read -r item; do
+            # Pular se for diretório .git (não aparece no find acima, mas por segurança)
+            if [[ "$item" == ".git" ]]; then
+              continue
+            fi
+            
+            # Verificar se é arquivo ou diretório
+            if [ -f "$item" ]; then
+              # É um arquivo
+              ALLOWED=false
+              
+              # Verificar se está na lista de permitidos
+              for allowed in "${ALLOWED_FILES[@]}"; do
+                if [[ "$item" == "$allowed" ]]; then
+                  ALLOWED=true
+                  break
+                fi
+              done
+              
+              if [ "$ALLOWED" = false ]; then
+                echo "❌ ERRO: Arquivo proibido na raiz: $item"
+                echo "   Arquivos permitidos na raiz: ${ALLOWED_FILES[*]}"
+                FOUND_PROHIBITED=true
+                ERRORS=$((ERRORS + 1))
+              else
+                echo "✅ Arquivo permitido: $item"
+              fi
+              
+            elif [ -d "$item" ]; then
+              # É um diretório
+              ALLOWED=false
+              
+              # Verificar se está na lista de permitidos
+              for allowed in "${ALLOWED_DIRS[@]}"; do
+                if [[ "$item" == "$allowed" ]]; then
+                  ALLOWED=true
+                  break
+                fi
+              done
+              
+              if [ "$ALLOWED" = false ]; then
+                echo "❌ ERRO: Diretório proibido na raiz: $item"
+                echo "   Diretórios permitidos na raiz: ${ALLOWED_DIRS[*]}"
+                FOUND_PROHIBITED=true
+                ERRORS=$((ERRORS + 1))
+              else
+                echo "✅ Diretório permitido: $item"
+              fi
+            fi
+          done
+          
+          echo ""
+          
+          # Verificações específicas
+          echo "🔍 Verificações específicas..."
+          
+          # Verificar arquivos .md na raiz (exceto README.md e CHANGELOG.md)
+          MD_FILES=$(find . -maxdepth 1 -name "*.md" -not -name "README.md" -not -name "CHANGELOG.md" 2>/dev/null | sed 's|^\./||')
+          if [ -n "$MD_FILES" ]; then
+            echo "❌ ERRO: Arquivos .md proibidos na raiz (exceto README.md e CHANGELOG.md):"
+            echo "$MD_FILES" | while read -r file; do
+              echo "   - $file"
+            done
+            FOUND_PROHIBITED=true
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ Nenhum arquivo .md proibido na raiz"
+          fi
+          
+          # Verificar arquivos .sh na raiz
+          SH_FILES=$(find . -maxdepth 1 -name "*.sh" 2>/dev/null | sed 's|^\./||')
+          if [ -n "$SH_FILES" ]; then
+            echo "❌ ERRO: Arquivos .sh proibidos na raiz (devem estar em /scripts):"
+            echo "$SH_FILES" | while read -r file; do
+              echo "   - $file"
+            done
+            FOUND_PROHIBITED=true
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ Nenhum arquivo .sh na raiz"
+          fi
+          
+          # Verificar arquivos .yaml/.yml na raiz (exceto se estiverem em pastas permitidas)
+          YAML_FILES=$(find . -maxdepth 1 \( -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | sed 's|^\./||')
+          if [ -n "$YAML_FILES" ]; then
+            echo "❌ ERRO: Arquivos .yaml/.yml proibidos na raiz (devem estar em /helm ou /configs):"
+            echo "$YAML_FILES" | while read -r file; do
+              echo "   - $file"
+            done
+            FOUND_PROHIBITED=true
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ Nenhum arquivo .yaml/.yml na raiz"
+          fi
+          
+          # Verificar arquivos soltos (.txt, .log, .json)
+          SOLO_FILES=$(find . -maxdepth 1 \( -name "*.txt" -o -name "*.log" -o -name "*.json" \) 2>/dev/null | sed 's|^\./||')
+          if [ -n "$SOLO_FILES" ]; then
+            echo "❌ ERRO: Arquivos soltos proibidos na raiz (.txt, .log, .json):"
+            echo "$SOLO_FILES" | while read -r file; do
+              echo "   - $file"
+            done
+            FOUND_PROHIBITED=true
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ Nenhum arquivo solto (.txt, .log, .json) na raiz"
+          fi
+          
+          # Verificar pastas privadas
+          PRIVATE_DIRS=$(find . -maxdepth 1 -type d \( -name "TriSLA_PROMPTS" -o -name "private" -o -name "sandbox" -o -name "tmp" -o -name "venv" -o -name ".venv" \) 2>/dev/null | sed 's|^\./||')
+          if [ -n "$PRIVATE_DIRS" ]; then
+            echo "❌ ERRO: Diretórios privados detectados na raiz:"
+            echo "$PRIVATE_DIRS" | while read -r dir; do
+              echo "   - $dir"
+            done
+            FOUND_PROHIBITED=true
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ Nenhum diretório privado na raiz"
+          fi
+          
+          echo ""
+          
+          # Resultado final
+          if [ "$FOUND_PROHIBITED" = true ] || [ $ERRORS -gt 0 ]; then
+            echo "::error::❌ ROOT inválido: arquivos ou pastas não permitidos foram detectados."
+            echo ""
+            echo "📋 Resumo:"
+            echo "   - Erros encontrados: $ERRORS"
+            echo "   - Arquivos permitidos na raiz: ${ALLOWED_FILES[*]}"
+            echo "   - Diretórios permitidos na raiz: ${ALLOWED_DIRS[*]}"
+            echo ""
+            echo "🔧 Ação necessária:"
+            echo "   1. Mover arquivos proibidos para pastas apropriadas"
+            echo "   2. Remover diretórios privados"
+            echo "   3. Executar: ./scripts/enforce-clean-root.sh"
+            exit 1
+          else
+            echo "✅ Estrutura da raiz válida!"
+            echo ""
+            echo "📋 Estrutura permitida confirmada:"
+            echo "   - Arquivos: ${ALLOWED_FILES[*]}"
+            echo "   - Diretórios: ${ALLOWED_DIRS[*]}"
+          fi
+

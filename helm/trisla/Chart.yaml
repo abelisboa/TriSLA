@@ -2,8 +2,8 @@ apiVersion: v2
 name: trisla
 description: TriSLA - SLA-Aware Architecture for 5G/O-RAN
 type: application
-version: 1.0.0
-appVersion: "1.0.0"
+version: 3.5.0
+appVersion: "3.5.0"
 keywords:
   - 5g
   - o-ran

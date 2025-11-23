@@ -1,49 +1,383 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pdb
+# ============================================
+# TriSLA - .gitignore DEFINITIVO
+# ============================================
+# Proteção definitiva da estrutura do repositório
+# ============================================
 
-# venv
+# ============================================
+# PROTEÇÃO DE RAIZ - ARQUIVOS PROIBIDOS
+# ============================================
+
+# Bloquear TODOS os .md na raiz EXCETO README.md e CHANGELOG.md
+/*.md
+!/README.md
+!/CHANGELOG.md
+
+# Bloquear arquivos .sh na raiz (devem estar em /scripts)
+/*.sh
+
+# Bloquear arquivos .yaml/.yml na raiz (devem estar em /helm ou /configs)
+/*.yaml
+/*.yml
+!/helm/**/*.yaml
+!/helm/**/*.yml
+!/configs/**/*.yaml
+!/configs/**/*.yml
+
+# Bloquear arquivos soltos na raiz
+/*.txt
+/*.log
+/*.json
+/*.pdf
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.svg
+/*.zip
+/*.tar
+/*.gz
+
+# Bloquear docker-compose na raiz (se não for necessário)
+/docker-compose.yml
+/docker-compose.yaml
+
+# Bloquear arquivos de configuração soltos
+/.env
+/.env.*
+/*.ini
+/*.conf
+/*.config
+
+# ============================================
+# DIRETÓRIOS PRIVADOS (NUNCA PUBLICAR)
+# ============================================
+
+# Prompts e documentação privada
+TriSLA_PROMPTS/
+private/
+sandbox/
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Ambientes virtuais
+venv/
 .venv/
 env/
-venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Logs
-logs/
-*.log
-
-# Editor
-.vscode/
-.idea/
-# OS
-.DS_Store
-Thumbs.db
-
-# Node UI
+# Node modules
 node_modules/
-dist/
-build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Docker
+# ============================================
+# ARQUIVOS DE LOG (NUNCA PUBLICAR)
+# ============================================
+
+*.log
+logs/
+*.log.*
+trisla_build.log
+trisla_build_prod.log
+pipeline_output.log
+*.out
+
+# ============================================
+# PYTHON
+# ============================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# ============================================
+# EDITORES E IDEs
+# ============================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# IntelliJ / PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================
+# SISTEMA OPERACIONAL
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# DOCKER E CONTAINERS
+# ============================================
+
 *.pid
 *.tar
 *.img
+*.iso
+docker-compose.override.yml
+.dockerignore.local
 
-# Tests
-.pytest_cache/
+# ============================================
+# BACKUPS E ARQUIVOS TEMPORÁRIOS
+# ============================================
 
-# Local-only artifacts
-apps/bc-nssmf/src/contracts/contract_address.json
-pipeline_output.log
-trisla_build.log
-
-# Backups
 *.bak
 *.old
 *.backup
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.orig
+*.rej
+
+# ============================================
+# SECRETS E CREDENCIAIS (CRÍTICO)
+# ============================================
+
+# Tokens e chaves
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+*.jks
+*.keystore
+*.token
+*.secret
+*.password
+*.passwd
+*.pwd
+secrets/
+.secrets/
+credentials/
+.credentials/
+.env.local
+.env.*.local
+*.env.local
+
+# GitHub tokens
+.github_token
+.github_tokens
+gh_token
+gh_tokens
+
+# ============================================
+# ARQUIVOS ESPECÍFICOS DO TRISLA
+# ============================================
+
+# Contratos blockchain (podem conter endereços privados)
+apps/bc-nssmf/src/contracts/contract_address.json
+apps/bc-nssmf/src/contracts/*.private.json
+
+# Arquivos de configuração local
+*.local.yaml
+*.local.yml
+*.local.json
+values-local.yaml
+values-local.yml
 
 # Cursor artifacts
 *cursor_backup*
+.cursor/
 
+# ============================================
+# RELATÓRIOS TEMPORÁRIOS (DEVEM ESTAR EM docs/)
+# ============================================
+
+# Relatórios de auditoria temporários (manter apenas os finais em docs/)
+# Estes serão movidos para docs/reports/
+AUDIT_REPORT_COMPLETE.md
+DEVOPS_AUDIT_REPORT.md
+VALIDATION_REPORT_FINAL.md
+RELEASE_RENAME_REPORT.md
+GITHUB_SAFETY_REPORT.md
+RELEASE_CHECKLIST_v3.5.0.md
+RELEASE_v3.5.0_SUMMARY.md
+CHANGELOG.md
+
+# ============================================
+# TESTES E VALIDAÇÃO
+# ============================================
+
+# Resultados de testes temporários
+tests/validation-results.json
+tests/*.tmp
+tests/*.temp
+
+# ============================================
+# BUILD E ARTEFATOS
+# ============================================
+
+# Build artifacts
+build/
+dist/
+target/
+out/
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ============================================
+# DATABASES LOCAIS
+# ============================================
+
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# ============================================
+# CACHE E TEMPORÁRIOS
+# ============================================
+
+.cache/
+*.cache
+.tmp/
+temp/
+tmp/
+
+# ============================================
+# NOTAS FINAIS
+# ============================================
+# 
+# Este .gitignore garante que:
+# - Apenas README.md, LICENSE, .gitignore e .github/ na raiz
+# - Apenas pastas autorizadas na raiz
+# - Nenhum arquivo .md, .sh, .yaml solto na raiz
+# - Nenhum prompt privado seja publicado
+# - Nenhum log seja commitado
+# - Nenhum ambiente virtual seja versionado
+# - Nenhum secret ou credencial seja exposto
+# - Apenas código de produção seja publicado
+#
+# ============================================

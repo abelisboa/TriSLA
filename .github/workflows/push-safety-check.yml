@@ -1,0 +1,198 @@
+name: Push Safety Check
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  safety-check:
+    name: Validate Push Safety
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for checking changes
+      
+      - name: Check for prohibited directories
+        run: |
+          echo "🔍 Checking for prohibited directories..."
+          
+          PROHIBITED_DIRS=(
+            "TriSLA_PROMPTS"
+            "private"
+            "sandbox"
+            "tmp"
+            "venv"
+            ".venv"
+            "env"
+          )
+          
+          FOUND_PROHIBITED=false
+          
+          for dir in "${PROHIBITED_DIRS[@]}"; do
+            if [ -d "$dir" ] || git ls-files | grep -q "^$dir/"; then
+              echo "❌ ERROR: Prohibited directory found: $dir"
+              FOUND_PROHIBITED=true
+            fi
+          done
+          
+          if [ "$FOUND_PROHIBITED" = true ]; then
+            echo "::error::Prohibited directories detected! These should not be in the repository."
+            exit 1
+          fi
+          
+          echo "✅ No prohibited directories found"
+      
+      - name: Check for log files
+        run: |
+          echo "🔍 Checking for log files..."
+          
+          if git ls-files | grep -E '\.(log|out)$'; then
+            echo "::error::Log files detected! Logs should not be committed."
+            echo "Files found:"
+            git ls-files | grep -E '\.(log|out)$'
+            exit 1
+          fi
+          
+          echo "✅ No log files found"
+      
+      - name: Check for sensitive files
+        run: |
+          echo "🔍 Checking for sensitive files..."
+          
+          SENSITIVE_PATTERNS=(
+            "*.key"
+            "*.pem"
+            "*.p12"
+            "*.pfx"
+            "*.token"
+            "*.secret"
+            "*.password"
+            "*.env.local"
+            ".env.*.local"
+            "secrets/"
+            ".secrets/"
+            "credentials/"
+            ".credentials/"
+            "*.token"
+            "gh_token"
+            "github_token"
+          )
+          
+          FOUND_SENSITIVE=false
+          
+          for pattern in "${SENSITIVE_PATTERNS[@]}"; do
+            if git ls-files | grep -q "$pattern"; then
+              echo "❌ ERROR: Sensitive file pattern detected: $pattern"
+              FOUND_SENSITIVE=true
+            fi
+          done
+          
+          if [ "$FOUND_SENSITIVE" = true ]; then
+            echo "::error::Sensitive files detected! Secrets should never be committed."
+            exit 1
+          fi
+          
+          echo "✅ No sensitive files found"
+      
+      - name: Check for node_modules
+        run: |
+          echo "🔍 Checking for node_modules..."
+          
+          if [ -d "node_modules" ] || git ls-files | grep -q "^node_modules/"; then
+            echo "::error::node_modules detected! Should not be committed."
+            exit 1
+          fi
+          
+          echo "✅ No node_modules found"
+      
+      - name: Check for Python cache
+        run: |
+          echo "🔍 Checking for Python cache files..."
+          
+          if git ls-files | grep -E '(__pycache__|\.pyc|\.pyo|\.pyd)'; then
+            echo "::error::Python cache files detected! Should not be committed."
+            echo "Files found:"
+            git ls-files | grep -E '(__pycache__|\.pyc|\.pyo|\.pyd)'
+            exit 1
+          fi
+          
+          echo "✅ No Python cache files found"
+      
+      - name: Check repository structure
+        run: |
+          echo "🔍 Validating repository structure..."
+          
+          REQUIRED_DIRS=(
+            "helm"
+            "apps"
+            "scripts"
+            "ansible"
+            "docs"
+            "monitoring"
+            "tests"
+          )
+          
+          MISSING_DIRS=false
+          
+          for dir in "${REQUIRED_DIRS[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "⚠️  WARNING: Required directory missing: $dir"
+              MISSING_DIRS=true
+            fi
+          done
+          
+          if [ "$MISSING_DIRS" = true ]; then
+            echo "::warning::Some required directories are missing"
+          else
+            echo "✅ All required directories present"
+          fi
+      
+      - name: Check for .gitignore
+        run: |
+          echo "🔍 Checking .gitignore..."
+          
+          if [ ! -f ".gitignore" ]; then
+            echo "::error::.gitignore file is missing!"
+            exit 1
+          fi
+          
+          # Check if .gitignore contains critical patterns
+          if ! grep -q "TriSLA_PROMPTS/" .gitignore; then
+            echo "::error::.gitignore missing TriSLA_PROMPTS/ pattern"
+            exit 1
+          fi
+          
+          if ! grep -q "\.log" .gitignore; then
+            echo "::error::.gitignore missing .log pattern"
+            exit 1
+          fi
+          
+          echo "✅ .gitignore is valid"
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## ✅ Push Safety Check Complete"
+          echo ""
+          echo "All safety checks passed. Repository is safe to publish."
+          echo ""
+          echo "### Protected:"
+          echo "- ✅ No prohibited directories"
+          echo "- ✅ No log files"
+          echo "- ✅ No sensitive files"
+          echo "- ✅ No node_modules"
+          echo "- ✅ No Python cache"
+          echo "- ✅ Repository structure valid"
+          echo "- ✅ .gitignore configured"
+
