@@ -21,7 +21,8 @@ echo ""
 # Verificar se está no diretório correto
 if [ ! -f "README.md" ] || [ ! -d "helm" ] || [ ! -d "scripts" ]; then
     echo -e "${RED}❌ Erro: Execute este script no diretório raiz do projeto TriSLA${NC}"
-    echo "   cd ~/gtp5g/trisla"
+    echo "   No node1 do NASP: cd ~/gtp5g/trisla"
+    echo "   Localmente: cd /caminho/para/TriSLA-clean"
     exit 1
 fi
 
