@@ -266,7 +266,7 @@ TriSLA/
 
 ## 🚀 Deploy Local no NASP
 
-O deploy do TriSLA no ambiente NASP é realizado **localmente no node1**, sem necessidade de SSH ou acesso remoto. Todas as operações são executadas diretamente no node onde o cluster Kubernetes está rodando.
+O deploy do TriSLA no ambiente NASP é realizado no Node onde o cluster Kubernetes está rodando.
 
 ### Pré-requisitos
 
@@ -1775,7 +1775,7 @@ Esta é a primeira versão pública e consolidada do TriSLA, alinhada à dissert
 
 **TriSLA v1.0.0** — Desenvolvido como parte da dissertação de mestrado em Engenharia de Sistemas e Computação.
 
-**Autor**: Abel Lisboa  
+**Autor**: Abel José Rodrigues Lisboa  
 **Licença**: MIT  
 **Repositório**: [GitHub](https://github.com/abelisboa/TriSLA)
 
