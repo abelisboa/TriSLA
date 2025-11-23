@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # ============================================
-# Script Interativo para Preencher values-production.yaml
+# Script Interativo para Preencher values-production.yaml ou values-nasp.yaml
 # ============================================
-# Ajuda o operador a preencher helm/trisla/values-production.yaml
+# Para NASP: preenche helm/trisla/values-nasp.yaml
+# Para produção genérica: preenche helm/trisla/values-production.yaml
 # de forma guiada e segura
 # ============================================
 # Uso: ./scripts/fill_values_production.sh
@@ -12,7 +13,15 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-VALUES_FILE="$PROJECT_ROOT/helm/trisla/values-production.yaml"
+# Determinar qual arquivo usar baseado no ambiente
+# Para NASP, usar values-nasp.yaml; para produção genérica, usar values-production.yaml
+if [ "${TRISLA_ENV:-}" = "nasp" ] || [ -n "${NASP_DEPLOY:-}" ]; then
+    VALUES_FILE="$PROJECT_ROOT/helm/trisla/values-nasp.yaml"
+    VALUES_TYPE="NASP"
+else
+    VALUES_FILE="$PROJECT_ROOT/helm/trisla/values-production.yaml"
+    VALUES_TYPE="Produção Genérica"
+fi
 VALUES_BACKUP="$VALUES_FILE.backup.$(date +%Y%m%d_%H%M%S)"
 
 # Cores
@@ -23,7 +32,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}============================================================${NC}"
-echo -e "${BLUE}📝 Preenchimento Guiado de values-production.yaml${NC}"
+echo -e "${BLUE}📝 Preenchimento Guiado de $VALUES_FILE (${VALUES_TYPE})${NC}"
 echo -e "${BLUE}============================================================${NC}\n"
 
 # Verificar se yq está disponível
@@ -45,9 +54,12 @@ if [ -f "$VALUES_FILE" ]; then
     cp "$VALUES_FILE" "$VALUES_BACKUP"
     echo -e "${GREEN}✅ Backup criado: $VALUES_BACKUP${NC}\n"
 else
-    echo -e "${YELLOW}⚠️ Arquivo values-production.yaml não encontrado. Criando novo...${NC}\n"
-    # Copiar de values.yaml se existir
-    if [ -f "$PROJECT_ROOT/helm/trisla/values.yaml" ]; then
+    echo -e "${YELLOW}⚠️ Arquivo $VALUES_FILE não encontrado. Criando novo...${NC}\n"
+    # Para NASP, tentar copiar de template; caso contrário, copiar de values.yaml
+    if [ "$VALUES_TYPE" = "NASP" ] && [ -f "$PROJECT_ROOT/docs/nasp/values-nasp.yaml" ]; then
+        cp "$PROJECT_ROOT/docs/nasp/values-nasp.yaml" "$VALUES_FILE"
+        echo -e "${GREEN}✅ Arquivo criado a partir do template docs/nasp/values-nasp.yaml${NC}\n"
+    elif [ -f "$PROJECT_ROOT/helm/trisla/values.yaml" ]; then
         cp "$PROJECT_ROOT/helm/trisla/values.yaml" "$VALUES_FILE"
         echo -e "${GREEN}✅ Arquivo criado a partir de values.yaml${NC}\n"
     fi

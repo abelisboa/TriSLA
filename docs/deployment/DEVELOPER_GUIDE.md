@@ -1991,9 +1991,15 @@ helm upgrade --install trisla ./helm/trisla \
 - Kafka do cluster NASP
 - Observabilidade do cluster NASP
 
-### 13.2 Onde Ajustar values-production.yaml
+### 13.2 Onde Ajustar Values Files
 
-**Localização:** `helm/trisla/values-production.yaml`
+**Para NASP (ambiente UNISINOS):**
+- **Arquivo canônico:** `helm/trisla/values-nasp.yaml`
+- Template disponível em: `docs/nasp/values-nasp.yaml`
+- Guia completo: `docs/nasp/NASP_DEPLOY_RUNBOOK.md`
+
+**Para produção genérica (fora NASP):**
+- **Arquivo:** `helm/trisla/values-production.yaml`
 
 **Guia completo:** `docs/VALUES_PRODUCTION_GUIDE.md`
 
@@ -2038,7 +2044,8 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 ```
 
 **Valores reais apenas em:**
-- `helm/trisla/values-production.yaml` (arquivo local, não versionado)
+- `helm/trisla/values-production.yaml` (produção genérica, não versionado)
+- `helm/trisla/values-nasp.yaml` (produção NASP, não versionado)
 - `ansible/inventory.yaml` (arquivo local, não versionado)
 - Variáveis de ambiente
 

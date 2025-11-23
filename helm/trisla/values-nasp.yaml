@@ -4,6 +4,10 @@
 # ⚠️ IMPORTANTE: Substituir placeholders pelos valores reais do ambiente NASP
 # Versão: 3.4.0
 # Data: 2025-01-22
+#
+# Este é o arquivo CANÔNICO para deploy do TriSLA no ambiente NASP.
+# Para exemplo/template, consulte: docs/nasp/values-nasp.yaml
+# ============================================
 
 global:
   imageRegistry: ghcr.io/abelisboa

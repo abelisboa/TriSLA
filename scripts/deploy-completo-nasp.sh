@@ -33,9 +33,9 @@ if [ ! -f "README.md" ] || [ ! -d "helm" ] || [ ! -d "scripts" ]; then
     exit 1
 fi
 
-NAMESPACE="trisla-nsp"
-RELEASE_NAME="trisla"
-VALUES_FILE="helm/trisla/values-production.yaml"
+NAMESPACE="trisla"
+RELEASE_NAME="trisla-portal"
+VALUES_FILE="helm/trisla/values-nasp.yaml"
 
 echo -e "${YELLOW}📋 Configuração:${NC}"
 echo "   Namespace: $NAMESPACE"

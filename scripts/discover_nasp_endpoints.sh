@@ -299,7 +299,7 @@ echo ""
 echo -e "${YELLOW}📋 Próximos passos:${NC}"
 echo "   1. Revisar docs/NASP_CONTEXT_REPORT.md"
 echo "   2. Identificar endpoints NASP relevantes"
-echo "   3. Preencher helm/trisla/values-production.yaml"
+echo "   3. Preencher helm/trisla/values-nasp.yaml"
 echo "   4. Executar scripts/fill_values_production.sh"
 echo ""
 

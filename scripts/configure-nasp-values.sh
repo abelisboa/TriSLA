@@ -17,14 +17,28 @@ NODE2_IP="${NODE2_IP:-}"
 echo "🔧 Configurando valores reais do NASP..."
 echo ""
 
-# 1. Atualizar helm/trisla/values-production.yaml
-echo "1️⃣ Atualizando helm/trisla/values-production.yaml..."
+# 1. Atualizar helm/trisla/values-nasp.yaml
+VALUES_FILE="helm/trisla/values-nasp.yaml"
+echo "1️⃣ Atualizando $VALUES_FILE..."
+
+# Criar arquivo se não existir (copiar de template)
+if [ ! -f "$VALUES_FILE" ]; then
+    if [ -f "docs/nasp/values-nasp.yaml" ]; then
+        echo "   Criando $VALUES_FILE a partir do template..."
+        cp docs/nasp/values-nasp.yaml "$VALUES_FILE"
+    elif [ -f "helm/trisla/values.yaml" ]; then
+        echo "   Criando $VALUES_FILE a partir de values.yaml..."
+        cp helm/trisla/values.yaml "$VALUES_FILE"
+    else
+        echo "   ⚠️  Nenhum template encontrado, criando arquivo básico..."
+    fi
+fi
 
 # Criar backup
-cp helm/trisla/values-production.yaml helm/trisla/values-production.yaml.bak 2>/dev/null || true
+cp "$VALUES_FILE" "${VALUES_FILE}.bak" 2>/dev/null || true
 
 # Atualizar valores conhecidos
-cat > helm/trisla/values-production.yaml <<EOF
+cat > "$VALUES_FILE" <<EOF
 # ============================================
 # Values para PRODUÇÃO REAL
 # ============================================
@@ -123,7 +137,7 @@ monitoring:
     enabled: true
 EOF
 
-echo "✅ values-production.yaml atualizado"
+echo "✅ $VALUES_FILE atualizado"
 echo ""
 
 # 2. Atualizar ansible/inventory.ini
@@ -226,7 +240,7 @@ fi
 echo ""
 echo "⚠️  AÇÕES NECESSÁRIAS:"
 echo "   1. Executar no NASP: ./scripts/discover-nasp-endpoints.sh"
-echo "   2. Preencher endpoints reais em helm/trisla/values-production.yaml:"
+    echo "   2. Preencher endpoints reais em helm/trisla/values-nasp.yaml:"
 echo "      - RAN controller endpoint"
 echo "      - Transport controller endpoint"
 echo "      - Core controller endpoint"

@@ -9,11 +9,17 @@ set -euo pipefail
 
 LOG_FILE="/tmp/trisla-deploy.log"
 START_TIME=$(date +%s)
-REPO_PATH="/home/porvir5g/gtp5g/trisla"
-HELM_CHART_PATH="${REPO_PATH}/helm/trisla"
-VALUES_FILE="${REPO_PATH}/nasp/values-nasp.yaml"
+
+# Determinar caminho do repositório (relativo ao script ou absoluto)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+HELM_CHART_PATH="${REPO_ROOT}/helm/trisla"
+VALUES_FILE="${REPO_ROOT}/helm/trisla/values-nasp.yaml"
 RELEASE_NAME="trisla-portal"
 NAMESPACE="trisla"
+
+# Permitir override via variável de ambiente
+VALUES_FILE="${TRISLA_VALUES_FILE:-${VALUES_FILE}}"
 
 # Cores para output
 RED='\033[0;31m'

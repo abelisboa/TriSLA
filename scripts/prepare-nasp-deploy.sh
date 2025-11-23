@@ -23,7 +23,7 @@ if ! kubectl cluster-info &>/dev/null; then
     exit 1
 fi
 
-NAMESPACE="trisla-nsp"
+NAMESPACE="trisla"
 GHCR_USER="${GHCR_USER:-abelisboa}"
 GHCR_TOKEN="${GHCR_TOKEN}"
 
@@ -67,32 +67,30 @@ else
     echo "Certifique-se de estar no diretório correto"
 fi
 
-# 4. Verificar valores de produção
-if [ -f "helm/trisla/values-production.yaml" ]; then
-    echo -e "${YELLOW}📋 Verificando values-production.yaml...${NC}"
+# 4. Verificar valores NASP
+VALUES_FILE="helm/trisla/values-nasp.yaml"
+if [ -f "$VALUES_FILE" ]; then
+    echo -e "${YELLOW}📋 Verificando $VALUES_FILE...${NC}"
     
-    # Verificar se production.enabled está true
-    if grep -q "enabled: true" helm/trisla/values-production.yaml; then
-        echo -e "${GREEN}✅ Production enabled${NC}"
+    # Verificar se há placeholders não substituídos
+    if grep -q "<.*>" "$VALUES_FILE"; then
+        echo -e "${YELLOW}⚠️  Atenção: $VALUES_FILE contém placeholders não substituídos${NC}"
+        echo "   Execute scripts/discover-nasp-endpoints.sh para descobrir endpoints"
     else
-        echo -e "${RED}⚠️  Atenção: production.enabled pode não estar true${NC}"
-    fi
-    
-    # Verificar se simulationMode está false
-    if grep -q "simulationMode: false" helm/trisla/values-production.yaml; then
-        echo -e "${GREEN}✅ Simulation mode desabilitado${NC}"
-    else
-        echo -e "${RED}⚠️  Atenção: simulationMode pode não estar false${NC}"
+        echo -e "${GREEN}✅ Arquivo values-nasp.yaml parece estar configurado${NC}"
     fi
 else
-    echo -e "${YELLOW}⚠️  values-production.yaml não encontrado${NC}"
+    echo -e "${YELLOW}⚠️  $VALUES_FILE não encontrado${NC}"
+    echo "   Para deploy NASP, este arquivo é obrigatório"
+    echo "   Você pode copiar de docs/nasp/values-nasp.yaml como template"
 fi
 
 echo ""
 echo -e "${GREEN}✅ Preparação concluída!${NC}"
 echo ""
 echo "📋 Próximos passos:"
-echo "   1. Validar Helm chart: helm lint ./helm/trisla"
-echo "   2. Dry-run: helm template trisla ./helm/trisla --values ./helm/trisla/values-production.yaml"
-echo "   3. Deploy: helm upgrade --install trisla ./helm/trisla --namespace $NAMESPACE --values ./helm/trisla/values-production.yaml --wait"
+echo "   1. Preencher helm/trisla/values-nasp.yaml com valores reais do NASP"
+echo "   2. Validar Helm chart: helm lint ./helm/trisla"
+echo "   3. Dry-run: helm template trisla-portal ./helm/trisla --values ./helm/trisla/values-nasp.yaml"
+echo "   4. Deploy: helm upgrade --install trisla-portal ./helm/trisla --namespace $NAMESPACE --values ./helm/trisla/values-nasp.yaml --wait"
 

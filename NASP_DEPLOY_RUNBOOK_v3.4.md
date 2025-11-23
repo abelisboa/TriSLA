@@ -99,7 +99,7 @@ cat docs/ghcr/IMAGES_GHCR_MATRIX.md
 ./scripts/fill_values_production.sh
 
 # Ou editar manualmente
-nano nasp/values-nasp.yaml
+nano helm/trisla/values-nasp.yaml
 ```
 
 **Campos obrigatórios a preencher:**
@@ -114,10 +114,10 @@ nano nasp/values-nasp.yaml
 
 ```bash
 # Validar sintaxe YAML
-yamllint nasp/values-nasp.yaml
+yamllint helm/trisla/values-nasp.yaml
 
 # Validar Helm chart
-helm lint helm/trisla -f nasp/values-nasp.yaml
+helm lint helm/trisla -f helm/trisla/values-nasp.yaml
 ```
 
 ---
@@ -151,7 +151,7 @@ Se preferir fazer deploy manual:
 helm upgrade --install trisla-portal \
   ./helm/trisla \
   -n trisla \
-  -f ./nasp/values-nasp.yaml \
+  -f ./helm/trisla/values-nasp.yaml \
   --timeout 15m \
   --wait \
   --debug
@@ -185,7 +185,7 @@ ansible-playbook -i ansible/inventory-nasp.yaml \
 ```bash
 ansible-playbook -i ansible/inventory-nasp.yaml \
   ansible/playbooks/deploy-trisla-nasp.yml \
-  -e "values_file=nasp/values-nasp.yaml"
+  -e "values_file=helm/trisla/values-nasp.yaml"
 ```
 
 ### 3.5 Validar Deploy

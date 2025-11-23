@@ -1,4 +1,7 @@
-# Guia de Preenchimento de values-production.yaml — TriSLA
+# Guia de Preenchimento de values-production.yaml
+
+> **⚠️ IMPORTANTE:** Este guia é focado em `values-production.yaml` para **produção genérica (fora NASP)**.  
+> Para deploy no **ambiente NASP-UNISINOS**, utilize `helm/trisla/values-nasp.yaml` conforme `docs/nasp/NASP_DEPLOY_RUNBOOK.md`. — TriSLA
 
 **Versão:** 1.0  
 **Objetivo:** Explicar como preencher corretamente o arquivo `helm/trisla/values-production.yaml` para deploy no NASP

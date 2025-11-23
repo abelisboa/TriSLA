@@ -814,15 +814,20 @@ kubectl logs -n trisla -l app=sla-agent-layer --tail=50
 
 ## 7. Deploy Completo com Helm
 
-### 7.1 Preparar values-nasp.yaml
+### 7.1 Preparar helm/trisla/values-nasp.yaml
 
-**Criar arquivo de valores específico para NASP:**
+**⚠️ IMPORTANTE:** O arquivo canônico para deploy NASP é `helm/trisla/values-nasp.yaml`.  
+O arquivo `docs/nasp/values-nasp.yaml` é apenas um template/exemplo.
+
+**Criar/editar arquivo de valores específico para NASP:**
 
 ```bash
-# Copiar values.yaml como base
-cp helm/trisla/values.yaml helm/trisla/values-nasp.yaml
+# Se o arquivo não existir, copiar do template
+if [ ! -f "helm/trisla/values-nasp.yaml" ]; then
+    cp docs/nasp/values-nasp.yaml helm/trisla/values-nasp.yaml
+fi
 
-# Editar values-nasp.yaml
+# Editar o arquivo canônico
 vim helm/trisla/values-nasp.yaml
 ```
 

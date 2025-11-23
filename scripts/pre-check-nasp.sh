@@ -150,6 +150,6 @@ echo -e "=================================================\n"
 
 echo "➡️ Agora você pode rodar:"
 echo "helm upgrade --install trisla ./helm/trisla \\"
-echo "  -n trisla -f ./nasp/values-nasp.yaml \\"
+echo "  -n trisla -f ./helm/trisla/values-nasp.yaml \\"
 echo "  --atomic --cleanup-on-fail"
 echo ""

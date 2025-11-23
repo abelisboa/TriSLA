@@ -66,15 +66,15 @@ Use este checklist antes de iniciar o deploy do TriSLA v3.4.0 no ambiente NASP.
 
 ### 3.1 Values File
 
-- [ ] `nasp/values-nasp.yaml` preenchido conforme guia
+- [ ] `helm/trisla/values-nasp.yaml` preenchido conforme template `docs/nasp/values-nasp.yaml`
 - [ ] Todos os placeholders substituídos por valores válidos
 - [ ] Namespace alvo (`global.namespace`) definido corretamente
 - [ ] Tags de imagens definidas como `3.4.0`
 
 ### 3.2 Validação
 
-- [ ] `helm lint helm/trisla -f nasp/values-nasp.yaml` sem erros
-- [ ] `helm template helm/trisla -f nasp/values-nasp.yaml` gera YAML válido
+- [ ] `helm lint helm/trisla -f helm/trisla/values-nasp.yaml` sem erros
+- [ ] `helm template trisla-portal helm/trisla -f helm/trisla/values-nasp.yaml` gera YAML válido
 - [ ] Valores de recursos (CPU/Memory) adequados ao cluster
 
 ---
@@ -108,7 +108,7 @@ Use este checklist antes de iniciar o deploy do TriSLA v3.4.0 no ambiente NASP.
 
 ### 5.2 Configuração
 
-- [ ] `naspAdapter.naspEndpoints.*` preenchidos em `values-nasp.yaml`
+- [ ] `naspAdapter.naspEndpoints.*` preenchidos em `helm/trisla/values-nasp.yaml`
 - [ ] Endpoints testados e acessíveis
 - [ ] Autenticação NASP configurada (se necessário)
 

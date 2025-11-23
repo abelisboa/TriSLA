@@ -126,6 +126,6 @@ echo ""
 echo "📋 Próximos passos:"
 echo "   1. Identificar os serviços corretos (RAN, Transport, Core)"
 echo "   2. Usar ClusterIP ou FQDN para configurar endpoints"
-echo "   3. Atualizar helm/trisla/values-production.yaml"
+echo "   3. Atualizar helm/trisla/values-nasp.yaml"
 echo "   4. Atualizar apps/nasp-adapter/src/nasp_client.py"
 

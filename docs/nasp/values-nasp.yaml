@@ -1,9 +1,18 @@
 # ============================================
-# TriSLA v3.4.0 - Values para Deploy NASP
+# TriSLA v3.4.0 - Values para Deploy NASP (EXEMPLO/TEMPLATE)
 # ============================================
-# ⚠️ IMPORTANTE: Substituir placeholders pelos valores reais do ambiente NASP
+# ⚠️ ATENÇÃO: Este é um arquivo de EXEMPLO/TEMPLATE
+# 
+# Para deploy real no NASP, utilize o arquivo CANÔNICO:
+#   helm/trisla/values-nasp.yaml
+#
+# Este arquivo serve apenas como referência e template para
+# entender a estrutura esperada. Não use este arquivo diretamente
+# em comandos helm install/upgrade.
+# ============================================
 # Versão: 3.4.0
 # Data: 2025-01-22
+# ============================================
 
 global:
   imageRegistry: ghcr.io/abelisboa
@@ -13,10 +22,11 @@ global:
   version: "3.4.0"
 
 # Network Configuration NASP
+# ⚠️ Substituir pelos valores reais do ambiente NASP
 network:
-  interface: "<NASP_NETWORK_INTERFACE>"
-  nodeIP: "<NASP_NODE_IP>"
-  gateway: "<NASP_GATEWAY>"
+  interface: "<NASP_NETWORK_INTERFACE>"  # Exemplo: "my5g"
+  nodeIP: "<NASP_NODE_IP>"               # Exemplo: "192.168.10.16"
+  gateway: "<NASP_GATEWAY>"              # Exemplo: "192.168.10.1"
 
 # SEM-CSMF Configuration
 semCsmf:
@@ -120,6 +130,7 @@ slaAgentLayer:
   replicas: 2
 
 # NASP-Adapter Configuration
+# ⚠️ IMPORTANTE: Substituir todos os placeholders <...> pelos endpoints reais do NASP
 naspAdapter:
   enabled: true
   image:
@@ -131,15 +142,21 @@ naspAdapter:
     port: 8085
   naspEndpoints:
     # RAN - substituir pelo endpoint real do RAN controller
+    # Para descobrir: kubectl get svc -n <ran-namespace> | grep -i ran
     ran: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_PORT>"
     ran_metrics: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_METRICS_PORT>"
+    
     # Core - substituir pelos endpoints reais do Core (UPF, AMF, SMF)
+    # Para descobrir: kubectl get svc -n <core-namespace> | grep -E "upf|amf|smf"
     core_upf: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_PORT>"
     core_upf_metrics: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_METRICS_PORT>"
     core_amf: "http://<AMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<AMF_PORT>"
     core_smf: "http://<SMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<SMF_PORT>"
+    
     # Transport - substituir pelo endpoint real do Transport controller
+    # Para descobrir: kubectl get svc -n <transport-namespace> | grep -i transport
     transport: "http://<TRANSPORT_SERVICE>.<TRANSPORT_NAMESPACE>.svc.cluster.local:<TRANSPORT_PORT>"
+    
     # Endpoint principal (opcional, se houver)
     main: "http://<MAIN_SERVICE>.<MAIN_NAMESPACE>.svc.cluster.local:<MAIN_PORT>"
   resources:
@@ -219,6 +236,7 @@ observability:
     endpoint: "http://grafana.<OBSERVABILITY_NAMESPACE>.svc.cluster.local:3000"
 
 # Security Configuration
+# ⚠️ IMPORTANTE: Substituir por secret real em produção
 security:
   jwtSecretKey: "<JWT_SECRET_KEY>"  # Substituir por secret real
   rateLimitEnabled: true

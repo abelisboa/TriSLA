@@ -69,29 +69,34 @@ cat tmp/nasp_context_raw.txt
 - [ ] Serviços NASP mapeados (RAN, Transport, Core)
 - [ ] Problemas de saúde identificados (se houver)
 
-**Próximo passo:** Preencher `values-production.yaml` com endpoints descobertos.
+**Próximo passo:** Preencher `helm/trisla/values-nasp.yaml` com endpoints descobertos.
 
 ---
 
-### Passo 3: Preencher values-production.yaml
+### Passo 3: Preencher helm/trisla/values-nasp.yaml
 
-**Objetivo:** Configurar valores de produção específicos do ambiente NASP.
+**Objetivo:** Configurar valores específicos do ambiente NASP no arquivo canônico.
+
+**⚠️ IMPORTANTE:** O arquivo oficial para deploy NASP é `helm/trisla/values-nasp.yaml`.  
+O arquivo `docs/nasp/values-nasp.yaml` é apenas um template/exemplo.
 
 **Execução (método guiado):**
 ```bash
+# Para NASP, definir variável de ambiente
+export TRISLA_ENV=nasp
 ./scripts/fill_values_production.sh
 ```
 
 **Ou manualmente:**
-1. Editar `helm/trisla/values-production.yaml`
-2. Seguir guia: `docs/VALUES_PRODUCTION_GUIDE.md`
+1. Editar `helm/trisla/values-nasp.yaml` (arquivo canônico)
+2. Seguir guia: `docs/VALUES_PRODUCTION_GUIDE.md` (conceitos aplicáveis)
 3. Substituir todos os placeholders `<...>` por valores reais
 
 **Validação:**
 ```bash
 # Validar sintaxe e valores
-helm template trisla ./helm/trisla \
-  -f ./helm/trisla/values-production.yaml \
+helm template trisla-portal ./helm/trisla \
+  -f ./helm/trisla/values-nasp.yaml \
   --debug
 ```
 
@@ -198,7 +203,7 @@ ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
 helm upgrade --install trisla ./helm/trisla \
   --namespace trisla \
   --create-namespace \
-  -f ./helm/trisla/values-production.yaml \
+  -f ./helm/trisla/values-nasp.yaml \
   --wait \
   --timeout 10m
 ```
@@ -462,7 +467,7 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 1. **Preparação:**
    - Executar `scripts/discover_nasp_endpoints.sh`
    - Revisar `docs/NASP_CONTEXT_REPORT.md`
-   - Preencher `values-production.yaml` com `scripts/fill_values_production.sh`
+   - Preencher `helm/trisla/values-nasp.yaml` com `scripts/fill_values_production.sh` (com TRISLA_ENV=nasp)
 
 2. **Validação:**
    - Executar `python3 scripts/audit_ghcr_images.py`

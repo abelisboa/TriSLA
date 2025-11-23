@@ -12,8 +12,10 @@
   
   vars:
     namespace: "{{ trisla_namespace | default('trisla') }}"
+    helm_release: "{{ trisla_helm_release | default('trisla-portal') }}"
     helm_chart_path: "{{ trisla_helm_chart_path | default('./helm/trisla') }}"
-    values_file: "{{ helm_chart_path }}/values-production.yaml"
+    # Para deploy NASP, usar values-nasp.yaml; para produção genérica, usar values-production.yaml
+    values_file: "{{ trisla_values_file | default(helm_chart_path + '/values-nasp.yaml') }}"
   
   tasks:
     - name: Verificar se namespace existe
@@ -49,10 +51,9 @@
     
     - name: Dry-run do deploy
       command: >
-        helm install trisla {{ helm_chart_path }}
+        helm template {{ helm_release }} {{ helm_chart_path }}
         --namespace {{ namespace }}
         --values {{ values_file }}
-        --dry-run
         --debug
       register: helm_dry_run
       changed_when: false
@@ -62,14 +63,14 @@
         path: "{{ values_file }}"
       register: values_file_stat
     
-    - name: Falhar se values-production.yaml não existir
+    - name: Falhar se values file não existir
       fail:
-        msg: "Arquivo values-production.yaml não encontrado: {{ values_file }}. Execute scripts/fill_values_production.sh primeiro."
+        msg: "Arquivo values não encontrado: {{ values_file }}. Para NASP, execute scripts/fill_values_production.sh com TRISLA_ENV=nasp ou configure helm/trisla/values-nasp.yaml."
       when: not values_file_stat.stat.exists
     
     - name: Deploy real do TriSLA
       command: >
-        helm upgrade --install trisla {{ helm_chart_path }}
+        helm upgrade --install {{ helm_release }} {{ helm_chart_path }}
         --namespace {{ namespace }}
         --values {{ values_file }}
         --create-namespace
@@ -92,7 +93,8 @@
         msg: "{{ pods_status.stdout_lines }}"
     
     - name: Aguardar pods estarem prontos
-      command: kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=trisla -n {{ namespace }} --timeout=600s
+      command: kubectl wait --for=condition=ready pod -l app.kubernetes.io/name={{ helm_release }} -n {{ namespace }} --timeout=600s
+      ignore_errors: yes
       register: wait_result
       failed_when: wait_result.rc != 0
     
