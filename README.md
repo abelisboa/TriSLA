@@ -129,6 +129,10 @@ Para diagramas detalhados e documentação completa da arquitetura, consulte:
 - **Documentação de Arquitetura**: [`docs/architecture/`](docs/architecture/)
 - **Figuras e Diagramas**: Diagramas Draw.io e ilustrações técnicas
 - **Especificações de Interfaces**: Documentação das interfaces I-01 a I-07
+- **Guia da Ontologia TriSLA**: [`docs/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](docs/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md) — Guia completo da ontologia OWL, classes, propriedades, diagramas Protégé
+- **Guia do ML-NSMF**: [`docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md) — Guia completo do módulo ML, treinamento de modelos e XAI
+- **Guia do BC-NSSMF**: [`docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md`](docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md) — Guia completo do módulo Blockchain, smart contracts, integração Web3 e deploy
+- **Relatório de Validação Produção**: [`docs/reports/PRODUCTION_VALIDATION_REPORT_v3.5.0.md`](docs/reports/PRODUCTION_VALIDATION_REPORT_v3.5.0.md) — Análise completa de todos os módulos para produção real no NASP
 
 ---
 
@@ -237,6 +241,12 @@ TriSLA/
 │
 ├── docs/                          # Documentação completa
 │   ├── nasp/                     # Documentação NASP
+│   ├── ontology/                 # Documentação da Ontologia OWL
+│   │   └── ONTOLOGY_IMPLEMENTATION_GUIDE.md
+│   ├── ml-nsmf/                  # Documentação do ML-NSMF
+│   │   └── ML_NSMF_COMPLETE_GUIDE.md
+│   ├── bc-nssmf/                 # Documentação do BC-NSSMF
+│   │   └── BC_NSSMF_COMPLETE_GUIDE.md
 │   │   ├── NASP_DEPLOY_GUIDE.md
 │   │   ├── NASP_DEPLOY_RUNBOOK.md
 │   │   └── NASP_PREDEPLOY_CHECKLIST_v2.md

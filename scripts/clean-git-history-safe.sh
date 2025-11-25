@@ -170,3 +170,4 @@ echo "   - Eles não serão mais rastreados pelo Git"
 echo "   - Certifique-se de que .gitignore está atualizado"
 echo ""
 
+

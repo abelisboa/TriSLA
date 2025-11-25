@@ -116,3 +116,4 @@ nodes:
     ip: "192.168.10.15"  # IP do node2
     interface: "my5g"  # Interface principal
 
+

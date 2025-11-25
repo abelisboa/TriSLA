@@ -3,7 +3,7 @@ Processador de Intents - SEM-CSMF
 Pipeline: Intent → Ontology → GST
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from opentelemetry import trace
 
 import sys
@@ -14,6 +14,13 @@ from models.intent import Intent, SLARequirements
 from ontology.parser import OntologyParser
 from ontology.matcher import SemanticMatcher
 
+try:
+    from nlp.parser import NLPParser
+    NLP_AVAILABLE = True
+except ImportError:
+    NLP_AVAILABLE = False
+    NLPParser = None
+
 tracer = trace.get_tracer(__name__)
 
 
@@ -22,15 +29,57 @@ class IntentProcessor:
     
     def __init__(self):
         self.ontology_parser = OntologyParser()
-        self.semantic_matcher = SemanticMatcher()
+        self.semantic_matcher = SemanticMatcher(
+            ontology_loader=self.ontology_parser.ontology_loader
+        )
+        if NLP_AVAILABLE:
+            self.nlp_parser = NLPParser()
+        else:
+            self.nlp_parser = None
     
-    async def validate_semantic(self, intent: Intent) -> Intent:
+    async def validate_semantic(self, intent: Intent, intent_text: Optional[str] = None) -> Intent:
         """
         Valida intent semanticamente usando ontologias
         Intent → Ontology
+        
+        Args:
+            intent: Intent a ser validado
+            intent_text: Texto em linguagem natural (opcional, para NLP)
         """
         with tracer.start_as_current_span("validate_semantic") as span:
             span.set_attribute("intent.id", intent.intent_id)
+            
+            # Se texto em linguagem natural fornecido, processar com NLP
+            if intent_text and self.nlp_parser:
+                try:
+                    nlp_result = self.nlp_parser.parse_intent_text(intent_text)
+                    
+                    # Atualizar intent com informações extraídas do NLP
+                    if nlp_result.get("slice_type") and not intent.service_type.value:
+                        from models.intent import SliceType
+                        try:
+                            intent.service_type = SliceType[nlp_result["slice_type"].upper()]
+                        except (KeyError, AttributeError):
+                            pass
+                    
+                    # Atualizar requisitos de SLA se extraídos
+                    if nlp_result.get("requirements"):
+                        req = nlp_result["requirements"]
+                        if "latency" in req and not intent.sla_requirements.latency:
+                            intent.sla_requirements.latency = req["latency"]
+                        if "throughput" in req and not intent.sla_requirements.throughput:
+                            intent.sla_requirements.throughput = req["throughput"]
+                        if "reliability" in req and not intent.sla_requirements.reliability:
+                            intent.sla_requirements.reliability = req["reliability"]
+                        if "jitter" in req and not intent.sla_requirements.jitter:
+                            intent.sla_requirements.jitter = req["jitter"]
+                        if "coverage" in req and not intent.sla_requirements.coverage:
+                            intent.sla_requirements.coverage = req["coverage"]
+                    
+                    span.set_attribute("nlp.processed", True)
+                except Exception as e:
+                    span.set_attribute("nlp.error", str(e))
+                    span.set_attribute("nlp.processed", False)
             
             # Parse da ontologia
             ontology = await self.ontology_parser.parse_intent(intent)

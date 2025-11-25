@@ -210,3 +210,4 @@ jobs:
             echo "   - Diretórios: ${ALLOWED_DIRS[*]}"
           fi
 
+

@@ -325,3 +325,4 @@ O repositório TriSLA está **95% alinhado** para a release v3.5.0:
 **Versão:** 3.5.0  
 **Preparado por:** Sistema de Alinhamento DevOps TriSLA
 
+

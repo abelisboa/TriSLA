@@ -32,3 +32,10 @@ requests==2.31.0
 
 # Ontologia OWL
 rdflib==7.0.0
+owlready2==0.40
+sparqlwrapper==1.8.5
+
+# NLP (Natural Language Processing)
+spacy>=3.7.0
+# Baixar modelo: python -m spacy download pt_core_news_sm
+# Baixar modelo: python -m spacy download en_core_web_sm
