@@ -1,6 +1,6 @@
 # Documentação da Ontologia TriSLA
 
-Este diretório contém a documentação completa da Ontologia TriSLA, que faz parte do módulo SEM-CSMF.
+Este diretório contém a documentação completa da Ontologia TriSLA.
 
 ## 📚 Documentos Disponíveis
 
@@ -27,10 +27,10 @@ Guia completo que inclui:
 - **Parser:** `apps/sem-csmf/src/ontology/parser.py`
 - **Matcher:** `apps/sem-csmf/src/ontology/matcher.py`
 
-## 🔗 Documentação Relacionada
+## 📚 Documentação Relacionada
 
-- **Guia Completo do SEM-CSMF:** [`../SEM_CSMF_COMPLETE_GUIDE.md`](../SEM_CSMF_COMPLETE_GUIDE.md)
-- **README do SEM-CSMF:** [`../README.md`](../README.md)
+- **[Guia Completo do SEM-CSMF](../SEM_CSMF_COMPLETE_GUIDE.md)** — Guia completo do módulo SEM-CSMF
+- **[README do SEM-CSMF](../README.md)** — Índice da documentação do SEM-CSMF
 
 ## 🎯 Início Rápido
 

@@ -129,7 +129,7 @@ Para diagramas detalhados e documentação completa da arquitetura, consulte:
 - **Documentação de Arquitetura**: [`docs/architecture/`](docs/architecture/)
 - **Figuras e Diagramas**: Diagramas Draw.io e ilustrações técnicas
 - **Especificações de Interfaces**: Documentação das interfaces I-01 a I-07
-- **Guia do SEM-CSMF**: [`docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`](docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md) — Guia completo do módulo SEM-CSMF, pipeline de processamento, ontologia e NLP
+- **Guia do SEM-CSMF**: [`docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`](docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md) — Guia completo do módulo SEM-CSMF, pipeline, ontologia, NLP e geração de NEST
 - **Guia da Ontologia TriSLA**: [`docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md) — Guia completo da ontologia OWL, classes, propriedades, diagramas Protégé
 - **Guia do ML-NSMF**: [`docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md) — Guia completo do módulo ML, treinamento de modelos e XAI
 - **Guia do BC-NSSMF**: [`docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md`](docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md) — Guia completo do módulo Blockchain, smart contracts, integração Web3 e deploy
