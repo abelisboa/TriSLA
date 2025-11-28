@@ -45,3 +45,4 @@ spec:
         resources:
           {{- toYaml .Values.decisionEngine.resources | nindent 10 }}
 
+

@@ -45,3 +45,4 @@ spec:
         resources:
           {{- toYaml .Values.uiDashboard.resources | nindent 10 }}
 
+
