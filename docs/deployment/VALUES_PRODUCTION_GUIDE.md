@@ -85,7 +85,7 @@ naspAdapter:
 ```
 
 **Solução:**
-- Execute `scripts/discover_nasp_endpoints.sh` para descobrir endpoints
+- Execute `scripts/discover-nasp-endpoints.sh` para descobrir endpoints
 - Use `scripts/fill_values_production.sh` para preenchimento guiado
 - Valide com `helm template` antes do deploy
 
@@ -171,7 +171,7 @@ kubectl create secret docker-registry ghcr-secret \
 
 ```bash
 # No node1 do NASP
-./scripts/discover_nasp_endpoints.sh
+./scripts/discover-nasp-endpoints.sh
 ```
 
 ### Passo 2: Revisar Relatório
@@ -269,7 +269,7 @@ production:
 
 ## 6. Referências
 
-- **Descoberta de Endpoints:** `scripts/discover_nasp_endpoints.sh`
+- **Descoberta de Endpoints:** `scripts/discover-nasp-endpoints.sh`
 - **Preenchimento Guiado:** `scripts/fill_values_production.sh`
 - **Checklist de Pré-Deploy:** `docs/NASP_PREDEPLOY_CHECKLIST_v2.md`
 - **Runbook de Deploy:** `docs/NASP_DEPLOY_RUNBOOK.md`

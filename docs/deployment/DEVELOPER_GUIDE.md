@@ -2019,9 +2019,9 @@ helm upgrade --install trisla ./helm/trisla \
 - Variáveis de grupo para automação
 
 **Scripts auxiliares:**
-- `scripts/discover_nasp_endpoints.sh` — Descoberta de endpoints
+- `scripts/discover-nasp-endpoints.sh` — Descoberta de endpoints
 - `scripts/fill_values_production.sh` — Preenchimento guiado
-- `scripts/audit_ghcr_images.py` — Auditoria de imagens GHCR
+- Validação manual de imagens GHCR via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
 
 ### 13.4 Recomendação: Não Colocar IPs Reais em Markdown
 

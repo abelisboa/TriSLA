@@ -1712,7 +1712,7 @@ Para realizar um deploy controlado do TriSLA no ambiente NASP, siga a documenta�
 **Documentos principais:**
 
 1. **`docs/NASP_CONTEXT_REPORT.md`** — Relatório de contexto do cluster NASP
-   - Gerado por: `scripts/discover_nasp_endpoints.sh`
+   - Gerado por: `scripts/discover-nasp-endpoints.sh`
    - Contém: Visão geral do cluster, serviços detectados, diagnóstico de saúde
 
 2. **`docs/VALUES_PRODUCTION_GUIDE.md`** — Guia de preenchimento de `values-production.yaml`
@@ -1721,7 +1721,7 @@ Para realizar um deploy controlado do TriSLA no ambiente NASP, siga a documenta�
    - Erros comuns e como evitar
 
 3. **`docs/IMAGES_GHCR_MATRIX.md`** — Matriz de imagens Docker no GHCR
-   - Gerado por: `python3 scripts/audit_ghcr_images.py`
+   - Gerado por: Validação manual via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
    - Contém: Status de cada imagem, dependências, como publicar imagens faltantes
 
 4. **`docs/NASP_PREDEPLOY_CHECKLIST_v2.md`** — Checklist completo de pré-deploy
@@ -1741,7 +1741,7 @@ Para realizar um deploy controlado do TriSLA no ambiente NASP, siga a documenta�
 
 **Descoberta de Endpoints:**
 ```bash
-./scripts/discover_nasp_endpoints.sh
+./scripts/discover-nasp-endpoints.sh
 ```
 
 **Preenchimento Guiado:**
@@ -1751,15 +1751,18 @@ Para realizar um deploy controlado do TriSLA no ambiente NASP, siga a documenta�
 
 **Auditoria de Imagens:**
 ```bash
-python3 scripts/audit_ghcr_images.py
+# Validar imagens manualmente
+docker manifest inspect ghcr.io/abelisboa/trisla-sem-csmf:latest
+docker manifest inspect ghcr.io/abelisboa/trisla-ml-nsmf:latest
+# ... (ver docs/ghcr/IMAGES_GHCR_MATRIX.md para lista completa)
 ```
 
 ### 8.3 Fluxo Recomendado
 
-1. **Descoberta:** Executar `scripts/discover_nasp_endpoints.sh`
+1. **Descoberta:** Executar `scripts/discover-nasp-endpoints.sh`
 2. **Configuração:** Preencher `values-production.yaml` com `scripts/fill_values_production.sh`
-3. **Publicação de Imagens:** Publicar imagens no GHCR com `scripts/publish_all_images_ghcr.sh` (ver `docs/GHCR_PUBLISH_GUIDE.md`)
-4. **Validação:** Executar `python3 scripts/audit_ghcr_images.py`
+3. **Publicação de Imagens:** Publicar imagens no GHCR manualmente ou via scripts (`scripts/build-all-images.sh`, `scripts/push-all-images.ps1`) - ver `docs/ghcr/GHCR_PUBLISH_GUIDE.md`
+4. **Validação:** Validar imagens manualmente via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)`
 5. **Deploy:** Seguir `docs/NASP_DEPLOY_RUNBOOK.md`
 
 ---

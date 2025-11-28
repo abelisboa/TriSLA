@@ -23,18 +23,19 @@ Este relatório documenta a validação completa das imagens Docker do TriSLA pu
 
 ### 2.1 Ferramentas Utilizadas
 
-1. **`scripts/audit_ghcr_images.py`**
+1. **Validação Manual via Docker**
    - Verifica existência via `docker manifest inspect`
-   - Gera relatório em `docs/IMAGES_GHCR_MATRIX.md`
+   - Validação de manifestos e digests
+   - Verificação de autenticação GHCR
 
-2. **`scripts/verify-images-ghcr.ps1`**
+2. **`scripts/verify-images-ghcr.ps1`** (se disponível)
    - Validação detalhada de manifestos
    - Extração de digests e arquiteturas
    - Verificação de autenticação GHCR
 
 ### 2.2 Processo de Validação
 
-1. ✅ **Auditoria Inicial:** Execução de `audit_ghcr_images.py`
+1. ✅ **Validação Manual:** Verificação de imagens via `docker manifest inspect` ou `docker pull`
 2. ✅ **Verificação de Login:** Validação de autenticação GHCR
 3. ✅ **Validação de Manifests:** Verificação de cada imagem individualmente
 4. ✅ **Geração de Relatório:** Documentação de resultados
@@ -149,11 +150,13 @@ Todas as imagens correspondem ao código atual do repositório:
 
 ### 8.2 Scripts de Build/Push
 
-Scripts de build e push estão consistentes:
+Scripts de build e push disponíveis:
 
-- ✅ **`scripts/publish_all_images_ghcr.sh`:** Disponível e funcional
-- ✅ **`scripts/publish_all_images_ghcr.ps1`:** Disponível e funcional
-- ✅ **`scripts/build-push-images.ps1`:** Disponível e funcional
+- ✅ **`scripts/build-all-images.sh`:** Build de todas as imagens
+- ✅ **`scripts/push-all-images.ps1`:** Push de imagens para GHCR (PowerShell)
+- ✅ **`scripts/build-push-images.ps1`:** Build e push combinados (PowerShell)
+
+**Nota:** Para publicação manual, use `docker buildx build` e `docker push` conforme documentado em `docs/ghcr/GHCR_PUBLISH_GUIDE.md`.
 
 ---
 
@@ -174,26 +177,30 @@ Scripts de build e push estão consistentes:
    - Execute: `ansible-playbook -i ansible/inventory.yaml playbooks/deploy-trisla-nasp.yml`
 
 2. **Monitoramento Contínuo:**
-   - Execute `python3 scripts/audit_ghcr_images.py` periodicamente
-   - Monitore `docs/IMAGES_GHCR_MATRIX.md` para mudanças
+   - Valide imagens manualmente via `docker manifest inspect` ou `docker pull`
+   - Monitore `docs/ghcr/IMAGES_GHCR_MATRIX.md` para mudanças
 
 3. **Atualização de Imagens:**
    - Quando houver mudanças no código, execute:
      ```bash
-     ./scripts/publish_all_images_ghcr.sh
+     # Build de todas as imagens
+     ./scripts/build-all-images.sh
+     
+     # Push para GHCR (PowerShell)
+     .\scripts\push-all-images.ps1
      ```
 
 ---
 
 ## 10. Referências
 
-- **Matriz de Imagens:** `docs/IMAGES_GHCR_MATRIX.md`
-- **Guia de Publicação:** `docs/GHCR_PUBLISH_GUIDE.md`
-- **Script de Auditoria:** `scripts/audit_ghcr_images.py`
-- **Script de Verificação:** `scripts/verify-images-ghcr.ps1`
-- **Scripts de Publicação:**
-  - `scripts/publish_all_images_ghcr.sh` (Bash)
-  - `scripts/publish_all_images_ghcr.ps1` (PowerShell)
+- **Matriz de Imagens:** `docs/ghcr/IMAGES_GHCR_MATRIX.md`
+- **Guia de Publicação:** `docs/ghcr/GHCR_PUBLISH_GUIDE.md`
+- **Script de Verificação:** `scripts/verify-images-ghcr.ps1` (se disponível)
+- **Scripts de Build/Push:**
+  - `scripts/build-all-images.sh` (Bash)
+  - `scripts/push-all-images.ps1` (PowerShell)
+  - `scripts/build-push-images.ps1` (PowerShell)
 
 ---
 

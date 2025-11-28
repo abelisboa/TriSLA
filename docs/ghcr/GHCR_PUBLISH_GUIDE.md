@@ -44,8 +44,11 @@ docker buildx create --use
 # Definir token
 export GHCR_TOKEN="ghp_xxxxxxxxxxxx"
 
-# Executar script
-./scripts/publish_all_images_ghcr.sh
+# Build de todas as imagens
+./scripts/build-all-images.sh
+
+# Push de todas as imagens (após build)
+# Nota: Use docker buildx build --push ou scripts individuais
 ```
 
 ### Método 2: Script PowerShell (Windows)
@@ -54,8 +57,11 @@ export GHCR_TOKEN="ghp_xxxxxxxxxxxx"
 # Definir token
 $env:GHCR_TOKEN = "ghp_xxxxxxxxxxxx"
 
-# Executar script
-.\scripts\publish_all_images_ghcr.ps1
+# Build e push de todas as imagens
+.\scripts\build-push-images.ps1
+
+# OU apenas push (se imagens já foram buildadas)
+.\scripts\push-all-images.ps1
 ```
 
 ### Método 3: Manual (Passo a Passo)
@@ -129,11 +135,13 @@ docker buildx build \
 #### 3. Validar Publicação
 
 ```bash
-# Executar auditoria
-python3 scripts/audit_ghcr_images.py
+# Validar imagens manualmente
+docker manifest inspect ghcr.io/abelisboa/trisla-sem-csmf:latest
+docker manifest inspect ghcr.io/abelisboa/trisla-ml-nsmf:latest
+# ... (ver docs/ghcr/IMAGES_GHCR_MATRIX.md para lista completa)
 
-# Verificar relatório
-cat docs/IMAGES_GHCR_MATRIX.md
+# Verificar matriz de imagens
+cat docs/ghcr/IMAGES_GHCR_MATRIX.md
 ```
 
 ---
@@ -163,14 +171,17 @@ docker pull ghcr.io/abelisboa/trisla-sem-csmf:latest
 docker images | grep ghcr.io/abelisboa/trisla
 ```
 
-### 3. Executar Auditoria Automática
+### 3. Validar Imagens Manualmente
 
 ```bash
-python3 scripts/audit_ghcr_images.py
+# Validar cada imagem individualmente
+docker manifest inspect ghcr.io/abelisboa/trisla-sem-csmf:latest
+docker manifest inspect ghcr.io/abelisboa/trisla-ml-nsmf:latest
+# ... (ver docs/ghcr/IMAGES_GHCR_MATRIX.md para lista completa)
 ```
 
-O script irá:
-- Verificar existência de cada imagem
+Para cada imagem, o comando irá:
+- Verificar existência da imagem
 - Listar tags disponíveis
 - Obter digests
 - Atualizar `docs/IMAGES_GHCR_MATRIX.md`
@@ -291,16 +302,20 @@ jobs:
       - name: Build and push
         run: |
           export GHCR_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          ./scripts/publish_all_images_ghcr.sh
+          ./scripts/build-all-images.sh
+          # Push via docker buildx build --push (incluído no build-all-images.sh)
 ```
 
 ---
 
 ## Referências
 
-- **Matriz de Imagens:** `docs/IMAGES_GHCR_MATRIX.md`
-- **Script de Auditoria:** `scripts/audit_ghcr_images.py`
-- **Script de Publicação:** `scripts/publish_all_images_ghcr.sh` (Bash) ou `scripts/publish_all_images_ghcr.ps1` (PowerShell)
+- **Matriz de Imagens:** `docs/ghcr/IMAGES_GHCR_MATRIX.md`
+- **Scripts de Build/Push:** 
+  - `scripts/build-all-images.sh` (Bash - build)
+  - `scripts/build-push-images.ps1` (PowerShell - build + push)
+  - `scripts/push-all-images.ps1` (PowerShell - push apenas)
+- **Validação:** Manual via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
 
 ---
 

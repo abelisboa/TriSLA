@@ -1,7 +1,7 @@
 # Relatório de Contexto NASP — TriSLA
 
 **Data:** <DATA_GERADA>  
-**Gerado por:** scripts/discover_nasp_endpoints.sh  
+**Gerado por:** scripts/discover-nasp-endpoints.sh  
 **Objetivo:** Documentar o ambiente NASP sem expor informações sensíveis
 
 ---
@@ -15,7 +15,7 @@
 | CNI | Calico |
 | Namespace TriSLA alvo | <TRISLA_NAMESPACE> (ex.: trisla) |
 
-**Nota:** Este relatório é gerado automaticamente. Execute `scripts/discover_nasp_endpoints.sh` no ambiente NASP para obter valores reais.
+**Nota:** Este relatório é gerado automaticamente. Execute `scripts/discover-nasp-endpoints.sh` no ambiente NASP para obter valores reais.
 
 ---
 
@@ -46,7 +46,7 @@
 - ⚠️ Pods em ImagePullBackOff: Verificar `tmp/nasp_context_raw.txt` para detalhes
 - ⚠️ Pods não prontos: Verificar `tmp/nasp_context_raw.txt` para detalhes
 
-**Nota:** Este relatório é um template. Execute `scripts/discover_nasp_endpoints.sh` para obter diagnóstico real.
+**Nota:** Este relatório é um template. Execute `scripts/discover-nasp-endpoints.sh` para obter diagnóstico real.
 
 ---
 

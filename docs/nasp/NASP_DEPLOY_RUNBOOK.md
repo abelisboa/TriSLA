@@ -115,19 +115,27 @@ helm template trisla ./helm/trisla \
 
 **Execução:**
 ```bash
-# Executar auditoria
-python3 scripts/audit_ghcr_images.py
+# Verificar imagens GHCR disponíveis
+# Revisar: docs/ghcr/IMAGES_GHCR_MATRIX.md
+# Testar pull de imagens críticas:
+docker pull ghcr.io/abelisboa/trisla-sem-csmf:latest
+docker pull ghcr.io/abelisboa/trisla-ml-nsmf:latest
+docker pull ghcr.io/abelisboa/trisla-decision-engine:latest
+docker pull ghcr.io/abelisboa/trisla-bc-nssmf:latest
+docker pull ghcr.io/abelisboa/trisla-sla-agent-layer:latest
+docker pull ghcr.io/abelisboa/trisla-nasp-adapter:latest
+docker pull ghcr.io/abelisboa/trisla-ui-dashboard:latest
 ```
 
 **Validação:**
-- [ ] Relatório gerado em `docs/IMAGES_GHCR_MATRIX.md`
-- [ ] Todas as imagens críticas marcadas como OK
-- [ ] Nenhuma imagem crítica marcada como FALTANDO
+- [ ] Matriz de imagens revisada em `docs/ghcr/IMAGES_GHCR_MATRIX.md`
+- [ ] Todas as imagens críticas podem ser puxadas do GHCR
+- [ ] Nenhuma imagem crítica retorna erro ao fazer pull
 
 **Se imagens faltando:**
-1. Buildar imagens faltantes
-2. Publicar no GHCR
-3. Reexecutar auditoria
+1. Buildar imagens faltantes usando Dockerfiles em `apps/<module>/`
+2. Publicar no GHCR manualmente ou via CI/CD
+3. Validar que imagens estão acessíveis
 
 **Próximo passo:** Executar pre-flight checks via Ansible.
 
@@ -494,12 +502,12 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 ## Sequência Recomendada de Uso
 
 1. **Preparação:**
-   - Executar `scripts/discover_nasp_endpoints.sh`
-   - Revisar `docs/NASP_CONTEXT_REPORT.md`
+   - Executar `scripts/discover-nasp-endpoints.sh`
+   - Revisar `docs/nasp/NASP_CONTEXT_REPORT.md`
    - Preencher `values-nasp.yaml` com `scripts/fill_values_production.sh`
 
 2. **Validação:**
-   - Executar `python3 scripts/audit_ghcr_images.py`
+   - Revisar `docs/ghcr/IMAGES_GHCR_MATRIX.md` e validar que imagens podem ser puxadas
    - Revisar `docs/IMAGES_GHCR_MATRIX.md`
    - Validar `values-nasp.yaml` com `helm template`
 

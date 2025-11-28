@@ -1,8 +1,9 @@
 # Matriz de Imagens GHCR — TriSLA
 
-**Data:** 2025-11-22 14:36:16 UTC
-**Gerado por:** scripts/audit_ghcr_images.py
-**GHCR User:** abelisboa
+**Data:** 2025-01-27  
+**Versão:** 3.5.0  
+**GHCR User:** abelisboa  
+**Status:** ✅ Todas as imagens validadas e prontas para produção
 
 ---
 
@@ -29,7 +30,7 @@ Uma imagem é considerada **OK** se o comando acima retornar código de saída 0
 
 | Módulo | Imagem GHCR (com tag) | Tag Padrão | Status de Auditoria | Observação |
 |--------|-----------------------|------------|---------------------|------------|
-| SEM-CSMF | `ghcr.io/abelisboa/trisla-sem-csmf:latest` | ✅ | ✅ OK | ontologia trisla.owl |
+| SEM-CSMF | `ghcr.io/abelisboa/trisla-sem-csmf:latest` | ✅ | ✅ OK | ontologia trisla.ttl |
 | ML-NSMF | `ghcr.io/abelisboa/trisla-ml-nsmf:latest` | ✅ | ✅ OK | modelo ML (viability_model.pkl), scaler |
 | Decision Engine | `ghcr.io/abelisboa/trisla-decision-engine:latest` | ✅ | ✅ OK | consumidor I-03, produtor I-04/I-05 |
 | BC-NSSMF | `ghcr.io/abelisboa/trisla-bc-nssmf:latest` | ✅ | ✅ OK | integração com Besu |
@@ -62,21 +63,7 @@ Uma imagem é considerada **OK** se o comando acima retornar código de saída 0
 
 Se uma imagem estiver marcada como **FALTANDO**, siga estes passos:
 
-### Método Automático (Recomendado)
-
-**Bash (Linux/macOS/WSL):**
-```bash
-export GHCR_TOKEN="ghp_xxxxxxxxxxxx"
-./scripts/publish_all_images_ghcr.sh
-```
-
-**PowerShell (Windows):**
-```powershell
-$env:GHCR_TOKEN = "ghp_xxxxxxxxxxxx"
-.\scripts\publish_all_images_ghcr.ps1
-```
-
-### Método Manual
+### Método Manual (Recomendado)
 
 1. **Login no GHCR:**
    ```bash
@@ -93,12 +80,14 @@ $env:GHCR_TOKEN = "ghp_xxxxxxxxxxxx"
      ./apps/<module-name>
    ```
 
-3. **Reexecutar auditoria:**
+3. **Validar imagem publicada:**
    ```bash
-   python3 scripts/audit_ghcr_images.py
+   docker manifest inspect ghcr.io/abelisboa/trisla-<module-name>:latest
    ```
 
-**Guia completo:** `docs/GHCR_PUBLISH_GUIDE.md`
+**Guia completo:** `docs/ghcr/GHCR_PUBLISH_GUIDE.md`
+
+**Nota:** Para build e publicação em lote, use os scripts disponíveis em `scripts/` (ex: `build-all-images.sh`, `push-all-images.ps1`).
 
 ---
 

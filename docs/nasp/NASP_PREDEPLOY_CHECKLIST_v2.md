@@ -39,8 +39,8 @@ kubectl get namespaces
 
 ### 2.1 SEM-CSMF
 
-- [ ] **Ontologia `trisla.owl` presente no container SEM-CSMF**
-  - Verificar: `apps/sem-csmf/src/ontology/trisla.owl` existe
+- [ ] **Ontologia `trisla.ttl` presente no container SEM-CSMF**
+  - Verificar: `apps/sem-csmf/src/ontology/trisla.ttl` existe
   - Verificar Dockerfile: Ontologia copiada para container
 
 - [ ] **PostgreSQL acessível**
@@ -89,8 +89,8 @@ kubectl get namespaces
 ### 2.6 NASP Adapter
 
 - [ ] **Endpoints NASP descobertos e configurados**
-  - Executar: `scripts/discover_nasp_endpoints.sh`
-  - Revisar: `docs/NASP_CONTEXT_REPORT.md`
+  - Executar: `scripts/discover-nasp-endpoints.sh`
+  - Revisar: `docs/nasp/NASP_CONTEXT_REPORT.md`
   - Preencher: `naspAdapter.naspEndpoints.*` em `values-nasp.yaml`
 
 ---
@@ -133,17 +133,18 @@ kubectl get namespaces
 
 ### 4.1 Auditoria GHCR
 
-- [ ] **`docs/IMAGES_GHCR_MATRIX.md` revisado**
-  - Executar: `python3 scripts/audit_ghcr_images.py`
-  - Revisar: Status de cada imagem
+- [ ] **`docs/ghcr/IMAGES_GHCR_MATRIX.md` revisado**
+  - Revisar: Status de cada imagem conforme matriz documentada
+  - Verificar: Todas as 7 imagens principais estão listadas e marcadas como OK
 
-- [ ] **`scripts/audit_ghcr_images.py` executado sem falhas críticas**
-  - Verificar: Script executa sem erros
-  - Verificar: Relatório gerado em `docs/IMAGES_GHCR_MATRIX.md`
-
-- [ ] **Nenhuma imagem crítica marcada como FALTANDO**
+- [ ] **Imagens GHCR validadas localmente**
+  - Verificar: Imagens podem ser puxadas do GHCR
+  - Comando de teste: `docker pull ghcr.io/abelisboa/trisla-<module-name>:latest`
   - Imagens críticas: SEM-CSMF, ML-NSMF, Decision Engine, BC-NSSMF, SLA-Agent Layer, NASP Adapter
   - Imagem opcional: UI Dashboard
+
+- [ ] **Nenhuma imagem crítica marcada como FALTANDO**
+  - Todas as imagens devem estar disponíveis no GHCR antes do deploy
 
 ### 4.2 Secret GHCR
 
@@ -217,17 +218,17 @@ kubectl get namespaces
 
 ### 7.1 Documentos Criados
 
-- [ ] **`docs/NASP_CONTEXT_REPORT.md` gerado**
-  - Executar: `scripts/discover_nasp_endpoints.sh`
+- [ ] **`docs/nasp/NASP_CONTEXT_REPORT.md` gerado**
+  - Executar: `scripts/discover-nasp-endpoints.sh`
   - Revisar: Relatório não contém IPs reais
 
-- [ ] **`docs/VALUES_PRODUCTION_GUIDE.md` revisado**
+- [ ] **`docs/deployment/VALUES_PRODUCTION_GUIDE.md` revisado**
   - Verificar: Guia completo e claro
   - Verificar: Exemplos usam placeholders
 
-- [ ] **`docs/IMAGES_GHCR_MATRIX.md` atualizado**
-  - Executar: `python3 scripts/audit_ghcr_images.py`
-  - Revisar: Status de imagens atualizado
+- [ ] **`docs/ghcr/IMAGES_GHCR_MATRIX.md` revisado**
+  - Revisar: Status de imagens conforme documentação
+  - Verificar: Todas as imagens necessárias estão listadas
 
 - [ ] **`docs/NASP_DEPLOY_RUNBOOK.md` revisado**
   - Verificar: Runbook completo e seguível
