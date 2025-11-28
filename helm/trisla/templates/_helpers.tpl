@@ -36,3 +36,13 @@ Full image name
 {{- end }}
 {{- end }}
 
+{{/*
+GHCR Docker Config JSON (Base64 encoded)
+Only used when ghcrUser and ghcrToken are provided
+*/}}
+{{- define "trisla.ghcrDockerConfig" -}}
+{{- $auth := printf "%s:%s" .Values.global.ghcrUser .Values.global.ghcrToken | b64enc }}
+{{- $config := printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .Values.global.imageRegistry .Values.global.ghcrUser .Values.global.ghcrToken $auth }}
+{{- $config | b64enc }}
+{{- end }}
+
