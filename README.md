@@ -130,7 +130,7 @@ Para diagramas detalhados e documentação completa da arquitetura, consulte:
 - **Figuras e Diagramas**: Diagramas Draw.io e ilustrações técnicas
 - **Especificações de Interfaces**: Documentação das interfaces I-01 a I-07
 - **Guia do SEM-CSMF**: [`docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`](docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md) — Guia completo do módulo SEM-CSMF, pipeline, ontologia, NLP e geração de NEST
-- **Guia da Ontologia TriSLA**: [`docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md) — Guia completo da ontologia OWL, classes, propriedades, diagramas Protégé
+- **Guia da Ontologia TriSLA**: [`docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md) — Guia completo da ontologia OWL (arquivo: `apps/sem-csmf/src/ontology/trisla.ttl`), classes, propriedades, diagramas Protégé
 - **Guia do ML-NSMF**: [`docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md) — Guia completo do módulo ML, treinamento de modelos e XAI
 - **Guia do BC-NSSMF**: [`docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md`](docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md) — Guia completo do módulo Blockchain, smart contracts, integração Web3 e deploy
 - **Relatório de Validação Produção**: [`docs/reports/PRODUCTION_VALIDATION_REPORT_v3.5.0.md`](docs/reports/PRODUCTION_VALIDATION_REPORT_v3.5.0.md) — Análise completa de todos os módulos para produção real no NASP
@@ -185,7 +185,7 @@ TriSLA/
 ├── apps/                          # Aplicações principais
 │   ├── sem-csmf/                 # Interpretação Semântica
 │   │   ├── src/                  # Código-fonte Python
-│   │   ├── ontology/             # Ontologias OWL
+│   │   │   └── ontology/         # Ontologias OWL (trisla.ttl)
 │   │   ├── Dockerfile            # Imagem Docker
 │   │   └── requirements.txt       # Dependências Python
 │   ├── ml-nsmf/                  # Predição ML
@@ -208,15 +208,18 @@ TriSLA/
 │       └── src/                  # Interface React/TypeScript
 │
 ├── helm/                          # Helm Charts
-│   └── trisla/                   # Chart principal
+│   └── trisla/                   # Chart principal (7 módulos)
 │       ├── Chart.yaml            # Metadados do chart
 │       ├── values.yaml           # Valores padrão
 │       ├── values-nasp.yaml      # ⭐ Valores canônicos para NASP
+│       ├── values-production.yaml # Valores para produção
 │       └── templates/            # Templates Kubernetes
-│           ├── deployment-*.yaml
-│           ├── service-*.yaml
+│           ├── deployment-*.yaml # 7 deployments (todos os módulos)
+│           ├── service-*.yaml    # 7 services (um por módulo)
 │           ├── configmap.yaml
-│           └── secret-ghcr.yaml
+│           ├── namespace.yaml
+│           ├── secret-ghcr.yaml   # Secret opcional para GHCR
+│           └── ingress.yaml      # Ingress para UI Dashboard
 │
 ├── ansible/                       # Automação Ansible
 │   ├── inventory.yaml            # Inventário (127.0.0.1 local)
@@ -250,9 +253,9 @@ TriSLA/
 │   │   └── ML_NSMF_COMPLETE_GUIDE.md
 │   ├── bc-nssmf/                 # Documentação do BC-NSSMF
 │   │   └── BC_NSSMF_COMPLETE_GUIDE.md
-│   │   ├── NASP_DEPLOY_GUIDE.md
-│   │   ├── NASP_DEPLOY_RUNBOOK.md
-│   │   └── NASP_PREDEPLOY_CHECKLIST_v2.md
+│   │   ├── NASP_DEPLOY_GUIDE.md  # ⭐ Guia canônico de deploy NASP
+│   │   ├── NASP_DEPLOY_RUNBOOK.md # Runbook operacional
+│   │   └── NASP_PREDEPLOY_CHECKLIST_v2.md # Checklist pré-deploy
 │   ├── deployment/               # Guias de deploy
 │   │   ├── VALUES_PRODUCTION_GUIDE.md
 │   │   ├── DEVELOPER_GUIDE.md
@@ -1437,12 +1440,6 @@ Para troubleshooting avançado, consulte:
 
 - **Guia Completo**: [`docs/reports/TROUBLESHOOTING_TRISLA.md`](docs/reports/TROUBLESHOOTING_TRISLA.md)
 - **Relatórios Técnicos**: [`docs/reports/`](docs/reports/)
-
----
-
-## 📄 Arquivo Canônico values-nasp.yaml
-
-- **README Ansible**: [`ansible/README.md`](ansible/README.md)
 
 ---
 

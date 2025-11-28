@@ -67,6 +67,7 @@
 
 # Prompts e documentação privada
 TriSLA_PROMPTS/
+TRISLA_PROMPTS_v3.5/
 private/
 sandbox/
 tmp/

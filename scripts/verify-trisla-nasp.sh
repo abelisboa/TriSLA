@@ -50,8 +50,8 @@ else
     echo "   1. Clonar do GitHub:"
     echo "      cd ~/gtp5g"
     echo "      git clone https://github.com/abelisboa/TriSLA.git trisla"
-    echo "   2. Ou usar script de cópia:"
-    echo "      bash scripts/copy-to-nasp-two-step.sh"
+    echo "   2. O projeto deve estar em: ~/gtp5g/trisla"
+    echo "      (Scripts de cópia foram descontinuados - deploy é local)"
     exit 1
 fi
 
