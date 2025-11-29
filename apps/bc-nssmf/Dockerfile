@@ -14,9 +14,7 @@ ENV PYTHONPATH=/app
 ENV PORT=8083
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD python -c "import requests; requests.get('http://localhost:8083/health')"
 
 EXPOSE 8083
 
-CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8083"]
 
