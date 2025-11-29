@@ -39,8 +39,8 @@ FastAPIInstrumentor.instrument_app(app)
 
 # Inicializar componentes
 predictor = RiskPredictor()
-metrics_consumer = MetricsConsumer()
-prediction_producer = PredictionProducer()
+metrics_consumer = MetricsConsumer()  # Kafka opcional
+prediction_producer = PredictionProducer()  # Kafka opcional
 
 
 @app.get("/health")
