@@ -45,3 +45,5 @@ jobs:
             echo "⚠️ Nenhum pod OTEL Collector encontrado no namespace ${NAMESPACE_TRISLA}."
           fi
 
+
+

@@ -33,3 +33,5 @@ jobs:
             docker push $REGISTRY/trisla-$m:$VERSION
           done
 
+
+

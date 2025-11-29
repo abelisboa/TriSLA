@@ -52,3 +52,5 @@ jobs:
         run: |
           kubectl get events -n "${NAMESPACE}" --sort-by=.lastTimestamp | tail -50
 
+
+
