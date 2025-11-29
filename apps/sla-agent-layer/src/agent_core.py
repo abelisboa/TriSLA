@@ -22,6 +22,21 @@ try:
 except ImportError:
     NASP_AVAILABLE = False
     print("⚠️ NASP Adapter não disponível. Agent Core usará fallback limitado.")
+    
+    # Criar stub básico NASPClient
+    class NASPClient:
+        """Stub básico para NASPClient quando não disponível"""
+        def __init__(self):
+            pass
+        
+        async def get_core_metrics(self):
+            return {
+                "cpu_utilization": 0.0,
+                "memory_utilization": 0.0,
+                "request_latency": 0.0,
+                "throughput": 0.0,
+                "source": "stub"
+            }
 
 from slo_evaluator import SLOEvaluator
 from config_loader import load_slo_config

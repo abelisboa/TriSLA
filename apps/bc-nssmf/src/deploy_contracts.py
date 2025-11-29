@@ -105,7 +105,9 @@ def deploy() -> None:
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
     if not w3.is_connected():
-        raise RuntimeError(f"Erro: RPC Besu não conectado em {RPC_URL}.")
+        print(f"⚠️ AVISO: RPC Besu não conectado em {RPC_URL}.")
+        print("   Deploy de contratos será pulado. Módulo entrará em modo degraded.")
+        return  # Não interromper startup, apenas pular deploy
 
     private_key = get_private_key()
     acct = w3.eth.account.from_key(private_key)

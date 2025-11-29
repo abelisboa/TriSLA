@@ -38,9 +38,17 @@ class BCClient:
                 self.w3 = Web3(Web3.HTTPProvider(config.bc_nssmf_rpc_url))
 
                 if not self.w3.is_connected():
-                    raise Exception(
-                        f"Não foi possível conectar ao Besu RPC em {config.bc_nssmf_rpc_url}"
-                    )
+                    # Fallback: modo degraded - não interromper servidor
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.warning(f"⚠️ Decision Engine: Besu RPC não disponível em {config.bc_nssmf_rpc_url}. Modo degraded ativado.")
+                    self.w3 = None
+                    self.contract = None
+                    self.contract_address = None
+                    self.account = None
+                    span.set_attribute("bc.initialized", False)
+                    span.set_attribute("bc.mode", "degraded")
+                    return  # Continuar sem blockchain
 
                 # Carregar informações do contrato
                 configured_path = Path(config.bc_nssmf_contract_path)
@@ -87,8 +95,18 @@ class BCClient:
 
             except Exception as e:
                 span.record_exception(e)
-                span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
-                raise Exception(f"Erro ao inicializar BC Client: {str(e)}")
+                # Fallback: modo degraded - não interromper servidor
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"⚠️ Decision Engine: Erro ao inicializar BC Client. Modo degraded ativado: {e}")
+                self.w3 = None
+                self.contract = None
+                self.contract_address = None
+                self.account = None
+                span.set_attribute("bc.initialized", False)
+                span.set_attribute("bc.mode", "degraded")
+                span.set_status(trace.Status(trace.StatusCode.OK, "Degraded mode"))
+                # Não levantar exceção - continuar sem blockchain
     
     async def register_sla_on_chain(self, decision_result: DecisionResult) -> Optional[str]:
         """
@@ -101,6 +119,13 @@ class BCClient:
             Hash da transação ou None em caso de erro
         """
         with tracer.start_as_current_span("register_sla_blockchain") as span:
+            # Verificar se BC está disponível
+            if not self.w3 or not self.contract:
+                span.set_attribute("bc.skip_reason", "Degraded mode - BC not available")
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info("⚠️ Decision Engine: BC-NSSMF não disponível. Registro no blockchain pulado (modo degraded).")
+                return None
             span.set_attribute("decision.id", decision_result.decision_id)
             span.set_attribute("decision.action", decision_result.action.value)
             
@@ -189,6 +214,10 @@ class BCClient:
             Hash da transação ou None
         """
         with tracer.start_as_current_span("update_sla_status_blockchain") as span:
+            # Verificar se BC está disponível
+            if not self.w3 or not self.contract:
+                span.set_attribute("bc.skip_reason", "Degraded mode - BC not available")
+                return None
             span.set_attribute("bc.sla_id", sla_id)
             span.set_attribute("bc.status", status)
             
@@ -233,6 +262,9 @@ class BCClient:
         Returns:
             Dados do SLA ou None
         """
+        if not self.w3 or not self.contract:
+            return None  # Modo degraded
+        
         try:
             result = self.contract.functions.getSLA(sla_id).call()
             return {

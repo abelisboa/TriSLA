@@ -9,6 +9,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ ./src/
+# Garantir que contratos sejam copiados corretamente
+COPY src/contracts/ /app/src/contracts/
 
 ENV PYTHONPATH=/app
 ENV PORT=8083

@@ -48,13 +48,21 @@ class OntologyLoader:
         """
         with tracer.start_as_current_span("load_ontology") as span:
             if get_ontology is None:
-                raise ImportError(
-                    "owlready2 não está instalado. "
-                    "Instale com: pip install owlready2"
-                )
+                # Fallback robusto: retornar None em vez de levantar exceção
+                span.set_attribute("ontology.loaded", False)
+                span.set_attribute("ontology.error", "owlready2 não está instalado")
+                self._loaded = False
+                return None
             
             try:
                 span.set_attribute("ontology.path", self.ontology_path)
+                
+                # Verificar se arquivo existe
+                if not os.path.exists(self.ontology_path):
+                    span.set_attribute("ontology.loaded", False)
+                    span.set_attribute("ontology.error", f"Arquivo não encontrado: {self.ontology_path}")
+                    self._loaded = False
+                    return None
                 
                 # Carregar ontologia (owlready2 gerencia o mundo automaticamente)
                 ontology_uri = f"file://{os.path.abspath(self.ontology_path)}"
@@ -83,7 +91,10 @@ class OntologyLoader:
             except Exception as e:
                 span.record_exception(e)
                 span.set_attribute("ontology.loaded", False)
-                raise
+                span.set_attribute("ontology.error", str(e))
+                # Fallback robusto: não levantar exceção, apenas marcar como não carregado
+                self._loaded = False
+                return None
     
     def get_class(self, class_name: str):
         """Obtém classe da ontologia"""

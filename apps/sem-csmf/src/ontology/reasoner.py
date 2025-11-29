@@ -33,11 +33,21 @@ class SemanticReasoner:
     
     def initialize(self):
         """Inicializa reasoner com ontologia carregada"""
-        if not self.ontology_loader.is_loaded():
-            self.ontology_loader.load(apply_reasoning=True)
-        
-        self.ontology = self.ontology_loader.ontology
-        self.world = self.ontology_loader.world
+        try:
+            if not self.ontology_loader.is_loaded():
+                result = self.ontology_loader.load(apply_reasoning=True)
+                if result is None:
+                    # Ontologia não pôde ser carregada, usar modo degraded
+                    self.ontology = None
+                    self.world = None
+                    return
+            
+            self.ontology = self.ontology_loader.ontology
+            self.world = self.ontology_loader.world
+        except Exception as e:
+            # Fallback robusto: continuar sem ontologia
+            self.ontology = None
+            self.world = None
     
     def infer_slice_type(self, intent_data: Dict[str, Any]) -> Optional[str]:
         """
@@ -50,10 +60,13 @@ class SemanticReasoner:
             Tipo de slice inferido (eMBB, URLLC, mMTC) ou None
         """
         with tracer.start_as_current_span("infer_slice_type") as span:
-            if not self.ontology:
-                self.initialize()
-            
             try:
+                if not self.ontology:
+                    self.initialize()
+                
+                # Se ontologia não foi carregada, usar inferência simplificada
+                if not self.ontology:
+                    return self._infer_slice_type_fallback(intent_data)
                 # Extrair requisitos
                 latency = self._parse_latency(intent_data.get("latency"))
                 throughput = self._parse_throughput(intent_data.get("throughput"))
@@ -103,7 +116,42 @@ class SemanticReasoner:
                 
             except Exception as e:
                 span.record_exception(e)
-                return None
+                # Fallback para inferência simplificada
+                return self._infer_slice_type_fallback(intent_data)
+    
+    def _infer_slice_type_fallback(self, intent_data: Dict[str, Any]) -> Optional[str]:
+        """Inferência simplificada quando ontologia não está disponível"""
+        latency = intent_data.get("latency")
+        throughput = intent_data.get("throughput")
+        reliability = intent_data.get("reliability")
+        
+        # Inferência baseada em valores típicos
+        if latency:
+            try:
+                latency_val = float(str(latency).replace("ms", "").strip())
+                if latency_val <= 10:
+                    return "URLLC"
+                elif latency_val <= 50:
+                    return "eMBB"
+            except (ValueError, AttributeError):
+                pass
+        
+        if reliability and float(reliability) >= 0.999:
+            return "URLLC"
+        
+        if throughput:
+            try:
+                throughput_str = str(throughput).upper()
+                if "GBPS" in throughput_str:
+                    return "eMBB"
+                elif "MBPS" in throughput_str:
+                    val = float(throughput_str.replace("MBPS", "").strip())
+                    if val >= 100:
+                        return "eMBB"
+            except (ValueError, AttributeError):
+                pass
+        
+        return "eMBB"  # Padrão
     
     def validate_sla_requirements(self, slice_type: str, sla_requirements: Dict[str, Any]) -> Dict[str, Any]:
         """

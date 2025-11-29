@@ -47,9 +47,12 @@ class NLPParser:
             self._initialized = True
         except OSError:
             # Modelo não instalado, usar fallback
-            tracer.get_tracer(__name__).start_as_current_span("nlp_fallback").set_attribute(
-                "fallback.reason", f"Modelo {model_name} não encontrado"
-            )
+            try:
+                current_tracer = trace.get_tracer(__name__)
+                with current_tracer.start_as_current_span("nlp_fallback") as span:
+                    span.set_attribute("fallback.reason", f"Modelo {model_name} não encontrado")
+            except Exception:
+                pass  # Se tracer falhar, continuar sem tracing
             self._initialized = False
     
     def parse_intent_text(self, intent_text: str) -> Dict[str, Any]:

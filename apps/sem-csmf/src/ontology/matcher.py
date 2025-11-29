@@ -42,12 +42,23 @@ class SemanticMatcher:
         if not self._initialized:
             try:
                 if not self.ontology_loader.is_loaded():
-                    self.ontology_loader.load(apply_reasoning=True)
+                    result = self.ontology_loader.load(apply_reasoning=True)
+                    if result is None:
+                        # Ontologia não pôde ser carregada
+                        self._initialized = False
+                        return
                 self.reasoner.initialize()
-                self._initialized = True
+                # Verificar se reasoner foi inicializado corretamente
+                if self.reasoner.ontology is None:
+                    self._initialized = False
+                else:
+                    self._initialized = True
             except Exception as e:
-                with tracer.start_as_current_span("matcher_fallback") as span:
-                    span.set_attribute("fallback.reason", str(e))
+                try:
+                    with tracer.start_as_current_span("matcher_fallback") as span:
+                        span.set_attribute("fallback.reason", str(e))
+                except Exception:
+                    pass  # Se tracer falhar, continuar
                 self._initialized = False
     
     async def match(self, ontology: Dict[str, Any], intent: Intent) -> Intent:

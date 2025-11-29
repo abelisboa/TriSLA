@@ -27,15 +27,9 @@ from grpc_client import DecisionEngineClient
 from grpc_client_retry import DecisionEngineClientWithRetry
 from auth import get_current_user, is_auth_enabled, get_current_user_optional
 
-# Importar router do novo módulo SEM-CSMF
+# Importar router do novo módulo SEM-CSMF (corrigido para usar caminho absoluto)
 try:
-    # Adicionar caminho para src/ na raiz do projeto
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-    src_path = os.path.join(project_root, "src")
-    if os.path.exists(src_path) and src_path not in sys.path:
-        sys.path.insert(0, src_path)
-    
-    from sem_csmf.api_rest import router as sem_router
+    from src.api_rest import router as sem_router
     app.include_router(sem_router)
 except ImportError as e:
     # Se o módulo não estiver disponível, continuar sem ele
@@ -83,15 +77,9 @@ FastAPIInstrumentor.instrument_app(app)
 # Inicializar banco de dados
 init_db()
 
-# Importar e registrar router do novo módulo SEM-CSMF
+# Importar e registrar router do novo módulo SEM-CSMF (corrigido para usar caminho absoluto)
 try:
-    # Adicionar caminho para src/ na raiz do projeto
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-    src_path = os.path.join(project_root, "src")
-    if os.path.exists(src_path) and src_path not in sys.path:
-        sys.path.insert(0, src_path)
-    
-    from sem_csmf.api_rest import router as sem_router
+    from src.api_rest import router as sem_router
     app.include_router(sem_router)
     print("Router do sem_csmf registrado com sucesso")
 except ImportError as e:

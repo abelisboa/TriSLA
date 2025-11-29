@@ -21,6 +21,8 @@ semCsmf:
     repository: trisla-sem-csmf
     tag: latest
     pullPolicy: IfNotPresent
+  annotations:
+    trisla-mode: degraded
   service:
     type: ClusterIP
     port: 8080
@@ -81,6 +83,11 @@ bcNssmf:
   service:
     type: ClusterIP
     port: 8083
+    # Desabilitar healthcheck RPC em modo degraded
+    healthcheck:
+      enabled: false
+  annotations:
+    trisla-mode: degraded
   resources:
     requests:
       cpu: 500m

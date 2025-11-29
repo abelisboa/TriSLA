@@ -17,6 +17,9 @@ COPY requirements.txt .
 # Instalar dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Baixar modelo spaCy
+RUN python -m spacy download en_core_web_sm
+
 # Copiar código
 COPY src/ ./src/
 

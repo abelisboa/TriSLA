@@ -11,8 +11,8 @@ from models import (
     DecisionInput, DecisionResult, DecisionAction,
     SLARequirement, RiskLevel, SliceType
 )
-from sem_client import SEMClient
-from ml_client import MLClient
+from src.sem_client import SEMClient
+from src.ml_client import MLClient
 from bc_client import BCClient
 
 tracer = trace.get_tracer(__name__)

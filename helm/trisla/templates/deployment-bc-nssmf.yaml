@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         {{- include "trisla.selectorLabels" (merge . (dict "component" "bc-nssmf")) | nindent 8 }}
+      annotations:
+        trisla-mode: {{ .Values.bcNssmf.annotations.trisla-mode | default "degraded" }}
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
