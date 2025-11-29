@@ -19,13 +19,18 @@ from agent_transport import AgentTransport
 from agent_core import AgentCore
 from kafka_consumer import ActionConsumer
 
-# OpenTelemetry
+# OpenTelemetry (opcional em modo DEV)
+otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
-otlp_exporter = OTLPSpanExporter(endpoint="http://otlp-collector:4317", insecure=True)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+if otlp_enabled:
+    try:
+        otlp_exporter = OTLPSpanExporter(endpoint="http://otlp-collector:4317", insecure=True)
+        span_processor = BatchSpanProcessor(otlp_exporter)
+        trace.get_tracer_provider().add_span_processor(span_processor)
+    except Exception as e:
+        print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
 
 app = FastAPI(title="TriSLA SLA-Agent Layer", version="1.0.0")
 FastAPIInstrumentor.instrument_app(app)

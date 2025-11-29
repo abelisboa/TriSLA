@@ -27,28 +27,25 @@ from grpc_client import DecisionEngineClient
 from grpc_client_retry import DecisionEngineClientWithRetry
 from auth import get_current_user, is_auth_enabled, get_current_user_optional
 
-# Importar router do novo módulo SEM-CSMF (corrigido para usar caminho absoluto)
-try:
-    from src.api_rest import router as sem_router
-    app.include_router(sem_router)
-except ImportError as e:
-    # Se o módulo não estiver disponível, continuar sem ele
-    print(f"Aviso: Não foi possível importar router do sem_csmf: {e}")
-except Exception as e:
-    print(f"Aviso: Erro ao registrar router do sem_csmf: {e}")
-
-# Configurar OpenTelemetry
+# Configurar OpenTelemetry (opcional em modo DEV)
+otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
-# OTLP endpoint via variável de ambiente ou padrão
-otlp_endpoint = os.getenv("OTLP_ENDPOINT", "http://otlp-collector:4317")
-otlp_exporter = OTLPSpanExporter(
-    endpoint=otlp_endpoint,
-    insecure=True
-)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+if otlp_enabled:
+    try:
+        # OTLP endpoint via variável de ambiente ou padrão
+        otlp_endpoint = os.getenv("OTLP_ENDPOINT", "http://otlp-collector:4317")
+        otlp_exporter = OTLPSpanExporter(
+            endpoint=otlp_endpoint,
+            insecure=True
+        )
+        span_processor = BatchSpanProcessor(otlp_exporter)
+        trace.get_tracer_provider().add_span_processor(span_processor)
+    except Exception as e:
+        print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
+else:
+    print("ℹ️ SEM-CSMF: Modo DEV - OTLP desabilitado (OTLP_ENABLED=false)")
 
 app = FastAPI(
     title="TriSLA SEM-CSMF",

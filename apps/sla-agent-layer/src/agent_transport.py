@@ -16,9 +16,20 @@ sys.path.insert(0, os.path.join(
     "src"
 ))
 
+# Definir stub NASPClient antes de tentar importar
+class NASPClient:
+    """Stub NASPClient para modo DEV quando NASP não está disponível"""
+    def __init__(self):
+        pass
+    async def get_transport_metrics(self):
+        return {"bandwidth": 10.5, "latency": 5.2, "jitter": 0.8, "source": "stub"}
+    async def execute_transport_action(self, action_type: str, params: dict):
+        return {"status": "simulated", "action": action_type, "params": params}
+
 try:
-    from nasp_client import NASPClient
+    from nasp_client import NASPClient as RealNASPClient
     NASP_AVAILABLE = True
+    NASPClient = RealNASPClient  # Usar o real se disponível
 except ImportError:
     NASP_AVAILABLE = False
     print("⚠️ NASP Adapter não disponível. Agent Transport usará fallback limitado.")

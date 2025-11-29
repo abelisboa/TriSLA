@@ -11,7 +11,7 @@ Conforme dissertação TriSLA:
 
 import sys
 import os
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, TYPE_CHECKING
 from opentelemetry import trace
 import logging
 
@@ -22,9 +22,20 @@ sys.path.insert(0, os.path.join(
     "src"
 ))
 
+# Definir stub NASPClient antes de tentar importar
+class NASPClient:
+    """Stub NASPClient para modo DEV quando NASP não está disponível"""
+    def __init__(self):
+        pass
+    async def get_ran_metrics(self):
+        return {"cpu": 45.0, "memory": 60.0, "throughput": 1.2, "source": "stub"}
+    async def execute_ran_action(self, action_type: str, params: dict):
+        return {"status": "simulated", "action": action_type, "params": params}
+
 try:
-    from nasp_client import NASPClient
+    from nasp_client import NASPClient as RealNASPClient
     NASP_AVAILABLE = True
+    NASPClient = RealNASPClient  # Usar o real se disponível
 except ImportError:
     NASP_AVAILABLE = False
     print("⚠️ NASP Adapter não disponível. Agent RAN usará fallback limitado.")

@@ -4,6 +4,7 @@ Consome I-01 (gRPC), I-02, I-03 e gera decisões AC/RENEG/REJ
 """
 
 from contextlib import asynccontextmanager
+from typing import Optional
 from fastapi import FastAPI
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -32,11 +33,17 @@ from config import config
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
-# Usar endpoint configurável do OTLP Collector
-otlp_endpoint = os.getenv("OTLP_ENDPOINT_GRPC", config.otlp_endpoint_grpc)
-otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+# Usar endpoint configurável do OTLP Collector (opcional em modo DEV)
+otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
+if otlp_enabled:
+    try:
+        otlp_endpoint = os.getenv("OTLP_ENDPOINT_GRPC", config.otlp_endpoint_grpc)
+        if otlp_endpoint:
+            otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
+            span_processor = BatchSpanProcessor(otlp_exporter)
+            trace.get_tracer_provider().add_span_processor(span_processor)
+    except Exception as e:
+        print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
 
 # Variável global para thread do gRPC
 grpc_thread = None
@@ -110,14 +117,21 @@ decision_maker = DecisionMaker(rule_engine)  # Mantido para compatibilidade
 # Novo serviço integrado (usa SEM-CSMF, ML-NSMF, BC-NSSMF)
 decision_service = DecisionService()
 
-decision_consumer = DecisionConsumer(decision_maker)
-# Usar producer com retry se habilitado
-USE_KAFKA_RETRY = os.getenv("USE_KAFKA_RETRY", "true").lower() == "true"
-if USE_KAFKA_RETRY:
-    kafka_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092").split(",")
-    decision_producer = DecisionProducerWithRetry(kafka_servers)
+# DecisionConsumer e Producer podem ser None se Kafka estiver desabilitado
+kafka_enabled = os.getenv("KAFKA_ENABLED", "false").lower() == "true"
+if kafka_enabled:
+    decision_consumer = DecisionConsumer(decision_maker)
+    # Usar producer com retry se habilitado
+    USE_KAFKA_RETRY = os.getenv("USE_KAFKA_RETRY", "true").lower() == "true"
+    if USE_KAFKA_RETRY:
+        kafka_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092").split(",")
+        decision_producer = DecisionProducerWithRetry(kafka_servers)
+    else:
+        decision_producer = DecisionProducer()
 else:
-    decision_producer = DecisionProducer()
+    decision_consumer = None
+    decision_producer = None
+    print("ℹ️ Decision Engine: Modo DEV - Kafka desabilitado (KAFKA_ENABLED=false)")
 
 # Fallback: Iniciar gRPC quando o módulo é importado
 # Isso garante que o servidor gRPC inicie mesmo se o lifespan não funcionar
@@ -232,7 +246,17 @@ except Exception as e:
 @app.get("/health")
 async def health():
     """Health check endpoint"""
-    return {"status": "healthy", "module": "decision-engine"}
+    kafka_enabled = os.getenv("KAFKA_ENABLED", "false").lower() == "true"
+    kafka_status = "enabled" if kafka_enabled else "offline"
+    
+    return {
+        "status": "healthy",
+        "module": "decision-engine",
+        "kafka": kafka_status,
+        "rule_engine": "ready" if rule_engine else "not_ready",
+        "decision_service": "ready" if decision_service else "not_ready",
+        "grpc_thread": "alive" if grpc_thread and grpc_thread.is_alive() else "not_running"
+    }
 
 
 @app.get("/debug/grpc", include_in_schema=True)

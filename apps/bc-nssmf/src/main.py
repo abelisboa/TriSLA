@@ -18,24 +18,37 @@ from src.service import BCService
 from src.oracle import MetricsOracle
 from src.kafka_consumer import DecisionConsumer
 
-# OpenTelemetry
+# OpenTelemetry (opcional em modo DEV)
+otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
-otlp_exporter = OTLPSpanExporter(endpoint="http://otlp-collector:4317", insecure=True)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+if otlp_enabled:
+    try:
+        otlp_exporter = OTLPSpanExporter(endpoint="http://otlp-collector:4317", insecure=True)
+        span_processor = BatchSpanProcessor(otlp_exporter)
+        trace.get_tracer_provider().add_span_processor(span_processor)
+    except Exception as e:
+        print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
 
 app = FastAPI(title="TriSLA BC-NSSMF", version="1.0.0")
 FastAPIInstrumentor.instrument_app(app)
 
-# Inicializar com fallback para RPC offline
-try:
-    bc_service = BCService()
-    enabled = True
-except Exception as e:
-    print(f"⚠️ BC-NSSMF: RPC Besu não disponível. Entrando em modo degraded: {e}")
-    bc_service = None
+# Inicializar com fallback para RPC offline (modo DEV)
+bc_enabled = os.getenv("BC_ENABLED", "false").lower() == "true"
+enabled = False
+bc_service = None
+
+if bc_enabled:
+    try:
+        bc_service = BCService()
+        enabled = True
+    except Exception as e:
+        print(f"⚠️ BC-NSSMF: RPC Besu não disponível. Entrando em modo degraded: {e}")
+        bc_service = None
+        enabled = False
+else:
+    print("ℹ️ BC-NSSMF: Modo DEV - Blockchain desabilitado (BC_ENABLED=false)")
     enabled = False
 
 metrics_oracle = MetricsOracle()

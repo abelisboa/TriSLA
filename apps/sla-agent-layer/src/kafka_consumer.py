@@ -7,10 +7,18 @@ import json
 import os
 import logging
 from typing import List, Dict, Any, Optional
-from kafka import KafkaConsumer
-from kafka.errors import KafkaError
 from opentelemetry import trace
 import asyncio
+
+try:
+    from kafka import KafkaConsumer
+    from kafka.errors import KafkaError, NoBrokersAvailable
+    KAFKA_AVAILABLE = True
+except ImportError:
+    KAFKA_AVAILABLE = False
+    KafkaConsumer = None
+    KafkaError = Exception
+    NoBrokersAvailable = Exception
 
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
@@ -29,24 +37,55 @@ class ActionConsumer:
         bootstrap_servers: list = None
     ):
         """
-        Inicializa consumer Kafka
+        Inicializa consumer Kafka (opcional)
         
         Args:
             agents: Lista de agentes (AgentRAN, AgentTransport, AgentCore)
             bootstrap_servers: Lista de servidores Kafka (padrão: kafka:9092)
         """
         self.agents = agents
-        self.bootstrap_servers = bootstrap_servers or os.getenv(
-            "KAFKA_BOOTSTRAP_SERVERS",
-            "localhost:29092,kafka:9092"
-        ).split(",")
+        
+        kafka_enabled = os.getenv("KAFKA_ENABLED", "false").lower() == "true"
+        kafka_brokers = os.getenv("KAFKA_BROKERS", "").strip()
+        
+        if bootstrap_servers:
+            self.bootstrap_servers = bootstrap_servers
+        elif kafka_brokers:
+            self.bootstrap_servers = kafka_brokers.split(",")
+        else:
+            self.bootstrap_servers = os.getenv(
+                "KAFKA_BOOTSTRAP_SERVERS",
+                "localhost:29092,kafka:9092"
+            ).split(",")
         
         self.consumer = None
         self.running = False
+        self.enabled = False
+        
+        if not KAFKA_AVAILABLE:
+            logger.info(
+                "Kafka não disponível (biblioteca não instalada). "
+                "SLA-Agent Layer iniciando em modo offline."
+            )
+            return
+        
+        if not kafka_enabled or not kafka_brokers:
+            logger.info(
+                "Kafka desabilitado (KAFKA_ENABLED=%s, KAFKA_BROKERS='%s'). "
+                "SLA-Agent Layer iniciando em modo offline.",
+                kafka_enabled,
+                kafka_brokers,
+            )
+            return
+        
+        self.enabled = True
         self._create_consumer()
     
     def _create_consumer(self):
         """Cria consumer Kafka para tópico I-05"""
+        if not self.enabled:
+            return
+        
         try:
             self.consumer = KafkaConsumer(
                 'trisla-i05-actions',
@@ -58,9 +97,21 @@ class ActionConsumer:
                 consumer_timeout_ms=1000
             )
             logger.info(f"✅ Consumer I-05 criado para tópico: trisla-i05-actions")
-        except Exception as e:
-            logger.error(f"❌ Erro ao criar consumer I-05: {e}")
+        except NoBrokersAvailable:
+            logger.warning(
+                "Kafka brokers não disponíveis. "
+                "SLA-Agent Layer continuando em modo offline."
+            )
             self.consumer = None
+            self.enabled = False
+        except Exception as e:
+            logger.warning(
+                "Erro ao criar consumer I-05: %s. "
+                "SLA-Agent Layer continuando em modo offline.",
+                e
+            )
+            self.consumer = None
+            self.enabled = False
     
     async def consume_and_execute(self) -> Optional[Dict[str, Any]]:
         """

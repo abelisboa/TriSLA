@@ -8,6 +8,7 @@ MODULES=(
   "sla-agent-layer"
   "decision-engine"
   "ui-dashboard"
+  "nasp-adapter"
 )
 
 for module in "${MODULES[@]}"; do

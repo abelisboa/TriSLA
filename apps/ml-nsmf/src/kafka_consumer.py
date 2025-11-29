@@ -32,13 +32,7 @@ class MetricsConsumer:
         
         self.consumer: Optional[KafkaConsumer] = None
         
-        if not KAFKA_AVAILABLE:
-            logger.info(
-                "Kafka não disponível (biblioteca não instalada). "
-                "Iniciando em modo offline."
-            )
-            return
-        
+        # Verificar primeiro se Kafka está desabilitado
         if not kafka_enabled or not kafka_brokers:
             logger.info(
                 "Kafka desabilitado (KAFKA_ENABLED=%s, KAFKA_BROKERS='%s'). "
@@ -48,6 +42,14 @@ class MetricsConsumer:
             )
             return
         
+        if not KAFKA_AVAILABLE:
+            logger.info(
+                "Kafka não disponível (biblioteca não instalada). "
+                "Iniciando em modo offline."
+            )
+            return
+        
+        # Só tentar criar consumer se Kafka estiver habilitado E disponível
         try:
             self.consumer = KafkaConsumer(
                 'nasp-metrics',
@@ -58,16 +60,11 @@ class MetricsConsumer:
                 enable_auto_commit=True,
             )
             logger.info("Conectado ao Kafka em %s", kafka_brokers)
-        except NoBrokersAvailable:
+        except (NoBrokersAvailable, Exception) as e:
             logger.warning(
                 "Kafka brokers não disponíveis em '%s'. "
-                "Continuando em modo offline.",
+                "Continuando em modo offline: %s",
                 kafka_brokers,
-            )
-            self.consumer = None
-        except Exception as e:
-            logger.warning(
-                "Erro ao conectar ao Kafka: %s. Continuando em modo offline.",
                 e,
             )
             self.consumer = None
