@@ -1,0 +1,52 @@
+name: "CD - Rollback TriSLA (Helm)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: "Revisão Helm para rollback (vazia = última revisão estável anterior)"
+        required: false
+        default: ""
+
+jobs:
+  rollback:
+    runs-on: [ self-hosted ]
+    env:
+      APP_NAME: trisla
+      NAMESPACE: trisla
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Exibir histórico atual do Helm
+        run: |
+          echo "=== Histórico Helm atual ==="
+          helm history "${APP_NAME}" -n "${NAMESPACE}" || echo "⚠️ Aplicação ainda não instalada."
+
+      - name: Executar rollback
+        run: |
+          REV="${{ github.event.inputs.revision }}"
+          if [ -z "$REV" ]; then
+            echo "Nenhuma revisão fornecida. Selecionando revisão anterior automaticamente..."
+            # Pega a 2ª linha do history (primeira após o header), que normalmente é a revisão anterior estável
+            REV=$(helm history "${APP_NAME}" -n "${NAMESPACE}" | awk 'NR==2{print $1}')
+          fi
+
+          if [ -z "$REV" ]; then
+            echo "❌ Não foi possível determinar a revisão para rollback."
+            exit 1
+          fi
+
+          echo "➡️ Executando rollback para revisão: $REV"
+          helm rollback "${APP_NAME}" "$REV" -n "${NAMESPACE}" --wait --timeout 10m
+
+      - name: Histórico após rollback
+        run: |
+          echo "=== Histórico após rollback ==="
+          helm history "${APP_NAME}" -n "${NAMESPACE}"
+
+      - name: Validar pods após rollback
+        run: |
+          kubectl get pods -n "${NAMESPACE}" -o wide
+

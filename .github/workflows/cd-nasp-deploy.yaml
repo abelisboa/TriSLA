@@ -1,0 +1,54 @@
+name: "CD - Deploy TriSLA no NASP (self-hosted)"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "helm/**"
+      - "apps/**"
+      - ".github/workflows/cd-nasp-deploy.yaml"
+  workflow_dispatch:
+
+jobs:
+  deploy-nasp:
+    runs-on: [ self-hosted ]
+    # Recomenda-se registrar o runner do node1 como self-hosted para este repositório.
+    env:
+      APP_NAME: trisla
+      NAMESPACE: trisla
+      VALUES_FILE: ./helm/trisla/values-nasp.yaml
+      CHART_PATH: ./helm/trisla
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Exibir contexto de ambiente
+        run: |
+          echo "Hostname:" $(hostname)
+          echo "Diretório:" $(pwd)
+          echo "Kubeconfig:" ${KUBECONFIG:-"(usando padrão ~/.kube/config)"}
+
+      - name: Verificar contexto Kubernetes
+        run: |
+          kubectl config current-context
+          kubectl get nodes -o wide
+
+      - name: Helm Upgrade/Install TriSLA no NASP
+        run: |
+          helm upgrade --install "${APP_NAME}" "${CHART_PATH}" \
+            -n "${NAMESPACE}" \
+            -f "${VALUES_FILE}" \
+            --create-namespace \
+            --wait \
+            --timeout 10m
+
+      - name: Validar Pods TriSLA
+        run: |
+          kubectl get pods -n "${NAMESPACE}" -o wide
+          kubectl get svc -n "${NAMESPACE}"
+
+      - name: Listar eventos recentes do namespace
+        run: |
+          kubectl get events -n "${NAMESPACE}" --sort-by=.lastTimestamp | tail -50
+

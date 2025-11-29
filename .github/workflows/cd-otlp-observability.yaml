@@ -1,0 +1,47 @@
+name: "CD - OTLP Observability Check (TriSLA + NASP)"
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # A cada 6 horas
+  workflow_dispatch:
+
+jobs:
+  otlp-check:
+    runs-on: [ self-hosted ]
+    env:
+      NAMESPACE_TRISLA: trisla
+      NAMESPACE_MONITORING: monitoring
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Verificar pods OTLP / Collector / TriSLA
+        run: |
+          echo "=== Pods no namespace TriSLA ==="
+          kubectl get pods -n "${NAMESPACE_TRISLA}" -o wide || true
+
+          echo ""
+          echo "=== Procurando OTEL Collector (trisla-otel-collector) ==="
+          kubectl get svc -n "${NAMESPACE_TRISLA}" | grep -i otel || echo "⚠️ Service OTEL Collector não encontrado em trisla."
+
+      - name: Verificar stack de monitoramento (Prometheus/Grafana)
+        run: |
+          echo "=== Pods de monitoramento (namespace: ${NAMESPACE_MONITORING}) ==="
+          kubectl get pods -n "${NAMESPACE_MONITORING}" -o wide || true
+
+          echo ""
+          echo "=== Services de monitoramento ==="
+          kubectl get svc -n "${NAMESPACE_MONITORING}" || true
+
+      - name: Teste simples de scraping (se houver pod do collector)
+        run: |
+          COLLECTOR_POD=$(kubectl get pods -n "${NAMESPACE_TRISLA}" | grep -i otel | awk 'NR==1{print $1}')
+          if [ -n "$COLLECTOR_POD" ]; then
+            echo "Encontrado Collector: $COLLECTOR_POD"
+            echo "Tentando obter logs recentes..."
+            kubectl logs -n "${NAMESPACE_TRISLA}" "$COLLECTOR_POD" --tail=50 || true
+          else
+            echo "⚠️ Nenhum pod OTEL Collector encontrado no namespace ${NAMESPACE_TRISLA}."
+          fi
+
