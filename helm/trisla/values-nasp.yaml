@@ -53,6 +53,9 @@ semCsmf:
 
 mlNsmf:
   replicas: 3
+  env:
+    KAFKA_ENABLED: "false"
+    KAFKA_BROKERS: ""
   resources:
     requests:
       cpu: 2000m

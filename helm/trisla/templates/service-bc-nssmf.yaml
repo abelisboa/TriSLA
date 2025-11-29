@@ -16,3 +16,5 @@ spec:
     {{- include "trisla.selectorLabels" (merge . (dict "component" "bc-nssmf")) | nindent 4 }}
 
 
+
+

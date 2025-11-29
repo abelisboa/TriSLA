@@ -16,3 +16,5 @@ spec:
     {{- include "trisla.selectorLabels" (merge . (dict "component" "decision-engine")) | nindent 4 }}
 
 
+
+

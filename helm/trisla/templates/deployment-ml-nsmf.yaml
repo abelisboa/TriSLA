@@ -30,6 +30,10 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        - name: KAFKA_ENABLED
+          value: {{ .Values.mlNsmf.env.KAFKA_ENABLED | default "false" | quote }}
+        - name: KAFKA_BROKERS
+          value: {{ .Values.mlNsmf.env.KAFKA_BROKERS | default "" | quote }}
         livenessProbe:
           httpGet:
             path: /health
@@ -44,5 +48,7 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.mlNsmf.resources | nindent 10 }}
+
+
 
 
