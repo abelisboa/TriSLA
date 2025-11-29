@@ -13,6 +13,8 @@ COPY src/ ./src/
 
 ENV PYTHONPATH=/app
 ENV PORT=8081
+ENV KAFKA_ENABLED=false
+ENV KAFKA_BROKERS=""
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD python -c "import requests; requests.get('http://localhost:8081/health')"

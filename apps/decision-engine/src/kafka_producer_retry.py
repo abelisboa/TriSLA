@@ -1,16 +1,26 @@
 """
 Kafka Producer com Retry Logic - Decision Engine
-Producer com retry automático para falhas temporárias
+Producer com retry automático para falhas temporárias (Kafka opcional)
 """
 
-from kafka import KafkaProducer
-from kafka.errors import KafkaError, KafkaTimeoutError
-import json
-from typing import Dict, Any
-from opentelemetry import trace
-import logging
-import asyncio
 import os
+import logging
+from typing import Dict, Any, Optional
+from opentelemetry import trace
+import asyncio
+
+try:
+    from kafka import KafkaProducer
+    from kafka.errors import KafkaError, KafkaTimeoutError, NoBrokersAvailable
+    KAFKA_AVAILABLE = True
+except ImportError:
+    KAFKA_AVAILABLE = False
+    KafkaProducer = None
+    KafkaError = Exception
+    KafkaTimeoutError = Exception
+    NoBrokersAvailable = Exception
+
+import json
 
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
@@ -22,29 +32,77 @@ RETRY_BACKOFF = float(os.getenv("KAFKA_RETRY_BACKOFF", "2.0"))
 
 
 class DecisionProducerWithRetry:
-    """Produz decisões para I-04 e I-05 com retry"""
+    """Produz decisões para I-04 e I-05 com retry (Kafka opcional)"""
     
-    def __init__(self, bootstrap_servers: list):
-        self.bootstrap_servers = bootstrap_servers
-        self.producer = None
+    def __init__(self, bootstrap_servers: list = None):
+        kafka_enabled = os.getenv("KAFKA_ENABLED", "false").lower() == "true"
+        kafka_brokers = os.getenv("KAFKA_BROKERS", "").strip()
+        
+        if bootstrap_servers:
+            self.bootstrap_servers = bootstrap_servers
+        elif kafka_brokers:
+            self.bootstrap_servers = kafka_brokers.split(",")
+        else:
+            self.bootstrap_servers = []
+        
+        self.producer: Optional[KafkaProducer] = None
+        self.enabled = False
+        
+        if not KAFKA_AVAILABLE:
+            logger.info(
+                "Kafka não disponível (biblioteca não instalada). "
+                "DecisionProducerWithRetry em modo offline."
+            )
+            return
+        
+        if not kafka_enabled or not self.bootstrap_servers:
+            logger.info(
+                "Kafka desabilitado (KAFKA_ENABLED=%s, bootstrap_servers=%s). "
+                "DecisionProducerWithRetry em modo offline.",
+                kafka_enabled,
+                self.bootstrap_servers,
+            )
+            return
+        
+        self.enabled = True
         self._create_producer()
     
     def _create_producer(self):
         """Cria ou recria o producer"""
+        if not self.enabled:
+            return
+        
         try:
             if self.producer:
-                self.producer.close()
-        except:
-            pass
+                try:
+                    self.producer.close()
+                except:
+                    pass
         
-        self.producer = KafkaProducer(
-            bootstrap_servers=self.bootstrap_servers,
-            value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-            retries=MAX_RETRIES,
-            acks='all',
-            max_in_flight_requests_per_connection=1,
-            enable_idempotence=True
-        )
+            self.producer = KafkaProducer(
+                bootstrap_servers=self.bootstrap_servers,
+                value_serializer=lambda v: json.dumps(v).encode('utf-8'),
+                retries=MAX_RETRIES,
+                acks='all',
+                max_in_flight_requests_per_connection=1,
+                enable_idempotence=True
+            )
+            logger.info("Kafka Producer criado com sucesso")
+        except NoBrokersAvailable:
+            logger.warning(
+                "Kafka brokers não disponíveis. "
+                "DecisionProducerWithRetry em modo offline."
+            )
+            self.producer = None
+            self.enabled = False
+        except Exception as e:
+            logger.warning(
+                "Erro ao criar Kafka Producer: %s. "
+                "DecisionProducerWithRetry em modo offline.",
+                e,
+            )
+            self.producer = None
+            self.enabled = False
     
     async def send_with_retry(
         self,
@@ -56,6 +114,17 @@ class DecisionProducerWithRetry:
         with tracer.start_as_current_span("kafka_send_retry") as span:
             span.set_attribute("kafka.topic", topic)
             span.set_attribute("retry.max_attempts", MAX_RETRIES)
+            
+            if not self.enabled or self.producer is None:
+                logger.debug(
+                    "Kafka não disponível - mensagem não enviada. "
+                    "Topic: %s, Value: %s",
+                    topic,
+                    value
+                )
+                span.set_attribute("kafka.enabled", False)
+                span.set_attribute("retry.success", False)
+                return False
             
             last_exception = None
             
