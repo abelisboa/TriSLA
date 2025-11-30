@@ -9,6 +9,10 @@ from typing import Dict, Any, Optional
 from opentelemetry import trace
 import logging
 
+# Definir logger ANTES de usar
+tracer = trace.get_tracer(__name__)
+logger = logging.getLogger(__name__)
+
 # Adicionar path para NASP Adapter
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
@@ -42,9 +46,6 @@ except ImportError:
 
 from slo_evaluator import SLOEvaluator
 from config_loader import load_slo_config
-
-tracer = trace.get_tracer(__name__)
-logger = logging.getLogger(__name__)
 
 
 class AgentTransport:

@@ -18,15 +18,23 @@ from nasp_client import NASPClient
 from metrics_collector import MetricsCollector
 from action_executor import ActionExecutor
 
-# OpenTelemetry
+# OpenTelemetry (opcional em modo DEV)
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
-# OTLP endpoint via variável de ambiente ou padrão
-otlp_endpoint = os.getenv("OTLP_ENDPOINT", "http://otlp-collector:4317")
-otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+# OTLP endpoint via variável de ambiente (opcional)
+otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
+if otlp_enabled:
+    try:
+        otlp_endpoint = os.getenv("OTLP_ENDPOINT", "http://otlp-collector:4317")
+        otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
+        span_processor = BatchSpanProcessor(otlp_exporter)
+        trace.get_tracer_provider().add_span_processor(span_processor)
+        print("✅ OTLP habilitado para NASP Adapter")
+    except Exception as e:
+        print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
+else:
+    print("ℹ️ NASP Adapter: Modo DEV - OTLP desabilitado (OTLP_ENABLED=false)")
 
 app = FastAPI(title="TriSLA NASP Adapter", version="1.0.0")
 FastAPIInstrumentor.instrument_app(app)

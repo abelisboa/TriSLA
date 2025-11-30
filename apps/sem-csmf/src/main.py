@@ -74,16 +74,8 @@ FastAPIInstrumentor.instrument_app(app)
 # Inicializar banco de dados
 init_db()
 
-# Importar e registrar router do novo módulo SEM-CSMF (corrigido para usar caminho absoluto)
-try:
-    from src.api_rest import router as sem_router
-    app.include_router(sem_router)
-    print("Router do sem_csmf registrado com sucesso")
-except ImportError as e:
-    # Se o módulo não estiver disponível, continuar sem ele
-    print(f"Aviso: Não foi possível importar router do sem_csmf: {e}")
-except Exception as e:
-    print(f"Aviso: Erro ao registrar router do sem_csmf: {e}")
+# Rotas estão definidas diretamente neste arquivo (main.py)
+# Não há necessidade de importar router externo
 
 # Inicializar processadores
 intent_processor = IntentProcessor()
