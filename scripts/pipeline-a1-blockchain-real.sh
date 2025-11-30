@@ -9,7 +9,7 @@ echo "============================================================"
 
 GHCR_USER="abelisboa"
 GHCR_REGISTRY="ghcr.io/${GHCR_USER}"
-TAG="nasp-a1"
+TAG="nasp-a2"
 
 MODULES=(
   "sem-csmf"

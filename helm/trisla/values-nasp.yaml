@@ -18,6 +18,46 @@ production:
   useRealServices: true  # ⚠️ Usar serviços REAIS
   executeRealActions: true  # ⚠️ Executar ações REAIS
 
+# Variáveis de ambiente globais para modo ONLINE no NASP
+# Nota: Estas variáveis devem ser aplicadas nos deployments individuais
+# via templates do Helm, não diretamente aqui (values-nasp.yaml é override)
+
+# Configurações por módulo para modo ONLINE
+bcNssmf:
+  env:
+    BC_ENABLED: "true"  # Blockchain habilitado no NASP
+    OTLP_ENABLED: "true"  # Observabilidade habilitada
+
+semCsmf:
+  env:
+    OTLP_ENABLED: "true"
+
+mlNsmf:
+  env:
+    KAFKA_ENABLED: "false"  # Kafka desabilitado por enquanto
+    KAFKA_REQUIRED: "false"  # Kafka não obrigatório (modo degradado permitido)
+    OTLP_ENABLED: "true"
+
+decisionEngine:
+  env:
+    BC_ENABLED: "true"
+    KAFKA_ENABLED: "false"
+    KAFKA_REQUIRED: "false"
+    OTLP_ENABLED: "true"
+
+slaAgentLayer:
+  env:
+    OTLP_ENABLED: "true"
+
+naspAdapter:
+  env:
+    OTLP_ENABLED: "true"
+
+uiDashboard:
+  env:
+    API_BACKEND_HOST: "trisla-decision-engine.trisla.svc.cluster.local"
+    API_BACKEND_PORT: "8082"
+
 # Endpoints do NASP (substituir pelos endpoints reais descobertos)
 naspAdapter:
   naspEndpoints:
@@ -56,6 +96,7 @@ mlNsmf:
   env:
     KAFKA_ENABLED: "false"
     KAFKA_BROKERS: ""
+    KAFKA_REQUIRED: "false"
   resources:
     requests:
       cpu: 2000m

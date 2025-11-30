@@ -15,30 +15,32 @@ from typing import Dict, Any, Optional, TYPE_CHECKING
 from opentelemetry import trace
 import logging
 
-# Adicionar path para NASP Adapter
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "nasp-adapter",
-    "src"
-))
-
-# Definir stub NASPClient antes de tentar importar
-class NASPClient:
-    """Stub NASPClient para modo DEV quando NASP não está disponível"""
-    def __init__(self):
-        pass
-    async def get_ran_metrics(self):
-        return {"cpu": 45.0, "memory": 60.0, "throughput": 1.2, "source": "stub"}
-    async def execute_ran_action(self, action_type: str, params: dict):
-        return {"status": "simulated", "action": action_type, "params": params}
-
+# Tentar importar NASPClient do nasp-adapter (produção) ou usar stub (fallback)
 try:
-    from nasp_client import NASPClient as RealNASPClient
+    # Tentar importar do nasp-adapter (se disponível no mesmo namespace)
+    from nasp_adapter.src.nasp_client import NASPClient
     NASP_AVAILABLE = True
-    NASPClient = RealNASPClient  # Usar o real se disponível
+    logger.info("✅ NASPClient importado do nasp-adapter")
 except ImportError:
-    NASP_AVAILABLE = False
-    print("⚠️ NASP Adapter não disponível. Agent RAN usará fallback limitado.")
+    try:
+        # Tentar importar direto (se nasp-adapter estiver no PYTHONPATH)
+        from nasp_client import NASPClient
+        NASP_AVAILABLE = True
+        logger.info("✅ NASPClient importado diretamente")
+    except ImportError:
+        # Fallback: criar stub NASPClient para não quebrar o serviço
+        NASP_AVAILABLE = False
+        logger.warning("⚠️ NASP Adapter não disponível. Agent RAN usará fallback limitado.")
+        
+        class NASPClient:
+            """Stub NASPClient quando NASP não está disponível"""
+            def __init__(self):
+                pass
+            async def get_ran_metrics(self):
+                return {"cpu": 45.0, "memory": 60.0, "throughput": 1.2, "source": "stub"}
+            async def execute_ran_action(self, action_type: str, params: dict):
+                logger.warning(f"⚠️ NASP não disponível - ação {action_type} simulada")
+                return {"status": "simulated", "action": action_type, "params": params}
 
 from slo_evaluator import SLOEvaluator
 from config_loader import load_slo_config

@@ -9,6 +9,9 @@ from typing import Dict, Any, Optional
 from opentelemetry import trace
 import logging
 
+tracer = trace.get_tracer(__name__)
+logger = logging.getLogger(__name__)
+
 # Adicionar path para NASP Adapter
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
@@ -16,28 +19,32 @@ sys.path.insert(0, os.path.join(
     "src"
 ))
 
-# Definir stub NASPClient antes de tentar importar
-class NASPClient:
-    """Stub básico para NASPClient quando não disponível"""
-    def __init__(self):
-        pass
-    
-    async def get_core_metrics(self):
-        return {
-            "cpu_utilization": 0.0,
-            "memory_utilization": 0.0,
-            "request_latency": 0.0,
-            "throughput": 0.0,
-            "source": "stub"
-        }
-
+# Tentar importar NASPClient do nasp-adapter (produção) ou usar stub (fallback)
 try:
-    from nasp_client import NASPClient as RealNASPClient
+    from nasp_adapter.src.nasp_client import NASPClient
     NASP_AVAILABLE = True
-    NASPClient = RealNASPClient  # Usar o real se disponível
+    logger.info("✅ NASPClient importado do nasp-adapter")
 except ImportError:
-    NASP_AVAILABLE = False
-    print("⚠️ NASP Adapter não disponível. Agent Core usará fallback limitado.")
+    try:
+        from nasp_client import NASPClient
+        NASP_AVAILABLE = True
+        logger.info("✅ NASPClient importado diretamente")
+    except ImportError:
+        NASP_AVAILABLE = False
+        logger.warning("⚠️ NASP Adapter não disponível. Agent Core usará fallback limitado.")
+        
+        class NASPClient:
+            """Stub NASPClient quando NASP não está disponível"""
+            def __init__(self):
+                pass
+            async def get_core_metrics(self):
+                return {
+                    "cpu_utilization": 0.0,
+                    "memory_utilization": 0.0,
+                    "request_latency": 0.0,
+                    "throughput": 0.0,
+                    "source": "stub"
+                }
 
 from slo_evaluator import SLOEvaluator
 from config_loader import load_slo_config

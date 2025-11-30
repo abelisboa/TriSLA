@@ -16,23 +16,29 @@ sys.path.insert(0, os.path.join(
     "src"
 ))
 
-# Definir stub NASPClient antes de tentar importar
-class NASPClient:
-    """Stub NASPClient para modo DEV quando NASP não está disponível"""
-    def __init__(self):
-        pass
-    async def get_transport_metrics(self):
-        return {"bandwidth": 10.5, "latency": 5.2, "jitter": 0.8, "source": "stub"}
-    async def execute_transport_action(self, action_type: str, params: dict):
-        return {"status": "simulated", "action": action_type, "params": params}
-
+# Tentar importar NASPClient do nasp-adapter (produção) ou usar stub (fallback)
 try:
-    from nasp_client import NASPClient as RealNASPClient
+    from nasp_adapter.src.nasp_client import NASPClient
     NASP_AVAILABLE = True
-    NASPClient = RealNASPClient  # Usar o real se disponível
+    logger.info("✅ NASPClient importado do nasp-adapter")
 except ImportError:
-    NASP_AVAILABLE = False
-    print("⚠️ NASP Adapter não disponível. Agent Transport usará fallback limitado.")
+    try:
+        from nasp_client import NASPClient
+        NASP_AVAILABLE = True
+        logger.info("✅ NASPClient importado diretamente")
+    except ImportError:
+        NASP_AVAILABLE = False
+        logger.warning("⚠️ NASP Adapter não disponível. Agent Transport usará fallback limitado.")
+        
+        class NASPClient:
+            """Stub NASPClient quando NASP não está disponível"""
+            def __init__(self):
+                pass
+            async def get_transport_metrics(self):
+                return {"bandwidth": 10.5, "latency": 5.2, "jitter": 0.8, "source": "stub"}
+            async def execute_transport_action(self, action_type: str, params: dict):
+                logger.warning(f"⚠️ NASP não disponível - ação {action_type} simulada")
+                return {"status": "simulated", "action": action_type, "params": params}
 
 from slo_evaluator import SLOEvaluator
 from config_loader import load_slo_config

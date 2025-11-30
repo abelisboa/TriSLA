@@ -29,14 +29,18 @@ class MetricsConsumer:
     def __init__(self):
         kafka_enabled = os.getenv("KAFKA_ENABLED", "false").lower() == "true"
         kafka_brokers = os.getenv("KAFKA_BROKERS", "").strip()
+        kafka_required = os.getenv("KAFKA_REQUIRED", "false").lower() == "true"
         
         self.consumer: Optional[KafkaConsumer] = None
         
         # Verificar primeiro se Kafka está desabilitado
         if not kafka_enabled or not kafka_brokers:
+            if kafka_required:
+                logger.error("❌ KAFKA_REQUIRED=true mas Kafka está desabilitado. Encerrando.")
+                raise RuntimeError("Kafka é obrigatório mas não está configurado (KAFKA_ENABLED=false ou KAFKA_BROKERS vazio)")
             logger.info(
                 "Kafka desabilitado (KAFKA_ENABLED=%s, KAFKA_BROKERS='%s'). "
-                "Iniciando em modo offline.",
+                "Iniciando em modo NASP-KAFKA-OFFLINE.",
                 kafka_enabled,
                 kafka_brokers,
             )
@@ -61,9 +65,12 @@ class MetricsConsumer:
             )
             logger.info("Conectado ao Kafka em %s", kafka_brokers)
         except (NoBrokersAvailable, Exception) as e:
+            if kafka_required:
+                logger.error("❌ KAFKA_REQUIRED=true mas brokers não disponíveis. Encerrando.")
+                raise RuntimeError(f"Kafka é obrigatório mas brokers não disponíveis em '{kafka_brokers}': {e}")
             logger.warning(
                 "Kafka brokers não disponíveis em '%s'. "
-                "Continuando em modo offline: %s",
+                "Continuando em modo NASP-KAFKA-OFFLINE: %s",
                 kafka_brokers,
                 e,
             )

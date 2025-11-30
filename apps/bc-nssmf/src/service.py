@@ -52,12 +52,15 @@ class BCService:
 
         if not SOLCX_AVAILABLE:
             logger.warning("⚠️ py-solc-x não está instalado. Compilação de contratos desabilitada.")
-            # Continuar sem solcx, apenas sem compilação
+            # Continuar sem solcx, apenas sem compilação - não encerra o serviço
 
         try:
             self.w3 = Web3(Web3.HTTPProvider(cfg.rpc_url))
             if not self.w3.is_connected():
-                raise Exception("Não conectado ao Besu RPC.")
+                logger.warning(f"⚠️ BC-NSSMF: Não conectado ao Besu RPC em {cfg.rpc_url}. Modo degraded.")
+                self.enabled = False
+                self.w3 = None
+                return  # Continuar sem blockchain, mas serviço continua rodando
             
             # Carregar informações do contrato
             contract_path = cfg.contract_info_path

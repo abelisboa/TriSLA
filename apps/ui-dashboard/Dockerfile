@@ -20,8 +20,8 @@ RUN apk add --no-cache gettext
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
-# Variáveis de ambiente padrão
-ENV API_BACKEND_HOST=decision-engine
+# Variáveis de ambiente padrão (Kubernetes Service names)
+ENV API_BACKEND_HOST=trisla-decision-engine.trisla.svc.cluster.local
 ENV API_BACKEND_PORT=8082
 
 EXPOSE 80

@@ -1,8 +1,25 @@
 import json
 import os
+import logging
 
-from solcx import compile_standard, set_solc_version
-from web3 import Web3
+logger = logging.getLogger(__name__)
+
+try:
+    from solcx import compile_standard, set_solc_version, install_solc
+    SOLCX_AVAILABLE = True
+except ImportError as e:
+    logger.error(f"❌ py-solc-x não está instalado: {e}")
+    SOLCX_AVAILABLE = False
+    compile_standard = None
+    set_solc_version = None
+    install_solc = None
+
+try:
+    from web3 import Web3
+    WEB3_AVAILABLE = True
+except ImportError:
+    WEB3_AVAILABLE = False
+    Web3 = None
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONTRACT_PATH = os.path.join(BASE_DIR, "contracts", "SLAContract.sol")
@@ -82,8 +99,32 @@ def load_contract() -> str:
 
 
 def deploy() -> None:
+    if not SOLCX_AVAILABLE:
+        raise ImportError("py-solc-x não está instalado. Execute: pip install py-solc-x>=1.1.1")
+    
+    if not WEB3_AVAILABLE:
+        raise ImportError("web3 não está instalado. Execute: pip install web3>=6.0.0")
+    
     print("[TriSLA] Compilando contrato Solidity...")
-    set_solc_version("0.8.20")
+    try:
+        # Tentar instalar versão específica do solc se não estiver disponível
+        try:
+            set_solc_version("0.8.20")
+        except Exception as e:
+            logger.warning(f"⚠️ Versão 0.8.20 não encontrada, tentando instalar: {e}")
+            if install_solc:
+                install_solc("0.8.20")
+                set_solc_version("0.8.20")
+            else:
+                raise
+    except Exception as e:
+        logger.error(f"❌ Erro ao configurar solc 0.8.20: {e}")
+        logger.info("ℹ️ Tentando usar versão disponível...")
+        # Tentar usar versão padrão disponível
+        try:
+            set_solc_version("0.8.20")
+        except:
+            logger.warning("⚠️ Continuando sem versão específica do solc")
 
     source = load_contract()
 
