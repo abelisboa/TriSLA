@@ -6,19 +6,25 @@ metadata:
   labels:
     {{- include "trisla.labels" (merge . (dict "component" "ui-dashboard")) | nindent 4 }}
 spec:
-  replicas: {{ .Values.uiDashboard.replicas }}
+  replicas: {{ .Values.uiDashboard.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "trisla.selectorLabels" (merge . (dict "component" "ui-dashboard")) | nindent 6 }}
+      app: trisla-ui-dashboard
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "trisla.selectorLabels" (merge . (dict "component" "ui-dashboard")) | nindent 8 }}
+        app: trisla-ui-dashboard
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
       containers:
-      - name: ui-dashboard
         image: {{ include "trisla.image" (merge .Values.uiDashboard.image (dict "Values" .Values)) }}
         ports:
         - containerPort: {{ .Values.uiDashboard.service.port }}
@@ -44,7 +50,5 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.uiDashboard.resources | nindent 10 }}
-
-
 
 

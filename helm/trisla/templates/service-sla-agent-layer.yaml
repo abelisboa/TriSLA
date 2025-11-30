@@ -13,8 +13,7 @@ spec:
     protocol: TCP
     name: http
   selector:
-    {{- include "trisla.selectorLabels" (merge . (dict "component" "sla-agent-layer")) | nindent 4 }}
-
-
-
+    app: trisla-sla-agent-layer
+    app.kubernetes.io/name: {{ include "trisla.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 

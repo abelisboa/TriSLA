@@ -6,19 +6,25 @@ metadata:
   labels:
     {{- include "trisla.labels" (merge . (dict "component" "nasp-adapter")) | nindent 4 }}
 spec:
-  replicas: {{ .Values.naspAdapter.replicas }}
+  replicas: {{ .Values.naspAdapter.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "trisla.selectorLabels" (merge . (dict "component" "nasp-adapter")) | nindent 6 }}
+      app: trisla-nasp-adapter
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "trisla.selectorLabels" (merge . (dict "component" "nasp-adapter")) | nindent 8 }}
+        app: trisla-nasp-adapter
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
       containers:
-      - name: nasp-adapter
         image: {{ include "trisla.image" (merge .Values.naspAdapter.image (dict "Values" .Values)) }}
         ports:
         - containerPort: {{ .Values.naspAdapter.service.port }}
@@ -44,7 +50,5 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.naspAdapter.resources | nindent 10 }}
-
-
 
 

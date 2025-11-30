@@ -13,8 +13,7 @@ spec:
     protocol: TCP
     name: http
   selector:
-    {{- include "trisla.selectorLabels" (merge . (dict "component" "ml-nsmf")) | nindent 4 }}
-
-
-
+    app: trisla-ml-nsmf
+    app.kubernetes.io/name: {{ include "trisla.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 

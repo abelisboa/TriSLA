@@ -6,21 +6,25 @@ metadata:
   labels:
     {{- include "trisla.labels" (merge . (dict "component" "bc-nssmf")) | nindent 4 }}
 spec:
-  replicas: {{ .Values.bcNssmf.replicas }}
+  replicas: {{ .Values.bcNssmf.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "trisla.selectorLabels" (merge . (dict "component" "bc-nssmf")) | nindent 6 }}
+      app: trisla-bc-nssmf
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "trisla.selectorLabels" (merge . (dict "component" "bc-nssmf")) | nindent 8 }}
-      annotations:
-        trisla-mode: {{ .Values.bcNssmf.annotations.trisla-mode | default "degraded" }}
+        app: trisla-bc-nssmf
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
       containers:
-      - name: bc-nssmf
         image: {{ include "trisla.image" (merge .Values.bcNssmf.image (dict "Values" .Values)) }}
         ports:
         - containerPort: {{ .Values.bcNssmf.service.port }}

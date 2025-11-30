@@ -6,19 +6,25 @@ metadata:
   labels:
     {{- include "trisla.labels" (merge . (dict "component" "ml-nsmf")) | nindent 4 }}
 spec:
-  replicas: {{ .Values.mlNsmf.replicas }}
+  replicas: {{ .Values.mlNsmf.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "trisla.selectorLabels" (merge . (dict "component" "ml-nsmf")) | nindent 6 }}
+      app: trisla-ml-nsmf
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "trisla.selectorLabels" (merge . (dict "component" "ml-nsmf")) | nindent 8 }}
+        app: trisla-ml-nsmf
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
       containers:
-      - name: ml-nsmf
         image: {{ include "trisla.image" (merge .Values.mlNsmf.image (dict "Values" .Values)) }}
         ports:
         - containerPort: {{ .Values.mlNsmf.service.port }}
@@ -30,10 +36,6 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        - name: KAFKA_ENABLED
-          value: {{ .Values.mlNsmf.env.KAFKA_ENABLED | default "false" | quote }}
-        - name: KAFKA_BROKERS
-          value: {{ .Values.mlNsmf.env.KAFKA_BROKERS | default "" | quote }}
         livenessProbe:
           httpGet:
             path: /health
@@ -48,7 +50,5 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.mlNsmf.resources | nindent 10 }}
-
-
 
 

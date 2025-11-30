@@ -6,19 +6,25 @@ metadata:
   labels:
     {{- include "trisla.labels" (merge . (dict "component" "sla-agent-layer")) | nindent 4 }}
 spec:
-  replicas: {{ .Values.slaAgentLayer.replicas }}
+  replicas: {{ .Values.slaAgentLayer.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "trisla.selectorLabels" (merge . (dict "component" "sla-agent-layer")) | nindent 6 }}
+      app: trisla-sla-agent-layer
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "trisla.selectorLabels" (merge . (dict "component" "sla-agent-layer")) | nindent 8 }}
+        app: trisla-sla-agent-layer
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
       containers:
-      - name: sla-agent-layer
         image: {{ include "trisla.image" (merge .Values.slaAgentLayer.image (dict "Values" .Values)) }}
         ports:
         - containerPort: {{ .Values.slaAgentLayer.service.port }}
@@ -44,7 +50,5 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.slaAgentLayer.resources | nindent 10 }}
-
-
 
 

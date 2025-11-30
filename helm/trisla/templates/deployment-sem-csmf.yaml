@@ -6,19 +6,25 @@ metadata:
   labels:
     {{- include "trisla.labels" (merge . (dict "component" "sem-csmf")) | nindent 4 }}
 spec:
-  replicas: {{ .Values.semCsmf.replicas }}
+  replicas: {{ .Values.semCsmf.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "trisla.selectorLabels" (merge . (dict "component" "sem-csmf")) | nindent 6 }}
+      app: trisla-sem-csmf
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "trisla.selectorLabels" (merge . (dict "component" "sem-csmf")) | nindent 8 }}
+        app: trisla-sem-csmf
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
       containers:
-      - name: sem-csmf
         image: {{ include "trisla.image" (merge .Values.semCsmf.image (dict "Values" .Values)) }}
         ports:
         - containerPort: {{ .Values.semCsmf.service.port }}
