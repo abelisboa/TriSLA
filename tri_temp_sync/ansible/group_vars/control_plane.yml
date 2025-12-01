@@ -1,0 +1,17 @@
+# ============================================
+# Variáveis para Control Plane Nodes
+# ============================================
+
+# Control plane nodes têm acesso ao kubeconfig
+kubeconfig_available: true
+can_deploy: true
+
+# Recursos específicos do control plane
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "1Gi"
+  limits:
+    cpu: "4000m"
+    memory: "4Gi"
+

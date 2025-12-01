@@ -1,0 +1,15 @@
+apiVersion: v2
+name: trisla
+description: TriSLA - SLA-Aware Architecture for 5G/O-RAN
+type: application
+version: 3.6.0
+appVersion: "3.6.0"
+keywords:
+  - 5g
+  - o-ran
+  - sla
+  - network-slicing
+maintainers:
+  - name: TriSLA Team
+    email: abelisboa@gmail.com
+

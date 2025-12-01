@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trisla.name" . }}-ui-dashboard
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (merge . (dict "component" "ui-dashboard")) | nindent 4 }}
+spec:
+  type: {{ .Values.uiDashboard.service.type }}
+  ports:
+  - port: {{ .Values.uiDashboard.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-ui-dashboard
+    app.kubernetes.io/name: {{ include "trisla.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+

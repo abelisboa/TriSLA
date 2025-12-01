@@ -1,0 +1,283 @@
+{
+  "dashboard": {
+    "title": "TriSLA A2 - Resultados Experimentais (BERT/Latency/Status)",
+    "tags": ["trisla", "a2", "results", "bert", "latency", "status"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Latência Total por Tipo de Serviço (P95)",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (le, service_type) (rate(trisla_intent_latency_ms_bucket[5m])))",
+            "legendFormat": "{{service_type}} - P95",
+            "refId": "A"
+          },
+          {
+            "expr": "avg by (service_type) (trisla_intent_latency_ms_sum / trisla_intent_latency_ms_count)",
+            "legendFormat": "{{service_type}} - Média",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latência (ms)",
+            "format": "ms"
+          }
+        ],
+        "xaxis": {
+          "show": true,
+          "mode": "time"
+        },
+        "description": "⚠️ PLACEHOLDER: Substituir 'trisla_intent_latency_ms_bucket' pelo nome real da métrica Prometheus. Esta métrica deve ser um histograma com labels 'service_type' (URLLC, eMBB, mMTC)."
+      },
+      {
+        "id": 2,
+        "title": "Distribuição de Status Final",
+        "type": "bargauge",
+        "gridPos": {
+          "x": 12,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum by (status_final) (rate(trisla_intent_status_total[5m]))",
+            "legendFormat": "{{status_final}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "orientation": "horizontal",
+          "displayMode": "gradient"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        },
+        "description": "⚠️ PLACEHOLDER: Substituir 'trisla_intent_status_total' pelo nome real da métrica. Deve ser um counter com label 'status_final' (ACCEPTED, RENEGOTIATED, REJECTED, ERROR)."
+      },
+      {
+        "id": 3,
+        "title": "Latência por Módulo (P95)",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (le) (rate(trisla_sem_csmf_latency_ms_bucket[5m])))",
+            "legendFormat": "SEM-CSMF - P95",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum by (le) (rate(trisla_ml_nsmf_latency_ms_bucket[5m])))",
+            "legendFormat": "ML-NSMF - P95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum by (le) (rate(trisla_decision_engine_latency_ms_bucket[5m])))",
+            "legendFormat": "Decision Engine - P95",
+            "refId": "C"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum by (le) (rate(trisla_bc_nssmf_latency_ms_bucket[5m])))",
+            "legendFormat": "BC-NSSMF - P95",
+            "refId": "D"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latência (ms)",
+            "format": "ms"
+          }
+        ],
+        "description": "⚠️ PLACEHOLDER: Substituir pelos nomes reais das métricas de latência por módulo. Cada módulo deve expor um histograma: trisla_<modulo>_latency_ms_bucket."
+      },
+      {
+        "id": 4,
+        "title": "BERT por Tipo de Serviço",
+        "type": "graph",
+        "gridPos": {
+          "x": 12,
+          "y": 8,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "avg by (service_type) (trisla_bert_value)",
+            "legendFormat": "{{service_type}} - Média",
+            "refId": "A"
+          },
+          {
+            "expr": "max by (service_type) (trisla_bert_value)",
+            "legendFormat": "{{service_type}} - Máximo",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "BERT (Bit Error Rate)",
+            "format": "short"
+          }
+        ],
+        "description": "⚠️ PLACEHOLDER: Substituir 'trisla_bert_value' pelo nome real da métrica BERT. Se BERT não estiver disponível, este painel pode ser removido ou desabilitado."
+      },
+      {
+        "id": 5,
+        "title": "Tabela de Intents Recentes",
+        "type": "table",
+        "gridPos": {
+          "x": 0,
+          "y": 16,
+          "w": 24,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "topk(20, trisla_intent_info)",
+            "format": "table",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "indexByName": {
+                "intent_id": 0,
+                "service_type": 1,
+                "status_final": 2,
+                "latency_total_ms": 3,
+                "error_type": 4
+              },
+              "renameByName": {
+                "intent_id": "Intent ID",
+                "service_type": "Tipo de Serviço",
+                "status_final": "Status",
+                "latency_total_ms": "Latência Total (ms)",
+                "error_type": "Tipo de Erro"
+              }
+            }
+          }
+        ],
+        "description": "⚠️ PLACEHOLDER: Substituir 'trisla_intent_info' por uma métrica que exponha informações detalhadas de cada intent. Pode ser necessário usar uma query diferente ou criar uma métrica customizada."
+      },
+      {
+        "id": 6,
+        "title": "Taxa de Requisições por Segundo",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 24,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(trisla_intent_total[5m]))",
+            "legendFormat": "Total",
+            "refId": "A"
+          },
+          {
+            "expr": "sum by (service_type) (rate(trisla_intent_total[5m]))",
+            "legendFormat": "{{service_type}}",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Requisições/segundo",
+            "format": "reqps"
+          }
+        ],
+        "description": "⚠️ PLACEHOLDER: Substituir 'trisla_intent_total' pelo counter real de intents processadas."
+      },
+      {
+        "id": 7,
+        "title": "Taxa de Erro por Módulo",
+        "type": "graph",
+        "gridPos": {
+          "x": 12,
+          "y": 24,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum by (module) (rate(trisla_module_errors_total[5m]))",
+            "legendFormat": "{{module}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Erros/segundo",
+            "format": "reqps"
+          }
+        ],
+        "description": "⚠️ PLACEHOLDER: Substituir 'trisla_module_errors_total' pelo counter real de erros por módulo. Label 'module' deve identificar SEM-CSMF, ML-NSMF, Decision Engine, BC-NSSMF."
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "name": "Deploy",
+          "enable": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "type": "tags",
+          "tags": ["deploy"]
+        }
+      ]
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "service_type",
+          "type": "query",
+          "query": "label_values(trisla_intent_total, service_type)",
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "options": [],
+          "includeAll": true,
+          "multi": true,
+          "allValue": null
+        }
+      ]
+    },
+    "links": [],
+    "version": 1,
+    "schemaVersion": 27,
+    "style": "dark",
+    "uid": "trisla-a2-results"
+  }
+}
+
+

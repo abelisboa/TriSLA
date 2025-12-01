@@ -213,3 +213,5 @@ O dashboard contém **placeholders** de métricas Prometheus. Antes de usar:
 **Próximo Passo**: Executar `python analysis/scripts/run_full_analysis.py` após instalar dependências.
 
 
+
+

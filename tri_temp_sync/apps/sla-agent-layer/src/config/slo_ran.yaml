@@ -1,0 +1,41 @@
+# SLO Configuration - RAN Domain
+# Service Level Objectives para domínio RAN
+
+domain: "RAN"
+
+slos:
+  - name: "latency"
+    target: 10.0
+    unit: "ms"
+    operator: "<="  # Menor é melhor
+    risk_threshold: 0.8  # 80% do target = risco (8ms)
+    description: "Latência end-to-end no RAN"
+  
+  - name: "throughput"
+    target: 1000.0
+    unit: "Mbps"
+    operator: ">="  # Maior é melhor
+    risk_threshold: 0.8  # 80% do target = risco (800Mbps)
+    description: "Throughput máximo no RAN"
+  
+  - name: "prb_allocation"
+    target: 0.8
+    unit: "ratio"
+    operator: "<="  # Menor é melhor (utilização de PRB)
+    risk_threshold: 0.9  # 90% do target = risco (0.72)
+    description: "Alocação de PRB (Physical Resource Block)"
+  
+  - name: "packet_loss"
+    target: 0.001
+    unit: "ratio"
+    operator: "<="  # Menor é melhor
+    risk_threshold: 0.8  # 80% do target = risco (0.0008)
+    description: "Taxa de perda de pacotes"
+  
+  - name: "jitter"
+    target: 5.0
+    unit: "ms"
+    operator: "<="  # Menor é melhor
+    risk_threshold: 0.8  # 80% do target = risco (4ms)
+    description: "Variação de latência (jitter)"
+

@@ -1,0 +1,77 @@
+---
+# ============================================
+# Playbook: Validação do Cluster NASP
+# ============================================
+# Valida todos os requisitos do cluster antes do deploy
+# ============================================
+
+- name: Validar Cluster NASP para TriSLA
+  hosts: nasp
+  connection: local
+  become: yes
+  gather_facts: no
+  
+  tasks:
+    - name: Verificar conectividade
+      ping:
+    
+    - name: Verificar kubectl
+      command: kubectl version --client
+      register: kubectl_version
+      changed_when: false
+    
+    - name: Exibir versão do kubectl
+      debug:
+        msg: "kubectl version: {{ kubectl_version.stdout }}"
+    
+    - name: Verificar cluster acessível
+      command: kubectl cluster-info
+      register: cluster_info
+      changed_when: false
+    
+    - name: Exibir informações do cluster
+      debug:
+        msg: "{{ cluster_info.stdout_lines }}"
+    
+    - name: Listar nós do cluster
+      command: kubectl get nodes -o wide
+      register: nodes
+      changed_when: false
+    
+    - name: Exibir nós
+      debug:
+        msg: "{{ nodes.stdout_lines }}"
+    
+    - name: Verificar Calico
+      command: kubectl get pods -n kube-system -l k8s-app=calico-node
+      register: calico_pods
+      changed_when: false
+      failed_when: false
+    
+    - name: Verificar CoreDNS
+      command: kubectl get pods -n kube-system -l k8s-app=kube-dns
+      register: coredns_pods
+      changed_when: false
+      failed_when: false
+    
+    - name: Verificar StorageClass
+      command: kubectl get storageclass
+      register: storage_classes
+      changed_when: false
+      failed_when: false
+    
+    - name: Exibir StorageClasses
+      debug:
+        msg: "{{ storage_classes.stdout_lines }}"
+    
+    - name: Verificar Helm
+      command: helm version --short
+      register: helm_version
+      changed_when: false
+      failed_when: false
+    
+    - name: Exibir versão do Helm
+      debug:
+        msg: "Helm version: {{ helm_version.stdout }}"
+      when: helm_version.rc == 0
+

@@ -1,0 +1,34 @@
+---
+# ============================================
+# Playbook: Setup do Namespace TriSLA
+# ============================================
+# Cria namespace e configura secrets básicos
+# ============================================
+
+- name: Configurar Namespace TriSLA
+  hosts: nasp
+  connection: local
+  become: yes
+  gather_facts: no
+  
+  vars:
+    namespace: "{{ trisla.namespace }}"
+  
+  tasks:
+    - name: Criar namespace
+      kubernetes.core.k8s:
+        name: "{{ namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+    
+    - name: Verificar namespace criado
+      command: kubectl get namespace {{ namespace }}
+      register: ns_check
+      changed_when: false
+    
+    - name: Exibir status do namespace
+      debug:
+        msg: "Namespace {{ namespace }} criado com sucesso"
+      when: ns_check.rc == 0
+

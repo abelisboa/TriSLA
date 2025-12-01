@@ -1,0 +1,201 @@
+intent_id,service_type,scenario,created_at,timestamp_received,timestamp_decision,timestamp_completed,status_final,latency_total_ms,latency_sem_csmf_ms,latency_ml_nsmf_ms,latency_decision_engine_ms,latency_bc_nssmf_ms,error_type,error_message,nest_id,bert,ber,source_file
+urlcc-1764543595-1-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:08.4881827+00:00""}""
+>",nest-urlcc-1764543595-1-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543599-2-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:11.845517789+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543599-2-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543602-3-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:15.198099795+00:00""}""
+>",nest-urlcc-1764543602-3-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543605-4-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:18.554132547+00:00""}""
+>",nest-urlcc-1764543605-4-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543609-5-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:21.911132003+00:00""}""
+>",nest-urlcc-1764543609-5-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543612-6-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:25.464345593+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543612-6-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543615-7-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:28.825070123+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543615-7-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543619-8-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:32.184879524+00:00""}""
+>",nest-urlcc-1764543619-8-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543622-9-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:35.544547103+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543622-9-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543626-10-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:38.90746179+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543626-10-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543629-11-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:42.265594465+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543629-11-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543632-12-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:45.626583142+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543632-12-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543636-13-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:57:48.985440762+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543636-13-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543639-14-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:52.341962325+00:00""}""
+>",nest-urlcc-1764543639-14-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543642-15-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:55.701146629+00:00""}""
+>",nest-urlcc-1764543642-15-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543646-16-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T22:57:59.063649566+00:00""}""
+>",nest-urlcc-1764543646-16-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543649-17-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:58:02.425150114+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543649-17-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543652-18-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:58:05.785101963+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543652-18-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543656-19-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:58:09.146745601+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543656-19-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764543659-20-4182717,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T22:58:12.50307236+00:00"", grpc_status:14}""
+>",nest-urlcc-1764543659-20-4182717,,,urlcc_batch_20251130_195955.jsonl
+urlcc-1764544515-1-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:12:28.442309555+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544515-1-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544518-2-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:12:31.804408713+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544518-2-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544522-3-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:12:35.166695448+00:00""}""
+>",nest-urlcc-1764544522-3-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544525-4-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:12:38.527535659+00:00""}""
+>",nest-urlcc-1764544525-4-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544529-5-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:12:41.882871638+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544529-5-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544532-6-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:12:45.241007241+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544532-6-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544535-7-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:12:48.603560971+00:00""}""
+>",nest-urlcc-1764544535-7-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544539-8-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:12:51.964820514+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544539-8-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544542-9-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:12:55.327125383+00:00""}""
+>",nest-urlcc-1764544542-9-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544545-10-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:12:58.684479317+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544545-10-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544549-11-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:13:02.046240046+00:00""}""
+>",nest-urlcc-1764544549-11-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544552-12-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:13:05.406716899+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544552-12-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544555-13-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:13:08.767831195+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544555-13-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544559-14-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:13:12.124190689+00:00""}""
+>",nest-urlcc-1764544559-14-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544562-15-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:13:15.48518976+00:00""}""
+>",nest-urlcc-1764544562-15-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544566-16-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:13:18.844990882+00:00""}""
+>",nest-urlcc-1764544566-16-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544569-17-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:""2025-11-30T23:13:22.200286424+00:00""}""
+>",nest-urlcc-1764544569-17-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544572-18-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:13:25.557051719+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544572-18-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544576-19-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:13:28.914740392+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544576-19-16015,,,urlcc_batch_20251130_201515.jsonl
+urlcc-1764544579-20-16015,URLLC,URLLC_BATCH,,,,,ACCEPTED,,,,,,GRPC_ERROR,"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = ""failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused""
+	debug_error_string = ""UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused {created_time:""2025-11-30T23:13:32.278701696+00:00"", grpc_status:14}""
+>",nest-urlcc-1764544579-20-16015,,,urlcc_batch_20251130_201515.jsonl

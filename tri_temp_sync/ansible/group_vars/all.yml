@@ -1,0 +1,88 @@
+# ============================================
+# Variáveis Globais Ansible - TriSLA
+# ============================================
+
+# Configurações de rede NASP
+trisla_network:
+  interface: "my5g"
+  node_ip: "192.168.10.16"
+  gateway: "192.168.10.1"
+
+# Configurações do Kubernetes
+kubernetes:
+  namespace: "trisla"
+  kubeconfig_path: "/etc/kubernetes/admin.conf"
+
+# Configurações do TriSLA
+trisla:
+  namespace: "trisla"
+  image_registry: "ghcr.io/abelisboa"
+  image_pull_secret: "ghcr-secret"
+  
+  # Módulos
+  modules:
+    sem_csmf:
+      enabled: true
+      image: "{{ trisla.image_registry }}/trisla-sem-csmf"
+      tag: "latest"
+    
+    ml_nsmf:
+      enabled: true
+      image: "{{ trisla.image_registry }}/trisla-ml-nsmf"
+      tag: "latest"
+    
+    decision_engine:
+      enabled: true
+      image: "{{ trisla.image_registry }}/trisla-decision-engine"
+      tag: "latest"
+    
+    bc_nssmf:
+      enabled: true
+      image: "{{ trisla.image_registry }}/trisla-bc-nssmf"
+      tag: "latest"
+    
+    sla_agent_layer:
+      enabled: true
+      image: "{{ trisla.image_registry }}/trisla-sla-agent"
+      tag: "latest"
+    
+    nasp_adapter:
+      enabled: true
+      image: "{{ trisla.image_registry }}/trisla-nasp-adapter"
+      tag: "latest"
+    
+    ui_dashboard:
+      enabled: true
+      image: "{{ trisla.image_registry }}/trisla-ui-dashboard"
+      tag: "latest"
+
+# Configurações de produção
+production:
+  enabled: true
+  simulation_mode: false
+  use_real_services: true
+  execute_real_actions: true
+
+# Configurações de observabilidade
+observability:
+  enabled: true
+  otlp_collector:
+    enabled: true
+    image: "otel/opentelemetry-collector:latest"
+  
+  prometheus:
+    enabled: true
+  
+  grafana:
+    enabled: true
+    admin_password: "admin"  # ⚠️ ALTERAR EM PRODUÇÃO
+
+# Configurações de recursos
+resources:
+  requests:
+    cpu: "500m"
+    memory: "512Mi"
+  limits:
+    cpu: "2000m"
+    memory: "2Gi"
+

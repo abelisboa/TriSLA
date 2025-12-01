@@ -43,3 +43,5 @@ echo "✅ Testes Nginx concluídos"
 echo "=========================================="
 
 
+
+

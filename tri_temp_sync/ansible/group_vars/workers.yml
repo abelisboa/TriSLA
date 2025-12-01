@@ -1,0 +1,16 @@
+# ============================================
+# Variáveis para Worker Nodes
+# ============================================
+
+# Worker nodes executam workloads
+workload_enabled: true
+
+# Recursos específicos dos workers
+resources:
+  requests:
+    cpu: "2000m"
+    memory: "2Gi"
+  limits:
+    cpu: "8000m"
+    memory: "8Gi"
+
