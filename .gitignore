@@ -397,3 +397,4 @@ tmp/
 helm_audit/
 trisla_helm_clean/
 trisla_helm_publish/
+docs/roadmap/
