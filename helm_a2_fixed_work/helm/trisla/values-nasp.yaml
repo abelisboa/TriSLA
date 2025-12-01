@@ -1,0 +1,97 @@
+global:
+  namespace: trisla
+  imageRegistry: "ghcr.io/abelisboa"
+  imagePullSecrets:
+    - name: ghcr-secret
+  nodeSelector:
+    kubernetes.io/hostname: node1
+  env:
+    OTLP_ENABLED: false
+    KAFKA_ENABLED: false
+    BC_ENABLED: false
+    NASP_MODE: "production"
+  # Flags globais unificadas (evita duplicação)
+  otlpEnabled: false
+  kafkaEnabled: false
+  bcEnabled: false
+  naspMode: "production"
+# -------------------------------------------------------------------
+# MÓDULOS
+# -------------------------------------------------------------------
+bcNssmf:
+  enabled: true
+  image:
+    repository: "trisla-bc-nssmf"
+    tag: "nasp-a2"
+    pullPolicy: IfNotPresent
+  service:
+    port: 8083
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/hostname: node1
+decisionEngine:
+  enabled: true
+  image:
+    repository: "trisla-decision-engine"
+    tag: "nasp-a2"
+    pullPolicy: IfNotPresent
+  service:
+    port: 8082
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/hostname: node1
+mlNsmf:
+  enabled: true
+  image:
+    repository: "trisla-ml-nsmf"
+    tag: "nasp-a2"
+    pullPolicy: IfNotPresent
+  service:
+    port: 8081
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/hostname: node1
+naspAdapter:
+  enabled: true
+  image:
+    repository: "trisla-nasp-adapter"
+    tag: "nasp-a2"
+    pullPolicy: IfNotPresent
+  service:
+    port: 8085
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/hostname: node1
+semCsmf:
+  enabled: true
+  image:
+    repository: "trisla-sem-csmf"
+    tag: "nasp-a2"
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/hostname: node1
+slaAgentLayer:
+  enabled: true
+  image:
+    repository: "trisla-sla-agent-layer"
+    tag: "nasp-a2"
+    pullPolicy: IfNotPresent
+  service:
+    port: 8084
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/hostname: node1
+uiDashboard:
+  enabled: true
+  image:
+    repository: "trisla-ui-dashboard"
+    tag: "nasp-a2"
+    pullPolicy: IfNotPresent
+  service:
+    port: 80
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/hostname: node1

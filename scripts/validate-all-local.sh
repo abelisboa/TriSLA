@@ -79,3 +79,4 @@ echo "  1. Execute: ./scripts/test-all.sh"
 echo "  2. Execute: ./scripts/build-all-images.sh"
 echo "  3. Commit e push: git add . && git commit -m 'fix: correções finais' && git push"
 
+

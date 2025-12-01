@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trisla.name" . }}-bc-nssmf
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (merge . (dict "component" "bc-nssmf")) | nindent 4 }}
+spec:
+  type: {{ .Values.bcNssmf.service.type }}
+  ports:
+  - port: {{ .Values.bcNssmf.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "trisla.selectorLabels" (merge . (dict "component" "bc-nssmf")) | nindent 4 }}
+
+
+
+

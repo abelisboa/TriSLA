@@ -30,9 +30,18 @@ class OntologyLoader:
                           Se None, usa caminho padrão.
         """
         if ontology_path is None:
-            # Caminho padrão relativo ao módulo
+            # Caminho padrão relativo ao módulo - tentar OWL primeiro, depois TTL
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            ontology_path = os.path.join(current_dir, "trisla.ttl")
+            owl_path = os.path.join(current_dir, "trisla_complete.owl")
+            ttl_path = os.path.join(current_dir, "trisla.ttl")
+            
+            # Priorizar OWL completo se existir, senão usar TTL
+            if os.path.exists(owl_path):
+                ontology_path = owl_path
+            elif os.path.exists(ttl_path):
+                ontology_path = ttl_path
+            else:
+                ontology_path = owl_path  # Tentar carregar mesmo se não existir (erro será tratado)
         
         self.ontology_path = ontology_path
         self.ontology = None

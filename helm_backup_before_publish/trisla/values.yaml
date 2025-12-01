@@ -1,0 +1,209 @@
+# ============================================
+# TriSLA Helm Chart - Values
+# ============================================
+
+global:
+  imageRegistry: ghcr.io/abelisboa
+  imagePullSecrets:
+    - name: ghcr-secret
+  namespace: trisla
+
+# Network Configuration (from auto-config)
+network:
+  interface: "my5g"
+  nodeIP: "192.168.10.16"
+  gateway: "192.168.10.1"
+
+# SEM-CSMF
+semCsmf:
+  enabled: true
+  image:
+    repository: trisla-sem-csmf
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  annotations:
+    trisla-mode: degraded
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# ML-NSMF
+mlNsmf:
+  enabled: true
+  image:
+    repository: trisla-ml-nsmf
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8081
+  env:
+    KAFKA_ENABLED: "false"
+    KAFKA_BROKERS: ""
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+  replicas: 2
+
+# Decision Engine
+decisionEngine:
+  enabled: true
+  image:
+    repository: trisla-decision-engine
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# BC-NSSMF
+bcNssmf:
+  enabled: true
+  image:
+    repository: trisla-bc-nssmf
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8083
+    # Desabilitar healthcheck RPC em modo degraded
+    healthcheck:
+      enabled: false
+  annotations:
+    trisla-mode: degraded
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# SLA-Agent Layer
+slaAgentLayer:
+  enabled: true
+  image:
+    repository: trisla-sla-agent-layer
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8084
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 3
+
+# NASP Adapter
+naspAdapter:
+  enabled: true
+  image:
+    repository: trisla-nasp-adapter
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8085
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# UI Dashboard
+uiDashboard:
+  enabled: true
+  image:
+    repository: trisla-ui-dashboard
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: trisla.local
+        paths:
+          - path: /
+            pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  replicas: 2
+
+# Kafka
+kafka:
+  enabled: true
+  image:
+    repository: apache/kafka
+    tag: latest
+  replicas: 3
+
+# OpenTelemetry Collector
+otelCollector:
+  enabled: true
+  image:
+    repository: otel/opentelemetry-collector
+    tag: latest
+  service:
+    type: ClusterIP
+    ports:
+      grpc: 4317
+      http: 4318
+
+# Prometheus
+prometheus:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: latest
+
+# Grafana
+grafana:
+  enabled: true
+  image:
+    repository: grafana/grafana
+    tag: latest
+  adminPassword: admin  # ⚠️ ALTERAR EM PRODUÇÃO
+
+# Production Settings
+production:
+  enabled: true
+  simulationMode: false
+  useRealServices: true
+  executeRealActions: true
+

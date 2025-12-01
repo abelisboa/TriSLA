@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models.intent import Intent
 from .loader import OntologyLoader
 from .reasoner import SemanticReasoner
+from .cache import SemanticCache
 
 tracer = trace.get_tracer(__name__)
 
@@ -20,15 +21,17 @@ tracer = trace.get_tracer(__name__)
 class OntologyParser:
     """Parser de ontologias para validação semântica usando OWL real"""
     
-    def __init__(self, ontology_path: Optional[str] = None):
+    def __init__(self, ontology_path: Optional[str] = None, cache: Optional[SemanticCache] = None):
         """
         Inicializa parser de ontologia
         
         Args:
             ontology_path: Caminho para arquivo .ttl ou .owl. Se None, usa padrão.
+            cache: Cache semântico compartilhado (opcional, cria novo se None)
         """
         self.ontology_loader = OntologyLoader(ontology_path)
-        self.reasoner = SemanticReasoner(self.ontology_loader)
+        self.cache = cache if cache is not None else SemanticCache()
+        self.reasoner = SemanticReasoner(self.ontology_loader, cache=self.cache)
         self._initialized = False
     
     def _ensure_initialized(self):

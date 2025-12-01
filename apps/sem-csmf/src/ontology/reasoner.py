@@ -13,6 +13,7 @@ except ImportError:
     World = None
 
 from .loader import OntologyLoader
+from .cache import SemanticCache
 
 tracer = trace.get_tracer(__name__)
 
@@ -20,16 +21,18 @@ tracer = trace.get_tracer(__name__)
 class SemanticReasoner:
     """Motor de reasoning semântico"""
     
-    def __init__(self, ontology_loader: OntologyLoader):
+    def __init__(self, ontology_loader: OntologyLoader, cache: Optional[SemanticCache] = None):
         """
         Inicializa reasoner
         
         Args:
             ontology_loader: Carregador de ontologia
+            cache: Cache semântico (opcional, cria novo se None)
         """
         self.ontology_loader = ontology_loader
         self.ontology = None
         self.world = None
+        self.cache = cache if cache is not None else SemanticCache()
     
     def initialize(self):
         """Inicializa reasoner com ontologia carregada"""
@@ -60,13 +63,25 @@ class SemanticReasoner:
             Tipo de slice inferido (eMBB, URLLC, mMTC) ou None
         """
         with tracer.start_as_current_span("infer_slice_type") as span:
+            # Verificar cache primeiro
+            cached_result = self.cache.get("infer_slice_type", intent_data)
+            if cached_result is not None:
+                span.set_attribute("cache.hit", True)
+                return cached_result
+            
+            span.set_attribute("cache.hit", False)
+            
             try:
                 if not self.ontology:
                     self.initialize()
                 
                 # Se ontologia não foi carregada, usar inferência simplificada
                 if not self.ontology:
-                    return self._infer_slice_type_fallback(intent_data)
+                    result = self._infer_slice_type_fallback(intent_data)
+                    # Cachear resultado mesmo do fallback
+                    if result:
+                        self.cache.set("infer_slice_type", intent_data, result)
+                    return result
                 # Extrair requisitos
                 latency = self._parse_latency(intent_data.get("latency"))
                 throughput = self._parse_throughput(intent_data.get("throughput"))
@@ -110,6 +125,8 @@ class SemanticReasoner:
                     slice_type = best_match.replace("_Type", "").replace("_Slice", "")
                     span.set_attribute("inferred.slice_type", slice_type)
                     span.set_attribute("inferred.score", best_score)
+                    # Cachear resultado
+                    self.cache.set("infer_slice_type", intent_data, slice_type)
                     return slice_type
                 
                 return None
@@ -165,6 +182,15 @@ class SemanticReasoner:
             Dicionário com validação e detalhes
         """
         with tracer.start_as_current_span("validate_sla_requirements") as span:
+            # Verificar cache primeiro
+            cache_params = {"slice_type": slice_type, **sla_requirements}
+            cached_result = self.cache.get("validate_sla_requirements", cache_params)
+            if cached_result is not None:
+                span.set_attribute("cache.hit", True)
+                return cached_result
+            
+            span.set_attribute("cache.hit", False)
+            
             if not self.ontology:
                 self.initialize()
             
@@ -226,6 +252,9 @@ class SemanticReasoner:
                 
                 span.set_attribute("validation.valid", validation_result["valid"])
                 span.set_attribute("validation.violations_count", len(validation_result["violations"]))
+                
+                # Cachear resultado
+                self.cache.set("validate_sla_requirements", cache_params, validation_result)
                 
                 return validation_result
                 

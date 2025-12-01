@@ -5,8 +5,8 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 :TriSLAOntology a owl:Ontology ;
-    rdfs:comment "Ontologia TriSLA para gerenciamento de Network Slices com garantia de SLA" ;
-    owl:versionInfo "3.5.0" .
+    rdfs:comment "Ontologia TriSLA para gerenciamento de Network Slices com garantia de SLA - Versão expandida com atributos 3GPP TS 28.541 completos" ;
+    owl:versionInfo "3.6.0" .
 
 # ============================================
 # CLASSES PRINCIPAIS
@@ -303,6 +303,91 @@
     rdfs:range xsd:float ;
     rdfs:comment "Densidade de dispositivos por km²" .
 
+# Atributos 3GPP TS 28.541 - QoS Characteristics
+:qosCharacteristics a owl:Class ;
+    rdfs:comment "QoS Characteristics conforme 3GPP TS 28.541" ;
+    rdfs:subClassOf owl:Thing .
+
+:hasQoSCharacteristics a owl:ObjectProperty ;
+    rdfs:domain :Slice ;
+    rdfs:range :qosCharacteristics ;
+    rdfs:comment "Slice tem características QoS" .
+
+:priorityLevel a owl:DatatypeProperty ;
+    rdfs:domain :qosCharacteristics ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "Priority Level (1-8 conforme 3GPP)" .
+
+:packetDelayBudget a owl:DatatypeProperty ;
+    rdfs:domain :qosCharacteristics ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "Packet Delay Budget em ms" .
+
+:packetErrorRate a owl:DatatypeProperty ;
+    rdfs:domain :qosCharacteristics ;
+    rdfs:range xsd:float ;
+    rdfs:comment "Packet Error Rate (0-1)" .
+
+:guaranteedBitRate a owl:DatatypeProperty ;
+    rdfs:domain :qosCharacteristics ;
+    rdfs:range xsd:float ;
+    rdfs:comment "Guaranteed Bit Rate em Mbps" .
+
+:maximumBitRate a owl:DatatypeProperty ;
+    rdfs:domain :qosCharacteristics ;
+    rdfs:range xsd:float ;
+    rdfs:comment "Maximum Bit Rate em Mbps" .
+
+# Atributos 3GPP TS 28.541 - Slice Profile
+:sliceProfile a owl:Class ;
+    rdfs:comment "Slice Profile conforme 3GPP TS 28.541" ;
+    rdfs:subClassOf owl:Thing .
+
+:hasSliceProfile a owl:ObjectProperty ;
+    rdfs:domain :Slice ;
+    rdfs:range :sliceProfile ;
+    rdfs:comment "Slice tem perfil" .
+
+:plmnId a owl:DatatypeProperty ;
+    rdfs:domain :sliceProfile ;
+    rdfs:range xsd:string ;
+    rdfs:comment "PLMN Identifier" .
+
+:sNSSAI a owl:DatatypeProperty ;
+    rdfs:domain :sliceProfile ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Single Network Slice Selection Assistance Information" .
+
+:maxNumberOfUEs a owl:DatatypeProperty ;
+    rdfs:domain :sliceProfile ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "Número máximo de UEs" .
+
+:maxDataRatePerUE a owl:DatatypeProperty ;
+    rdfs:domain :sliceProfile ;
+    rdfs:range xsd:float ;
+    rdfs:comment "Taxa máxima de dados por UE em Mbps" .
+
+# Atributos 3GPP TS 28.541 - Coverage Area
+:coverageArea a owl:Class ;
+    rdfs:comment "Área de cobertura conforme 3GPP" ;
+    rdfs:subClassOf owl:Thing .
+
+:hasCoverageArea a owl:ObjectProperty ;
+    rdfs:domain :Slice ;
+    rdfs:range :coverageArea ;
+    rdfs:comment "Slice tem área de cobertura" .
+
+:areaType a owl:DatatypeProperty ;
+    rdfs:domain :coverageArea ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Tipo de área (Urban, Rural, Suburban)" .
+
+:geographicCoordinates a owl:DatatypeProperty ;
+    rdfs:domain :coverageArea ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Coordenadas geográficas (lat,lon)" .
+
 :hasSST a owl:DatatypeProperty ;
     rdfs:domain :GSTTemplate ;
     rdfs:range xsd:integer ;
@@ -374,4 +459,29 @@
     :hasSliceType :mMTC_Type ;
     :hasDeviceDensity 1000000.0 ;
     :hasReliability 0.95 .
+
+# QoS Characteristics para tipos de slice
+:eMBB_QoS a :qosCharacteristics ;
+    rdfs:label "eMBB QoS Characteristics" ;
+    :priorityLevel 6 ;
+    :packetDelayBudget 50 ;
+    :packetErrorRate 0.0001 ;
+    :guaranteedBitRate 100.0 ;
+    :maximumBitRate 1000.0 .
+
+:URLLC_QoS a :qosCharacteristics ;
+    rdfs:label "URLLC QoS Characteristics" ;
+    :priorityLevel 1 ;
+    :packetDelayBudget 10 ;
+    :packetErrorRate 0.000001 ;
+    :guaranteedBitRate 10.0 ;
+    :maximumBitRate 100.0 .
+
+:mMTC_QoS a :qosCharacteristics ;
+    rdfs:label "mMTC QoS Characteristics" ;
+    :priorityLevel 8 ;
+    :packetDelayBudget 1000 ;
+    :packetErrorRate 0.01 ;
+    :guaranteedBitRate 0.1 ;
+    :maximumBitRate 1.0 .
 

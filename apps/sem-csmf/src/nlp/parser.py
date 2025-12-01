@@ -8,6 +8,18 @@ from opentelemetry import trace
 import re
 
 try:
+    from .intent_examples import (
+        get_all_examples, get_extraction_patterns, get_keywords,
+        URLLC_KEYWORDS, EMBB_KEYWORDS, MMTC_KEYWORDS
+    )
+    EXAMPLES_AVAILABLE = True
+except ImportError:
+    EXAMPLES_AVAILABLE = False
+    URLLC_KEYWORDS = ["urllc", "ultra reliable", "low latency"]
+    EMBB_KEYWORDS = ["embb", "enhanced mobile broadband", "broadband"]
+    MMTC_KEYWORDS = ["mmtc", "massive", "iot"]
+
+try:
     import spacy
     from spacy import displacy
     SPACY_AVAILABLE = True
@@ -95,13 +107,34 @@ class NLPParser:
         requirements = {}
         text_lower = text.lower()
         
+        # Usar padrões expandidos se disponíveis
+        if EXAMPLES_AVAILABLE:
+            patterns_dict = get_extraction_patterns()
+            latency_patterns = patterns_dict.get("latency", [])
+            throughput_patterns = patterns_dict.get("throughput", [])
+            reliability_patterns = patterns_dict.get("reliability", [])
+        else:
+            # Padrões básicos como fallback
+            latency_patterns = [
+                r'lat[êe]ncia\s*(?:m[áa]xima|max)?\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*ms',
+                r'latency\s*(?:max|maximum)?\s*(?:of)?\s*(\d+(?:\.\d+)?)\s*ms',
+                r'(\d+(?:\.\d+)?)\s*ms\s*(?:de\s*)?lat[êe]ncia',
+                r'(\d+(?:\.\d+)?)\s*ms\s*(?:of\s*)?latency'
+            ]
+            throughput_patterns = [
+                r'throughput\s*(?:m[íi]nimo|min|minimum)?\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)',
+                r'(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)\s*(?:de\s*)?throughput',
+                r'largura\s*de\s*banda\s*(?:m[íi]nima|min)?\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)',
+                r'bandwidth\s*(?:min|minimum)?\s*(?:of)?\s*(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)'
+            ]
+            reliability_patterns = [
+                r'confiabilidade\s*(?:de|of)?\s*(\d+(?:\.\d+)?)%',
+                r'reliability\s*(?:of)?\s*(\d+(?:\.\d+)?)%',
+                r'(\d+(?:\.\d+)?)%\s*(?:de\s*)?confiabilidade',
+                r'(\d+(?:\.\d+)?)%\s*(?:of\s*)?reliability'
+            ]
+        
         # Extrair latência
-        latency_patterns = [
-            r'lat[êe]ncia\s*(?:m[áa]xima|max)?\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*ms',
-            r'latency\s*(?:max|maximum)?\s*(?:of)?\s*(\d+(?:\.\d+)?)\s*ms',
-            r'(\d+(?:\.\d+)?)\s*ms\s*(?:de\s*)?lat[êe]ncia',
-            r'(\d+(?:\.\d+)?)\s*ms\s*(?:of\s*)?latency'
-        ]
         for pattern in latency_patterns:
             match = re.search(pattern, text_lower, re.IGNORECASE)
             if match:
@@ -109,12 +142,6 @@ class NLPParser:
                 break
         
         # Extrair throughput
-        throughput_patterns = [
-            r'throughput\s*(?:m[íi]nimo|min|minimum)?\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)',
-            r'(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)\s*(?:de\s*)?throughput',
-            r'largura\s*de\s*banda\s*(?:m[íi]nima|min)?\s*(?:de|of)?\s*(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)',
-            r'bandwidth\s*(?:min|minimum)?\s*(?:of)?\s*(\d+(?:\.\d+)?)\s*(?:mbps|gbps|kbps)'
-        ]
         for pattern in throughput_patterns:
             match = re.search(pattern, text_lower, re.IGNORECASE)
             if match:
@@ -124,12 +151,6 @@ class NLPParser:
                 break
         
         # Extrair confiabilidade
-        reliability_patterns = [
-            r'confiabilidade\s*(?:de|of)?\s*(\d+(?:\.\d+)?)%',
-            r'reliability\s*(?:of)?\s*(\d+(?:\.\d+)?)%',
-            r'(\d+(?:\.\d+)?)%\s*(?:de\s*)?confiabilidade',
-            r'(\d+(?:\.\d+)?)%\s*(?:of\s*)?reliability'
-        ]
         for pattern in reliability_patterns:
             match = re.search(pattern, text_lower, re.IGNORECASE)
             if match:
@@ -195,10 +216,16 @@ class NLPParser:
         """Infere tipo de slice baseado em texto e requisitos"""
         text_lower = text.lower()
         
-        # Palavras-chave para cada tipo
-        embb_keywords = ["embb", "enhanced mobile broadband", "broadband", "banda larga", "video", "streaming"]
-        urllc_keywords = ["urllc", "ultra reliable", "low latency", "ultra confiável", "baixa latência", "surgery", "cirurgia"]
-        mmtc_keywords = ["mmtc", "massive", "iot", "internet das coisas", "sensores", "sensors"]
+        # Usar palavras-chave expandidas se disponíveis
+        if EXAMPLES_AVAILABLE:
+            urllc_keywords = URLLC_KEYWORDS
+            embb_keywords = EMBB_KEYWORDS
+            mmtc_keywords = MMTC_KEYWORDS
+        else:
+            # Palavras-chave básicas como fallback
+            embb_keywords = ["embb", "enhanced mobile broadband", "broadband", "banda larga", "video", "streaming"]
+            urllc_keywords = ["urllc", "ultra reliable", "low latency", "ultra confiável", "baixa latência", "surgery", "cirurgia"]
+            mmtc_keywords = ["mmtc", "massive", "iot", "internet das coisas", "sensores", "sensors"]
         
         # Verificar palavras-chave
         if any(keyword in text_lower for keyword in urllc_keywords):

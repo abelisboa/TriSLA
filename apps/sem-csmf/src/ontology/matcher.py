@@ -3,7 +3,7 @@ Semantic Matcher - SEM-CSMF
 Faz match semântico entre intent e ontologia usando reasoning real
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from opentelemetry import trace
 
 import sys
@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models.intent import Intent
 from .reasoner import SemanticReasoner
 from .loader import OntologyLoader
+from .cache import SemanticCache
 
 tracer = trace.get_tracer(__name__)
 
@@ -20,21 +21,25 @@ tracer = trace.get_tracer(__name__)
 class SemanticMatcher:
     """Faz match semântico entre intents e ontologias usando reasoning OWL"""
     
-    def __init__(self, ontology_loader: OntologyLoader = None, reasoner: SemanticReasoner = None):
+    def __init__(self, ontology_loader: OntologyLoader = None, reasoner: SemanticReasoner = None, cache: Optional[SemanticCache] = None):
         """
         Inicializa matcher semântico
         
         Args:
             ontology_loader: Carregador de ontologia (opcional, cria novo se None)
             reasoner: Reasoner semântico (opcional, cria novo se None)
+            cache: Cache semântico compartilhado (opcional, cria novo se None)
         """
         if ontology_loader is None:
             ontology_loader = OntologyLoader()
+        if cache is None:
+            cache = SemanticCache()
         if reasoner is None:
-            reasoner = SemanticReasoner(ontology_loader)
+            reasoner = SemanticReasoner(ontology_loader, cache=cache)
         
         self.ontology_loader = ontology_loader
         self.reasoner = reasoner
+        self.cache = cache
         self._initialized = False
     
     def _ensure_initialized(self):
