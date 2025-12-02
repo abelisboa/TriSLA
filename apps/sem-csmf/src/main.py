@@ -23,8 +23,7 @@ from models.intent import Intent, IntentResponse
 from models.nest import NEST
 from models.db_models import IntentModel
 from database import get_db, init_db
-from grpc_client import DecisionEngineClient
-from grpc_client_retry import DecisionEngineClientWithRetry
+from decision_engine_client import DecisionEngineHTTPClient
 from auth import get_current_user, is_auth_enabled, get_current_user_optional
 
 # Configurar OpenTelemetry (opcional em modo DEV)
@@ -80,13 +79,9 @@ init_db()
 # Inicializar processadores
 intent_processor = IntentProcessor()
 
-# Cliente gRPC para Decision Engine (com retry)
-# Usar cliente com retry em produção, cliente simples em desenvolvimento
-USE_RETRY_CLIENT = os.getenv("USE_GRPC_RETRY", "true").lower() == "true"
-if USE_RETRY_CLIENT:
-    grpc_client = DecisionEngineClientWithRetry()
-else:
-    grpc_client = DecisionEngineClient()
+# Cliente HTTP para Decision Engine
+# Usa DECISION_ENGINE_URL (padrão: http://trisla-decision-engine.trisla.svc.cluster.local:8082/evaluate)
+decision_engine_client = DecisionEngineHTTPClient()
 
 
 @app.get("/health")
@@ -135,8 +130,8 @@ async def create_intent(
             # 5. Gerar metadados para Decision Engine
             metadata = await intent_processor.generate_metadata(intent, nest)
             
-            # 6. Enviar metadados via I-01 (gRPC) para Decision Engine
-            decision_response = await grpc_client.send_nest_metadata(
+            # 6. Enviar metadados via I-01 (HTTP) para Decision Engine
+            decision_response = await decision_engine_client.send_nest_metadata(
                 intent_id=intent.intent_id,
                 nest_id=nest.nest_id,
                 tenant_id=intent.tenant_id,
@@ -149,7 +144,7 @@ async def create_intent(
             span.set_attribute("nest.id", nest.nest_id)
             span.set_attribute("nest.status", "generated")
             span.set_attribute("decision.id", decision_response.get("decision_id"))
-            span.set_attribute("grpc.success", decision_response.get("success", False))
+            span.set_attribute("decision_engine.success", decision_response.get("success", False))
             
             return IntentResponse(
                 intent_id=intent.intent_id,
