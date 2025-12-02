@@ -313,6 +313,11 @@ async def make_decision(context: dict):
 
         
         # Enviar para BC-NSSMF (I-04) e SLA-Agents (I-05)
+        # Fallback: initialize producer if None
+        if decision_producer is None:
+            logger.error("Decision producer not initialized — fallback to dummy.")
+            decision_producer = DummyProducer()
+
         await decision_producer.send_to_bc_nssmf(decision)  # I-04
         await decision_producer.send_to_sla_agents(decision)  # I-05
         
