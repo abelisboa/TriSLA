@@ -22,6 +22,7 @@ from rule_engine import RuleEngine
 from kafka_consumer import DecisionConsumer
 from kafka_producer import DecisionProducer
 from kafka_producer_retry import DecisionProducerWithRetry
+from decision_producer import DummyProducer
 from grpc_server import serve as serve_grpc
 
 # Novos módulos integrados
@@ -130,7 +131,7 @@ if kafka_enabled:
         decision_producer = DecisionProducer()
 else:
     decision_consumer = None
-    decision_producer = None
+    decision_producer = DummyProducer()
     print("ℹ️ Decision Engine: Modo DEV - Kafka desabilitado (KAFKA_ENABLED=false)")
 
 # Fallback: Iniciar gRPC quando o módulo é importado
@@ -301,6 +302,15 @@ async def make_decision(context: dict):
     """
     with tracer.start_as_current_span("make_decision") as span:
         decision = await decision_maker.decide(context)
+        # Fallback: garantir que decision_producer está inicializado
+        global decision_producer
+        if decision_producer is None:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning("Decision producer not initialized — using DummyProducer fallback")
+            from decision_producer import DummyProducer
+            decision_producer = DummyProducer()
+
         
         # Enviar para BC-NSSMF (I-04) e SLA-Agents (I-05)
         await decision_producer.send_to_bc_nssmf(decision)  # I-04
