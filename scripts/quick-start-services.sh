@@ -32,7 +32,7 @@ sleep 5
 
 # Iniciar ML-NSMF
 echo "[TriSLA Quick Start] Iniciando ML-NSMF..."
-cd apps/ml-nsmf/src
+cd apps/ml_nsmf/src  # Diretório real é ml_nsmf (underscore)
 python main.py > ../../../trisla_build.log 2>&1 &
 ML_PID=$!
 cd ../../..

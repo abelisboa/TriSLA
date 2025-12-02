@@ -27,7 +27,7 @@ $registry = "ghcr.io/$ghcrUser"
 $modules = @(
     @{name="sem-csmf"; path="apps/sem-csmf"},
     @{name="decision-engine"; path="apps/decision-engine"},
-    @{name="ml-nsmf"; path="apps/ml-nsmf"},
+    @{name="ml-nsmf"; path="apps/ml_nsmf"},  # Diretório real é ml_nsmf (underscore)
     @{name="bc-nssmf"; path="apps/bc-nssmf"},
     @{name="sla-agent-layer"; path="apps/sla-agent-layer"},
     @{name="nasp-adapter"; path="apps/nasp-adapter"},

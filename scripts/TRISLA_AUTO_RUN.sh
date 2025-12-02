@@ -257,7 +257,7 @@ echo "[TriSLA] ✅ Contrato implantado com sucesso!" | tee -a "$LOG_FILE"
 step "FASE 4 — Treinamento ML-NSMF…"
 
 # Verificar se existe script de treinamento
-TRAIN_SCRIPT="apps/ml-nsmf/src/train_model.py"
+TRAIN_SCRIPT="apps/ml_nsmf/training/train_model.py"  # Diretório real é ml_nsmf (underscore)
 if [ -f "$TRAIN_SCRIPT" ]; then
     echo "[TriSLA] Script de treinamento encontrado. Executando..." | tee -a "$LOG_FILE"
     python "$TRAIN_SCRIPT" >> "$LOG_FILE" 2>&1 || {

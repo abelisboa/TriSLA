@@ -20,7 +20,7 @@ import joblib
 # 1. Carregamento do modelo e metadados
 # ================================================================
 def load_model():
-    model_dir = Path("apps/ml-nsmf/models")
+    model_dir = Path("apps/ml_nsmf/models")
 
     rf = joblib.load(model_dir / "viability_model.pkl")
     scaler = joblib.load(model_dir / "scaler.pkl")

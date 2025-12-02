@@ -37,6 +37,8 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        - name: ML_NSMF_HTTP_URL
+          value: "http://{{ include "trisla.name" . }}-ml-nsmf:{{ .Values.mlNsmf.service.port }}"
         livenessProbe:
           httpGet:
             path: /health

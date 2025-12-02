@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-12-02T10:16:33.790430",
+  "results": [
+    {
+      "latency": 5.0,
+      "throughput": 100,
+      "reliability": 0.999,
+      "jitter": 1.0,
+      "packet_loss": 0.001,
+      "cpu_utilization": 0.5,
+      "memory_utilization": 0.5,
+      "network_bandwidth_available": 500,
+      "active_slices_count": 10,
+      "slice_type": "URLLC",
+      "scenario_name": "Fixed_URLLC",
+      "viability_score": 0.44532987317445183,
+      "risk_score": 0.5546701268255482,
+      "risk_level": "medium"
+    },
+    {
+      "latency": 5.0,
+      "throughput": 100,
+      "reliability": 0.999,
+      "jitter": 1.0,
+      "packet_loss": 0.001,
+      "cpu_utilization": 0.5,
+      "memory_utilization": 0.5,
+      "network_bandwidth_available": 500,
+      "active_slices_count": 10,
+      "slice_type": "eMBB",
+      "scenario_name": "Fixed_eMBB",
+      "viability_score": 0.45256084490425813,
+      "risk_score": 0.5474391550957418,
+      "risk_level": "medium"
+    },
+    {
+      "latency": 5.0,
+      "throughput": 100,
+      "reliability": 0.999,
+      "jitter": 1.0,
+      "packet_loss": 0.001,
+      "cpu_utilization": 0.5,
+      "memory_utilization": 0.5,
+      "network_bandwidth_available": 500,
+      "active_slices_count": 10,
+      "slice_type": "mMTC",
+      "scenario_name": "Fixed_mMTC",
+      "viability_score": 0.45256084490425813,
+      "risk_score": 0.5474391550957418,
+      "risk_level": "medium"
+    }
+  ]
+}

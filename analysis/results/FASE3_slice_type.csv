@@ -1,0 +1,4 @@
+latency,throughput,reliability,jitter,packet_loss,cpu_utilization,memory_utilization,network_bandwidth_available,active_slices_count,slice_type,scenario_name,viability_score,risk_score,risk_level
+5.0,100,0.999,1.0,0.001,0.5,0.5,500,10,URLLC,Fixed_URLLC,0.44532987317445183,0.5546701268255482,medium
+5.0,100,0.999,1.0,0.001,0.5,0.5,500,10,eMBB,Fixed_eMBB,0.45256084490425813,0.5474391550957418,medium
+5.0,100,0.999,1.0,0.001,0.5,0.5,500,10,mMTC,Fixed_mMTC,0.45256084490425813,0.5474391550957418,medium

@@ -11,6 +11,17 @@ set -euo pipefail
 GITHUB_USERNAME="${GITHUB_USERNAME:-abelisboa}"
 GHCR_NAMESPACE="ghcr.io/${GITHUB_USERNAME}"
 
+# Mapeamento: nome do serviço -> diretório real
+declare -A SERVICE_DIRS=(
+  ["bc-nssmf"]="bc-nssmf"
+  ["ml-nsmf"]="ml_nsmf"  # Diretório real é ml_nsmf (underscore)
+  ["sem-csmf"]="sem-csmf"
+  ["decision-engine"]="decision-engine"
+  ["sla-agent-layer"]="sla-agent-layer"
+  ["ui-dashboard"]="ui-dashboard"
+  ["nasp-adapter"]="nasp-adapter"
+)
+
 SERVICES=(
   "bc-nssmf"
   "ml-nsmf"
@@ -47,7 +58,9 @@ echo "📦 Iniciando build e push de imagens..."
 echo "   Log: ${BUILD_LOG}"
 
 for service in "${SERVICES[@]}"; do
-  SERVICE_DIR="apps/${service}"
+  # Usar mapeamento se existir, senão usar nome do serviço
+  SERVICE_DIR_NAME="${SERVICE_DIRS[$service]:-$service}"
+  SERVICE_DIR="apps/${SERVICE_DIR_NAME}"
   
   if [[ ! -d "${SERVICE_DIR}" ]]; then
     echo "⚠️ Diretório ${SERVICE_DIR} não encontrado. Pulando..."

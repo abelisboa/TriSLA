@@ -42,9 +42,14 @@ $expectedStructure = @{
                 "nest_generator.py" = $true
             }
         }
-        "ml-nsmf" = @{
+        "ml_nsmf" = @{  # Diretório real é ml_nsmf (underscore)
             "Dockerfile" = $true
             "requirements.txt" = $true
+            "models" = @{
+                "viability_model.pkl" = $true
+                "scaler.pkl" = $true
+                "model_metadata.json" = $true
+            }
             "src" = @{
                 "main.py" = $true
                 "predictor.py" = $true

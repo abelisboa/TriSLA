@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-12-02T10:32:21.150217",
+  "total_scenarios": 3,
+  "results": [
+    {
+      "scenario": "URLLC_critico_realista",
+      "slice_type": "URLLC",
+      "direct_viability_score": 0.5963741795467634,
+      "ml_client_viability_score": 0.5920600319336967,
+      "ml_client_risk_score": 0.4079399680663033,
+      "ml_client_risk_level": "medium",
+      "ml_client_confidence": 0.8158799361326066,
+      "ml_client_model_used": true,
+      "difference": 0.004314147613066699,
+      "status": "OK"
+    },
+    {
+      "scenario": "eMBB_alto_trafego",
+      "slice_type": "eMBB",
+      "direct_viability_score": 0.5686008514100357,
+      "ml_client_viability_score": 0.5686794840450967,
+      "ml_client_risk_score": 0.4313205159549033,
+      "ml_client_risk_level": "medium",
+      "ml_client_confidence": 0.8626410319098066,
+      "ml_client_model_used": true,
+      "difference": 7.863263506102669e-05,
+      "status": "OK"
+    },
+    {
+      "scenario": "mMTC_denso_100k_UEs",
+      "slice_type": "mMTC",
+      "direct_viability_score": 0.46864157023486486,
+      "ml_client_viability_score": 0.46686055600913595,
+      "ml_client_risk_score": 0.5331394439908641,
+      "ml_client_risk_level": "medium",
+      "ml_client_confidence": 0.9337211120182719,
+      "ml_client_model_used": true,
+      "difference": 0.0017810142257289052,
+      "status": "OK"
+    }
+  ],
+  "statistics": {
+    "max_difference": 0.004314147613066699,
+    "mean_difference": 0.0020579314912855438,
+    "ok_count": 3,
+    "total_valid": 3
+  }
+}
