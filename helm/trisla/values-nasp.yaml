@@ -28,7 +28,7 @@ bcNssmf:
   enabled: true
   image:
     repository: "trisla-bc-nssmf"
-    tag: "nasp-a2"
+    tag: "v3.7.2-nasp"
     pullPolicy: IfNotPresent
   service:
     port: 8083
@@ -61,7 +61,7 @@ naspAdapter:
   enabled: true
   image:
     repository: "trisla-nasp-adapter"
-    tag: "nasp-a2"
+    tag: "v3.7.2-nasp"
     pullPolicy: IfNotPresent
   service:
     port: 8085
@@ -72,7 +72,7 @@ semCsmf:
   enabled: true
   image:
     repository: "trisla-sem-csmf"
-    tag: "nasp-a2"
+    tag: "v3.7.2-nasp"
     pullPolicy: IfNotPresent
   service:
     port: 8080
@@ -83,7 +83,7 @@ slaAgentLayer:
   enabled: true
   image:
     repository: "trisla-sla-agent-layer"
-    tag: "nasp-a2"
+    tag: "v3.7.2-nasp"
     pullPolicy: IfNotPresent
   service:
     port: 8084
@@ -94,7 +94,7 @@ uiDashboard:
   enabled: true
   image:
     repository: "trisla-ui-dashboard"
-    tag: "nasp-a2"
+    tag: "v3.7.2-nasp"
     pullPolicy: IfNotPresent
   service:
     port: 80
