@@ -51,3 +51,4 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.naspAdapter.resources | nindent 10 }}
+

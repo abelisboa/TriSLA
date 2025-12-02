@@ -16,3 +16,4 @@ spec:
     app: trisla-sla-agent-layer
     app.kubernetes.io/name: {{ include "trisla.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+
