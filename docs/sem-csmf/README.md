@@ -2,6 +2,10 @@
 
 **Semantic-enhanced Communication Service Management Function**
 
+**Versão:** 3.7.1  
+**Fase:** S (SEM-CSMF)  
+**Status:** Estabilizado
+
 Este diretório contém toda a documentação do módulo SEM-CSMF do TriSLA.
 
 ---
@@ -18,7 +22,7 @@ Guia completo que inclui:
 - ✅ **Ontologia OWL** (integração e uso)
 - ✅ **NLP** (processamento de linguagem natural)
 - ✅ **Geração de NEST** (Network Slice Template)
-- ✅ **Interfaces** (I-01 gRPC, I-02 Kafka)
+- ✅ **Interfaces** (I-01 HTTP REST, I-02 Kafka)
 - ✅ **Persistência** (PostgreSQL)
 - ✅ **Exemplos de Uso** (código Python)
 - ✅ **Troubleshooting** (soluções para problemas comuns)

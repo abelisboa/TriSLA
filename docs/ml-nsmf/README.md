@@ -1,5 +1,9 @@
 # Documentação do ML-NSMF
 
+**Versão:** 3.7.3  
+**Fase:** M (ML-NSMF)  
+**Status:** Estabilizado
+
 Este diretório contém a documentação completa do módulo ML-NSMF.
 
 ## 📚 Documentos Disponíveis
@@ -21,12 +25,12 @@ Guia completo que inclui:
 
 ## 📁 Arquivos Relacionados
 
-- **Predictor:** `apps/ml-nsmf/src/predictor.py`
-- **Treinamento:** `apps/ml-nsmf/training/train_model.py`
-- **Modelo:** `apps/ml-nsmf/models/viability_model.pkl`
-- **Scaler:** `apps/ml-nsmf/models/scaler.pkl`
-- **Metadados:** `apps/ml-nsmf/models/model_metadata.json`
-- **Dataset:** `apps/ml-nsmf/data/datasets/trisla_ml_dataset.csv`
+- **Predictor:** `apps/ml_nsmf/src/predictor.py`
+- **Treinamento:** `apps/ml_nsmf/training/train_model.py`
+- **Modelo:** `apps/ml_nsmf/models/viability_model.pkl`
+- **Scaler:** `apps/ml_nsmf/models/scaler.pkl`
+- **Metadados:** `apps/ml_nsmf/models/model_metadata.json`
+- **Dataset:** `apps/ml_nsmf/data/datasets/trisla_ml_dataset.csv`
 
 ## 🎯 Início Rápido
 

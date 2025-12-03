@@ -1,5 +1,9 @@
 # Documentação do BC-NSSMF
 
+**Versão:** 3.7.5  
+**Fase:** B (BC-NSSMF)  
+**Status:** Estabilizado
+
 Este diretório contém a documentação completa do módulo BC-NSSMF.
 
 ## 📚 Documentos Disponíveis

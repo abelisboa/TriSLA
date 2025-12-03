@@ -1,6 +1,6 @@
 # TriSLA — Trustworthy, Reasoned and Intelligent SLA Architecture
 
-[![Version](https://img.shields.io/badge/version-3.5.0-blue.svg)](https://github.com/abelisboa/TriSLA)
+[![Version](https://img.shields.io/badge/version-3.7.7-blue.svg)](https://github.com/abelisboa/TriSLA)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-1.29%2B-blue.svg)](https://kubernetes.io/)
 [![Helm](https://img.shields.io/badge/helm-3.14%2B-blue.svg)](https://helm.sh/)
@@ -32,11 +32,11 @@
 O **TriSLA** foi projetado para resolver os desafios críticos de gerenciamento de SLAs em ambientes 5G/O-RAN, oferecendo:
 
 - **Interpretação Semântica Inteligente**: Processamento de intenções de alto nível usando ontologias OWL
-- **Predição Baseada em ML**: Antecipação de violações de SLA usando modelos LSTM com explicações (XAI)
+- **Predição Baseada em ML**: Antecipação de violações de SLA usando modelos Random Forest com explicações (XAI)
 - **Decisão Automatizada**: Motor de decisão baseado em regras para ações corretivas
 - **Registro Imutável**: Blockchain para auditoria e compliance de SLAs
 - **Agentes Federados**: Coleta e execução distribuída em domínios RAN, Transport e Core
-- **Observabilidade Completa**: Métricas, logs e traces via OpenTelemetry, Prometheus e Grafana
+- **Observabilidade Completa**: Métricas, logs e traces via OpenTelemetry, Prometheus, Grafana, Jaeger e Loki com SLO Reports automáticos
 
 ### Integração com O-RAN / 5G
 
@@ -51,9 +51,9 @@ O TriSLA integra-se nativamente com ambientes **O-RAN** e **5G** através de:
 
 | Módulo | Descrição | Tecnologia |
 |--------|-----------|------------|
-| **SEM-CSMF** | Interpretação Semântica e geração de NEST | Python, OWL, PostgreSQL, gRPC |
-| **ML-NSMF** | Predição de viabilidade de SLA | Python, LSTM, XAI, Kafka |
-| **Decision Engine** | Motor de decisão baseado em regras | Python, YAML Rules, Kafka |
+| **SEM-CSMF** | Interpretação Semântica e geração de NEST | Python, OWL, PostgreSQL, HTTP REST |
+| **ML-NSMF** | Predição de viabilidade de SLA | Python, Random Forest, XAI, Kafka |
+| **Decision Engine** | Motor de decisão baseado em regras | Python, YAML Rules, Kafka, HTTP REST |
 | **BC-NSSMF** | Smart Contracts para registro de SLA | Python, Solidity, Besu/GoQuorum |
 | **SLA-Agent Layer** | Agentes federados por domínio | Python, Kafka, YAML Config |
 | **NASP Adapter** | Integração com ambiente NASP | Python, REST, gRPC |
@@ -113,7 +113,8 @@ O TriSLA integra-se nativamente com ambientes **O-RAN** e **5G** através de:
 
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Observability Stack                          │
-│  OpenTelemetry Collector → Prometheus → Grafana                │
+│  OpenTelemetry Collector → Prometheus, Jaeger, Loki          │
+│  → Grafana (Dashboards + SLO Reports)                        │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
@@ -183,25 +184,30 @@ Para diagramas detalhados e documentação completa da arquitetura, consulte:
 ```
 TriSLA/
 ├── apps/                          # Aplicações principais
-│   ├── sem-csmf/                 # Interpretação Semântica
+│   ├── sem-csmf/                 # Interpretação Semântica (FASE S)
 │   │   ├── src/                  # Código-fonte Python
-│   │   │   └── ontology/         # Ontologias OWL (trisla.ttl)
+│   │   │   ├── ontology/         # Ontologias OWL (trisla.ttl)
+│   │   │   └── decision_engine_client.py  # Cliente HTTP para Decision Engine
 │   │   ├── Dockerfile            # Imagem Docker
 │   │   └── requirements.txt       # Dependências Python
-│   ├── ml-nsmf/                  # Predição ML
+│   ├── ml_nsmf/                  # Predição ML (Random Forest)
 │   │   ├── src/                  # Código-fonte
-│   │   ├── models/               # Modelos LSTM treinados
+│   │   ├── models/               # Modelos Random Forest treinados
 │   │   └── training/             # Scripts de treinamento
-│   ├── decision-engine/          # Motor de Decisão
+│   ├── decision-engine/          # Motor de Decisão (FASE D)
 │   │   ├── src/                  # Código-fonte
-│   │   └── config/               # Regras de decisão (YAML)
-│   ├── bc-nssmf/                 # Blockchain NSSMF
+│   │   ├── config/               # Regras de decisão (YAML)
+│   │   └── README.md             # Documentação completa
+│   ├── bc-nssmf/                 # Blockchain NSSMF (FASE B)
 │   │   ├── src/                  # Código-fonte
 │   │   ├── contracts/            # Smart Contracts Solidity
-│   │   └── blockchain/           # Configuração Besu
-│   ├── sla-agent-layer/          # Agentes Federados
+│   │   ├── blockchain/           # Configuração Besu
+│   │   └── README.md             # Documentação completa
+│   ├── sla-agent-layer/          # Agentes Federados (FASE A)
 │   │   ├── src/                  # Código-fonte
-│   │   └── src/config/           # Configurações SLO por domínio
+│   │   │   └── agent_coordinator.py  # Coordenador de políticas federadas
+│   │   ├── src/config/           # Configurações SLO por domínio
+│   │   └── README.md             # Documentação completa
 │   ├── nasp-adapter/             # Adaptador NASP
 │   │   └── src/                  # Integração com NASP
 │   └── ui-dashboard/             # Dashboard Web
@@ -265,15 +271,19 @@ TriSLA/
 │   └── security/                 # Segurança e hardening
 │
 ├── monitoring/                    # Observabilidade
-│   ├── prometheus/               # Configuração Prometheus
-│   ├── grafana/                  # Dashboards Grafana
-│   ├── otel-collector/           # OpenTelemetry Collector
-│   └── alertmanager/             # Alertas
+│   ├── prometheus/               # Configuração Prometheus + SLO Rules
+│   ├── grafana/                  # Dashboards Grafana (Overview, SLO, Metrics, Traces)
+│   ├── otel-collector/           # OpenTelemetry Collector (OTLP → Prometheus/Jaeger/Loki)
+│   └── alertmanager/             # Alertas baseados em SLO
 │
+├── apps/shared/                   # Código compartilhado
+│   └── observability/             # Módulos de observabilidade
+│       ├── metrics.py             # TrislaMetrics (OpenTelemetry)
+│       ├── slo_calculator.py      # SLOCalculator (SLO compliance)
+│       └── trace_context.py       # Propagação de contexto de trace
 ├── tests/                         # Testes automatizados
-│   ├── unit/                     # Testes unitários
-│   ├── integration/              # Testes de integração
-│   └── e2e/                      # Testes end-to-end
+│   ├── unit/                     # Testes unitários (todos os módulos)
+│   └── integration/              # Testes de integração (I-01 a I-07)
 │
 └── README.md                      # Este arquivo
 ```
@@ -1737,49 +1747,59 @@ Veja o arquivo completo: [`LICENSE`](LICENSE)
 
 ---
 
-## 🏷️ TriSLA v3.5.0 — Release Estável NASP Local
+## 🏷️ TriSLA v3.7.7 — Release Pública Completa
 
-### Release v3.5.0
+### Release v3.7.7
 
-A **TriSLA v3.5.0** representa uma consolidação completa do repositório para operação em produção no ambiente NASP, com deploy totalmente automatizado e local.
+A **TriSLA v3.7.7** representa a conclusão completa de todas as fases de implementação (S → M → D → B → A → O), com todos os módulos estabilizados, testados e prontos para produção no ambiente NASP.
 
-**Principais características:**
-- ✅ Deploy 100% local no NASP (127.0.0.1)
-- ✅ `values-nasp.yaml` como arquivo canônico
-- ✅ Release name padronizado: `trisla`
-- ✅ Proteções GitHub implementadas
-- ✅ Documentação completa e sincronizada
-- ✅ Auditoria DevOps completa
+### Fases Concluídas
 
-**Para mais informações:**
-- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
-- **Relatório de Alinhamento**: [docs/reports/FINAL_ALIGNMENT_REPORT_v3.5.0.md](docs/reports/FINAL_ALIGNMENT_REPORT_v3.5.0.md)
-
----
-
-## 🏷️ TriSLA v1.0.0 — Release Inicial
-
-Esta é a primeira versão pública e consolidada do TriSLA, alinhada à dissertação de mestrado e ao ambiente operacional NASP.
+- ✅ **FASE S (SEM-CSMF)**: Estabilização completa com cliente HTTP para Decision Engine
+- ✅ **FASE M (ML-NSMF)**: Modelo Random Forest v3.7.0 com 13 features e XAI integrado
+- ✅ **FASE D (Decision Engine)**: Motor de decisão com regras, integração ML e alta disponibilidade
+- ✅ **FASE B (BC-NSSMF)**: Smart contracts Solidity, integração Besu/GoQuorum e Metrics Oracle
+- ✅ **FASE A (SLA-Agent Layer)**: Agentes federados (RAN, Transport, Core) com políticas coordenadas
+- ✅ **FASE O (Observabilidade)**: Stack completa OpenTelemetry, Prometheus, Grafana, Jaeger, Loki e SLO Reports
 
 ### Principais Características
 
-- ✅ **Arquitetura modular e extensível**: Componentes independentes e reutilizáveis
+- ✅ **Arquitetura modular completa**: 7 módulos independentes e testados
 - ✅ **Integração completa com NASP**: Adaptador nativo para ambientes 5G/O-RAN
-- ✅ **Observabilidade end-to-end**: OpenTelemetry, Prometheus e Grafana
-- ✅ **Smart Contracts**: Registro imutável de SLAs em blockchain
+- ✅ **Observabilidade end-to-end**: OpenTelemetry, Prometheus, Grafana, Jaeger, Loki
+- ✅ **SLO Reports automáticos**: Cálculo de compliance por interface (I-01 a I-07)
+- ✅ **Smart Contracts**: Registro imutável de SLAs em blockchain (Besu/GoQuorum)
 - ✅ **Closed-loop assurance**: Automação completa de monitoramento e correção
 - ✅ **Pipeline DevOps completo**: Build, test e deploy automatizados
+- ✅ **Testes completos**: Unit, integração e E2E para todos os módulos
 - ✅ **Deploy local simplificado**: Operação direta no node1 do NASP
+- ✅ **Conteúdo público limpo**: Repositório preparado para publicação pública
 
 ### Tecnologias Utilizadas
 
-- **Backend**: Python 3.10+, FastAPI, gRPC
-- **ML/AI**: TensorFlow/Keras, LSTM, XAI
-- **Blockchain**: Solidity, Besu/GoQuorum
+- **Backend**: Python 3.10+, FastAPI, HTTP REST
+- **ML/AI**: Scikit-learn (Random Forest), XAI (SHAP/LIME)
+- **Blockchain**: Solidity, Besu/GoQuorum, Web3.py
 - **Frontend**: TypeScript, React, Vite
 - **Infraestrutura**: Kubernetes, Helm, Ansible
-- **Observabilidade**: OpenTelemetry, Prometheus, Grafana
+- **Observabilidade**: OpenTelemetry, Prometheus, Grafana, Jaeger, Loki
 - **Message Bus**: Apache Kafka
+- **Semântica**: OWL 2.0 (Turtle), owlready2
+
+### Versões dos Módulos
+
+| Módulo | Versão | Status |
+|--------|--------|--------|
+| SEM-CSMF | v3.7.1 | ✅ Estabilizado |
+| ML-NSMF | v3.7.3 | ✅ Estabilizado |
+| Decision Engine | v3.7.4 | ✅ Estabilizado |
+| BC-NSSMF | v3.7.5 | ✅ Estabilizado |
+| SLA-Agent Layer | v3.7.6 | ✅ Estabilizado |
+| Observabilidade | v3.7.7 | ✅ Completo |
+
+**Para mais informações:**
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **Documentação Completa**: [`docs/`](docs/)
 
 ---
 
