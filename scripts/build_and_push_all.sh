@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
+set -u
 
 # ============================================
 # TriSLA - Build and Push All Images to GHCR
@@ -31,6 +32,11 @@ SERVICES=(
   "ui-dashboard"
   "nasp-adapter"
 )
+
+# Tag da imagem (parâmetro ou padrão)
+IMAGE_TAG="${1:-latest}"
+
+echo "🏷️  Tag da imagem: ${IMAGE_TAG}"
 
 # Verificar se Docker está disponível
 if ! command -v docker &>/dev/null; then
@@ -67,7 +73,7 @@ for service in "${SERVICES[@]}"; do
     continue
   fi
 
-  IMAGE_NAME="${GHCR_NAMESPACE}/trisla-${service}:latest"
+  IMAGE_NAME="${GHCR_NAMESPACE}/trisla-${service}:${IMAGE_TAG}"
   
   echo ""
   echo "=========================================="
@@ -102,7 +108,7 @@ echo "=========================================="
 echo ""
 echo "📊 Resumo:"
 for service in "${SERVICES[@]}"; do
-  IMAGE_NAME="${GHCR_NAMESPACE}/trisla-${service}:latest"
+  IMAGE_NAME="${GHCR_NAMESPACE}/trisla-${service}:${IMAGE_TAG}"
   echo "   ✅ ${IMAGE_NAME}"
 done
 echo ""
