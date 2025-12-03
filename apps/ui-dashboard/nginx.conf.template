@@ -2,6 +2,9 @@
 # Usar envsubst para substituir variáveis no template
 # Defaults: trisla-decision-engine.trisla.svc.cluster.local:8082
 
+resolver kube-dns.kube-system.svc.cluster.local valid=10s;
+resolver_timeout 5s;
+
 server {
     listen 80;
     server_name localhost;
@@ -21,7 +24,7 @@ server {
 
     # API Gateway - aponta para Decision Engine (ou serviço configurado)
     location /api {
-        proxy_pass http://${API_BACKEND_HOST}:${API_BACKEND_PORT};
+        proxy_pass http://trisla-decision-engine.trisla.svc.cluster.local:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
