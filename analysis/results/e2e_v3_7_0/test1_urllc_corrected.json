@@ -1,0 +1,1 @@
+{"intent_id":"urllc-001","status":"accepted","nest_id":"nest-urllc-001","message":"Intent processed and NEST generated. Decision Engine: Decision processed successfully"}pod "curl-test-urllc-corrected" deleted from trisla namespace

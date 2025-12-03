@@ -1,0 +1,30 @@
+E2E v3.7.2-nasp-fix-IPMODE FINALIZADO
+
+Data: ter 02 dez 2025 14:46:42 -03
+Ambiente: NASP (node1)
+Modo: IP Direct (workaround DNS)
+
+========================================================
+TESTES EXECUTADOS
+========================================================
+
+✅ Teste 1: URLLC (e2e-ipmode-urllc-001)
+✅ Teste 2: eMBB (e2e-ipmode-embb-001)
+✅ Teste 3: mMTC (e2e-ipmode-mmtc-001)
+
+========================================================
+CONFIGURAÇÃO APLICADA
+========================================================
+
+DECISION_ENGINE_URL: http://10.233.59.75:8082/evaluate
+(IP direto do service Decision Engine)
+
+========================================================
+STATUS
+========================================================
+
+Pipeline: SEM-CSMF → Decision Engine (via IP) ✅
+Conectividade: OK ✅
+Health checks: OK ✅
+
+========================================================

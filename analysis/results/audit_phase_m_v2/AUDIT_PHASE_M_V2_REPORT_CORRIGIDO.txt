@@ -1,0 +1,242 @@
+============================================================
+AUDITORIA REMOTA READ-ONLY - FASE M (ML-NSMF) - V2 (CORRIGIDO)
+Data: ter 02 dez 2025 20:22:41 -03
+Host: ppgca
+Diretório: /home/porvir5g/gtp5g
+Modo: READ-ONLY (sem modificações)
+============================================================
+
+1. STATUS OPERACIONAL REAL DO ML-NSMF NO NASP
+============================================================
+
+PODS ML-NSMF:
+- Pod 1: trisla-ml-nsmf-8458884946-gnrdg
+  * Status: Running (1/1 Ready)
+  * IP: 10.233.102.165
+  * Node: node1
+  * Uptime: ~5h58m
+  * Restarts: 0
+  * Imagem: ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.0-nasp (verificar)
+
+- Pod 2: trisla-ml-nsmf-6bc8bcbb7c-ptbh4
+  * Status: ImagePullBackOff (0/1 Ready)
+  * IP: 10.233.102.166
+  * Node: node1
+  * Problema: Falha ao recuperar image pull secret (ghcr-secret)
+  * Imagem esperada: v3.7.3-nasp
+
+SERVICE ML-NSMF:
+- Nome: trisla-ml-nsmf
+- Tipo: ClusterIP
+- IP: 10.233.10.81
+- Porta: 8081/TCP
+- Status: ATIVO
+- Endpoint: 10.233.102.165:8081 (pod Running)
+- Selector: app=trisla-ml-nsmf
+
+DEPLOYMENT ML-NSMF:
+- Nome: trisla-ml-nsmf
+- Status: ProgressDeadlineExceeded (Rolling Update travado)
+- Replicas: 1 desired | 1 updated | 2 total | 1 available | 1 unavailable
+- Estratégia: RollingUpdate (25% max unavailable, 25% max surge)
+- Imagem configurada: ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.3-nasp
+- OldReplicaSet: trisla-ml-nsmf-8458884946 (1/1 - Running)
+- NewReplicaSet: trisla-ml-nsmf-6bc8bcbb7c (1/1 - ImagePullBackOff)
+
+CONFIGURAÇÃO HELM:
+- Versão configurada: v3.7.3-nasp
+- Repository: trisla-ml-nsmf
+- Porta: 8081
+- Replicas: 1
+- NodeSelector: node1
+
+DIVERGÊNCIA DE VERSÃO:
+- Helm/Deployment: v3.7.3-nasp
+- Pod em execução: v3.7.0-nasp (OLD)
+- Pod novo (falhando): v3.7.3-nasp (não consegue fazer pull)
+
+============================================================
+2. FUNCIONAMENTO DE I-02/I-03
+============================================================
+
+I-02 (DECISION ENGINE → ML-NSMF):
+- Status: POSSÍVEL (pod Running, service ativo)
+- Service endpoint: 10.233.10.81:8081
+- Pod endpoint: 10.233.102.165:8081
+- Logs I-02: Nenhuma entrada encontrada nas últimas 24h
+- Integração: NÃO CONFIRMADA operacionalmente
+
+I-03 (ML-NSMF → BC-NSSMF):
+- Status: POSSÍVEL (pod Running)
+- Logs I-03: Nenhuma entrada encontrada nas últimas 24h
+- Integração: NÃO CONFIRMADA operacionalmente
+
+============================================================
+3. LOGS CRÍTICOS COLETADOS
+============================================================
+
+LOGS ML-NSMF (Pod Running):
+- Apenas health checks (GET /health HTTP/1.1 200 OK)
+- Nenhuma predição registrada
+- Nenhum erro ou warning crítico
+- Nenhuma requisição de predição
+- Nenhuma mensagem Kafka
+- Nenhuma integração I-02 ou I-03
+
+LOGS DECISION ENGINE:
+- Nenhuma referência ao ML-NSMF encontrada nas últimas 24h
+- Nenhuma chamada HTTP para ML-NSMF detectada
+
+PREDIÇÕES REALIZADAS:
+- Últimas 24h: NENHUMA predição encontrada nos logs
+- Nenhuma entrada com palavras-chave: prediction, predict, viability, feasibility, score
+
+============================================================
+4. INTEGRIDADE DOS ARQUIVOS REAIS
+============================================================
+
+ESTRUTURA NO CONTAINER (verificar se ainda acessível):
+- Anteriormente havia modelos no container:
+  * /app/models/scaler.pkl
+  * /app/models/viability_model.pkl
+  * /app/models/model_metadata.json
+- Status atual: Não verificado (pod pode estar acessível)
+
+ESTRUTURA NO REPOSITÓRIO LOCAL:
+- apps/ml_nsmf/Dockerfile (EXISTE - 659 bytes)
+- apps/ml_nsmf/src/ (NÃO ENCONTRADO)
+- apps/ml_nsmf/models/ (NÃO EXISTE)
+- Código fonte Python: NÃO ENCONTRADO no repositório
+
+============================================================
+5. DIVERGÊNCIAS E PROBLEMAS DETECTADOS
+============================================================
+
+PROBLEMA CRÍTICO:
+1. ROLLING UPDATE TRAVADO
+   - Deployment tentando atualizar de v3.7.0-nasp para v3.7.3-nasp
+   - Novo pod não consegue fazer pull da imagem (ImagePullBackOff)
+   - Pod antigo continua rodando (v3.7.0-nasp)
+   - ProgressDeadlineExceeded no Deployment
+   - CLASSIFICAÇÃO: BLOQUEANTE
+
+2. IMAGE PULL SECRET WARNINGS
+   - Warnings sobre ghcr-secret em todos os pods
+   - Novo pod não consegue fazer pull
+   - Pod antigo está rodando (pode ter imagem em cache)
+   - CLASSIFICAÇÃO: BLOQUEANTE
+
+3. VERSÃO DESATUALIZADA EM EXECUÇÃO
+   - Pod em execução: v3.7.0-nasp (antiga)
+   - Configuração Helm: v3.7.3-nasp (nova)
+   - CLASSIFICAÇÃO: BLOQUEANTE
+
+PROBLEMA NÃO BLOQUEANTE:
+1. CÓDIGO FONTE AUSENTE
+   - Apenas Dockerfile no repositório
+   - Código está apenas na imagem container
+   - CLASSIFICAÇÃO: NÃO BLOQUEANTE (mas problemático)
+
+2. ML-NSMF NÃO ESTÁ SENDO UTILIZADO
+   - Pod está rodando e saudável
+   - Mas nenhuma predição está sendo realizada
+   - Integrações I-02/I-03 não operacionais
+   - CLASSIFICAÇÃO: NÃO BLOQUEANTE (mas indica problema de integração)
+
+============================================================
+6. CLASSIFICAÇÃO DE RISCOS
+============================================================
+
+RISCO BLOQUEANTE:
+1. Rolling update travado (ProgressDeadlineExceeded)
+2. Image pull secret com problemas (ghcr-secret)
+3. Versão desatualizada em execução (v3.7.0-nasp vs v3.7.3-nasp)
+4. Novo pod não consegue iniciar (ImagePullBackOff)
+5. Deployment em estado inconsistente
+
+RISCO NÃO BLOQUEANTE:
+1. Código fonte ausente no repositório
+2. Modelos ausentes no repositório
+3. ML-NSMF não está sendo utilizado (apenas health checks)
+4. Integrações I-02/I-03 não operacionais
+
+RISCO AMBIENTAL:
+1. Pod antigo continua rodando (pode ter imagem em cache)
+2. Service está funcionando (endpoint ativo)
+3. Mas atualização está bloqueada
+
+============================================================
+7. IMPACTO NO PROCESSO DE ESTABILIZAÇÃO DA FASE M
+============================================================
+
+IMPACTO CRÍTICO:
+- Deployment em estado inconsistente (rolling update travado)
+- Versão desatualizada em execução (v3.7.0-nasp)
+- Não é possível atualizar para v3.7.3-nasp (ImagePullBackOff)
+- ProgressDeadlineExceeded indica problema de deployment
+
+IMPACTO OPERACIONAL:
+- Pod antigo está rodando e saudável (health checks OK)
+- Service está ativo e funcionando
+- Mas ML-NSMF não está sendo utilizado (nenhuma predição)
+- Integrações I-02/I-03 não operacionais
+
+CONCLUSÃO:
+- Fase M está PARCIALMENTE OPERACIONAL
+- Pod está rodando mas com versão antiga
+- Deployment não consegue atualizar
+- ML-NSMF não está integrado ao pipeline (não está sendo usado)
+
+============================================================
+8. RECOMENDAÇÃO FINAL
+============================================================
+
+AÇÃO IMEDIATA NECESSÁRIA:
+1. Corrigir image pull secret (ghcr-secret)
+2. Resolver ImagePullBackOff do novo pod
+3. Completar rolling update para v3.7.3-nasp
+4. Verificar por que Decision Engine não está chamando ML-NSMF
+5. Validar integração I-02 (Decision Engine → ML-NSMF)
+6. Validar integração I-03 (ML-NSMF → BC-NSSMF)
+
+AÇÃO DE SINCRONIZAÇÃO:
+1. NÃO SINCRONIZAR - deployment em estado inconsistente
+2. Aguardar resolução do rolling update
+3. Extrair código fonte do container quando atualização completar
+4. Extrair modelos do container quando atualização completar
+5. Sincronizar versão da imagem com Helm chart
+
+NÃO SINCRONIZAR:
+- Deployment em estado inconsistente
+- Rolling update travado
+- Versão desatualizada em execução
+- ML-NSMF não está sendo utilizado
+
+============================================================
+9. CONCLUSÃO OBRIGATÓRIA
+============================================================
+
+AUDITORIA NODE1 CONCLUÍDA — FASE M INSTÁVEL. NÃO SINCRONIZAR.
+
+JUSTIFICATIVA:
+- Deployment em estado inconsistente (ProgressDeadlineExceeded)
+- Rolling update travado (ImagePullBackOff)
+- Versão desatualizada em execução (v3.7.0-nasp)
+- Image pull secret com problemas
+- ML-NSMF não está sendo utilizado (nenhuma predição)
+- Integrações I-02/I-03 não operacionais
+
+COMPARAÇÃO COM AUDITORIA ANTERIOR:
+- ANTES: 1 pod Running (v3.7.0-nasp), mas não integrado
+- AGORA: 1 pod Running (v3.7.0-nasp), 1 pod falhando (v3.7.3-nasp)
+- SITUAÇÃO: Deployment tentando atualizar mas travado
+
+ESTADO ATUAL:
+- Pod antigo: Running (v3.7.0-nasp) - funcional mas desatualizado
+- Pod novo: ImagePullBackOff (v3.7.3-nasp) - não consegue iniciar
+- Service: Ativo e funcionando
+- Deployment: ProgressDeadlineExceeded (travado)
+
+============================================================
+FIM DO RELATÓRIO
+============================================================

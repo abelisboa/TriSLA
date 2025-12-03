@@ -1,0 +1,143 @@
+* Owlready2 * Warning: optimized Cython parser module 'owlready2_optimized' is not available, defaulting to slower Python implementation
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+ℹ️ SEM-CSMF: Modo DEV - OTLP desabilitado (OTLP_ENABLED=false)
+INFO:     192.168.10.16:44952 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51306 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51314 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35466 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35480 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35490 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42110 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42134 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42126 - "GET /health HTTP/1.1" 200 OK
+* Owlready2 * Running Pellet...
+    java -Xmx2000M -cp /usr/local/lib/python3.10/site-packages/owlready2/pellet/slf4j-api-1.6.4.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/owlapi-distribution-3.4.3-bin.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/httpcore-4.2.2.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/httpclient-4.2.3.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/jena-core-2.10.0.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/xml-apis-1.4.01.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/slf4j-log4j12-1.6.4.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/antlr-runtime-3.2.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/jcl-over-slf4j-1.6.4.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/aterm-java-1.6.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/commons-codec-1.6.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/jgrapht-jdk1.5.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/jena-iri-0.9.5.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/log4j-api-2.19.0.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/jena-arq-2.10.0.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/pellet-2.3.1.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/log4j-core-2.19.0.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/jena-tdb-0.10.0.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/log4j-1.2-api-2.19.0.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/xercesImpl-2.10.0.jar:/usr/local/lib/python3.10/site-packages/owlready2/pellet/antlr-3.2.jar pellet.Pellet realize --loader Jena --input-format N-Triples --infer-prop-values --infer-data-prop-values --ignore-imports /tmp/tmpsmdj14j1
+Erro de conexão com Decision Engine: HTTPConnectionPool(host='trisla-decision-engine.trisla.svc.cluster.local', port=8082): Max retries exceeded with url: /evaluate (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x7c916a564dc0>: Failed to resolve 'trisla-decision-engine.trisla.svc.cluster.local' ([Errno -3] Temporary failure in name resolution)"))
+Invalid type NoneType for attribute 'decision.id' value. Expected one of ['bool', 'str', 'bytes', 'int', 'float'] or a sequence of those types
+INFO:     10.233.75.6:59294 - "POST /api/v1/intents HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37180 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37164 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57614 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57622 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57624 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56656 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56658 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56664 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59682 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59688 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59698 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45132 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45142 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45154 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48414 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48426 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48432 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57208 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57224 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57222 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34540 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34550 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34558 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56070 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56084 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56086 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34888 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34902 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34904 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35440 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35444 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35446 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46222 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46224 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46234 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46144 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46164 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46148 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44272 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44276 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44290 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53810 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53814 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53828 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33488 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33490 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33504 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46614 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46630 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46644 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47778 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47780 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47782 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56520 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56530 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56536 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43888 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43902 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43912 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33166 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33178 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33194 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34146 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34148 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34160 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47148 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47156 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47164 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45260 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45270 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45272 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47680 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47692 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47696 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56074 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56086 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56102 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35308 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35316 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35332 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36750 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36758 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36760 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47644 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47648 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47664 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34274 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34290 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34288 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54354 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54370 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54386 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45592 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45598 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45606 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51128 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51134 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51136 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51872 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51876 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51888 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42814 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42816 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42824 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47584 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47608 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47596 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36210 - "GET /health HTTP/1.1" 200 OK
+Erro de conexão com Decision Engine: HTTPConnectionPool(host='trisla-decision-engine.trisla.svc.cluster.local', port=8082): Max retries exceeded with url: /evaluate (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x7c916845b8e0>: Failed to resolve 'trisla-decision-engine.trisla.svc.cluster.local' ([Errno -3] Temporary failure in name resolution)"))
+Invalid type NoneType for attribute 'decision.id' value. Expected one of ['bool', 'str', 'bytes', 'int', 'float'] or a sequence of those types
+INFO:     10.233.75.19:41384 - "POST /api/v1/intents HTTP/1.1" 200 OK
+Erro de conexão com Decision Engine: HTTPConnectionPool(host='trisla-decision-engine.trisla.svc.cluster.local', port=8082): Max retries exceeded with url: /evaluate (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x7c9168447b20>: Failed to resolve 'trisla-decision-engine.trisla.svc.cluster.local' ([Errno -3] Temporary failure in name resolution)"))
+Invalid type NoneType for attribute 'decision.id' value. Expected one of ['bool', 'str', 'bytes', 'int', 'float'] or a sequence of those types
+INFO:     10.233.75.19:47888 - "POST /api/v1/intents HTTP/1.1" 200 OK
+Erro de conexão com Decision Engine: HTTPConnectionPool(host='trisla-decision-engine.trisla.svc.cluster.local', port=8082): Max retries exceeded with url: /evaluate (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x7c916a566440>: Failed to resolve 'trisla-decision-engine.trisla.svc.cluster.local' ([Errno -3] Temporary failure in name resolution)"))
+Invalid type NoneType for attribute 'decision.id' value. Expected one of ['bool', 'str', 'bytes', 'int', 'float'] or a sequence of those types
+INFO:     10.233.75.19:47904 - "POST /api/v1/intents HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43894 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43898 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43906 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55304 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55314 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55326 - "GET /health HTTP/1.1" 200 OK

@@ -1,0 +1,1 @@
+{"detail":[{"type":"float_parsing","loc":["body","sla_requirements","reliability"],"msg":"Input should be a valid number, unable to parse string as a number","input":"99.999%","url":"https://errors.pydantic.dev/2.5/v/float_parsing"}]}pod "curl-test-urllc-final" deleted from trisla namespace

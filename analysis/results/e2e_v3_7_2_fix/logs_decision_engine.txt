@@ -1,0 +1,209 @@
+2025-12-02 17:23:01,431 - src.main - INFO - ============================================================
+2025-12-02 17:23:01,431 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+⚠️ Blockchain DESABILITADO — usando stub BCClient
+   [STUB] BCClient inicializado em modo offline
+ℹ️ Decision Engine: Modo DEV - Kafka desabilitado (KAFKA_ENABLED=false)
+2025-12-02 17:23:01,431 - src.main - INFO - ============================================================
+2025-12-02 17:23:01,431 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+2025-12-02 17:23:01,431 - src.main - INFO - ============================================================
+🔄 Starting gRPC server (fallback method)...
+2025-12-02 17:23:01,431 - src.main - INFO - ============================================================
+🔄 Starting gRPC server (fallback method)...
+2025-12-02 17:23:01,432 - grpc_server - INFO - ============================================================
+2025-12-02 17:23:01,432 - grpc_server - INFO - ============================================================
+2025-12-02 17:23:01,432 - grpc_server - INFO - 🔧 Creating gRPC server...
+2025-12-02 17:23:01,432 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2025-12-02 17:23:01,443 - grpc_server - INFO - 🔌 Binding to port 50051...
+2025-12-02 17:23:01,443 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2025-12-02 17:23:01,445 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2025-12-02 17:23:01,445 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2025-12-02 17:23:04,434 - src.main - INFO - Thread started: alive=True
+2025-12-02 17:23:04,434 - src.main - INFO - Thread started: alive=True
+2025-12-02 17:23:04,435 - src.main - INFO - ✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+2025-12-02 17:23:04,435 - src.main - INFO - ✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+2025-12-02 17:23:04,444 - src.main - INFO - ============================================================
+2025-12-02 17:23:04,444 - src.main - INFO - ============================================================
+2025-12-02 17:23:04,444 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2025-12-02 17:23:04,444 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2025-12-02 17:23:04,445 - src.main - INFO - ============================================================
+2025-12-02 17:23:04,445 - src.main - INFO - ============================================================
+============================================================
+🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+============================================================
+2025-12-02 17:23:04,445 - grpc_server - INFO - ============================================================
+2025-12-02 17:23:04,445 - grpc_server - INFO - ============================================================
+2025-12-02 17:23:04,445 - grpc_server - INFO - 🔧 Creating gRPC server...
+2025-12-02 17:23:04,445 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2025-12-02 17:23:04,446 - grpc_server - INFO - 🔌 Binding to port 50051...
+2025-12-02 17:23:04,446 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2025-12-02 17:23:04,447 - grpc_server - INFO - ✅ gRPC server started on port 50051
+2025-12-02 17:23:04,447 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2025-12-02 17:23:06,446 - src.main - INFO - ✅ gRPC server thread started successfully
+2025-12-02 17:23:06,446 - src.main - INFO - ✅ gRPC server thread started successfully
+2025-12-02 17:23:06,446 - src.main - INFO -    Thread name: gRPC-Server
+2025-12-02 17:23:06,446 - src.main - INFO -    Thread name: gRPC-Server
+2025-12-02 17:23:06,447 - src.main - INFO -    Thread alive: True
+2025-12-02 17:23:06,447 - src.main - INFO -    Thread alive: True
+✅ gRPC server thread started successfully
+   Thread name: gRPC-Server
+   Thread alive: True
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8082 (Press CTRL+C to quit)
+INFO:     192.168.10.16:55496 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54484 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54488 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33984 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33988 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37670 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37684 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37696 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59568 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59580 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59592 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49078 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49082 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49098 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53504 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53518 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53522 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33618 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33628 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33642 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39332 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39340 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39350 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60986 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:32768 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:32776 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49846 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49858 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49862 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52624 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52636 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52642 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44644 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44660 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44666 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37504 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37512 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37526 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50798 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50814 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50820 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58462 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58476 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58482 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45842 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45848 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45862 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35576 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35592 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35606 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39036 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39042 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39052 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56762 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56770 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56780 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55994 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56010 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56012 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45364 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45376 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45386 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55466 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55480 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55496 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55218 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55220 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55228 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41154 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41160 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41174 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40322 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40336 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40338 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58524 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58528 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58530 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53498 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53512 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53526 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44384 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44390 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44398 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47684 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47694 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47700 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47244 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47248 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47250 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48626 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48640 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48642 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52142 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52144 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52156 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56992 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57002 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57016 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49704 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49716 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49722 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41902 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41914 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41918 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54522 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54530 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54534 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53188 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53204 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53218 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55704 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55718 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55720 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50796 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50798 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50808 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41900 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41904 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41906 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48934 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48936 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48942 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47982 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47996 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47998 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37040 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37056 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37072 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52104 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52108 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52120 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33526 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33530 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33546 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60018 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60024 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60030 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56950 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56952 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56982 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49644 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49646 - "GET /health HTTP/1.1" 200 OK

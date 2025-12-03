@@ -4,7 +4,7 @@ metadata:
   name: {{ include "trisla.name" . }}-sem-csmf
   namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "trisla.labels" (dict "Values" .Values "Release" .Release "Chart" .Chart "component" "sem-csmf") | nindent 4 }}
+    {{- include "trisla.labels" (merge . (dict "component" "sem-csmf")) | nindent 4 }}
 spec:
   replicas: {{ .Values.semCsmf.replicaCount | default 1 }}
   selector:
@@ -18,14 +18,14 @@ spec:
         app: trisla-sem-csmf
         app.kubernetes.io/name: {{ include "trisla.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+
     spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
       nodeSelector:
         kubernetes.io/hostname: node1
       containers:
-      - name: sem-csmf
-        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.semCsmf.image) }}
+        image: {{ include "trisla.image" (merge .Values.semCsmf.image (dict "Values" .Values)) }}
         ports:
         - containerPort: {{ .Values.semCsmf.service.port }}
           name: http
@@ -36,10 +36,6 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        {{- if .Values.semCsmf.env.DECISION_ENGINE_URL }}
-        - name: DECISION_ENGINE_URL
-          value: {{ .Values.semCsmf.env.DECISION_ENGINE_URL | quote }}
-        {{- end }}
         livenessProbe:
           httpGet:
             path: /health
@@ -54,3 +50,4 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.semCsmf.resources | nindent 10 }}
+

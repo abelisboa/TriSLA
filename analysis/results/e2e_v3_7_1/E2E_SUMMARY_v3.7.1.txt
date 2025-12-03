@@ -1,0 +1,72 @@
+===========================================================
+E2E TEST SUMMARY - TriSLA v3.7.1-nasp (FASE EC)
+===========================================================
+Data: ter 02 dez 2025 13:09:04 -03
+Ambiente: NASP
+Versão: v3.7.1-nasp
+
+RESULTADO GERAL: ⚠️  CORREÇÃO PARCIAL
+===========================================================
+
+CORREÇÕES APLICADAS:
+✅ Variável DECISION_ENGINE_URL adicionada ao deployment SEM-CSMF
+✅ Endpoint configurado: http://trisla-decision-engine.trisla.svc.cluster.local:8082/evaluate
+✅ Helm chart atualizado e validado
+✅ Deploy v3.7.1-nasp executado com sucesso
+✅ Commit e tag v3.7.1-nasp criados
+
+TESTES EXECUTADOS: 3/3
+✅ Teste 1 (URLLC): Executado - Intent processada pelo SEM-CSMF
+✅ Teste 2 (eMBB): Executado - Intent processada pelo SEM-CSMF  
+✅ Teste 3 (mMTC): Executado - Intent processada pelo SEM-CSMF
+
+TEMPO TOTAL: ~9 segundos
+Tempo médio por teste: ~3 segundos
+
+PROBLEMA PERSISTENTE:
+===========================================================
+❌ SEM-CSMF ainda tenta conectar em 127.0.0.1:50051 (gRPC)
+   - Erro: Connection refused em 127.0.0.1:50051
+   - Causa: Código Python do SEM-CSMF não usa DECISION_ENGINE_URL
+   - Código ainda está hardcoded para gRPC em localhost:50051
+
+AÇÃO NECESSÁRIA:
+===========================================================
+A imagem do SEM-CSMF precisa ser REBUILDADA com código que:
+1. Lê a variável de ambiente DECISION_ENGINE_URL
+2. Usa HTTP ao invés de gRPC (endpoint /evaluate é HTTP)
+3. Faz chamada HTTP POST para DECISION_ENGINE_URL
+
+STATUS DOS MÓDULOS:
+===========================================================
+✅ SEM-CSMF: Operacional - Processa intents
+⚠️  Decision Engine: Não recebe chamadas (código ainda usa gRPC localhost)
+✅ ML-NSMF: Operacional
+✅ BC-NSSMF: Operacional
+✅ NASP Adapter: Operacional
+
+CRITÉRIOS DE ESTABILIDADE:
+===========================================================
+✅ 3/3 intenções processadas sem erro no SEM-CSMF
+❌ 0/3 DecisionEngine responses com viability_score válido
+⚠️  Código ainda usa gRPC localhost ao invés de HTTP DECISION_ENGINE_URL
+❌ BC-NSSMF não recebeu dados (pipeline interrompido)
+❌ NASP Adapter não recebeu dados (pipeline interrompido)
+✅ Nenhum pod reiniciou durante execução
+✅ Tempo de resposta médio < 3s (SEM-CSMF)
+
+PRÓXIMOS PASSOS:
+===========================================================
+1. Modificar código Python do SEM-CSMF para usar DECISION_ENGINE_URL
+2. Alterar de gRPC para HTTP (endpoint /evaluate)
+3. Rebuildar imagem SEM-CSMF
+4. Re-executar deploy e testes E2E
+
+RELATÓRIOS GERADOS:
+===========================================================
+✅ E2E_SUMMARY_v3.7.1.txt (este arquivo)
+✅ E2E_PIPELINE_v3.7.1.json (respostas completas)
+✅ E2E_LOGS_v3.7.1.txt (últimos 200 logs de cada módulo)
+✅ test1_urllc_response.json
+✅ test2_embb_response.json
+✅ test3_mmtc_response.json

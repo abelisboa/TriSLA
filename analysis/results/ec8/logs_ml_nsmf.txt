@@ -1,0 +1,1 @@
+Error from server (BadRequest): container "ml-nsmf" in pod "trisla-ml-nsmf-6bc8bcbb7c-ptbh4" is waiting to start: trying and failing to pull image

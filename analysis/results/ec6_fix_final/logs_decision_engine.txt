@@ -1,0 +1,200 @@
+INFO:     192.168.10.16:36622 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36630 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36632 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56398 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56414 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56426 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33956 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33970 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33986 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46944 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46956 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46958 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37178 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37182 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37186 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42100 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42112 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42128 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45092 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45094 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45104 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47252 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47258 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47274 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33886 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33896 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33908 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47418 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47434 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47436 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36902 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36910 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36920 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44210 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44218 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44226 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45972 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45974 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45988 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49116 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49124 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42776 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:21086 - "POST /api/v1/decide HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/protocols/http/httptools_impl.py", line 426, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.10/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 606, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/src/main.py", line 306, in make_decision
+    await decision_producer.send_to_bc_nssmf(decision)  # I-04
+AttributeError: 'NoneType' object has no attribute 'send_to_bc_nssmf'
+INFO:     192.168.10.16:49132 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.170:34048 - "POST /api/v1/decide HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/protocols/http/httptools_impl.py", line 426, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.10/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 606, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/src/main.py", line 306, in make_decision
+    await decision_producer.send_to_bc_nssmf(decision)  # I-04
+AttributeError: 'NoneType' object has no attribute 'send_to_bc_nssmf'
+INFO:     10.233.102.170:34060 - "POST /api/v1/decide HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/protocols/http/httptools_impl.py", line 426, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.10/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 606, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/src/main.py", line 306, in make_decision
+    await decision_producer.send_to_bc_nssmf(decision)  # I-04
+AttributeError: 'NoneType' object has no attribute 'send_to_bc_nssmf'
+INFO:     10.233.102.170:48096 - "POST /api/v1/decide HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/protocols/http/httptools_impl.py", line 426, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/usr/local/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/applications.py", line 1106, in __call__
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.10/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 606, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/src/main.py", line 306, in make_decision
+    await decision_producer.send_to_bc_nssmf(decision)  # I-04
+AttributeError: 'NoneType' object has no attribute 'send_to_bc_nssmf'
+INFO:     192.168.10.16:35462 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35474 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35482 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40574 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40582 - "GET /health HTTP/1.1" 200 OK

@@ -4,7 +4,7 @@ metadata:
   name: {{ include "trisla.name" . }}-sem-csmf
   namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "trisla.labels" (dict "Values" .Values "Release" .Release "Chart" .Chart "component" "sem-csmf") | nindent 4 }}
+    {{- include "trisla.labels" (dict "Values" .Values "component" "sem-csmf") | nindent 4 }}
 spec:
   replicas: {{ .Values.semCsmf.replicaCount | default 1 }}
   selector:
@@ -36,10 +36,6 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        {{- if .Values.semCsmf.env.DECISION_ENGINE_URL }}
-        - name: DECISION_ENGINE_URL
-          value: {{ .Values.semCsmf.env.DECISION_ENGINE_URL | quote }}
-        {{- end }}
         livenessProbe:
           httpGet:
             path: /health

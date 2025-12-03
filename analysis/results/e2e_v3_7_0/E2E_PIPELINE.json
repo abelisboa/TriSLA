@@ -1,0 +1,10 @@
+{
+  "test1_urllc": 
+
+,
+  "test2_embb": 
+{"intent_id":"test-embb-001","status":"accepted","nest_id":"nest-test-embb-001","message":"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNAVAILABLE\n\tdetails = \"failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused\"\n\tdebug_error_string = \"UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused {grpc_status:14, created_time:\"2025-12-02T15:58:29.709949234+00:00\"}\"\n>"}
+,
+  "test3_mmtc": 
+{"intent_id":"test-mmtc-001","status":"accepted","nest_id":"nest-test-mmtc-001","message":"Intent processed and NEST generated. Decision Engine: Erro ao comunicar com Decision Engine após 3 tentativas: <_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNAVAILABLE\n\tdetails = \"failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused\"\n\tdebug_error_string = \"UNKNOWN:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: Connection refused {created_time:\"2025-12-02T15:58:34.277402171+00:00\", grpc_status:14}\"\n>"}
+}

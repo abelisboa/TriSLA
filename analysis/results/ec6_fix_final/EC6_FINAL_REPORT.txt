@@ -1,0 +1,196 @@
+============================================================
+EC.6 FINAL REPORT - DNS + DECISION ENGINE ENDPOINT FIX
+============================================================
+Data: ter 02 dez 2025 15:18:56 -03
+Ambiente: NASP (node1/node006)
+Namespace: trisla
+Versão: v3.7.2-nasp-fix
+
+============================================================
+1. ROOT CAUSE FINAL
+============================================================
+
+Root Cause 1: ENDPOINT INCORRETO (CRÍTICO) ✅ CORRIGIDO
+  - Problema: DECISION_ENGINE_URL usava /evaluate (não existe)
+  - Solução: Corrigido para /api/v1/decide
+  - Status: RESOLVIDO
+
+Root Cause 2: DNS NÃO FUNCIONAL (MODERADO) ⚠️ CONTORNADO
+  - Problema: DNS do cluster não resolve service names
+  - Solução: Workaround IP direto mantido
+  - Status: CONTORNADO (workaround funcional)
+
+Root Cause 3: DECISION ENGINE TAG (BAIXO) ⚠️ MANTIDO
+  - Problema: Decision Engine v3.7.0-nasp (deveria ser v3.7.2)
+  - Solução: Mantido v3.7.0-nasp por estabilidade
+  - Status: ACEITÁVEL (não bloqueia pipeline)
+
+Root Cause 4: TEMPLATE HELM DUPLICADO (BAIXO) ✅ CORRIGIDO
+  - Problema: DECISION_ENGINE_URL duplicado no template
+  - Solução: Duplicação removida
+  - Status: RESOLVIDO
+
+============================================================
+2. ARQUIVOS MODIFICADOS
+============================================================
+
+helm/trisla/values-nasp.yaml:
+  - DECISION_ENGINE_URL alterado de:
+    http://10.233.59.75:8082/evaluate
+  - Para:
+    http://10.233.59.75:8082/api/v1/decide
+
+helm/trisla/templates/deployment-sem-csmf.yaml:
+  - Removida duplicação de DECISION_ENGINE_URL
+  - Mantida única entrada correta
+
+============================================================
+3. ENDPOINT FINAL USADO PELO SEM-CSMF
+============================================================
+
+DECISION_ENGINE_URL: http://10.233.59.75:8082/api/v1/decide
+
+Configuração:
+  - values-nasp.yaml: ✅ Corrigido
+  - deployment template: ✅ Corrigido
+  - Pod SEM-CSMF: ✅ Aplicado
+
+Validação:
+  - Endpoint existe no Decision Engine: ✅
+  - Health check OK: ✅
+  - Conectividade via IP: ✅
+
+============================================================
+4. STATUS DNS
+============================================================
+
+Status: NOK - DNS não funcional
+
+Workaround aplicado: IP direto
+  - IP Decision Engine: 10.233.59.75
+  - Funcionalidade: OK ✅
+  - Documentado: SIM ✅
+
+Próximo passo (futuro):
+  - Quando DNS for corrigido, alterar para:
+    http://trisla-decision-engine.trisla.svc.cluster.local:8082/api/v1/decide
+
+============================================================
+5. RESULTADO DO E2E
+============================================================
+
+Testes executados:
+  ✅ Teste 1: URLLC (ec6-urllc-001)
+  ✅ Teste 2: eMBB (ec6-embb-001)
+  ✅ Teste 3: mMTC (ec6-mmtc-001)
+
+Validações:
+  - SEM-CSMF aceita intents: ✅
+  - NEST gerado: ✅
+  - Decision Engine recebe requisições: VERIFICAR ⚠️
+  - ML-NSMF acionado: NÃO ⚠️
+  - BC-NSSMF acionado: NÃO ⚠️
+  - Erros 404 /evaluate: NÃO ✅
+
+============================================================
+6. VERSÕES EFETIVAS DAS IMAGENS
+============================================================
+
+SEM-CSMF:
+  Imagem: ghcr.io/abelisboa/trisla-sem-csmf:v3.7.2-nasp ✅
+  Status: Running/Ready ✅
+
+Decision Engine:
+  Imagem: ghcr.io/abelisboa/trisla-decision-engine:v3.7.0-nasp
+  Status: Running/Ready ✅
+  Nota: Mantido v3.7.0 por estabilidade
+
+ML-NSMF:
+  Imagem: ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.0-nasp
+  Status: Running/Ready ✅
+
+BC-NSSMF:
+  Imagem: ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.2-nasp
+  Status: Running/Ready ✅
+
+============================================================
+7. CONCLUSÃO
+============================================================
+
+Status: EC.6 ESTABILIZADA ✅
+
+Principais conquistas:
+  1. ✅ Endpoint corrigido: /evaluate → /api/v1/decide
+  2. ✅ Pipeline SEM-CSMF → Decision Engine funcional
+  3. ✅ Workaround IP direto documentado e funcional
+  4. ✅ Template Helm limpo (duplicação removida)
+  5. ✅ E2E executado com sucesso
+
+Pendências menores:
+  - DNS ainda não funcional (workaround IP aplicado)
+  - Decision Engine em v3.7.0-nasp (não crítico)
+
+Próximos passos sugeridos:
+  1. Quando DNS for corrigido, atualizar DECISION_ENGINE_URL para usar service name
+  2. Considerar atualizar Decision Engine para v3.7.2-nasp em deploy futuro
+  3. Monitorar logs para garantir ausência de erros 404
+
+============================================================
+
+============================================================
+8. ANÁLISE DETALHADA DOS RESULTADOS
+============================================================
+
+Status do Endpoint:
+  ✅ Endpoint corrigido: /evaluate → /api/v1/decide
+  ✅ SEM-CSMF conecta ao endpoint correto
+  ✅ Decision Engine recebe requisições POST /api/v1/decide
+  ⚠️  Decision Engine retorna 500 Internal Server Error
+
+Erro identificado no Decision Engine:
+  AttributeError: 'NoneType' object has no attribute 'send_to_bc_nssmf'
+  
+  Localização: /app/src/main.py, linha 306
+  Contexto: decision_producer.send_to_bc_nssmf(decision) # I-04
+  
+  Causa: decision_producer está None (não inicializado)
+
+Impacto:
+  - SEM-CSMF → Decision Engine: ✅ Conectividade OK
+  - Decision Engine → ML-NSMF: ❌ Não acionado (erro 500)
+  - Decision Engine → BC-NSSMF: ❌ Não acionado (erro 500)
+  - Pipeline completo: ⚠️ PARCIAL (quebra no Decision Engine)
+
+Progresso:
+  - Problema 404 /evaluate: ✅ RESOLVIDO
+  - Problema endpoint incorreto: ✅ RESOLVIDO
+  - Problema DNS: ⚠️ CONTORNADO (workaround IP)
+  - Problema Decision Engine interno: ❌ IDENTIFICADO (não corrigido nesta fase)
+
+============================================================
+9. CONCLUSÃO FINAL
+============================================================
+
+Status: EC.6 PARCIALMENTE ESTABILIZADA ⚠️
+
+Conquistas:
+  1. ✅ Endpoint corrigido: /evaluate → /api/v1/decide
+  2. ✅ SEM-CSMF conecta ao Decision Engine corretamente
+  3. ✅ Nenhum erro 404 /evaluate
+  4. ✅ Workaround IP direto funcional
+  5. ✅ Template Helm corrigido (duplicação removida)
+
+Pendências:
+  1. ❌ Decision Engine com erro interno (500)
+     - decision_producer não inicializado
+     - Pipeline quebra após Decision Engine receber requisição
+  2. ⚠️ DNS ainda não funcional (workaround aplicado)
+  3. ⚠️ Decision Engine v3.7.0-nasp (não crítico)
+
+Próximos passos recomendados:
+  1. Investigar e corrigir inicialização de decision_producer no Decision Engine
+  2. Verificar configuração de Kafka/producer no Decision Engine
+  3. Quando DNS for corrigido, atualizar para service name
+  4. Considerar atualizar Decision Engine para v3.7.2-nasp
+
+============================================================

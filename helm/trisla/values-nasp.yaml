@@ -1,34 +1,28 @@
 global:
   namespace: trisla
-  imageRegistry: "ghcr.io/abelisboa"
+  imageRegistry: ghcr.io/abelisboa
   imagePullSecrets:
-    - name: ghcr-secret
+  - name: ghcr-secret
   nodeSelector:
     kubernetes.io/hostname: node1
   env:
     OTLP_ENABLED: false
     KAFKA_ENABLED: false
     BC_ENABLED: false
-    NASP_MODE: "production"
-  # Flags globais unificadas (evita duplicação)
+    NASP_MODE: production
   otlpEnabled: false
   kafkaEnabled: false
   bcEnabled: false
-  naspMode: "production"
-
-# Network Configuration (requerido pelos templates)
+  naspMode: production
 network:
-  interface: "my5g"  # Ajustar conforme ambiente NASP
-  nodeIP: "192.168.10.16"  # Ajustar conforme ambiente NASP
-  gateway: "192.168.10.1"  # Ajustar conforme ambiente NASP
-# -------------------------------------------------------------------
-# MÓDULOS
-# -------------------------------------------------------------------
+  interface: my5g
+  nodeIP: 192.168.10.16
+  gateway: 192.168.10.1
 bcNssmf:
   enabled: true
   image:
-    repository: "trisla-bc-nssmf"
-    tag: "v3.7.2-nasp"
+    repository: trisla-bc-nssmf
+    tag: v3.7.2-nasp
     pullPolicy: IfNotPresent
   service:
     port: 8083
@@ -38,8 +32,8 @@ bcNssmf:
 decisionEngine:
   enabled: true
   image:
-    repository: "trisla-decision-engine"
-    tag: "v3.7.0-nasp"  # Atualizado para versão compatível com ML-NSMF v3.7.0
+    repository: trisla-decision-engine
+    tag: v3.7.3-nasp
     pullPolicy: IfNotPresent
   service:
     port: 8082
@@ -49,8 +43,8 @@ decisionEngine:
 mlNsmf:
   enabled: true
   image:
-    repository: "trisla-ml-nsmf"
-    tag: "v3.7.0-nasp"  # Atualizado para versão do modelo v3.7.0
+    repository: trisla-ml-nsmf
+    tag: v3.7.3-nasp
     pullPolicy: IfNotPresent
   service:
     port: 8081
@@ -60,8 +54,8 @@ mlNsmf:
 naspAdapter:
   enabled: true
   image:
-    repository: "trisla-nasp-adapter"
-    tag: "v3.7.2-nasp"
+    repository: trisla-nasp-adapter
+    tag: v3.7.2-nasp
     pullPolicy: IfNotPresent
   service:
     port: 8085
@@ -69,10 +63,12 @@ naspAdapter:
   nodeSelector:
     kubernetes.io/hostname: node1
 semCsmf:
+  env:
+    DECISION_ENGINE_URL: http://10.233.59.75:8082/api/v1/decide
   enabled: true
   image:
-    repository: "trisla-sem-csmf"
-    tag: "v3.7.2-nasp"
+    repository: trisla-sem-csmf
+    tag: v3.7.2-nasp
     pullPolicy: IfNotPresent
   service:
     port: 8080
@@ -82,8 +78,8 @@ semCsmf:
 slaAgentLayer:
   enabled: true
   image:
-    repository: "trisla-sla-agent-layer"
-    tag: "v3.7.2-nasp"
+    repository: trisla-sla-agent-layer
+    tag: v3.7.2-nasp
     pullPolicy: IfNotPresent
   service:
     port: 8084
@@ -93,8 +89,8 @@ slaAgentLayer:
 uiDashboard:
   enabled: true
   image:
-    repository: "trisla-ui-dashboard"
-    tag: "v3.7.2-nasp"
+    repository: trisla-ui-dashboard
+    tag: v3.7.2-nasp
     pullPolicy: IfNotPresent
   service:
     port: 80

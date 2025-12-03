@@ -1,0 +1,35 @@
+============================================================
+RELATÓRIO FINAL E2E v3.7.0-nasp - NASP (node1)
+Data: ter 02 dez 2025 21:12:36 -03
+Ambiente: NASP (node1)
+============================================================
+
+STATUS DO AMBIENTE:
+- Pods Running/Ready: 6/7 (ui-dashboard em CrashLoopBackOff - não crítico)
+- Pods críticos: Todos Running
+- Services: 7 ativos
+- Deployments: 7 (6 Ready, 1 com problema não crítico)
+
+CENÁRIOS TESTADOS:
+1. URLLC - cirurgia remota em robótica de alta precisão
+2. eMBB - streaming 8K de evento esportivo  
+3. mMTC - monitoramento massivo de sensores IoT
+
+RESULTADOS DOS TESTES:
+Teste 1 (URLLC):
+Teste 2 (eMBB):
+Teste 3 (mMTC):
+
+LOGS COLETADOS:
+- logs_sem_csmf_updated.txt
+- logs_decision_engine_updated.txt
+- logs_ml_nsmf_updated.txt
+- logs_bc_nssmf_updated.txt
+- logs_nasp_adapter_updated.txt
+
+OBSERVAÇÕES:
+- ui-dashboard em CrashLoopBackOff (não crítico para E2E)
+- Testes executados com formato corrigido da API
+- Logs coletados para análise detalhada
+
+============================================================

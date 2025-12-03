@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "trisla.name" . }}-sem-csmf
+  name: {{ include "trisla.name" . }}-bc-nssmf
   namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "trisla.labels" (dict "Values" .Values "Release" .Release "Chart" .Chart "component" "sem-csmf") | nindent 4 }}
+    {{- include "trisla.labels" (dict "Values" .Values "component" "bc-nssmf") | nindent 4 }}
 spec:
-  replicas: {{ .Values.semCsmf.replicaCount | default 1 }}
+  replicas: {{ .Values.bcNssmf.replicaCount | default 1 }}
   selector:
     matchLabels:
-      app: trisla-sem-csmf
+      app: trisla-bc-nssmf
       app.kubernetes.io/name: {{ include "trisla.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: trisla-sem-csmf
+        app: trisla-bc-nssmf
         app.kubernetes.io/name: {{ include "trisla.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
@@ -24,10 +24,10 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: node1
       containers:
-      - name: sem-csmf
-        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.semCsmf.image) }}
+      - name: bc-nssmf
+        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.bcNssmf.image) }}
         ports:
-        - containerPort: {{ .Values.semCsmf.service.port }}
+        - containerPort: {{ .Values.bcNssmf.service.port }}
           name: http
         env:
         - name: TRISLA_NODE_INTERFACE
@@ -36,10 +36,6 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        {{- if .Values.semCsmf.env.DECISION_ENGINE_URL }}
-        - name: DECISION_ENGINE_URL
-          value: {{ .Values.semCsmf.env.DECISION_ENGINE_URL | quote }}
-        {{- end }}
         livenessProbe:
           httpGet:
             path: /health
@@ -53,4 +49,4 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
         resources:
-          {{- toYaml .Values.semCsmf.resources | nindent 10 }}
+          {{- toYaml .Values.bcNssmf.resources | nindent 10 }}
