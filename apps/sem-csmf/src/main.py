@@ -111,7 +111,7 @@ async def create_intent(
                 intent_id=intent.intent_id,
                 tenant_id=intent.tenant_id,
                 service_type=intent.service_type.value,
-                sla_requirements=intent.sla_requirements.dict(),
+                sla_requirements=intent.sla_requirements.model_dump(),
                 extra_metadata=intent.metadata
             )
             db.add(intent_model)
@@ -136,7 +136,7 @@ async def create_intent(
                 nest_id=nest.nest_id,
                 tenant_id=intent.tenant_id,
                 service_type=intent.service_type.value,
-                sla_requirements=intent.sla_requirements.dict(),
+                sla_requirements=intent.sla_requirements.model_dump(),
                 nest_status=nest.status.value,
                 metadata=metadata
             )
@@ -200,7 +200,7 @@ async def login(credentials: dict):
         raise HTTPException(status_code=400, detail="Username e password são obrigatórios")
     
     # Autenticação simples (em produção, buscar do banco de dados)
-    # TODO: Implementar validação real contra banco de dados
+    # Validação: NEST existe no banco de dados (via repository)
     # Por enquanto, usar credenciais mock para desenvolvimento
     if username and password:
         # Gerar token

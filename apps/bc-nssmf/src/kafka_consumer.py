@@ -22,8 +22,8 @@ import json
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from src.service import BCService
-from src.oracle import MetricsOracle
+from service import BCService
+from oracle import MetricsOracle
 
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)

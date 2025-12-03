@@ -135,6 +135,6 @@ class DecisionProducer:
                 span.set_attribute("kafka.enabled", False)
     
     def _get_timestamp(self) -> str:
-        from datetime import datetime
-        return datetime.utcnow().isoformat() + "Z"
+        from datetime import datetime, timezone
+        return datetime.now(timezone.utc).isoformat()
 

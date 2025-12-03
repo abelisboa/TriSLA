@@ -25,7 +25,10 @@ else:
     SOLCX_AVAILABLE = False
     set_solc_version = None
 
-from .config import BCConfig
+try:
+    from .config import BCConfig
+except ImportError:
+    from config import BCConfig
 
 logger = logging.getLogger(__name__)
 
@@ -91,42 +94,124 @@ class BCService:
                 
         except Exception as e:
             # Fallback: modo degraded
-            import logging
-            logger = logging.getLogger(__name__)
             logger.warning(f"⚠️ BC-NSSMF: RPC Besu não disponível. Entrando em modo degraded: {e}")
             self.enabled = False
             self.w3 = None
             self.contract = None
 
     def register_sla(self, customer, service_name, sla_hash, slos):
+        """
+        Registra SLA no blockchain
+        
+        Args:
+            customer: Nome do cliente
+            service_name: Nome do serviço
+            sla_hash: Hash do SLA (bytes32)
+            slos: Lista de SLOs [(name, value, threshold), ...]
+        
+        Returns:
+            Transaction receipt
+        """
         if not self.enabled or not self.contract:
             raise RuntimeError("BC-NSSMF está em modo degraded. RPC Besu não disponível.")
         
-        tx = self.contract.functions.registerSLA(
-            customer,
-            service_name,
-            sla_hash,
-            slos
-        ).transact({"from": self.account})
+        if not self.account:
+            raise RuntimeError("Conta blockchain não disponível.")
+        
+        try:
+            tx = self.contract.functions.registerSLA(
+                customer,
+                service_name,
+                sla_hash,
+                slos
+            ).transact({"from": self.account})
 
-        receipt = self.w3.eth.wait_for_transaction_receipt(tx)
-        return receipt
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx)
+            logger.info(f"SLA registrado: tx_hash={receipt.transactionHash.hex()}, block={receipt.blockNumber}")
+            return receipt
+        except Exception as e:
+            logger.error(f"Erro ao registrar SLA: {e}")
+            raise
 
     def update_status(self, sla_id, status):
+        """
+        Atualiza status de SLA no blockchain
+        
+        Args:
+            sla_id: ID do SLA
+            status: Novo status (0=REQUESTED, 1=APPROVED, 2=REJECTED, 3=ACTIVE, 4=COMPLETED)
+        
+        Returns:
+            Transaction receipt
+        """
         if not self.enabled or not self.contract:
             raise RuntimeError("BC-NSSMF está em modo degraded. RPC Besu não disponível.")
         
-        tx = self.contract.functions.updateSLAStatus(sla_id, status).transact(
-            {"from": self.account}
-        )
-        receipt = self.w3.eth.wait_for_transaction_receipt(tx)
-        return receipt
+        if not self.account:
+            raise RuntimeError("Conta blockchain não disponível.")
+        
+        try:
+            tx = self.contract.functions.updateSLAStatus(sla_id, status).transact(
+                {"from": self.account}
+            )
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx)
+            logger.info(f"Status SLA {sla_id} atualizado: tx_hash={receipt.transactionHash.hex()}, status={status}")
+            return receipt
+        except Exception as e:
+            logger.error(f"Erro ao atualizar status SLA {sla_id}: {e}")
+            raise
 
     def get_sla(self, sla_id):
+        """
+        Obtém SLA do blockchain
+        
+        Args:
+            sla_id: ID do SLA
+        
+        Returns:
+            Tuple (customer, service_name, status, created_at, updated_at) ou None
+        """
         if not self.enabled or not self.contract:
             return None  # Retornar None em modo degraded
         
         try:
-            return self.contract.functions.getSLA(sla_id).call()
-        except Exception:
+            result = self.contract.functions.getSLA(sla_id).call()
+            logger.debug(f"SLA {sla_id} obtido: {result}")
+            return result
+        except Exception as e:
+            logger.warning(f"Erro ao obter SLA {sla_id}: {e}")
+            return None
+    
+    def register_sla_on_chain(self, decision_result):
+        """
+        Registra SLA no blockchain a partir de DecisionResult (Interface I-06)
+        
+        Args:
+            decision_result: DecisionResult do Decision Engine
+        
+        Returns:
+            Transaction hash (hex) ou None
+        """
+        if not self.enabled or not self.contract:
+            logger.warning("BC-NSSMF em modo degraded - não registrando SLA no blockchain")
+            return None
+        
+        try:
+            # Extrair dados do DecisionResult
+            customer = decision_result.intent_id  # Usar intent_id como customer
+            service_name = decision_result.action.value  # AC/RENEG/REJ
+            sla_hash = self.w3.keccak(text=decision_result.decision_id)
+            
+            # Converter SLOs para formato do contrato
+            slos = []
+            if decision_result.slos:
+                for slo in decision_result.slos:
+                    slos.append((slo.name, int(slo.value * 1000), int(slo.threshold * 1000)))
+            
+            # Registrar SLA
+            receipt = self.register_sla(customer, service_name, sla_hash, slos)
+            
+            return receipt.transactionHash.hex()
+        except Exception as e:
+            logger.error(f"Erro ao registrar SLA no blockchain: {e}")
             return None

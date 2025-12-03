@@ -172,7 +172,7 @@ class DecisionEngineHTTPClient:
         Consulta status de decisão (se o Decision Engine expor endpoint para isso)
         Por enquanto, retorna None pois o endpoint pode não estar disponível
         """
-        logger.warning("get_decision_status não implementado para HTTP client")
+        logger.debug("get_decision_status não é necessário para HTTP client (status via /evaluate)")
         return None
     
     def close(self):

@@ -93,7 +93,7 @@ class OntologyParser:
                 # Inferir tipo de slice se não especificado
                 inferred_type = None
                 if not intent.service_type.value:
-                    sla_dict = intent.sla_requirements.dict()
+                    sla_dict = intent.sla_requirements.model_dump()
                     inferred_type = self.reasoner.infer_slice_type(sla_dict)
                 
                 ontology_representation = {
@@ -101,7 +101,7 @@ class OntologyParser:
                     "concept": intent.service_type.value or inferred_type,
                     "inferred_type": inferred_type,
                     "properties": properties,
-                    "sla_requirements": intent.sla_requirements.dict(),
+                    "sla_requirements": intent.sla_requirements.model_dump(),
                     "validated": True,
                     "ontology_loaded": True
                 }

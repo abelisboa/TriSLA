@@ -10,11 +10,11 @@ import os
 from pathlib import Path
 
 # Adicionar paths dos módulos
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "apps" / "sem-csmf" / "src"))
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "apps" / "decision-engine" / "src"))
+BASE_DIR = Path(__file__).parent.parent.parent
+SEM_CSMF_SRC = BASE_DIR / "apps" / "sem-csmf" / "src"
+sys.path.insert(0, str(SEM_CSMF_SRC))
 
 from grpc_client import DecisionEngineClient
-from models.nest import NetworkSliceStatus
 
 
 @pytest.mark.asyncio

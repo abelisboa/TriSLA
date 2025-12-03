@@ -83,15 +83,46 @@ class RuleEngine:
             }
     
     def _evaluate_condition(self, condition: str, context: Dict[str, Any]) -> bool:
-        """Avalia condição de regra (simplificado)"""
-        # Em produção, usar engine de regras completo (ex: pyknow, rules engine)
+        """Avalia condição de regra de forma segura"""
         try:
-            # Substituir variáveis no contexto
-            for key, value in context.items():
-                condition = condition.replace(key, str(value))
+            # Extrair variáveis da condição
+            # Exemplo: "risk_level == 'high'" -> comparar context["risk_level"] com "high"
+            if "==" in condition:
+                parts = condition.split("==")
+                if len(parts) == 2:
+                    var_name = parts[0].strip()
+                    var_value = parts[1].strip().strip("'\"")
+                    context_value = str(context.get(var_name, ""))
+                    return context_value == var_value
             
-            # Avaliar (simplificado - em produção usar parser seguro)
-            return eval(condition)
-        except:
+            # Exemplo: "sla_compliance < 0.9" -> comparar context["sla_compliance"] com 0.9
+            if "<" in condition:
+                parts = condition.split("<")
+                if len(parts) == 2:
+                    var_name = parts[0].strip()
+                    threshold = float(parts[1].strip())
+                    context_value = float(context.get(var_name, 0))
+                    return context_value < threshold
+            
+            # Exemplo: "sla_compliance >= 0.95" -> comparar context["sla_compliance"] com 0.95
+            if ">=" in condition:
+                parts = condition.split(">=")
+                if len(parts) == 2:
+                    var_name = parts[0].strip()
+                    threshold = float(parts[1].strip())
+                    context_value = float(context.get(var_name, 0))
+                    return context_value >= threshold
+            
+            # Exemplo: "risk_score > 0.7" -> comparar context["risk_score"] com 0.7
+            if ">" in condition:
+                parts = condition.split(">")
+                if len(parts) == 2:
+                    var_name = parts[0].strip()
+                    threshold = float(parts[1].strip())
+                    context_value = float(context.get(var_name, 0))
+                    return context_value > threshold
+            
+            return False
+        except (ValueError, TypeError, KeyError):
             return False
 

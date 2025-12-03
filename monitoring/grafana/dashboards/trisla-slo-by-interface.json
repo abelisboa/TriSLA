@@ -1,0 +1,182 @@
+{
+  "dashboard": {
+    "title": "TriSLA - SLO Compliance por Interface",
+    "tags": ["trisla", "slo", "interfaces"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "SLO Compliance Geral",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "trisla_slo_compliance_rate",
+            "legendFormat": "Overall SLO Compliance"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 0.8, "color": "yellow"},
+                {"value": 0.95, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "SLO Compliance por Interface",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "trisla_slo_compliance_by_interface",
+            "format": "table"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Latência p99 por Interface",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.99, rate(trisla_i01_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "I-01 (SEM-CSMF → DE)"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(trisla_i02_message_duration_seconds_bucket[5m]))",
+            "legendFormat": "I-02 (ML-NSMF → DE)"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(trisla_i03_message_duration_seconds_bucket[5m]))",
+            "legendFormat": "I-03 (DE → ML-NSMF)"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(trisla_i04_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "I-04 (DE → BC-NSSMF)"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(trisla_i05_message_duration_seconds_bucket[5m]))",
+            "legendFormat": "I-05 (DE → SLA-Agent)"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(trisla_i06_event_duration_seconds_bucket[5m]))",
+            "legendFormat": "I-06 (SLA-Agent → DE)"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(trisla_i07_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "I-07 (NASP Adapter)"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ms",
+            "label": "Latency (ms)"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Throughput por Interface",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(trisla_i01_requests_total[5m])",
+            "legendFormat": "I-01"
+          },
+          {
+            "expr": "rate(trisla_i02_messages_total[5m])",
+            "legendFormat": "I-02"
+          },
+          {
+            "expr": "rate(trisla_i03_messages_total[5m])",
+            "legendFormat": "I-03"
+          },
+          {
+            "expr": "rate(trisla_i04_requests_total[5m])",
+            "legendFormat": "I-04"
+          },
+          {
+            "expr": "rate(trisla_i05_messages_total[5m])",
+            "legendFormat": "I-05"
+          },
+          {
+            "expr": "rate(trisla_i06_events_total[5m])",
+            "legendFormat": "I-06"
+          },
+          {
+            "expr": "rate(trisla_i07_requests_total[5m])",
+            "legendFormat": "I-07"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "reqps",
+            "label": "Requests/sec"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Taxa de Erro por Interface",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(trisla_i01_errors_total[5m]) / rate(trisla_i01_requests_total[5m])",
+            "legendFormat": "I-01"
+          },
+          {
+            "expr": "rate(trisla_i02_errors_total[5m]) / rate(trisla_i02_messages_total[5m])",
+            "legendFormat": "I-02"
+          },
+          {
+            "expr": "rate(trisla_i03_errors_total[5m]) / rate(trisla_i03_messages_total[5m])",
+            "legendFormat": "I-03"
+          },
+          {
+            "expr": "rate(trisla_i04_errors_total[5m]) / rate(trisla_i04_requests_total[5m])",
+            "legendFormat": "I-04"
+          },
+          {
+            "expr": "rate(trisla_i05_errors_total[5m]) / rate(trisla_i05_messages_total[5m])",
+            "legendFormat": "I-05"
+          },
+          {
+            "expr": "rate(trisla_i06_errors_total[5m]) / rate(trisla_i06_events_total[5m])",
+            "legendFormat": "I-06"
+          },
+          {
+            "expr": "rate(trisla_i07_errors_total[5m]) / rate(trisla_i07_requests_total[5m])",
+            "legendFormat": "I-07"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "percentunit",
+            "label": "Error Rate"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Violações de SLO",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(trisla_slo_violations_total[5m])",
+            "legendFormat": "SLO Violations"
+          }
+        ]
+      }
+    ]
+  }
+}
+

@@ -35,6 +35,20 @@ exporters:
     endpoint: "0.0.0.0:8889"
     namespace: "trisla"
   
+  # Jaeger exporter (para traces distribuídos)
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+  
+  # Loki exporter (para logs)
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    labels:
+      resource:
+        service.name: "service_name"
+        deployment.environment: "deployment_environment"
+  
   # Debug exporter (substitui o logging depreciado)
   debug:
     verbosity: normal
@@ -43,8 +57,8 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
-      exporters: [debug]  # Debug exporter para desenvolvimento local
+      processors: [memory_limiter, batch, resource]
+      exporters: [jaeger, debug]  # Jaeger para traces distribuídos
     
     metrics:
       receivers: [otlp]
@@ -53,6 +67,6 @@ service:
     
     logs:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
-      exporters: [debug]  # Debug exporter para desenvolvimento local
+      processors: [memory_limiter, batch, resource]
+      exporters: [loki, debug]  # Loki para logs estruturados
 

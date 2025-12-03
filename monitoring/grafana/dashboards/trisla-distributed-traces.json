@@ -1,0 +1,120 @@
+{
+  "dashboard": {
+    "title": "TriSLA - Traces Distribuídos",
+    "tags": ["trisla", "traces", "distributed"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Trace Overview",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(otel_traces{service_name=\"trisla\"}[5m]))",
+            "legendFormat": "Total Traces/sec"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Spans por Interface",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",interface=\"I-01\"}[5m]))",
+            "legendFormat": "I-01"
+          },
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",interface=\"I-02\"}[5m]))",
+            "legendFormat": "I-02"
+          },
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",interface=\"I-03\"}[5m]))",
+            "legendFormat": "I-03"
+          },
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",interface=\"I-04\"}[5m]))",
+            "legendFormat": "I-04"
+          },
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",interface=\"I-05\"}[5m]))",
+            "legendFormat": "I-05"
+          },
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",interface=\"I-06\"}[5m]))",
+            "legendFormat": "I-06"
+          },
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",interface=\"I-07\"}[5m]))",
+            "legendFormat": "I-07"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Duração de Spans por Interface",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(otel_span_duration_bucket{service_name=\"trisla\",interface=\"I-01\"}[5m])) by (le))",
+            "legendFormat": "I-01 p99"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(otel_span_duration_bucket{service_name=\"trisla\",interface=\"I-02\"}[5m])) by (le))",
+            "legendFormat": "I-02 p99"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(otel_span_duration_bucket{service_name=\"trisla\",interface=\"I-03\"}[5m])) by (le))",
+            "legendFormat": "I-03 p99"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(otel_span_duration_bucket{service_name=\"trisla\",interface=\"I-04\"}[5m])) by (le))",
+            "legendFormat": "I-04 p99"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(otel_span_duration_bucket{service_name=\"trisla\",interface=\"I-05\"}[5m])) by (le))",
+            "legendFormat": "I-05 p99"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(otel_span_duration_bucket{service_name=\"trisla\",interface=\"I-06\"}[5m])) by (le))",
+            "legendFormat": "I-06 p99"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(otel_span_duration_bucket{service_name=\"trisla\",interface=\"I-07\"}[5m])) by (le))",
+            "legendFormat": "I-07 p99"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ms",
+            "label": "Duration (ms)"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Erros em Traces",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(otel_spans{service_name=\"trisla\",status_code=\"ERROR\"}[5m]))",
+            "legendFormat": "Error Spans/sec"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Trace Correlation",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "topk(10, sum(rate(otel_traces{service_name=\"trisla\"}[5m])) by (trace_id))",
+            "format": "table"
+          }
+        ]
+      }
+    ]
+  }
+}
+

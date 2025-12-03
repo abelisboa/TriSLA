@@ -102,7 +102,7 @@ class IntentProcessor:
                 "gst_id": f"gst-{intent.intent_id}",
                 "intent_id": intent.intent_id,
                 "service_type": intent.service_type.value,
-                "sla_requirements": intent.sla_requirements.dict(),
+                "sla_requirements": intent.sla_requirements.model_dump(),
                 "template": self._create_gst_template(intent)
             }
             
@@ -113,7 +113,7 @@ class IntentProcessor:
         """Cria template GST baseado no tipo de slice"""
         base_template = {
             "slice_type": intent.service_type.value,
-            "sla": intent.sla_requirements.dict()
+            "sla": intent.sla_requirements.model_dump()
         }
         
         # Templates específicos por tipo
@@ -165,7 +165,7 @@ class IntentProcessor:
                 "nest_id": nest_id,
                 "tenant_id": intent.tenant_id,
                 "service_type": intent.service_type.value,
-                "sla_requirements": intent.sla_requirements.dict(),
+                "sla_requirements": intent.sla_requirements.model_dump(),
                 "nest_status": nest_status,
                 "timestamp": self._get_timestamp()
             }

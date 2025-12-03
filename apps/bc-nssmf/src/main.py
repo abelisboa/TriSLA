@@ -3,7 +3,7 @@ BC-NSSMF - Blockchain-enabled Network Slice Subnet Management Function
 Executa Smart Contracts e valida SLAs
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
@@ -14,9 +14,10 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from src.service import BCService
-from src.oracle import MetricsOracle
-from src.kafka_consumer import DecisionConsumer
+from service import BCService
+from oracle import MetricsOracle
+from kafka_consumer import DecisionConsumer
+from models import SLARequest, SLAStatusUpdate
 
 # OpenTelemetry (opcional em modo DEV)
 otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
@@ -69,9 +70,128 @@ async def health():
     }
 
 
+# Interface I-04 - REST API
+@app.post("/api/v1/register-sla")
+async def register_sla(req: SLARequest):
+    """Registra SLA no blockchain (Interface I-04)"""
+    with tracer.start_as_current_span("register_sla_i04") as span:
+        if not enabled or not bc_service:
+            span.set_attribute("sla.registered", False)
+            span.set_attribute("sla.error", "BC-NSSMF em modo degraded")
+            raise HTTPException(
+                status_code=503,
+                detail="BC-NSSMF está em modo degraded. RPC Besu não disponível."
+            )
+        
+        try:
+            # Converter SLOs para formato do contrato
+            slos = [(s.name, s.value, s.threshold) for s in req.slos]
+            
+            # Converter slaHash para bytes32
+            from web3 import Web3
+            sla_hash_bytes = Web3.keccak(text=req.slaHash) if req.slaHash else Web3.keccak(text="")
+            
+            # Registrar SLA no blockchain
+            receipt = bc_service.register_sla(
+                req.customer,
+                req.serviceName,
+                sla_hash_bytes,
+                slos
+            )
+            
+            span.set_attribute("sla.registered", True)
+            span.set_attribute("sla.tx_hash", receipt.transactionHash.hex())
+            
+            return {
+                "status": "ok",
+                "tx_hash": receipt.transactionHash.hex(),
+                "block_number": receipt.blockNumber,
+                "sla_id": req.customer  # Em produção, extrair do evento
+            }
+        except RuntimeError as e:
+            span.record_exception(e)
+            span.set_attribute("sla.registered", False)
+            raise HTTPException(status_code=503, detail=str(e))
+        except Exception as e:
+            span.record_exception(e)
+            span.set_attribute("sla.registered", False)
+            raise HTTPException(status_code=500, detail=f"Erro ao registrar SLA: {str(e)}")
+
+
+@app.post("/api/v1/update-sla-status")
+async def update_sla_status(req: SLAStatusUpdate):
+    """Atualiza status de SLA no blockchain (Interface I-04)"""
+    with tracer.start_as_current_span("update_sla_status_i04") as span:
+        if not enabled or not bc_service:
+            span.set_attribute("sla.updated", False)
+            span.set_attribute("sla.error", "BC-NSSMF em modo degraded")
+            raise HTTPException(
+                status_code=503,
+                detail="BC-NSSMF está em modo degraded. RPC Besu não disponível."
+            )
+        
+        try:
+            # Atualizar status no blockchain
+            receipt = bc_service.update_status(req.slaId, req.newStatus)
+            
+            span.set_attribute("sla.updated", True)
+            span.set_attribute("sla.tx_hash", receipt.transactionHash.hex())
+            
+            return {
+                "status": "ok",
+                "tx_hash": receipt.transactionHash.hex(),
+                "block_number": receipt.blockNumber
+            }
+        except RuntimeError as e:
+            span.record_exception(e)
+            span.set_attribute("sla.updated", False)
+            raise HTTPException(status_code=503, detail=str(e))
+        except Exception as e:
+            span.record_exception(e)
+            span.set_attribute("sla.updated", False)
+            raise HTTPException(status_code=500, detail=f"Erro ao atualizar status: {str(e)}")
+
+
+@app.get("/api/v1/get-sla/{sla_id}")
+async def get_sla(sla_id: int):
+    """Obtém SLA do blockchain (Interface I-04)"""
+    with tracer.start_as_current_span("get_sla_i04") as span:
+        if not enabled or not bc_service:
+            span.set_attribute("sla.retrieved", False)
+            span.set_attribute("sla.error", "BC-NSSMF em modo degraded")
+            raise HTTPException(
+                status_code=503,
+                detail="BC-NSSMF está em modo degraded. RPC Besu não disponível."
+            )
+        
+        try:
+            sla_data = bc_service.get_sla(sla_id)
+            
+            if sla_data is None:
+                raise HTTPException(status_code=404, detail=f"SLA {sla_id} não encontrado")
+            
+            span.set_attribute("sla.retrieved", True)
+            span.set_attribute("sla.id", sla_id)
+            
+            return {
+                "sla_id": sla_id,
+                "customer": sla_data[0],
+                "service_name": sla_data[1],
+                "status": sla_data[2],
+                "created_at": sla_data[3],
+                "updated_at": sla_data[4]
+            }
+        except HTTPException:
+            raise
+        except Exception as e:
+            span.record_exception(e)
+            span.set_attribute("sla.retrieved", False)
+            raise HTTPException(status_code=500, detail=f"Erro ao obter SLA: {str(e)}")
+
+
 @app.post("/api/v1/execute-contract")
 async def execute_contract(contract_data: dict):
-    """Executa smart contract"""
+    """Executa smart contract (Interface I-04 - genérico)"""
     with tracer.start_as_current_span("execute_contract") as span:
         if not enabled or not bc_service:
             span.set_attribute("contract.executed", False)

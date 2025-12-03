@@ -22,7 +22,7 @@ class IntentRepository:
             intent_id=intent.intent_id,
             tenant_id=intent.tenant_id,
             service_type=intent.service_type.value,
-            sla_requirements=intent.sla_requirements.dict(),
+            sla_requirements=intent.sla_requirements.model_dump(),
             metadata=intent.metadata
         )
         db.add(db_intent)

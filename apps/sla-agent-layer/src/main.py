@@ -18,6 +18,7 @@ from agent_ran import AgentRAN
 from agent_transport import AgentTransport
 from agent_core import AgentCore
 from kafka_consumer import ActionConsumer
+from agent_coordinator import AgentCoordinator
 
 # OpenTelemetry (opcional em modo DEV)
 otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
@@ -39,7 +40,13 @@ FastAPIInstrumentor.instrument_app(app)
 agent_ran = AgentRAN()
 agent_transport = AgentTransport()
 agent_core = AgentCore()
-action_consumer = ActionConsumer([agent_ran, agent_transport, agent_core])
+agents = [agent_ran, agent_transport, agent_core]
+
+# Inicializar coordenador de agentes
+agent_coordinator = AgentCoordinator(agents)
+
+# Inicializar consumer Kafka
+action_consumer = ActionConsumer(agents)
 
 
 @app.get("/health")
@@ -133,32 +140,63 @@ async def get_slos():
     """
     with tracer.start_as_current_span("get_slos") as span:
         try:
-            # Obter SLOs de cada agente
-            ran_slos = await agent_ran.get_slos()
-            transport_slos = await agent_transport.get_slos()
-            core_slos = await agent_core.get_slos()
+            # Usar coordenador para avaliar todos os SLOs
+            evaluation = await agent_coordinator.evaluate_all_slos()
             
-            all_slos = {
-                "timestamp": agent_ran._get_timestamp(),
-                "slos": {
-                    "ran": ran_slos,
-                    "transport": transport_slos,
-                    "core": core_slos
-                },
-                "compliance": {
-                    "ran": ran_slos.get("compliance_rate", 0.0),
-                    "transport": transport_slos.get("compliance_rate", 0.0),
-                    "core": core_slos.get("compliance_rate", 0.0)
-                },
-                "overall_compliance": (
-                    ran_slos.get("compliance_rate", 0.0) +
-                    transport_slos.get("compliance_rate", 0.0) +
-                    core_slos.get("compliance_rate", 0.0)
-                ) / 3.0
-            }
-            
-            span.set_attribute("slos.count", len(all_slos["slos"]))
-            return all_slos
+            span.set_attribute("slos.overall_compliance", evaluation.get("overall_compliance", 0.0))
+            return evaluation
+        except Exception as e:
+            span.record_exception(e)
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/v1/coordinate")
+async def coordinate_action(action: dict, target_domains: list = None):
+    """
+    Coordena ação entre múltiplos domínios (Interface I-06)
+    
+    Body:
+        {
+            "type": "action-type",
+            "parameters": {...},
+            "target_domains": ["RAN", "Transport", "Core"]  # Opcional
+        }
+    """
+    with tracer.start_as_current_span("coordinate_action_i06") as span:
+        try:
+            result = await agent_coordinator.coordinate_action(action, target_domains)
+            span.set_attribute("coordination.success_rate", result.get("success_rate", 0.0))
+            return result
+        except Exception as e:
+            span.record_exception(e)
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/v1/policies/federated")
+async def apply_federated_policy(policy: dict):
+    """
+    Aplica política federada aos agentes (Interface I-06)
+    
+    Body:
+        {
+            "name": "policy-name",
+            "priority": "high" | "medium" | "low",
+            "domains": ["RAN", "Transport", "Core"],
+            "actions": [
+                {
+                    "domain": "RAN",
+                    "action": {...},
+                    "depends_on": ["Transport"]  # Opcional
+                }
+            ]
+        }
+    """
+    with tracer.start_as_current_span("apply_federated_policy_i06") as span:
+        try:
+            result = await agent_coordinator.apply_federated_policy(policy)
+            span.set_attribute("policy.name", result.get("policy_name", "unknown"))
+            span.set_attribute("policy.success_rate", result.get("success_rate", 0.0))
+            return result
         except Exception as e:
             span.record_exception(e)
             raise HTTPException(status_code=500, detail=str(e))

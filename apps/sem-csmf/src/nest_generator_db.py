@@ -13,11 +13,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from models.nest import NEST, NetworkSlice, NetworkSliceStatus
 from models.db_models import NESTModel, NetworkSliceModel
+from nest_generator_base import NESTGeneratorBase
 
 tracer = trace.get_tracer(__name__)
 
 
-class NESTGeneratorDB:
+class NESTGeneratorDB(NESTGeneratorBase):
     """Gera NEST com persistência em banco de dados"""
     
     def __init__(self, db: Session):
@@ -80,64 +81,9 @@ class NESTGeneratorDB:
             
             return nest
     
-    def _generate_network_slices(self, gst: Dict[str, Any]) -> list[NetworkSlice]:
-        """Gera network slices baseado no template GST"""
-        slices = []
-        template = gst.get("template", {})
-        slice_type = template.get("slice_type", "eMBB")
-        
-        # Gerar slice principal
-        main_slice = NetworkSlice(
-            slice_id=f"slice-{gst['intent_id']}-001",
-            slice_type=slice_type,
-            resources=self._calculate_resources(template),
-            status=NetworkSliceStatus.GENERATED,
-            metadata={"primary": True}
-        )
-        slices.append(main_slice)
-        
-        # Gerar slices adicionais se necessário
-        if slice_type == "URLLC":
-            redundant_slice = NetworkSlice(
-                slice_id=f"slice-{gst['intent_id']}-002",
-                slice_type=slice_type,
-                resources=self._calculate_resources(template),
-                status=NetworkSliceStatus.GENERATED,
-                metadata={"redundant": True}
-            )
-            slices.append(redundant_slice)
-        
-        return slices
-    
-    def _calculate_resources(self, template: Dict[str, Any]) -> Dict[str, Any]:
-        """Calcula recursos necessários baseado no template"""
-        resources = {
-            "cpu": "2",
-            "memory": "4Gi",
-            "storage": "10Gi"
-        }
-        
-        slice_type = template.get("slice_type")
-        if slice_type == "eMBB":
-            resources.update({
-                "bandwidth": template.get("qos", {}).get("maximum_bitrate", "1Gbps"),
-                "cpu": "4",
-                "memory": "8Gi"
-            })
-        elif slice_type == "URLLC":
-            resources.update({
-                "latency": template.get("qos", {}).get("latency", "1ms"),
-                "cpu": "2",
-                "memory": "4Gi"
-            })
-        elif slice_type == "mMTC":
-            resources.update({
-                "device_density": template.get("qos", {}).get("device_density", "1000000/km²"),
-                "cpu": "1",
-                "memory": "2Gi"
-            })
-        
-        return resources
+    # Métodos _generate_network_slices e _calculate_resources
+    # agora são herdados de NESTGeneratorBase (sem duplicidade)
+    # A versão base inclui mapeamento completo 3GPP TS 28.541
     
     async def get_nest(self, nest_id: str) -> Optional[NEST]:
         """Retorna NEST por ID do banco de dados"""
@@ -440,8 +386,5 @@ class NESTGeneratorDB:
         
         return nests
     
-    def _get_timestamp(self) -> str:
-        """Retorna timestamp atual em ISO format"""
-        from datetime import datetime
-        return datetime.utcnow().isoformat() + "Z"
+    # Método _get_timestamp herdado de NESTGeneratorBase
 

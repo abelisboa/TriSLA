@@ -97,7 +97,7 @@ class SemanticMatcher:
             try:
                 # Usar reasoner para validação completa
                 slice_type = intent.service_type.value or ontology.get("inferred_type")
-                sla_dict = intent.sla_requirements.dict()
+                sla_dict = intent.sla_requirements.model_dump()
                 
                 validation_result = self.reasoner.validate_sla_requirements(slice_type, sla_dict)
                 

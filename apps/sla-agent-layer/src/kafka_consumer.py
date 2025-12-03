@@ -167,7 +167,9 @@ class ActionConsumer:
                     }
                 
                 # Executar ação no agente
-                result = await agent.execute_action(decision)
+                # Se a decisão contém 'action', usar diretamente; senão, usar 'decision' como ação
+                action_to_execute = decision.get("action", decision)
+                result = await agent.execute_action(action_to_execute)
                 
                 logger.info(
                     f"✅ Ação executada: domain={domain}, action={action}, "

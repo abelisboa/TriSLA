@@ -6,7 +6,7 @@ Modelos para entrada/saída de decisões alinhados com SEM-CSMF, ML-NSMF e BC-NS
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class SliceType(str, Enum):
@@ -113,7 +113,7 @@ class DecisionResult(BaseModel):
     
     # Metadados
     metadata: Optional[Dict[str, Any]] = None
-    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
     class Config:
         json_schema_extra = {
