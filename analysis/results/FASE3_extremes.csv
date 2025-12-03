@@ -1,9 +1,0 @@
-name,latency,throughput,reliability,jitter,packet_loss,slice_type,cpu_utilization,memory_utilization,network_bandwidth_available,active_slices_count,viability_score,risk_score,is_valid,error
-latency_zero,0,100,0.999,1.0,0.001,URLLC,0.5,0.5,500,10,0.49135782487391066,0.5086421751260893,True,
-latency_extreme,500,100,0.999,1.0,0.001,URLLC,0.5,0.5,500,10,0.49620502685569035,0.5037949731443097,True,
-throughput_zero,5,0,0.999,1.0,0.001,eMBB,0.5,0.5,500,10,0.46510468710863473,0.5348953128913653,True,
-throughput_extreme,5,5000,0.999,1.0,0.001,eMBB,0.5,0.5,500,10,0.8613068935898112,0.13869310641018884,True,
-reliability_above_1,5,100,1.5,1.0,0.001,eMBB,0.5,0.5,500,10,0.6143778559076213,0.3856221440923787,True,
-reliability_negative,5,100,-0.1,1.0,0.001,eMBB,0.5,0.5,500,10,0.38307870695097584,0.6169212930490242,True,
-packet_loss_above_1,5,100,0.999,1.0,1.5,mMTC,0.5,0.5,500,10,0.45256084490425813,0.5474391550957418,True,
-packet_loss_negative,5,100,0.999,1.0,-0.1,mMTC,0.5,0.5,500,10,0.4551532156129167,0.5448467843870832,True,

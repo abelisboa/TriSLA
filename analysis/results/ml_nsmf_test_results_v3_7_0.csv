@@ -1,4 +1,0 @@
-name,slice_type,latency,throughput,reliability,jitter,packet_loss,cpu_utilization,memory_utilization,network_bandwidth_available,active_slices_count,slice_type_encoded,latency_throughput_ratio,reliability_packet_loss_ratio,jitter_latency_ratio,viability_score
-URLLC_critico_realista,URLLC,0.8,20,0.999,0.1,0.0001,0.12,0.18,150,5,0,0.039999999998,9989.90010099899,0.12499999984375,0.5954830468026289
-eMBB_alto_trafego,eMBB,15.0,250,0.995,3.0,0.002,0.58,0.61,500,12,1,0.05999999999976,497.4997512501244,0.19999999998666668,0.5418060891462325
-mMTC_denso_100k_UEs,mMTC,40.0,1,0.98,12.0,0.01,0.37,0.44,80,120,2,39.99999996,97.99999020000098,0.29999999999250004,0.46864157023486475

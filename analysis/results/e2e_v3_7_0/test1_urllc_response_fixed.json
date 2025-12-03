@@ -1,1 +1,0 @@
-{"detail":[{"type":"string_type","loc":["body","sla_requirements","latency"],"msg":"Input should be a valid string","input":1,"url":"https://errors.pydantic.dev/2.5/v/string_type"}]}pod "curl-test-urllc-fixed" deleted from trisla namespace

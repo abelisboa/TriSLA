@@ -1,4 +1,0 @@
-scenario,slice_type,direct_viability_score,ml_client_viability_score,ml_client_risk_score,ml_client_risk_level,ml_client_confidence,ml_client_model_used,difference,status
-URLLC_critico_realista,URLLC,0.5963741795467634,0.5920600319336967,0.4079399680663033,medium,0.8158799361326066,True,0.004314147613066699,OK
-eMBB_alto_trafego,eMBB,0.5686008514100357,0.5686794840450967,0.4313205159549033,medium,0.8626410319098066,True,7.863263506102669e-05,OK
-mMTC_denso_100k_UEs,mMTC,0.46864157023486486,0.46686055600913595,0.5331394439908641,medium,0.9337211120182719,True,0.0017810142257289052,OK

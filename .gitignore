@@ -399,3 +399,23 @@ trisla_helm_clean/
 trisla_helm_publish/
 docs/roadmap/
 tri_temp_sync/
+
+# === ÁREAS PRIVADAS (não publicar no GitHub) ===
+ansible/
+TRISLA_PROMPTS_v3.5/
+analysis/
+devops_logs/
+local/
+logs/
+results/
+actions-runner/
+helm_a2_fixed_work/
+helm_audit/
+helm_backup_before_publish/
+restore_snapshot*.sh
+*snapshot*.sh
+*rendered.yaml
+tests/unit/
+tests/integration/test_*e2e*.py
+tests/integration/test_*kafka*.py
+
