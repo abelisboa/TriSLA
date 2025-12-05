@@ -5,12 +5,13 @@ Consome I-01 (gRPC), I-02, I-03 e gera decisões AC/RENEG/REJ
 
 from contextlib import asynccontextmanager
 from typing import Optional
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 import threading
 import os
 
@@ -259,6 +260,11 @@ async def health():
         "grpc_thread": "alive" if grpc_thread and grpc_thread.is_alive() else "not_running"
     }
 
+
+@app.get("/metrics")
+async def metrics():
+    """Expor métricas Prometheus"""
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 @app.get("/debug/grpc", include_in_schema=True)
 async def debug_grpc():

@@ -3,12 +3,13 @@ ML-NSMF - Machine Learning Network Slice Management Function
 Aplicação principal FastAPI
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 import sys
 import os
@@ -61,6 +62,11 @@ async def health():
         "predictor": "ready" if predictor else "not_ready"
     }
 
+
+@app.get("/metrics")
+async def metrics():
+    """Expor métricas Prometheus"""
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 @app.post("/api/v1/predict")
 async def predict_risk(metrics: dict):

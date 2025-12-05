@@ -3,7 +3,7 @@ SEM-CSMF - Semantic-enhanced Communication Service Management Function
 Aplicação principal FastAPI
 """
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import uvicorn
@@ -12,6 +12,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 import sys
 import os
@@ -89,6 +90,11 @@ async def health():
     """Health check endpoint"""
     return {"status": "healthy", "module": "sem-csmf"}
 
+
+@app.get("/metrics")
+async def metrics():
+    """Expor métricas Prometheus"""
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 @app.post("/api/v1/intents", response_model=IntentResponse)
 async def create_intent(

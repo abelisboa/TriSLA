@@ -22,7 +22,7 @@ bcNssmf:
   enabled: true
   image:
     repository: trisla-bc-nssmf
-    tag: 3.7.9
+    tag: 3.7.10
     pullPolicy: IfNotPresent
   service:
     port: 8083
@@ -33,7 +33,7 @@ decisionEngine:
   enabled: true
   image:
     repository: trisla-decision-engine
-    tag: 3.7.9
+    tag: 3.7.10
     pullPolicy: IfNotPresent
   service:
     port: 8082
@@ -44,7 +44,7 @@ mlNsmf:
   enabled: true
   image:
     repository: trisla-ml-nsmf
-    tag: 3.7.9
+    tag: 3.7.10
     pullPolicy: IfNotPresent
   service:
     port: 8081
@@ -68,7 +68,7 @@ semCsmf:
   enabled: true
   image:
     repository: trisla-sem-csmf
-    tag: 3.7.9
+    tag: 3.7.10
     pullPolicy: IfNotPresent
   service:
     port: 8080
@@ -79,7 +79,7 @@ slaAgentLayer:
   enabled: true
   image:
     repository: trisla-sla-agent-layer
-    tag: 3.7.9
+    tag: 3.7.10
     pullPolicy: IfNotPresent
   service:
     port: 8084
