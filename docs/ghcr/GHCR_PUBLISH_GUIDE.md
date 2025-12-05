@@ -1,17 +1,19 @@
 # Guia de Publicação de Imagens GHCR — TriSLA
 
-**Versão:** 2.0 (v3.7.9)  
-**Data:** 2025-01-XX  
-**Objetivo:** Publicar todas as imagens Docker dos módulos TriSLA v3.7.9 com observability no GitHub Container Registry (GHCR)
+**Versão:** 3.0 (v3.7.10)  
+**Data:** 2025-12-05  
+**Objetivo:** Publicar todas as imagens Docker dos módulos TriSLA v3.7.10 com observability no GitHub Container Registry (GHCR)
 
 ---
 
-## 🆕 Novidades v3.7.9
+## 🆕 Novidades v3.7.10
 
 - ✅ **Observability Integrada**: Todos os módulos incluem métricas Prometheus e traces OpenTelemetry
 - ✅ **Build Automatizado**: Scripts para build e push de todas as imagens
-- ✅ **Tags Atualizadas**: Imagens disponíveis com tag `3.7.9` e `latest`
-- ✅ **Dependências Corrigidas**: Conflitos de versões OpenTelemetry resolvidos
+- ✅ **Tags Atualizadas**: Imagens disponíveis com tag `3.7.10` e `latest`
+- ✅ **Deploy Completo**: Todas as 7 imagens deployadas e operacionais no NASP
+- ✅ **ServiceMonitors**: 6 ServiceMonitors configurados para descoberta automática
+- ✅ **OTEL Collector**: Deployado e funcionando
 
 ---
 
@@ -45,7 +47,7 @@ docker buildx create --use
 
 ---
 
-## Publicação Automática v3.7.9
+## Publicação Automática v3.7.10
 
 ### Método 1: Script Bash (Linux/WSL) — Recomendado
 
@@ -55,16 +57,18 @@ cd /mnt/c/Users/USER/Documents/TriSLA-clean
 # Autenticar no GHCR (se necessário)
 echo $GHCR_TOKEN | docker login ghcr.io -u abelisboa --password-stdin
 
-# Build e push de todas as imagens 3.7.9
-bash build_push_3.7.9.sh
+# Build e push de todas as imagens 3.7.10
+bash build_push_3.7.10.sh
 ```
 
 **O script constrói e faz push de:**
-- `ghcr.io/abelisboa/trisla-sem-csmf:3.7.9` e `:latest`
-- `ghcr.io/abelisboa/trisla-ml-nsmf:3.7.9` e `:latest`
-- `ghcr.io/abelisboa/trisla-decision-engine:3.7.9` e `:latest`
-- `ghcr.io/abelisboa/trisla-bc-nssmf:3.7.9` e `:latest`
-- `ghcr.io/abelisboa/trisla-sla-agent-layer:3.7.9` e `:latest`
+- `ghcr.io/abelisboa/trisla-sem-csmf:3.7.10` e `:latest`
+- `ghcr.io/abelisboa/trisla-ml-nsmf:3.7.10` e `:latest`
+- `ghcr.io/abelisboa/trisla-decision-engine:3.7.10` e `:latest`
+- `ghcr.io/abelisboa/trisla-bc-nssmf:3.7.10` e `:latest`
+- `ghcr.io/abelisboa/trisla-sla-agent-layer:3.7.10` e `:latest`
+- `ghcr.io/abelisboa/trisla-nasp-adapter:3.7.10` e `:latest`
+- `ghcr.io/abelisboa/trisla-ui-dashboard:3.7.10` e `:latest`
 
 ### Método 2: Script PowerShell (Windows)
 
@@ -74,8 +78,8 @@ cd C:\Users\USER\Documents\TriSLA-clean
 # Autenticar no GHCR (se necessário)
 $env:GHCR_TOKEN | docker login ghcr.io -u abelisboa --password-stdin
 
-# Build e push de todas as imagens 3.7.9
-.\build_push_images_3.7.9.ps1
+# Build e push de todas as imagens 3.7.10
+.\build_push_images_3.7.10.ps1
 ```
 
 ### Método 3: Manual (Passo a Passo)
