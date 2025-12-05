@@ -55,7 +55,7 @@ naspAdapter:
   enabled: true
   image:
     repository: trisla-nasp-adapter
-    tag: v3.7.2-nasp
+    tag: 3.7.10
     pullPolicy: IfNotPresent
   service:
     port: 8085
@@ -90,7 +90,7 @@ uiDashboard:
   enabled: true
   image:
     repository: trisla-ui-dashboard
-    tag: v3.7.2-nasp
+    tag: 3.7.10
     pullPolicy: IfNotPresent
   service:
     port: 80
