@@ -1,8 +1,17 @@
 # Guia de Publicação de Imagens GHCR — TriSLA
 
-**Versão:** 1.0  
-**Data:** 2025-11-22  
-**Objetivo:** Publicar todas as imagens Docker dos módulos TriSLA no GitHub Container Registry (GHCR)
+**Versão:** 2.0 (v3.7.9)  
+**Data:** 2025-01-XX  
+**Objetivo:** Publicar todas as imagens Docker dos módulos TriSLA v3.7.9 com observability no GitHub Container Registry (GHCR)
+
+---
+
+## 🆕 Novidades v3.7.9
+
+- ✅ **Observability Integrada**: Todos os módulos incluem métricas Prometheus e traces OpenTelemetry
+- ✅ **Build Automatizado**: Scripts para build e push de todas as imagens
+- ✅ **Tags Atualizadas**: Imagens disponíveis com tag `3.7.9` e `latest`
+- ✅ **Dependências Corrigidas**: Conflitos de versões OpenTelemetry resolvidos
 
 ---
 
@@ -36,32 +45,37 @@ docker buildx create --use
 
 ---
 
-## Publicação Automática
+## Publicação Automática v3.7.9
 
-### Método 1: Script Bash (Linux/macOS/WSL)
+### Método 1: Script Bash (Linux/WSL) — Recomendado
 
 ```bash
-# Definir token
-export GHCR_TOKEN="ghp_xxxxxxxxxxxx"
+cd /mnt/c/Users/USER/Documents/TriSLA-clean
 
-# Build de todas as imagens
-./scripts/build-all-images.sh
+# Autenticar no GHCR (se necessário)
+echo $GHCR_TOKEN | docker login ghcr.io -u abelisboa --password-stdin
 
-# Push de todas as imagens (após build)
-# Nota: Use docker buildx build --push ou scripts individuais
+# Build e push de todas as imagens 3.7.9
+bash build_push_3.7.9.sh
 ```
+
+**O script constrói e faz push de:**
+- `ghcr.io/abelisboa/trisla-sem-csmf:3.7.9` e `:latest`
+- `ghcr.io/abelisboa/trisla-ml-nsmf:3.7.9` e `:latest`
+- `ghcr.io/abelisboa/trisla-decision-engine:3.7.9` e `:latest`
+- `ghcr.io/abelisboa/trisla-bc-nssmf:3.7.9` e `:latest`
+- `ghcr.io/abelisboa/trisla-sla-agent-layer:3.7.9` e `:latest`
 
 ### Método 2: Script PowerShell (Windows)
 
 ```powershell
-# Definir token
-$env:GHCR_TOKEN = "ghp_xxxxxxxxxxxx"
+cd C:\Users\USER\Documents\TriSLA-clean
 
-# Build e push de todas as imagens
-.\scripts\build-push-images.ps1
+# Autenticar no GHCR (se necessário)
+$env:GHCR_TOKEN | docker login ghcr.io -u abelisboa --password-stdin
 
-# OU apenas push (se imagens já foram buildadas)
-.\scripts\push-all-images.ps1
+# Build e push de todas as imagens 3.7.9
+.\build_push_images_3.7.9.ps1
 ```
 
 ### Método 3: Manual (Passo a Passo)

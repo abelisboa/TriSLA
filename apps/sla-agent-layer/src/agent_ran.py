@@ -11,7 +11,7 @@ Conforme dissertação TriSLA:
 
 import sys
 import os
-from typing import Dict, Any, Optional, TYPE_CHECKING
+from typing import Dict, Any, Optional
 from opentelemetry import trace
 import logging
 

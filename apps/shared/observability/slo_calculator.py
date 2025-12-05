@@ -217,3 +217,8 @@ class SLOCalculator:
         """Retorna SLOs targets para todas as interfaces"""
         return self.SLO_TARGETS.copy()
 
+
+
+
+
+

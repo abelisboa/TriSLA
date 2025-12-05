@@ -1,6 +1,6 @@
 # TriSLA — Trustworthy, Reasoned and Intelligent SLA Architecture
 
-[![Version](https://img.shields.io/badge/version-3.7.7-blue.svg)](https://github.com/abelisboa/TriSLA)
+[![Version](https://img.shields.io/badge/version-3.7.9-blue.svg)](https://github.com/abelisboa/TriSLA)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-1.29%2B-blue.svg)](https://kubernetes.io/)
 [![Helm](https://img.shields.io/badge/helm-3.14%2B-blue.svg)](https://helm.sh/)
@@ -15,6 +15,7 @@
 - [Arquitetura Geral](#-arquitetura-geral)
 - [Requisitos](#-requisitos)
 - [Estrutura do Repositório](#-estrutura-do-repositório)
+- [Build e Push das Imagens Docker 3.7.9](#-build-e-push-das-imagens-docker-379)
 - [Deploy Local no NASP](#-deploy-local-no-nasp)
 - [Deploy via Ansible (Modo Local)](#-deploy-via-ansible-modo-local)
 - [Arquivo Canônico values-nasp.yaml](#-arquivo-canônico-values-naspyaml)
@@ -290,9 +291,61 @@ TriSLA/
 
 ---
 
+## 🐳 Build e Push das Imagens Docker 3.7.9
+
+### Pré-requisitos
+
+- Docker instalado e funcionando
+- Autenticação no GHCR configurada
+- Código fonte com instrumentação de observability integrada
+
+### Build e Push Automatizado
+
+**Script Bash (Linux/WSL):**
+```bash
+cd /mnt/c/Users/USER/Documents/TriSLA-clean
+bash build_push_3.7.9.sh
+```
+
+**Script PowerShell (Windows):**
+```powershell
+cd C:\Users\USER\Documents\TriSLA-clean
+.\build_push_images_3.7.9.ps1
+```
+
+### Módulos Construídos
+
+O script constrói e faz push de **5 módulos Python** com observability:
+
+1. **sem-csmf** → `ghcr.io/abelisboa/trisla-sem-csmf:3.7.9`
+2. **ml-nsmf** → `ghcr.io/abelisboa/trisla-ml-nsmf:3.7.9`
+3. **decision-engine** → `ghcr.io/abelisboa/trisla-decision-engine:3.7.9`
+4. **bc-nssmf** → `ghcr.io/abelisboa/trisla-bc-nssmf:3.7.9`
+5. **sla-agent-layer** → `ghcr.io/abelisboa/trisla-sla-agent-layer:3.7.9`
+
+### Instrumentação de Observability
+
+Todos os módulos incluem:
+- ✅ **Métricas Prometheus**: Expostas em `/metrics`
+- ✅ **Traces OpenTelemetry**: Enviados via OTLP gRPC
+- ✅ **Propagação de Contexto**: B3 e TraceContext
+- ✅ **Instrumentação FastAPI/gRPC**: Automática
+
+### Documentação Completa
+
+Para instruções detalhadas sobre build e push:
+- **Guia de Build e Push**: [`TRISLA_PROMPTS_v3.5/8_NASP_INSTRUCOES/GUIA_BUILD_PUSH_IMAGENS_3.7.9.md`](TRISLA_PROMPTS_v3.5/8_NASP_INSTRUCOES/GUIA_BUILD_PUSH_IMAGENS_3.7.9.md)
+- **Guia GHCR**: [`docs/ghcr/GHCR_PUBLISH_GUIDE.md`](docs/ghcr/GHCR_PUBLISH_GUIDE.md)
+
+---
+
 ## 🚀 Deploy Local no NASP
 
 O deploy do TriSLA no ambiente NASP é realizado no Node onde o cluster Kubernetes está rodando.
+
+### ⚠️ Importante: Versão 3.7.9
+
+O arquivo `helm/trisla/values-nasp.yaml` já está atualizado com as tags `3.7.9` para todos os módulos Python. Certifique-se de que as imagens estão disponíveis no GHCR antes do deploy.
 
 ### Pré-requisitos
 
@@ -1747,9 +1800,20 @@ Veja o arquivo completo: [`LICENSE`](LICENSE)
 
 ---
 
-## 🏷️ TriSLA v3.7.7 — Release Pública Completa
+## 🏷️ TriSLA v3.7.9 — Release com Observability Completa
 
-### Release v3.7.7
+### Release v3.7.9
+
+A **TriSLA v3.7.9** representa a integração completa de **observability** em todos os módulos Python, com instrumentação de métricas Prometheus e traces OpenTelemetry. Esta versão inclui todas as melhorias da v3.7.7, além de:
+
+- ✅ **Instrumentação Completa**: Todos os 5 módulos Python com métricas e traces
+- ✅ **OpenTelemetry Integrado**: Traces distribuídos com propagação de contexto
+- ✅ **Prometheus Metrics**: Métricas customizadas expostas em `/metrics`
+- ✅ **Build e Push Automatizado**: Scripts para build e push das imagens Docker
+- ✅ **Helm Values Atualizados**: Tags atualizadas para `3.7.9` no `values-nasp.yaml`
+- ✅ **Pronto para Deploy**: Todas as imagens disponíveis no GHCR
+
+### Release v3.7.7 (Anterior)
 
 A **TriSLA v3.7.7** representa a conclusão completa de todas as fases de implementação (S → M → D → B → A → O), com todos os módulos estabilizados, testados e prontos para produção no ambiente NASP.
 
@@ -1788,14 +1852,21 @@ A **TriSLA v3.7.7** representa a conclusão completa de todas as fases de implem
 
 ### Versões dos Módulos
 
-| Módulo | Versão | Status |
-|--------|--------|--------|
-| SEM-CSMF | v3.7.1 | ✅ Estabilizado |
-| ML-NSMF | v3.7.3 | ✅ Estabilizado |
-| Decision Engine | v3.7.4 | ✅ Estabilizado |
-| BC-NSSMF | v3.7.5 | ✅ Estabilizado |
-| SLA-Agent Layer | v3.7.6 | ✅ Estabilizado |
-| Observabilidade | v3.7.7 | ✅ Completo |
+| Módulo | Versão | Status | Observability |
+|--------|--------|--------|---------------|
+| SEM-CSMF | 3.7.9 | ✅ Estabilizado | ✅ Integrado |
+| ML-NSMF | 3.7.9 | ✅ Estabilizado | ✅ Integrado |
+| Decision Engine | 3.7.9 | ✅ Estabilizado | ✅ Integrado |
+| BC-NSSMF | 3.7.9 | ✅ Estabilizado | ✅ Integrado |
+| SLA-Agent Layer | 3.7.9 | ✅ Estabilizado | ✅ Integrado |
+| Observabilidade | 3.7.9 | ✅ Completo | ✅ Completo |
+
+**Imagens Docker:** Todas as imagens estão disponíveis no GHCR com tag `3.7.9`:
+- `ghcr.io/abelisboa/trisla-sem-csmf:3.7.9`
+- `ghcr.io/abelisboa/trisla-ml-nsmf:3.7.9`
+- `ghcr.io/abelisboa/trisla-decision-engine:3.7.9`
+- `ghcr.io/abelisboa/trisla-bc-nssmf:3.7.9`
+- `ghcr.io/abelisboa/trisla-sla-agent-layer:3.7.9`
 
 **Para mais informações:**
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)

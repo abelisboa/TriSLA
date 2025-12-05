@@ -171,3 +171,8 @@ async def test_integration_decision_service_domains_extracted(decision_service, 
         assert "RAN" in result.domains
         assert "Transporte" in result.domains
 
+
+
+
+
+

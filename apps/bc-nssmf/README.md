@@ -300,3 +300,8 @@ curl -X POST http://localhost:8083/api/v1/register-sla \
 
 **Status:** ✅ Estabilizado — Pronto para produção
 
+
+
+
+
+

@@ -52,3 +52,20 @@ spec:
         resources:
           {{- toYaml .Values.slaAgentLayer.resources | nindent 10 }}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

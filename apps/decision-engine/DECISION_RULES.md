@@ -322,3 +322,8 @@ DECISION_RISK_MEDIUM_THRESHOLD=0.4
 
 **Última atualização:** 2025-01-27
 
+
+
+
+
+

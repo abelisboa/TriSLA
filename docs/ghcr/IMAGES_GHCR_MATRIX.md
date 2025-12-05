@@ -1,9 +1,11 @@
 # Matriz de Imagens GHCR — TriSLA
 
-**Data:** 2025-01-27  
-**Versão:** 3.5.0  
+**Data:** 2025-12-03  
+**Versão:** 3.7.8  
 **GHCR User:** abelisboa  
 **Status:** ✅ Todas as imagens validadas e prontas para produção
+
+**Última atualização:** 2025-12-03 — Adicionadas tags v3.7.8 para sla-agent-layer e ui-dashboard (correções de bugfix)
 
 ---
 
@@ -35,8 +37,10 @@ Uma imagem é considerada **OK** se o comando acima retornar código de saída 0
 | Decision Engine | `ghcr.io/abelisboa/trisla-decision-engine:latest` | ✅ | ✅ OK | consumidor I-03, produtor I-04/I-05 |
 | BC-NSSMF | `ghcr.io/abelisboa/trisla-bc-nssmf:latest` | ✅ | ✅ OK | integração com Besu |
 | SLA-Agent Layer | `ghcr.io/abelisboa/trisla-sla-agent-layer:latest` | ✅ | ✅ OK | agentes RAN/Transporte/Core |
+| SLA-Agent Layer | `ghcr.io/abelisboa/trisla-sla-agent-layer:v3.7.8` | ✅ | ✅ OK | correção: python-multipart, bugfix crashloop |
 | NASP Adapter | `ghcr.io/abelisboa/trisla-nasp-adapter:latest` | ✅ | ✅ OK | interface com NASP real |
 | UI Dashboard | `ghcr.io/abelisboa/trisla-ui-dashboard:latest` | ✅ | ✅ OK | interface de observação TriSLA |
+| UI Dashboard | `ghcr.io/abelisboa/trisla-ui-dashboard:v3.7.8` | ✅ | ✅ OK | correção: nginx proxy_pass com variáveis, bugfix DNS |
 
 ---
 

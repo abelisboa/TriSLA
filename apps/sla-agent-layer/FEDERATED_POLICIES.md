@@ -182,3 +182,8 @@ Políticas federadas são parte da Interface I-06, permitindo:
 - Execução sequencial baseada em dependências
 - Monitoramento de resultados agregados
 
+
+
+
+
+

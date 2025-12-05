@@ -8,10 +8,10 @@
 # PROTEÇÃO DE RAIZ - ARQUIVOS PROIBIDOS
 # ============================================
 
-# Bloquear TODOS os .md na raiz EXCETO README.md e CHANGELOG.md
+# Bloquear TODOS os .md na raiz EXCETO README.md
+# (CHANGELOG.md deve estar em docs/ se necessário)
 /*.md
 !/README.md
-!/CHANGELOG.md
 
 # Bloquear arquivos .sh na raiz (devem estar em /scripts)
 /*.sh
@@ -260,6 +260,7 @@ docker-compose.override.yml
 *.bak
 *.old
 *.backup
+*.backup-*
 *.tmp
 *.temp
 *.swp
@@ -326,6 +327,8 @@ values-local.yml
 
 # Relatórios de auditoria temporários (manter apenas os finais em docs/)
 # Estes serão movidos para docs/reports/
+# Nota: CHANGELOG.md é bloqueado pelo padrão /*.md (linha 12)
+# Apenas README.md é permitido na raiz
 AUDIT_REPORT_COMPLETE.md
 DEVOPS_AUDIT_REPORT.md
 VALIDATION_REPORT_FINAL.md
@@ -333,7 +336,6 @@ RELEASE_RENAME_REPORT.md
 GITHUB_SAFETY_REPORT.md
 RELEASE_CHECKLIST_v3.5.0.md
 RELEASE_v3.5.0_SUMMARY.md
-CHANGELOG.md
 
 # ============================================
 # TESTES E VALIDAÇÃO
@@ -418,4 +420,46 @@ restore_snapshot*.sh
 tests/unit/
 tests/integration/test_*e2e*.py
 tests/integration/test_*kafka*.py
+
+# ============================================
+# PACOTES E ARQUIVOS TEMPORÁRIOS v3.7.9
+# ============================================
+
+# Pacotes de instrumentação (privados)
+_pacote_instrumentacao_trisla_3.7.9/
+pacote_instrumentacao_trisla_3.7.9.tar.gz
+observability_trisla_3.7.9.tar.gz
+
+# Scripts de build privados na raiz
+build_push_3.7.9.sh
+build_push_images_3.7.9.ps1
+validate_python_envs*.sh
+trisla_devops_local.sh
+trisla_full_rebuild.sh
+
+# Relatórios e análises privadas v3.7.9 (na raiz)
+*ANALISE*.md
+*CORRECAO*.md
+*ATUALIZACAO*.md
+*VALIDACAO*.md
+*BUILD_PUSH*.md
+*PUBLICACAO*.md
+*RELATORIO*.md
+*HOMOLOGACAO*.md
+*AUDITORIA*.md
+*EXECUCAO*.md
+*INTEGRACAO*.md
+*EXPLICACAO*.md
+*EXECUTAR*.md
+*RELEASE*.md
+*PUBLICATION*.md
+*00_MASTER*.md
+
+# Pastas temporárias de trabalho
+trisla_helm_clean/
+trisla_helm_publish/
+trisla-dashboard/
+
+# Arquivos de relatórios específicos (manter apenas em docs/)
+!docs/**/*.md
 
