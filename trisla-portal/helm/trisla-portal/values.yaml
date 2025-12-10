@@ -13,6 +13,7 @@ frontend:
   replicaCount: 1
   env:
     BACKEND_URL: "http://trisla-portal-backend:8001/api/v1"
+    NEXT_PUBLIC_API_URL: "http://trisla-portal-backend:8001/api/v1"
 
 # Configuração do Backend
 backend:

@@ -15,7 +15,10 @@ export default function HomePage() {
     // Verificar status do backend opcionalmente
     const checkBackend = async () => {
       try {
-        const response = await fetch('http://localhost:8001/health')
+        // Usar variável de ambiente ou fallback para ambiente Kubernetes (nunca localhost)
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://trisla-portal-backend:8001/api/v1'
+        const healthUrl = apiBase.replace('/api/v1', '/health')
+        const response = await fetch(healthUrl)
         if (response.ok) {
           setBackendStatus('online')
         } else {
