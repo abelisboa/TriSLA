@@ -6,6 +6,9 @@ frontend:
     repository: ghcr.io/abelisboa/trisla-portal-frontend
     tag: latest
     pullPolicy: Always
+  service:
+    port: 80
+    targetPort: 3000
   nodePort: 32001
   replicaCount: 1
   env:
@@ -30,4 +33,3 @@ backend:
 # Configurações globais
 global:
   namespace: trisla
-
