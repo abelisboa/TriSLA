@@ -5,6 +5,7 @@ import { FileText, Settings, BarChart3, Activity } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
+import { API_BASE_URL } from '@/lib/config'
 
 export default function HomePage() {
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking')
@@ -15,8 +16,8 @@ export default function HomePage() {
     // Verificar status do backend opcionalmente
     const checkBackend = async () => {
       try {
-        // Usar variável de ambiente ou fallback para ambiente Kubernetes (nunca localhost)
-        const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://trisla-portal-backend:8001/api/v1'
+        // Usar configuração centralizada (client-side usa localhost:32002)
+        const apiBase = API_BASE_URL
         const healthUrl = apiBase.replace('/api/v1', '/health')
         const response = await fetch(healthUrl)
         if (response.ok) {
