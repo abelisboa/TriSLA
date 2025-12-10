@@ -1,0 +1,207 @@
+(Instruções diretas ao Cursor / Desenvolvedor / Automação)
+
+Objetivo: executar o processo completo, validando ambiente, rodando stress tests, coletando SLOs/KPIs, gerando tabelas, gráficos e análise textual do Capítulo 6, usando exclusivamente o NASP.
+Importante: o Cursor deve verificar o ambiente antes de executar qualquer fase.
+
+░▒▓ INICIAR EXECUÇÃO DO STRESS TEST TRI-SLA ▓▒░
+
+Siga exatamente as instruções abaixo. Não avance sem validar cada etapa.
+
+FASE 0 — Validação do Ambiente (Obrigatória)
+
+Antes de qualquer coisa, o Cursor DEVE:
+
+0.1 Validar que o Portal está ativo
+GET http://localhost:8001/health
+
+
+Se não estiver ativo → não executar mais nada. Instruir o usuário a iniciar:
+
+bash start_backend.sh
+
+0.2 Validar port-forwards dos módulos NASP
+
+O Cursor deve verificar:
+
+Módulo	Porta	Endpoint
+SEM-CSMF	8080	/health
+ML-NSMF	8081	/health
+Decision Engine	8082	/health
+BC-NSSMF	8083	/health
+SLA-Agent Layer	8084	/health
+
+Se qualquer módulo falhar:
+→ Repetir a validação três vezes
+→ Se ainda falhar, parar e instruir o usuário a corrigir o port-forward no node1.
+
+0.3 Validar acesso real ao NASP
+
+O Cursor deve executar:
+
+curl -s http://localhost:8083/health
+
+
+Se status != healthy, não iniciar stress test.
+
+FASE 1 — Executar Battery Test (20, 50, 100, 135 requisições)
+
+O Cursor deve executar:
+
+cd backend
+python tools/stress_sla_submit.py 20
+python tools/stress_sla_submit.py 50
+python tools/stress_sla_submit.py 100
+python tools/stress_sla_submit.py 135
+
+
+Cada execução gera arquivos JSON que serão usados nas fases seguintes.
+
+FASE 2 — Orquestrador Completo (Gerar SLOs, KPIs, Gráficos, Tabelas, Textos)
+
+Executar:
+
+python tools/stress_test_orchestrator.py
+
+
+O Cursor deve:
+
+coletar dados das execuções anteriores
+
+calcular:
+
+SLOs detalhados
+
+KPIs 3GPP + O-RAN
+
+métricas de cabeça de pipeline e gargalos
+
+gerar:
+
+gráficos PNG (prontos para Overleaf)
+
+tabelas Markdown (prontas para LaTeX)
+
+arquivo JSON consolidado
+
+relatório técnico SLO/KPI
+
+Saída esperada:
+
+backend/STRESS_TEST_REPORT.md
+backend/stress_test_report.json
+backend/figures/*.png
+
+FASE 3 — Validar SLOs e KPIs
+
+O Cursor deve verificar se foram gerados corretamente:
+
+SLOs obrigatórios
+
+Latência E2E (media, P95, P99, max)
+
+Confiabilidade (> 99%)
+
+Tempo de decisão do Decision Engine
+
+Tempo de inferência SEM-CSMF
+
+Tempo de inferência ML-NSMF
+
+Latência Blockchain (BC-NSSMF)
+
+Sucesso de registro no smart contract
+
+KPIs obrigatórios (3GPP + O-RAN)
+
+E2E Slice Setup Latency
+
+SLA Compliance Rate
+
+Closed Loop Latency
+
+Observability Loop Time
+
+AI Inference Stability
+
+Blockchain Registration Latency
+
+Se qualquer KPI estiver faltando → O Cursor deve refazer a fase correspondente.
+
+FASE 4 — Validar Gráficos
+
+O Cursor deve verificar que foram gerados os seguintes gráficos:
+
+✔ Boxplot por módulo
+✔ Distribuição de latência (histograma)
+✔ Gráfico comparativo 20×50×100×135
+✔ Radar de SLOs
+✔ Heatmap de falhas por módulo
+✔ Timeline do pipeline TriSLA
+
+Se qualquer gráfico faltar → regenerar via matplotlib usando os dados coletados.
+
+FASE 5 — Geração do Texto Acadêmico do Capítulo 6
+
+O Cursor deve gerar automaticamente:
+
+6.1 Conexão entre fundamentos, arquitetura e execução
+
+Texto descrevendo como a execução experimental confirma a arquitetura.
+
+6.2 Análise crítica
+
+Gargalos
+
+Pontos fortes
+
+Impacto dos SLOs
+
+Comportamento por tipo de slice (URLLC, eMBB, mMTC)
+
+6.3 Ligação com SLOrion
+
+Como TriSLA expande SLOrion
+
+Do contrato isolado → pipeline inteligente e federado
+
+6.4 Perspectivas 6G
+
+Edge AI
+
+Semantic Networks
+
+Distributed SLA Governance
+
+Reinforcement Learning no loop de decisão
+
+Todos os textos devem seguir o estilo acadêmico da dissertação.
+
+FASE 6 — Checklist Final
+
+Confirmar geração dos seguintes arquivos:
+
+[OK] STRESS_TEST_REPORT.md
+
+[OK] stress_test_report.json
+
+[OK] 5+ gráficos PNG
+
+[OK] Tabelas Markdown
+
+[OK] Texto acadêmico completo
+
+[OK] KPIs
+
+[OK] SLOs
+
+Se algo faltar, repetir a fase correspondente automaticamente.
+
+FASE 7 — Finalização
+
+O Cursor deve:
+
+Exibir um resumo final das métricas
+
+Exibir uma conclusão executiva para anexar ao Capítulo 6
+
+Confirmar que os arquivos estão prontos para envio ao Overleaf

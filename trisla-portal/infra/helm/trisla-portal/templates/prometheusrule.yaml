@@ -1,0 +1,55 @@
+{{- if .Values.prometheusRules.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "trisla-portal.fullname" . }}
+  labels:
+    {{- include "trisla-portal.labels" . | nindent 4 }}
+spec:
+  groups:
+  - name: trisla-portal
+    interval: 30s
+    rules:
+    - alert: TrislaPortalBackendDown
+      expr: up{job="{{ include "trisla-portal.fullname" . }}-backend"} == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "TriSLA Portal Backend is down"
+        description: "Backend pod has been down for more than 5 minutes"
+
+    - alert: TrislaPortalBackendHighLatency
+      expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="{{ include "trisla-portal.fullname" . }}-backend"}[5m])) > 1
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "TriSLA Portal Backend high latency"
+        description: "P95 latency is above 1s for more than 5 minutes"
+
+    - alert: TrislaPortalBackendHighErrorRate
+      expr: rate(http_requests_total{job="{{ include "trisla-portal.fullname" . }}-backend",status=~"5.."}[5m]) > 0.1
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "TriSLA Portal Backend high error rate"
+        description: "Error rate is above 10% for more than 5 minutes"
+
+    - alert: TrislaPortalFrontendDown
+      expr: up{job="{{ include "trisla-portal.fullname" . }}-frontend"} == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "TriSLA Portal Frontend is down"
+        description: "Frontend pod has been down for more than 5 minutes"
+{{- end }}
+
+
+
+
+
+
+
