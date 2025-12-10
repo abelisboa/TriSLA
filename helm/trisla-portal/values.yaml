@@ -1,0 +1,33 @@
+# Values para o Portal TriSLA
+
+# Configuração do Frontend
+frontend:
+  image:
+    repository: ghcr.io/abelisboa/trisla-portal-frontend
+    tag: latest
+    pullPolicy: Always
+  nodePort: 32001
+  replicaCount: 1
+  env:
+    BACKEND_URL: "http://trisla-portal-backend:8001/api/v1"
+
+# Configuração do Backend
+backend:
+  image:
+    repository: ghcr.io/abelisboa/trisla-portal-backend
+    tag: latest
+    pullPolicy: Always
+  nodePort: 32002
+  replicaCount: 1
+  env:
+    SEM_CSMF_URL: "http://trisla-sem-csmf:8080"
+    ML_NSMF_URL: "http://trisla-ml-nsmf:8081"
+    DECISION_ENGINE_URL: "http://trisla-decision-engine:8082"
+    BC_NSSMF_URL: "http://trisla-bc-nssmf:8083"
+    SLA_AGENT_URL: "http://trisla-sla-agent-layer:8084"
+    OTEL_SDK_DISABLED: "true"
+
+# Configurações globais
+global:
+  namespace: trisla
+
