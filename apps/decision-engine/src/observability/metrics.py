@@ -147,3 +147,16 @@ def dec_pipeline_in_flight():
     """Decrementa o número de intents em processamento."""
     decision_pipeline_in_flight.dec()
 
+
+
+
+
+
+
+
+
+
+
+
+
+

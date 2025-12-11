@@ -131,3 +131,16 @@ def dec_pending_transactions():
     """Decrementa o número de transações pendentes."""
     bc_pending_transactions.dec()
 
+
+
+
+
+
+
+
+
+
+
+
+
+

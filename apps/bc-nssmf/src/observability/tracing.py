@@ -112,3 +112,16 @@ def trace_block_commit(commit_func, parent_context=None):
             span.set_attribute("trisla.block.commit.status", "error")
             raise
 
+
+
+
+
+
+
+
+
+
+
+
+
+

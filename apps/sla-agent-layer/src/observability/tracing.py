@@ -113,3 +113,16 @@ def trace_check_violation(contract_id, check_func, parent_context=None):
             span.set_attribute("trisla.violation.check.status", "error")
             raise
 
+
+
+
+
+
+
+
+
+
+
+
+
+

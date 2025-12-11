@@ -114,3 +114,16 @@ def trace_sla_validation(intent, validation_func, parent_context=None):
             span.set_attribute("trisla.sla.validation.status", "error")
             raise
 
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -346,55 +346,69 @@ class NASPService:
                     
                     # Tratar erros HTTP diferenciados
                     if response.status_code == 422:
-                        # Erro 422 (validação) - não fazer retry, é problema de payload
-                        error_detail = response.text
-                        logger.error(f"❌ BC-NSSMF: Erro de validação (422) - {error_detail}")
+                        # Erro 422 (business error) - saldo insuficiente, validação de negócio
+                        # Não fazer retry, é problema de negócio, não de infraestrutura
+                        try:
+                            error_json = response.json()
+                            error_detail = error_json.get("detail", response.text)
+                        except Exception:
+                            error_detail = response.text
+                        
+                        logger.error(f"❌ BC-NSSMF: Erro de negócio (422) - {error_detail}")
                         logger.error(f"   Payload enviado: {bc_request.model_dump()}")
                         raise HTTPException(
                             status_code=422,
                             detail={
                                 "success": False,
                                 "phase": "blockchain",
-                                "reason": "invalid_payload",
-                                "detail": f"BC-NSSMF rejeitou o payload: {error_detail}"
+                                "reason": "business_error",
+                                "detail": error_detail
                             }
                         )
                     
                     if response.status_code >= 400 and response.status_code < 500:
                         # Erro 4xx (cliente) - não fazer retry
-                        error_detail = response.text
+                        # Mas distinguir 422 (business) de outros 4xx
+                        try:
+                            error_json = response.json()
+                            error_detail = error_json.get("detail", response.text)
+                        except Exception:
+                            error_detail = response.text
+                        
                         logger.error(f"❌ BC-NSSMF: Erro HTTP {response.status_code} - {error_detail}")
                         raise HTTPException(
                             status_code=response.status_code,
                             detail={
                                 "success": False,
                                 "phase": "blockchain",
-                                "reason": "invalid_payload" if response.status_code == 422 else "client_error",
+                                "reason": "client_error",
                                 "detail": f"BC-NSSMF retornou erro {response.status_code}: {error_detail}"
                             }
                         )
                     
                     if response.status_code >= 500:
                         # Erro 5xx (servidor) - pode ser transitório, tentar retry
-                        error_detail = response.text
+                        # 503 = infraestrutura real (NASP degraded, RPC offline)
+                        try:
+                            error_json = response.json()
+                            error_detail = error_json.get("detail", response.text)
+                        except Exception:
+                            error_detail = response.text
+                        
                         logger.warning(f"⚠️ BC-NSSMF: Erro HTTP {response.status_code} (tentativa {attempt + 1}/{max_retries}) - {error_detail}")
                         
                         # Verificar se é erro específico do NASP (degraded mode)
-                        try:
-                            error_json = response.json()
-                            if "BC-NSSMF está em modo degraded" in str(error_json) or "RPC Besu não disponível" in str(error_json):
-                                # Erro lógico do NASP - não fazer retry
-                                raise HTTPException(
-                                    status_code=503,
-                                    detail={
-                                        "success": False,
-                                        "phase": "blockchain",
-                                        "reason": "nasp_degraded",
-                                        "detail": f"BC-NSSMF está em modo degraded. RPC Besu não disponível. Detalhes: {error_detail}"
-                                    }
-                                )
-                        except Exception:
-                            pass  # Não conseguiu parsear JSON, continuar com retry
+                        if "BC-NSSMF está em modo degraded" in str(error_detail) or "RPC Besu não disponível" in str(error_detail):
+                            # Erro de infraestrutura real - não fazer retry
+                            raise HTTPException(
+                                status_code=503,
+                                detail={
+                                    "success": False,
+                                    "phase": "blockchain",
+                                    "reason": "nasp_degraded",
+                                    "detail": error_detail
+                                }
+                            )
                         
                         # Se não for a última tentativa, fazer retry
                         if attempt < max_retries - 1:

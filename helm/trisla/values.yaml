@@ -76,12 +76,75 @@ decisionEngine:
       memory: 2Gi
   replicas: 2
 
+# BESU - Hyperledger Besu Blockchain Client
+besu:
+  enabled: true
+  image:
+    repository: hyperledger/besu
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8545
+    wsPort: 8546
+    p2pPort: 30303
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  persistence:
+    enabled: true
+    size: 20Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""  # Usar storage class padrão do cluster
+  genesis: |
+    {
+      "config": {
+        "chainId": 1337,
+        "homesteadBlock": 0,
+        "eip150Block": 0,
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "byzantiumBlock": 0,
+        "constantinopleBlock": 0,
+        "petersburgBlock": 0,
+        "istanbulBlock": 0,
+        "berlinBlock": 0,
+        "londonBlock": 0,
+        "ibft2": {
+          "blockperiodseconds": 2,
+          "epochlength": 30000,
+          "requesttimeoutseconds": 10
+        }
+      },
+      "nonce": "0x0",
+      "timestamp": "0x58ee40ba",
+      "extraData": "0x00",
+      "gasLimit": "0x47E7C4",
+      "difficulty": "0x1",
+      "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "coinbase": "0x0000000000000000000000000000000000000000",
+      "alloc": {
+        "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1": {
+          "balance": "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+        }
+      }
+    }
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+
 # BC-NSSMF
 bcNssmf:
   enabled: true
   image:
     repository: trisla-bc-nssmf
-    tag: nasp-a2
+    tag: v3.7.11
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -91,6 +154,9 @@ bcNssmf:
       enabled: false
   annotations:
     trisla-mode: degraded
+  env: {}
+    # Variáveis de ambiente serão injetadas automaticamente se BESU estiver habilitado
+    # TRISLA_RPC_URL e BESU_RPC_URL serão configuradas no template deployment-bc-nssmf.yaml
   resources:
     requests:
       cpu: 500m
@@ -99,6 +165,69 @@ bcNssmf:
       cpu: 2000m
       memory: 2Gi
   replicas: 2
+
+# BESU - Hyperledger Besu Blockchain Client
+besu:
+  enabled: true
+  image:
+    repository: hyperledger/besu
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8545
+    wsPort: 8546
+    p2pPort: 30303
+  genesis: |
+    {
+      "config": {
+        "chainId": 1337,
+        "homesteadBlock": 0,
+        "eip150Block": 0,
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "byzantiumBlock": 0,
+        "constantinopleBlock": 0,
+        "petersburgBlock": 0,
+        "istanbulBlock": 0,
+        "berlinBlock": 0,
+        "londonBlock": 0,
+        "ibft2": {
+          "blockperiodseconds": 2,
+          "epochlength": 30000,
+          "requesttimeoutseconds": 10
+        }
+      },
+      "nonce": "0x0",
+      "timestamp": "0x58ee40ba",
+      "extraData": "0x00",
+      "gasLimit": "0x47E7C4",
+      "difficulty": "0x1",
+      "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "coinbase": "0x0000000000000000000000000000000000000000",
+      "alloc": {
+        "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1": {
+          "balance": "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+        }
+      }
+    }
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""  # Usar storage class padrão do cluster
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
 
 # SLA-Agent Layer
 slaAgentLayer:
@@ -206,4 +335,10 @@ production:
   simulationMode: false
   useRealServices: true
   executeRealActions: true
+
+# BESU Subchart Configuration
+trisla-besu:
+  enabled: true
+  image:
+    tag: "23.10.1"
 

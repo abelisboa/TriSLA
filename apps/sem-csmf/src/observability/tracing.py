@@ -127,3 +127,16 @@ def trace_ontology_reasoning(intent, reasoning_func):
             span.set_attribute("trisla.reasoning.status", "error")
             raise
 
+
+
+
+
+
+
+
+
+
+
+
+
+

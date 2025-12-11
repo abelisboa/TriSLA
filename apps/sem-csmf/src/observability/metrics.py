@@ -135,3 +135,16 @@ def dec_intents_in_flight():
     """Decrementa o número de intents em processamento."""
     sem_intents_in_flight.dec()
 
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+{{- if and .Values.besu.enabled .Values.besu.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "trisla.name" . }}-besu-data
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app.kubernetes.io/component: besu
+spec:
+  accessModes:
+    {{- range .Values.besu.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.besu.persistence.size | quote }}
+  {{- if .Values.besu.persistence.storageClass }}
+  storageClassName: {{ .Values.besu.persistence.storageClass }}
+  {{- end }}
+{{- end }}

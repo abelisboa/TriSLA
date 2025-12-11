@@ -36,6 +36,27 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        # Configuração do BESU (se habilitado)
+        {{- if .Values.besu.enabled }}
+        - name: TRISLA_RPC_URL
+          value: "http://{{ include "trisla.name" . }}-besu:8545"
+        - name: BESU_RPC_URL
+          value: "http://{{ include "trisla.name" . }}-besu:8545"
+        - name: BC_ENABLED
+          value: {{ .Values.global.bcEnabled | default "true" | quote }}
+        - name: TRISLA_CHAIN_ID
+          value: "1337"
+        {{- else }}
+        - name: BC_ENABLED
+          value: "false"
+        {{- end }}
+        # Variáveis de ambiente customizadas (podem sobrescrever as acima)
+        {{- if .Values.bcNssmf.env }}
+        {{- range $key, $value := .Values.bcNssmf.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /health

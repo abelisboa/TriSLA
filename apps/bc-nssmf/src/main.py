@@ -15,7 +15,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from service import BCService
+from service import BCService, BCInfrastructureError, BCBusinessError
 from oracle import MetricsOracle
 from kafka_consumer import DecisionConsumer
 from models import SLARequest, SLAStatusUpdate
@@ -114,13 +114,26 @@ async def register_sla(req: SLARequest):
                 "block_number": receipt.blockNumber,
                 "sla_id": req.customer  # Em produção, extrair do evento
             }
-        except RuntimeError as e:
+        except BCBusinessError as e:
             span.record_exception(e)
             span.set_attribute("sla.registered", False)
+            span.set_attribute("sla.error_type", "business")
+            raise HTTPException(status_code=422, detail=str(e))
+        except BCInfrastructureError as e:
+            span.record_exception(e)
+            span.set_attribute("sla.registered", False)
+            span.set_attribute("sla.error_type", "infrastructure")
+            raise HTTPException(status_code=503, detail=str(e))
+        except RuntimeError as e:
+            # Manter compatibilidade com RuntimeError antigo (tratar como infraestrutura)
+            span.record_exception(e)
+            span.set_attribute("sla.registered", False)
+            span.set_attribute("sla.error_type", "infrastructure")
             raise HTTPException(status_code=503, detail=str(e))
         except Exception as e:
             span.record_exception(e)
             span.set_attribute("sla.registered", False)
+            span.set_attribute("sla.error_type", "unknown")
             raise HTTPException(status_code=500, detail=f"Erro ao registrar SLA: {str(e)}")
 
 
@@ -148,13 +161,26 @@ async def update_sla_status(req: SLAStatusUpdate):
                 "tx_hash": receipt.transactionHash.hex(),
                 "block_number": receipt.blockNumber
             }
-        except RuntimeError as e:
+        except BCBusinessError as e:
             span.record_exception(e)
             span.set_attribute("sla.updated", False)
+            span.set_attribute("sla.error_type", "business")
+            raise HTTPException(status_code=422, detail=str(e))
+        except BCInfrastructureError as e:
+            span.record_exception(e)
+            span.set_attribute("sla.updated", False)
+            span.set_attribute("sla.error_type", "infrastructure")
+            raise HTTPException(status_code=503, detail=str(e))
+        except RuntimeError as e:
+            # Manter compatibilidade com RuntimeError antigo (tratar como infraestrutura)
+            span.record_exception(e)
+            span.set_attribute("sla.updated", False)
+            span.set_attribute("sla.error_type", "infrastructure")
             raise HTTPException(status_code=503, detail=str(e))
         except Exception as e:
             span.record_exception(e)
             span.set_attribute("sla.updated", False)
+            span.set_attribute("sla.error_type", "unknown")
             raise HTTPException(status_code=500, detail=f"Erro ao atualizar status: {str(e)}")
 
 

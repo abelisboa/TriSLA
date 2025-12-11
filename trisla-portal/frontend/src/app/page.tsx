@@ -5,7 +5,7 @@ import { FileText, Settings, BarChart3, Activity } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
-import { API_BASE_URL } from '@/lib/config'
+import { API_BASE_URL, API_ENDPOINTS } from '@/lib/config'
 
 export default function HomePage() {
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking')
@@ -16,9 +16,11 @@ export default function HomePage() {
     // Verificar status do backend opcionalmente
     const checkBackend = async () => {
       try {
-        // Usar configuração centralizada (client-side usa localhost:32002)
+        // Health endpoint não usa /api/v1, apenas /health
+        // Extrair base URL sem /api/v1 e construir URL de health
         const apiBase = API_BASE_URL
-        const healthUrl = apiBase.replace('/api/v1', '/health')
+        const baseUrl = apiBase.replace('/api/v1', '')
+        const healthUrl = `${baseUrl}${API_ENDPOINTS.health}`
         const response = await fetch(healthUrl)
         if (response.ok) {
           setBackendStatus('online')

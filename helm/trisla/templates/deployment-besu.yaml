@@ -1,0 +1,124 @@
+{{- if .Values.besu.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trisla.name" . }}-besu
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app.kubernetes.io/component: besu
+spec:
+  replicas: {{ .Values.besu.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "trisla.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: besu
+  template:
+    metadata:
+      labels:
+        {{- include "trisla.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: besu
+      annotations:
+        checksum/genesis: {{ .Values.besu.genesis | sha256sum | trunc 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: besu
+        image: "{{ .Values.besu.image.repository }}:{{ .Values.besu.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.besu.image.pullPolicy }}
+        ports:
+        - name: rpc-http
+          containerPort: 8545
+          protocol: TCP
+        - name: rpc-ws
+          containerPort: 8546
+          protocol: TCP
+        - name: p2p
+          containerPort: 30303
+          protocol: TCP
+        command:
+        - /opt/besu/bin/besu
+        args:
+        - --data-path=/opt/besu/data
+        - --genesis-file=/opt/besu/genesis.json
+        - --network=dev
+        - --rpc-http-enabled=true
+        - --rpc-http-host=0.0.0.0
+        - --rpc-http-port=8545
+        - --rpc-http-api=ETH,NET,IBFT,WEB3,ADMIN,DEBUG
+        - --rpc-http-cors-origins=*
+        - --host-allowlist=*
+        - --miner-enabled=true
+        - --miner-coinbase=0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1
+        - --miner-extra-data=0x00
+        env:
+        - name: BESU_DATA_PATH
+          value: "/opt/besu/data"
+        - name: BESU_GENESIS_FILE
+          value: "/opt/besu/genesis.json"
+        volumeMounts:
+        - name: besu-data
+          mountPath: /opt/besu/data
+        - name: besu-genesis
+          mountPath: /opt/besu/genesis.json
+          subPath: genesis.json
+          readOnly: true
+        {{- if .Values.besu.nodeSelector }}
+        nodeSelector:
+          {{- toYaml .Values.besu.nodeSelector | nindent 10 }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.besu.resources | nindent 10 }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - |
+              curl -f -X POST http://localhost:8545 \
+                -H "Content-Type: application/json" \
+                -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - |
+              curl -f -X POST http://localhost:8545 \
+                -H "Content-Type: application/json" \
+                -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: besu-data
+        {{- if .Values.besu.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "trisla.name" . }}-besu-data
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+      - name: besu-genesis
+        configMap:
+          name: {{ include "trisla.name" . }}-besu-genesis
+      {{- with .Values.besu.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.besu.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.besu.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

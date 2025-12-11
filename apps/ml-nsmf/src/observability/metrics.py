@@ -129,3 +129,16 @@ def set_model_version(version):
     # Limpa versões anteriores (opcional, pode manter histórico)
     ml_model_version.labels(version=version).set(1)
 
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -88,3 +88,16 @@ def trace_predict_slice(slice_type, predict_func, parent_context=None):
             span.set_attribute("trisla.prediction.status", "error")
             raise
 
+
+
+
+
+
+
+
+
+
+
+
+
+

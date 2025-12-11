@@ -323,3 +323,16 @@ kubectl exec -n trisla deployment/trisla-sem-csmf -- \
 
 **Status:** ✅ Documentação completa da observability v3.7.9
 
+
+
+
+
+
+
+
+
+
+
+
+
+

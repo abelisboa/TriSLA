@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/abelisboa/trisla-besu
-  tag: v3.7.10
+  tag: v3.7.11
   pullPolicy: IfNotPresent
 
 persistence:

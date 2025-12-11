@@ -1,0 +1,28 @@
+{{- if .Values.besu.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trisla.name" . }}-besu
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app.kubernetes.io/component: besu
+spec:
+  type: {{ .Values.besu.service.type }}
+  ports:
+  - port: {{ .Values.besu.service.port }}
+    targetPort: rpc-http
+    protocol: TCP
+    name: rpc-http
+  - port: {{ .Values.besu.service.wsPort | default 8546 }}
+    targetPort: rpc-ws
+    protocol: TCP
+    name: rpc-ws
+  - port: {{ .Values.besu.service.p2pPort | default 30303 }}
+    targetPort: p2p
+    protocol: TCP
+    name: p2p
+  selector:
+    {{- include "trisla.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: besu
+{{- end }}

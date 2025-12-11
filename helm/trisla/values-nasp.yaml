@@ -8,16 +8,139 @@ global:
   env:
     OTLP_ENABLED: false
     KAFKA_ENABLED: false
-    BC_ENABLED: false
+    BC_ENABLED: true
     NASP_MODE: production
   otlpEnabled: false
   kafkaEnabled: false
-  bcEnabled: false
+  bcEnabled: true
   naspMode: production
 network:
   interface: my5g
   nodeIP: 192.168.10.16
   gateway: 192.168.10.1
+# BESU - Hyperledger Besu Blockchain Client
+besu:
+  enabled: true
+  image:
+    repository: hyperledger/besu
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8545
+    wsPort: 8546
+    p2pPort: 30303
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  persistence:
+    enabled: true
+    size: 20Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""
+  nodeSelector:
+    kubernetes.io/hostname: node1
+  genesis: |
+    {
+      "config": {
+        "chainId": 1337,
+        "homesteadBlock": 0,
+        "eip150Block": 0,
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "byzantiumBlock": 0,
+        "constantinopleBlock": 0,
+        "petersburgBlock": 0,
+        "istanbulBlock": 0,
+        "berlinBlock": 0,
+        "londonBlock": 0,
+        "ibft2": {
+          "blockperiodseconds": 2,
+          "epochlength": 30000,
+          "requesttimeoutseconds": 10
+        }
+      },
+      "nonce": "0x0",
+      "timestamp": "0x58ee40ba",
+      "extraData": "0x00",
+      "gasLimit": "0x47E7C4",
+      "difficulty": "0x1",
+      "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "coinbase": "0x0000000000000000000000000000000000000000",
+      "alloc": {
+        "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1": {
+          "balance": "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+        }
+      }
+    }
+
+besu:
+  enabled: true
+  image:
+    repository: hyperledger/besu
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8545
+    wsPort: 8546
+    p2pPort: 30303
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  nodeSelector:
+    kubernetes.io/hostname: node1
+  genesis: |
+    {
+      "config": {
+        "chainId": 1337,
+        "homesteadBlock": 0,
+        "eip150Block": 0,
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "byzantiumBlock": 0,
+        "constantinopleBlock": 0,
+        "petersburgBlock": 0,
+        "istanbulBlock": 0,
+        "berlinBlock": 0,
+        "londonBlock": 0,
+        "ibft2": {
+          "blockperiodseconds": 2,
+          "epochlength": 30000,
+          "requesttimeoutseconds": 10
+        }
+      },
+      "nonce": "0x0",
+      "timestamp": "0x58ee40ba",
+      "extraData": "0x00",
+      "gasLimit": "0x47E7C4",
+      "difficulty": "0x1",
+      "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "coinbase": "0x0000000000000000000000000000000000000000",
+      "alloc": {
+        "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1": {
+          "balance": "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+        }
+      }
+    }
+
 bcNssmf:
   enabled: true
   image:
@@ -29,6 +152,12 @@ bcNssmf:
   replicaCount: 1
   nodeSelector:
     kubernetes.io/hostname: node1
+  env:
+    TRISLA_RPC_URL: "http://trisla-besu:8545"
+    BESU_RPC_URL: "http://trisla-besu:8545"
+    BC_ENABLED: "true"
+    TRISLA_CHAIN_ID: "1337"
+  env: {}
 decisionEngine:
   enabled: true
   image:
@@ -97,3 +226,9 @@ uiDashboard:
   replicaCount: 1
   nodeSelector:
     kubernetes.io/hostname: node1
+
+# BESU Subchart Configuration
+trisla-besu:
+  enabled: true
+  image:
+    tag: "23.10.1"

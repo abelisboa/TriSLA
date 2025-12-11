@@ -32,6 +32,17 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
+class BCInfrastructureError(RuntimeError):
+    """Erro de infraestrutura - RPC offline, conta não disponível, etc. Retorna 503."""
+    pass
+
+
+class BCBusinessError(RuntimeError):
+    """Erro de negócio - saldo insuficiente, validação de dados, etc. Retorna 422."""
+    pass
+
+
 class BCService:
 
     def __init__(self):
@@ -111,12 +122,32 @@ class BCService:
         
         Returns:
             Transaction receipt
+        
+        Raises:
+            BCInfrastructureError: Se RPC offline ou conta não disponível (503)
+            BCBusinessError: Se saldo insuficiente ou erro de validação (422)
         """
         if not self.enabled or not self.contract:
-            raise RuntimeError("BC-NSSMF está em modo degraded. RPC Besu não disponível.")
+            raise BCInfrastructureError("BC-NSSMF está em modo degraded. RPC Besu não disponível.")
         
         if not self.account:
-            raise RuntimeError("Conta blockchain não disponível.")
+            raise BCInfrastructureError("Conta blockchain não disponível.")
+        
+        # Verificar saldo antes de tentar registrar
+        try:
+            balance = self.w3.eth.get_balance(self.account)
+            if balance == 0:
+                logger.warning(f"Saldo insuficiente na conta {self.account}: {balance} wei")
+                raise BCBusinessError("Saldo insuficiente na conta blockchain para registrar SLA.")
+            
+            logger.debug(f"Saldo da conta verificado: {balance} wei")
+        except BCBusinessError:
+            # Re-raise BCBusinessError sem modificação
+            raise
+        except Exception as e:
+            # Erro ao verificar saldo - tratar como erro de infraestrutura
+            logger.error(f"Erro ao verificar saldo da conta: {e}")
+            raise BCInfrastructureError(f"Erro ao verificar saldo da conta blockchain: {str(e)}")
         
         try:
             tx = self.contract.functions.registerSLA(
@@ -129,9 +160,16 @@ class BCService:
             receipt = self.w3.eth.wait_for_transaction_receipt(tx)
             logger.info(f"SLA registrado: tx_hash={receipt.transactionHash.hex()}, block={receipt.blockNumber}")
             return receipt
-        except Exception as e:
-            logger.error(f"Erro ao registrar SLA: {e}")
+        except BCBusinessError:
+            # Re-raise BCBusinessError sem modificação
             raise
+        except BCInfrastructureError:
+            # Re-raise BCInfrastructureError sem modificação
+            raise
+        except Exception as e:
+            # Outros erros podem ser de infraestrutura (ex: transação falhou por rede)
+            logger.error(f"Erro ao registrar SLA: {e}")
+            raise BCInfrastructureError(f"Erro ao registrar SLA no blockchain: {str(e)}")
 
     def update_status(self, sla_id, status):
         """
@@ -143,12 +181,28 @@ class BCService:
         
         Returns:
             Transaction receipt
+        
+        Raises:
+            BCInfrastructureError: Se RPC offline ou conta não disponível (503)
+            BCBusinessError: Se saldo insuficiente ou erro de validação (422)
         """
         if not self.enabled or not self.contract:
-            raise RuntimeError("BC-NSSMF está em modo degraded. RPC Besu não disponível.")
+            raise BCInfrastructureError("BC-NSSMF está em modo degraded. RPC Besu não disponível.")
         
         if not self.account:
-            raise RuntimeError("Conta blockchain não disponível.")
+            raise BCInfrastructureError("Conta blockchain não disponível.")
+        
+        # Verificar saldo antes de tentar atualizar
+        try:
+            balance = self.w3.eth.get_balance(self.account)
+            if balance == 0:
+                logger.warning(f"Saldo insuficiente na conta {self.account}: {balance} wei")
+                raise BCBusinessError("Saldo insuficiente na conta blockchain para atualizar SLA.")
+        except BCBusinessError:
+            raise
+        except Exception as e:
+            logger.error(f"Erro ao verificar saldo da conta: {e}")
+            raise BCInfrastructureError(f"Erro ao verificar saldo da conta blockchain: {str(e)}")
         
         try:
             tx = self.contract.functions.updateSLAStatus(sla_id, status).transact(
@@ -157,9 +211,13 @@ class BCService:
             receipt = self.w3.eth.wait_for_transaction_receipt(tx)
             logger.info(f"Status SLA {sla_id} atualizado: tx_hash={receipt.transactionHash.hex()}, status={status}")
             return receipt
+        except BCBusinessError:
+            raise
+        except BCInfrastructureError:
+            raise
         except Exception as e:
             logger.error(f"Erro ao atualizar status SLA {sla_id}: {e}")
-            raise
+            raise BCInfrastructureError(f"Erro ao atualizar status SLA no blockchain: {str(e)}")
 
     def get_sla(self, sla_id):
         """

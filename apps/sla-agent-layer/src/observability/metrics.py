@@ -119,3 +119,16 @@ def dec_active_contracts():
     """Decrementa o número de contratos ativos."""
     sla_active_contracts.dec()
 
+
+
+
+
+
+
+
+
+
+
+
+
+

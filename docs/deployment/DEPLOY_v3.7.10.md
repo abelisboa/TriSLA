@@ -454,3 +454,10 @@ kubectl logs -n trisla -l app=trisla-otel-collector --tail=50 -f
 
 **Última atualização:** 2025-12-05
 
+
+
+
+
+
+
+
