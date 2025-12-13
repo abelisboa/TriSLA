@@ -4,7 +4,7 @@
 frontend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-frontend
-    tag: v3.7.11
+    tag: v3.7.31
     pullPolicy: Always
   service:
     port: 80

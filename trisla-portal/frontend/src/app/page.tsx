@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/config'
+import { PORTAL_VERSION_DISPLAY } from '@/lib/version'
 
 export default function HomePage() {
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking')
@@ -46,6 +47,7 @@ export default function HomePage() {
         <p className="text-muted-foreground">
           Portal para gerenciamento de SLA em redes 5G/O-RAN - Integração completa com todos os módulos TriSLA
         </p>
+        <p className="text-xs text-muted-foreground mt-1">{PORTAL_VERSION_DISPLAY}</p>
         {backendStatus !== 'checking' && (
           <div className="mt-2">
             <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
