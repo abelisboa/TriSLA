@@ -37,7 +37,7 @@ const TEMPLATES = [
     service_type: 'mMTC',
     fields: [
       { name: 'type', label: 'Service Type', type: 'hidden', value: 'mMTC', required: false },
-      { name: 'device_density', label: 'Densidade de Dispositivos (por km²)', type: 'number', required: true, min: 1 },
+      { name: 'device_density', label: 'Densidade de Dispositivos (por km²)', type: 'number', required: true, min: 1000, placeholder: 'Mínimo 1000 para IoT massivo' },
       { name: 'battery_life', label: 'Vida Útil da Bateria (anos)', type: 'number', required: true, min: 1 },
     ]
   },
@@ -89,6 +89,10 @@ export default function SLACreationTemplatePage() {
         }),
       })
       setResult(data)
+      // Redirecionar para página de resultado após submissão
+      if (data.decision && data.sla_id) {
+        router.push(`/slas/result?decision=${data.decision}&sla_id=${data.sla_id}`)
+      }
     } catch (err: any) {
       const apiError = err as APIError
       setError(apiError.message || 'Erro ao criar SLA')
@@ -102,10 +106,10 @@ export default function SLACreationTemplatePage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
           <Settings className="h-8 w-8" />
-          TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN
+          Criar SLA por Template (GST)
         </h1>
-        <p className="text-muted-foreground">
-          Criar SLA via Template - será processado por todos os módulos TriSLA (SEM-CSMF → ML-NSMF → Decision Engine → BC-NSSMF)
+        <p className="text-muted-foreground mt-2">
+          Preencha os atributos GST explicitamente. O template será processado por todos os módulos TriSLA (SEM-CSMF → ML-NSMF → Decision Engine → BC-NSSMF).
         </p>
       </div>
 
@@ -151,9 +155,22 @@ export default function SLACreationTemplatePage() {
 
               {template && (
                 <div className="space-y-3 pt-2 border-t">
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-3">
+                    <div className="text-sm font-medium text-blue-900 mb-1">Atributos GST:</div>
+                    <div className="text-xs text-blue-700">
+                      Organize os campos conforme o modelo GST (Guaranteed Service Template)
+                    </div>
+                  </div>
                   <div className="text-sm text-muted-foreground mb-2">
                     {template.description}
                   </div>
+                  
+                  {/* Tipo de Serviço - Atributo GST explícito */}
+                  <div className="p-2 bg-gray-50 rounded border">
+                    <div className="text-xs font-medium text-gray-600 mb-1">Tipo de Serviço (GST)</div>
+                    <div className="text-sm font-semibold">{template.service_type}</div>
+                  </div>
+                  
                   {template.fields.map(field => {
                     // Campos hidden são preenchidos automaticamente
                     if (field.type === 'hidden') {
@@ -166,10 +183,24 @@ export default function SLACreationTemplatePage() {
                       return null
                     }
                     
+                    // Mapear labels para atributos GST explícitos
+                    const gstLabelMap: Record<string, string> = {
+                      'latency': 'Latência Alvo (ms)',
+                      'reliability': 'Confiabilidade (%)',
+                      'throughput_ul': 'Throughput UL (Mbps)',
+                      'throughput_dl': 'Throughput DL (Mbps)',
+                      'device_density': 'Área de Cobertura (dispositivos/km²)',
+                      'battery_life': 'Duração (anos)',
+                    }
+                    
+                    const gstLabel = gstLabelMap[field.name] || field.label
+                    const isGSTAttribute = ['latency', 'reliability', 'throughput_ul', 'throughput_dl', 'device_density', 'battery_life'].includes(field.name)
+                    
                     return (
-                      <div key={field.name}>
+                      <div key={field.name} className={isGSTAttribute ? "p-2 bg-gray-50 rounded border" : ""}>
                         <label className="text-sm font-medium">
-                          {field.label}
+                          {isGSTAttribute && <span className="text-xs text-gray-500 mr-1">[GST]</span>}
+                          {gstLabel}
                           {field.required && <span className="text-red-500"> *</span>}
                         </label>
                         <input
@@ -184,6 +215,7 @@ export default function SLACreationTemplatePage() {
                           min={"min" in field ? field.min : undefined}
                           max={"max" in field ? field.max : undefined}
                           step={"step" in field ? field.step : undefined}
+                          placeholder={"placeholder" in field ? field.placeholder : undefined}
                         />
                       </div>
                     )
@@ -210,7 +242,17 @@ export default function SLACreationTemplatePage() {
                 </div>
               )}
 
-              <Button type="submit" disabled={loading || !selectedTemplate} className="w-full">
+              <Button 
+                type="submit" 
+                disabled={loading || !selectedTemplate} 
+                className="w-full"
+                onClick={(e) => {
+                  // Após submissão, redirecionar para página de resultado
+                  if (!loading && selectedTemplate) {
+                    // O redirecionamento será feito após o resultado
+                  }
+                }}
+              >
                 {loading ? 'Processando através de todos os módulos...' : 'Criar SLA'}
               </Button>
             </form>

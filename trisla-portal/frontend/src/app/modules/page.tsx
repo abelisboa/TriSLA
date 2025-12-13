@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/api'
 import { Module } from '@/types'
 import { ArrowLeft, Activity, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
+import { PORTAL_VERSION_DISPLAY } from '@/lib/version'
 
 export default function ModulesPage() {
   const router = useRouter()
@@ -81,63 +82,133 @@ export default function ModulesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Módulos</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Administração - Módulos TriSLA</h1>
         <p className="text-muted-foreground">
-          Visão detalhada dos módulos do TriSLA
+          Estado dos módulos, integrações ativas, versões e links técnicos
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {modules.map((module) => (
-          <Card 
-            key={module.name}
-            className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => router.push(`/modules/${module.name}`)}
-          >
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{module.name}</CardTitle>
-                {getStatusIcon(module.status)}
+      {/* Resumo de Integrações Ativas */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Integrações Ativas</CardTitle>
+          <CardDescription>
+            Módulos integrados ao NASP e status de conexão
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {modules.filter(m => m.status === 'UP').map((module) => (
+              <div key={module.name} className="p-3 border rounded">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon(module.status)}
+                  <span className="font-medium text-sm">{module.name}</span>
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">Integrado ao NASP</div>
               </div>
-              <CardDescription>Status: {module.status}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                {module.latency !== undefined && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Latência:</span>
-                    <span>{module.latency.toFixed(2)}ms</span>
-                  </div>
-                )}
-                {module.error_rate !== undefined && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Taxa de Erro:</span>
-                    <span>{(module.error_rate * 100).toFixed(2)}%</span>
-                  </div>
-                )}
-                {module.pods && module.pods.length > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Pods:</span>
-                    <span>
-                      {module.pods.filter(p => p.ready).length}/{module.pods.length} prontos
-                    </span>
-                  </div>
-                )}
-              </div>
-              <Button 
-                variant="outline" 
-                className="w-full mt-4"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  router.push(`/modules/${module.name}`)
-                }}
-              >
-                Ver Detalhes
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Estado dos Módulos */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Estado dos Módulos</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {modules.map((module) => (
+            <Card 
+              key={module.name}
+              className="cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => router.push(`/modules/${module.name}`)}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">{module.name}</CardTitle>
+                  {getStatusIcon(module.status)}
+                </div>
+                <CardDescription>Status: {module.status}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  {module.latency !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Latência:</span>
+                      <span>{module.latency.toFixed(2)}ms</span>
+                    </div>
+                  )}
+                  {module.error_rate !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Taxa de Erro:</span>
+                      <span>{(module.error_rate * 100).toFixed(2)}%</span>
+                    </div>
+                  )}
+                  {module.pods && module.pods.length > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Pods:</span>
+                      <span>
+                        {module.pods.filter(p => p.ready).length}/{module.pods.length} prontos
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full mt-4"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    router.push(`/modules/${module.name}`)
+                  }}
+                >
+                  Ver Detalhes
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
+
+      {/* Versões e Links Técnicos */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Versões e Links Técnicos</CardTitle>
+          <CardDescription>
+            Informações sobre versões dos módulos e links para documentação técnica
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <div className="text-sm font-medium mb-2">Versão do Portal</div>
+                <div className="text-sm font-semibold text-primary">{PORTAL_VERSION_DISPLAY}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium mb-2">Backend API</div>
+                <div className="text-sm text-muted-foreground">/api/v1</div>
+              </div>
+            </div>
+            <div className="pt-4 border-t">
+              <div className="text-sm font-medium mb-2">Links Técnicos</div>
+              <div className="space-y-2 text-sm">
+                <div>
+                  <span className="text-muted-foreground">API Docs:</span>{' '}
+                  <a href="/api/docs" className="text-primary hover:underline">/api/docs</a>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Health Check:</span>{' '}
+                  <a href="/health" className="text-primary hover:underline">/health</a>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Grafana:</span>{' '}
+                  <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                    Dashboards Avançados
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -14,10 +14,11 @@ import {
 // Menu conforme arquitetura TriSLA
 const navigation = [
   { name: 'HOME', href: '/', icon: Home },
-  { name: 'Criar SLA (Formulário 3 Etapas)', href: '/slas/create', icon: FileText },
   { name: 'Criar SLA (PNL)', href: '/slas/create/pln', icon: FileText },
   { name: 'Criar SLA (Template)', href: '/slas/create/template', icon: Settings },
-  { name: 'Métricas', href: '/slas/metrics', icon: BarChart3 },
+  { name: 'Monitoramento', href: '/slas/monitoring', icon: BarChart3 },
+  { name: 'Métricas', href: '/slas/metrics', icon: Activity },
+  { name: 'Administração', href: '/modules', icon: Settings },
 ]
 
 export function Sidebar() {

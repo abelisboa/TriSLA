@@ -13,21 +13,24 @@ export default function SLACreationPLNPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<any>(null)
+  const [interpretedTemplate, setInterpretedTemplate] = useState<any>(null)
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleInterpret = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
     setResult(null)
+    setInterpretedTemplate(null)
 
     try {
       const data = await api("/sla/interpret", {
         method: "POST",
         body: JSON.stringify({
-          tenant_id: "default",
-          intent_text: intentText
+          intent: intentText
         }),
       })
+      setInterpretedTemplate(data)
       setResult(data)
     } catch (err: any) {
       const apiError = err as APIError
@@ -37,15 +40,46 @@ export default function SLACreationPLNPage() {
     }
   }
 
+  const handleSubmit = async () => {
+    if (!interpretedTemplate) return
+    
+    setSubmitting(true)
+    setError(null)
+
+    try {
+      const data = await api("/sla/submit", {
+        method: "POST",
+        body: JSON.stringify({
+          tenant_id: "default",
+          template_id: interpretedTemplate.intent_id || "pln-generated",
+          form_values: {
+            type: interpretedTemplate.service_type,
+            service_type: interpretedTemplate.service_type,
+            ...interpretedTemplate.sla_requirements,
+            ...interpretedTemplate.technical_parameters
+          }
+        }),
+      })
+      setResult(data)
+      // Redirecionar para página de resultado após submissão
+      router.push(`/slas/result?decision=${data.decision}&sla_id=${data.sla_id || ''}`)
+    } catch (err: any) {
+      const apiError = err as APIError
+      setError(apiError.message || 'Erro ao submeter SLA')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
           <Sparkles className="h-8 w-8" />
-          TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN
+          Criar SLA por Linguagem Natural (PLN)
         </h1>
-        <p className="text-muted-foreground">
-          Criar SLA via Processamento de Linguagem Natural - será interpretado pelo SEM-CSMF do NASP
+        <p className="text-muted-foreground mt-2">
+          A descrição é interpretada semanticamente (PLN → Ontologia → Template GST). O SEM-CSMF do NASP processa sua solicitação e gera um template GST editável antes da submissão final.
         </p>
       </div>
 
@@ -58,7 +92,7 @@ export default function SLACreationPLNPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleInterpret} className="space-y-4">
               <div>
                 <label className="text-sm font-medium">Intent (Linguagem Natural)</label>
                 <textarea
@@ -82,7 +116,7 @@ export default function SLACreationPLNPage() {
                 </div>
               )}
               <Button type="submit" disabled={loading} className="w-full">
-                {loading ? 'Processando...' : 'Interpretar e Enviar ao NASP'}
+                {loading ? 'Interpretando...' : 'Interpretar (PLN → Ontologia → Template GST)'}
               </Button>
             </form>
           </CardContent>
@@ -90,13 +124,51 @@ export default function SLACreationPLNPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Resultado da Interpretação</CardTitle>
+            <CardTitle>Template GST Gerado</CardTitle>
             <CardDescription>
-              Informações interpretadas pelo SEM-CSMF
+              Template resultante da interpretação semântica (PLN → Ontologia → Template GST)
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {result ? (
+            {interpretedTemplate ? (
+              <div className="space-y-4">
+                {/* Mostrar template antes da submissão */}
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded">
+                  <div className="text-sm font-medium text-blue-900 mb-2">Template GST Gerado:</div>
+                  <div className="space-y-2 text-sm">
+                    {interpretedTemplate.service_type && (
+                      <div>
+                        <span className="font-medium">Tipo de Serviço:</span> {interpretedTemplate.service_type}
+                      </div>
+                    )}
+                    {interpretedTemplate.technical_parameters && Object.keys(interpretedTemplate.technical_parameters).length > 0 && (
+                      <div>
+                        <span className="font-medium">Parâmetros Técnicos:</span>
+                        <pre className="mt-1 p-2 bg-white rounded text-xs overflow-auto">
+                          {JSON.stringify(interpretedTemplate.technical_parameters, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                    {interpretedTemplate.sla_requirements && Object.keys(interpretedTemplate.sla_requirements).length > 0 && (
+                      <div>
+                        <span className="font-medium">Requisitos SLA:</span>
+                        <pre className="mt-1 p-2 bg-white rounded text-xs overflow-auto">
+                          {JSON.stringify(interpretedTemplate.sla_requirements, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleSubmit} 
+                  disabled={submitting} 
+                  className="w-full"
+                >
+                  {submitting ? 'Submetendo...' : 'Submeter SLA ao NASP'}
+                </Button>
+              </div>
+            ) : result ? (
               <div className="space-y-4">
                 {/* Intent ID */}
                 {result.intent_id && (
@@ -182,7 +254,7 @@ export default function SLACreationPLNPage() {
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                O resultado aparecerá aqui após enviar
+                O template GST aparecerá aqui após a interpretação
               </div>
             )}
           </CardContent>
