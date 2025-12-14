@@ -5,7 +5,8 @@ import { FileText, Settings, BarChart3, Activity } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState, useCallback } from 'react'
 import { api } from '@/lib/api'
-import { API_BASE_URL, API_ENDPOINTS } from '@/lib/config'
+import { API_BASE_URL } from '@/lib/runtimeConfig'
+import { API_ENDPOINTS } from '@/lib/config'
 import { PORTAL_VERSION_DISPLAY } from '@/lib/version'
 
 export default function HomePage() {

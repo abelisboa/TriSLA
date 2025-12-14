@@ -3,9 +3,9 @@
  * Cliente para comunicação com o backend
  */
 
-import { API_BASE_URL } from './config'
+import { API_BASE_URL } from './runtimeConfig'
 
-// Usar configuração centralizada que diferencia client-side e server-side
+// Usar configuração centralizada Kubernetes-safe
 export const BACKEND_URL = API_BASE_URL
 
 export interface APIError {

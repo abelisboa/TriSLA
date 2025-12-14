@@ -4,7 +4,7 @@
 frontend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-frontend
-    tag: v3.7.32
+    tag: v3.7.33
     pullPolicy: Always
   service:
     port: 80
@@ -13,7 +13,8 @@ frontend:
   replicaCount: 1
   env:
     BACKEND_URL: "http://trisla-portal-backend:8001/api/v1"
-    NEXT_PUBLIC_TRISLA_API_BASE_URL: "http://localhost:8001/api/v1"
+    # NEXT_PUBLIC_TRISLA_API_BASE_URL não precisa ser definido - runtimeConfig.ts usa Service Kubernetes por padrão
+    # Para desenvolvimento local via túnel SSH, pode ser sobrescrito via ConfigMap/Secret se necessário
 
 # Configuração do Backend
 backend:
