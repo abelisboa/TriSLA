@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { Contract } from '@/types'
 import { FileCheck, Eye, GitCompare } from 'lucide-react'
 
@@ -23,7 +23,7 @@ export default function ContractsPage() {
     setLoading(true)
     setError(null)
     try {
-      const data = await api.getContracts()
+      const data = await apiFetch("/contracts")
       setContracts(data)
     } catch (err: any) {
       setError(err.message)

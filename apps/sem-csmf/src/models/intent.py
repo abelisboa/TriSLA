@@ -3,7 +3,7 @@ Modelos de Intent para SEM-CSMF
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Literal
 from enum import Enum
 
 
@@ -27,8 +27,9 @@ class Intent(BaseModel):
     """Modelo de Intent"""
     intent_id: str = Field(..., description="ID único do intent")
     tenant_id: Optional[str] = Field(None, description="ID do tenant")
-    service_type: SliceType = Field(..., description="Tipo de serviço/slice")
-    sla_requirements: SLARequirements = Field(..., description="Requisitos de SLA")
+    service_type: SliceType = Field(..., description="Tipo de serviço/slice (URLLC, eMBB, mMTC)")
+    sla_requirements: Optional[SLARequirements] = Field(None, description="Requisitos de SLA (opcional, pode ser gerado internamente)")
+    intent_text: Optional[str] = Field(None, description="Texto em linguagem natural para processamento semântico")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Metadados adicionais")
     
     class Config:
@@ -45,6 +46,18 @@ class Intent(BaseModel):
                 }
             }
         }
+
+
+class IntentRequest(BaseModel):
+    """
+    Request simplificado para criação de intent via PNL
+    Aceita payload mínimo: service_type + intent
+    sla_requirements será gerado internamente conforme ontologia
+    """
+    service_type: Literal["URLLC", "eMBB", "mMTC"] = Field(..., description="Tipo de serviço/slice")
+    intent: str = Field(..., description="Texto em linguagem natural")
+    sla_requirements: Optional[Dict[str, Any]] = Field(None, description="Requisitos de SLA (opcional, será gerado se não fornecido)")
+    tenant_id: Optional[str] = Field(None, description="ID do tenant")
 
 
 class IntentResponse(BaseModel):

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from .service import BCService
-from .models import SLARequest, SLAStatusUpdate
+from src.service import BCService
+from src.models import SLARequest, SLAStatusUpdate
 
 router = APIRouter(prefix="/bc")
 

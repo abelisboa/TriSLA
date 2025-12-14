@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { Contract, Violation, Renegotiation, Penalty } from '@/types'
 import { ArrowLeft, AlertTriangle, RefreshCw, DollarSign } from 'lucide-react'
 
@@ -27,10 +27,10 @@ export default function ContractDetailPage() {
     setError(null)
     try {
       const [contractData, violationsData, renegotiationsData, penaltiesData] = await Promise.all([
-        api.getContract(contractId),
-        api.getContractViolations(contractId),
-        api.getContractRenegotiations(contractId),
-        api.getContractPenalties(contractId),
+        apiFetch(`/contracts/${contractId}`),
+        apiFetch(`/contracts/${contractId}/violations`),
+        apiFetch(`/contracts/${contractId}/renegotiations`),
+        apiFetch(`/contracts/${contractId}/penalties`),
       ])
       setContract(contractData)
       setViolations(violationsData)

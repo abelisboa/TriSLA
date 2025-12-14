@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { ArrowLeft, Activity } from 'lucide-react'
 
 export default function ModuleDetailPage() {
@@ -30,9 +30,9 @@ export default function ModuleDetailPage() {
     setError(null)
     try {
       const [moduleData, metricsData, statusData] = await Promise.all([
-        api.getModule(moduleName),
-        api.getModuleMetrics(moduleName),
-        api.getModuleStatus(moduleName),
+        apiFetch(`/modules/${moduleName}`),
+        apiFetch(`/modules/${moduleName}/metrics`),
+        apiFetch(`/modules/${moduleName}/status`),
       ])
       
       if (mountedRef.current) {

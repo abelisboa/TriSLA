@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { api } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { CheckCircle, XCircle, Clock, FileText, Activity, ExternalLink } from 'lucide-react'
 
 function ResultPage() {
@@ -32,7 +32,7 @@ function ResultPage() {
 
   const fetchStatus = async (id: string) => {
     try {
-      const data = await api(`/sla/status/${id}`)
+      const data = await apiFetch(`/sla/status/${id}`)
       setStatus(data)
     } catch (err: any) {
       console.warn('Status não encontrado:', err)

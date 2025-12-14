@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { api, APIError } from '@/lib/api'
+import { apiFetch, APIError } from '@/lib/api'
 import { Etapa1Schema, Etapa2Schema, Etapa3Schema, SLAFormSchema, type Etapa1Input, type Etapa2Input, type Etapa3Input } from '@/lib/validation'
 import { z } from 'zod'
 import { FileText, CheckCircle, XCircle, ArrowRight, ArrowLeft } from 'lucide-react'
@@ -38,12 +38,13 @@ export default function SLACreationPage() {
       const validated = Etapa1Schema.parse(etapa1Data)
       
       setLoading(true)
-      const data = await api("/sla/interpret", {
+      const data = await apiFetch("/sla/interpret", {
         method: "POST",
         body: JSON.stringify({
           tenant_id: validated.tenant_id,
           intent_text: validated.descricao_intencao
         }),
+        headers: { "Content-Type": "application/json" }
       })
       
       setInterpretResult(data)
@@ -124,9 +125,10 @@ export default function SLACreationPage() {
         }
       }
       
-      const result = await api("/sla/submit", {
+      const result = await apiFetch("/sla/submit", {
         method: "POST",
         body: JSON.stringify(submitData),
+        headers: { "Content-Type": "application/json" }
       })
       
       // Redirecionar para página de resultado ou métricas

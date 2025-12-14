@@ -54,7 +54,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
     description="API para gerenciamento de SLA em redes 5G/O-RAN",
-    version="1.0.0",
+    version="3.7.21",
     lifespan=lifespan,
 )
 
@@ -75,7 +75,7 @@ app.include_router(sla.router, prefix="/api/v1/sla", tags=["SLA"])
 async def root():
     return {
         "name": "TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
-        "version": "1.0.0",
+        "version": "3.7.21",
         "status": "running"
     }
 
@@ -90,10 +90,18 @@ async def health_check():
     # Não fazer todos os testes aqui para não deixar o endpoint pesado
     return {
         "status": "healthy",
-        "version": "1.0.0",
+        "version": "3.7.21",
         "nasp_reachable": None,  # Será preenchido pelo diagnóstico se necessário
         "nasp_details_url": "/nasp/diagnostics"
     }
+
+
+@app.get("/api/v1/health", tags=["health"])
+async def health_v1():
+    """
+    Alias para /health - retrocompatibilidade com frontend que espera /api/v1/health
+    """
+    return await health_check()
 
 
 @app.get("/nasp/diagnostics", response_model=NASPDiagnosticsResponse)

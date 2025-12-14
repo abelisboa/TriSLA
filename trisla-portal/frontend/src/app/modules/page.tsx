@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { apiClient } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { Module } from '@/types'
 import { ArrowLeft, Activity, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
 import { PORTAL_VERSION_DISPLAY } from '@/lib/version'
@@ -21,7 +21,7 @@ export default function ModulesPage() {
     setLoading(true)
     setError(null)
     try {
-      const data = await apiClient.getModules()
+      const data = await apiFetch("/modules")
       setModules(data)
     } catch (err: any) {
       setError(err.message)

@@ -5,6 +5,7 @@ import { FileText, Settings, BarChart3, Activity } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState, useCallback } from 'react'
 import { PORTAL_VERSION_DISPLAY } from '@/lib/version'
+import { apiFetch } from '@/lib/api'
 
 export default function HomePage() {
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking')
@@ -13,24 +14,8 @@ export default function HomePage() {
   // Função estável com useCallback para evitar loops infinitos
   const checkBackend = useCallback(async () => {
     try {
-      // Health endpoint: /health (same-origin, Next.js faz proxy)
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000)
-      
-      try {
-        const response = await fetch('/health', { signal: controller.signal })
-        clearTimeout(timeoutId)
-        if (response.ok) {
-          setBackendStatus('online')
-        } else {
-          setBackendStatus('offline')
-        }
-      } catch (err: any) {
-        clearTimeout(timeoutId)
-        if (err.name !== 'AbortError') {
-          setBackendStatus('offline')
-        }
-      }
+      await apiFetch("/health")
+      setBackendStatus('online')
     } catch {
       setBackendStatus('offline')
     }

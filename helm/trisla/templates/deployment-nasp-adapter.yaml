@@ -20,6 +20,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
 
     spec:
+      # FASE C3-C3.2 FIX A: Garantir automount do ServiceAccount token
+      automountServiceAccountToken: true
+      serviceAccountName: {{ include "trisla.name" . }}-nasp-adapter
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
       nodeSelector:

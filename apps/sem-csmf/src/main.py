@@ -20,12 +20,17 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from intent_processor import IntentProcessor
 from nest_generator_db import NESTGeneratorDB
-from models.intent import Intent, IntentResponse
+from models.intent import Intent, IntentRequest, IntentResponse, SliceType, SLARequirements
 from models.nest import NEST
 from models.db_models import IntentModel
 from database import get_db, init_db
 from decision_engine_client import DecisionEngineHTTPClient
 from auth import get_current_user, is_auth_enabled, get_current_user_optional
+from services.semantic_generator import generate_default_sla
+import logging
+import uuid
+
+logger = logging.getLogger(__name__)
 
 # Configurar OpenTelemetry (opcional em modo DEV)
 otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
@@ -96,17 +101,169 @@ async def metrics():
     """Expor métricas Prometheus"""
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
+@app.post("/api/v1/interpret")
+async def interpret_intent(
+    request: dict,
+    db: Session = Depends(get_db),
+    current_user: str = get_current_user_optional()
+):
+    """
+    Endpoint minimalista para interpretação PNL
+    Aceita apenas { "intent": "texto" } e infere service_type e sla_requirements
+    """
+    from models.intent import Intent, SliceType, SLARequirements
+    import uuid
+    
+    intent_text = request.get("intent")
+    if not intent_text or not intent_text.strip():
+        raise HTTPException(status_code=400, detail="Campo 'intent' é obrigatório")
+    
+    tenant_id = request.get("tenant_id", "default")
+    
+    with tracer.start_as_current_span("interpret_intent") as span:
+        span.set_attribute("intent.text", intent_text[:100])  # Primeiros 100 chars
+        
+        try:
+            # 1. Processar texto com NLP para inferir service_type e sla_requirements
+            nlp_result = None
+            if intent_processor.nlp_parser:
+                try:
+                    nlp_result = intent_processor.nlp_parser.parse_intent_text(intent_text)
+                except Exception as e:
+                    logger.warning(f"NLP parser error: {e}")
+            
+            # 2. Inferir service_type
+            inferred_service_type = SliceType.EMBB  # Default
+            if nlp_result and nlp_result.get("slice_type"):
+                try:
+                    inferred_service_type = SliceType[nlp_result["slice_type"].upper()]
+                except (KeyError, AttributeError):
+                    # Fallback: inferir do texto
+                    intent_upper = intent_text.upper()
+                    if "URLLC" in intent_upper or "LATENCIA" in intent_upper or "LATENCY" in intent_upper or "CIRURGIA" in intent_upper or "SURGERY" in intent_upper:
+                        inferred_service_type = SliceType.URLLC
+                    elif "MMTC" in intent_upper or "IOT" in intent_upper or "DEVICE" in intent_upper or "SENSOR" in intent_upper:
+                        inferred_service_type = SliceType.MMTC
+                    elif "EMBB" in intent_upper or "BROADBAND" in intent_upper or "BANDA" in intent_upper:
+                        inferred_service_type = SliceType.EMBB
+            
+            # 3. Construir SLA requirements a partir do NLP ou valores padrão
+            sla_req_dict = {}
+            if nlp_result and nlp_result.get("requirements"):
+                sla_req_dict = nlp_result["requirements"]
+            else:
+                # Valores padrão baseados no service_type
+                if inferred_service_type == SliceType.URLLC:
+                    sla_req_dict = {
+                        "latency": "10ms",
+                        "reliability": 0.99999,
+                        "jitter": "5ms"
+                    }
+                elif inferred_service_type == SliceType.MMTC:
+                    sla_req_dict = {
+                        "device_density": 10000,  # IoT massivo
+                        "coverage": "Urban"
+                    }
+                else:  # eMBB
+                    sla_req_dict = {
+                        "throughput": "100Mbps",
+                        "reliability": 0.99
+                    }
+            
+            sla_requirements = SLARequirements(**sla_req_dict)
+            
+            # 4. Criar Intent completo
+            intent_id = str(uuid.uuid4())
+            intent = Intent(
+                intent_id=intent_id,
+                tenant_id=tenant_id,
+                service_type=inferred_service_type,
+                sla_requirements=sla_requirements
+            )
+            
+            # 5. Validar semanticamente
+            validated_intent = await intent_processor.validate_semantic(intent, intent_text)
+            
+            # 6. Gerar GST e NEST
+            gst = await intent_processor.generate_gst(validated_intent)
+            nest_generator = NESTGeneratorDB(db)
+            nest = await nest_generator.generate_nest(gst)
+            
+            span.set_attribute("intent.id", intent_id)
+            span.set_attribute("nest.id", nest.nest_id)
+            span.set_attribute("service_type", validated_intent.service_type.value)
+            
+            # 7. Retornar resposta padronizada
+            return {
+                "intent_id": intent_id,
+                "nest_id": nest.nest_id,
+                "service_type": validated_intent.service_type.value,
+                "slice_type": validated_intent.service_type.value,  # Compatibilidade
+                "sla_requirements": validated_intent.sla_requirements.model_dump(),
+                "status": "accepted",
+                "message": "Intent interpretado e NEST gerado com sucesso"
+            }
+            
+        except Exception as e:
+            span.record_exception(e)
+            span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+            logger.error(f"Erro ao interpretar intent: {e}", exc_info=True)
+            raise HTTPException(status_code=500, detail=f"Erro ao interpretar intent: {str(e)}")
+
+
 @app.post("/api/v1/intents", response_model=IntentResponse)
 async def create_intent(
-    intent: Intent,
+    request: IntentRequest,
     db: Session = Depends(get_db),
     current_user: str = get_current_user_optional()
 ):
     """
     Recebe intent e processa através do pipeline:
     Intent → Ontology → GST → NEST → Database → Decision Engine (I-01)
+    
+    Aceita payload mínimo: service_type + intent
+    sla_requirements será gerado internamente se não fornecido
     """
     # current_user será None se autenticação estiver desabilitada
+    
+    # Converter service_type string para enum
+    # Mapear "eMBB" para "EMBB" (enum interno)
+    try:
+        if request.service_type == "eMBB":
+            service_type_enum = SliceType.EMBB
+        elif request.service_type == "URLLC":
+            service_type_enum = SliceType.URLLC
+        elif request.service_type == "mMTC":
+            service_type_enum = SliceType.MMTC
+        else:
+            raise HTTPException(status_code=400, detail=f"service_type inválido: {request.service_type}. Deve ser URLLC, eMBB ou mMTC")
+    except (KeyError, AttributeError) as e:
+        raise HTTPException(status_code=400, detail=f"service_type inválido: {request.service_type}. Deve ser URLLC, eMBB ou mMTC. Erro: {str(e)}")
+    
+    # Gerar intent_id se não fornecido
+    intent_id = str(uuid.uuid4())
+    tenant_id = request.tenant_id or "default"
+    
+    # FASE 3: Gerar sla_requirements se não fornecido
+    if request.sla_requirements is None:
+        sla_req_dict = generate_default_sla(request.service_type)
+        logger.info(f"🔧 Gerando sla_requirements default para {request.service_type}: {sla_req_dict}")
+    else:
+        sla_req_dict = request.sla_requirements
+    
+    # Converter dict para SLARequirements
+    sla_requirements = SLARequirements(**sla_req_dict)
+    
+    # Construir Intent completo
+    intent = Intent(
+        intent_id=intent_id,
+        tenant_id=tenant_id,
+        service_type=service_type_enum,
+        sla_requirements=sla_requirements,
+        intent_text=request.intent,
+        metadata={}
+    )
+    
     with tracer.start_as_current_span("process_intent") as span:
         span.set_attribute("intent.id", intent.intent_id)
         span.set_attribute("intent.type", intent.service_type.value)
@@ -117,32 +274,33 @@ async def create_intent(
                 intent_id=intent.intent_id,
                 tenant_id=intent.tenant_id,
                 service_type=intent.service_type.value,
-                sla_requirements=intent.sla_requirements.model_dump(),
+                sla_requirements=intent.sla_requirements.model_dump() if intent.sla_requirements else {},
                 extra_metadata=intent.metadata
             )
             db.add(intent_model)
             db.commit()
             
-            # 2. Validar intent semanticamente (Ontology)
-            validated_intent = await intent_processor.validate_semantic(intent)
+            # 3. Validar intent semanticamente (Ontology)
+            # Se intent_text foi fornecido, usar para enriquecimento semântico
+            validated_intent = await intent_processor.validate_semantic(intent, intent_text=intent.intent_text)
             
-            # 3. Gerar GST (Generation Service Template)
+            # 4. Gerar GST (Generation Service Template)
             gst = await intent_processor.generate_gst(validated_intent)
             
-            # 4. Gerar NEST (Network Slice Template) com persistência
+            # 5. Gerar NEST (Network Slice Template) com persistência
             nest_generator = NESTGeneratorDB(db)
             nest = await nest_generator.generate_nest(gst)
             
-            # 5. Gerar metadados para Decision Engine
+            # 6. Gerar metadados para Decision Engine
             metadata = await intent_processor.generate_metadata(intent, nest)
             
-            # 6. Enviar metadados via I-01 (HTTP) para Decision Engine
+            # 7. Enviar metadados via I-01 (HTTP) para Decision Engine
             decision_response = await decision_engine_client.send_nest_metadata(
                 intent_id=intent.intent_id,
                 nest_id=nest.nest_id,
                 tenant_id=intent.tenant_id,
                 service_type=intent.service_type.value,
-                sla_requirements=intent.sla_requirements.model_dump(),
+                sla_requirements=intent.sla_requirements.model_dump() if intent.sla_requirements else {},
                 nest_status=nest.status.value,
                 metadata=metadata
             )

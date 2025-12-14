@@ -3,7 +3,8 @@ BC-NSSMF - Blockchain-enabled Network Slice Subnet Management Function
 Executa Smart Contracts e valida SLAs
 """
 
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response, APIRouter
+from fastapi.responses import JSONResponse
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
@@ -69,6 +70,41 @@ async def health():
         "enabled": enabled,
         "rpc_connected": enabled
     }
+
+
+@app.get("/health/ready")
+def health_ready():
+    """Endpoint de readiness real - verifica RPC conectado e BC_PRIVATE_KEY válida"""
+    try:
+        # Verificar se módulos de wallet estão disponíveis
+        try:
+            from src.blockchain.tx_sender import rpc_connected
+            from src.blockchain.wallet import get_sender_address
+        except ImportError:
+            return JSONResponse(
+                status_code=503,
+                content={"ready": False, "reason": "wallet_module_unavailable"}
+            )
+        
+        # Verificar RPC conectado
+        if not rpc_connected():
+            return JSONResponse(
+                status_code=503,
+                content={"ready": False, "reason": "rpc_unreachable"}
+            )
+        
+        # Verificar BC_PRIVATE_KEY e derivar endereço
+        addr = get_sender_address()
+        return {
+            "ready": True,
+            "rpc_connected": True,
+            "sender": addr
+        }
+    except Exception as e:
+        return JSONResponse(
+            status_code=503,
+            content={"ready": False, "reason": "wallet_unavailable", "detail": str(e)}
+        )
 
 
 @app.get("/metrics")

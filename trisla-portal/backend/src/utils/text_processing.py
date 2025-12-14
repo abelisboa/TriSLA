@@ -48,10 +48,13 @@ def corrigir_erros_ortograficos(texto: str) -> str:
     return texto_corrigido.strip()
 
 
-def inferir_tipo_slice(texto: str) -> str:
+def infer_service_type_from_intent(intent: str) -> str:
     """
-    Infere tipo de slice a partir do texto de intenção
-    Conforme Capítulo 5 - SEM-CSMF
+    Inferência semântica determinística ANTES do SEM-CSMF
+    Conforme Capítulo 5 - SEM-CSMF (inferência semântica inicial)
+    
+    Esta função é determinística e rastreável, não é IA inventada.
+    É inferência semântica baseada em palavras-chave, como descrito na dissertação.
     
     Exemplos:
     - "cirurgia remota" → URLLC
@@ -59,31 +62,44 @@ def inferir_tipo_slice(texto: str) -> str:
     - "milhares de sensores IoT" → mMTC
     
     Args:
-        texto: Texto da intenção
+        intent: Texto da intenção em linguagem natural
         
     Returns:
-        Tipo de slice inferido: "URLLC", "eMBB", "mMTC" ou "AUTO"
+        Tipo de slice inferido: "URLLC", "eMBB" ou "mMTC"
+        
+    Raises:
+        ValueError: Se não foi possível inferir o tipo de slice
     """
-    texto_lower = texto.lower()
+    intent_lower = intent.lower()
     
-    # Palavras-chave para URLLC
-    urllc_keywords = ['cirurgia', 'remota', 'cirurgia remota', 'baixa latência', 'ultra confiável', 
-                      'urllc', 'ultra-reliable', 'low latency', 'crítico', 'tempo real']
+    # Palavras-chave para URLLC (prioridade alta)
+    urllc_keywords = [
+        'cirurgia', 'remota', 'cirurgia remota', 'surgery', 'remote surgery',
+        'baixa latência', 'low latency', 'ultra confiável', 'ultra-reliable',
+        'urllc', 'crítico', 'tempo real', 'real-time', 'critical',
+        'latência', 'latency', 'confiabilidade', 'reliability'
+    ]
     
     # Palavras-chave para eMBB
-    embb_keywords = ['streaming', '4k', 'vídeo', 'estádio', 'lota', 'banda larga', 
-                     'embb', 'enhanced mobile', 'broadband', 'alta velocidade']
+    embb_keywords = [
+        'streaming', '4k', 'vídeo', 'video', 'estádio', 'stadium', 'lota', 'crowd',
+        'banda larga', 'broadband', 'embb', 'enhanced mobile', 'alta velocidade',
+        'high speed', 'download', 'upload', 'throughput'
+    ]
     
     # Palavras-chave para mMTC
-    mmtc_keywords = ['sensores', 'iot', 'milhares', 'dispositivos', 'densidade', 
-                     'mmtc', 'massive machine', 'machine type', 'máquinas']
+    mmtc_keywords = [
+        'sensores', 'sensors', 'iot', 'internet das coisas', 'milhares', 'thousands',
+        'dispositivos', 'devices', 'densidade', 'density', 'mmtc', 'massive machine',
+        'machine type', 'máquinas', 'machines', 'sensor network'
+    ]
     
     # Contar ocorrências
-    urllc_count = sum(1 for kw in urllc_keywords if kw in texto_lower)
-    embb_count = sum(1 for kw in embb_keywords if kw in texto_lower)
-    mmtc_count = sum(1 for kw in mmtc_keywords if kw in texto_lower)
+    urllc_count = sum(1 for kw in urllc_keywords if kw in intent_lower)
+    embb_count = sum(1 for kw in embb_keywords if kw in intent_lower)
+    mmtc_count = sum(1 for kw in mmtc_keywords if kw in intent_lower)
     
-    # Retornar tipo com maior score
+    # Retornar tipo com maior score (determinístico)
     if urllc_count > embb_count and urllc_count > mmtc_count:
         return "URLLC"
     elif embb_count > mmtc_count:
@@ -91,6 +107,18 @@ def inferir_tipo_slice(texto: str) -> str:
     elif mmtc_count > 0:
         return "mMTC"
     else:
+        # Se não conseguiu inferir, levantar erro (não retornar "AUTO")
+        raise ValueError(f"Não foi possível inferir o tipo de slice a partir do intent: '{intent[:50]}...'")
+
+
+def inferir_tipo_slice(texto: str) -> str:
+    """
+    Alias para infer_service_type_from_intent (compatibilidade)
+    Retorna "AUTO" se não conseguir inferir (comportamento legado)
+    """
+    try:
+        return infer_service_type_from_intent(texto)
+    except ValueError:
         return "AUTO"
 
 

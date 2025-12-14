@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { api, APIError } from '@/lib/api'
+import { apiFetch, APIError } from '@/lib/api'
 import { BarChart3, Activity } from 'lucide-react'
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
@@ -30,7 +30,7 @@ function MetricsPage() {
   const fetchStatus = useCallback(async () => {
     if (!slaId) return
     try {
-      const data = await api(`/sla/status/${slaId}`)
+      const data = await apiFetch(`/sla/status/${slaId}`)
       setStatus(data)
     } catch (err: any) {
       // Status pode não existir ainda - não é crítico
@@ -44,7 +44,7 @@ function MetricsPage() {
     setLoading(true)
     setError(null)
     try {
-      const data = await api(`/sla/metrics/${slaId}`)
+      const data = await apiFetch(`/sla/metrics/${slaId}`)
       setMetrics(data)
     } catch (err: any) {
       const apiError = err as APIError

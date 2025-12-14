@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { api, APIError } from '@/lib/api'
+import { apiFetch, APIError } from '@/lib/api'
 import { Sparkles, CheckCircle, XCircle, Clock, Activity } from 'lucide-react'
 
 export default function SLACreationPLNPage() {
@@ -24,11 +24,12 @@ export default function SLACreationPLNPage() {
     setInterpretedTemplate(null)
 
     try {
-      const data = await api("/sla/interpret", {
+      const data = await apiFetch("/sla/interpret", {
         method: "POST",
         body: JSON.stringify({
           intent: intentText
         }),
+        headers: { "Content-Type": "application/json" }
       })
       setInterpretedTemplate(data)
       setResult(data)
@@ -47,7 +48,7 @@ export default function SLACreationPLNPage() {
     setError(null)
 
     try {
-      const data = await api("/sla/submit", {
+      const data = await apiFetch("/sla/submit", {
         method: "POST",
         body: JSON.stringify({
           tenant_id: "default",
@@ -59,6 +60,7 @@ export default function SLACreationPLNPage() {
             ...interpretedTemplate.technical_parameters
           }
         }),
+        headers: { "Content-Type": "application/json" }
       })
       setResult(data)
       // Redirecionar para página de resultado após submissão

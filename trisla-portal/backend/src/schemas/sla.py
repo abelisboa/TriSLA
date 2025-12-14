@@ -3,9 +3,9 @@ from typing import Optional, Dict, Any
 
 
 class SLAInterpretRequest(BaseModel):
-    """Request para interpretar PNL e enviar ao SEM-CSMF REAL"""
-    intent_text: str
-    tenant_id: str
+    """Request para interpretar PNL e enviar ao SEM-CSMF REAL - Payload minimalista"""
+    intent: str
+    tenant_id: Optional[str] = "default"
 
 
 class SLASubmitRequest(BaseModel):

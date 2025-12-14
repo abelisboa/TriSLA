@@ -32,6 +32,9 @@ opentelemetry-propagator-b3>=1.24.0
 # Métricas Prometheus
 prometheus_client>=0.20.0
 
+# HTTP Client (para integração com Prometheus)
+httpx>=0.25.0
+
 # Utilitários
 python-dateutil==2.8.2
 requests==2.31.0

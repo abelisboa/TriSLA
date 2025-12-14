@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { XAIExplanation } from '@/types'
 import { Brain, BarChart3 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
@@ -23,7 +23,7 @@ export default function XAIPage() {
     setLoading(true)
     setError(null)
     try {
-      const data = await api.getXAIExplanations()
+      const data = await apiFetch("/xai/explanations")
       setExplanations(data)
     } catch (err: any) {
       setError(err.message)

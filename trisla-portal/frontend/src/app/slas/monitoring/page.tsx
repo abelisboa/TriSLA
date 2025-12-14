@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { api } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { Activity, BarChart3, ExternalLink, RefreshCw } from 'lucide-react'
 
 export default function MonitoringPage() {
@@ -25,7 +25,7 @@ export default function MonitoringPage() {
       
       // Tentar buscar health global para verificar status do sistema
       try {
-        const health = await api.getHealthGlobal()
+        const health = await apiFetch("/health/global")
         if (!mountedRef.current) return
         
         if (health.status === 'healthy') {

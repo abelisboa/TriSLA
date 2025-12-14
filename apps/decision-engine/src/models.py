@@ -144,3 +144,40 @@ class DecisionStatus(BaseModel):
     blockchain_tx_hash: Optional[str] = None
     timestamp: str
 
+
+class SLAEvaluateInput(BaseModel):
+    """
+    Entrada para o endpoint /evaluate
+    Recebe SLA validado do SEM-CSMF
+    """
+    intent_id: str = Field(..., description="ID do intent (obrigatório)")
+    nest_id: Optional[str] = Field(None, description="ID do NEST (opcional)")
+    intent: Dict[str, Any] = Field(..., description="Dados do intent (SLAIntent)")
+    nest: Optional[Dict[str, Any]] = Field(None, description="Dados do NEST (NestSubset, opcional)")
+    context: Optional[Dict[str, Any]] = Field(None, description="Contexto adicional (opcional)")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "intent_id": "intent-001",
+                "nest_id": "nest-001",
+                "intent": {
+                    "intent_id": "intent-001",
+                    "tenant_id": "tenant-001",
+                    "service_type": "URLLC",
+                    "sla_requirements": {
+                        "latency": "10ms",
+                        "reliability": 0.999
+                    }
+                },
+                "nest": {
+                    "nest_id": "nest-001",
+                    "intent_id": "intent-001",
+                    "network_slices": [],
+                    "resources": {},
+                    "status": "generated"
+                },
+                "context": {}
+            }
+        }
+

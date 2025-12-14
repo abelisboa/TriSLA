@@ -3,6 +3,7 @@ Rotas REAIS para SLA - SEM SIMULAÇÕES
 Todas as respostas vêm do NASP real (SEM-CSMF, ML-NSMF, Decision Engine, BC-NSSMF)
 """
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from src.schemas.sla import (
     SLAInterpretRequest,
     SLASubmitRequest,
@@ -12,6 +13,7 @@ from src.schemas.sla import (
 )
 from src.services.nasp import NASPService
 from src.utils.text_processing import corrigir_erros_ortograficos, inferir_tipo_slice, extrair_parametros_tecnicos
+from src.api.schemas.error_response import ErrorResponse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -32,37 +34,46 @@ async def interpret_sla(request: SLAInterpretRequest):
     - Nunca aceita entrada inválida
     """
     try:
-        # Validação básica de entrada
-        if not request.intent_text or not request.intent_text.strip():
+        # Validação básica de entrada (payload minimalista)
+        if not request.intent or not request.intent.strip():
             raise HTTPException(
                 status_code=400,
-                detail="Intent text não pode ser vazio"
+                detail="Intent não pode ser vazio"
             )
         
-        if not request.tenant_id or not request.tenant_id.strip():
-            raise HTTPException(
-                status_code=400,
-                detail="Tenant ID não pode ser vazio"
-            )
+        tenant_id = (request.tenant_id or "default").strip()
         
         # ETAPA 1: Corrigir erros ortográficos (Cap. 5 - PNL)
-        intent_text_corrigido = corrigir_erros_ortograficos(request.intent_text.strip())
+        intent_text_corrigido = corrigir_erros_ortograficos(request.intent.strip())
         
-        # ETAPA 2: Inferir tipo de slice se necessário
-        tipo_slice_inferido = inferir_tipo_slice(intent_text_corrigido)
+        # ETAPA 2: Inferência semântica inicial ANTES do SEM-CSMF (conforme dissertação)
+        # Esta é uma função determinística e rastreável, não é IA inventada
+        from src.utils.text_processing import infer_service_type_from_intent
+        try:
+            service_type_inferido = infer_service_type_from_intent(intent_text_corrigido)
+            logger.info(f"🔍 Inferência semântica inicial realizada: {service_type_inferido}")
+        except ValueError as e:
+            logger.error(f"❌ Erro na inferência semântica: {e}")
+            raise HTTPException(
+                status_code=422,
+                detail=f"Erro semântico: {str(e)}. Por favor, especifique o tipo de serviço desejado (URLLC, eMBB ou mMTC) no texto."
+            )
         
-        # ETAPA 3: Extrair parâmetros técnicos do texto
+        # ETAPA 3: Extrair parâmetros técnicos do texto (opcional, para enriquecimento)
         parametros_extraidos = extrair_parametros_tecnicos(intent_text_corrigido)
         
-        # Chamada REAL ao SEM-CSMF do NASP
+        # ETAPA 4: Chamada REAL ao SEM-CSMF com service_type válido (enum correto)
+        # O SEM-CSMF recebe o enum válido e especializa os requisitos
         result = await nasp_service.call_sem_csmf(
             intent_text=intent_text_corrigido,
-            tenant_id=request.tenant_id.strip()
+            tenant_id=tenant_id,
+            service_type=service_type_inferido  # ✅ ENUM VÁLIDO inferido antes
         )
         
         # Enriquecer resposta com informações processadas localmente
-        if not result.get("service_type") and tipo_slice_inferido != "AUTO":
-            result["service_type"] = tipo_slice_inferido
+        # service_type já foi inferido e enviado ao SEM-CSMF, mas garantimos que está na resposta
+        if not result.get("service_type"):
+            result["service_type"] = service_type_inferido
         
         # Mesclar parâmetros extraídos com resposta do SEM-CSMF
         if parametros_extraidos:
@@ -79,7 +90,7 @@ async def interpret_sla(request: SLAInterpretRequest):
         
         # Retornar resposta REAL do SEM-CSMF com parâmetros técnicos sugeridos
         # Conforme Capítulo 5 - SEM-CSMF deve retornar parâmetros técnicos editáveis
-        service_type_final = result.get("service_type") or result.get("slice_type") or tipo_slice_inferido
+        service_type_final = result.get("service_type") or result.get("slice_type") or service_type_inferido
         
         # Construir parâmetros técnicos sugeridos (ETAPA 2)
         technical_parameters = result.get("technical_parameters", {})
@@ -184,14 +195,14 @@ async def submit_sla_template(request: SLASubmitRequest):
             tenant_id=request.tenant_id
         )
         
-        # Garantir que decision é ACCEPT ou REJECT
+        # Garantir que decision é ACCEPT, RENEG ou REJECT
         # A normalização já foi feita em nasp.py, mas validamos novamente por segurança
         decision = result.get("decision", "").upper()
-        if decision not in ["ACCEPT", "REJECT"]:
+        if decision not in ["ACCEPT", "RENEG", "REJECT"]:
             logger.error(f"❌ /submit: Decisão inválida após processamento - {decision}. Dados: {result}")
             raise HTTPException(
                 status_code=500,
-                detail=f"Formato inesperado retornado pelo Decision Engine. Decisão '{decision}' não é ACCEPT ou REJECT. Verifique a estrutura JSON."
+                detail=f"Formato inesperado retornado pelo Decision Engine. Decisão '{decision}' não é ACCEPT, RENEG ou REJECT. Verifique a estrutura JSON."
             )
         
         # Retornar resposta padronizada (incluindo campos unificados)
@@ -217,13 +228,48 @@ async def submit_sla_template(request: SLASubmitRequest):
             block_number=result.get("block_number"),
             nest_id=result.get("nest_id")
         )
-    except HTTPException:
-        raise
+    except HTTPException as e:
+        # Converter HTTPException para JSONResponse com ErrorResponse
+        detail = e.detail
+        if isinstance(detail, dict):
+            # Se já é um dict com reason, usar diretamente
+            reason = detail.get("reason", "business_error")
+            phase = detail.get("phase", "semantic")
+            upstream_status = detail.get("upstream_status", e.status_code)
+            error_detail = detail.get("detail", str(detail))
+        else:
+            # Se é string, determinar reason baseado no status_code
+            if e.status_code == 422:
+                reason = "business_error"
+                phase = "semantic"
+            elif e.status_code >= 500:
+                reason = "nasp_degraded"
+                phase = "blockchain"
+            else:
+                reason = "business_error"
+                phase = "semantic"
+            upstream_status = e.status_code
+            error_detail = str(detail)
+        
+        return JSONResponse(
+            status_code=e.status_code,
+            content=ErrorResponse(
+                reason=reason,
+                detail=error_detail,
+                phase=phase,
+                upstream_status=upstream_status
+            ).dict()
+        )
     except Exception as e:
         logger.error(f"❌ Erro ao submeter SLA: {type(e).__name__}: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Erro ao processar submissão do SLA: {str(e)}"
+        return JSONResponse(
+            status_code=503,
+            content=ErrorResponse(
+                reason="nasp_degraded",
+                detail=str(e),
+                phase="blockchain",
+                upstream_status=503
+            ).dict()
         )
 
 

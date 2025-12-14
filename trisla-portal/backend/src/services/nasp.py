@@ -12,6 +12,7 @@ from fastapi import HTTPException
 import uuid
 from src.utils.sla_hash import calculate_sla_hash, convert_slos_to_numeric
 from src.schemas.sla_aware import SLAAware, SLARequestBC, SLO
+from src.core.error_mapping import map_bc_nssmf_response
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 class NASPService:
     """Service para comunicação REAL com TODOS os módulos TriSLA - SEM SIMULAÇÕES"""
     
-    async def call_sem_csmf(self, intent_text: str = None, nest_template: Dict[str, Any] = None, tenant_id: str = None) -> Dict[str, Any]:
+    async def call_sem_csmf(self, intent_text: str = None, nest_template: Dict[str, Any] = None, tenant_id: str = None, service_type: str = None) -> Dict[str, Any]:
         """
         (1) SEM-CSMF – Interpretação Semântica Real
         
@@ -28,24 +29,47 @@ class NASPService:
         Se inválido → rejeitar imediatamente com erro 422.
         Usa a ontologia completa.
         
+        IMPORTANTE: service_type deve ser um enum válido (URLLC, eMBB, mMTC) inferido ANTES desta chamada.
+        O SEM-CSMF especializa os requisitos, mas não deve receber "automatic" ou valores inválidos.
+        
         Retorna: { "intent_id": str, "nest_id": str, "slice_type": str, ... }
         """
+        from src.utils.text_processing import infer_service_type_from_intent
+        
         async with httpx.AsyncClient() as client:
             try:
-                url = f"{settings.nasp_sem_csmf_url}/api/v1/intents"
-                
                 if intent_text:
-                    # Novo contrato para /interpret conforme especificação
+                    # FASE A: Inferência semântica inicial ANTES do SEM-CSMF (conforme dissertação)
+                    if not service_type:
+                        try:
+                            service_type = infer_service_type_from_intent(intent_text)
+                            logger.info(f"🔍 Inferência semântica inicial: intent → {service_type}")
+                        except ValueError as e:
+                            logger.error(f"❌ Não foi possível inferir service_type: {e}")
+                            raise HTTPException(
+                                status_code=422,
+                                detail=f"Erro semântico: {str(e)}. Por favor, especifique o tipo de serviço desejado (URLLC, eMBB ou mMTC) no texto."
+                            )
+                    
+                    # Validar que service_type é um enum válido
+                    if service_type not in ["URLLC", "eMBB", "mMTC"]:
+                        raise HTTPException(
+                            status_code=422,
+                            detail=f"service_type inválido: {service_type}. Deve ser URLLC, eMBB ou mMTC"
+                        )
+                    
+                    # FASE B: Construir payload mínimo para SEM-CSMF
+                    # SEM-CSMF aceita payload mínimo e gera sla_requirements internamente
+                    url = f"{settings.nasp_sem_csmf_url}/api/v1/intents"
                     payload = {
-                        "intent_id": str(uuid.uuid4()),
+                        "service_type": service_type,  # ✅ ENUM VÁLIDO (URLLC, eMBB, mMTC)
+                        "intent": intent_text,  # Texto em linguagem natural
                         "tenant_id": tenant_id or "default",
-                        "service_type": "automatic",
-                        "sla_requirements": {
-                            "latency": 1,
-                            "reliability": 99
-                        }
+                        # NÃO enviar sla_requirements - SEM-CSMF gera internamente conforme ontologia
                     }
+                    
                 elif nest_template:
+                    url = f"{settings.nasp_sem_csmf_url}/api/v1/intents"
                     payload = {"tenant_id": tenant_id, "nest": nest_template}
                 else:
                     raise HTTPException(status_code=400, detail="intent_text ou nest_template deve ser fornecido")
@@ -57,7 +81,7 @@ class NASPService:
                 )
                 response.raise_for_status()
                 data = response.json()
-                logger.info(f"✅ SEM-CSMF: Intent interpretado - intent_id={data.get('intent_id')}")
+                logger.info(f"✅ SEM-CSMF: Intent interpretado - intent_id={data.get('intent_id')}, service_type={service_type}")
                 return data
             except httpx.HTTPStatusError as e:
                 error_msg = f"SEM-CSMF erro HTTP {e.response.status_code}: {e.response.text}"
@@ -173,16 +197,16 @@ class NASPService:
                     )
                 
                 # Normalizar campos do Decision Engine para o formato esperado pelo Portal
-                # O Decision Engine retorna "action": "AC"|"RENEG"|"REJ", mas o Portal espera "decision": "ACCEPT"|"REJECT"
+                # O Decision Engine retorna "action": "AC"|"RENEG"|"REJ", mas o Portal espera "decision": "ACCEPT"|"RENEG"|"REJECT"
                 action = data.get("action", "").upper()
                 
-                # Mapear action para decision
+                # Mapear action para decision (preservando RENEG conforme dissertação)
                 action_to_decision = {
                     "AC": "ACCEPT",
                     "ACCEPT": "ACCEPT",  # Caso já venha normalizado
                     "REJ": "REJECT",
                     "REJECT": "REJECT",  # Caso já venha normalizado
-                    "RENEG": "REJECT"  # Renegotiate é tratado como REJECT no portal
+                    "RENEG": "RENEG"  # RENEG não pode ser normalizado para REJECT (conforme dissertação)
                 }
                 
                 decision = action_to_decision.get(action)
@@ -190,11 +214,11 @@ class NASPService:
                 # Se não encontrou mapeamento, tentar campo "decision" diretamente
                 if not decision:
                     decision = data.get("decision", "").upper()
-                    if decision not in ["ACCEPT", "REJECT"]:
+                    if decision not in ["ACCEPT", "REJECT", "RENEG"]:
                         logger.error(f"❌ Decision Engine: Ação/Decisão inválida - action={action}, decision={decision}. Dados completos: {data}")
                         raise HTTPException(
                             status_code=500,
-                            detail=f"Formato inesperado retornado pelo Decision Engine. Ação '{action}' não mapeável para ACCEPT/REJECT. Verifique a estrutura JSON."
+                            detail=f"Formato inesperado retornado pelo Decision Engine. Ação '{action}' não mapeável para ACCEPT/RENEG/REJECT. Verifique a estrutura JSON."
                         )
                 
                 # Normalizar resposta para formato esperado pelo Portal
@@ -344,127 +368,69 @@ class NASPService:
                     # Log detalhado da resposta
                     logger.info(f"BC-NSSMF RAW response status={response.status_code} body={response.text}")
                     
-                    # Tratar erros HTTP diferenciados
-                    if response.status_code == 422:
-                        # Erro 422 (business error) - saldo insuficiente, validação de negócio
-                        # Não fazer retry, é problema de negócio, não de infraestrutura
-                        try:
-                            error_json = response.json()
-                            error_detail = error_json.get("detail", response.text)
-                        except Exception:
-                            error_detail = response.text
+                    # 2xx: retorna normal
+                    if 200 <= response.status_code < 300:
+                        data = response.json()
                         
-                        logger.error(f"❌ BC-NSSMF: Erro de negócio (422) - {error_detail}")
-                        logger.error(f"   Payload enviado: {bc_request.model_dump()}")
-                        raise HTTPException(
-                            status_code=422,
-                            detail={
-                                "success": False,
-                                "phase": "blockchain",
-                                "reason": "business_error",
-                                "detail": error_detail
-                            }
-                        )
-                    
-                    if response.status_code >= 400 and response.status_code < 500:
-                        # Erro 4xx (cliente) - não fazer retry
-                        # Mas distinguir 422 (business) de outros 4xx
-                        try:
-                            error_json = response.json()
-                            error_detail = error_json.get("detail", response.text)
-                        except Exception:
-                            error_detail = response.text
+                        # Extrair informações da transação
+                        blockchain_status = "CONFIRMED" if data.get("status") == "ok" else "PENDING"
+                        tx_hash = data.get("tx") or data.get("tx_hash") or data.get("transaction_hash") or data.get("hash")
+                        block_number = data.get("block_number") or data.get("blockNumber")
                         
-                        logger.error(f"❌ BC-NSSMF: Erro HTTP {response.status_code} - {error_detail}")
-                        raise HTTPException(
-                            status_code=response.status_code,
-                            detail={
-                                "success": False,
-                                "phase": "blockchain",
-                                "reason": "client_error",
-                                "detail": f"BC-NSSMF retornou erro {response.status_code}: {error_detail}"
-                            }
-                        )
-                    
-                    if response.status_code >= 500:
-                        # Erro 5xx (servidor) - pode ser transitório, tentar retry
-                        # 503 = infraestrutura real (NASP degraded, RPC offline)
-                        try:
-                            error_json = response.json()
-                            error_detail = error_json.get("detail", response.text)
-                        except Exception:
-                            error_detail = response.text
+                        if not tx_hash:
+                            logger.warning(f"⚠️ BC-NSSMF não retornou tx_hash na resposta: {data}")
+                            # Tentar extrair de transactionHash se presente
+                            if "transactionHash" in data:
+                                tx_hash = data["transactionHash"]
+                            else:
+                                raise HTTPException(
+                                    status_code=500,
+                                    detail={
+                                        "success": False,
+                                        "phase": "blockchain",
+                                        "reason": "unknown",
+                                        "detail": "BC-NSSMF não retornou tx_hash - registro pode ter falhado"
+                                    }
+                                )
                         
-                        logger.warning(f"⚠️ BC-NSSMF: Erro HTTP {response.status_code} (tentativa {attempt + 1}/{max_retries}) - {error_detail}")
+                        logger.info(f"✅ BC-NSSMF: SLA registrado - tx_hash={tx_hash}, status={blockchain_status}, sla_hash={sla_hash}")
                         
-                        # Verificar se é erro específico do NASP (degraded mode)
-                        if "BC-NSSMF está em modo degraded" in str(error_detail) or "RPC Besu não disponível" in str(error_detail):
-                            # Erro de infraestrutura real - não fazer retry
-                            raise HTTPException(
-                                status_code=503,
-                                detail={
-                                    "success": False,
-                                    "phase": "blockchain",
-                                    "reason": "nasp_degraded",
-                                    "detail": error_detail
-                                }
-                            )
-                        
-                        # Se não for a última tentativa, fazer retry
-                        if attempt < max_retries - 1:
-                            await asyncio.sleep(1 * (attempt + 1))  # Backoff simples: 1s, 2s, 3s
-                            continue
-                        else:
-                            # Última tentativa falhou
-                            raise HTTPException(
-                                status_code=503,
-                                detail={
-                                    "success": False,
-                                    "phase": "blockchain",
-                                    "reason": "nasp_degraded",
-                                    "detail": f"BC-NSSMF retornou erro {response.status_code} após {max_retries} tentativas: {error_detail}"
-                                }
-                            )
+                        return {
+                            "blockchain_status": blockchain_status,
+                            "tx_hash": tx_hash,
+                            "block_number": block_number,
+                            "sla_id": data.get("sla_id", sla_id),
+                            "sla_hash": sla_hash
+                        }
                     
-                    # Sucesso (status 200-299)
-                    response.raise_for_status()
-                    data = response.json()
+                    # Tratar erros usando map_bc_nssmf_response
+                    try:
+                        body = response.json()
+                    except Exception:
+                        body = {"raw": response.text}
                     
-                    # Extrair informações da transação
-                    blockchain_status = "CONFIRMED" if data.get("status") == "ok" else "PENDING"
-                    tx_hash = data.get("tx") or data.get("tx_hash") or data.get("transaction_hash") or data.get("hash")
-                    block_number = data.get("block_number") or data.get("blockNumber")
+                    mapped = map_bc_nssmf_response(status_code=response.status_code, body=body)
                     
-                    if not tx_hash:
-                        logger.warning(f"⚠️ BC-NSSMF não retornou tx_hash na resposta: {data}")
-                        # Tentar extrair de transactionHash se presente
-                        if "transactionHash" in data:
-                            tx_hash = data["transactionHash"]
-                        else:
-                            raise HTTPException(
-                                status_code=500,
-                                detail={
-                                    "success": False,
-                                    "phase": "blockchain",
-                                    "reason": "unknown",
-                                    "detail": "BC-NSSMF não retornou tx_hash - registro pode ter falhado"
-                                }
-                            )
+                    # 4xx: retorna HTTP 422 com reason=business_error
+                    if 400 <= response.status_code < 500:
+                        logger.error(f"❌ BC-NSSMF: Erro de negócio ({response.status_code}) - {mapped.get('detail')}")
+                        raise HTTPException(status_code=422, detail=mapped)
                     
-                    logger.info(f"✅ BC-NSSMF: SLA registrado - tx_hash={tx_hash}, status={blockchain_status}, sla_hash={sla_hash}")
+                    # 5xx / exceções: retorna HTTP 503 com reason=nasp_degraded
+                    # Se não for a última tentativa, fazer retry
+                    if attempt < max_retries - 1:
+                        logger.warning(f"⚠️ BC-NSSMF: Erro HTTP {response.status_code} (tentativa {attempt + 1}/{max_retries}) - {mapped.get('detail')}")
+                        await asyncio.sleep(1 * (attempt + 1))  # Backoff simples: 1s, 2s, 3s
+                        continue
+                    else:
+                        # Última tentativa falhou
+                        logger.error(f"❌ BC-NSSMF: Erro HTTP {response.status_code} após {max_retries} tentativas - {mapped.get('detail')}")
+                        raise HTTPException(status_code=503, detail=mapped)
                     
-                    return {
-                        "blockchain_status": blockchain_status,
-                        "tx_hash": tx_hash,
-                        "block_number": block_number,
-                        "sla_id": data.get("sla_id", sla_id),
-                        "sla_hash": sla_hash
-                    }
-                    
-            except httpx.ConnectError as e:
-                # Erro de conexão - provável problema de port-forward ou NASP offline
+            except (httpx.ConnectError, httpx.ReadTimeout, httpx.ConnectTimeout) as e:
+                # Erro de conectividade - pode ser transitório
                 last_exception = e
-                error_msg = f"BC-NSSMF: erro de conexão (provável problema de port-forward ou NASP offline)"
+                error_msg = f"BC-NSSMF: erro de conectividade ({type(e).__name__})"
                 logger.warning(f"⚠️ {error_msg} (tentativa {attempt + 1}/{max_retries}): {str(e)}")
                 
                 if attempt < max_retries - 1:
@@ -478,33 +444,11 @@ class NASPService:
                         detail={
                             "success": False,
                             "phase": "blockchain",
-                            "reason": "connection_error",
-                            "detail": f"Falha ao contatar o módulo BC-NSSMF (Blockchain). Verifique se o NASP está acessível e se o port-forward está ativo. Erro: {str(e)}"
-                        }
+                            "reason": "nasp_degraded",
+                            "detail": f"Falha de conectividade com BC-NSSMF: {type(e).__name__}",
+                        },
                     )
-                    
-            except httpx.ReadTimeout as e:
-                # Timeout - pode ser transitório
-                last_exception = e
-                error_msg = f"BC-NSSMF: timeout ao conectar"
-                logger.warning(f"⚠️ {error_msg} (tentativa {attempt + 1}/{max_retries}): {str(e)}")
-                
-                if attempt < max_retries - 1:
-                    await asyncio.sleep(1 * (attempt + 1))  # Backoff simples
-                    continue
-                else:
-                    # Última tentativa falhou
-                    logger.error(f"❌ {error_msg}")
-                    raise HTTPException(
-                        status_code=503,
-                        detail={
-                            "success": False,
-                            "phase": "blockchain",
-                            "reason": "connection_error",
-                            "detail": f"Timeout ao contatar o módulo BC-NSSMF (Blockchain). Verifique se o NASP está acessível. Erro: {str(e)}"
-                        }
-                    )
-                    
+            
             except HTTPException:
                 # Re-raise HTTPException sem modificação (já tratado acima)
                 raise
@@ -526,9 +470,9 @@ class NASPService:
                         detail={
                             "success": False,
                             "phase": "blockchain",
-                            "reason": "connection_error",
-                            "detail": f"Erro ao contatar o módulo BC-NSSMF (Blockchain). Verifique se o NASP está acessível. Erro: {str(e)}"
-                        }
+                            "reason": "nasp_degraded",
+                            "detail": f"Falha de conectividade com BC-NSSMF: {type(e).__name__}",
+                        },
                     )
         
         # Se chegou aqui, todas as tentativas falharam
@@ -698,11 +642,25 @@ class NASPService:
                     "automatic"
                 )
                 
+                # Validar service_type para garantir enum válido
+                if service_type not in ["URLLC", "eMBB", "mMTC"]:
+                    # Se não for válido, tentar normalizar
+                    service_type_upper = service_type.upper()
+                    if service_type_upper in ["URLLC", "EMBB", "MMTC"]:
+                        service_type = "URLLC" if service_type_upper == "URLLC" else ("eMBB" if service_type_upper == "EMBB" else "mMTC")
+                    else:
+                        raise HTTPException(
+                            status_code=422,
+                            detail=f"service_type inválido no template: {service_type}. Deve ser URLLC, eMBB ou mMTC"
+                        )
+                
+                # Montar payload no formato IntentRequest do SEM-CSMF
+                # SEM-CSMF espera: service_type, intent, tenant_id, sla_requirements (opcional)
                 sem_payload = {
-                    "intent_id": str(uuid.uuid4()),
+                    "service_type": service_type,  # ENUM válido (URLLC, eMBB, mMTC)
+                    "intent": f"template:{service_type}",  # Intent técnico-sintético obrigatório
                     "tenant_id": tenant_id or "default",
-                    "service_type": service_type,
-                    "sla_requirements": nest_template.get("sla_requirements", {})
+                    "sla_requirements": nest_template.get("sla_requirements", {})  # Opcional - SEM-CSMF pode gerar internamente
                 }
                 
                 response_sem = await client.post(
@@ -790,12 +748,12 @@ class NASPService:
             # A normalização já foi feita dentro de call_decision_engine
             decision = decision_result.get("decision", "").upper()
             
-            # Validação adicional de segurança
-            if decision not in ["ACCEPT", "REJECT"]:
+            # Validação adicional de segurança (aceita ACCEPT, RENEG, REJECT)
+            if decision not in ["ACCEPT", "RENEG", "REJECT"]:
                 logger.error(f"❌ Decision Engine: Decisão inválida após normalização - {decision}. Dados: {decision_result}")
                 raise HTTPException(
-                    status_code=500,
-                    detail=f"Formato inesperado retornado pelo Decision Engine. Decisão '{decision}' não é ACCEPT ou REJECT. Verifique a estrutura JSON."
+                    status_code=502,
+                    detail=f"Decision Engine retornou ação inválida: {decision}"
                 )
             
             # Extrair campos normalizados (já processados em call_decision_engine)
@@ -819,29 +777,66 @@ class NASPService:
                 detail=f"Erro ao processar resposta do Decision Engine: {str(e)}"
             )
         
-        try:
-            # Passo 4: BC-NSSMF
-            # Construir SLA-aware completo e registrar no blockchain
-            blockchain_result = await self.call_bc_nssmf(
-                sla_id=sla_id,
-                decision=decision,
-                tenant_id=tenant_id,
-                intent_id=intent_id,
-                nest_id=nest_id,
-                sla_requirements=nest_template.get("sla_requirements", {}),
-                required_resources=decision_result.get("required_resources"),
-                service_type=service_type or slice_type,
-                justification=reason,
-                timestamp=timestamp
-            )
-            
-            bc_status = blockchain_result.get("blockchain_status", "ERROR")
-            
-        except HTTPException as e:
-            # NÃO fazer fallback silencioso - propagar erro 503
+        # Passo 4: BC-NSSMF - GATE IMPLEMENTADO (conforme dissertação)
+        # BC-NSSMF só deve ser chamado se decision == "ACCEPT"
+        # RENEG e REJECT não devem acionar BC-NSSMF
+        blockchain_result = None
+        bc_status = "SKIPPED"
+        
+        if decision == "ACCEPT":
+            logger.info(f"✅ Decision Engine action=ACCEPT → calling BC-NSSMF")
+            try:
+                # Construir SLA-aware completo e registrar no blockchain
+                blockchain_result = await self.call_bc_nssmf(
+                    sla_id=sla_id,
+                    decision=decision,
+                    tenant_id=tenant_id,
+                    intent_id=intent_id,
+                    nest_id=nest_id,
+                    sla_requirements=nest_template.get("sla_requirements", {}),
+                    required_resources=decision_result.get("required_resources"),
+                    service_type=service_type or slice_type,
+                    justification=reason,
+                    timestamp=timestamp
+                )
+                
+                bc_status = blockchain_result.get("blockchain_status", "ERROR")
+                
+            except HTTPException as e:
+                # NÃO fazer fallback silencioso - propagar erro 503
+                raise HTTPException(
+                    status_code=e.status_code,
+                    detail=f"BC-NSSMF: {e.detail}"
+                )
+        
+        elif decision == "RENEG":
+            logger.info(f"⚠️ Decision Engine action=RENEG → skipping BC-NSSMF")
+            # NÃO chamar BC-NSSMF para RENEG
+            blockchain_result = {
+                "blockchain_status": "SKIPPED",
+                "tx_hash": None,
+                "block_number": None,
+                "sla_hash": None
+            }
+            bc_status = "SKIPPED"
+        
+        elif decision == "REJECT":
+            logger.info(f"❌ Decision Engine action=REJECT → skipping BC-NSSMF")
+            # NÃO chamar BC-NSSMF para REJECT
+            blockchain_result = {
+                "blockchain_status": "SKIPPED",
+                "tx_hash": None,
+                "block_number": None,
+                "sla_hash": None
+            }
+            bc_status = "SKIPPED"
+        
+        else:
+            # Decisão inválida → erro de integração (não é "REJECT")
+            logger.error(f"❌ Decision Engine retornou ação inválida: {decision}")
             raise HTTPException(
-                status_code=e.status_code,
-                detail=f"BC-NSSMF: {e.detail}"
+                status_code=502,
+                detail=f"Decision Engine retornou ação inválida: {decision}"
             )
         
         # Passo 5: SLA-Agent Layer (apenas se ACCEPT)
@@ -867,11 +862,11 @@ class NASPService:
             "decision": decision,
             "justification": reason,
             "reason": reason,  # Mantido para compatibilidade
-            "blockchain_tx_hash": blockchain_result.get("tx_hash"),
-            "tx_hash": blockchain_result.get("tx_hash"),  # Mantido para compatibilidade
-            "sla_hash": blockchain_result.get("sla_hash"),  # Hash SHA-256 do SLA-aware
+            "blockchain_tx_hash": blockchain_result.get("tx_hash") if blockchain_result else None,
+            "tx_hash": blockchain_result.get("tx_hash") if blockchain_result else None,  # Mantido para compatibilidade
+            "sla_hash": blockchain_result.get("sla_hash") if blockchain_result else None,  # Hash SHA-256 do SLA-aware
             "timestamp": timestamp,
-            "status": "ok",
+            "status": "ok" if decision == "ACCEPT" else ("RENEGOTIATION_REQUIRED" if decision == "RENEG" else "REJECTED"),
             "sla_id": sla_id,
             "nest_id": nest_id,
             "sem_csmf_status": sem_csmf_status,

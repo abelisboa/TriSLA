@@ -33,6 +33,12 @@ class DecisionEngineConfig(BaseModel):
     )
     bc_nssmf_chain_id: int = int(os.getenv("TRISLA_CHAIN_ID", "1337"))
     
+    # NASP Adapter (Interface I-07 - Execução de ações)
+    nasp_adapter_url: str = os.getenv("NASP_ADAPTER_URL", "http://127.0.0.1:8085")
+    
+    # Portal Backend (para notificar rejeições)
+    portal_backend_url: str = os.getenv("PORTAL_BACKEND_URL", "http://127.0.0.1:8001")
+    
     # Decision Engine
     decision_engine_grpc_port: int = int(os.getenv("GRPC_PORT", "50051"))
     decision_engine_http_port: int = int(os.getenv("HTTP_PORT", "8082"))

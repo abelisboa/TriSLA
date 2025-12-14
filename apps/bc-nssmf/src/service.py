@@ -25,10 +25,19 @@ else:
     SOLCX_AVAILABLE = False
     set_solc_version = None
 
+from src.config import BCConfig
+
+# Importar módulos de wallet e assinatura local
 try:
-    from .config import BCConfig
+    from src.blockchain.wallet import get_sender_address, load_account
+    from src.blockchain.tx_sender import rpc_connected, w3 as get_w3
+    WALLET_AVAILABLE = True
 except ImportError:
-    from config import BCConfig
+    WALLET_AVAILABLE = False
+    get_sender_address = None
+    load_account = None
+    rpc_connected = None
+    get_w3 = None
 
 logger = logging.getLogger(__name__)
 
@@ -69,9 +78,9 @@ class BCService:
             # Continuar sem solcx, apenas sem compilação - não encerra o serviço
 
         try:
-            self.w3 = Web3(Web3.HTTPProvider(cfg.rpc_url))
+            self.w3 = Web3(Web3.HTTPProvider(cfg.effective_rpc_url))
             if not self.w3.is_connected():
-                logger.warning(f"⚠️ BC-NSSMF: Não conectado ao Besu RPC em {cfg.rpc_url}. Modo degraded.")
+                logger.warning(f"⚠️ BC-NSSMF: Não conectado ao Besu RPC em {cfg.effective_rpc_url}. Modo degraded.")
                 self.enabled = False
                 self.w3 = None
                 return  # Continuar sem blockchain, mas serviço continua rodando
@@ -97,11 +106,22 @@ class BCService:
                 abi=self.abi
             )
 
-            accounts = self.w3.eth.accounts
-            if accounts:
-                self.account = accounts[0]
+            # Usar assinatura local em vez de eth_accounts
+            if WALLET_AVAILABLE:
+                try:
+                    self.account = get_sender_address()
+                    logger.info(f"✅ Conta blockchain configurada via BC_PRIVATE_KEY: {self.account}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Não foi possível carregar conta via BC_PRIVATE_KEY: {e}")
+                    self.account = None
             else:
-                self.account = None
+                # Fallback para eth_accounts (compatibilidade)
+                accounts = self.w3.eth.accounts
+                if accounts:
+                    self.account = accounts[0]
+                    logger.warning("⚠️ Usando eth_accounts (fallback). Configure BC_PRIVATE_KEY para assinatura local.")
+                else:
+                    self.account = None
                 
         except Exception as e:
             # Fallback: modo degraded
@@ -150,16 +170,39 @@ class BCService:
             raise BCInfrastructureError(f"Erro ao verificar saldo da conta blockchain: {str(e)}")
         
         try:
-            tx = self.contract.functions.registerSLA(
-                customer,
-                service_name,
-                sla_hash,
-                slos
-            ).transact({"from": self.account})
+            # Usar assinatura local se disponível
+            if WALLET_AVAILABLE and load_account:
+                # Construir transação assinada localmente
+                from src.blockchain.tx_sender import build_and_send_signed_tx
+                
+                # Construir dados da transação
+                tx_data = self.contract.encodeABI(
+                    fn_name="registerSLA",
+                    args=[customer, service_name, sla_hash, slos]
+                )
+                
+                # Enviar transação assinada
+                tx_result = build_and_send_signed_tx(
+                    to=self.contract_address,
+                    data=tx_data
+                )
+                
+                tx_hash = tx_result["tx_hash"]
+                receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+                logger.info(f"SLA registrado (assinatura local): tx_hash={receipt.transactionHash.hex()}, block={receipt.blockNumber}")
+                return receipt
+            else:
+                # Fallback para método antigo (compatibilidade)
+                tx = self.contract.functions.registerSLA(
+                    customer,
+                    service_name,
+                    sla_hash,
+                    slos
+                ).transact({"from": self.account})
 
-            receipt = self.w3.eth.wait_for_transaction_receipt(tx)
-            logger.info(f"SLA registrado: tx_hash={receipt.transactionHash.hex()}, block={receipt.blockNumber}")
-            return receipt
+                receipt = self.w3.eth.wait_for_transaction_receipt(tx)
+                logger.info(f"SLA registrado: tx_hash={receipt.transactionHash.hex()}, block={receipt.blockNumber}")
+                return receipt
         except BCBusinessError:
             # Re-raise BCBusinessError sem modificação
             raise
@@ -205,12 +248,35 @@ class BCService:
             raise BCInfrastructureError(f"Erro ao verificar saldo da conta blockchain: {str(e)}")
         
         try:
-            tx = self.contract.functions.updateSLAStatus(sla_id, status).transact(
-                {"from": self.account}
-            )
-            receipt = self.w3.eth.wait_for_transaction_receipt(tx)
-            logger.info(f"Status SLA {sla_id} atualizado: tx_hash={receipt.transactionHash.hex()}, status={status}")
-            return receipt
+            # Usar assinatura local se disponível
+            if WALLET_AVAILABLE and load_account:
+                # Construir transação assinada localmente
+                from src.blockchain.tx_sender import build_and_send_signed_tx
+                
+                # Construir dados da transação
+                tx_data = self.contract.encodeABI(
+                    fn_name="updateSLAStatus",
+                    args=[sla_id, status]
+                )
+                
+                # Enviar transação assinada
+                tx_result = build_and_send_signed_tx(
+                    to=self.contract_address,
+                    data=tx_data
+                )
+                
+                tx_hash = tx_result["tx_hash"]
+                receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+                logger.info(f"Status SLA {sla_id} atualizado (assinatura local): tx_hash={receipt.transactionHash.hex()}, status={status}")
+                return receipt
+            else:
+                # Fallback para método antigo (compatibilidade)
+                tx = self.contract.functions.updateSLAStatus(sla_id, status).transact(
+                    {"from": self.account}
+                )
+                receipt = self.w3.eth.wait_for_transaction_receipt(tx)
+                logger.info(f"Status SLA {sla_id} atualizado: tx_hash={receipt.transactionHash.hex()}, status={status}")
+                return receipt
         except BCBusinessError:
             raise
         except BCInfrastructureError:

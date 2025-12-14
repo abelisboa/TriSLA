@@ -187,9 +187,9 @@ else:
                 span.set_attribute("decision.id", decision_result.decision_id)
                 span.set_attribute("decision.action", decision_result.action.value)
                 
-                # Só registrar se decisão for ACCEPT
-                if decision_result.action != DecisionAction.ACCEPT:
-                    span.set_attribute("bc.skip_reason", "Decision not ACCEPT")
+                # Registrar se decisão for ACCEPT ou RENEGOTIATE
+                if decision_result.action not in (DecisionAction.ACCEPT, DecisionAction.RENEGOTIATE):
+                    span.set_attribute("bc.skip_reason", f"Decision {decision_result.action.value} not registrable")
                     return None
                 
                 try:

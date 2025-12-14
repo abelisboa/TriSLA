@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { api, APIError } from '@/lib/api'
+import { apiFetch, APIError } from '@/lib/api'
 import { Settings, CheckCircle, XCircle, Clock, Activity, Hash } from 'lucide-react'
 
 const TEMPLATES = [
@@ -80,13 +80,14 @@ export default function SLACreationTemplatePage() {
     setResult(null)
 
     try {
-      const data = await api("/sla/submit", {
+      const data = await apiFetch("/sla/submit", {
         method: "POST",
         body: JSON.stringify({
           tenant_id: "default",
           template_id: selectedTemplate,
           form_values: formValues
         }),
+        headers: { "Content-Type": "application/json" }
       })
       setResult(data)
       // Redirecionar para página de resultado após submissão

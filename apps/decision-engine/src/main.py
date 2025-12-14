@@ -28,8 +28,10 @@ from grpc_server import serve as serve_grpc
 
 # Novos módulos integrados
 from service import DecisionService
-from models import DecisionResult
+from models import DecisionResult, DecisionInput, SLAIntent, NestSubset, SLAEvaluateInput
 from config import config
+from nasp_adapter_client import NASPAdapterClient
+from portal_backend_client import PortalBackendClient
 
 # OpenTelemetry
 trace.set_tracer_provider(TracerProvider())
@@ -119,6 +121,13 @@ decision_maker = DecisionMaker(rule_engine)  # Mantido para compatibilidade
 # Novo serviço integrado (usa SEM-CSMF, ML-NSMF, BC-NSSMF)
 decision_service = DecisionService()
 
+# Clientes para encaminhamento de decisões
+nasp_adapter_client = NASPAdapterClient()
+portal_backend_client = PortalBackendClient()
+
+# Storage de decisões (em memória - substituir por DB em produção)
+decisions_storage = {}
+
 # DecisionConsumer e Producer podem ser None se Kafka estiver desabilitado
 kafka_enabled = os.getenv("KAFKA_ENABLED", "false").lower() == "true"
 if kafka_enabled:
@@ -132,8 +141,8 @@ if kafka_enabled:
         decision_producer = DecisionProducer()
 else:
     decision_consumer = None
-    decision_producer = DummyProducer()
-    print("ℹ️ Decision Engine: Modo DEV - Kafka desabilitado (KAFKA_ENABLED=false)")
+    decision_producer = None  # ⚠️ FASE C1: Não usar DummyProducer - endpoint /evaluate não depende de Kafka
+    print("ℹ️ Decision Engine: Kafka desabilitado. Endpoint /evaluate usa clientes HTTP diretos.")
 
 # Fallback: Iniciar gRPC quando o módulo é importado
 # Isso garante que o servidor gRPC inicie mesmo se o lifespan não funcionar
@@ -303,31 +312,30 @@ async def debug_grpc():
 @app.post("/api/v1/decide")
 async def make_decision(context: dict):
     """
-    Faz decisão baseada em contexto (endpoint compatível)
-    Mantido para compatibilidade com código existente
+    Faz decisão baseada em contexto (endpoint compatível - DEPRECATED)
+    ⚠️ Este endpoint está DEPRECATED. Use /evaluate para fluxo real.
+    Mantido para compatibilidade com código existente.
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning("⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.")
+    
     with tracer.start_as_current_span("make_decision") as span:
         decision = await decision_maker.decide(context)
-        # Fallback: garantir que decision_producer está inicializado
+        
+        # ⚠️ FASE C1: DummyProducer desativado - usar apenas se Kafka estiver habilitado
         global decision_producer
         if decision_producer is None:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.warning("Decision producer not initialized — using DummyProducer fallback")
-            from decision_producer import DummyProducer
-            decision_producer = DummyProducer()
-
-        
-        # Enviar para BC-NSSMF (I-04) e SLA-Agents (I-05)
-        # Fallback: initialize producer if None
-        if decision_producer is None:
-            logger.error("Decision producer not initialized — fallback to dummy.")
-            decision_producer = DummyProducer()
-
-        await decision_producer.send_to_bc_nssmf(decision)  # I-04
-        await decision_producer.send_to_sla_agents(decision)  # I-05
+            logger.warning("⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.")
+            # Não usar DummyProducer - apenas logar
+            logger.info(f"Decisão gerada (sem encaminhamento): {decision.get('action', 'unknown')}")
+        else:
+            # Apenas enviar se producer real estiver disponível
+            await decision_producer.send_to_bc_nssmf(decision)  # I-04
+            await decision_producer.send_to_sla_agents(decision)  # I-05
         
         span.set_attribute("decision.action", decision.get("action"))
+        span.set_attribute("decision.deprecated_endpoint", True)
         return decision
 
 
@@ -373,12 +381,156 @@ async def get_status():
                 "rpc_url": config.bc_nssmf_rpc_url,
                 "contract_path": config.bc_nssmf_contract_path
             },
+            "nasp_adapter": {
+                "url": config.nasp_adapter_url
+            },
+            "portal_backend": {
+                "url": config.portal_backend_url
+            },
             "otlp": {
                 "endpoint": config.otlp_endpoint
             }
         }
     }
     return status
+
+
+@app.post("/evaluate", response_model=DecisionResult)
+async def evaluate_sla(sla_input: SLAEvaluateInput):
+    """
+    Endpoint real de avaliação de SLA (FASE C1)
+    
+    Recebe SLA validado (SEM-CSMF output) e:
+    1. Chama ML-NSMF para obter decisão
+    2. Persiste decisão
+    3. Encaminha:
+       - ACCEPT → NASP Adapter (criação de slice)
+       - REJECT → Portal Backend (notificação)
+       - DEGRADED → BC-NSMF (registro)
+    
+    Args:
+        sla_input: SLA validado do SEM-CSMF contendo:
+            - intent_id: ID do intent
+            - nest_id: ID do NEST (opcional)
+            - intent: Dados do intent (SLAIntent)
+            - nest: Dados do NEST (NestSubset, opcional)
+            - context: Contexto adicional (opcional)
+    
+    Returns:
+        DecisionResult com ação e justificativa
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    with tracer.start_as_current_span("evaluate_sla") as span:
+        try:
+            # Extrair dados do input (agora tipado via Pydantic)
+            intent_id = sla_input.intent_id
+            nest_id = sla_input.nest_id
+            context = sla_input.context or {}
+            
+            span.set_attribute("intent.id", intent_id)
+            if nest_id:
+                span.set_attribute("nest.id", nest_id)
+            
+            logger.info(f"📥 SLA recebido para avaliação: intent_id={intent_id}, nest_id={nest_id}")
+            
+            # 1. Construir DecisionInput a partir do SLA validado
+            intent_data = sla_input.intent
+            nest_data = sla_input.nest
+            
+            # Converter para modelos
+            from models import SliceType
+            intent = SLAIntent(
+                intent_id=intent_id,
+                tenant_id=intent_data.get("tenant_id"),
+                service_type=SliceType(intent_data.get("service_type", "eMBB")),
+                sla_requirements=intent_data.get("sla_requirements", {}),
+                nest_id=nest_id or intent_data.get("nest_id"),
+                metadata=intent_data.get("metadata")
+            )
+            
+            nest = None
+            if nest_data:
+                nest = NestSubset(
+                    nest_id=nest_id or nest_data.get("nest_id", ""),
+                    intent_id=intent_id,
+                    network_slices=nest_data.get("network_slices", []),
+                    resources=nest_data.get("resources", {}),
+                    status=nest_data.get("status", "generated"),
+                    metadata=nest_data.get("metadata")
+                )
+            
+            decision_input = DecisionInput(
+                intent=intent,
+                nest=nest,
+                context=context
+            )
+            
+            logger.info(f"🔍 Chamando ML-NSMF para intent_id={intent_id}")
+            
+            # 2. Chamar ML-NSMF para obter decisão
+            decision_result = await decision_service.process_decision_from_input(decision_input)
+            
+            span.set_attribute("decision.action", decision_result.action.value)
+            span.set_attribute("decision.confidence", decision_result.confidence)
+            logger.info(f"✅ Decisão obtida: {decision_result.action.value} (confidence={decision_result.confidence:.2f})")
+            
+            # 3. Persistir decisão
+            decisions_storage[decision_result.decision_id] = {
+                "decision_id": decision_result.decision_id,
+                "intent_id": decision_result.intent_id,
+                "nest_id": decision_result.nest_id,
+                "action": decision_result.action.value,
+                "reasoning": decision_result.reasoning,
+                "confidence": decision_result.confidence,
+                "ml_risk_score": decision_result.ml_risk_score,
+                "ml_risk_level": decision_result.ml_risk_level.value if decision_result.ml_risk_level else None,
+                "timestamp": decision_result.timestamp,
+                "metadata": decision_result.metadata
+            }
+            logger.info(f"💾 Decisão persistida: {decision_result.decision_id}")
+            
+            # 4. Encaminhar conforme ação
+            from models import DecisionAction
+            
+            if decision_result.action == DecisionAction.ACCEPT:
+                logger.info(f"🚀 Encaminhando ACCEPT para NASP Adapter: decision_id={decision_result.decision_id}")
+                nasp_result = await nasp_adapter_client.execute_slice_creation(decision_result)
+                if nasp_result:
+                    decision_result.metadata = decision_result.metadata or {}
+                    decision_result.metadata["nasp_execution"] = nasp_result
+                    logger.info(f"✅ Slice criado no NASP: {nasp_result}")
+                else:
+                    logger.warning(f"⚠️ Falha ao criar slice no NASP para decision_id={decision_result.decision_id}")
+            
+            elif decision_result.action == DecisionAction.REJECT:
+                logger.info(f"❌ Encaminhando REJECT para Portal Backend: decision_id={decision_result.decision_id}")
+                portal_result = await portal_backend_client.notify_decision_rejection(decision_result)
+                if portal_result:
+                    decision_result.metadata = decision_result.metadata or {}
+                    decision_result.metadata["portal_notification"] = portal_result
+                    logger.info(f"✅ Portal Backend notificado: {portal_result}")
+            
+            elif decision_result.action == DecisionAction.RENEGOTIATE:
+                # RENEGOTIATE → BC-NSMF (registro para rastreabilidade)
+                logger.info(f"🔄 Encaminhando RENEGOTIATE para BC-NSMF: decision_id={decision_result.decision_id}")
+                bc_result = await decision_service.engine.bc_client.register_sla_on_chain(decision_result)
+                if bc_result:
+                    decision_result.metadata = decision_result.metadata or {}
+                    decision_result.metadata["blockchain_tx_hash"] = bc_result
+                    logger.info(f"✅ RENEGOTIATE registrado no BC-NSMF: tx_hash={bc_result}")
+                else:
+                    logger.warning(f"⚠️ Falha ao registrar RENEGOTIATE no BC-NSMF para decision_id={decision_result.decision_id}")
+            
+            return decision_result
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao avaliar SLA: {e}", exc_info=True)
+            span.record_exception(e)
+            span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+            from fastapi import HTTPException
+            raise HTTPException(status_code=500, detail=f"Erro ao avaliar SLA: {str(e)}")
 
 
 # AGORA instrumentar FastAPI APÓS todas as rotas serem definidas
