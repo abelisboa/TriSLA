@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { FileText, Settings, BarChart3, Activity } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api } from '@/lib/api'
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/config'
 import { PORTAL_VERSION_DISPLAY } from '@/lib/version'
@@ -12,28 +12,42 @@ export default function HomePage() {
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-    // Verificar status do backend opcionalmente
-    const checkBackend = async () => {
+  // Função estável com useCallback para evitar loops infinitos
+  const checkBackend = useCallback(async () => {
+    try {
+      // Health endpoint não usa /api/v1, apenas /health
+      // Extrair base URL sem /api/v1 e construir URL de health
+      const apiBase = API_BASE_URL
+      const baseUrl = apiBase.replace('/api/v1', '')
+      const healthUrl = `${baseUrl}${API_ENDPOINTS.health}`
+      
+      // Timeout de 5 segundos para health check
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      
       try {
-        // Health endpoint não usa /api/v1, apenas /health
-        // Extrair base URL sem /api/v1 e construir URL de health
-        const apiBase = API_BASE_URL
-        const baseUrl = apiBase.replace('/api/v1', '')
-        const healthUrl = `${baseUrl}${API_ENDPOINTS.health}`
-        const response = await fetch(healthUrl)
+        const response = await fetch(healthUrl, { signal: controller.signal })
+        clearTimeout(timeoutId)
         if (response.ok) {
           setBackendStatus('online')
         } else {
           setBackendStatus('offline')
         }
-      } catch {
-        setBackendStatus('offline')
+      } catch (err: any) {
+        clearTimeout(timeoutId)
+        if (err.name !== 'AbortError') {
+          setBackendStatus('offline')
+        }
       }
+    } catch {
+      setBackendStatus('offline')
     }
-    checkBackend()
   }, [])
+
+  useEffect(() => {
+    setMounted(true)
+    checkBackend()
+  }, [checkBackend])
   
   // Evitar hydration mismatch
   if (!mounted) {

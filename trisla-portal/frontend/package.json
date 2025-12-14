@@ -1,6 +1,6 @@
 {
   "name": "trisla-observability-portal",
-  "version": "3.7.31",
+  "version": "3.7.32",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -16,11 +16,8 @@ export default function ModulesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchModules()
-  }, [])
-
-  const fetchModules = async () => {
+  // Função estável com useCallback para evitar loops infinitos
+  const fetchModules = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -31,7 +28,11 @@ export default function ModulesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchModules()
+  }, [fetchModules])
 
   const getStatusIcon = (status: string) => {
     switch (status) {

@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -26,7 +26,8 @@ function MetricsPage() {
     setSlaId(searchParams.get('id') || '')
   }, [searchParams])
 
-  const fetchStatus = async () => {
+  // Função estável com useCallback para evitar loops infinitos
+  const fetchStatus = useCallback(async () => {
     if (!slaId) return
     try {
       const data = await api(`/sla/status/${slaId}`)
@@ -35,9 +36,10 @@ function MetricsPage() {
       // Status pode não existir ainda - não é crítico
       console.warn('Status não encontrado:', err)
     }
-  }
+  }, [slaId])
 
-  const fetchMetrics = async () => {
+  // Função estável com useCallback para evitar loops infinitos
+  const fetchMetrics = useCallback(async () => {
     if (!slaId) return
     setLoading(true)
     setError(null)
@@ -50,14 +52,14 @@ function MetricsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [slaId])
 
   useEffect(() => {
     if (mounted && slaId) {
       fetchStatus()
       fetchMetrics()
     }
-  }, [mounted, slaId])
+  }, [mounted, slaId, fetchStatus, fetchMetrics])
 
   useEffect(() => {
     if (autoRefresh && slaId) {
@@ -66,7 +68,7 @@ function MetricsPage() {
       }, 5000)
       return () => clearInterval(interval)
     }
-  }, [autoRefresh, slaId])
+  }, [autoRefresh, slaId, fetchMetrics])
 
   // Extrair métricas REAIS do objeto retornado (SEM simulação)
   const latency_ms = metrics?.latency_ms

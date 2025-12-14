@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,14 +17,15 @@ export default function ModuleDetailPage() {
   const [status, setStatus] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const mountedRef = useRef(true)
 
-  useEffect(() => {
-    if (moduleName) {
-      fetchModuleData()
-    }
-  }, [moduleName])
-
-  const fetchModuleData = async () => {
+  // Função estável com useCallback para evitar loops infinitos
+  const fetchModuleData = useCallback(async () => {
+    if (!moduleName) return
+    
+    // Verificar se componente ainda está montado antes de atualizar state
+    if (!mountedRef.current) return
+    
     setLoading(true)
     setError(null)
     try {
@@ -33,15 +34,32 @@ export default function ModuleDetailPage() {
         api.getModuleMetrics(moduleName),
         api.getModuleStatus(moduleName),
       ])
-      setModule(moduleData)
-      setMetrics(metricsData)
-      setStatus(statusData)
+      
+      if (mountedRef.current) {
+        setModule(moduleData)
+        setMetrics(metricsData)
+        setStatus(statusData)
+      }
     } catch (err: any) {
-      setError(err.message)
+      if (mountedRef.current) {
+        setError(err.message)
+      }
     } finally {
-      setLoading(false)
+      if (mountedRef.current) {
+        setLoading(false)
+      }
     }
-  }
+  }, [moduleName])
+
+  useEffect(() => {
+    mountedRef.current = true
+    if (moduleName) {
+      fetchModuleData()
+    }
+    return () => {
+      mountedRef.current = false
+    }
+  }, [moduleName, fetchModuleData])
 
   if (loading) {
     return (

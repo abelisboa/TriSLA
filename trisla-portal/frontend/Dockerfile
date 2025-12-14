@@ -3,9 +3,14 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Aceitar ARG para NEXT_PUBLIC_API_URL (injetado pelo Helm durante o build)
-ARG NEXT_PUBLIC_API_URL=http://trisla-portal-backend:8001/api/v1
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# Aceitar ARG para NEXT_PUBLIC_TRISLA_API_BASE_URL (browser/client-side)
+# Default usa localhost:8001 para túnel SSH - pode ser sobrescrito no build
+ARG NEXT_PUBLIC_TRISLA_API_BASE_URL=http://localhost:8001/api/v1
+ENV NEXT_PUBLIC_TRISLA_API_BASE_URL=$NEXT_PUBLIC_TRISLA_API_BASE_URL
+
+# Aceitar ARG para INTERNAL_API_URL (SSR/server-side - cluster interno)
+ARG INTERNAL_API_URL=http://trisla-portal-backend:8001/api/v1
+ENV INTERNAL_API_URL=$INTERNAL_API_URL
 
 COPY package.json package-lock.json ./
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
@@ -12,14 +12,13 @@ export default function MonitoringPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const mountedRef = useRef(true)
 
-  useEffect(() => {
-    fetchMonitoringData()
-    const interval = setInterval(fetchMonitoringData, 30000) // Atualizar a cada 30s
-    return () => clearInterval(interval)
-  }, [])
-
-  const fetchMonitoringData = async () => {
+  // Função estável com useCallback para evitar loops infinitos
+  const fetchMonitoringData = useCallback(async () => {
+    // Verificar se componente ainda está montado antes de atualizar state
+    if (!mountedRef.current) return
+    
     try {
       setLoading(true)
       setError(null)
@@ -27,6 +26,8 @@ export default function MonitoringPage() {
       // Tentar buscar health global para verificar status do sistema
       try {
         const health = await api.getHealthGlobal()
+        if (!mountedRef.current) return
+        
         if (health.status === 'healthy') {
           setSystemStatus('healthy')
         } else if (health.status === 'degraded') {
@@ -35,20 +36,36 @@ export default function MonitoringPage() {
           setSystemStatus('unhealthy')
         }
       } catch (err) {
+        if (!mountedRef.current) return
         setSystemStatus('degraded')
       }
 
       // Contar SLAs ativos (simplificado - em produção, teria endpoint específico)
       // Por enquanto, assumimos que não temos endpoint de listagem, então mostramos 0
-      setActiveSLAs(0)
-      setLastUpdate(new Date())
+      if (mountedRef.current) {
+        setActiveSLAs(0)
+        setLastUpdate(new Date())
+      }
     } catch (err: any) {
+      if (!mountedRef.current) return
       setError(err.message || 'Erro ao buscar dados de monitoramento')
       setSystemStatus('degraded')
     } finally {
-      setLoading(false)
+      if (mountedRef.current) {
+        setLoading(false)
+      }
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    mountedRef.current = true
+    fetchMonitoringData()
+    const interval = setInterval(fetchMonitoringData, 30000) // Atualizar a cada 30s
+    return () => {
+      mountedRef.current = false
+      clearInterval(interval)
+    }
+  }, [fetchMonitoringData])
 
   const getStatusColor = () => {
     switch (systemStatus) {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -20,13 +20,9 @@ export default function ContractDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (contractId) {
-      fetchContractData()
-    }
-  }, [contractId])
-
-  const fetchContractData = async () => {
+  // Função estável com useCallback para evitar loops infinitos
+  const fetchContractData = useCallback(async () => {
+    if (!contractId) return
     setLoading(true)
     setError(null)
     try {
@@ -45,7 +41,13 @@ export default function ContractDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [contractId])
+
+  useEffect(() => {
+    if (contractId) {
+      fetchContractData()
+    }
+  }, [contractId, fetchContractData])
 
   if (loading) {
     return (
