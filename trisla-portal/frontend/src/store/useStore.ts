@@ -31,8 +31,8 @@ export const useStore = create<AppState>((set) => ({
   fetchHealth: async () => {
     set({ loading: true, error: null })
     try {
-      const { api } = await import('@/lib/api')
-      const health = await api.getHealthGlobal()
+      const { apiClient } = await import('@/lib/api')
+      const health = await apiClient.getHealthGlobal()
       set({ health, loading: false })
     } catch (error: any) {
       set({ error: error.message, loading: false })
@@ -42,8 +42,8 @@ export const useStore = create<AppState>((set) => ({
   fetchModules: async () => {
     set({ loading: true, error: null })
     try {
-      const { api } = await import('@/lib/api')
-      const modules = await api.getModules()
+      const { apiClient } = await import('@/lib/api')
+      const modules = await apiClient.getModules()
       set({ modules, loading: false })
     } catch (error: any) {
       set({ error: error.message, loading: false })
