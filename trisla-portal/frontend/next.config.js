@@ -5,11 +5,19 @@ const nextConfig = {
   experimental: {
     serverActions: { allowedOrigins: ['*'] }
   },
-  // NEXT_PUBLIC_* são injetadas no build time
-  // Para client-side (browser via túnel SSH): localhost:32002
-  // Para server-side (SSR no cluster): será sobrescrito via API_URL
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:32002/api/v1',
+  async rewrites() {
+    // IMPORTANTE:
+    // - No cluster: o Next roda dentro do pod, então pode falar com o Service do backend.
+    // - Externamente: seu navegador chama /api/v1 no MESMO host do Portal (localhost:3001 via túnel).
+    const backendBase =
+      process.env.BACKEND_URL || "http://trisla-portal-backend:8001/api/v1";
+
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${backendBase}/:path*`,
+      },
+    ];
   },
 };
 

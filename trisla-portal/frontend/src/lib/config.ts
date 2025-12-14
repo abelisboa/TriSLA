@@ -1,35 +1,17 @@
 /**
  * Configuração centralizada da API do Portal TriSLA
  * 
- * DEPRECATED: Use runtimeConfig.ts para nova lógica Kubernetes-safe
+ * CORREÇÃO DEFINITIVA: Usa same-origin (/api/v1) e Next.js faz proxy interno
  * 
- * Este arquivo mantém compatibilidade, mas redireciona para runtimeConfig.ts
+ * O browser sempre chama /api/v1 no mesmo host do Portal.
+ * O Next.js faz rewrite interno para o backend via Service Kubernetes.
  */
-
-import { API_BASE_URL as RUNTIME_API_BASE_URL } from './runtimeConfig';
 
 /**
- * URL base da API - usa runtimeConfig.ts (Kubernetes-safe)
- * 
- * @deprecated Use import { API_BASE_URL } from './runtimeConfig' diretamente
+ * Base URL da API - sempre same-origin (sem IP hardcoded)
+ * O Next.js faz proxy via rewrites em next.config.js
  */
-export const API_BASE_URL = RUNTIME_API_BASE_URL;
-
-/**
- * Helper para obter URL da API no server-side (SSR, API Routes)
- * @deprecated Use runtimeConfig.ts
- */
-export const getServerApiUrl = (): string => {
-  return RUNTIME_API_BASE_URL;
-};
-
-/**
- * Helper para obter URL da API no client-side (browser)
- * @deprecated Use runtimeConfig.ts
- */
-export const getBrowserApiUrl = (): string => {
-  return RUNTIME_API_BASE_URL;
-};
+export const API_BASE = "/api/v1";
 
 export const API_ENDPOINTS = {
   health: '/health',

@@ -4,9 +4,6 @@ import Link from 'next/link'
 import { FileText, Settings, BarChart3, Activity } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState, useCallback } from 'react'
-import { api } from '@/lib/api'
-import { API_BASE_URL } from '@/lib/runtimeConfig'
-import { API_ENDPOINTS } from '@/lib/config'
 import { PORTAL_VERSION_DISPLAY } from '@/lib/version'
 
 export default function HomePage() {
@@ -16,18 +13,12 @@ export default function HomePage() {
   // Função estável com useCallback para evitar loops infinitos
   const checkBackend = useCallback(async () => {
     try {
-      // Health endpoint não usa /api/v1, apenas /health
-      // Extrair base URL sem /api/v1 e construir URL de health
-      const apiBase = API_BASE_URL
-      const baseUrl = apiBase.replace('/api/v1', '')
-      const healthUrl = `${baseUrl}${API_ENDPOINTS.health}`
-      
-      // Timeout de 5 segundos para health check
+      // Health endpoint: /health (same-origin, Next.js faz proxy)
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 5000)
       
       try {
-        const response = await fetch(healthUrl, { signal: controller.signal })
+        const response = await fetch('/health', { signal: controller.signal })
         clearTimeout(timeoutId)
         if (response.ok) {
           setBackendStatus('online')

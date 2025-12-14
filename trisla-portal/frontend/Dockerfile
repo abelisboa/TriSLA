@@ -3,15 +3,13 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Aceitar ARG para NEXT_PUBLIC_TRISLA_API_BASE_URL (browser/client-side)
-# Default Kubernetes-safe: usa Service interno (pode ser sobrescrito no build)
-# Para desenvolvimento local via túnel SSH, passar: --build-arg NEXT_PUBLIC_TRISLA_API_BASE_URL=http://localhost:8001/api/v1
-ARG NEXT_PUBLIC_TRISLA_API_BASE_URL=http://trisla-portal-backend:8001/api/v1
-ENV NEXT_PUBLIC_TRISLA_API_BASE_URL=$NEXT_PUBLIC_TRISLA_API_BASE_URL
+# CORREÇÃO DEFINITIVA v3.7.34: Frontend usa same-origin (/api/v1) e Next.js faz proxy
+# Não precisa mais de NEXT_PUBLIC_TRISLA_API_BASE_URL - o frontend sempre usa /api/v1
+# O Next.js faz rewrite interno via next.config.js para o backend Service Kubernetes
 
-# Aceitar ARG para INTERNAL_API_URL (SSR/server-side - cluster interno)
-ARG INTERNAL_API_URL=http://trisla-portal-backend:8001/api/v1
-ENV INTERNAL_API_URL=$INTERNAL_API_URL
+# ARG para BACKEND_URL (usado apenas no server-side do Next.js para rewrites)
+ARG BACKEND_URL=http://trisla-portal-backend:8001/api/v1
+ENV BACKEND_URL=$BACKEND_URL
 
 COPY package.json package-lock.json ./
 

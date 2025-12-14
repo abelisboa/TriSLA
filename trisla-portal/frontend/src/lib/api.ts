@@ -1,12 +1,12 @@
 /**
  * API Client - TriSLA Portal Light
- * Cliente para comunicação com o backend
+ * Cliente para comunicação com o backend usando same-origin (/api/v1)
+ * 
+ * CORREÇÃO DEFINITIVA: Todas as chamadas usam /api/v1 (same-origin)
+ * O Next.js faz proxy interno via rewrites em next.config.js
  */
 
-import { API_BASE_URL } from './runtimeConfig'
-
-// Usar configuração centralizada Kubernetes-safe
-export const BACKEND_URL = API_BASE_URL
+import { API_BASE } from "./config";
 
 export interface APIError {
   message: string
@@ -16,11 +16,69 @@ export interface APIError {
 }
 
 /**
- * Tipo para o cliente API como function object
- * Permite chamar api(endpoint) e também api.getContract(id), etc.
+ * Helper para criar timeout com AbortController
  */
-type ApiClient = {
-  (endpoint: string, options?: RequestInit): Promise<any>
+function withTimeout(ms = 30000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  return { controller, id };
+}
+
+/**
+ * GET request com timeout
+ */
+export async function apiGet<T>(path: string, timeoutMs = 30000): Promise<T> {
+  const { controller, id } = withTimeout(timeoutMs);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, { signal: controller.signal });
+    if (!res.ok) {
+      let errorDetail: string = '';
+      try {
+        const errorData = await res.json();
+        errorDetail = errorData.detail || errorData.error || errorData.message || res.statusText;
+      } catch {
+        errorDetail = res.statusText;
+      }
+      throw new Error(`GET ${path} -> ${res.status}: ${errorDetail}`);
+    }
+    return (await res.json()) as T;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+/**
+ * POST request com timeout
+ */
+export async function apiPost<T>(path: string, body: unknown, timeoutMs = 30000): Promise<T> {
+  const { controller, id } = withTimeout(timeoutMs);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      let errorDetail: string = '';
+      try {
+        const errorData = await res.json();
+        errorDetail = errorData.detail || errorData.error || errorData.message || res.statusText;
+      } catch {
+        errorDetail = res.statusText;
+      }
+      throw new Error(`POST ${path} -> ${res.status}: ${errorDetail}`);
+    }
+    return (await res.json()) as T;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+/**
+ * Tipo para o cliente API completo
+ */
+type ApiClientFunction = ((endpoint: string, options?: RequestInit) => Promise<any>) & {
   getContract: (id: string) => Promise<any>
   getContractViolations: (id: string) => Promise<any>
   getContractRenegotiations: (id: string) => Promise<any>
@@ -30,22 +88,15 @@ type ApiClient = {
   getModule: (moduleName: string) => Promise<any>
   getModuleMetrics: (moduleName: string) => Promise<any>
   getModuleStatus: (moduleName: string) => Promise<any>
-  getHealthGlobal: () => Promise<any>
   getModules: () => Promise<any>
+  getHealthGlobal: () => Promise<any>
 }
 
 /**
- * Função base da API com timeout e tratamento robusto de erros
+ * Compatibilidade: função api() genérica (mantém compatibilidade com código existente)
  */
-const baseApi = async (
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<any> => {
-  const url = `${BACKEND_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
-  
-  // Timeout de 25 segundos (AbortController)
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 25000)
+async function apiFunction(endpoint: string, options: RequestInit = {}): Promise<any> {
+  const { controller, id } = withTimeout(30000);
   
   const defaultOptions: RequestInit = {
     headers: {
@@ -54,113 +105,89 @@ const baseApi = async (
     },
     signal: controller.signal,
     ...options,
-  }
+  };
 
   try {
-    const response = await fetch(url, defaultOptions)
-    clearTimeout(timeoutId)
+    const response = await fetch(`${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`, defaultOptions);
+    clearTimeout(id);
     
     if (!response.ok) {
-      let errorDetail: string = ''
+      let errorDetail: string = '';
       try {
-        const errorData = await response.json()
-        errorDetail = errorData.detail || errorData.error || errorData.message || response.statusText
+        const errorData = await response.json();
+        errorDetail = errorData.detail || errorData.error || errorData.message || response.statusText;
       } catch {
-        errorDetail = response.statusText
+        errorDetail = response.statusText;
       }
       
       const error: APIError = {
         message: errorDetail,
         status: response.status,
         detail: errorDetail,
-      }
+      };
       
       // Se o erro contém informações de módulo, extrair
       if (errorDetail.includes('SEM-CSMF') || errorDetail.includes('ML-NSMF') || 
           errorDetail.includes('Decision Engine') || errorDetail.includes('BC-NSSMF') ||
           errorDetail.includes('SLA-Agent Layer')) {
-        error.module = errorDetail.split(':')[0]
+        error.module = errorDetail.split(':')[0];
       }
       
-      throw error
+      throw error;
     }
 
     // Se resposta vazia, retornar objeto vazio
-    const contentType = response.headers.get('content-type')
+    const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
-      return {}
+      return {};
     }
 
-    return await response.json()
+    return await response.json();
   } catch (error: any) {
-    clearTimeout(timeoutId)
+    clearTimeout(id);
     
     // Se já é um APIError, relançar
     if (error.status) {
-      throw error
+      throw error;
     }
     
     // Tratamento de timeout ou erro de rede
     if (error.name === 'AbortError' || error.message?.includes('aborted')) {
       throw {
-        message: 'Timeout ao conectar com o backend. Verifique se o túnel SSH está ativo.',
+        message: 'Timeout ao conectar com o backend',
         status: 0,
-        detail: 'Request timeout após 25 segundos',
-      } as APIError
+        detail: 'Request timeout após 30 segundos',
+      } as APIError;
     }
     
     // Erro de rede ou outro erro
     throw {
-      message: error.message || 'Erro ao conectar com o backend. Verifique se o túnel SSH está ativo.',
+      message: error.message || 'Erro ao conectar com o backend',
       status: 0,
       detail: error.message || 'Network error',
-    } as APIError
+    } as APIError;
   }
 }
 
-/**
- * API Client como function object
- * Pode ser chamado como função: api('/endpoint')
- * Ou como objeto com métodos: api.getContract(id)
- */
-const api = baseApi as ApiClient
+// Criar objeto api com métodos
+const api = apiFunction as ApiClientFunction
 
-// Métodos específicos de contratos
-api.getContract = (id: string) =>
-  baseApi(`/contracts/${id}`)
+// Adicionar métodos ao objeto api para compatibilidade
+api.getContract = (id: string) => apiGet(`/contracts/${id}`)
+api.getContractViolations = (id: string) => apiGet(`/contracts/${id}/violations`)
+api.getContractRenegotiations = (id: string) => apiGet(`/contracts/${id}/renegotiations`)
+api.getContractPenalties = (id: string) => apiGet(`/contracts/${id}/penalties`)
+api.getContracts = () => apiGet(`/contracts`)
+api.getXAIExplanations = () => apiGet(`/xai/explanations`)
+api.getModule = (moduleName: string) => apiGet(`/modules/${moduleName}`)
+api.getModuleMetrics = (moduleName: string) => apiGet(`/modules/${moduleName}/metrics`)
+api.getModuleStatus = (moduleName: string) => apiGet(`/modules/${moduleName}/status`)
+api.getModules = () => apiGet(`/modules`)
+api.getHealthGlobal = () => apiGet(`/health/global`)
 
-api.getContractViolations = (id: string) =>
-  baseApi(`/contracts/${id}/violations`)
+// Export para compatibilidade
+export const apiClient = api
 
-api.getContractRenegotiations = (id: string) =>
-  baseApi(`/contracts/${id}/renegotiations`)
-
-api.getContractPenalties = (id: string) =>
-  baseApi(`/contracts/${id}/penalties`)
-
-api.getContracts = () =>
-  baseApi(`/contracts`)
-
-// Métodos de XAI
-api.getXAIExplanations = () =>
-  baseApi(`/xai/explanations`)
-
-// Métodos de módulos
-api.getModule = (moduleName: string) =>
-  baseApi(`/modules/${moduleName}`)
-
-api.getModuleMetrics = (moduleName: string) =>
-  baseApi(`/modules/${moduleName}/metrics`)
-
-api.getModuleStatus = (moduleName: string) =>
-  baseApi(`/modules/${moduleName}/status`)
-
-api.getModules = () =>
-  baseApi(`/modules`)
-
-// Métodos de health
-api.getHealthGlobal = () =>
-  baseApi(`/health/global`)
-
-export default api
+// Export named e default para compatibilidade
 export { api }
+export default api
