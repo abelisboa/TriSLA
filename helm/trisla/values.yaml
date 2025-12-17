@@ -39,8 +39,8 @@ semCsmf:
 mlNsmf:
   enabled: true
   image:
-    repository: trisla-ml-nsmf
-    tag: nasp-a2
+    repository: ghcr.io/abelisboa/trisla-ml-nsmf
+    tag: v3.7.11
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
