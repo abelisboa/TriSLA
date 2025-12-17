@@ -18,8 +18,8 @@ network:
 semCsmf:
   enabled: true
   image:
-    repository: trisla-sem-csmf
-    tag: nasp-a2
+    repository: ghcr.io/abelisboa/trisla-sem-csmf
+    tag: v3.7.11
     pullPolicy: IfNotPresent
   annotations:
     trisla-mode: degraded
