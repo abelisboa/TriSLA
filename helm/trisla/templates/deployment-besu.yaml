@@ -6,18 +6,22 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "trisla.labels" . | nindent 4 }}
+    app: besu
+    component: blockchain
     app.kubernetes.io/component: besu
 spec:
   replicas: {{ .Values.besu.replicaCount }}
   selector:
     matchLabels:
       {{- include "trisla.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: besu
+      app: besu
+      component: blockchain
   template:
     metadata:
       labels:
         {{- include "trisla.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: besu
+        app: besu
+        component: blockchain
       annotations:
         checksum/genesis: {{ .Values.besu.genesis | sha256sum | trunc 8 }}
     spec:
@@ -48,12 +52,9 @@ spec:
         - --rpc-http-enabled=true
         - --rpc-http-host=0.0.0.0
         - --rpc-http-port=8545
-        - --rpc-http-api=ETH,NET,IBFT,WEB3,ADMIN,DEBUG
+        - --rpc-http-api=ETH,NET,WEB3
         - --rpc-http-cors-origins=*
         - --host-allowlist=*
-        - --miner-enabled=true
-        - --miner-coinbase=0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1
-        - --miner-extra-data=0x00
         env:
         - name: BESU_DATA_PATH
           value: "/opt/besu/data"
@@ -75,12 +76,12 @@ spec:
         livenessProbe:
           exec:
             command:
-            - /bin/sh
-            - -c
-            - |
-              curl -f -X POST http://localhost:8545 \
-                -H "Content-Type: application/json" \
-                -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
+              - /bin/sh
+              - -c
+              - |
+                curl -sf -X POST http://localhost:8545 \
+                  -H "Content-Type: application/json" \
+                  -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 10
@@ -88,12 +89,12 @@ spec:
         readinessProbe:
           exec:
             command:
-            - /bin/sh
-            - -c
-            - |
-              curl -f -X POST http://localhost:8545 \
-                -H "Content-Type: application/json" \
-                -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
+              - /bin/sh
+              - -c
+              - |
+                curl -sf -X POST http://localhost:8545 \
+                  -H "Content-Type: application/json" \
+                  -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5

@@ -6,23 +6,25 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "trisla.labels" . | nindent 4 }}
-    app.kubernetes.io/component: besu
+    app: besu
+    component: blockchain
 spec:
   type: {{ .Values.besu.service.type }}
   ports:
   - port: {{ .Values.besu.service.port }}
-    targetPort: rpc-http
+    targetPort: 8545
     protocol: TCP
-    name: rpc-http
+    name: rpc
   - port: {{ .Values.besu.service.wsPort | default 8546 }}
-    targetPort: rpc-ws
+    targetPort: 8546
     protocol: TCP
     name: rpc-ws
   - port: {{ .Values.besu.service.p2pPort | default 30303 }}
-    targetPort: p2p
+    targetPort: 30303
     protocol: TCP
     name: p2p
   selector:
     {{- include "trisla.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: besu
+    app: besu
+    component: blockchain
 {{- end }}

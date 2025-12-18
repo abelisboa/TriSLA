@@ -6,7 +6,8 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "trisla.labels" . | nindent 4 }}
-    app.kubernetes.io/component: besu
+    app: besu
+    component: blockchain
 spec:
   accessModes:
     {{- range .Values.besu.persistence.accessModes }}

@@ -16,7 +16,7 @@ network:
 
 # SEM-CSMF
 semCsmf:
-  enabled: true
+  enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: ghcr.io/abelisboa/trisla-sem-csmf
     tag: v3.7.11
@@ -26,6 +26,8 @@ semCsmf:
   service:
     type: ClusterIP
     port: 8080
+  env:
+    DECISION_ENGINE_URL: ""  # Sprint S3.4 - Valor padrão obrigatório
   resources:
     requests:
       cpu: 500m
@@ -37,7 +39,7 @@ semCsmf:
 
 # ML-NSMF
 mlNsmf:
-  enabled: true
+  enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: ghcr.io/abelisboa/trisla-ml-nsmf
     tag: v3.7.11
@@ -59,7 +61,7 @@ mlNsmf:
 
 # Decision Engine
 decisionEngine:
-  enabled: true
+  enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-decision-engine
     tag: nasp-a2
@@ -78,7 +80,7 @@ decisionEngine:
 
 # BESU - Hyperledger Besu Blockchain Client
 besu:
-  enabled: true
+  enabled: false  # Sprint S3.5.1 - Base idempotente
   image:
     repository: hyperledger/besu
     tag: 23.10.1
@@ -141,10 +143,10 @@ besu:
 
 # BC-NSSMF
 bcNssmf:
-  enabled: true
+  enabled: false  # Sprint S3.4 - Base idempotente
   image:
-    repository: trisla-bc-nssmf
-    tag: v3.7.11
+    repository: ghcr.io/abelisboa/trisla-bc-nssmf
+    tag: v3.7.16
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -154,7 +156,8 @@ bcNssmf:
       enabled: false
   annotations:
     trisla-mode: degraded
-  env: {}
+  env:
+    BC_ENABLED: "true"  # Sprint S3.4 - Valor padrão obrigatório
     # Variáveis de ambiente serão injetadas automaticamente se BESU estiver habilitado
     # TRISLA_RPC_URL e BESU_RPC_URL serão configuradas no template deployment-bc-nssmf.yaml
   resources:
@@ -168,7 +171,7 @@ bcNssmf:
 
 # BESU - Hyperledger Besu Blockchain Client
 besu:
-  enabled: true
+  enabled: false  # Sprint S3.5.1 - Base idempotente
   image:
     repository: hyperledger/besu
     tag: 23.10.1
@@ -231,7 +234,7 @@ besu:
 
 # SLA-Agent Layer
 slaAgentLayer:
-  enabled: true
+  enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-sla-agent-layer
     tag: nasp-a2
@@ -250,7 +253,7 @@ slaAgentLayer:
 
 # NASP Adapter
 naspAdapter:
-  enabled: true
+  enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-nasp-adapter
     tag: nasp-a2
@@ -269,7 +272,7 @@ naspAdapter:
 
 # UI Dashboard
 uiDashboard:
-  enabled: true
+  enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-ui-dashboard
     tag: nasp-a2
