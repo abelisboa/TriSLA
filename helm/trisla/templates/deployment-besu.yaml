@@ -22,8 +22,7 @@ spec:
         {{- include "trisla.selectorLabels" . | nindent 8 }}
         app: besu
         component: blockchain
-      annotations:
-        checksum/genesis: {{ .Values.besu.genesis | sha256sum | trunc 8 }}
+      annotations: {}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -47,7 +46,6 @@ spec:
         - /opt/besu/bin/besu
         args:
         - --data-path=/opt/besu/data
-        - --genesis-file=/opt/besu/genesis.json
         - --network=dev
         - --rpc-http-enabled=true
         - --rpc-http-host=0.0.0.0
@@ -58,15 +56,9 @@ spec:
         env:
         - name: BESU_DATA_PATH
           value: "/opt/besu/data"
-        - name: BESU_GENESIS_FILE
-          value: "/opt/besu/genesis.json"
         volumeMounts:
         - name: besu-data
           mountPath: /opt/besu/data
-        - name: besu-genesis
-          mountPath: /opt/besu/genesis.json
-          subPath: genesis.json
-          readOnly: true
         {{- if .Values.besu.nodeSelector }}
         nodeSelector:
           {{- toYaml .Values.besu.nodeSelector | nindent 10 }}
@@ -107,9 +99,6 @@ spec:
         {{- else }}
         emptyDir: {}
         {{- end }}
-      - name: besu-genesis
-        configMap:
-          name: {{ include "trisla.name" . }}-besu-genesis
       {{- with .Values.besu.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
