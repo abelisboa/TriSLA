@@ -18,7 +18,7 @@ network:
 semCsmf:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
-    repository: ghcr.io/abelisboa/trisla-sem-csmf
+    repository: trisla-sem-csmf
     tag: v3.7.11
     pullPolicy: IfNotPresent
   annotations:
@@ -41,8 +41,8 @@ semCsmf:
 mlNsmf:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
-    repository: ghcr.io/abelisboa/trisla-ml-nsmf
-    tag: v3.7.11
+    repository: trisla-ml-nsmf
+    tag: v3.7.14
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -113,7 +113,7 @@ besu:
 bcNssmf:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
-    repository: ghcr.io/abelisboa/trisla-bc-nssmf
+    repository: trisla-bc-nssmf
     tag: v3.7.16
     pullPolicy: IfNotPresent
   service:
