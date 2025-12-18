@@ -1,3 +1,4 @@
+{{- if .Values.semCsmf.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,7 +37,7 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        {{- if .Values.semCsmf.env.DECISION_ENGINE_URL }}
+        {{- if and .Values.semCsmf.env .Values.semCsmf.env.DECISION_ENGINE_URL }}
         - name: DECISION_ENGINE_URL
           value: {{ .Values.semCsmf.env.DECISION_ENGINE_URL | quote }}
         {{- end }}
@@ -54,3 +55,4 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.semCsmf.resources | nindent 10 }}
+{{- end }}
