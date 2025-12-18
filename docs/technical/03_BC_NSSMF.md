@@ -51,8 +51,8 @@ besu \
 **Helm Chart:**
 - **Deployment:** `helm/trisla/templates/deployment-besu.yaml`
 - **Service:** `helm/trisla/templates/service-besu.yaml`
-- **ConfigMap:** `helm/trisla/templates/configmap-besu.yaml` (genesis)
 - **PVC:** `helm/trisla/templates/pvc-besu.yaml` (persistência)
+- **❌ Removido (Sprint S3.5.4):** ConfigMap de genesis (usando --network=dev sem genesis customizado)
 
 **Labels consistentes (Pod ↔ Service):**
 ```yaml
@@ -61,9 +61,11 @@ labels:
   component: blockchain
 ```
 
-**Health Checks:**
-- **LivenessProbe:** TCP socket na porta 8545
-- **ReadinessProbe:** TCP socket na porta 8545
+**Health Checks (Sprint S3.5.5 - Correção Definitiva):**
+- **LivenessProbe:** `httpGet` nativo Kubernetes (path: `/`, port: `8545`)
+- **ReadinessProbe:** `httpGet` nativo Kubernetes (path: `/`, port: `8545`)
+- **❌ Removido:** Probes `exec` com `curl` (imagem Besu não contém curl)
+- **✅ Benefício:** Portabilidade total, elimina CrashLoopBackOff
 
 **Garantias de idempotência (Sprint S3.3):**
 - ✅ Deploy isolado do Besu via Helm
@@ -83,7 +85,7 @@ labels:
 - RPC HTTP: `http://trisla-besu:8545` (ClusterIP)
 - RPC WebSocket: `ws://trisla-besu:8546` (opcional)
 - Contas e chaves (tratamento seguro via `BC_PRIVATE_KEY`)
-- ChainId: `1337` (configurado no genesis)
+- ChainId: Gerado automaticamente pelo Besu em modo DEV (Sprint S3.5.4)
 
 ## 3. Modelo de contrato
 

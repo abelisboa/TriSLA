@@ -264,11 +264,10 @@ helm template trisla helm/trisla \
 
 **Versão:** `23.10.1` (compatível com Besu ≥ 23.x)
 
-**Flags Válidas (mínimo funcional):**
+**Flags Válidas (mínimo funcional - Sprint S3.5.4):**
 ```yaml
 args:
   - --data-path=/opt/besu/data
-  - --genesis-file=/opt/besu/genesis.json
   - --network=dev
   - --rpc-http-enabled=true
   - --rpc-http-host=0.0.0.0
@@ -278,6 +277,9 @@ args:
   - --host-allowlist=*
 ```
 
+**❌ Removido (Sprint S3.5.4):**
+- `--genesis-file` (usando --network=dev sem genesis customizado)
+
 **❌ Flags Obsoletas Removidas:**
 - `--miner-enabled` (não necessário em dev network)
 - `--miner-coinbase` (não necessário)
@@ -285,43 +287,41 @@ args:
 
 **Opinião técnica:** Este modo é suficiente para RPC funcional, deploy de contrato e testes on-chain no NASP.
 
-### 9.2 Estratégia de Probes
+### 9.2 Estratégia de Probes (Sprint S3.5.5 - Correção Definitiva)
 
-**Probes RPC Real (Sprint S3.5.1):**
+**Probes httpGet Nativo Kubernetes:**
 
-As probes verificam o RPC real, não apenas a porta TCP:
+As probes usam `httpGet` nativo do Kubernetes, sem dependências no container:
 
 ```yaml
 readinessProbe:
-  exec:
-    command:
-      - /bin/sh
-      - -c
-      - |
-        curl -sf -X POST http://localhost:8545 \
-          -H "Content-Type: application/json" \
-          -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
+  httpGet:
+    path: /
+    port: 8545
   initialDelaySeconds: 30
   periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 3
+  timeoutSeconds: 3
+  failureThreshold: 6
 
 livenessProbe:
-  exec:
-    command:
-      - /bin/sh
-      - -c
-      - |
-        curl -sf -X POST http://localhost:8545 \
-          -H "Content-Type: application/json" \
-          -d '{"jsonrpc":"2.0","method":"web3_clientVersion","id":1}' || exit 1
+  httpGet:
+    path: /
+    port: 8545
   initialDelaySeconds: 60
-  periodSeconds: 30
-  timeoutSeconds: 10
-  failureThreshold: 3
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 6
 ```
 
-**Opinião técnica:** RPC > TCP socket. Evita falso-positivo e garante que o Besu está realmente respondendo a requisições JSON-RPC.
+**❌ Removido (Sprint S3.5.5):**
+- Probes baseadas em `exec` com `curl` (imagem oficial Besu não contém curl)
+- Dependências externas no container
+
+**✅ Benefícios:**
+- Portabilidade total (sem dependências no container)
+- Elimina CrashLoopBackOff causado por "curl: not found"
+- Usa recursos nativos do Kubernetes
+- Besu responde HTTP 200 quando RPC está pronto
 
 ### 9.3 Labels e Selectors Consistentes
 
@@ -365,26 +365,87 @@ selector:
 
 - ✅ Flags atualizadas para versões atuais do Besu
 - ✅ Nenhuma flag obsoleta presente
-- ✅ Probes refletem RPC real (não apenas TCP)
+- ✅ Probes httpGet nativo Kubernetes (sem dependências no container)
 - ✅ Service e selectors consistentes
 - ✅ Container Besu inicializa corretamente
 
-### 9.6 Correções Aplicadas (Sprint S3.5.1)
+### 9.6 Correções Aplicadas (Sprint S3.5.1 - S3.5.5)
 
+**Sprint S3.5.1:**
 - ✅ Remoção definitiva de flags obsoletas (`--miner-enabled`, `--miner-coinbase`, `--miner-extra-data`)
-- ✅ Probes atualizadas para verificar RPC real (exec com curl)
 - ✅ Labels e selectors consolidados em todos os recursos
 - ✅ Service expõe corretamente porta 8545
 - ✅ Values.yaml com defaults idempotentes (`enabled: false`)
+
+**Sprint S3.5.4:**
+- ✅ Remoção de `--genesis-file` e ConfigMap de genesis
+- ✅ Besu em modo DEV (`--network=dev`) sem genesis customizado
+- ✅ Elimina CrashLoopBackOff por genesis.json
+
+**Sprint S3.5.5:**
+- ✅ Probes `exec` com `curl` removidas (imagem Besu não contém curl)
+- ✅ Probes substituídas por `httpGet` nativo Kubernetes
+- ✅ Elimina CrashLoopBackOff por "curl: not found"
+- ✅ Portabilidade total (sem dependências no container)
+
+**Validação:**
 - ✅ Helm lint passa sem erros
 - ✅ Helm template isolado do Besu funciona
+- ✅ Nenhum curl nos templates renderizados
+- ✅ Nenhum exec nos probes do Besu
 
-## 10. Próximos Passos
+## 10. Sprint S3.5.5 — Correção Definitiva dos Probes do Besu
+
+### 10.1 Problema Identificado
+
+**Erro no NASP:**
+```
+Readiness probe failed: /bin/sh: curl: not found
+```
+
+**Causa raiz:**
+- Imagem oficial `hyperledger/besu:*` não contém `curl`
+- Probes baseadas em `exec` + `curl` são inválidas
+- Causa CrashLoopBackOff mesmo com Besu funcional
+
+### 10.2 Solução Aplicada
+
+**Probes httpGet Nativo Kubernetes:**
+- ✅ Removidos todos os probes baseados em `exec` com `curl`
+- ✅ Substituídos por `httpGet` nativo do Kubernetes
+- ✅ Path: `/` (raiz do RPC HTTP)
+- ✅ Port: `8545` (porta RPC)
+- ✅ Sem dependências no container
+
+**Benefícios:**
+- ✅ Elimina CrashLoopBackOff por "curl: not found"
+- ✅ Portabilidade total (sem dependências externas)
+- ✅ Usa recursos nativos do Kubernetes
+- ✅ Helm Chart 100% idempotente
+
+### 10.3 Validação
+
+**Helm Lint:**
+```bash
+helm lint helm/trisla
+# Resultado: 1 chart(s) linted, 0 chart(s) failed
+```
+
+**Helm Template:**
+```bash
+helm template trisla helm/trisla --set besu.enabled=true
+# ✅ Nenhum curl nos templates renderizados
+# ✅ Nenhum exec nos probes do Besu
+# ✅ Apenas httpGet presente
+```
+
+## 11. Próximos Passos
 
 O Helm Chart está consolidado e pronto para:
 - ✅ Deploy idempotente em qualquer cluster Kubernetes
 - ✅ Eliminação de hotfixes manuais
 - ✅ Reprodutibilidade completa da arquitetura
 - ✅ Novos ambientes (clusters) sem correções ad-hoc
-- ✅ Besu funcional e estável (Sprint S3.5.1)
+- ✅ Besu funcional e estável (Sprint S3.5.5)
+- ✅ Probes portáveis (sem dependências no container)
 
