@@ -18,12 +18,12 @@ network:
   interface: my5g
   nodeIP: 192.168.10.16
   gateway: 192.168.10.1
-# BESU - Hyperledger Besu Blockchain Client
+# BESU - Hyperledger Besu Blockchain Client (versioned)
 besu:
   enabled: true
   image:
-    repository: hyperledger/besu
-    tag: latest
+    repository: trisla-besu
+    tag: v3.7.16
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:
@@ -83,8 +83,8 @@ besu:
 besu:
   enabled: true
   image:
-    repository: hyperledger/besu
-    tag: latest
+    repository: trisla-besu
+    tag: v3.7.16
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:

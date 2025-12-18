@@ -30,7 +30,7 @@ spec:
       {{- end }}
       containers:
       - name: besu
-        image: "{{ .Values.besu.image.repository }}:{{ .Values.besu.image.tag | default .Chart.AppVersion }}"
+        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.besu.image) }}
         imagePullPolicy: {{ .Values.besu.image.pullPolicy }}
         ports:
         - name: rpc-http

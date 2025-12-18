@@ -78,37 +78,6 @@ decisionEngine:
       memory: 2Gi
   replicas: 2
 
-# BESU - Hyperledger Besu Blockchain Client
-besu:
-  enabled: false  # Sprint S3.5.1 - Base idempotente
-  image:
-    repository: hyperledger/besu
-    tag: 23.10.1
-    pullPolicy: IfNotPresent
-  replicaCount: 1
-  service:
-    type: ClusterIP
-    port: 8545
-    wsPort: 8546
-    p2pPort: 30303
-  resources:
-    requests:
-      cpu: 1000m
-      memory: 2Gi
-    limits:
-      cpu: 4000m
-      memory: 8Gi
-  persistence:
-    enabled: true
-    size: 20Gi
-    accessModes:
-      - ReadWriteOnce
-    storageClass: ""  # Usar storage class padrão do cluster
-  # Genesis removed - using --network=dev mode (Sprint S3.5.4)
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-
 # BC-NSSMF
 bcNssmf:
   enabled: false  # Sprint S3.4 - Base idempotente
@@ -137,12 +106,12 @@ bcNssmf:
       memory: 2Gi
   replicas: 2
 
-# BESU - Hyperledger Besu Blockchain Client
+# BESU - Hyperledger Besu Blockchain Client (versioned)
 besu:
   enabled: false  # Sprint S3.5.1 - Base idempotente
   image:
-    repository: hyperledger/besu
-    tag: 23.10.1
+    repository: trisla-besu
+    tag: v3.7.16
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:
