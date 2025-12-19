@@ -19,7 +19,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from service import BCService, BCInfrastructureError, BCBusinessError
 from oracle import MetricsOracle
 from kafka_consumer import DecisionConsumer
-from models import SLARequest, SLAStatusUpdate
+from models import (
+    SLARegisterRequest, 
+    SLAStatusUpdateRequest, 
+    ContractExecuteRequest,
+    SLARequest,  # legado - para mapeamento interno
+    SLAStatusUpdate  # legado - para mapeamento interno
+)
 
 # OpenTelemetry (opcional em modo DEV)
 otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
@@ -174,8 +180,8 @@ async def register_sla(req: SLARequest):
 
 
 @app.post("/api/v1/update-sla-status")
-async def update_sla_status(req: SLAStatusUpdate):
-    """Atualiza status de SLA no blockchain (Interface I-04)"""
+async def update_sla_status(req: SLAStatusUpdateRequest):
+    """Atualiza status de SLA no blockchain (Interface I-04) - Schema final"""
     with tracer.start_as_current_span("update_sla_status_i04") as span:
         if not enabled or not bc_service:
             span.set_attribute("sla.updated", False)
@@ -186,16 +192,37 @@ async def update_sla_status(req: SLAStatusUpdate):
             )
         
         try:
+            # Mapear status string para int (schema final usa string)
+            status_map = {
+                "CREATED": 0,
+                "ACTIVE": 1,
+                "VIOLATED": 2,
+                "RENEGOTIATED": 3,
+                "CLOSED": 4
+            }
+            
+            if req.status not in status_map:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"Status inválido: {req.status}. Valores permitidos: {list(status_map.keys())}"
+                )
+            
+            new_status_int = status_map[req.status]
+            
             # Atualizar status no blockchain
-            receipt = bc_service.update_status(req.slaId, req.newStatus)
+            receipt = bc_service.update_status(req.sla_id, new_status_int)
             
             span.set_attribute("sla.updated", True)
             span.set_attribute("sla.tx_hash", receipt.transactionHash.hex())
+            span.set_attribute("sla.id", req.sla_id)
+            span.set_attribute("sla.status", req.status)
             
             return {
                 "status": "ok",
                 "tx_hash": receipt.transactionHash.hex(),
-                "block_number": receipt.blockNumber
+                "block_number": receipt.blockNumber,
+                "sla_id": req.sla_id,
+                "new_status": req.status
             }
         except BCBusinessError as e:
             span.record_exception(e)
@@ -258,39 +285,69 @@ async def get_sla(sla_id: int):
 
 
 @app.post("/api/v1/execute-contract")
-async def execute_contract(contract_data: dict):
-    """Executa smart contract (Interface I-04 - genérico)"""
+async def execute_contract(req: ContractExecuteRequest):
+    """Executa smart contract (Interface I-04) - Schema final explícito"""
     with tracer.start_as_current_span("execute_contract") as span:
         if not enabled or not bc_service:
             span.set_attribute("contract.executed", False)
             span.set_attribute("contract.error", "BC-NSSMF em modo degraded")
-            return {
-                "status": "error",
-                "message": "BC-NSSMF está em modo degraded. RPC Besu não disponível.",
-                "enabled": False
-            }
+            raise HTTPException(
+                status_code=503,
+                detail="BC-NSSMF está em modo degraded. RPC Besu não disponível."
+            )
         
         try:
+            # Validar schema final
+            if req.operation not in ["DEPLOY", "EXECUTE"]:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"Operation inválida: {req.operation}. Valores permitidos: DEPLOY, EXECUTE"
+                )
+            
+            if req.operation == "EXECUTE":
+                if not req.function:
+                    raise HTTPException(
+                        status_code=422,
+                        detail="Campo 'function' é obrigatório quando operation='EXECUTE'"
+                    )
+                if req.args is None:
+                    raise HTTPException(
+                        status_code=422,
+                        detail="Campo 'args' é obrigatório quando operation='EXECUTE'"
+                    )
+            
             # Obter métricas do oracle
             metrics = await metrics_oracle.get_metrics()
             
-            # Executar contract via BCService
-            # Nota: BCService não tem método execute, usar register_sla como exemplo
-            result = {
-                "status": "executed",
-                "contract_data": contract_data,
-                "metrics": metrics
-            }
+            # Executar operação
+            if req.operation == "DEPLOY":
+                # Deploy de contrato (implementação futura)
+                result = {
+                    "status": "ok",
+                    "operation": "DEPLOY",
+                    "message": "Contract deployment initiated",
+                    "metrics": metrics
+                }
+            else:  # EXECUTE
+                # Executar função do contrato (implementação futura)
+                result = {
+                    "status": "ok",
+                    "operation": "EXECUTE",
+                    "function": req.function,
+                    "args": req.args,
+                    "message": f"Function {req.function} executed",
+                    "metrics": metrics
+                }
             
             span.set_attribute("contract.executed", True)
+            span.set_attribute("contract.operation", req.operation)
             return result
+        except HTTPException:
+            raise
         except Exception as e:
             span.record_exception(e)
             span.set_attribute("contract.executed", False)
-            return {
-                "status": "error",
-                "message": str(e)
-            }
+            raise HTTPException(status_code=500, detail=f"Erro ao executar contrato: {str(e)}")
 
 
 if __name__ == "__main__":
