@@ -63,18 +63,16 @@ spec:
         resources:
           {{- toYaml .Values.besu.resources | nindent 10 }}
         livenessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 8545
-          initialDelaySeconds: 60
+          initialDelaySeconds: 30
           periodSeconds: 20
           timeoutSeconds: 5
           failureThreshold: 6
         readinessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 8545
-          initialDelaySeconds: 30
+          initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 3
           failureThreshold: 6

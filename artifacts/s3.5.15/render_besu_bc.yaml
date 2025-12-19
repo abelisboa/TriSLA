@@ -1,0 +1,841 @@
+---
+# Source: trisla/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: trisla
+  labels:
+    name: trisla
+---
+# Source: trisla/templates/nasp-adapter-rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trisla-nasp-adapter
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: nasp-adapter
+    app.kubernetes.io/version: 3.7.10
+---
+# Source: trisla/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trisla-config
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: config
+    app.kubernetes.io/version: 3.7.10
+data:
+  network.interface: "my5g"
+  network.nodeIP: "192.168.10.16"
+  network.gateway: "192.168.10.1"
+  production.enabled: "true"
+  production.simulationMode: "false"
+  production.useRealServices: "true"
+  production.executeRealActions: "true"
+---
+# Source: trisla/templates/pvc-besu.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: trisla-besu-data
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: trisla
+    app.kubernetes.io/version: 3.7.10
+    app: besu
+    component: blockchain
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"
+---
+# Source: trisla/templates/nasp-adapter-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: trisla-nasp-adapter
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: nasp-adapter
+    app.kubernetes.io/version: 3.7.10
+rules:
+  # CRDs - NetworkSliceInstances e NetworkSliceSubnetInstances
+  - apiGroups:
+      - trisla.io
+    resources:
+      - networksliceinstances
+      - networksliceinstances/status
+      - networkslicesubnetinstances
+      - networkslicesubnetinstances/status
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  # Namespaces (cluster-scoped)
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+  # ResourceQuotas e LimitRanges
+  - apiGroups:
+      - ""
+    resources:
+      - resourcequotas
+      - limitranges
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  # NetworkPolicies
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+---
+# Source: trisla/templates/nasp-adapter-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: trisla-nasp-adapter
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: nasp-adapter
+    app.kubernetes.io/version: 3.7.10
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: trisla-nasp-adapter
+subjects:
+  - kind: ServiceAccount
+    name: trisla-nasp-adapter
+    namespace: trisla
+---
+# Source: trisla/templates/service-bc-nssmf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-bc-nssmf
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: bc-nssmf
+    app.kubernetes.io/version: 3.7.10
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8083
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-bc-nssmf
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+---
+# Source: trisla/templates/service-besu.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-besu
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: trisla
+    app.kubernetes.io/version: 3.7.10
+    app: besu
+    component: blockchain
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8545
+    targetPort: 8545
+    protocol: TCP
+    name: rpc
+  - port: 8546
+    targetPort: 8546
+    protocol: TCP
+    name: rpc-ws
+  - port: 30303
+    targetPort: 30303
+    protocol: TCP
+    name: p2p
+  selector:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app: besu
+    component: blockchain
+---
+# Source: trisla/templates/service-decision-engine.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-decision-engine
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: decision-engine
+    app.kubernetes.io/version: 3.7.10
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8082
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-decision-engine
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+---
+# Source: trisla/templates/service-ml-nsmf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-ml-nsmf
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: ml-nsmf
+    app.kubernetes.io/version: 3.7.10
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8081
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-ml-nsmf
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+---
+# Source: trisla/templates/service-nasp-adapter.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-nasp-adapter
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: nasp-adapter
+    app.kubernetes.io/version: 3.7.10
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8085
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-nasp-adapter
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+---
+# Source: trisla/templates/service-sem-csmf.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-sem-csmf
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: sem-csmf
+    app.kubernetes.io/version: 3.7.10
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-sem-csmf
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+---
+# Source: trisla/templates/service-sla-agent-layer.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-sla-agent-layer
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: sla-agent-layer
+    app.kubernetes.io/version: 3.7.10
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8084
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-sla-agent-layer
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+---
+# Source: trisla/templates/service-ui-dashboard.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trisla-ui-dashboard
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: ui-dashboard
+    app.kubernetes.io/version: 3.7.10
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: trisla-ui-dashboard
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+---
+# Source: trisla/templates/deployment-bc-nssmf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-bc-nssmf
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: bc-nssmf
+    app.kubernetes.io/version: 3.7.10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-bc-nssmf
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/instance: trisla
+  template:
+    metadata:
+      labels:
+        app: trisla-bc-nssmf
+        app.kubernetes.io/name: trisla
+        app.kubernetes.io/instance: trisla
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: bc-nssmf
+        image: ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.18
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8083
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: "my5g"
+        - name: TRISLA_NODE_IP
+          value: "192.168.10.16"
+        - name: OTLP_ENDPOINT
+          value: "http://trisla-otel-collector:4317"
+        # Configuração do BESU (se habilitado) - RPC determinístico
+        - name: TRISLA_RPC_URL
+          value: "http://trisla-besu.trisla.svc.cluster.local:8545"
+        - name: BESU_RPC_URL
+          value: "http://trisla-besu.trisla.svc.cluster.local:8545"
+        - name: BC_ENABLED
+          value: "true"
+        - name: TRISLA_CHAIN_ID
+          value: "1337"
+        # Variáveis de ambiente customizadas (podem sobrescrever as acima)
+        - name: BC_ENABLED
+          value: "true"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+---
+# Source: trisla/templates/deployment-besu.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-besu
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: trisla
+    app.kubernetes.io/version: 3.7.10
+    app: besu
+    component: blockchain
+    app.kubernetes.io/component: besu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/instance: trisla
+      app: besu
+      component: blockchain
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: trisla
+        app.kubernetes.io/instance: trisla
+        app: besu
+        component: blockchain
+      annotations: {}
+    spec:
+      containers:
+      - name: besu
+        image: ghcr.io/abelisboa/trisla-besu:v3.7.16
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: rpc-http
+          containerPort: 8545
+          protocol: TCP
+        - name: rpc-ws
+          containerPort: 8546
+          protocol: TCP
+        - name: p2p
+          containerPort: 30303
+          protocol: TCP
+        command:
+        - /opt/besu/bin/besu
+        args:
+        - --data-path=/opt/besu/data
+        - --network=dev
+        - --rpc-http-enabled
+        - --rpc-http-port=8545
+        - --rpc-http-api=ETH,NET,WEB3
+        env:
+        - name: BESU_DATA_PATH
+          value: "/opt/besu/data"
+        volumeMounts:
+        - name: besu-data
+          mountPath: /opt/besu/data
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+        livenessProbe:
+          tcpSocket:
+            port: 8545
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 6
+        readinessProbe:
+          tcpSocket:
+            port: 8545
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 6
+      volumes:
+      - name: besu-data
+        persistentVolumeClaim:
+          claimName: trisla-besu-data
+---
+# Source: trisla/templates/deployment-decision-engine.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-decision-engine
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: decision-engine
+    app.kubernetes.io/version: 3.7.10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-decision-engine
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/instance: trisla
+  template:
+    metadata:
+      labels:
+        app: trisla-decision-engine
+        app.kubernetes.io/name: trisla
+        app.kubernetes.io/instance: trisla
+
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: decision-engine
+        image: ghcr.io/abelisboa/trisla-decision-engine:nasp-a2
+        ports:
+        - containerPort: 8082
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: "my5g"
+        - name: TRISLA_NODE_IP
+          value: "192.168.10.16"
+        - name: OTLP_ENDPOINT
+          value: "http://trisla-otel-collector:4317"
+        - name: ML_NSMF_HTTP_URL
+          value: "http://trisla-ml-nsmf:8081"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+---
+# Source: trisla/templates/deployment-ml-nsmf.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-ml-nsmf
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: ml-nsmf
+    app.kubernetes.io/version: 3.7.10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-ml-nsmf
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/instance: trisla
+  template:
+    metadata:
+      labels:
+        app: trisla-ml-nsmf
+        app.kubernetes.io/name: trisla
+        app.kubernetes.io/instance: trisla
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: ml-nsmf
+        image: ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.14
+        ports:
+        - containerPort: 8081
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: "my5g"
+        - name: TRISLA_NODE_IP
+          value: "192.168.10.16"
+        - name: OTLP_ENDPOINT
+          value: "http://trisla-otel-collector:4317"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 4Gi
+          requests:
+            cpu: 1000m
+            memory: 1Gi
+---
+# Source: trisla/templates/deployment-nasp-adapter.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-nasp-adapter
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: nasp-adapter
+    app.kubernetes.io/version: 3.7.10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-nasp-adapter
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/instance: trisla
+  template:
+    metadata:
+      labels:
+        app: trisla-nasp-adapter
+        app.kubernetes.io/name: trisla
+        app.kubernetes.io/instance: trisla
+
+    spec:
+      # FASE C3-C3.2 FIX A: Garantir automount do ServiceAccount token
+      automountServiceAccountToken: true
+      serviceAccountName: trisla-nasp-adapter
+      imagePullSecrets:
+        - name: ghcr-secret
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: nasp-adapter
+        image: ghcr.io/abelisboa/trisla-nasp-adapter:nasp-a2
+        ports:
+        - containerPort: 8085
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: "my5g"
+        - name: TRISLA_NODE_IP
+          value: "192.168.10.16"
+        - name: OTLP_ENDPOINT
+          value: "http://trisla-otel-collector:4317"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+---
+# Source: trisla/templates/deployment-sla-agent-layer.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-sla-agent-layer
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: sla-agent-layer
+    app.kubernetes.io/version: 3.7.10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-sla-agent-layer
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/instance: trisla
+  template:
+    metadata:
+      labels:
+        app: trisla-sla-agent-layer
+        app.kubernetes.io/name: trisla
+        app.kubernetes.io/instance: trisla
+
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: sla-agent-layer
+        image: ghcr.io/abelisboa/trisla-sla-agent-layer:nasp-a2
+        ports:
+        - containerPort: 8084
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: "my5g"
+        - name: TRISLA_NODE_IP
+          value: "192.168.10.16"
+        - name: OTLP_ENDPOINT
+          value: "http://trisla-otel-collector:4317"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+---
+# Source: trisla/templates/deployment-ui-dashboard.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trisla-ui-dashboard
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: ui-dashboard
+    app.kubernetes.io/version: 3.7.10
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trisla-ui-dashboard
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/instance: trisla
+  template:
+    metadata:
+      labels:
+        app: trisla-ui-dashboard
+        app.kubernetes.io/name: trisla
+        app.kubernetes.io/instance: trisla
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: ui-dashboard
+        image: ghcr.io/abelisboa/trisla-ui-dashboard:nasp-a2
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: "my5g"
+        - name: TRISLA_NODE_IP
+          value: "192.168.10.16"
+        - name: OTLP_ENDPOINT
+          value: "http://trisla-otel-collector:4317"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+---
+# Source: trisla/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trisla-ingress
+  namespace: trisla
+  labels:
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/version: 3.7.10
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "trisla.local"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trisla-ui-dashboard
+            port:
+              number: 80
