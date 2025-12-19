@@ -83,7 +83,7 @@ bcNssmf:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-bc-nssmf
-    tag: v3.7.16
+    tag: v3.7.17
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP

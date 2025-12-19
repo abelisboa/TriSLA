@@ -36,12 +36,12 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        # Configuração do BESU (se habilitado)
+        # Configuração do BESU (se habilitado) - RPC determinístico
         {{- if .Values.besu.enabled }}
         - name: TRISLA_RPC_URL
-          value: "http://{{ include "trisla.name" . }}-besu:8545"
+          value: "http://{{ include "trisla.name" . }}-besu.{{ .Values.global.namespace }}.svc.cluster.local:8545"
         - name: BESU_RPC_URL
-          value: "http://{{ include "trisla.name" . }}-besu:8545"
+          value: "http://{{ include "trisla.name" . }}-besu.{{ .Values.global.namespace }}.svc.cluster.local:8545"
         - name: BC_ENABLED
           value: {{ .Values.global.bcEnabled | default "true" | quote }}
         - name: TRISLA_CHAIN_ID
