@@ -26,6 +26,7 @@ spec:
       containers:
       - name: bc-nssmf
         image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.bcNssmf.image) }}
+        imagePullPolicy: {{ .Values.bcNssmf.image.pullPolicy | default "Always" }}
         ports:
         - containerPort: {{ .Values.bcNssmf.service.port }}
           name: http

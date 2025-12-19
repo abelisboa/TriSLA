@@ -146,7 +146,7 @@ bcNssmf:
   image:
     repository: trisla-bc-nssmf
     tag: v3.7.18
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     port: 8083
   replicaCount: 1
