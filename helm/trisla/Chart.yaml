@@ -15,8 +15,4 @@ maintainers:
   - name: TriSLA Team
     email: abelisboa@gmail.com
 
-dependencies:
-  - name: trisla-besu
-    version: 1.0.0
-    repository: "file://../trisla-besu"
-    condition: trisla-besu.enabled
+# Dependencies removed - Besu is now integrated directly in templates (Sprint S3.4)
