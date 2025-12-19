@@ -244,9 +244,7 @@ production:
   useRealServices: true
   executeRealActions: true
 
-# BESU Subchart Configuration
-trisla-besu:
-  enabled: true
-  image:
-    tag: "23.10.1"
+# BESU Subchart Configuration (removed - using main chart besu.enabled)
+# trisla-besu:
+#   enabled: false
 
