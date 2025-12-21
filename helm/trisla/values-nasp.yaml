@@ -1,7 +1,7 @@
 global:
   imagePullPolicy: IfNotPresent
   version: "v3.7.29"
-  imageRegistry: "ghcr.io/abelisboa"
+  imageRegistry: ghcr.io/abelisboa
 
 portalFrontend:
   enabled: true

@@ -47,6 +47,8 @@ spec:
         args:
         - --data-path=/opt/besu/data
         - --network=dev
+        - --revert-reorg-enabled
+        - --network-id=20211201
         - --rpc-http-enabled
         - --rpc-http-port=8545
         - --rpc-http-api=ETH,NET,WEB3
