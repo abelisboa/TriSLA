@@ -1,83 +1,75 @@
 global:
-  namespace: trisla
   imagePullPolicy: IfNotPresent
   version: "v3.7.29"
   imageRegistry: "ghcr.io/abelisboa"
-  imagePullSecrets:
-    - name: ghcr-secret
 
-# Todos os componentes usam helper trisla.image (camelCase)
-besu:
+portalFrontend:
   enabled: true
   image:
-    repository: trisla-besu
+    repository: trisla-portal-frontend
     tag: "v3.7.29"
-    pullPolicy: IfNotPresent
 
-naspAdapter:
+portalBackend:
   enabled: true
   image:
-    repository: trisla-nasp-adapter
+    repository: trisla-portal-backend
     tag: "v3.7.29"
-    pullPolicy: IfNotPresent
-  env:
-    NASP_EXECUTION_MODE: "crd"
-    NASP_PROXY_ENABLED: "false"
-
-slaAgentLayer:
-  enabled: true
-  image:
-    repository: trisla-sla-agent-layer
-    tag: "v3.7.29"
-    pullPolicy: IfNotPresent
-  env:
-    NASP_ADAPTER_URL: "http://trisla-nasp-adapter:8085"
-    BC_NSSMF_URL: "http://trisla-bc-nssmf:8090"
-
-uiDashboard:
-  enabled: true
-  image:
-    repository: trisla-ui-dashboard
-    tag: "v3.7.29"
-    pullPolicy: IfNotPresent
 
 semCsmf:
   enabled: true
   image:
     repository: trisla-sem-csmf
     tag: "v3.7.29"
-    pullPolicy: IfNotPresent
 
 mlNsmf:
   enabled: true
   image:
     repository: trisla-ml-nsmf
     tag: "v3.7.29"
-    pullPolicy: IfNotPresent
 
 decisionEngine:
   enabled: true
   image:
     repository: trisla-decision-engine
     tag: "v3.7.29"
-    pullPolicy: IfNotPresent
   env:
     SLA_AGENT_URL: "http://trisla-sla-agent-layer:8084"
     PORT: "8082"
+
+slaAgentLayer:
+  enabled: true
+  image:
+    repository: trisla-sla-agent-layer
+    tag: "v3.7.29"
+  env:
+    NASP_ADAPTER_URL: "http://trisla-nasp-adapter:8085"
+    BC_NSSMF_URL: "http://trisla-bc-nssmf:8090"
+
+naspAdapter:
+  enabled: true
+  image:
+    repository: trisla-nasp-adapter
+    tag: "v3.7.29"
+  env:
+    NASP_EXECUTION_MODE: "crd"
+    NASP_PROXY_ENABLED: "false"
 
 bcNssmf:
   enabled: true
   image:
     repository: trisla-bc-nssmf
     tag: "v3.7.29"
-    pullPolicy: IfNotPresent
   env:
     TRISLA_RPC_URL: "http://trisla-besu:8545"
 
-# Portal usa .Values.portal
-portal:
+besu:
   enabled: true
   image:
-    repository: ghcr.io/abelisboa/trisla-portal
+    repository: trisla-besu
     tag: "v3.7.29"
-    pullPolicy: IfNotPresent
+
+uiDashboard:
+  enabled: true
+  image:
+    repository: trisla-ui-dashboard
+    tag: "v3.7.29"
