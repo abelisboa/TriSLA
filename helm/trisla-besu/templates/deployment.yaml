@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trisla-besu.fullname" . }}
+  labels:
+    {{- include "trisla-besu.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "trisla-besu.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "trisla-besu.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+          - "besu"
+        args:
+          - "--data-path=/opt/besu/data"
+          - "--genesis-file=/opt/besu/genesis.json"
+          - "--network-id=1337"
+          - "--rpc-http-enabled=true"
+          - "--rpc-http-host=0.0.0.0"
+          - "--rpc-http-port=8545"
+          - "--rpc-http-api=ETH,NET,WEB3,ADMIN,DEBUG"
+          - "--rpc-http-cors-origins=*"
+          - "--host-allowlist=*"
+          - "--rpc-ws-enabled=true"
+          - "--rpc-ws-host=0.0.0.0"
+          - "--rpc-ws-port=8546"
+          - "--sync-mode={{ .Values.syncMode | default "FULL" }}"
+          - "--logging=INFO"
+        ports:
+        - name: rpc
+          containerPort: 8545
+          protocol: TCP
+        - name: ws
+          containerPort: 8546
+          protocol: TCP
+        - name: p2p
+          containerPort: 30303
+          protocol: TCP
+        volumeMounts:
+        - name: data
+          mountPath: /opt/besu/data
+        - name: genesis
+          mountPath: /opt/besu/genesis.json
+          subPath: genesis.json
+          readOnly: true
+        {{- if .Values.probes.useHttp }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8545
+          initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds | default 120 }}
+          periodSeconds: {{ .Values.probes.readiness.periodSeconds | default 15 }}
+          timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds | default 5 }}
+          failureThreshold: {{ .Values.probes.readiness.failureThreshold | default 10 }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8545
+          initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds | default 180 }}
+          periodSeconds: {{ .Values.probes.liveness.periodSeconds | default 30 }}
+          timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds | default 10 }}
+          failureThreshold: {{ .Values.probes.liveness.failureThreshold | default 10 }}
+        {{- else }}
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - |
+              curl -f -X POST http://localhost:8545 \
+                -H "Content-Type: application/json" \
+                --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+                | grep -q "result"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - |
+              curl -f -X POST http://localhost:8545 \
+                -H "Content-Type: application/json" \
+                --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+                | grep -q "result"
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+      volumes:
+      - name: data
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "trisla-besu.fullname" . }}-data
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+      - name: genesis
+        configMap:
+          name: {{ include "trisla-besu.fullname" . }}-genesis

@@ -1,0 +1,47 @@
+# SEM-CSMF Requirements
+
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# gRPC
+grpcio==1.59.0
+grpcio-tools==1.59.0
+protobuf==4.25.0
+
+# OpenTelemetry
+opentelemetry-api>=1.24.0
+opentelemetry-sdk>=1.24.0
+opentelemetry-instrumentation-fastapi>=0.44b0
+opentelemetry-exporter-otlp-proto-grpc>=1.24.0
+opentelemetry-instrumentation-grpc>=0.44b0
+opentelemetry-propagator-b3>=1.24.0
+# opentelemetry-propagator-tracecontext está incluído no opentelemetry-api
+
+# Métricas Prometheus
+prometheus_client>=0.20.0
+
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.12.1
+
+# Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# Utilitários
+python-dateutil==2.8.2
+requests==2.31.0
+
+# Ontologia OWL
+rdflib==7.0.0
+owlready2==0.40
+sparqlwrapper==1.8.5
+
+# NLP (Natural Language Processing)
+spacy>=3.7.0
+# Baixar modelo: python -m spacy download pt_core_news_sm
+# Baixar modelo: python -m spacy download en_core_web_sm

@@ -1,0 +1,36 @@
+image:
+  repository: ghcr.io/abelisboa/trisla-besu
+  tag: v3.7.11
+  pullPolicy: IfNotPresent
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2
+    memory: 2Gi
+
+syncMode: FULL
+
+probes:
+  useHttp: true
+  readiness:
+    initialDelaySeconds: 120
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 10
+  liveness:
+    initialDelaySeconds: 180
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 10
+
+service:
+  rpcPort: 8545
+  wsPort: 8546
+  p2pPort: 30303

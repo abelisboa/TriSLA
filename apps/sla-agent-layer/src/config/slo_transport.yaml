@@ -1,0 +1,34 @@
+# SLO Configuration - Transport Domain
+# Service Level Objectives para domínio Transport
+
+domain: "Transport"
+
+slos:
+  - name: "bandwidth"
+    target: 100.0
+    unit: "Gbps"
+    operator: ">="  # Maior é melhor
+    risk_threshold: 0.8  # 80% do target = risco (80Gbps)
+    description: "Largura de banda disponível"
+  
+  - name: "latency"
+    target: 5.0
+    unit: "ms"
+    operator: "<="  # Menor é melhor
+    risk_threshold: 0.8  # 80% do target = risco (4ms)
+    description: "Latência no transporte"
+  
+  - name: "packet_loss"
+    target: 0.0001
+    unit: "ratio"
+    operator: "<="  # Menor é melhor
+    risk_threshold: 0.8  # 80% do target = risco (0.00008)
+    description: "Taxa de perda de pacotes no transporte"
+  
+  - name: "jitter"
+    target: 2.0
+    unit: "ms"
+    operator: "<="  # Menor é melhor
+    risk_threshold: 0.8  # 80% do target = risco (1.6ms)
+    description: "Variação de latência (jitter)"
+

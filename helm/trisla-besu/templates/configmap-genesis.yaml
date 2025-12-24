@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trisla-besu-genesis
+data:
+  genesis.json: |
+{{ .Files.Get "genesis.json" | indent 4 }}

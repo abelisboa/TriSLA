@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trisla.name" . }}-decision-engine
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (dict "Values" .Values "Release" .Release "Chart" .Chart "component" "decision-engine") | nindent 4 }}
+spec:
+  replicas: {{ .Values.decisionEngine.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: trisla-decision-engine
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: trisla-decision-engine
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+
+    spec:
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: decision-engine
+        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.decisionEngine.image) }}
+        ports:
+        - containerPort: {{ .Values.decisionEngine.service.port }}
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: {{ .Values.network.interface | quote }}
+        - name: TRISLA_NODE_IP
+          value: {{ .Values.network.nodeIP | quote }}
+        - name: OTLP_ENDPOINT
+          value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        - name: ML_NSMF_HTTP_URL
+          value: "http://{{ include "trisla.name" . }}-ml-nsmf:{{ .Values.mlNsmf.service.port }}"
+        - name: SLA_AGENT_URL
+          value: "http://{{ include "trisla.name" . }}-sla-agent-layer:{{ .Values.slaAgentLayer.service.port }}"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          {{- toYaml .Values.decisionEngine.resources | nindent 10 }}
+

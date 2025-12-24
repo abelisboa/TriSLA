@@ -1,0 +1,250 @@
+# ============================================
+# TriSLA Helm Chart - Values
+# ============================================
+
+global:
+  imageRegistry: ghcr.io/abelisboa
+  imagePullSecrets:
+    - name: ghcr-secret
+  namespace: trisla
+
+# Network Configuration (from auto-config)
+network:
+  interface: "my5g"
+  nodeIP: "192.168.10.16"
+  gateway: "192.168.10.1"
+
+# SEM-CSMF
+semCsmf:
+  enabled: false  # Sprint S3.4 - Base idempotente
+  image:
+    repository: trisla-sem-csmf
+    tag: v3.7.11
+    pullPolicy: IfNotPresent
+  annotations:
+    trisla-mode: degraded
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    DECISION_ENGINE_URL: ""  # Sprint S3.4 - Valor padrão obrigatório
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# ML-NSMF
+mlNsmf:
+  enabled: false  # Sprint S3.4 - Base idempotente
+  image:
+    repository: trisla-ml-nsmf
+    tag: v3.7.14
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8081
+  env:
+    KAFKA_ENABLED: "false"
+    KAFKA_BROKERS: ""
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+  replicas: 2
+
+# Decision Engine
+decisionEngine:
+  enabled: false  # Sprint S3.4 - Base idempotente
+  image:
+    repository: trisla-decision-engine
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# BC-NSSMF
+bcNssmf:
+  enabled: false  # Sprint S3.4 - Base idempotente
+  image:
+    repository: trisla-bc-nssmf
+    tag: v3.7.18
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8083
+    # Desabilitar healthcheck RPC em modo degraded
+    healthcheck:
+      enabled: false
+  annotations:
+    trisla-mode: degraded
+  env:
+    BC_ENABLED: "true"  # Sprint S3.4 - Valor padrão obrigatório
+    # Variáveis de ambiente serão injetadas automaticamente se BESU estiver habilitado
+    # TRISLA_RPC_URL e BESU_RPC_URL serão configuradas no template deployment-bc-nssmf.yaml
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# BESU - Hyperledger Besu Blockchain Client (versioned)
+besu:
+  enabled: false  # Sprint S3.5.1 - Base idempotente
+  image:
+    repository: trisla-besu
+    tag: v3.7.16
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8545
+    wsPort: 8546
+    p2pPort: 30303
+  # Genesis removed - using --network=dev mode (Sprint S3.5.4)
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""  # Usar storage class padrão do cluster
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+
+# SLA-Agent Layer
+slaAgentLayer:
+  enabled: false  # Sprint S3.4 - Base idempotente
+  image:
+    repository: trisla-sla-agent-layer
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8084
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 3
+
+# NASP Adapter
+naspAdapter:
+  enabled: false  # Sprint S3.4 - Base idempotente
+  image:
+    repository: trisla-nasp-adapter
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8085
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# UI Dashboard
+uiDashboard:
+  enabled: false  # Sprint S3.4 - Base idempotente
+  image:
+    repository: trisla-ui-dashboard
+    tag: nasp-a2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: trisla.local
+        paths:
+          - path: /
+            pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  replicas: 2
+
+# Kafka
+kafka:
+  enabled: true
+  image:
+    repository: apache/kafka
+    tag: 3.6.1
+  replicas: 3
+
+# OpenTelemetry Collector
+otelCollector:
+  enabled: true
+  image:
+    repository: otel/opentelemetry-collector
+    tag: 0.92.0
+  service:
+    type: ClusterIP
+    ports:
+      grpc: 4317
+      http: 4318
+
+# Prometheus
+prometheus:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: v2.49.1
+
+# Grafana
+grafana:
+  enabled: true
+  image:
+    repository: grafana/grafana
+    tag: 10.2.3
+  adminPassword: admin  # ⚠️ ALTERAR EM PRODUÇÃO
+
+# Production Settings
+production:
+  enabled: true
+  simulationMode: false
+  useRealServices: true
+  executeRealActions: true
+
+# BESU Subchart Configuration (removed - using main chart besu.enabled)
+# trisla-besu:
+#   enabled: false
+

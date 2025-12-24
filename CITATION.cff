@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "TriSLA"
+    given-names: "Project"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+title: "TriSLA - Trustworthy, Reasoned and Intelligent SLA Architecture"
+version: "1.0.0"
+date-released: 2025-01-27
+doi: "10.0000/0000000000000000"
+url: "https://github.com/yourusername/trisla"
+keywords:
+  - "5G"
+  - "O-RAN"
+  - "Network Slicing"
+  - "SLA"
+  - "Blockchain"
+  - "Machine Learning"
+  - "Explainable AI"
+  - "Semantic Web"
+license: MIT
+

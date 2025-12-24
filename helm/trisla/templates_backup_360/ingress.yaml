@@ -1,0 +1,28 @@
+{{- if .Values.uiDashboard.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "trisla.name" . }}-ingress
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (merge . (dict "component" "ingress")) | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: {{ .Values.uiDashboard.ingress.className }}
+  rules:
+  {{- range .Values.uiDashboard.ingress.hosts }}
+  - host: {{ .host | quote }}
+    http:
+      paths:
+      {{- range .paths }}
+      - path: {{ .path }}
+        pathType: {{ .pathType }}
+        backend:
+          service:
+            name: {{ include "trisla.name" $ }}-ui-dashboard
+            port:
+              number: {{ $.Values.uiDashboard.service.port }}
+      {{- end }}
+  {{- end }}
+{{- end }}
