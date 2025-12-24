@@ -55,6 +55,7 @@ Cada módulo possui sua própria documentação:
 
 ### Para Deploy e Operação
 
+- **[Guia Canônico de Instalação](deployment/TRISLA_INSTALLATION_GUIDE.md)** — Instalação pública via Helm
 - **[Deploy NASP](nasp/NASP_DEPLOY_GUIDE.md)** — Guia completo de deploy no NASP
 - **[Valores de Produção](deployment/VALUES_PRODUCTION_GUIDE.md)** — Configuração de produção
 - **[Troubleshooting](reports/TROUBLESHOOTING_TRISLA.md)** — Solução de problemas

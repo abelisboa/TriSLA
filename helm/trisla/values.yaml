@@ -4,8 +4,7 @@
 
 global:
   imageRegistry: ghcr.io/abelisboa
-  imagePullSecrets:
-    - name: ghcr-secret
+  imagePullSecrets: []  # Imagens públicas não requerem secret
   namespace: trisla
 
 # Network Configuration (from auto-config)
@@ -18,8 +17,8 @@ network:
 semCsmf:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
-    repository: trisla-sem-csmf
-    tag: v3.7.11
+    repository: trisla-sem-nsmf
+    tag: trisla-public-v1.0-rc1
     pullPolicy: IfNotPresent
   annotations:
     trisla-mode: degraded
@@ -42,7 +41,7 @@ mlNsmf:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-ml-nsmf
-    tag: v3.7.14
+    tag: trisla-public-v1.0-rc1
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -83,7 +82,7 @@ bcNssmf:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-bc-nssmf
-    tag: v3.7.18
+    tag: trisla-public-v1.0-rc1
     pullPolicy: Always
   service:
     type: ClusterIP

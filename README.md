@@ -75,6 +75,27 @@ Esta versão pública é adequada para:
 
 ---
 
+## 🚀 Installation
+
+Para instalar o TriSLA em um cluster Kubernetes, consulte o [Guia Canônico de Instalação](docs/deployment/TRISLA_INSTALLATION_GUIDE.md).
+
+**Pré-requisitos:**
+- Kubernetes ≥ 1.24
+- Helm ≥ 3.8
+- Acesso ao GHCR (`ghcr.io/abelisboa`)
+
+**Instalação rápida:**
+```bash
+kubectl create namespace trisla
+helm upgrade --install trisla helm/trisla \
+  --namespace trisla \
+  --set semCsmf.enabled=true \
+  --set mlNsmf.enabled=true \
+  --set bcNssmf.enabled=true \
+  --set global.imagePullSecrets=[] \
+  --wait
+```
+
 ## 🚀 Início Rápido
 
 ### Pré-requisitos
