@@ -32,7 +32,6 @@ O **TriSLA** é uma arquitetura distribuída e inteligente para gerenciamento au
 
 - **[Arquitetura Completa](ARCHITECTURE.md)** — Visão geral da arquitetura TriSLA
 - **[Metodologia](METHODOLOGY.md)** — Metodologia de validação e escopo experimental
-- **[Qualificação](QUALIFICATION.md)** — Escopo de qualificação e defesa
 
 ---
 

@@ -14,7 +14,6 @@
 4. [Cenários de Teste](#-cenários-de-teste)
 5. [Métricas e KPIs](#-métricas-e-kpis)
 6. [Critérios de Sucesso](#-critérios-de-sucesso)
-7. [Validação com Banca](#-validação-com-banca)
 
 ---
 
@@ -242,52 +241,11 @@ A metodologia de validação do TriSLA foi projetada para demonstrar, de forma q
 
 ---
 
-## 🎓 Validação com Banca
-
-### Escopo de Apresentação
-
-A validação com a banca examinadora inclui:
-
-1. **Demonstração Funcional**:
-   - Execução ao vivo do fluxo completo
-   - Visualização de métricas em tempo real
-   - Demonstração de XAI
-
-2. **Apresentação de Resultados**:
-   - Resultados experimentais (C1, C2, C3)
-   - Análise estatística
-   - Gráficos e tabelas
-
-3. **Evidências Técnicas**:
-   - Código-fonte
-   - Documentação técnica
-   - Relatórios de validação
-
-### Materiais de Apoio
-
-- **Slides**: Apresentação técnica completa
-- **Demonstração**: Execução ao vivo no NASP
-- **Relatórios**: Relatórios técnicos e experimentais
-- **Documentação**: Documentação completa do projeto
-
-### Critérios de Avaliação pela Banca
-
-A banca avaliará:
-
-1. **Funcionalidade**: Sistema funciona conforme especificado?
-2. **Performance**: Atende aos requisitos de performance?
-3. **Qualidade**: Resultados são consistentes e válidos?
-4. **Documentação**: Documentação é completa e clara?
-5. **Contribuição**: Contribuição científica é relevante?
-
----
-
 ## 📚 Referências
 
 ### Documentação Relacionada
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — Arquitetura completa
-- **[QUALIFICATION.md](QUALIFICATION.md)** — Escopo de qualificação
 - **[experimentos/CENARIOS_EXPERIMENTAIS.md](experimentos/CENARIOS_EXPERIMENTAIS.md)** — Cenários detalhados
 - **[experimentos/RESULTADOS_BRUTOS.md](experimentos/RESULTADOS_BRUTOS.md)** — Resultados experimentais
 
