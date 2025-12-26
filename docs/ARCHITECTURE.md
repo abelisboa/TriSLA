@@ -479,7 +479,6 @@ A arquitetura TriSLA representa uma solução completa e moderna para gerenciame
 **Referências:**
 - [README.md](README.md): Visão geral da documentação
 - [METHODOLOGY.md](METHODOLOGY.md): Metodologia de validação
-- [QUALIFICATION.md](QUALIFICATION.md): Escopo de qualificação
 - [sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md](sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md): Guia completo do SEM-NSMF
 - [ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md](ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md): Guia completo do ML-NSMF
 - [bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md](bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md): Guia completo do BC-NSSMF
