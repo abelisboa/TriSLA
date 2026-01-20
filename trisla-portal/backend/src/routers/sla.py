@@ -16,6 +16,24 @@ from src.utils.text_processing import corrigir_erros_ortograficos, inferir_tipo_
 from src.api.schemas.error_response import ErrorResponse
 import logging
 
+# TRISLA_FIX_SERVICE_TYPE_FROM_TEMPLATE
+def _extract_service_type_from_template(template_id: str | None) -> str | None:
+    """Extrai service_type de template_id. template:URLLC -> URLLC"""
+    if not template_id:
+        return None
+    tid = template_id.strip()
+    if tid.lower().startswith("template:"):
+        st = tid.split(":", 1)[1].strip()
+        up = st.upper()
+        if up == "URLLC":
+            return "URLLC"
+        if up == "EMBB":
+            return "eMBB"
+        if up == "MMTC":
+            return "mMTC"
+    return None
+
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()

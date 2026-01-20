@@ -460,6 +460,36 @@ trisla_helm_clean/
 trisla_helm_publish/
 trisla-dashboard/
 
+# Execuções, auditorias, evidências
+audit*/
+auditoria*/
+evidencias*/
+freeze*/
+run_*/
+snapshot*/
+backup*/
+*_backup*
+*.backup*
+*.backup_*
+*.py.backup*
+
+# Experimentos e observabilidade
+experiments/
+observability/
+pre_auditoria*/
+investigacao*/
+
+# Diretórios temporários
+TriSLA/
+_de_patch/
+_ml_patch/
+_de_overlay/
+__pycache__/
+.pytest_cache/
+
+# Logs
+*.log
+
 # Arquivos de relatórios específicos (manter apenas em docs/)
 !docs/**/*.md
 

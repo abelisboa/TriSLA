@@ -37,10 +37,15 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        - name: KAFKA_ENABLED
+          value: "true"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
         - name: ML_NSMF_HTTP_URL
           value: "http://{{ include "trisla.name" . }}-ml-nsmf:{{ .Values.mlNsmf.service.port }}"
         - name: SLA_AGENT_URL
           value: "http://{{ include "trisla.name" . }}-sla-agent-layer:{{ .Values.slaAgentLayer.service.port }}"
+          value: "kafka:9092"
         livenessProbe:
           httpGet:
             path: /health

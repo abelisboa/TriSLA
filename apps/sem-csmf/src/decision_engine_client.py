@@ -80,6 +80,12 @@ class DecisionEngineHTTPClient:
                 )
                 
                 # Fazer requisição HTTP POST
+                # FIX: nunca enviar 'decision' como input ao Decision Engine
+
+                if isinstance(payload, dict):
+
+                    payload.pop('decision', None)
+
                 response = requests.post(
                     self.base_url,
                     json=payload,
@@ -101,6 +107,7 @@ class DecisionEngineHTTPClient:
                     "status_code": result.get("status_code", 200)
                 }
                 
+                if decision_response.get("decision_id"):
                 span.set_attribute("decision.id", decision_response.get("decision_id"))
                 span.set_attribute("decision.success", decision_response.get("success", False))
                 span.set_attribute("http.status_code", response.status_code)

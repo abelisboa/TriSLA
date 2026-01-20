@@ -59,10 +59,7 @@ bcNssmf:
   image:
     repository: trisla-bc-nssmf
     tag: "v3.7.29"
-  env:
-    TRISLA_RPC_URL: "http://trisla-besu:8545"
-
-besu:
+  besu:
   enabled: true
   image:
     repository: trisla-besu

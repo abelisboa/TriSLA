@@ -37,10 +37,10 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        {{- if and .Values.semCsmf.env .Values.semCsmf.env.DECISION_ENGINE_URL }}
-        - name: DECISION_ENGINE_URL
-          value: {{ .Values.semCsmf.env.DECISION_ENGINE_URL | quote }}
-        {{- end }}
+        - name: KAFKA_ENABLED
+          value: "true"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
         livenessProbe:
           httpGet:
             path: /health

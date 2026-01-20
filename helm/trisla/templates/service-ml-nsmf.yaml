@@ -9,7 +9,7 @@ spec:
   type: {{ .Values.mlNsmf.service.type }}
   ports:
   - port: {{ .Values.mlNsmf.service.port }}
-    targetPort: http
+    targetPort: 8081
     protocol: TCP
     name: http
   selector:

@@ -8,13 +8,14 @@ pydantic==2.5.0
 # Machine Learning
 # TensorFlow não compatível com Python 3.12 - usando scikit-learn como alternativa
 # tensorflow==2.15.0  # Desabilitado - incompatível com Python 3.12
-scikit-learn>=1.3.0
+scikit-learn==1.2.2
 # torch>=2.0.0  # Alternativa ao TensorFlow
-numpy==1.24.3
-pandas==2.1.3
+numpy>=1.24.0,<2.0.0
+joblib==1.2.0
+pandas==1.5.3
 
 # XAI (Explainable AI)
-shap==0.43.0
+shap>=0.45.0
 lime==0.2.0.1
 
 # Kafka

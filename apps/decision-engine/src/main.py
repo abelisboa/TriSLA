@@ -523,6 +523,30 @@ async def evaluate_sla(sla_input: SLAEvaluateInput):
                 else:
                     logger.warning(f"⚠️ Falha ao registrar RENEGOTIATE no BC-NSMF para decision_id={decision_result.decision_id}")
             
+            # 5. Publicar decisão no Kafka I-04/I-05 (obrigatório para rastreabilidade)
+            global decision_producer
+            if decision_producer is not None:
+                decision_dict = {
+                    "decision_id": decision_result.decision_id,
+                    "intent_id": decision_result.intent_id,
+                    "nest_id": decision_result.nest_id,
+                    "action": decision_result.action.value,
+                    "reasoning": decision_result.reasoning,
+                    "confidence": decision_result.confidence,
+                    "ml_risk_score": decision_result.ml_risk_score,
+                    "ml_risk_level": decision_result.ml_risk_level.value if decision_result.ml_risk_level else None,
+                    "timestamp": decision_result.timestamp,
+                    "metadata": decision_result.metadata
+                }
+                try:
+                    await decision_producer.send_to_bc_nssmf(decision_dict)  # I-04
+                    await decision_producer.send_to_sla_agents(decision_dict)  # I-05
+                    logger.info(f"✅ Decisão publicada no Kafka I-04/I-05: decision_id={decision_result.decision_id}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Falha ao publicar decisão no Kafka: {e}")
+            else:
+                logger.warning("⚠️ Decision producer não disponível - decisão não publicada no Kafka")
+
             return decision_result
             
         except Exception as e:
