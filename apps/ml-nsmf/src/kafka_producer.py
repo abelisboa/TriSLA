@@ -115,3 +115,46 @@ class PredictionProducer:
         from datetime import datetime, timezone
         return datetime.now(timezone.utc).isoformat()
 
+
+    async def send_xai_explanation(self, explanation: Dict[str, Any], slice_type: str, nest_id: Optional[str] = None):
+        """
+        Envia explicação XAI para tópico trisla-ml-xai (v3.9.0)
+        NÃO toca I-04/I-05 conforme especificação
+        """
+        with tracer.start_as_current_span("send_xai_explanation") as span:
+            message = {
+                "version": "v3.9.0",
+                "interface": "XAI",
+                "source": "ml-nsmf",
+                "slice_type": slice_type,
+                "nest_id": nest_id,
+                "explanation": explanation,
+                "timestamp": self._get_timestamp()
+            }
+            
+            if self.producer is None:
+                logger.debug(
+                    "Kafka não disponível - explicação XAI não enviada. "
+                    "Mensagem: %s",
+                    message
+                )
+                span.set_attribute("kafka.enabled", False)
+                span.set_attribute("kafka.topic", "trisla-ml-xai")
+                span.set_attribute("xai.available", explanation.get("explanation_available", False))
+                return
+            
+            try:
+                # Enviar para novo tópico Kafka trisla-ml-xai (v3.9.0)
+                self.producer.send('trisla-ml-xai', value=message)
+                self.producer.flush()
+                
+                span.set_attribute("kafka.enabled", True)
+                span.set_attribute("kafka.topic", "trisla-ml-xai")
+                span.set_attribute("xai.available", explanation.get("explanation_available", False))
+                span.set_attribute("xai.method", explanation.get("method", "none"))
+                logger.info("✅ Explicação XAI enviada para Kafka (trisla-ml-xai)")
+            except Exception as e:
+                logger.error("Erro ao enviar explicação XAI via Kafka: %s", e)
+                span.record_exception(e)
+                span.set_attribute("kafka.enabled", False)
+
