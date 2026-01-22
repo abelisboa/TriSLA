@@ -108,7 +108,7 @@ class DecisionEngineHTTPClient:
                 }
                 
                 if decision_response.get("decision_id"):
-                span.set_attribute("decision.id", decision_response.get("decision_id"))
+                    span.set_attribute("decision.id", decision_response.get("decision_id"))
                 span.set_attribute("decision.success", decision_response.get("success", False))
                 span.set_attribute("http.status_code", response.status_code)
                 
