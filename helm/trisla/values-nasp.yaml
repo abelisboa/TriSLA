@@ -7,31 +7,31 @@ portalFrontend:
   enabled: true
   image:
     repository: trisla-portal-frontend
-    tag: "v3.9.1"
+    tag: "v3.9.4"
 
 portalBackend:
   enabled: true
   image:
     repository: trisla-portal-backend
-    tag: "v3.9.1"
+    tag: "v3.9.4"
 
 semCsmf:
   enabled: true
   image:
     repository: trisla-sem-csmf
-    tag: "v3.9.1"
+    tag: "v3.9.4"
 
 mlNsmf:
   enabled: true
   image:
     repository: trisla-ml-nsmf
-    tag: "v3.9.1"
+    tag: "v3.9.4"
 
 decisionEngine:
   enabled: true
   image:
     repository: trisla-decision-engine
-    tag: "v3.9.1"
+    tag: "v3.9.4"
   env:
     SLA_AGENT_URL: "http://trisla-sla-agent-layer:8084"
     PORT: "8082"
@@ -40,7 +40,7 @@ slaAgentLayer:
   enabled: true
   image:
     repository: trisla-sla-agent-layer
-    tag: "v3.9.1"
+    tag: "v3.9.4"
   env:
     NASP_ADAPTER_URL: "http://trisla-nasp-adapter:8085"
     BC_NSSMF_URL: "http://trisla-bc-nssmf:8090"
@@ -49,7 +49,7 @@ naspAdapter:
   enabled: true
   image:
     repository: trisla-nasp-adapter
-    tag: "v3.9.1"
+    tag: "v3.9.4"
   env:
     NASP_EXECUTION_MODE: "crd"
     NASP_PROXY_ENABLED: "false"
@@ -58,15 +58,15 @@ bcNssmf:
   enabled: true
   image:
     repository: trisla-bc-nssmf
-    tag: "v3.9.1"
+    tag: "v3.9.4"
   besu:
   enabled: true
   image:
     repository: trisla-besu
-    tag: "v3.9.1"
+    tag: "v3.9.4"
 
 uiDashboard:
   enabled: true
   image:
     repository: trisla-ui-dashboard
-    tag: "v3.9.1"
+    tag: "v3.9.4"
