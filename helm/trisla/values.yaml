@@ -16,7 +16,7 @@ network:
 
 # SEM-CSMF
 semCsmf:
-  enabled: false  # Sprint S3.4 - Base idempotente
+  enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-sem-csmf
     tag: v3.7.11
@@ -39,7 +39,7 @@ semCsmf:
 
 # ML-NSMF
 mlNsmf:
-  enabled: false  # Sprint S3.4 - Base idempotente
+  enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-ml-nsmf
     tag: v3.7.14
@@ -63,7 +63,7 @@ mlNsmf:
 decisionEngine:
   env:
     LOG_LEVEL: "DEBUG"
-  enabled: false  # Sprint S3.4 - Base idempotente
+  enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-decision-engine
     tag: v3.9.4
@@ -82,7 +82,7 @@ decisionEngine:
 
 # BC-NSSMF
 bcNssmf:
-  enabled: false  # Sprint S3.4 - Base idempotente
+  enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-bc-nssmf
     tag: v3.7.18
@@ -141,7 +141,7 @@ besu:
 
 # SLA-Agent Layer
 slaAgentLayer:
-  enabled: false  # Sprint S3.4 - Base idempotente
+  enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-sla-agent-layer
     tag: v3.9.4
@@ -160,7 +160,7 @@ slaAgentLayer:
 
 # NASP Adapter
 naspAdapter:
-  enabled: false  # Sprint S3.4 - Base idempotente
+  enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-nasp-adapter
     tag: v3.9.4
@@ -179,7 +179,7 @@ naspAdapter:
 
 # UI Dashboard
 uiDashboard:
-  enabled: false  # Sprint S3.4 - Base idempotente
+  enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-ui-dashboard
     tag: v3.9.4
