@@ -61,6 +61,8 @@ mlNsmf:
 
 # Decision Engine
 decisionEngine:
+  env:
+    LOG_LEVEL: "DEBUG"
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-decision-engine
