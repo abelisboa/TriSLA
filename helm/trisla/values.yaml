@@ -64,7 +64,7 @@ decisionEngine:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-decision-engine
-    tag: nasp-a2
+    tag: v3.9.4
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -142,7 +142,7 @@ slaAgentLayer:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-sla-agent-layer
-    tag: nasp-a2
+    tag: v3.9.4
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -161,7 +161,7 @@ naspAdapter:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-nasp-adapter
-    tag: nasp-a2
+    tag: v3.9.4
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -180,7 +180,7 @@ uiDashboard:
   enabled: false  # Sprint S3.4 - Base idempotente
   image:
     repository: trisla-ui-dashboard
-    tag: nasp-a2
+    tag: v3.9.4
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP

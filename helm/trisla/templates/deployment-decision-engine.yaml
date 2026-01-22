@@ -20,13 +20,16 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
 
     spec:
+      {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
       nodeSelector:
         kubernetes.io/hostname: node1
       containers:
       - name: decision-engine
         image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.decisionEngine.image) }}
+        imagePullPolicy: {{ .Values.decisionEngine.image.pullPolicy | default "IfNotPresent" }}
         ports:
         - containerPort: {{ .Values.decisionEngine.service.port }}
           name: http
@@ -37,15 +40,16 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
-        - name: KAFKA_ENABLED
-          value: "true"
-        - name: KAFKA_BROKERS
-          value: "kafka:9092"
+        {{- if .Values.decisionEngine.env }}
+        {{- range $key, $value := .Values.decisionEngine.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
         - name: ML_NSMF_HTTP_URL
           value: "http://{{ include "trisla.name" . }}-ml-nsmf:{{ .Values.mlNsmf.service.port }}"
         - name: SLA_AGENT_URL
           value: "http://{{ include "trisla.name" . }}-sla-agent-layer:{{ .Values.slaAgentLayer.service.port }}"
-          value: "kafka:9092"
         livenessProbe:
           httpGet:
             path: /health
@@ -60,4 +64,3 @@ spec:
           periodSeconds: 5
         resources:
           {{- toYaml .Values.decisionEngine.resources | nindent 10 }}
-
