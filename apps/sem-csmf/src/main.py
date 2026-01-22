@@ -308,7 +308,7 @@ async def create_intent(
             span.set_attribute("nest.id", nest.nest_id)
             span.set_attribute("nest.status", "generated")
             if decision_response.get("decision_id"):
-            span.set_attribute("decision.id", decision_response.get("decision_id"))
+                span.set_attribute("decision.id", decision_response.get("decision_id"))
             span.set_attribute("decision_engine.success", decision_response.get("success", False))
             
             return IntentResponse(
