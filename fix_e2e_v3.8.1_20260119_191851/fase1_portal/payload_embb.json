@@ -1,0 +1,10 @@
+{
+  "template_id": "template:eMBB",
+  "form_values": {
+    "service_type": "eMBB",
+    "latency": "20",
+    "reliability": "0.99",
+    "throughput": "100",
+    "jitter": "5"
+  }
+}

@@ -1,0 +1,40 @@
+    features = self._extract_features(decision_input)
+    features = self._extract_features(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    features = self._extract_features(decision_input)
+    features = self._extract_features(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    features = self._extract_features(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    features = self._extract_features(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    features = self._extract_features(decision_input)
+    features = self._extract_features(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    features = self._extract_features(decision_input)
+    features = self._extract_features(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)
+    decision_result = await decision_service.process_decision_from_input(decision_input)
+  File "/app/src/service.py", line 70, in process_decision_from_input
+    ml_prediction = await self.engine.ml_client.predict_viability(decision_input)

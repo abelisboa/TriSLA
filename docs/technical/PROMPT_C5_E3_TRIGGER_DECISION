@@ -1,0 +1,130 @@
+Objetivo
+
+Forçar decisões ACCEPT no Decision Engine para acionar automaticamente o BC-NSSMF e registrar contratos on-chain, validando o Eixo E3 em ambiente NASP.
+
+Pré-condições obrigatórias
+
+Acesso SSH confirmado: ssh node006
+
+Pods operacionais:
+
+trisla-decision-engine → Running
+
+trisla-bc-nssmf → Running (1/1 Ready)
+
+trisla-besu → Running
+
+Nenhuma alteração de código será realizada
+
+Ambiente
+ssh node006
+cd /home/porvir5g/gtp5g/trisla
+kubectl get pods -n trisla
+
+Estratégia
+
+Submeter SLAs trivialmente aceitáveis (baixa exigência), garantindo:
+
+decision = ACCEPT
+
+bc_status = TRIGGERED
+
+Geração de tx_hash on-chain
+
+Execução — Submissão de SLAs ACCEPT
+SLA 1
+curl -s -X POST http://localhost:32002/api/v1/sla/submit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "intent_id": "intent-accept-001",
+    "tenant_id": "default",
+    "service_type": "eMBB",
+    "template_id": "template:eMBB",
+    "intent": "basic_video",
+    "form_values": {
+      "throughput": 20,
+      "latency": 120,
+      "availability": 98.0
+    }
+  }' | tee docs/experiments/C5_E3_ACCEPT/response_accept_001.json
+
+SLA 2
+curl -s -X POST http://localhost:32002/api/v1/sla/submit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "intent_id": "intent-accept-002",
+    "tenant_id": "default",
+    "service_type": "eMBB",
+    "template_id": "template:eMBB",
+    "intent": "basic_streaming",
+    "form_values": {
+      "throughput": 25,
+      "latency": 150,
+      "availability": 97.5
+    }
+  }' | tee docs/experiments/C5_E3_ACCEPT/response_accept_002.json
+
+SLA 3
+curl -s -X POST http://localhost:32002/api/v1/sla/submit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "intent_id": "intent-accept-003",
+    "tenant_id": "default",
+    "service_type": "eMBB",
+    "template_id": "template:eMBB",
+    "intent": "basic_iot_dashboard",
+    "form_values": {
+      "throughput": 15,
+      "latency": 180,
+      "availability": 98.5
+    }
+  }' | tee docs/experiments/C5_E3_ACCEPT/response_accept_003.json
+
+Validação imediata
+1. Verificar decisões ACCEPT
+grep -R "\"decision\"" docs/experiments/C5_E3_ACCEPT/
+
+
+Esperado:
+
+"decision": "ACCEPT"
+
+2. Verificar acionamento do blockchain
+grep -R "\"bc_status\"" docs/experiments/C5_E3_ACCEPT/
+
+
+Esperado:
+
+"bc_status": "TRIGGERED"
+
+3. Verificar transações on-chain
+grep -R "tx_hash" docs/experiments/C5_E3_ACCEPT/
+
+
+Esperado:
+
+"tx_hash": "0x..."
+
+Evidências adicionais (opcional)
+Logs BC-NSSMF
+kubectl logs -n trisla deployment/trisla-bc-nssmf | grep -i contract
+
+Logs Besu
+kubectl logs -n trisla deployment/trisla-besu | tail -n 50
+
+Critérios de sucesso
+Critério	Esperado
+Decision	ACCEPT
+bc_status	TRIGGERED
+tx_hash	presente
+Contratos aceitos	≥ 2
+Código alterado	NÃO
+Resultado esperado
+
+2 a 3 contratos ACCEPT
+
+BC-NSSMF acionado automaticamente
+
+Transações on-chain confirmadas
+
+Eixo E3 validado operacionalmente

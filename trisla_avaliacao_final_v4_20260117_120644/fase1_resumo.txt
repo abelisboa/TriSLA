@@ -1,0 +1,11 @@
+=== FASE 1 - CORREÇÕES APLICADAS ===
+
+1. ML-NSMF: Timestamp adicionado
+2. Decision Engine: NoneType handling corrigido
+3. Logging explícito implementado
+
+Arquivos modificados:
+apps/decision-engine/src/ml_client.py
+apps/decision-engine/src/ml_client.py.backup
+apps/ml-nsmf/src/main.py
+apps/ml-nsmf/src/main.py.backup

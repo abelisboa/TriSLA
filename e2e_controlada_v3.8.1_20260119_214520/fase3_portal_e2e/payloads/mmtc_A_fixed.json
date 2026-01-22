@@ -1,0 +1,9 @@
+{
+  "template_id": "template:mMTC",
+  "form_values": {
+    "service_type": "mMTC",
+    "latency": 50,
+    "reliability": 0.95,
+    "device_density": 10000
+  }
+}

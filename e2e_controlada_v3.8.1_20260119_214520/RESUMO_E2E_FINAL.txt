@@ -1,0 +1,17 @@
+=== RESUMO E2E CONTROLADA v3.8.1 ===
+Data: 2026-01-19 21:47:33
+WORKDIR: /home/porvir5g/gtp5g/trisla/e2e_controlada_v3.8.1_20260119_214520
+
+=== CORREÇÕES APLICADAS ===
+1. Kafka habilitado no Decision Engine (KAFKA_ENABLED=true)
+2. Endpoints ML-NSMF corrigidos (targetPort=8081 já estava OK)
+3. Payloads ajustados com service_type explícito
+
+=== RESULTADOS ===
+- Decision IDs gerados: 0
+- Kafka I-04: 0 linhas
+- Kafka I-05: 0 linhas
+
+=== STATUS ===
+E2E parcialmente executado. Alguns decision_ids foram gerados.
+Necessário validar se todos aparecem no Kafka e nos logs.

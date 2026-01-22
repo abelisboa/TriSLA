@@ -14,6 +14,9 @@ trisla_service = TriSLAService()
 class SLAService:
     async def create_pln(self, intent_text: str, tenant_id: str) -> dict[str, Any]:
         """Cria SLA via PLN"""
+        # FASE 3 (C3): Capturar timestamp de submissão
+        t_submit = datetime.utcnow().isoformat() + 'Z'
+        
         # Chama SEM-CSMF para processar intent
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -22,7 +25,11 @@ class SLAService:
                 timeout=30.0,
             )
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+            
+            # Adicionar timestamp de submissão
+            result["t_submit"] = t_submit
+            return result
 
     async def validate_pln(self, intent_text: str) -> dict[str, Any]:
         """Valida intent PLN"""
@@ -71,6 +78,9 @@ class SLAService:
         self, template_id: str, form_values: dict[str, Any], tenant_id: str
     ) -> dict[str, Any]:
         """Cria SLA via template"""
+        # FASE 3 (C3): Capturar timestamp de submissão
+        t_submit = datetime.utcnow().isoformat() + 'Z'
+        
         template = await self.get_template(template_id)
         # Substituir placeholders no template
         nest = template.nest_template.copy()
@@ -83,7 +93,11 @@ class SLAService:
                 timeout=30.0,
             )
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+            
+            # Adicionar timestamp de submissão
+            result["t_submit"] = t_submit
+            return result
 
     async def create_batch(
         self, file: UploadFile, tenant_id: str

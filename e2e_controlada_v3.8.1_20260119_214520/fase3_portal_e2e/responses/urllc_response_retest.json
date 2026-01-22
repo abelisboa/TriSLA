@@ -1,0 +1,1 @@
+{"success":false,"reason":"business_error","detail":"SEM-CSMF: service_type inválido no template: automatic. Deve ser URLLC, eMBB ou mMTC","phase":"semantic","upstream_status":422}pod "portal-urllc-retest" deleted from trisla namespace

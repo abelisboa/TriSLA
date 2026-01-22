@@ -1,0 +1,151 @@
+1. Objetivo (revisado)
+
+Este protocolo tem como objetivo eliminar o estado degraded do módulo BC-NSSMF, esgotando todas as alternativas operacionais válidas, antes de aceitar qualquer limitação experimental.
+
+👉 Regra central:
+
+Não aceitar justificativas enquanto houver solução técnica operacional possível.
+
+2. Princípios obrigatórios
+
+❌ Não alterar código-fonte
+
+❌ Não alterar smart contracts
+
+❌ Não recompilar imagens
+
+❌ Não modificar lógica de negócio
+
+✅ Permitir ajustes de configuração do deployment (portas, replicas, probes)
+
+✅ Permitir uso de values.yaml já existentes
+
+✅ Permitir rollback para configuração anterior funcional
+
+✅ Priorizar estado Running/Ready completo
+
+3. Contexto técnico confirmado (entrada do protocolo)
+
+Besu: operacional
+
+BC-NSSMF:
+
+Container A (bc-nssmf) → usa porta 8083
+
+Container B (trisla-bc-nssmf) → tenta usar 8083
+
+Erro:
+
+[Errno 98] address already in use
+
+
+Causa raiz confirmada: conflito de porta no mesmo pod
+
+4. FASE 0 — Snapshot obrigatório (antes de qualquer ação)
+kubectl get deploy trisla-bc-nssmf -n trisla -o yaml > \
+docs/experiments/C5_E3/FASE0_DEPLOYMENT_SNAPSHOT.yaml
+
+kubectl describe pod -n trisla -l app=trisla-bc-nssmf > \
+docs/experiments/C5_E3/FASE0_POD_DESCRIBE.txt
+
+
+📌 Esse snapshot garante rastreabilidade científica.
+
+5. FASE 1 — Validação do design esperado do BC-NSSMF
+5.1 Verificar se ambos os containers são realmente necessários
+kubectl get deploy trisla-bc-nssmf -n trisla -o jsonpath='{.spec.template.spec.containers[*].name}'
+
+
+Critério:
+
+Se um container for sidecar de métricas ou wrapper, ele não deve escutar 8083
+
+6. FASE 2 — Correção operacional via configuração (SEM código)
+6.1 Estratégia A — Separação de portas (PRIORITÁRIA)
+
+Editar somente o deployment, ajustando a porta de UM dos containers:
+
+kubectl edit deployment trisla-bc-nssmf -n trisla
+
+
+Ação permitida:
+
+Alterar containerPort do container secundário de 8083 → 8084
+
+Ajustar readinessProbe / livenessProbe para a nova porta
+
+📌 Isso é configuração, não desenvolvimento.
+
+6.2 Estratégia B — Remover container redundante (SE aplicável)
+
+Se o segundo container for apenas:
+
+wrapper,
+
+proxy,
+
+duplicação histórica,
+
+então:
+
+Remover somente o container redundante do deployment
+
+Manter container funcional (bc-nssmf)
+
+📌 Isso não altera código, apenas corrige erro de empacotamento.
+
+6.3 Estratégia C — Escala para 1 réplica (fallback)
+kubectl scale deployment trisla-bc-nssmf -n trisla --replicas=1
+
+
+Usar apenas se probes estiverem conflitando entre réplicas.
+
+7. FASE 3 — Reconcile e estabilização
+kubectl rollout restart deployment trisla-bc-nssmf -n trisla
+kubectl rollout status deployment trisla-bc-nssmf -n trisla
+
+
+Validar:
+
+kubectl get pods -n trisla | grep bc-nssmf
+kubectl logs -n trisla -l app=trisla-bc-nssmf --tail=50
+
+8. Critérios de sucesso (NÃO NEGOCIÁVEIS)
+Critério	Obrigatório
+Todos os containers Running	✅
+Zero CrashLoopBackOff	✅
+Porta única por container	✅
+Health checks OK	✅
+Conectividade com Besu	✅
+
+👉 Se qualquer critério falhar, retornar à FASE 2.
+
+9. FASE 4 — Teste funcional mínimo (obrigatório)
+
+Após estabilização:
+
+curl http://<BC_NSSMF_CLUSTER_IP>:8083/health
+curl http://<BC_NSSMF_CLUSTER_IP>:8083/metrics
+
+
+Registrar respostas.
+
+10. Critério de saída global do PROMPT_C5_E3_v2
+
+O protocolo SÓ PODE SER ENCERRADO se:
+
+BC-NSSMF estiver 100% operacional
+
+Sem justificativa de “modo degraded”
+
+Sem pendência técnica remanescente
+
+📌 Se não for possível, o relatório deve provar tecnicamente que NÃO há solução operacional, o que ainda não é o caso aqui.
+
+11. Continuidade obrigatória após sucesso
+
+Somente após BC-NSSMF estabilizado, executar:
+
+PROMPT_C5_E3_TESTES_CONTRATUAIS
+
+PROMPT_C5_NASP_MANUAL

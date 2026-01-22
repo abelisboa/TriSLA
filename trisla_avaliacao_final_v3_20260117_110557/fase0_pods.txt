@@ -1,0 +1,9 @@
+kafka-c948b8d64-jgmz5                     1/1     Running            0                3d13h   10.233.75.59     node2   <none>           <none>
+trisla-bc-nssmf-7b5c6fd7b7-zc4zl          1/1     Running            0                21d     10.233.102.138   node1   <none>           <none>
+trisla-bc-nssmf-7d99b476b7-r75jl          0/1     ImagePullBackOff   0                3d15h   10.233.102.155   node1   <none>           <none>
+trisla-besu-6448cb6bc6-mxb84              1/1     Running            0                24d     10.233.75.56     node2   <none>           <none>
+trisla-decision-engine-7984f6f486-jgn96   1/1     Running            0                3d      10.233.102.145   node1   <none>           <none>
+trisla-ml-nsmf-648666b86-7ghmv            1/1     Running            0                3d4h    10.233.102.149   node1   <none>           <none>
+trisla-portal-backend-69568dbdb7-5z8k9    1/1     Running            0                3d10h   10.233.75.39     node2   <none>           <none>
+trisla-portal-frontend-6dd98dc868-2nx7k   1/1     Running            0                25d     10.233.102.141   node1   <none>           <none>
+trisla-sem-csmf-685985d44-6v9hk           1/1     Running            0                3d10h   10.233.102.161   node1   <none>           <none>

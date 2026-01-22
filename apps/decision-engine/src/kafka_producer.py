@@ -134,6 +134,58 @@ class DecisionProducer:
                 span.record_exception(e)
                 span.set_attribute("kafka.enabled", False)
     
+    async def send_decision_event(self, decision_result: Dict[str, Any]):
+        """
+        FASE 5 (C5): Publicar evento estruturado de decisão no tópico trisla-decision-events
+        
+        Evento estruturado contém:
+        - decision_id
+        - sla_id (intent_id)
+        - decision (action)
+        - timestamps (t_submit, t_decision)
+        """
+        with tracer.start_as_current_span("send_decision_event") as span:
+            # Extrair timestamps do metadata
+            metadata = decision_result.get("metadata", {})
+            timestamps = {
+                "t_submit": metadata.get("t_submit"),
+                "t_decision": metadata.get("t_decision"),
+                "t_event": self._get_timestamp()
+            }
+            
+            event = {
+                "decision_id": decision_result.get("decision_id"),
+                "sla_id": decision_result.get("intent_id"),
+                "decision": decision_result.get("action"),
+                "timestamps": timestamps,
+                "confidence": decision_result.get("confidence"),
+                "ml_risk_score": decision_result.get("ml_risk_score"),
+                "ml_risk_level": decision_result.get("ml_risk_level"),
+                "reasoning": decision_result.get("reasoning")
+            }
+            
+            if self.producer is None:
+                logger.debug(
+                    "Kafka não disponível - evento de decisão não publicado. "
+                    "Evento: %s",
+                    event
+                )
+                span.set_attribute("kafka.enabled", False)
+                span.set_attribute("kafka.topic", "trisla-decision-events")
+                return
+            
+            try:
+                self.producer.send('trisla-decision-events', value=event)
+                self.producer.flush()
+                logger.info(f"✅ Evento de decisão publicado: decision_id={event['decision_id']}, action={event['decision']}")
+                span.set_attribute("kafka.enabled", True)
+                span.set_attribute("kafka.topic", "trisla-decision-events")
+                span.set_attribute("decision.action", event["decision"])
+            except Exception as e:
+                logger.error("Erro ao publicar evento de decisão via Kafka: %s", e)
+                span.record_exception(e)
+                span.set_attribute("kafka.enabled", False)
+    
     def _get_timestamp(self) -> str:
         from datetime import datetime, timezone
         return datetime.now(timezone.utc).isoformat()

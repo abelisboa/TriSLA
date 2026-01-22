@@ -5,6 +5,7 @@ Alinhado com arquitetura TriSLA (Capítulos 4, 5, 6)
 """
 
 from typing import Optional
+from datetime import datetime
 from opentelemetry import trace
 
 from models import (
@@ -90,6 +91,9 @@ class DecisionEngine:
             
             span.set_attribute("decision.action", action.value)
             
+            # FASE 4 (C4): Capturar timestamp de decisão
+            t_decision = datetime.utcnow().isoformat() + 'Z'
+            
             # 5. Construir resultado da decisão
             decision_result = DecisionResult(
                 decision_id=decision_id,
@@ -104,7 +108,8 @@ class DecisionEngine:
                 domains=domains,
                 metadata={
                     "ml_explanation": ml_prediction.explanation,
-                    "ml_features_importance": ml_prediction.features_importance
+                    "ml_features_importance": ml_prediction.features_importance,
+                    "t_decision": t_decision
                 }
             )
             

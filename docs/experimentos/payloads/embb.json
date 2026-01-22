@@ -1,0 +1,20 @@
+{
+  "template_id": "sla-template-001",
+  "form_values": {
+    "sla_name": "eMBB_EXP",
+    "service_type": "eMBB",
+    "latency_max": 50,
+    "availability_min": 95.0
+  },
+  "sla_requirements": {
+    "service_type": "eMBB",
+    "latency": {
+      "max": 50,
+      "unit": "ms"
+    },
+    "availability": {
+      "min": 95.0,
+      "unit": "percent"
+    }
+  }
+}

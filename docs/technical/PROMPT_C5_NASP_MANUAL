@@ -1,0 +1,65 @@
+for i in 1 2 3; do
+  cat > /tmp/nasp_action_nsi_$i.json <<EOF
+{
+  "action_type": "DEPLOY_NSI",
+  "payload": {
+    "nsi_id": "nsi-manual-00$i",
+    "service_type": "eMBB",
+    "slice_profile": {
+      "latency_ms": 50,
+      "throughput_mbps": 100,
+      "availability": 99.9
+    },
+    "resources": {
+      "ran": true,
+      "transport": true,
+      "core": true
+    },
+    "source": "manual-trisla-e3"
+  }
+}
+EOF
+
+  curl -s -X POST \
+    http://trisla-nasp-adapter.trisla.svc.cluster.local:8085/api/v1/nasp/actions \
+    -H "Content-Type: application/json" \
+    -d @/tmp/nasp_action_nsi_$i.json \
+    | tee /tmp/nasp_action_response_$i.json
+done
+O que muda tecnicamente (importante)
+Antes	Agora
+Payload solto	Payload encapsulado
+Adapter não entende	Adapter processa
+HTTP 500	200 / 202
+Sem execução	Execução real
+Teste inválido	Teste válido
+
+Evidências que você deve checar logo após
+bash
+Copy code
+# Respostas
+ls -lh /tmp/nasp_action_response_*.json
+
+# Logs do NASP Adapter
+kubectl logs -n trisla deploy/trisla-nasp-adapter --tail=200
+Você deve ver:
+
+Ação recebida
+
+Ação processada
+
+Tentativa de interação com NASP real
+
+Se AINDA der erro (plano B, sem código)
+Se ainda retornar erro:
+
+bash
+Copy code
+kubectl logs -n trisla deploy/trisla-nasp-adapter --tail=200 | grep -i error
+Normalmente aparece:
+
+campo obrigatório faltando
+
+nome errado de action_type
+
+Mas não será mais 500 genérico, será erro semântico → progresso real.

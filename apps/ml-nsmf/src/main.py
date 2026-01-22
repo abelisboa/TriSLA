@@ -4,6 +4,7 @@ Aplicação principal FastAPI
 """
 
 from fastapi import FastAPI, Response
+from datetime import datetime
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
@@ -19,7 +20,8 @@ from predictor import RiskPredictor
 from kafka_consumer import MetricsConsumer
 from kafka_producer import PredictionProducer
 from nasp_prometheus_client import PrometheusClient
-from ml_nsmf import assess_viability, explain_prediction  # v3.9.0 - XAI
+from ml_nsmf import assess_viability, explain_prediction
+from xai_logging import log_xai_explanation, save_xai_to_csv  # v3.9.0 - XAI
 
 # Configurar OpenTelemetry (opcional em modo DEV)
 otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
@@ -118,8 +120,33 @@ async def predict_risk(metrics: dict):
             "time_range_minutes": time_range_minutes
         }
         
-        # Explicar (XAI)
+        # FASE 6 (C6): Integrar XAI real após inferência ML
         explanation = predictor.explain(prediction, normalized)
+        
+        # Chamar XAI condicionalmente (após inferência ML, sem bloquear decisão)
+        try:
+            # Extrair slice_type e nest_id das métricas
+            slice_type = metrics.get("slice_type") or metrics.get("service_type", "UNKNOWN")
+            nest_id = metrics.get("nest_id") or metrics.get("slice_id")
+            
+            # Persistir XAI: features, weights, method, confidence, timestamp
+            # Estrutura esperada por log_xai_explanation e save_xai_to_csv
+            xai_explanation = {
+                "method": explanation.get("method", "heuristic"),
+                "explanation_available": explanation.get("explanation_available", False),
+                "confidence": prediction.get("confidence", 0.0),
+                "prediction": prediction.get("risk_level", "UNKNOWN"),
+                "feature_importance": explanation.get("feature_importance", {}),
+                "top_features": explanation.get("top_features", [])
+            }
+            
+            # Log e persistir XAI (sem bloquear decisão)
+            log_xai_explanation(xai_explanation, slice_type, nest_id)
+            save_xai_to_csv(xai_explanation, slice_type, nest_id)
+            
+            logger.info(f"✅ XAI integrado: method={xai_data['method']}, confidence={xai_data['confidence']:.2f}")
+        except Exception as xai_error:
+            logger.warning(f"⚠️ Erro ao integrar XAI (não bloqueia decisão): {xai_error}")
         
         # Enviar para Decision Engine via Kafka (I-03)
         await prediction_producer.send_prediction(prediction, explanation)
@@ -129,10 +156,14 @@ async def predict_risk(metrics: dict):
         
         logger.info(f"✅ Predição gerada: risk_level={prediction.get('risk_level')}, risk_score={prediction.get('risk_score'):.2f}")
         
+        # FASE 1 (C1): Adicionar timestamp UTC
+        timestamp_utc = datetime.utcnow().isoformat() + 'Z'
+        
         return {
             "prediction": prediction,
             "explanation": explanation,
-            "metrics_used": prediction["metrics_used"]
+            "metrics_used": prediction["metrics_used"],
+            "timestamp_utc": timestamp_utc
         }
 
 

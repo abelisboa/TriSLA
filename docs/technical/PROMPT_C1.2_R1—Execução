@@ -1,0 +1,204 @@
+Cenário C1.2 — eMBB com 10 SLAs simultâneos
+
+Rodada: R1 (baseline válida)
+Ambiente: NASP (real)
+Isolamento: TOTAL (somente experiments/)
+Objetivo científico: Avaliar comportamento do TriSLA sob carga eMBB moderada, mantendo decisões conservadoras e rastreabilidade completa.
+
+0️⃣ PRINCÍPIOS INEGOCIÁVEIS
+
+Antes de qualquer comando, leia e aceite:
+
+❌ Não modificar código em apps/
+
+❌ Não modificar Helm charts
+
+❌ Não alterar regras de decisão
+
+❌ Não forçar ACCEPT
+
+❌ Não corrigir comportamento observado
+
+✅ Apenas executar, medir e documentar
+
+Se qualquer desses pontos for violado → ABORTAR.
+
+1️⃣ CONTEXTO FIXO
+
+Cluster: NASP
+
+Namespace: trisla
+
+Versão: v3.7.10
+
+Diretório base:
+
+/home/porvir5g/gtp5g/trisla/experiments
+
+
+Template:
+
+templates/C1_eMBB_10.yaml
+
+
+Script de submissão:
+
+generators/submit_slas.py
+
+2️⃣ FASE 0 — PRÉ-CONDICIONAL (OBRIGATÓRIA)
+2.1 Verificar acesso e diretório
+ssh node006
+cd /home/porvir5g/gtp5g/trisla/experiments
+
+2.2 Verificar estado do cluster
+kubectl -n trisla get pods
+
+Critério:
+
+✅ Pelo menos 1 pod Running para:
+
+sem-csmf
+
+decision-engine
+
+ml-nsmf
+
+nasp-adapter
+
+⚠️ Pods antigos em CrashLoopBackOff devem ser documentados, não corrigidos
+
+📄 Criar arquivo:
+
+reports/C1.2_R1_PRE_CONDITIONAL_STATUS.md
+
+
+Registrar:
+
+Data
+
+Pods Running
+
+Pods CrashLoopBackOff (se houver)
+
+Decisão: prosseguir com ressalva ou abortar
+
+3️⃣ FASE 1 — CONGELAMENTO EXPERIMENTAL
+3.1 Criar diretório da rodada
+mkdir -p reports/C1.2_R1
+
+3.2 Congelar templates e scripts
+cp templates/C1_eMBB_10.yaml reports/C1.2_R1/
+cp generators/submit_slas.py reports/C1.2_R1/
+
+
+Registrar no PRE_CONDITIONAL_STATUS.md:
+
+Hash SHA256 dos arquivos congelados
+
+4️⃣ FASE 2 — EXECUÇÃO DO CENÁRIO
+4.1 Submissão dos SLAs (10)
+python3 generators/submit_slas.py \
+  --template templates/C1_eMBB_10.yaml \
+  --count 10 \
+  --interval 5 \
+  --output reports/C1.2_R1/C1.2_submissions.json
+
+Regras obrigatórias:
+
+Intervalo fixo: 5 segundos
+
+Execução sequencial
+
+❌ Sem paralelismo
+
+❌ Sem retry automático
+
+4.2 Validação imediata
+
+Confirmar:
+
+10 submissões realizadas
+
+Nenhum erro HTTP
+
+correlation_id presente em todas
+
+5️⃣ FASE 3 — COLETA DE DADOS
+5.1 Coleta de métricas Prometheus
+python3 collectors/prometheus_collector.py \
+  --scenario C1.2_R1 \
+  --output reports/C1.2_R1/
+
+5.2 Coleta de logs
+python3 collectors/logs_collector.py \
+  --scenario C1.2_R1 \
+  --output reports/C1.2_R1/
+
+
+Confirmar geração de arquivos .txt.
+
+6️⃣ FASE 4 — ANÁLISE OFFLINE
+python3 analysis/compute_metrics.py \
+  --input reports/C1.2_R1/C1.2_submissions.json \
+  --output reports/C1.2_R1/analysis_C1.2_R1.json
+
+
+Extrair:
+
+Tempo de decisão
+
+Tempo end-to-end
+
+Distribuição ACCEPT / RENEG / REJECT
+
+Estatísticas básicas (min, avg, p95)
+
+7️⃣ FASE 5 — PRESERVAÇÃO DE EVIDÊNCIAS
+7.1 Checksums
+cd reports/C1.2_R1
+sha256sum * > SHA256SUMS.txt
+
+7.2 Arquivo final
+cd ..
+tar -czf C1.2_R1.tgz C1.2_R1/
+
+8️⃣ FASE 6 — CHECKLIST FINAL
+
+Criar e preencher:
+
+reports/C1.2_R1/CHECKLIST_VALIDACAO.md
+
+
+Itens obrigatórios:
+
+ 10 SLAs submetidos
+
+ Logs coletados
+
+ Métricas coletadas (mesmo que vazias)
+
+ Análise gerada
+
+ SHA256 calculado
+
+ Nenhuma modificação fora de experiments/
+
+9️⃣ CRITÉRIO DE ENCERRAMENTO
+
+A execução SÓ É CONSIDERADA VÁLIDA se:
+
+C1.2_R1.tgz existir
+
+SHA256SUMS.txt existir
+
+CHECKLIST_VALIDACAO.md preenchido
+
+Nenhuma alteração fora de experiments/
+
+🔚 STATUS ESPERADO
+
+Ao final, registrar:
+
+Execução C1.2_R1 concluída conforme protocolo.
+Resultados refletem comportamento real do TriSLA sob carga eMBB moderada.
+Nenhuma alteração estrutural foi realizada no sistema.

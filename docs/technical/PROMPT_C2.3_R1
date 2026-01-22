@@ -1,0 +1,193 @@
+Execução Controlada — Eixo C2 (URLLC) | Cenário C2.3 — 10 SLAs simultâneos
+
+1. Identificação do Experimento
+
+Eixo: C2 — URLLC (Latência e Confiabilidade)
+
+Cenário: C2.3
+
+Rodada: R1 (baseline válida)
+
+Carga: 10 SLAs simultâneos
+
+Ambiente: NASP (ambiente real, não simulado)
+
+Namespace: trisla
+
+Versão do TriSLA: v3.7.10
+
+Diretório experimental:
+
+/home/porvir5g/gtp5g/trisla/experiments/
+
+2. Objetivo Científico
+
+Avaliar o limite superior do TriSLA para SLAs URLLC, verificando:
+
+Consistência do comportamento decisório ao triplicar a carga (3 → 10 SLAs)
+
+Estabilidade do pipeline E2E sob requisitos URLLC rigorosos
+
+Manutenção da rastreabilidade sob maior pressão
+
+Evidência empírica clara dos limites reais da arquitetura TriSLA para URLLC
+
+⚠️ Resultados RENEG ou REJECT são esperados e desejáveis como evidência científica.
+Não há expectativa prévia de ACCEPT.
+
+3. Princípios Invioláveis
+
+❌ Não modificar código produtivo (apps/, helm/)
+
+❌ Não alterar regras de decisão ou ML
+
+❌ Não aplicar retries automáticos
+
+❌ Não paralelizar submissões
+
+❌ Não corrigir “para aceitar”
+
+✅ Execução sequencial controlada
+
+✅ Isolamento total em experiments/
+
+✅ Preservação completa de evidências
+
+4. Artefatos de Entrada (Congelados)
+Template URLLC
+experiments/templates/C2_URLLC_10.yaml
+
+
+📌 Criação obrigatória, caso não exista, a partir de C2_URLLC_6.yaml, alterando somente:
+
+Número de SLAs: 10
+
+Mantendo inalterado:
+
+Latência: 5 ms
+
+Jitter: 1 ms
+
+Confiabilidade: 0.99999
+
+Scripts (inalterados)
+experiments/generators/submit_slas.py
+experiments/collectors/prometheus_collector.py
+experiments/collectors/logs_collector.py
+experiments/analysis/compute_metrics.py
+
+5. FASE 0 — Pré-Condições (Obrigatória)
+5.1 Acesso
+ssh -J porvir5g@ppgca.unisinos.br porvir5g@node006
+cd /home/porvir5g/gtp5g/trisla/experiments
+
+5.2 Verificação do cluster
+kubectl get pods -n trisla
+
+
+Critério:
+
+Cada serviço crítico com ≥ 1 pod Running
+
+Pods antigos em CrashLoopBackOff apenas documentados
+
+5.3 Registro do estado
+
+Criar:
+
+reports/C2.3_R1/C2.3_R1_PRE_CONDITIONAL_STATUS.md
+
+6. FASE 1 — Congelamento Experimental
+mkdir -p reports/C2.3_R1
+cp templates/C2_URLLC_10.yaml reports/C2.3_R1/
+cp generators/submit_slas.py reports/C2.3_R1/
+
+sha256sum reports/C2.3_R1/* > reports/C2.3_R1/SHA256_INPUTS.txt
+
+7. FASE 2 — Execução do Cenário
+python3 generators/submit_slas.py \
+  --template templates/C2_URLLC_10.yaml \
+  --output reports/C2.3_R1/C2.3_submissions.json \
+  --interval 5
+
+
+Critérios obrigatórios:
+
+10 SLAs submetidos
+
+Intervalo ≥ 5 segundos
+
+Execução estritamente sequencial
+
+Correlation IDs preservados
+
+8. FASE 3 — Coleta de Dados
+8.1 Métricas Prometheus
+python3 collectors/prometheus_collector.py \
+  --scenario C2.3_R1 \
+  --output reports/C2.3_R1/
+
+8.2 Logs
+python3 collectors/logs_collector.py \
+  --scenario C2.3_R1 \
+  --output reports/C2.3_R1/
+
+9. FASE 4 — Análise Offline
+python3 analysis/compute_metrics.py \
+  --input reports/C2.3_R1/C2.3_submissions.json \
+  --output reports/C2.3_R1/analysis_C2.3_R1.json
+
+10. FASE 5 — Preservação de Evidências
+cd reports
+tar czf C2.3_R1.tgz C2.3_R1/
+sha256sum C2.3_R1.tgz > C2.3_R1_SHA256.txt
+
+11. FASE 6 — Checklist Final
+
+Criar:
+
+reports/C2.3_R1/CHECKLIST_VALIDACAO.md
+
+
+Confirmar explicitamente:
+
+ 10 SLAs processados
+
+ Logs coletados
+
+ Análise gerada
+
+ SHA256 registrado
+
+ Nenhuma modificação fora de experiments/
+
+12. Critério de Encerramento
+
+A execução só é considerada válida se:
+
+C2.3_R1.tgz existir
+
+SHA256_INPUTS.txt existir
+
+Checklist preenchido
+
+Ambiente produtivo inalterado
+
+13. Encadeamento Metodológico
+
+Após conclusão válida:
+
+Consolidar o Eixo C2 (URLLC) como bloco fechado
+
+Comparar formalmente:
+
+C1 (eMBB) × C2 (URLLC)
+
+Redigir seção:
+“Limites Empíricos do TriSLA para SLAs de Alta Criticidade”
+
+Decidir conscientemente se:
+
+Prossegue para C3 (mMTC)
+
+Ou encerra experimentalmente com base em evidência suficiente

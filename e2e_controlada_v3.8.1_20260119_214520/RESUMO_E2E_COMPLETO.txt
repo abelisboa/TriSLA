@@ -1,0 +1,36 @@
+=== RESUMO EXECUÇÃO E2E CONTROLADA v3.8.1 ===
+Data: 2026-01-19 21:47:59
+WORKDIR: /home/porvir5g/gtp5g/trisla/e2e_controlada_v3.8.1_20260119_214520
+
+=== FASES EXECUTADAS ===
+✅ FASE 0: OK (baseline coletado)
+✅ FASE 1: OK (Kafka habilitado, tópicos presentes)
+❌ FASE 2: FAIL (ML-NSMF não acessível via service)
+❌ FASE 3: FAIL (SEM-CSMF erro 500, nenhum decision_id gerado)
+⏭️ FASE 4: SKIP (sem decision_ids)
+⏭️ FASE 5: SKIP (sem decision_ids)
+⏭️ FASE 6: SKIP (sem decision_ids)
+
+=== CORREÇÕES APLICADAS ===
+1. ✅ Kafka habilitado no Decision Engine (KAFKA_ENABLED=true)
+2. ⚠️ Endpoint ML-NSMF: recriado manualmente mas ainda não funciona via service
+3. ⚠️ Payloads: ajustados com service_type e valores como strings
+
+=== PROBLEMAS IDENTIFICADOS ===
+1. SEM-CSMF erro 500:
+   - Erro Pydantic: "Input should be a valid string [type=string_type, input_value=500, input_type=int]"
+   - Campo throughput está sendo enviado como inteiro quando deveria ser string
+   - Erro ao comunicar com Decision Engine: 422 Unprocessable Entity
+
+2. ML-NSMF endpoints:
+   - Endpoints ficam vazios após rollout
+   - Necessário criar manualmente (workaround, não solução definitiva)
+   - Conectividade via service ainda falha
+
+=== STATUS FINAL ===
+GATE_E2E_STATUS: FAIL
+
+=== PRÓXIMOS PASSOS ===
+1. Corrigir SEM-CSMF: garantir que valores numéricos sejam enviados como strings
+2. Investigar por que endpoints do ML-NSMF não são criados automaticamente
+3. Reexecutar E2E após correções

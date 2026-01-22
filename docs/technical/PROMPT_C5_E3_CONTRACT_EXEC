@@ -1,0 +1,166 @@
+1. Contexto e Objetivo
+
+Este protocolo define o procedimento experimental para executar funções reais de um smart contract já implantado na blockchain Hyperledger Besu, utilizando o módulo BC-NSSMF, conforme projetado na arquitetura TriSLA.
+
+O objetivo é validar experimentalmente o Eixo E3 (Contratual) por meio de:
+
+Execução real de funções do contrato (registerSLA, getSLA)
+
+Geração de transação on-chain
+
+Registro de evidências rastreáveis (txHash, bloco, logs)
+
+Confirmação de integração BC-NSSMF ↔ Besu
+
+Nenhuma modificação de código ou smart contract
+
+Este protocolo não depende de novo deploy e utiliza o contrato já validado no ambiente.
+
+2. Ambiente de Execução (Obrigatório)
+
+Host: node006
+
+Usuário: porvir5g
+
+Diretório base:
+
+cd /home/porvir5g/gtp5g/trisla
+
+
+Namespace Kubernetes: trisla
+
+⚠️ Todos os comandos devem ser executados neste contexto.
+
+3. Pré-condições (FASE 0 — Obrigatória)
+3.1 Verificação dos pods críticos
+kubectl get pods -n trisla | egrep "besu|bc-nssmf"
+
+
+Critérios para continuar:
+
+trisla-besu-* → Running (1/1)
+
+trisla-bc-nssmf-* → Running (1/1)
+
+❌ Qualquer CrashLoopBackOff invalida a execução
+
+3.2 Health check do BC-NSSMF
+kubectl -n trisla port-forward svc/trisla-bc-nssmf 8083:8083
+
+
+Em outro terminal:
+
+curl -s http://localhost:8083/health | jq
+
+
+Resultado esperado:
+
+{
+  "status": "healthy",
+  "module": "bc-nssmf",
+  "enabled": true,
+  "rpc_connected": true
+}
+
+3.3 Snapshot de rastreabilidade
+mkdir -p docs/experiments/C5_E3_CONTRACT_EXEC
+kubectl get deployment trisla-bc-nssmf -n trisla -o yaml \
+  > docs/experiments/C5_E3_CONTRACT_EXEC/FASE0_DEPLOYMENT_SNAPSHOT.yaml
+
+4. Preparação do Payload Contratual
+4.1 Criar payload de execução
+cat <<EOF > docs/experiments/C5_E3_CONTRACT_EXEC/payload_execute_contract.json
+{
+  "contract_type": "sla_contract",
+  "operation": "registerSLA",
+  "sla_id": "sla-C5-E3-001",
+  "sla_data": {
+    "service_type": "eMBB",
+    "latency": 50,
+    "throughput": 100,
+    "decision": "RENEG",
+    "intent_id": "intent-C5-E3-001",
+    "decision_id": "dec-C5-E3-001"
+  }
+}
+EOF
+
+5. Execução Experimental
+FASE 1 — Execução real do smart contract
+
+⚠️ Este é o endpoint correto para execução on-chain.
+
+curl -X POST http://localhost:8083/api/v1/execute-contract \
+  -H "Content-Type: application/json" \
+  -d @docs/experiments/C5_E3_CONTRACT_EXEC/payload_execute_contract.json \
+  | tee docs/experiments/C5_E3_CONTRACT_EXEC/response_execute.json
+
+5.1 Evidências esperadas na resposta
+
+A resposta deve conter pelo menos:
+
+transaction_hash
+
+block_number
+
+status: success ou equivalente
+
+Exemplo esperado:
+
+{
+  "status": "success",
+  "transaction_hash": "0xabc123...",
+  "block_number": 145,
+  "contractAddress": "0x42699A7612A82f1d9C36148af9C77354759b210b"
+}
+
+6. Validação Pós-Execução
+6.1 Consulta do SLA no contrato
+cat <<EOF > docs/experiments/C5_E3_CONTRACT_EXEC/payload_get_sla.json
+{
+  "contract_type": "sla_contract",
+  "operation": "getSLA",
+  "sla_id": "sla-C5-E3-001"
+}
+EOF
+
+curl -X POST http://localhost:8083/api/v1/execute-contract \
+  -H "Content-Type: application/json" \
+  -d @docs/experiments/C5_E3_CONTRACT_EXEC/payload_get_sla.json \
+  | tee docs/experiments/C5_E3_CONTRACT_EXEC/response_get_sla.json
+
+
+Critério de sucesso:
+
+SLA retornado
+
+Dados consistentes com o payload original
+
+7. Auditoria e Evidências
+7.1 Logs do BC-NSSMF
+kubectl logs -n trisla deploy/trisla-bc-nssmf \
+  | egrep "execute|contract|tx|block|SLA" \
+  > docs/experiments/C5_E3_CONTRACT_EXEC/bc_nssmf_exec.log
+
+7.2 Logs do Besu
+kubectl logs -n trisla deploy/trisla-besu \
+  > docs/experiments/C5_E3_CONTRACT_EXEC/besu_exec.log
+
+8. Critérios de Sucesso
+Critério	Status Esperado
+Execução real de contrato	✅
+Transação registrada	✅
+txHash gerado	✅
+Bloco confirmado	✅
+SLA consultável	✅
+Rastreabilidade completa	✅
+Nenhuma alteração de código	✅
+9. Entregáveis Esperados
+docs/experiments/C5_E3_CONTRACT_EXEC/
+├── FASE0_DEPLOYMENT_SNAPSHOT.yaml
+├── payload_execute_contract.json
+├── response_execute.json
+├── payload_get_sla.json
+├── response_get_sla.json
+├── bc_nssmf_exec.log
+└── besu_exec.log

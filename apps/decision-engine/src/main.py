@@ -524,7 +524,6 @@ async def evaluate_sla(sla_input: SLAEvaluateInput):
                     logger.warning(f"⚠️ Falha ao registrar RENEGOTIATE no BC-NSMF para decision_id={decision_result.decision_id}")
             
             # 5. Publicar decisão no Kafka I-04/I-05 (obrigatório para rastreabilidade)
-            global decision_producer
             if decision_producer is not None:
                 decision_dict = {
                     "decision_id": decision_result.decision_id,

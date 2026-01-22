@@ -1,0 +1,58 @@
+{
+  "eMBB": {
+    "SLA_eMBB_1": {
+      "service_type": "eMBB",
+      "latency_max": 50,
+      "availability_min": 95.0,
+      "throughput": "moderate"
+    },
+    "SLA_eMBB_2": {
+      "service_type": "eMBB",
+      "latency_max": 30,
+      "availability_min": 98.0,
+      "throughput": "high"
+    },
+    "SLA_eMBB_3": {
+      "service_type": "eMBB",
+      "latency_max": 20,
+      "availability_min": 99.0,
+      "throughput": "high",
+      "latency_restricted": true
+    }
+  },
+  "URLLC": {
+    "SLA_URLLC_1": {
+      "service_type": "URLLC",
+      "latency_max": 10,
+      "availability_min": 99.9
+    },
+    "SLA_URLLC_2": {
+      "service_type": "URLLC",
+      "latency_max": 5,
+      "availability_min": 99.9
+    },
+    "SLA_URLLC_3": {
+      "service_type": "URLLC",
+      "latency_max": 5,
+      "availability_min": 99.99,
+      "high_reliability": true
+    }
+  },
+  "mMTC": {
+    "SLA_mMTC_1": {
+      "service_type": "mMTC",
+      "devices": 1000,
+      "availability_min": 90.0
+    },
+    "SLA_mMTC_2": {
+      "service_type": "mMTC",
+      "devices": 5000,
+      "availability_min": 90.0
+    },
+    "SLA_mMTC_3": {
+      "service_type": "mMTC",
+      "devices": 10000,
+      "availability_min": 90.0
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "template_id": "sla-template-001",
+  "form_values": {
+    "sla_name": "SLA_mMTC_3",
+    "service_type": "mMTC",
+    "latency_max": 100,
+    "availability_min": 90.0
+  },
+  "sla_requirements": {
+    "service_type": "mMTC",
+    "latency": {
+      "max": 100,
+      "unit": "ms"
+    },
+    "availability": {
+      "min": 90.0,
+      "unit": "percent"
+    }
+  }
+}

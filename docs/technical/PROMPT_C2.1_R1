@@ -1,0 +1,183 @@
+Execução Controlada — Eixo C2 (URLLC) | Cenário C2.1 — 3 SLAs simultâneos
+
+1. Identificação do Experimento
+
+Eixo: C2 — URLLC (Latência e Confiabilidade)
+
+Cenário: C2.1
+
+Rodada: R1 (baseline válida)
+
+Carga: 3 SLAs simultâneos
+
+Ambiente: NASP (ambiente real, não simulado)
+
+Namespace: trisla
+
+Versão do sistema: v3.7.10
+
+Diretório experimental:
+
+/home/porvir5g/gtp5g/trisla/experiments/
+
+2. Objetivo Científico
+
+Avaliar o comportamento do TriSLA sob SLAs URLLC com requisitos rigorosos de latência e confiabilidade, observando:
+
+Execução correta do pipeline end-to-end (I-01 → I-07)
+
+Comportamento decisório do Decision Engine
+
+Rastreabilidade completa
+
+Estabilidade sob requisitos críticos
+
+Limites reais da arquitetura
+
+⚠️ Não há pressuposto de aceitação dos SLAs.
+Resultados como RENEG ou REJECT são cientificamente válidos.
+
+3. Princípios Obrigatórios
+
+❌ Nenhuma modificação em apps/, helm/, docs/
+
+❌ Nenhuma alteração em regras produtivas
+
+❌ Nenhum retry automático
+
+❌ Nenhuma paralelização fora do script
+
+✅ Execução estritamente sequencial
+
+✅ Isolamento total em experiments/
+
+✅ Preservação integral de evidências
+
+4. Artefatos de Entrada (Congelados)
+Template URLLC
+experiments/templates/C2_URLLC_3.yaml
+
+Scripts (já existentes)
+experiments/generators/submit_slas.py
+experiments/collectors/prometheus_collector.py
+experiments/collectors/logs_collector.py
+experiments/analysis/compute_metrics.py
+
+5. FASE 0 — Pré-Condições (Obrigatória)
+5.1 Acesso
+ssh -J porvir5g@ppgca.unisinos.br porvir5g@node006
+cd /home/porvir5g/gtp5g/trisla/experiments
+
+5.2 Verificação do cluster
+kubectl get pods -n trisla
+
+
+Critério:
+
+Serviços críticos (SEM-CSMF, ML-NSMF, Decision Engine, NASP Adapter) devem ter ao menos 1 pod Running
+
+Pods antigos em CrashLoopBackOff devem ser documentados, não corrigidos
+
+5.3 Registrar status
+
+Criar:
+
+reports/C2.1_R1/C2.1_R1_PRE_CONDITIONAL_STATUS.md
+
+6. FASE 1 — Congelamento Experimental
+mkdir -p reports/C2.1_R1
+cp templates/C2_URLLC_3.yaml reports/C2.1_R1/
+cp generators/submit_slas.py reports/C2.1_R1/
+
+sha256sum reports/C2.1_R1/* > reports/C2.1_R1/SHA256_INPUTS.txt
+
+7. FASE 2 — Execução do Cenário
+Submissão controlada (sequencial)
+python3 generators/submit_slas.py \
+  --template templates/C2_URLLC_3.yaml \
+  --output reports/C2.1_R1/C2.1_submissions.json \
+  --interval 5
+
+
+Critérios:
+
+3 SLAs submetidos
+
+Intervalo ≥ 5s
+
+Correlation IDs preservados
+
+Nenhum retry
+
+8. FASE 3 — Coleta de Dados
+8.1 Métricas Prometheus
+python3 collectors/prometheus_collector.py \
+  --scenario C2.1_R1 \
+  --output reports/C2.1_R1/
+
+8.2 Logs
+python3 collectors/logs_collector.py \
+  --scenario C2.1_R1 \
+  --output reports/C2.1_R1/
+
+9. FASE 4 — Análise Offline
+python3 analysis/compute_metrics.py \
+  --input reports/C2.1_R1/C2.1_submissions.json \
+  --output reports/C2.1_R1/analysis_C2.1_R1.json
+
+
+Métricas esperadas:
+
+Tempo de decisão
+
+Tempo end-to-end
+
+Taxa de ACCEPT / RENEG / REJECT
+
+10. FASE 5 — Preservação de Evidências
+cd reports
+tar czf C2.1_R1.tgz C2.1_R1/
+sha256sum C2.1_R1.tgz > C2.1_R1_SHA256.txt
+
+11. FASE 6 — Checklist Final
+
+Criar:
+
+reports/C2.1_R1/CHECKLIST_VALIDACAO.md
+
+
+Confirmar:
+
+ Pipeline executado
+
+ 3 SLAs processados
+
+ Logs coletados
+
+ Análise gerada
+
+ SHA256 calculado
+
+ Nenhuma modificação fora de experiments/
+
+12. Critério de Encerramento
+
+A execução só é considerada concluída se:
+
+C2.1_R1.tgz existir
+
+SHA256_INPUTS.txt existir
+
+CHECKLIST_VALIDACAO.md preenchido
+
+Nenhuma alteração fora de experiments/
+
+13. Status Esperado
+
+Resultados podem ser ACCEPT, RENEG ou REJECT
+
+RENEG/REJECT não caracterizam falha
+
+O objetivo é mapear limites reais do TriSLA
+
+FI
