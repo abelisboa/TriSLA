@@ -1,45 +1,45 @@
-# TriSLA — Guia de Implantação no NASP
+# TriSLA — NASP Deployment Guide
 
-## 1. Introdução ao Ambiente NASP
+## 1. NASP Environment Introduction
 
-### 1.1 Visão Geral do NASP
+### 1.1 NASP Overview
 
-O **NASP** (Network Automation & Slicing Platform) é uma plataforma de automação de rede projetada para gerenciamento de network slicing em ambientes 5G/O-RAN. O ambiente NASP consiste em um cluster Kubernetes de alta disponibilidade instalado via **Kubespray**, utilizando **Calico** como CNI (Container Network Interface) e uma stack completa de observabilidade baseada em **Prometheus** e **Grafana**.
+**NASP** (Network Automation & Slicing Platform) is a platform for network automation designed for network slicing management in 5G/O-RAN environments. The NASP environment consists of a Kubernetes cluster with high availability installed via **Kubespray**, using **Calico** as CNI (Container Network Interface) and a complete observability stack based on **Prometheus** and **Grafana**.
 
-### 1.2 Arquitetura do Cluster NASP
+### 1.2 NASP Cluster Architecture
 
-O cluster NASP é composto por:
+The NASP cluster is composed of:
 
-- **Node1**: Nó de controle (control plane) e worker
-- **Node2**: Nó de controle (control plane) e worker
-- **Workers adicionais**: Opcionalmente, nós worker dedicados podem ser adicionados
+- **Node1**: Control node (control plane) e worker
+- **Node2**: Control node (control plane) e worker
+- **Additional workers**: Opcionalmente, nós worker dedicados podem ser adicionados
 
-Cada nó executa:
+Each node runs:
 - Kubernetes (instalado via Kubespray)
 - Calico CNI para networking
 - Prometheus Operator para observabilidade
 - Ingress Controller (Nginx) para exposição de serviços
 
-### 1.3 Objetivo deste Documento
+### 1.3 Document Objective
 
-Este guia fornece instruções passo a passo para implantar o **TriSLA** no ambiente NASP, cobrindo desde a preparação inicial até validação completa do deploy. O documento assume que o operador possui acesso administrativo ao cluster NASP e conhecimento básico de Kubernetes, Helm e redes 5G/O-RAN.
+This guide provides step-by-step instructions to deploy **TriSLA** in the NASP environment, covering from initial preparation to complete deployment validation. The document assumes that the operator has administrative access to the NASP cluster and basic knowledge of Kubernetes, Helm and 5G/O-RAN networks.
 
 ---
 
-## 2. Arquitetura do Cluster
+## 2. Cluster Architecture
 
-### 2.1 Node1 e Node2
+### 2.1 Node1 and Node2
 
 #### Node1 (Control Plane + Worker)
 
-**Especificações típicas:**
-- **IP**: Configurado na interface `my5g` (ex: 192.168.10.16)
-- **Função**: Control plane e worker
-- **Recursos**: Mínimo 8 cores CPU, 16 GiB RAM, 100 GiB storage
-- **Serviços**: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, kube-proxy
-- **Deploy**: O deploy do TriSLA é executado localmente neste nó
+**Typical specifications:**
+- **IP**: Configured on interface `my5g` (ex: 192.168.10.16)
+- **Function**: Control plane and worker
+- **Resources**: Minimum 8 cores CPU, 16 GiB RAM, 100 GiB storage
+- **Services**: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, kube-proxy
+- **Deploy**: TriSLA deployment is executed locally on this node
 
-**Verificação (executar localmente no node1):**
+**Verification (run locally on node1):**
 
 ```bash
 # Verificar status do Kubernetes
@@ -49,11 +49,11 @@ kubectl get pods -n kube-system
 
 #### Node2 (Control Plane + Worker)
 
-**Especificações típicas:**
-- **IP**: Configurado na interface `my5g` (ex: 192.168.10.17)
-- **Função**: Control plane e worker
-- **Recursos**: Mínimo 8 cores CPU, 16 GiB RAM, 100 GiB storage
-- **Serviços**: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, kube-proxy
+**Typical specifications:**
+- **IP**: Configured on interface `my5g` (ex: 192.168.10.17)
+- **Function**: Control plane and worker
+- **Resources**: Minimum 8 cores CPU, 16 GiB RAM, 100 GiB storage
+- **Services**: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, kube-proxy
 
 **Nota:** O deploy é feito localmente no node1, mas o cluster inclui o node2 como parte do control plane.
 
@@ -1635,7 +1635,7 @@ helm upgrade trisla ./helm/trisla \
 
 ## Conclusão
 
-Este guia fornece instruções completas para implantar o TriSLA no ambiente NASP. Siga os passos na ordem apresentada e valide cada etapa antes de prosseguir para a próxima.
+This guide provides instruções completas para implantar o TriSLA in the NASP environment. Siga os passos na ordem apresentada e valide cada etapa antes de prosseguir para a próxima.
 
 **Lembre-se:**
 - Sempre validar pre-flight antes do deploy

@@ -1,10 +1,10 @@
-# TriSLA — Guia de Operações em Produção
+# TriSLA — Production Operations Guide
 
-## 1. Introdução
+## 1. Introduction
 
 ### 1.1 Objetivo do Documento
 
-Este documento fornece instruções completas para implantar, operar e manter o **TriSLA** (Triple-SLA) em ambiente de produção real, especificamente no **NASP** (Network Automation & Slicing Platform). O guia cobre desde a preparação inicial do ambiente até operações diárias, troubleshooting e boas práticas de segurança.
+This document provides instruções completas para implantar, operar e manter o **TriSLA** (Triple-SLA) in production environment real, especificamente no **NASP** (Network Automation & Slicing Platform). O guia cobre desde a preparação inicial do ambiente até operações diárias, troubleshooting e boas práticas de segurança.
 
 ### 1.2 Visão Geral do TriSLA em Produção
 

@@ -1,10 +1,10 @@
 # TriSLA — Guia de Instalação Completa para Produção
 
-## 1. Introdução
+## 1. Introduction
 
 ### 1.1 Objetivo deste Documento
 
-Este documento fornece instruções completas e automatizadas para instalar o **TriSLA** (Triple-SLA) em ambiente de produção real no **NASP** (Network Automation & Slicing Platform). O guia cobre múltiplos métodos de instalação, desde scripts automatizados até pipelines CI/CD completos.
+This document provides instruções completas e automatizadas para instalar o **TriSLA** (Triple-SLA) in production environment real no **NASP** (Network Automation & Slicing Platform). O guia cobre múltiplos métodos de instalação, desde scripts automatizados até pipelines CI/CD completos.
 
 ### 1.2 Métodos de Instalação Disponíveis
 
