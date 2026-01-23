@@ -518,3 +518,30 @@ tmp/
 
 # Internal deployment artifacts
 docs/deployment/FROZEN_IMAGES_v3.9.3.md
+
+# PROMPT_S6.1 - Internal experiments and artifacts (HARDENING)
+artifacts/
+assets/
+fix_e2e*
+tests/
+trisla_avaliacao*
+trisla_evidencia*
+trisla_experimentos*
+inventory/
+snapshots/
+run_*/
+logs/
+tmp/
+
+# Generated artifacts (internal use only)
+*.csv
+*.log
+*.sha256
+*.tar.gz
+*.pdf
+*.png
+
+# Experimental results and evidence
+RESULTADOS*
+EVIDENCIAS*
+VALIDATION*

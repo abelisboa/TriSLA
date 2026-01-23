@@ -1,7 +1,0 @@
-STATUS: PASS (fix + e2e mínimo via Portal + kafka obrigatório)
-WORKDIR: /home/porvir5g/gtp5g/trisla/fix_e2e_v3.8.1_20260119_192003
-REGRAS ATENDIDAS:
-- Portal gerou sla_id
-- ML-NSMF funcional (tolerante a erro de pickle na inicialização)
-- Kafka com tópicos obrigatórios
-- Evidências coletadas

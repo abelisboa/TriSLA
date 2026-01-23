@@ -1,9 +1,0 @@
-{
-  "intent_id": "evidence-final-001",
-  "service_type": "eMBB",
-  "sla_requirements": {
-    "latency": 10,
-    "throughput": 100,
-    "reliability": 0.999
-  }
-}

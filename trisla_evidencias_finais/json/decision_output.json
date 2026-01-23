@@ -1,1 +1,0 @@
-{"detail":[{"type":"missing","loc":["body","intent"],"msg":"Field required","input":{"intent_id":"evidence-final-001","service_type":"eMBB","sla_requirements":{"latency":10,"throughput":100,"reliability":0.999}},"url":"https://errors.pydantic.dev/2.5/v/missing"}]}

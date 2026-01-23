@@ -1,8 +1,0 @@
-{
-  "intent_id": "evidence-final-001",
-  "sla": {
-    "latency": 10,
-    "throughput": 100,
-    "reliability": 0.999
-  }
-}
