@@ -1,0 +1,20 @@
+{
+  "template_id": "sla-template-001",
+  "form_values": {
+    "sla_name": "SLA_URLLC_3",
+    "service_type": "URLLC",
+    "latency_max": 5,
+    "availability_min": 99.99
+  },
+  "sla_requirements": {
+    "service_type": "URLLC",
+    "latency": {
+      "max": 5,
+      "unit": "ms"
+    },
+    "availability": {
+      "min": 99.99,
+      "unit": "percent"
+    }
+  }
+}

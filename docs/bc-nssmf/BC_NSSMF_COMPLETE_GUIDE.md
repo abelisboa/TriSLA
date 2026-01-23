@@ -1,52 +1,52 @@
-# Guia Completo do Módulo BC-NSSMF
+# BC-NSSMF Module Complete Guide
 
-**Versão:** 3.5.0  
-**Data:** 2025-01-27  
-**Módulo:** Blockchain-enabled Network Slice Subnet Management Function
+**Version:** 3.5.0  
+**Date:** 2025-01-27  
+**Module:** Blockchain-enabled Network Slice Subnet Management Function
 
 ---
 
-## 📋 Sumário
+## 📋 Table of Contents
 
-1. [Visão Geral](#visão-geral)
-2. [Arquitetura do Módulo](#arquitetura-do-módulo)
+1. [Overview](#visão-geral)
+2. [Module Architecture](#arquitetura-do-módulo)
 3. [Smart Contracts](#smart-contracts)
-4. [Integração Web3](#integração-web3)
-5. [API REST e gRPC](#api-rest-e-grpc)
-6. [Oracle de Métricas](#oracle-de-métricas)
-7. [Integração com Outros Módulos](#integração-com-outros-módulos)
+4. [Web3 Integration](#integração-web3)
+5. [REST and gRPC API](#api-rest-e-grpc)
+6. [Metrics Oracle](#oracle-de-métricas)
+7. [Integration with Other Modules](#integração-com-outros-módulos)
 8. [Interface I-04 (Kafka)](#interface-i-04-kafka)
-9. [Deploy e Configuração](#deploy-e-configuração)
-10. [Exemplos de Uso](#exemplos-de-uso)
+9. [Deployment and Configuration](#deploy-e-configuração)
+10. [Usage Examples](#exemplos-de-uso)
 11. [Troubleshooting](#troubleshooting)
 
 ---
 
-## 🎯 Visão Geral
+## 🎯 Overview
 
-O **BC-NSSMF (Blockchain-enabled Network Slice Subnet Management Function)** é responsável por registrar SLAs on-chain em uma blockchain permissionada, garantindo imutabilidade, rastreabilidade e execução determinística de regras contratuais.
+The **BC-NSSMF (Blockchain-enabled Network Slice Subnet Management Function)** is responsible for registrar SLAs on-chain em uma blockchain permissionada, ensuring imutabilidade, rastreabilidade e execução determinística de regras contratuais.
 
-### Objetivos
+### Objectives
 
-1. **Registro On-Chain:** Registrar SLAs aprovados pelo Decision Engine na blockchain
-2. **Atualização de Status:** Atualizar status de SLAs (ACTIVE, VIOLATED, TERMINATED)
-3. **Registro de Violações:** Registrar violações de SLA de forma imutável
-4. **Auditoria:** Fornecer auditoria completa via eventos on-chain
-5. **Enforcement:** Executar regras contratuais automaticamente
+1. **On-Chain Registration:** Register approved SLAs pelo Decision Engine on the blockchain
+2. **Status Update:** Update SLA status (ACTIVE, VIOLATED, TERMINATED)
+3. **Violation Registration:** Register SLA violations in an immutable way
+4. **Auditoria:** Provide complete audit via on-chain events
+5. **Enforcement:** Automatically execute contractual rules
 
-### Características Principais
+### Main Features
 
 - **Blockchain:** Hyperledger Besu (Ethereum permissionado)
 - **Smart Contracts:** Solidity 0.8.20
 - **Cliente Web3:** web3.py
-- **Tempo de Confirmação:** < 5 segundos (blockchain local)
-- **Imutabilidade:** Todos os eventos registrados on-chain
+- **Confirmation Time:** < 5 segundos (blockchain local)
+- **Imutabilidade:** All events registered on-chain
 
 ---
 
-## 🏗️ Arquitetura do Módulo
+## 🏗️ Module Architecture
 
-### Estrutura de Diretórios
+### Directory Structure
 
 ```
 apps/bc-nssmf/
@@ -75,7 +75,7 @@ apps/bc-nssmf/
 └── README.md
 ```
 
-### Componentes Principais
+### Main Components
 
 1. **BCService** — Serviço principal de integração Web3
 2. **SmartContractExecutor** — Executor de smart contracts
@@ -83,7 +83,7 @@ apps/bc-nssmf/
 4. **DecisionConsumer** — Consumer Kafka para decisões (I-04)
 5. **SLAContract** — Smart Contract Solidity
 
-### Fluxo de Dados
+### Data Flow
 
 ```
 ┌─────────────────┐
@@ -119,11 +119,11 @@ apps/bc-nssmf/
 
 ### SLAContract.sol
 
-**Localização:** `apps/bc-nssmf/src/contracts/SLAContract.sol`
+**Location:** `apps/bc-nssmf/src/contracts/SLAContract.sol`
 
-**Versão Solidity:** 0.8.20
+**Solidity Version:** 0.8.20
 
-#### Estruturas
+#### Structures
 
 ```solidity
 enum SLAStatus {
@@ -152,25 +152,25 @@ struct SLA {
 }
 ```
 
-#### Funções Principais
+#### Main Functions
 
 1. **`registerSLA()`**
-   - Registra um novo SLA on-chain
-   - Parâmetros: `customer`, `serviceName`, `slaHash`, `slos[]`
-   - Retorna: `slaId` (uint256)
+   - Registers a new SLA on-chain
+   - Parameters: `customer`, `serviceName`, `slaHash`, `slos[]`
+   - Returns: `slaId` (uint256)
    - Evento: `SLARequested`
 
 2. **`updateSLAStatus()`**
-   - Atualiza status de um SLA
-   - Parâmetros: `slaId`, `newStatus`
+   - Updates the status of an SLA
+   - Parameters: `slaId`, `newStatus`
    - Evento: `SLAUpdated`
 
 3. **`getSLA()`**
-   - Consulta dados de um SLA
-   - Parâmetros: `slaId`
-   - Retorna: `customer`, `serviceName`, `status`, `createdAt`, `updatedAt`
+   - Queries SLA data
+   - Parameters: `slaId`
+   - Returns: `customer`, `serviceName`, `status`, `createdAt`, `updatedAt`
 
-#### Eventos
+#### Events
 
 ```solidity
 event SLARequested(uint256 indexed slaId, string customer, string serviceName);
@@ -178,11 +178,11 @@ event SLAUpdated(uint256 indexed slaId, SLAStatus status);
 event SLACompleted(uint256 indexed slaId);
 ```
 
-### Deploy do Contrato
+### Contract Deployment
 
 **Script:** `apps/bc-nssmf/src/deploy_contracts.py`
 
-**Comando:**
+**Command:**
 ```bash
 cd apps/bc-nssmf
 python src/deploy_contracts.py
@@ -204,7 +204,7 @@ python src/deploy_contracts.py
 
 ---
 
-## 🔗 Integração Web3
+## 🔗 Web3 Integration
 
 ### BCService
 
@@ -249,7 +249,7 @@ service = BCService()
 3. **`get_sla()`**
    ```python
    sla_data = service.get_sla(sla_id=1)
-   # Retorna: (customer, serviceName, status, createdAt, updatedAt)
+   # Returns: (customer, serviceName, status, createdAt, updatedAt)
    ```
 
 ### Configuração
@@ -264,7 +264,7 @@ class BCConfig:
 
 ---
 
-## 🌐 API REST e gRPC
+## 🌐 REST and gRPC API
 
 ### API REST
 
@@ -275,16 +275,16 @@ class BCConfig:
 1. **`POST /bc/register`**
    - Registra SLA on-chain
    - Body: `SLARequest`
-   - Retorna: `{"status": "ok", "tx": "0x..."}`
+   - Returns: `{"status": "ok", "tx": "0x..."}`
 
 2. **`POST /bc/update`**
    - Atualiza status de SLA
    - Body: `SLAStatusUpdate`
-   - Retorna: `{"status": "ok", "tx": "0x..."}`
+   - Returns: `{"status": "ok", "tx": "0x..."}`
 
 3. **`GET /bc/{sla_id}`**
    - Consulta SLA
-   - Retorna: Dados do SLA
+   - Returns: Dados do SLA
 
 **Modelos Pydantic:**
 
@@ -315,7 +315,7 @@ class SLAStatusUpdate(BaseModel):
 
 ---
 
-## 🔮 Oracle de Métricas
+## 🔮 Metrics Oracle
 
 ### MetricsOracle
 
@@ -350,7 +350,7 @@ metrics = await metrics_oracle.get_metrics()
 
 ---
 
-## 🔌 Integração com Outros Módulos
+## 🔌 Integration with Other Modules
 
 ### 1. Decision Engine (Interface I-04)
 
@@ -437,13 +437,13 @@ consumer = KafkaConsumer(
 
 ---
 
-## 🚀 Deploy e Configuração
+## 🚀 Deployment and Configuration
 
 ### 1. Iniciar Blockchain Besu
 
 **Docker Compose:** `apps/bc-nssmf/blockchain/besu/docker-compose-besu.yaml`
 
-**Comando:**
+**Command:**
 ```bash
 cd apps/bc-nssmf/blockchain/besu
 docker-compose -f docker-compose-besu.yaml up -d
@@ -456,7 +456,7 @@ curl http://127.0.0.1:8545
 
 ### 2. Deploy do Smart Contract
 
-**Comando:**
+**Command:**
 ```bash
 cd apps/bc-nssmf
 python src/deploy_contracts.py
@@ -489,7 +489,7 @@ KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 
 ### 4. Iniciar Aplicação
 
-**Comando:**
+**Command:**
 ```bash
 cd apps/bc-nssmf
 uvicorn src.main:app --host 0.0.0.0 --port 8083
@@ -502,7 +502,7 @@ curl http://localhost:8083/health
 
 ---
 
-## 💡 Exemplos de Uso
+## 💡 Usage Examples
 
 ### Exemplo 1: Registrar SLA On-Chain
 
@@ -754,8 +754,8 @@ O BC-NSSMF fornece registro on-chain de SLAs com imutabilidade e auditoria compl
 
 - ✅ **Registra SLAs** on-chain após aprovação do Decision Engine
 - ✅ **Atualiza status** de SLAs (ACTIVE, VIOLATED, TERMINATED)
-- ✅ **Registra violações** de forma imutável
-- ✅ **Fornece auditoria** via eventos on-chain
+- ✅ **Registra violações** in an immutable way
+- ✅ **Fornece auditoria** via on-chain events
 - ✅ **Integra-se** com Decision Engine e SLO Reporter
 - ✅ **Observável** via Prometheus e OpenTelemetry
 
