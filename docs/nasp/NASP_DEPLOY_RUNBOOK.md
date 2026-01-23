@@ -50,7 +50,7 @@ read_file
 **Validação:**
 - [ ] Arquivo `tmp/nasp_context_raw.txt` gerado
 - [ ] Arquivo `docs/NASP_CONTEXT_REPORT.md` atualizado
-- [ ] Serviços relevantes identificados (Prometheus, Grafana, Kafka, NASP Adapter, etc.)
+- [ ] Services relevantes identificados (Prometheus, Grafana, Kafka, NASP Adapter, etc.)
 
 **Próximo passo:** Revisar `docs/NASP_CONTEXT_REPORT.md` e identificar endpoints necessários.
 
@@ -69,7 +69,7 @@ cat tmp/nasp_context_raw.txt
 
 **Validação:**
 - [ ] Namespaces relevantes identificados
-- [ ] Serviços NASP mapeados (RAN, Transport, Core)
+- [ ] Services NASP mapeados (RAN, Transport, Core)
 - [ ] Problemas de saúde identificados (se houver)
 
 **Próximo passo:** Preencher `values-nasp.yaml` com endpoints descobertos.
@@ -111,11 +111,11 @@ helm template trisla ./helm/trisla \
 
 ### Passo 4: Auditar Imagens GHCR
 
-**Objetivo:** Verificar se todas as imagens necessárias estão disponíveis no GHCR.
+**Objetivo:** Verifiesr se todas as imagens necessárias estão disponíveis no GHCR.
 
 **Execução:**
 ```bash
-# Verificar imagens GHCR disponíveis
+# Verifiesr imagens GHCR disponíveis
 # Revisar: docs/ghcr/IMAGES_GHCR_MATRIX.md
 # Testar pull de imagens críticas:
 docker pull ghcr.io/abelisboa/trisla-sem-csmf:latest
@@ -186,10 +186,10 @@ kubectl create secret docker-registry ghcr-secret \
 
 **Validação:**
 ```bash
-# Verificar namespace
+# Verifiesr namespace
 kubectl get namespace trisla
 
-# Verificar secret
+# Verifiesr secret
 kubectl get secret ghcr-secret -n trisla
 ```
 
@@ -217,17 +217,17 @@ helm upgrade --install trisla ./helm/trisla \
 
 **Validação:**
 ```bash
-# Verificar pods
+# Verifiesr pods
 kubectl get pods -n trisla
 
-# Verificar serviços
+# Verifiesr serviços
 kubectl get svc -n trisla
 
-# Verificar deployments
+# Verifiesr deployments
 kubectl get deployments -n trisla
 ```
 
-**Aguardar:**
+**Waitsr:**
 - Todos os pods em status `Running`
 - Readiness probes passando
 - Liveness probes passando
@@ -284,11 +284,11 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
   kafka-topics --list --bootstrap-server localhost:9092
 ```
 
-**Próximo passo:** Verificar observabilidade.
+**Próximo passo:** Verifiesr observabilidade.
 
 ---
 
-### Passo 9: Verificar Observabilidade
+### Passo 9: Verifiesr Observabilidade
 
 **Objetivo:** Confirmar que métricas e traces estão sendo coletados.
 
@@ -362,7 +362,7 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
        }'
    ```
 
-2. **Verificar mensagens Kafka (I-02):**
+2. **Verifiesr mensagens Kafka (I-02):**
    ```bash
    kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
      kafka-console-consumer \
@@ -372,7 +372,7 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
        --max-messages 1
    ```
 
-3. **Verificar mensagens Kafka (I-03):**
+3. **Verifiesr mensagens Kafka (I-03):**
    ```bash
    kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
      kafka-console-consumer \
@@ -382,7 +382,7 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
        --max-messages 1
    ```
 
-4. **Verificar mensagens Kafka (I-04):**
+4. **Verifiesr mensagens Kafka (I-04):**
    ```bash
    kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
      kafka-console-consumer \
@@ -392,7 +392,7 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
        --max-messages 1
    ```
 
-5. **Verificar mensagens Kafka (I-06):**
+5. **Verifiesr mensagens Kafka (I-06):**
    ```bash
    kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
      kafka-console-consumer \
@@ -402,7 +402,7 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
        --max-messages 1
    ```
 
-3. **Verificar registro na blockchain:**
+3. **Verifiesr registro na blockchain:**
    ```bash
    kubectl logs -n trisla <bc-nssmf-pod> | grep "SLA registrado"
    ```
@@ -440,10 +440,10 @@ kubectl get all -n trisla
 
 **Solução:**
 ```bash
-# Verificar secret
+# Verifiesr secret
 kubectl get secret ghcr-secret -n trisla
 
-# Verificar se imagem existe
+# Verifiesr se imagem existe
 docker pull ghcr.io/<GHCR_USER>/trisla-sem-csmf:latest
 
 # Recriar secret se necessário
@@ -468,13 +468,13 @@ kubectl logs -n trisla <pod-name> --previous
 kubectl describe pod -n trisla <pod-name>
 ```
 
-#### 3. Serviços não acessíveis
+#### 3. Services não acessíveis
 
 **Causa:** Network Policies ou configuração de rede incorreta.
 
 **Solução:**
 ```bash
-# Verificar Network Policies
+# Verifiesr Network Policies
 kubectl get networkpolicies -n trisla
 
 # Testar conectividade entre pods
@@ -518,8 +518,8 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 
 4. **Validação Pós-Deploy:**
    - Executar `ansible-playbook -i inventory.yaml playbooks/validate-cluster.yml`
-   - Verificar health checks de todos os módulos
-   - Verificar observabilidade (Prometheus/Grafana)
+   - Verifiesr health checks de todos os módulos
+   - Verifiesr observabilidade (Prometheus/Grafana)
 
 ---
 

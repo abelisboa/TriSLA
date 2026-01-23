@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-This document provides a complete guide for developers who want to contribute to the project **TriSLA** (Triple-SLA). O TriSLA é uma plataforma de gerenciamento de SLA para redes 5G/O-RAN baseada em microserviços, utilizando Python, gRPC, Kafka, blockchain e integração com NASP.
+This document provides a complete guide for developers who want to contribute to the project **TriSLA** (Triple-SLA). O TriSLA é uma plataforma de gerenciamento de SLA para redes 5G/O-RAN baseada em microserviços, utilizando Python, gRPC, Kafka, blockchain e integration com NASP.
 
 **Objectives of this guide:**
 
@@ -238,7 +238,7 @@ sphinx-rtd-theme==1.3.0
 
 ### 4.3 Docker Setup
 
-**Verificar instalação:**
+**Verifiesr instalação:**
 
 ```bash
 docker --version
@@ -264,7 +264,7 @@ docker build -t ghcr.io/abelisboa/trisla-sem-csmf:dev .
 # Iniciar apenas infraestrutura (PostgreSQL, Kafka, Prometheus, etc.)
 docker compose up -d postgres kafka zookeeper prometheus grafana otlp-collector
 
-# Verificar status
+# Verifiesr status
 docker compose ps
 
 # Ver logs
@@ -407,7 +407,7 @@ docker compose up -d ml-nsmf
 # Health check
 curl http://localhost:8081/health
 
-# Enviar NEST para predição
+# Sendsr NEST para predição
 curl -X POST http://localhost:8081/api/v1/nest \
   -H "Content-Type: application/json" \
   -d @examples/nest_example.json
@@ -425,7 +425,7 @@ curl -X POST http://localhost:8081/api/v1/nest \
 # Iniciar stack completo
 docker compose up -d
 
-# Verificar status de todos os serviços
+# Verifiesr status de todos os serviços
 docker compose ps
 
 # Ver logs de todos os serviços
@@ -440,7 +440,7 @@ docker compose down -v
 
 ### 5.2 Explicação do docker-compose.yml
 
-**Serviços de infraestrutura:**
+**Services de infraestrutura:**
 
 ```yaml
 postgres:
@@ -487,7 +487,7 @@ grafana:
   # Uso: Visualização de métricas e dashboards
 ```
 
-**Serviços TriSLA:**
+**Services TriSLA:**
 
 ```yaml
 sem-csmf:
@@ -566,7 +566,7 @@ EOF
 docker compose up -d
 ```
 
-### 5.4 Dependências entre Serviços
+### 5.4 Dependências entre Services
 
 **Ordem de inicialização:**
 
@@ -591,7 +591,7 @@ docker compose up -d
 **Health checks:**
 
 ```bash
-# Verificar saúde de todos os serviços
+# Verifiesr saúde de todos os serviços
 docker compose ps
 
 # Health check manual
@@ -714,7 +714,7 @@ black src/main.py
 # Formatar diretório
 black apps/sem-csmf/src
 
-# Verificar sem modificar
+# Verifiesr sem modificar
 black --check apps/sem-csmf/src
 
 # Formatar todos os módulos
@@ -749,7 +749,7 @@ skip_glob = ["*/migrations/*", "*/__pycache__/*"]
 # Ordenar imports
 isort src/main.py
 
-# Verificar sem modificar
+# Verifiesr sem modificar
 isort --check-only src/
 
 # Ordenar todos os módulos
@@ -912,7 +912,7 @@ tests/
 │   ├── test_sem_csmf.py
 │   ├── test_ml_nsmf.py
 │   └── test_decision_engine.py
-├── integration/             # Testes de integração
+├── integration/             # Testes de integration
 │   ├── test_grpc_communication.py
 │   ├── test_kafka_flow.py
 │   └── test_module_integration.py
@@ -1029,13 +1029,13 @@ def test_send_nest_metadata(grpc_stub):
     assert response.decision_id is not None
 ```
 
-**Executar testes de integração:**
+**Executar testes de integration:**
 
 ```bash
 # Requer serviços rodando (Docker Compose)
 docker compose up -d
 
-# Executar testes de integração
+# Executar testes de integration
 pytest tests/integration/ -v
 
 # Com marcadores
@@ -1079,10 +1079,10 @@ def test_full_workflow(base_urls):
     intent_data = intent_response.json()
     intent_id = intent_data["intent_id"]
     
-    # 2. Aguardar geração de NEST
+    # 2. Waitsr geração de NEST
     time.sleep(2)
     
-    # 3. Verificar NEST gerado
+    # 3. Verifiesr NEST gerado
     nest_response = requests.get(
         f"{base_urls['sem_csmf']}/api/v1/nests/{intent_id}"
     )
@@ -1090,13 +1090,13 @@ def test_full_workflow(base_urls):
     nest_data = nest_response.json()
     nest_id = nest_data["nest_id"]
     
-    # 4. Verificar predição ML
+    # 4. Verifiesr predição ML
     prediction_response = requests.get(
         f"{base_urls['ml_nsmf']}/api/v1/predictions/{nest_id}"
     )
     assert prediction_response.status_code == 200
     
-    # 5. Verificar decisão
+    # 5. Verifiesr decisão
     decision_response = requests.get(
         f"{base_urls['decision_engine']}/api/v1/decisions/{intent_id}"
     )
@@ -1104,7 +1104,7 @@ def test_full_workflow(base_urls):
     decision_data = decision_response.json()
     assert decision_data["decision"] in ["ACCEPT", "REJECT", "RENEGOTIATE"]
     
-    # 6. Verificar registro em blockchain (se ACCEPT)
+    # 6. Verifiesr registro em blockchain (se ACCEPT)
     if decision_data["decision"] == "ACCEPT":
         blockchain_response = requests.get(
             f"{base_urls['bc_nssmf']}/api/v1/slas/{intent_id}"
@@ -1162,7 +1162,7 @@ def test_unit():
 
 @pytest.mark.integration
 def test_integration():
-    """Teste de integração"""
+    """Teste de integration"""
     pass
 
 @pytest.mark.e2e
@@ -1178,7 +1178,7 @@ def test_e2e():
 # Apenas testes unitários
 pytest -m unit
 
-# Apenas testes de integração
+# Apenas testes de integration
 pytest -m integration
 
 # Apenas testes E2E
@@ -1312,13 +1312,13 @@ EXPOSE 8080
 CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
 ```
 
-### 9.5 Verificar Imagens
+### 9.5 Verifiesr Imagens
 
 ```bash
 # Listar imagens locais
 docker images | grep trisla
 
-# Verificar imagem no GHCR
+# Verifiesr imagem no GHCR
 curl -H "Authorization: Bearer $GITHUB_TOKEN" \
   https://api.github.com/user/packages?package_type=container
 
@@ -1560,7 +1560,7 @@ Como testar as mudanças:
 
 ### 11.4 Revisão e Merge
 
-**Processo:**
+**Process:**
 
 1. **CI deve passar**: Todos os checks devem estar verdes
 2. **Code review**: Pelo menos 1 aprovação necessária
@@ -1676,7 +1676,7 @@ def process_intent(intent):
 
 ### 13.2 Logging
 
-**Configuração:**
+**Configuration:**
 
 ```python
 import logging
@@ -1752,7 +1752,7 @@ kafkacat -b localhost:29092 -L
 
 ### 13.6 Network Debug
 
-**Verificar conectividade:**
+**Verifiesr conectividade:**
 
 ```bash
 # Testar conexão
@@ -1761,7 +1761,7 @@ curl http://localhost:8080/health
 # Testar gRPC
 grpcurl -plaintext localhost:50051 list
 
-# Verificar portas
+# Verifiesr portas
 netstat -tulpn | grep -E '8080|50051|29092'
 
 # Ou com ss
@@ -1781,7 +1781,7 @@ ss -tulpn | grep -E '8080|50051|29092'
 # Inicia ambiente local completo
 
 docker compose up -d
-echo "✅ Serviços iniciados"
+echo "✅ Services iniciados"
 echo "📊 Grafana: http://localhost:3000"
 echo "📈 Prometheus: http://localhost:9090"
 ```
@@ -1938,7 +1938,7 @@ helm upgrade --install trisla ./helm/trisla \
 **Validação:**
 - Health checks de todos os módulos
 - Teste E2E no cluster NASP
-- Verificação de conectividade com NASP
+- Verifiesção de conectividade com NASP
 
 ### 12.3 Diferenças entre Local e NASP
 
@@ -1955,21 +1955,21 @@ helm upgrade --install trisla ./helm/trisla \
 
 **Problemas comuns:**
 
-1. **Serviços não iniciam:**
-   - Verificar logs: `docker compose logs <service-name>`
-   - Verificar dependências no `docker-compose.yml`
+1. **Services não iniciam:**
+   - Verifiesr logs: `docker compose logs <service-name>`
+   - Verifiesr dependências no `docker-compose.yml`
 
 2. **Kafka topics não criados:**
    - Executar manualmente: `docker exec trisla-kafka kafka-topics --create ...`
 
 3. **Besu não conecta:**
-   - Verificar se Besu está rodando: `curl http://localhost:8545`
-   - Verificar variáveis de ambiente: `BESU_RPC_URL`, `BESU_CHAIN_ID`
+   - Verifiesr se Besu está rodando: `curl http://localhost:8545`
+   - Verifiesr variáveis de ambiente: `BESU_RPC_URL`, `BESU_CHAIN_ID`
 
 4. **Testes E2E falham:**
-   - Verificar se todos os serviços estão saudáveis
-   - Verificar logs dos módulos
-   - Verificar mensagens no Kafka
+   - Verifiesr se todos os serviços estão saudáveis
+   - Verifiesr logs dos módulos
+   - Verifiesr mensagens no Kafka
 
 ---
 

@@ -61,7 +61,7 @@ kubectl get namespaces
 
 ## 2. Descoberta de Endpoints NASP
 
-### 2.1 Identificar Serviços NASP
+### 2.1 Identificar Services NASP
 
 Execute o script de descoberta (se disponível):
 ```bash
@@ -114,7 +114,7 @@ Preencher em `helm/trisla/values-nasp.yaml`:
   - `<UPF_SERVICE>`, `<CORE_NAMESPACE>`, `<UPF_PORT>` → Valores reais
   - `<TRANSPORT_SERVICE>`, `<TRANSPORT_NAMESPACE>`, `<TRANSPORT_PORT>` → Valores reais
 
-- [ ] **Verificar imagens GHCR:**
+- [ ] **Verifiesr imagens GHCR:**
   - Todas as imagens apontam para `ghcr.io/abelisboa/trisla-*:latest` ou versão específica
   - Secret `ghcr-secret` está configurado corretamente
 
@@ -141,7 +141,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
   ./scripts/pre-flight-check.sh
   ```
 
-- [ ] **Verificar recursos disponíveis:**
+- [ ] **Verifiesr recursos disponíveis:**
   ```bash
   kubectl top nodes
   kubectl describe node <node1-name>
@@ -165,20 +165,20 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
     --timeout 15m
   ```
 
-### 4.3 Verificar Deploy
+### 4.3 Verifiesr Deploy
 
-- [ ] **Verificar pods:**
+- [ ] **Verifiesr pods:**
   ```bash
   kubectl get pods -n trisla
   kubectl get pods -n trisla -w  # Watch mode
   ```
 
-- [ ] **Verificar serviços:**
+- [ ] **Verifiesr serviços:**
   ```bash
   kubectl get svc -n trisla
   ```
 
-- [ ] **Verificar deployments:**
+- [ ] **Verifiesr deployments:**
   ```bash
   kubectl get deployments -n trisla
   kubectl get statefulsets -n trisla
@@ -228,7 +228,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ### 5.2 Kafka Topics
 
-- [ ] **Verificar tópicos criados:**
+- [ ] **Verifiesr tópicos criados:**
   ```bash
   kubectl exec -n trisla <kafka-pod> -- kafka-topics --list --bootstrap-server localhost:9092
   ```
@@ -257,7 +257,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ### 5.4 Blockchain (Besu)
 
-- [ ] **Verificar conexão Besu:**
+- [ ] **Verifiesr conexão Besu:**
   ```bash
   kubectl exec -n trisla <bc-nssmf-pod> -- \
     curl -X POST http://<BESU_RPC_URL> \
@@ -265,7 +265,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
       -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
   ```
 
-- [ ] **Verificar contrato deployado:**
+- [ ] **Verifiesr contrato deployado:**
   ```bash
   kubectl exec -n trisla <bc-nssmf-pod> -- cat /app/src/contracts/contract_address.json
   ```
@@ -284,7 +284,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
   # Acessar http://localhost:3000 (admin/admin)
   ```
 
-- [ ] **Verificar métricas:**
+- [ ] **Verifiesr métricas:**
   - `trisla_intents_total`
   - `trisla_decisions_total`
   - `trisla_sla_registrations_total`
@@ -315,7 +315,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ### 6.2 Validar Fluxo Completo
 
-- [ ] **Verificar mensagem I-02 (Kafka):**
+- [ ] **Verifiesr mensagem I-02 (Kafka):**
   ```bash
   kubectl exec -n trisla <kafka-pod> -- kafka-console-consumer \
     --bootstrap-server localhost:9092 \
@@ -324,7 +324,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
     --max-messages 1
   ```
 
-- [ ] **Verificar mensagem I-03 (Kafka):**
+- [ ] **Verifiesr mensagem I-03 (Kafka):**
   ```bash
   kubectl exec -n trisla <kafka-pod> -- kafka-console-consumer \
     --bootstrap-server localhost:9092 \
@@ -333,7 +333,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
     --max-messages 1
   ```
 
-- [ ] **Verificar mensagem I-04 (Kafka):**
+- [ ] **Verifiesr mensagem I-04 (Kafka):**
   ```bash
   kubectl exec -n trisla <kafka-pod> -- kafka-console-consumer \
     --bootstrap-server localhost:9092 \
@@ -342,7 +342,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
     --max-messages 1
   ```
 
-- [ ] **Verificar registro na blockchain:**
+- [ ] **Verifiesr registro na blockchain:**
   ```bash
   kubectl logs -n trisla <bc-nssmf-pod> | grep "SLA registrado"
   ```
@@ -353,19 +353,19 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ### 7.1 Pods em CrashLoopBackOff
 
-- [ ] **Verificar logs:**
+- [ ] **Verifiesr logs:**
   ```bash
   kubectl logs -n trisla <pod-name> --previous
   ```
 
-- [ ] **Verificar eventos:**
+- [ ] **Verifiesr eventos:**
   ```bash
   kubectl describe pod -n trisla <pod-name>
   ```
 
 ### 7.2 Problemas de Conectividade
 
-- [ ] **Verificar Network Policies:**
+- [ ] **Verifiesr Network Policies:**
   ```bash
   kubectl get networkpolicies -n trisla
   ```
@@ -377,12 +377,12 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ### 7.3 Problemas com Kafka
 
-- [ ] **Verificar estado do Kafka:**
+- [ ] **Verifiesr estado do Kafka:**
   ```bash
   kubectl exec -n trisla <kafka-pod> -- kafka-broker-api-versions --bootstrap-server localhost:9092
   ```
 
-- [ ] **Verificar tópicos:**
+- [ ] **Verifiesr tópicos:**
   ```bash
   kubectl exec -n trisla <kafka-pod> -- kafka-topics --list --bootstrap-server localhost:9092
   ```

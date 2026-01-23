@@ -19,7 +19,7 @@ O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambi
 ### Escopo
 
 - **Ambiente:** Cluster Kubernetes NASP (2 nodes: node1 e node2)
-- **Método:** Deploy local no node1 (127.0.0.1), sem SSH
+- **Method:** Deploy local no node1 (127.0.0.1), sem SSH
 - **Ferramentas:** Ansible, Helm, kubectl
 - **Namespace:** `trisla`
 - **Release Helm:** `trisla`
@@ -42,7 +42,7 @@ O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambi
 
 | Componente | Valor | Descrição |
 |------------|-------|-----------|
-| **Interface Principal** | `my5g` | Interface de rede física do NASP |
+| **Interface Main** | `my5g` | Interface de rede física do NASP |
 | **Node1 IP** | `192.168.10.16` | IP do node1 (control plane + worker) |
 | **Node2 IP** | `192.168.10.15` | IP do node2 (control plane + worker) |
 | **Gateway** | `192.168.10.1` | Gateway padrão da rede |
@@ -414,7 +414,7 @@ resources:
 
 #### Dependências
 
-- **NASP Services** — Serviços reais do NASP (RAN, Transport, Core)
+- **NASP Services** — Services reais do NASP (RAN, Transport, Core)
 - **Kafka** — Comunicação com SLA-Agent Layer (I-06)
 - **Decision Engine** — Comunicação REST (I-07)
 - **OpenTelemetry Collector** — Observabilidade
@@ -649,14 +649,14 @@ node2:
 **Propósito:** Validações pré-deploy do cluster NASP
 
 **Fases Internas:**
-1. Verificar versão do Kubernetes
-2. Verificar certificados do cluster
-3. Verificar DNS interno
-4. Verificar autenticação GHCR
-5. Verificar suporte a NetworkPolicy
-6. Verificar saúde do Calico
-7. Verificar Helm
-8. Verificar StorageClass
+1. Verifiesr versão do Kubernetes
+2. Verifiesr certificados do cluster
+3. Verifiesr DNS interno
+4. Verifiesr autenticação GHCR
+5. Verifiesr suporte a NetworkPolicy
+6. Verifiesr saúde do Calico
+7. Verifiesr Helm
+8. Verifiesr StorageClass
 
 **Roles Chamadas:** Nenhuma (tasks diretos)
 
@@ -703,9 +703,9 @@ node2:
 4. Validar Helm chart
 5. Dry-run do deploy
 6. Deploy real do TriSLA
-7. Verificar status do deploy
-8. Aguardar pods estarem prontos
-9. Verificar serviços
+7. Verifiesr status do deploy
+8. Waitsr pods estarem prontos
+9. Verifiesr serviços
 10. Validar deploy
 
 **Roles Chamadas:** Nenhuma (tasks diretos)
@@ -726,12 +726,12 @@ node2:
 **Propósito:** Validação pós-deploy do cluster TriSLA
 
 **Fases Internas:**
-1. Verificar pods em Running
-2. Verificar readiness probes
-3. Verificar liveness probes
-4. Verificar serviços
-5. Verificar health checks
-6. Verificar conectividade entre módulos
+1. Verifiesr pods em Running
+2. Verifiesr readiness probes
+3. Verifiesr liveness probes
+4. Verifiesr serviços
+5. Verifiesr health checks
+6. Verifiesr conectividade entre módulos
 
 **Roles Chamadas:** Nenhuma (tasks diretos)
 
@@ -754,8 +754,8 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 **Tasks:**
 - Deploy Helm chart para SEM-CSMF
-- Verificar pods
-- Verificar serviços
+- Verifiesr pods
+- Verifiesr serviços
 - Validar health checks
 
 ---
@@ -766,8 +766,8 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 **Tasks:**
 - Deploy Helm chart para ML-NSMF
-- Verificar pods
-- Verificar serviços
+- Verifiesr pods
+- Verifiesr serviços
 - Validar health checks
 
 ---
@@ -778,8 +778,8 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 **Tasks:**
 - Deploy Helm chart para BC-NSSMF
-- Verificar pods
-- Verificar serviços
+- Verifiesr pods
+- Verifiesr serviços
 - Validar health checks
 
 ---
@@ -790,8 +790,8 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 **Tasks:**
 - Deploy Helm chart para Decision Engine
-- Verificar pods
-- Verificar serviços
+- Verifiesr pods
+- Verifiesr serviços
 - Validar health checks
 
 ---
@@ -802,8 +802,8 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 **Tasks:**
 - Deploy Helm chart para SLA-Agent Layer
-- Verificar DaemonSet
-- Verificar pods em cada node
+- Verifiesr DaemonSet
+- Verifiesr pods em cada node
 - Validar health checks
 
 ---
@@ -814,8 +814,8 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 **Tasks:**
 - Deploy Helm chart para Backend
-- Verificar pods
-- Verificar serviços
+- Verifiesr pods
+- Verifiesr serviços
 - Validar health checks
 
 ---
@@ -826,8 +826,8 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 **Tasks:**
 - Deploy Helm chart para UI Dashboard
-- Verificar pods
-- Verificar serviços
+- Verifiesr pods
+- Verifiesr serviços
 - Validar health checks
 
 ---
@@ -845,12 +845,12 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 ## 5. Preparação Manual (Somente no node1)
 
-### 5.1 Verificação da Saúde do Cluster
+### 5.1 Verifiesção da Saúde do Cluster
 
 **Executar localmente no node1:**
 
 ```bash
-# Verificar nodes
+# Verifiesr nodes
 kubectl get nodes
 
 # Saída esperada:
@@ -858,10 +858,10 @@ kubectl get nodes
 # node1    Ready    control-plane   30d   v1.26.0
 # node2    Ready    control-plane   30d   v1.26.0
 
-# Verificar pods do sistema
+# Verifiesr pods do sistema
 kubectl get pods -A
 
-# Verificar pods do Calico
+# Verifiesr pods do Calico
 kubectl get pods -n kube-system -l k8s-app=calico-node
 
 # Saída esperada:
@@ -875,13 +875,13 @@ kubectl get pods -n kube-system -l k8s-app=calico-node
 ### 5.2 Validação CNI (Calico)
 
 ```bash
-# Verificar status do Calico
+# Verifiesr status do Calico
 kubectl get nodes -o wide
 
-# Verificar Network Policies
+# Verifiesr Network Policies
 kubectl get networkpolicies --all-namespaces
 
-# Verificar conectividade entre pods
+# Verifiesr conectividade entre pods
 kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup kubernetes.default
 ```
 
@@ -890,19 +890,19 @@ kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup kubern
 ### 5.3 Validação kubelet / kube-proxy
 
 ```bash
-# Verificar kubelet
+# Verifiesr kubelet
 systemctl status kubelet
 
-# Verificar kube-proxy
+# Verifiesr kube-proxy
 kubectl get pods -n kube-system -l k8s-app=kube-proxy
 
-# Verificar logs do kubelet (se necessário)
+# Verifiesr logs do kubelet (se necessário)
 journalctl -u kubelet -f
 ```
 
 ---
 
-### 5.4 Verificação de StorageClass
+### 5.4 Verifiesção de StorageClass
 
 ```bash
 # Listar StorageClasses
@@ -912,10 +912,10 @@ kubectl get storageclass
 # NAME          PROVISIONER       RECLAIMPOLICY   VOLUMEBINDINGMODE   AGE
 # local-path    rancher.io/local-path   Delete         WaitForFirstConsumer   30d
 
-# Verificar StorageClass padrão
+# Verifiesr StorageClass padrão
 kubectl get storageclass -o jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}'
 
-# Verificar volumes persistentes
+# Verifiesr volumes persistentes
 kubectl get pv
 kubectl get pvc --all-namespaces
 ```
@@ -927,13 +927,13 @@ kubectl get pvc --all-namespaces
 **Executar no node1:**
 
 ```bash
-# Verificar portas em uso
+# Verifiesr portas em uso
 ss -tulnp | grep -E "8080|8081|8082|8083|8084|8085|50051|9090|3000|4317|9092"
 
-# Verificar portas dos serviços Kubernetes
+# Verifiesr portas dos serviços Kubernetes
 kubectl get svc --all-namespaces | grep -E "8080|8081|8082|8083|8084|8085|50051"
 
-# Verificar NodePorts (se aplicável)
+# Verifiesr NodePorts (se aplicável)
 kubectl get svc --all-namespaces -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.type}{"\t"}{.spec.ports[*].port}{"\n"}{end}' | grep NodePort
 ```
 
@@ -948,7 +948,7 @@ kubectl run test-dns --image=busybox --rm -it --restart=Never -- nslookup kubern
 # Testar DNS de serviços
 kubectl run test-dns-service --image=busybox --rm -it --restart=Never -- nslookup kube-dns.kube-system.svc.cluster.local
 
-# Verificar CoreDNS
+# Verifiesr CoreDNS
 kubectl get pods -n kube-system -l k8s-app=kube-dns
 ```
 
@@ -957,13 +957,13 @@ kubectl get pods -n kube-system -l k8s-app=kube-dns
 ### 5.7 Validação de Recursos node1 e node2
 
 ```bash
-# Verificar recursos do node1
+# Verifiesr recursos do node1
 kubectl describe node node1 | grep -A 10 "Allocated resources"
 
-# Verificar recursos do node2
+# Verifiesr recursos do node2
 kubectl describe node node2 | grep -A 10 "Allocated resources"
 
-# Verificar capacidade total
+# Verifiesr capacidade total
 kubectl top nodes
 ```
 
@@ -1057,7 +1057,7 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/deploy-trisla-nasp.
 - Helm chart validado
 - Deploy executado com sucesso
 - Pods em status `Running`
-- Serviços criados
+- Services criados
 - Readiness probes passando
 
 ---
@@ -1073,7 +1073,7 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/validate-cluster.ym
 - Todos os pods em `Running`
 - Readiness probes passando
 - Liveness probes passando
-- Serviços acessíveis
+- Services acessíveis
 - Health checks respondendo
 
 ---
@@ -1104,7 +1104,7 @@ A ordem de instalação dos módulos é gerenciada pelo Helm chart, mas a sequê
 - ConfigMap: `trisla-config`
 - Secret: `ghcr-secret` (referenciado)
 
-**Comando de Verificação:**
+**Comando de Verifiesção:**
 ```bash
 kubectl get pods,svc,configmap -n trisla -l app.kubernetes.io/component=sem-csmf
 ```
@@ -1133,7 +1133,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=sem-csmf
 - ConfigMap: `trisla-config`
 - PVC: `ml-nsmf-models` (se aplicável)
 
-**Comando de Verificação:**
+**Comando de Verifiesção:**
 ```bash
 kubectl get pods,svc,pvc -n trisla -l app.kubernetes.io/component=ml-nsmf
 ```
@@ -1161,7 +1161,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=ml-nsmf
 - ConfigMap: `trisla-config`, `besu-config`
 - PVC: `bc-nssmf-contracts` (se aplicável)
 
-**Comando de Verificação:**
+**Comando de Verifiesção:**
 ```bash
 kubectl get pods,svc,pvc -n trisla -l app.kubernetes.io/component=bc-nssmf
 ```
@@ -1188,7 +1188,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=bc-nssmf
 - Service: `trisla-decision-engine-grpc` (ClusterIP, port 50051)
 - ConfigMap: `trisla-config`, `decision-rules`
 
-**Comando de Verificação:**
+**Comando de Verifiesção:**
 ```bash
 kubectl get pods,svc,configmap -n trisla -l app.kubernetes.io/component=decision-engine
 ```
@@ -1215,7 +1215,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=decision-engine
 - Service: `trisla-sla-agent-layer` (ClusterIP, port 8084)
 - ConfigMap: `trisla-config`, `slo-config-ran`, `slo-config-transport`, `slo-config-core`
 
-**Comando de Verificação:**
+**Comando de Verifiesção:**
 ```bash
 kubectl get daemonset,pods,svc -n trisla -l app.kubernetes.io/component=sla-agent-layer
 ```
@@ -1242,7 +1242,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=sla-agent-layer
 - ConfigMap: `trisla-config`, `nasp-endpoints`
 - Secret: `nasp-oauth2-secret` (se aplicável)
 
-**Comando de Verificação:**
+**Comando de Verifiesção:**
 ```bash
 kubectl get pods,svc,configmap -n trisla -l app.kubernetes.io/component=nasp-adapter
 ```
@@ -1269,7 +1269,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=nasp-adapter
 - Ingress: `trisla-ingress` (se configurado)
 - ConfigMap: `trisla-config`, `ui-config`
 
-**Comando de Verificação:**
+**Comando de Verifiesção:**
 ```bash
 kubectl get pods,svc,ingress -n trisla -l app.kubernetes.io/component=ui-dashboard
 ```
@@ -1443,7 +1443,7 @@ curl http://localhost:8084/health
 
 **Teste de SLO:**
 ```bash
-# Verificar SLO
+# Verifiesr SLO
 curl http://localhost:8084/agents/slo?domain=RAN
 
 # Resposta esperada:
@@ -1493,13 +1493,13 @@ INTENT_RESPONSE=$(curl -X POST http://localhost:8080/api/v1/intents \
     }
   }')
 
-# 2. Verificar NEST gerado
+# 2. Verifiesr NEST gerado
 NEST_ID=$(echo $INTENT_RESPONSE | jq -r '.nest_id')
 
-# 3. Verificar predição ML-NSMF (via Kafka)
-# (Aguardar processamento assíncrono)
+# 3. Verifiesr predição ML-NSMF (via Kafka)
+# (Waitsr processamento assíncrono)
 
-# 4. Verificar decisão Decision Engine
+# 4. Verifiesr decisão Decision Engine
 DECISION_RESPONSE=$(curl -X POST http://localhost:8082/decision/evaluate \
   -H "Content-Type: application/json" \
   -d "{
@@ -1510,14 +1510,14 @@ DECISION_RESPONSE=$(curl -X POST http://localhost:8082/decision/evaluate \
     }
   }")
 
-# 5. Verificar registro BC-NSSMF (via Kafka)
-# (Aguardar processamento assíncrono)
+# 5. Verifiesr registro BC-NSSMF (via Kafka)
+# (Waitsr processamento assíncrono)
 
-# 6. Verificar SLA-Agent Layer
+# 6. Verifiesr SLA-Agent Layer
 SLA_RESPONSE=$(curl http://localhost:8084/agents/slo?domain=RAN)
 
-# 7. Verificar observabilidade (Prometheus)
-# (Aguardar coleta de métricas)
+# 7. Verifiesr observabilidade (Prometheus)
+# (Waitsr coleta de métricas)
 ```
 
 **Validação Esperada:**
@@ -1549,7 +1549,7 @@ kubectl port-forward -n monitoring svc/grafana 3000:3000 &
 - **Decision Engine Metrics** — Métricas de decisões
 - **BC-NSSMF Metrics** — Métricas de blockchain
 - **SLA-Agent Layer Metrics** — Métricas de SLOs por domínio
-- **NASP Adapter Metrics** — Métricas de integração NASP
+- **NASP Adapter Metrics** — Métricas de integration NASP
 
 **Validação:**
 - [ ] Dashboards carregados
@@ -1561,16 +1561,16 @@ kubectl port-forward -n monitoring svc/grafana 3000:3000 &
 
 ### 7.4 Validação de Ingestão OTLP
 
-**Verificar OpenTelemetry Collector:**
+**Verifiesr OpenTelemetry Collector:**
 ```bash
-# Verificar pods do OTLP Collector
+# Verifiesr pods do OTLP Collector
 kubectl get pods -n trisla -l app.kubernetes.io/component=otel-collector
 
-# Verificar logs
+# Verifiesr logs
 kubectl logs -n trisla -l app.kubernetes.io/component=otel-collector --tail=100
 
-# Verificar métricas no Prometheus
-# (Aguardar coleta)
+# Verifiesr métricas no Prometheus
+# (Waitsr coleta)
 ```
 
 **Validação Esperada:**
@@ -1581,11 +1581,11 @@ kubectl logs -n trisla -l app.kubernetes.io/component=otel-collector --tail=100
 
 ---
 
-### 7.5 Validação Final dos Pods e Serviços
+### 7.5 Validação Final dos Pods e Services
 
 **Comando Completo:**
 ```bash
-# Verificar todos os pods
+# Verifiesr todos os pods
 kubectl get pods -n trisla
 
 # Saída esperada:
@@ -1607,13 +1607,13 @@ kubectl get pods -n trisla
 # trisla-ui-dashboard-xxxxx-xxxxx         1/1     Running   0          10m
 # trisla-ui-dashboard-yyyyy-yyyyy         1/1     Running   0          10m
 
-# Verificar todos os serviços
+# Verifiesr todos os serviços
 kubectl get svc -n trisla
 
-# Verificar deployments
+# Verifiesr deployments
 kubectl get deployments -n trisla
 
-# Verificar daemonset
+# Verifiesr daemonset
 kubectl get daemonset -n trisla
 ```
 
@@ -1756,7 +1756,7 @@ kubectl get daemonset -n trisla
          │ I-06 (Kafka)
          ▼
 ┌─────────────────┐
-│ NASP Adapter    │  • Conecta a serviços reais do NASP
+│ NASP Adapter    │  • Connects a serviços reais do NASP
 │                 │  • Provisiona slices
 │                 │  • Coleta métricas
 └────────┬────────┘
@@ -1788,12 +1788,12 @@ kubectl get daemonset -n trisla
 
 1. PREPARAÇÃO (node1)
    │
-   ├─► Verificar cluster Kubernetes
-   ├─► Verificar CNI Calico
-   ├─► Verificar StorageClass
-   ├─► Verificar DNS interno
-   ├─► Verificar recursos (CPU, memória)
-   └─► Verificar portas livres
+   ├─► Verifiesr cluster Kubernetes
+   ├─► Verifiesr CNI Calico
+   ├─► Verifiesr StorageClass
+   ├─► Verifiesr DNS interno
+   ├─► Verifiesr recursos (CPU, memória)
+   └─► Verifiesr portas livres
    │
    ▼
 2. PRE-FLIGHT CHECKS (Ansible)
@@ -1820,17 +1820,17 @@ kubectl get daemonset -n trisla
    ├─► Validar Helm chart
    ├─► Dry-run do deploy
    ├─► Deploy real (helm upgrade --install)
-   ├─► Aguardar pods prontos
-   └─► Verificar serviços
+   ├─► Waitsr pods prontos
+   └─► Verifiesr serviços
    │
    ▼
 5. VALIDAÇÃO PÓS-DEPLOY (Ansible)
    │
    ├─► ansible-playbook validate-cluster.yml
-   ├─► Verificar pods em Running
-   ├─► Verificar readiness probes
-   ├─► Verificar liveness probes
-   └─► Verificar health checks
+   ├─► Verifiesr pods em Running
+   ├─► Verifiesr readiness probes
+   ├─► Verifiesr liveness probes
+   └─► Verifiesr health checks
    │
    ▼
 6. TESTES E2E (Manual)
@@ -1839,7 +1839,7 @@ kubectl get daemonset -n trisla
    ├─► Testar ciclo fechado TriSLA
    ├─► Validar dashboards Grafana
    ├─► Validar ingestão OTLP
-   └─► Validar integração NASP
+   └─► Validar integration NASP
    │
    ▼
 7. PRODUÇÃO APROVADA ✅
@@ -1915,7 +1915,7 @@ NASP Adapter ───► NASP Real Services
 
 ## 9. Checklist de Produção (Oficial)
 
-### 9.1 Pré-requisitos Verificados
+### 9.1 Pré-requisitos Verifiesdos
 
 - [ ] Cluster Kubernetes operacional (2 nodes Ready)
 - [ ] CNI Calico funcionando
@@ -1997,7 +1997,7 @@ NASP Adapter ───► NASP Real Services
 
 ---
 
-### 9.8 Serviços Respondendo
+### 9.8 Services Respondendo
 
 - [ ] SEM-CSMF health check OK (`/health`)
 - [ ] ML-NSMF health check OK (`/health`)
@@ -2059,7 +2059,7 @@ Após a conclusão bem-sucedida do deploy:
 
 ### Documentação TriSLA
 
-- **README Principal:** `README.md`
+- **README Main:** `README.md`
 - **Guia SEM-CSMF:** `docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`
 - **Guia Ontologia:** `docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`
 - **Guia ML-NSMF:** `docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`

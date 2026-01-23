@@ -6,7 +6,7 @@
 
 This document provides instruções completas e automatizadas para instalar o **TriSLA** (Triple-SLA) in production environment real no **NASP** (Network Automation & Slicing Platform). O guia cobre múltiplos métodos de instalação, desde scripts automatizados até pipelines CI/CD completos.
 
-### 1.2 Métodos de Instalação Disponíveis
+### 1.2 Methods de Instalação Disponíveis
 
 O TriSLA pode ser instalado através dos seguintes métodos:
 
@@ -26,7 +26,7 @@ Antes de iniciar qualquer método de instalação, certifique-se de possuir:
 - **Docker** ou **containerd** — para métodos Docker Compose
 - **Ansible** instalado (versão ≥ 2.14) — para métodos Ansible
 - **Acesso ao GitHub Container Registry (GHCR)** — para pull de imagens
-- **Credenciais do NASP** — para integração com a plataforma
+- **Credenciais do NASP** — para integration com a plataforma
 
 ### 1.4 Estrutura do Documento
 
@@ -42,7 +42,7 @@ O processo de instalação do TriSLA segue os seguintes passos principais:
 
 ```
 1. Preparação do Ambiente
-   ├── Verificar pré-requisitos
+   ├── Verifiesr pré-requisitos
    ├── Configurar acesso ao cluster
    ├── Criar secrets necessários
    └── Validar conectividade
@@ -58,9 +58,9 @@ O processo de instalação do TriSLA segue os seguintes passos principais:
    └── Configurar observabilidade
 
 4. Validação
-   ├── Verificar saúde dos pods
+   ├── Verifiesr saúde dos pods
    ├── Testar endpoints
-   ├── Validar integração com NASP
+   ├── Validar integration com NASP
    └── Executar testes E2E
 
 5. Finalização
@@ -80,7 +80,7 @@ Para instalação em produção, recomenda-se a seguinte ordem:
 5. **Testes**: Executar testes E2E
 6. **Monitoramento**: Configurar observabilidade
 
-### 2.3 Decisão de Método
+### 2.3 Decisão de Method
 
 **Use Scripts Automatizados quando:**
 - Precisa de instalação rápida
@@ -148,14 +148,14 @@ cd TriSLA-clean
 🔍 Coletando informações do NASP...
 Interface física principal detectada: my5g
 IP utilizado pelo Kubernetes: 192.168.10.16
-Gateway padrão: 192.168.10.1
+Gateway default: 192.168.10.1
 ✅ Configurações geradas em: configs/generated/
 ```
 
 **Arquivos gerados:**
 
 ```bash
-# Verificar arquivos gerados
+# Verifiesr arquivos gerados
 ls -la configs/generated/
 
 # Ver conteúdo do values gerado
@@ -221,19 +221,19 @@ export GHCR_REGISTRY=ghcr.io/abelisboa
 **Fluxo do script:**
 
 1. **Pre-flight checks** (se `--pre-flight`):
-   - Verifica kubectl
-   - Verifica Helm
-   - Verifica cluster Kubernetes
-   - Verifica namespace
-   - Verifica secrets
+   - Verifies kubectl
+   - Verifies Helm
+   - Verifies cluster Kubernetes
+   - Verifies namespace
+   - Verifies secrets
 
 2. **Deploy Helm** (se `--helm-install` ou `--helm-upgrade`):
    - Valida Helm chart
    - Executa `helm upgrade --install`
-   - Aguarda pods ficarem prontos
+   - Waits pods ficarem prontos
 
 3. **Health check** (se `--health-check`):
-   - Verifica status dos pods
+   - Verifies status dos pods
    - Testa health endpoints
    - Valida conectividade
 
@@ -332,11 +332,11 @@ O Docker Compose é ideal para instalação local, desenvolvimento e testes. Nã
 ### 4.2 Pré-requisitos
 
 ```bash
-# Verificar Docker
+# Verifiesr Docker
 docker --version
 docker-compose --version
 
-# Verificar se Docker está rodando
+# Verifiesr se Docker está rodando
 docker ps
 ```
 
@@ -348,7 +348,7 @@ docker ps
 # Navegar para diretório do repositório
 cd TriSLA-clean
 
-# Verificar docker-compose.yml
+# Verifiesr docker-compose.yml
 cat docker-compose.yml
 ```
 
@@ -370,17 +370,17 @@ EOF
 # Iniciar todos os serviços
 docker-compose up -d
 
-# Verificar status
+# Verifiesr status
 docker-compose ps
 
 # Ver logs
 docker-compose logs -f
 ```
 
-**Passo 4: Verificar serviços**
+**Passo 4: Verifiesr serviços**
 
 ```bash
-# Verificar saúde dos serviços
+# Verifiesr saúde dos serviços
 curl http://localhost:8080/health  # SEM-CSMF
 curl http://localhost:8081/health  # ML-NSMF
 curl http://localhost:8082/health  # Decision Engine
@@ -388,10 +388,10 @@ curl http://localhost:8083/health  # BC-NSSMF
 curl http://localhost:8084/health  # SLA-Agent Layer
 curl http://localhost:8085/health  # NASP Adapter
 
-# Verificar Prometheus
+# Verifiesr Prometheus
 curl http://localhost:9090/-/healthy
 
-# Verificar Grafana
+# Verifiesr Grafana
 curl http://localhost:3000/api/health
 ```
 
@@ -456,10 +456,10 @@ Helm é o método **recomendado** para instalação em produção. Oferece contr
 ### 5.2 Pré-requisitos
 
 ```bash
-# Verificar Helm
+# Verifiesr Helm
 helm version
 
-# Verificar acesso ao cluster
+# Verifiesr acesso ao cluster
 kubectl cluster-info
 kubectl get nodes
 ```
@@ -509,7 +509,7 @@ cat configs/generated/trisla_values_autogen.yaml >> helm/trisla/values-nasp.yaml
 
 ### 5.4 Instalação
 
-**Método 1: Instalação inicial**
+**Method 1: Instalação inicial**
 
 ```bash
 # Validar chart
@@ -531,7 +531,7 @@ helm install trisla ./helm/trisla \
   --timeout 15m
 ```
 
-**Método 2: Upgrade/Install (recomendado)**
+**Method 2: Upgrade/Install (recomendado)**
 
 ```bash
 # Upgrade ou install (idempotente)
@@ -543,7 +543,7 @@ helm upgrade --install trisla ./helm/trisla \
   --timeout 15m
 ```
 
-**Método 3: Com rollback automático**
+**Method 3: Com rollback automático**
 
 ```bash
 # Com rollback automático em caso de falha
@@ -556,19 +556,19 @@ helm upgrade --install trisla ./helm/trisla \
   --timeout 15m
 ```
 
-### 5.5 Verificação
+### 5.5 Verifiesção
 
 ```bash
-# Verificar status do release
+# Verifiesr status do release
 helm status trisla -n trisla
 
-# Verificar pods
+# Verifiesr pods
 kubectl get pods -n trisla
 
-# Verificar serviços
+# Verifiesr serviços
 kubectl get svc -n trisla
 
-# Verificar ingress
+# Verifiesr ingress
 kubectl get ingress -n trisla
 ```
 
@@ -608,7 +608,7 @@ Ansible oferece instalação automatizada, idempotente e repetível. Ideal para 
 # Instalar Ansible
 pip install ansible
 
-# Verificar instalação
+# Verifiesr instalação
 ansible --version
 
 # Instalar coleções necessárias
@@ -719,7 +719,7 @@ GitHub Actions permite instalação automatizada via pipeline CI/CD. Ideal para 
 
 ### 7.2 Estrutura do Workflow
 
-**Arquivo: `.github/workflows/deploy-production.yml`**
+**File: `.github/workflows/deploy-production.yml`**
 
 ```yaml
 name: Deploy TriSLA to Production
@@ -816,14 +816,14 @@ jobs:
 
 ### 7.4 Executar Deploy
 
-**Método 1: Push para main**
+**Method 1: Push para main**
 
 ```bash
 # Push para branch main dispara deploy automático
 git push origin main
 ```
 
-**Método 2: Workflow dispatch**
+**Method 2: Workflow dispatch**
 
 1. Acessar: `https://github.com/<repo>/actions`
 2. Selecionar workflow "Deploy TriSLA to Production"
@@ -868,7 +868,7 @@ git push origin main
 
 ### 8.1 Atualização via Helm
 
-**Método 1: Atualizar values e fazer upgrade**
+**Method 1: Atualizar values e fazer upgrade**
 
 ```bash
 # 1. Atualizar values-nasp.yaml com nova versão
@@ -883,7 +883,7 @@ helm upgrade trisla ./helm/trisla \
   --timeout 15m
 ```
 
-**Método 2: Atualizar apenas imagens**
+**Method 2: Atualizar apenas imagens**
 
 ```bash
 # Atualizar tag de imagem específica
@@ -894,7 +894,7 @@ helm upgrade trisla ./helm/trisla \
   --wait
 ```
 
-**Método 3: Atualizar todas as imagens**
+**Method 3: Atualizar todas as imagens**
 
 ```bash
 # Atualizar todas as imagens para nova versão
@@ -921,16 +921,16 @@ ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml \
   -e "trisla_version=v1.1.0"
 ```
 
-### 8.4 Verificação Pós-Atualização
+### 8.4 Verifiesção Pós-Atualização
 
 ```bash
-# Verificar versão dos pods
+# Verifiesr versão dos pods
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
 
-# Verificar health
+# Verifiesr health
 ./scripts/validate-production-real.sh
 
-# Verificar logs
+# Verifiesr logs
 kubectl logs -n trisla -l app=sem-csmf --tail=50
 ```
 
@@ -959,7 +959,7 @@ helm rollback trisla -n trisla
 # Rollback para revisão específica
 helm rollback trisla <revision-number> -n trisla
 
-# Verificar status após rollback
+# Verifiesr status após rollback
 helm status trisla -n trisla
 kubectl get pods -n trisla
 ```
@@ -1073,11 +1073,11 @@ kubectl cp trisla/<pod-name>:/var/lib/postgresql/data ./postgres-data-backup
 ### 10.3 Validação Pós-Migração
 
 ```bash
-# Verificar integridade dos dados
+# Verifiesr integridade dos dados
 kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=postgres -o jsonpath='{.items[0].metadata.name}') -- \
   psql -U trisla -d trisla -c "SELECT COUNT(*) FROM intents;"
 
-# Verificar aplicação funcionando
+# Verifiesr aplicação funcionando
 curl http://localhost:8080/health
 ```
 
@@ -1109,17 +1109,17 @@ curl http://localhost:8080/health
 
 ### 11.2 Validação Manual
 
-**Verificar pods:**
+**Verifiesr pods:**
 
 ```bash
 # Todos os pods devem estar Running
 kubectl get pods -n trisla
 
-# Verificar readiness
+# Verifiesr readiness
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
 
-**Verificar serviços:**
+**Verifiesr serviços:**
 
 ```bash
 # Todos os serviços devem ter endpoints
@@ -1150,7 +1150,7 @@ done
 python scripts/e2e_validator.py
 ```
 
-**Verificar integração com NASP:**
+**Verifiesr integration com NASP:**
 
 ```bash
 # Testar conectividade
@@ -1160,18 +1160,18 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=nasp-adapter -o js
 
 ### 11.4 Validação de Observabilidade
 
-**Verificar Prometheus:**
+**Verifiesr Prometheus:**
 
 ```bash
-# Verificar targets
+# Verifiesr targets
 kubectl port-forward -n trisla svc/prometheus 9090:9090
 # Acessar: http://localhost:9090/targets
 ```
 
-**Verificar Grafana:**
+**Verifiesr Grafana:**
 
 ```bash
-# Verificar dashboards
+# Verifiesr dashboards
 kubectl port-forward -n trisla svc/grafana 3000:3000
 # Acessar: http://localhost:3000
 ```
@@ -1190,7 +1190,7 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 
 ### 12.2 Instalação
 
-- [ ] Método de instalação escolhido
+- [ ] Method de instalação escolhido
 - [ ] Pre-flight checks executados
 - [ ] Deploy executado com sucesso
 - [ ] Todos os pods em estado Running

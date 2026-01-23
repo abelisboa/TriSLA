@@ -167,7 +167,7 @@ cd TriSLA
 # Adicionar upstream (repositório original)
 git remote add upstream https://github.com/abelisboa/TriSLA.git
 
-# Verificar remotes
+# Verifiesr remotes
 git remote -v
 # Deve mostrar:
 # origin    https://github.com/SEU_USUARIO/TriSLA.git (fetch)
@@ -194,7 +194,7 @@ git push origin main
 
 ### 4.1 Python
 
-**Verificar versão:**
+**Verifiesr versão:**
 
 ```bash
 python3 --version
@@ -217,7 +217,7 @@ choco install python310
 
 ### 4.2 Docker e Docker Compose
 
-**Verificar instalação:**
+**Verifiesr instalação:**
 
 ```bash
 docker --version
@@ -257,7 +257,7 @@ source .venv/bin/activate
 .venv\Scripts\Activate.ps1
 ```
 
-**Verificar ativação:**
+**Verifiesr ativação:**
 
 ```bash
 which python
@@ -304,7 +304,7 @@ cd ../..
 # Iniciar PostgreSQL, Kafka, Prometheus, Grafana
 docker compose up -d postgres kafka zookeeper prometheus grafana otlp-collector
 
-# Verificar status
+# Verifiesr status
 docker compose ps
 
 # Ver logs
@@ -373,7 +373,7 @@ git pull upstream main
 # Criar nova branch
 git checkout -b feature/nome-da-feature
 
-# Verificar branch atual
+# Verifiesr branch atual
 git branch
 # Deve mostrar * feature/nome-da-feature
 ```
@@ -589,10 +589,10 @@ Qualquer informação adicional relevante.
 
 ### 7.3 Política de Revisão
 
-**Processo:**
+**Process:**
 
 1. **Abertura do PR**: Mantenedor será notificado automaticamente
-2. **Revisão inicial**: Verificação de checklist e CI
+2. **Revisão inicial**: Verifiesção de checklist e CI
 3. **Code review**: Pelo menos 1 aprovação necessária
 4. **Feedback**: Discussão construtiva sobre mudanças
 5. **Alterações**: Fazer alterações solicitadas
@@ -647,7 +647,7 @@ pytest tests/unit/test_decision_engine.py -v
 docker compose up -d postgres kafka zookeeper
 ```
 
-**Executar testes de integração:**
+**Executar testes de integration:**
 
 ```bash
 pytest tests/integration/ -v -m integration
@@ -721,7 +721,7 @@ target-version = ['py310']
 **Uso:**
 
 ```bash
-# Verificar
+# Verifiesr
 black --check apps/ tests/
 
 # Formatar
@@ -748,7 +748,7 @@ multi_line_output = 3
 **Uso:**
 
 ```bash
-# Verificar
+# Verifiesr
 isort --check-only apps/ tests/
 
 # Ordenar
@@ -766,11 +766,11 @@ isort apps/ tests/
 **Opcional, mas recomendado:**
 
 ```bash
-# Verificar tipos
+# Verifiesr tipos
 mypy apps/
 ```
 
-**Configuração:**
+**Configuration:**
 
 ```ini
 # mypy.ini
@@ -782,7 +782,7 @@ ignore_missing_imports = True
 
 ### 9.4 flake8 (Linting)
 
-**Configuração:**
+**Configuration:**
 
 ```ini
 # .flake8 ou setup.cfg
@@ -1194,7 +1194,7 @@ aumentando flexibilidade do sistema.
 
 ## Como testar
 1. Criar intent com ontologia customizada
-2. Verificar que NEST é gerado corretamente
+2. Verifiesr que NEST é gerado corretamente
 3. Executar testes: `pytest tests/unit/test_sem_csmf.py`
 
 ## Impacto

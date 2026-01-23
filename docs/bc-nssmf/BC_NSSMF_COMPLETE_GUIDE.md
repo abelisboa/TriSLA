@@ -8,27 +8,27 @@
 
 ## 📋 Table of Contents
 
-1. [Overview](#visão-geral)
-2. [Module Architecture](#arquitetura-do-módulo)
+1. [Overview](#overview)
+2. [Module Architecture](#module-architecture)
 3. [Smart Contracts](#smart-contracts)
-4. [Web3 Integration](#integração-web3)
-5. [REST and gRPC API](#api-rest-e-grpc)
-6. [Metrics Oracle](#oracle-de-métricas)
-7. [Integration with Other Modules](#integração-com-outros-módulos)
+4. [Web3 Integration](#web3-integration)
+5. [REST and gRPC API](#rest-and-grpc-api)
+6. [Metrics Oracle](#metrics-oracle)
+7. [Integration with Other Modules](#integration-with-other-modules)
 8. [Interface I-04 (Kafka)](#interface-i-04-kafka)
-9. [Deployment and Configuration](#deploy-e-configuração)
-10. [Usage Examples](#exemplos-de-uso)
+9. [Deployment and Configuration](#deployment-and-configuration)
+10. [Usage Examples](#usage-examples)
 11. [Troubleshooting](#troubleshooting)
 
 ---
 
 ## 🎯 Overview
 
-The **BC-NSSMF (Blockchain-enabled Network Slice Subnet Management Function)** is responsible for registrar SLAs on-chain em uma blockchain permissionada, ensuring imutabilidade, rastreabilidade e execução determinística de regras contratuais.
+The **BC-NSSMF (Blockchain-enabled Network Slice Subnet Management Function)** is responsible for registering SLAs on-chain on a permissioned blockchain, ensuring immutability, traceability, and deterministic execution of contractual rules.
 
 ### Objectives
 
-1. **On-Chain Registration:** Register approved SLAs pelo Decision Engine on the blockchain
+1. **On-Chain Registration:** Register approved SLAs by the Decision Engine on the blockchain
 2. **Status Update:** Update SLA status (ACTIVE, VIOLATED, TERMINATED)
 3. **Violation Registration:** Register SLA violations in an immutable way
 4. **Auditoria:** Provide complete audit via on-chain events
@@ -36,11 +36,11 @@ The **BC-NSSMF (Blockchain-enabled Network Slice Subnet Management Function)** i
 
 ### Main Features
 
-- **Blockchain:** Hyperledger Besu (Ethereum permissionado)
+- **Blockchain:** Hyperledger Besu (permissioned Ethereum)
 - **Smart Contracts:** Solidity 0.8.20
-- **Cliente Web3:** web3.py
-- **Confirmation Time:** < 5 segundos (blockchain local)
-- **Imutabilidade:** All events registered on-chain
+- **Web3 Client:** web3.py
+- **Confirmation Time:** < 5 seconds (local blockchain)
+- **Immutability:** All events registered on-chain
 
 ---
 
@@ -51,25 +51,25 @@ The **BC-NSSMF (Blockchain-enabled Network Slice Subnet Management Function)** i
 ```
 apps/bc-nssmf/
 ├── src/
-│   ├── main.py                 # Aplicação FastAPI
-│   ├── service.py               # BCService (integração Web3)
+│   ├── main.py                 # FastAPI Application
+│   ├── service.py               # BCService (Web3 Integration)
 │   ├── api_rest.py              # Endpoints REST
-│   ├── api_grpc_server.py       # Servidor gRPC (placeholder)
-│   ├── models.py                # Modelos Pydantic
-│   ├── config.py                # Configuração
+│   ├── api_grpc_server.py       # gRPC Server (placeholder)
+│   ├── models.py                # Pydantic Models
+│   ├── config.py                # Configuration
 │   ├── oracle.py                # MetricsOracle
-│   ├── kafka_consumer.py        # Consumer Kafka (I-04)
-│   ├── deploy_contracts.py      # Script de deploy
+│   ├── kafka_consumer.py        # Kafka Consumer (I-04)
+│   ├── deploy_contracts.py      # Deployment Script
 │   └── contracts/
 │       ├── SLAContract.sol      # Smart Contract Solidity
-│       └── contract_address.json # Endereço e ABI do contrato
+│       └── contract_address.json # Contract Address and ABI
 ├── blockchain/
 │   └── besu/
 │       ├── docker-compose-besu.yaml  # Docker Compose Besu
 │       ├── genesis.json              # Genesis block
-│       └── data/                      # Dados da blockchain
+│       └── data/                      # Blockchain Data
 ├── tests/
-│   └── unit/                   # Testes unitários
+│   └── unit/                   # Unit Tests
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
@@ -77,10 +77,10 @@ apps/bc-nssmf/
 
 ### Main Components
 
-1. **BCService** — Serviço principal de integração Web3
-2. **SmartContractExecutor** — Executor de smart contracts
-3. **MetricsOracle** — Oracle que obtém métricas do NASP
-4. **DecisionConsumer** — Consumer Kafka para decisões (I-04)
+1. **BCService** — Main Web3 integration service
+2. **SmartContractExecutor** — Smart contract executor
+3. **MetricsOracle** — Oracle that obtains metrics from NASP
+4. **DecisionConsumer** — Kafka consumer for decisions (I-04)
 5. **SLAContract** — Smart Contract Solidity
 
 ### Data Flow
@@ -88,17 +88,17 @@ apps/bc-nssmf/
 ```
 ┌─────────────────┐
 │ Decision Engine │  (via Kafka I-04)
-│  (decisão AC)   │
+│  (ACCEPT decision)   │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ Kafka Consumer  │  (consome decisão)
+│ Kafka Consumer  │  (consumes decision)
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ BCService       │  (registra SLA on-chain)
+│ BCService       │  (registers SLA on-chain)
 └────────┬────────┘
          │
          ▼
@@ -109,7 +109,7 @@ apps/bc-nssmf/
          │
          ▼
 ┌─────────────────┐
-│ Eventos On-Chain│  (SLARequested, SLAUpdated)
+│ On-Chain Events│  (SLARequested, SLAUpdated)
 └─────────────────┘
 ```
 
@@ -158,12 +158,12 @@ struct SLA {
    - Registers a new SLA on-chain
    - Parameters: `customer`, `serviceName`, `slaHash`, `slos[]`
    - Returns: `slaId` (uint256)
-   - Evento: `SLARequested`
+   - Event: `SLARequested`
 
 2. **`updateSLAStatus()`**
    - Updates the status of an SLA
    - Parameters: `slaId`, `newStatus`
-   - Evento: `SLAUpdated`
+   - Event: `SLAUpdated`
 
 3. **`getSLA()`**
    - Queries SLA data
@@ -188,19 +188,19 @@ cd apps/bc-nssmf
 python src/deploy_contracts.py
 ```
 
-**Processo:**
-1. Compila contrato Solidity
-2. Conecta ao Besu RPC
-3. Verifica saldo da conta
-4. Envia transação de deploy
-5. Aguarda confirmação
-6. Salva endereço e ABI em `contract_address.json`
+**Process:**
+1. Compiles Solidity contract
+2. Connects to Besu RPC
+3. Verifies account balance
+4. Sends deployment transaction
+5. Waits for confirmation
+6. Saves address and ABI to `contract_address.json`
 
-**Variáveis de Ambiente:**
-- `TRISLA_RPC_URL` — URL do RPC Besu (padrão: `http://127.0.0.1:8545`)
-- `TRISLA_PRIVATE_KEY` — Chave privada (produção)
-- `TRISLA_DEV_PRIVATE_KEY` — Chave privada (desenvolvimento)
-- `TRISLA_CHAIN_ID` — Chain ID (padrão: `1337`)
+**Environment Variables:**
+- `TRISLA_RPC_URL` — URL do RPC Besu (default: `http://127.0.0.1:8545`)
+- `TRISLA_PRIVATE_KEY` — Private key (production)
+- `TRISLA_DEV_PRIVATE_KEY` — Private key (development)
+- `TRISLA_CHAIN_ID` — Chain ID (default: `1337`)
 
 ---
 
@@ -208,11 +208,11 @@ python src/deploy_contracts.py
 
 ### BCService
 
-**Arquivo:** `apps/bc-nssmf/src/service.py`
+**File:** `apps/bc-nssmf/src/service.py`
 
-**Classe:** `BCService`
+**Class:** `BCService`
 
-#### Inicialização
+#### Initialization
 
 ```python
 from service import BCService
@@ -220,13 +220,13 @@ from service import BCService
 service = BCService()
 ```
 
-**Processo:**
-1. Conecta ao RPC Besu via `Web3.HTTPProvider`
-2. Carrega ABI e endereço do contrato
-3. Cria instância do contrato
-4. Seleciona conta padrão
+**Process:**
+1. Connects to Besu RPC via `Web3.HTTPProvider`
+2. Loads contract ABI and address
+3. Creates contract instance
+4. Selects default account
 
-#### Métodos Principais
+#### Main Methods
 
 1. **`register_sla()`**
    ```python
@@ -252,9 +252,9 @@ service = BCService()
    # Returns: (customer, serviceName, status, createdAt, updatedAt)
    ```
 
-### Configuração
+### Configuration
 
-**Arquivo:** `apps/bc-nssmf/src/config.py`
+**File:** `apps/bc-nssmf/src/config.py`
 
 ```python
 class BCConfig:
@@ -268,7 +268,7 @@ class BCConfig:
 
 ### API REST
 
-**Arquivo:** `apps/bc-nssmf/src/api_rest.py`
+**File:** `apps/bc-nssmf/src/api_rest.py`
 
 **Endpoints:**
 
@@ -307,7 +307,7 @@ class SLAStatusUpdate(BaseModel):
 
 ### gRPC (Placeholder)
 
-**Arquivo:** `apps/bc-nssmf/src/api_grpc_server.py`
+**File:** `apps/bc-nssmf/src/api_grpc_server.py`
 
 **Status:** Placeholder funcional (estrutura mínima)
 
@@ -319,13 +319,13 @@ class SLAStatusUpdate(BaseModel):
 
 ### MetricsOracle
 
-**Arquivo:** `apps/bc-nssmf/src/oracle.py`
+**File:** `apps/bc-nssmf/src/oracle.py`
 
-**Classe:** `MetricsOracle`
+**Class:** `MetricsOracle`
 
 **Função:** Obtém métricas reais do NASP para validação de smart contracts.
 
-#### Método Principal
+#### Main Method
 
 ```python
 metrics = await metrics_oracle.get_metrics()
@@ -344,7 +344,7 @@ metrics = await metrics_oracle.get_metrics()
 ```
 
 **Em Produção:**
-- Conecta ao NASP Adapter via HTTP REST
+- Connects to NASP Adapter via HTTP REST
 - Obtém métricas em tempo real
 - Valida contra thresholds do SLA
 
@@ -369,7 +369,7 @@ result = await consumer.consume_and_execute()
 ```
 
 **Fluxo:**
-1. Decision Engine envia decisão `ACCEPT` via Kafka
+1. Decision Engine sends decision `ACCEPT` via Kafka
 2. BC-NSSMF consome mensagem
 3. BC-NSSMF registra SLA on-chain
 4. BC-NSSMF retorna `tx_hash` e `block_number`
@@ -384,7 +384,7 @@ result = await consumer.consume_and_execute()
 1. SLO Reporter detecta violação
 2. SLO Reporter chama BC-NSSMF
 3. BC-NSSMF atualiza status para `VIOLATED`
-4. BC-NSSMF emite evento `SLAUpdated`
+4. BC-NSSMF emits event `SLAUpdated`
 
 ### 3. NASP Adapter
 
@@ -421,11 +421,11 @@ result = await consumer.consume_and_execute()
 
 ### Consumer Kafka
 
-**Arquivo:** `apps/bc-nssmf/src/kafka_consumer.py`
+**File:** `apps/bc-nssmf/src/kafka_consumer.py`
 
-**Classe:** `DecisionConsumer`
+**Class:** `DecisionConsumer`
 
-**Configuração:**
+**Configuration:**
 ```python
 consumer = KafkaConsumer(
     'trisla-i04-decisions',
@@ -449,7 +449,7 @@ cd apps/bc-nssmf/blockchain/besu
 docker-compose -f docker-compose-besu.yaml up -d
 ```
 
-**Verificar:**
+**Verify:**
 ```bash
 curl http://127.0.0.1:8545
 ```
@@ -464,7 +464,7 @@ python src/deploy_contracts.py
 
 **Saída Esperada:**
 ```
-[TriSLA] Compilando contrato Solidity...
+[TriSLA] Compiling Solidity contract...
 [TriSLA] Usando conta: 0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1
 [TriSLA] Saldo da conta: 100.0 ETH
 [TriSLA] Enviando transação de deploy: 0x...
@@ -474,7 +474,7 @@ python src/deploy_contracts.py
 
 ### 3. Configurar Variáveis de Ambiente
 
-**Arquivo:** `.env` ou variáveis de ambiente
+**File:** `.env` ou variáveis de ambiente
 
 ```bash
 # Blockchain
@@ -495,7 +495,7 @@ cd apps/bc-nssmf
 uvicorn src.main:app --host 0.0.0.0 --port 8083
 ```
 
-**Verificar:**
+**Verify:**
 ```bash
 curl http://localhost:8083/health
 ```
@@ -607,7 +607,7 @@ while True:
     print(f"Contrato executado: {result}")
 ```
 
-### Exemplo 5: Consultar Eventos On-Chain
+### Exemplo 5: Consultar On-Chain Events
 
 **Código:**
 ```python

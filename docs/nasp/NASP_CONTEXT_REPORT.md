@@ -19,9 +19,9 @@
 
 ---
 
-## Serviços Detectados
+## Services Detectados
 
-| Componente | Namespace | Tipo de Serviço | Observação |
+| Componente | Namespace | Tipo de Service | Observação |
 |------------|-----------|-----------------|------------|
 | Prometheus | monitoring | ClusterIP/NodePort | Usado para métricas NASP |
 | Grafana | monitoring | ClusterIP | UI de visualização de métricas |
@@ -42,9 +42,9 @@
 
 ### Problemas Encontrados
 
-- ⚠️ Pods em CrashLoopBackOff: Verificar `tmp/nasp_context_raw.txt` para detalhes
-- ⚠️ Pods em ImagePullBackOff: Verificar `tmp/nasp_context_raw.txt` para detalhes
-- ⚠️ Pods não prontos: Verificar `tmp/nasp_context_raw.txt` para detalhes
+- ⚠️ Pods em CrashLoopBackOff: Verifiesr `tmp/nasp_context_raw.txt` para detalhes
+- ⚠️ Pods em ImagePullBackOff: Verifiesr `tmp/nasp_context_raw.txt` para detalhes
+- ⚠️ Pods não prontos: Verifiesr `tmp/nasp_context_raw.txt` para detalhes
 
 **Nota:** Este relatório é um template. Execute `scripts/discover-nasp-endpoints.sh` para obter diagnóstico real.
 
@@ -55,10 +55,10 @@
 | Namespace | Propósito | Observação |
 |-----------|-----------|------------|
 | monitoring | Stack de observabilidade | Prometheus, Grafana, Loki |
-| nasp | Serviços NASP principais | NASP Adapter, controladores |
-| <RAN_NS> | Serviços RAN | Controladores RAN (se aplicável) |
-| <CORE_NS> | Serviços Core | UPF, AMF, SMF (se aplicável) |
-| <TRANSPORT_NS> | Serviços Transport | Controladores de transporte (se aplicável) |
+| nasp | Services NASP principais | NASP Adapter, controladores |
+| <RAN_NS> | Services RAN | Controladores RAN (se aplicável) |
+| <CORE_NS> | Services Core | UPF, AMF, SMF (se aplicável) |
+| <TRANSPORT_NS> | Services Transport | Controladores de transporte (se aplicável) |
 
 ---
 

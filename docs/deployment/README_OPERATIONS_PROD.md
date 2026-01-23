@@ -256,7 +256,7 @@ kubectl get namespace trisla
 
 O secret é necessário para o Kubernetes fazer pull das imagens do GHCR.
 
-**Método 1: Via kubectl (recomendado)**
+**Method 1: Via kubectl (recomendado)**
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
@@ -267,7 +267,7 @@ kubectl create secret docker-registry ghcr-secret \
   --namespace=trisla
 ```
 
-**Método 2: Via arquivo YAML (mais seguro)**
+**Method 2: Via arquivo YAML (mais seguro)**
 
 Crie um arquivo `ghcr-secret.yaml`:
 
@@ -312,20 +312,20 @@ cd TriSLA-clean
 Ou manualmente:
 
 ```bash
-# Verificar nodes
+# Verifiesr nodes
 kubectl get nodes -o wide
 
-# Verificar storage
+# Verifiesr storage
 kubectl get storageclass
 
-# Verificar DNS
+# Verifiesr DNS
 kubectl run -it --rm debug --image=busybox --restart=Never -- nslookup kubernetes.default
 
-# Verificar conectividade de rede
+# Verifiesr conectividade de rede
 kubectl run -it --rm debug --image=busybox --restart=Never -- ping -c 3 8.8.8.8
 ```
 
-### 4.4 Verificar Conectividade Interna
+### 4.4 Verifiesr Conectividade Interna
 
 Antes do deploy, valide que os serviços NASP estão acessíveis:
 
@@ -679,7 +679,7 @@ Os templates Helm estão localizados em `helm/trisla/templates/`:
 
 ## 6. Deploy TriSLA com Helm
 
-### 6.1 Comando Principal do Deploy
+### 6.1 Comando Main do Deploy
 
 **Deploy inicial:**
 
@@ -699,7 +699,7 @@ helm upgrade --install trisla ./helm/trisla \
 - `--namespace trisla`: Namespace onde será instalado
 - `--create-namespace`: Cria o namespace se não existir
 - `--values`: Arquivo de valores customizado
-- `--wait`: Aguarda os recursos ficarem prontos
+- `--wait`: Waits os recursos ficarem prontos
 - `--timeout 10m`: Timeout de 10 minutos
 
 ### 6.2 Deploy com Validação Automática (`--atomic`)
@@ -773,7 +773,7 @@ helm install trisla ./helm/trisla \
 
 ---
 
-## 7. Verificação Pós-Deploy
+## 7. Verifiesção Pós-Deploy
 
 ### 7.1 Lista de Pods Esperados
 
@@ -801,15 +801,15 @@ kubectl get pods -n trisla
 | `grafana-*` | 1 | Running |
 | `alertmanager-*` | 1 | Running |
 
-### 7.2 Comandos para Verificar Cada Módulo
+### 7.2 Comandos para Verifiesr Cada Módulo
 
 **SEM-CSMF:**
 
 ```bash
-# Verificar pods
+# Verifiesr pods
 kubectl get pods -n trisla -l app=sem-csmf
 
-# Verificar logs
+# Verifiesr logs
 kubectl logs -n trisla -l app=sem-csmf --tail=50
 
 # Testar health endpoint
@@ -854,7 +854,7 @@ kubectl logs -n trisla -l app=nasp-adapter --tail=50
 
 ### 7.3 Checagem de Readiness e Liveness
 
-**Verificar readiness:**
+**Verifiesr readiness:**
 
 ```bash
 kubectl get pods -n trisla -o wide
@@ -863,13 +863,13 @@ kubectl describe pod <POD_NAME> -n trisla
 
 Todos os pods devem ter `READY` como `1/1` ou `2/2` (conforme replicas).
 
-**Verificar liveness probes:**
+**Verifiesr liveness probes:**
 
 ```bash
-# Verificar eventos
+# Verifiesr eventos
 kubectl get events -n trisla --sort-by='.lastTimestamp'
 
-# Verificar probes
+# Verifiesr probes
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
 
@@ -882,7 +882,7 @@ kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{
 kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=nasp-adapter -o jsonpath='{.items[0].metadata.name}') -- \
   curl http://localhost:8085/health
 
-# Verificar logs de conexão
+# Verifiesr logs de conexão
 kubectl logs -n trisla -l app=nasp-adapter | grep -i "nasp\|connection\|error"
 ```
 
@@ -908,7 +908,7 @@ Todos os módulos TriSLA exportam métricas, traces e logs via OpenTelemetry. O 
 - **Exportar para Prometheus**: Métricas
 - **Exportar para Grafana**: Visualização
 
-**Verificar OTLP Collector:**
+**Verifiesr OTLP Collector:**
 
 ```bash
 kubectl get pods -n trisla -l app=otlp-collector
@@ -930,7 +930,7 @@ As regras de alerta estão configuradas em `monitoring/prometheus/rules/`. Princ
 kubectl apply -f monitoring/prometheus/rules/ -n trisla
 ```
 
-**Verificar regras ativas:**
+**Verifiesr regras ativas:**
 
 ```bash
 # Via Prometheus UI (port-forward)
@@ -960,7 +960,7 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 
 **Importar dashboards:**
 
-Os dashboards são importados automaticamente via ConfigMap. Verificar:
+Os dashboards são importados automaticamente via ConfigMap. Verifiesr:
 
 ```bash
 kubectl get configmap -n trisla | grep grafana
@@ -1031,28 +1031,28 @@ curl -X POST http://<SEM-CSMF_ENDPOINT>/api/v1/intents \
 **2. SEM-CSMF processa e gera NEST:**
 
 ```bash
-# Verificar NEST gerado
+# Verifiesr NEST gerado
 curl http://<SEM-CSMF_ENDPOINT>/api/v1/nests/<NEST_ID>
 ```
 
 **3. Decision Engine avalia e decide:**
 
 ```bash
-# Verificar decisão
+# Verifiesr decisão
 curl http://<DECISION_ENGINE_ENDPOINT>/api/v1/decisions/<DECISION_ID>
 ```
 
 **4. BC-NSSMF registra SLA em blockchain:**
 
 ```bash
-# Verificar contrato
+# Verifiesr contrato
 curl http://<BC-NSSMF_ENDPOINT>/api/v1/contracts/<CONTRACT_ADDRESS>
 ```
 
 **5. NASP Adapter executa ações:**
 
 ```bash
-# Verificar ações executadas
+# Verifiesr ações executadas
 curl http://<NASP_ADAPTER_ENDPOINT>/api/v1/actions
 ```
 
@@ -1061,21 +1061,21 @@ curl http://<NASP_ADAPTER_ENDPOINT>/api/v1/actions
 O ML-NSMF recebe métricas via Kafka e gera predições:
 
 ```bash
-# Verificar predições
+# Verifiesr predições
 curl http://<ML-NSMF_ENDPOINT>/api/v1/predictions
 
-# Verificar explicações (XAI)
+# Verifiesr explicações (XAI)
 curl http://<ML-NSMF_ENDPOINT>/api/v1/explanations/<PREDICTION_ID>
 ```
 
 ### 9.4 Smart Contracts (BC-NSSMF)
 
-**Verificar contratos implantados:**
+**Verifiesr contratos implantados:**
 
 ```bash
 curl http://<BC-NSSMF_ENDPOINT>/api/v1/contracts
 
-# Verificar compliance de SLA
+# Verifiesr compliance de SLA
 curl http://<BC-NSSMF_ENDPOINT>/api/v1/contracts/<CONTRACT_ADDRESS>/compliance
 ```
 
@@ -1212,7 +1212,7 @@ curl 'http://localhost:9090/api/v1/query?query=trisla_sla_compliance_rate'
 **Exportar logs:**
 
 ```bash
-# Salvar logs em arquivo
+# Savesr logs em arquivo
 kubectl logs -n trisla -l app=sem-csmf --tail=1000 > sem-csmf.log
 kubectl logs -n trisla -l app=ml-nsmf --tail=1000 > ml-nsmf.log
 ```
@@ -1226,13 +1226,13 @@ kubectl logs -n trisla -l app=ml-nsmf --tail=1000 > ml-nsmf.log
 **Problema 1: Pods em estado `CrashLoopBackOff`**
 
 ```bash
-# Verificar logs
+# Verifiesr logs
 kubectl logs <POD_NAME> -n trisla --previous
 
-# Verificar eventos
+# Verifiesr eventos
 kubectl describe pod <POD_NAME> -n trisla
 
-# Verificar recursos
+# Verifiesr recursos
 kubectl top pod <POD_NAME> -n trisla
 ```
 
@@ -1244,10 +1244,10 @@ kubectl top pod <POD_NAME> -n trisla
 **Problema 2: Imagens não são puxadas do GHCR**
 
 ```bash
-# Verificar secret
+# Verifiesr secret
 kubectl get secret ghcr-secret -n trisla
 
-# Verificar imagePullSecrets no pod
+# Verifiesr imagePullSecrets no pod
 kubectl describe pod <POD_NAME> -n trisla | grep -i "pull"
 
 # Testar pull manual
@@ -1256,12 +1256,12 @@ kubectl run test-pull --image=ghcr.io/abelisboa/trisla-sem-csmf:latest --rm -it 
 
 **Solução:**
 - Recriar secret GHCR (ver seção 4.2)
-- Verificar token GitHub
+- Verifiesr token GitHub
 
 **Problema 3: Falha de conexão com NASP**
 
 ```bash
-# Verificar logs do NASP Adapter
+# Verifiesr logs do NASP Adapter
 kubectl logs -n trisla -l app=nasp-adapter | grep -i "error\|connection\|nasp"
 
 # Testar conectividade
@@ -1270,27 +1270,27 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=nasp-adapter -o js
 ```
 
 **Solução:**
-- Verificar endpoints NASP em `values-nasp.yaml`
-- Verificar token de autenticação
-- Verificar conectividade de rede
+- Verifiesr endpoints NASP em `values-nasp.yaml`
+- Verifiesr token de autenticação
+- Verifiesr conectividade de rede
 
 **Problema 4: Kafka não está disponível**
 
 ```bash
-# Verificar pods Kafka
+# Verifiesr pods Kafka
 kubectl get pods -n trisla -l app=kafka
 
-# Verificar logs
+# Verifiesr logs
 kubectl logs -n trisla -l app=kafka --tail=50
 
-# Verificar storage
+# Verifiesr storage
 kubectl get pvc -n trisla | grep kafka
 ```
 
 **Solução:**
-- Verificar StorageClass
-- Verificar recursos disponíveis
-- Verificar configuração de replicas
+- Verifiesr StorageClass
+- Verifiesr recursos disponíveis
+- Verifiesr configuração de replicas
 
 ### 11.2 Como Diagnosticar Falhas
 
@@ -1304,21 +1304,21 @@ cd TriSLA-clean
 **Diagnóstico manual:**
 
 ```bash
-# 1. Verificar saúde geral
+# 1. Verifiesr saúde geral
 kubectl get all -n trisla
 
-# 2. Verificar eventos recentes
+# 2. Verifiesr eventos recentes
 kubectl get events -n trisla --sort-by='.lastTimestamp' | tail -20
 
-# 3. Verificar recursos
+# 3. Verifiesr recursos
 kubectl top nodes
 kubectl top pods -n trisla
 
-# 4. Verificar conectividade de rede
+# 4. Verifiesr conectividade de rede
 kubectl run -it --rm debug --image=busybox --restart=Never -n trisla -- \
   nslookup sem-csmf.trisla.svc.cluster.local
 
-# 5. Verificar DNS
+# 5. Verifiesr DNS
 kubectl get svc -n trisla
 ```
 
@@ -1367,13 +1367,13 @@ O Kubernetes possui recovery automático via:
 - **LivenessProbe**: Reinicia pods se health check falhar
 - **ReadinessProbe**: Remove pods do service se não estiverem prontos
 
-**Verificar recovery:**
+**Verifiesr recovery:**
 
 ```bash
-# Verificar restart count
+# Verifiesr restart count
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.containerStatuses[0].restartCount}{"\n"}{end}'
 
-# Verificar eventos de restart
+# Verifiesr eventos de restart
 kubectl get events -n trisla | grep -i "restart\|backoff"
 ```
 
@@ -1391,7 +1391,7 @@ kubectl get events -n trisla | grep -i "restart\|backoff"
 # Validação E2E
 ./scripts/validate-e2e-pipeline.sh
 
-# Verificação de estrutura
+# Verifiesção de estrutura
 ./scripts/verify-structure.ps1
 
 # Teste de conexões entre módulos
@@ -1515,10 +1515,10 @@ helm upgrade trisla ./helm/trisla \
 
 ### 12.4 Imagens Assinadas
 
-**Verificar assinatura de imagens (se configurado):**
+**Verifiesr assinatura de imagens (se configurado):**
 
 ```bash
-# Verificar se imagens são assinadas (requer cosign)
+# Verifiesr se imagens são assinadas (requer cosign)
 cosign verify ghcr.io/abelisboa/trisla-sem-csmf:latest
 ```
 
@@ -1667,7 +1667,7 @@ kubectl get svc -n <transport-namespace> | grep -i transport
    - Substituir todos os `<...>` pelos valores reais descobertos
    - Validar com: `helm template trisla ./helm/trisla -f ./helm/trisla/values-production.yaml --debug`
 
-2. **Verificar imagens GHCR:**
+2. **Verifiesr imagens GHCR:**
    - Todas as imagens devem apontar para `ghcr.io/abelisboa/trisla-*:latest` ou versão específica
    - Secret `ghcr-secret` deve estar criado no namespace `trisla`
 
@@ -1692,7 +1692,7 @@ helm upgrade --install trisla ./helm/trisla \
   --wait \
   --timeout 10m
 
-# 4. Verificar deploy
+# 4. Verifiesr deploy
 kubectl get pods -n trisla
 kubectl get svc -n trisla
 ```
@@ -1760,7 +1760,7 @@ docker manifest inspect ghcr.io/abelisboa/trisla-ml-nsmf:latest
 ### 8.3 Fluxo Recomendado
 
 1. **Descoberta:** Executar `scripts/discover-nasp-endpoints.sh`
-2. **Configuração:** Preencher `values-production.yaml` com `scripts/fill_values_production.sh`
+2. **Configuration:** Preencher `values-production.yaml` com `scripts/fill_values_production.sh`
 3. **Publicação de Imagens:** Publicar imagens no GHCR manualmente ou via scripts (`scripts/build-all-images.sh`, `scripts/push-all-images.ps1`) - ver `docs/ghcr/GHCR_PUBLISH_GUIDE.md`
 4. **Validação:** Validar imagens manualmente via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)`
 5. **Deploy:** Seguir `docs/NASP_DEPLOY_RUNBOOK.md`

@@ -19,7 +19,7 @@ Complete guide that includes:
 - ✅ **Overview** of the module
 - ✅ **Architecture** details
 - ✅ **Processing Pipeline** (Intent → NEST)
-- ✅ **OWL Ontology** (integração e uso)
+- ✅ **OWL Ontology** (integration e uso)
 - ✅ **NLP** (processamento de linguagem natural)
 - ✅ **NEST Generation** (Network Slice Template)
 - ✅ **Interfaces** (I-01 HTTP REST, I-02 Kafka)
