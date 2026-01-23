@@ -102,7 +102,7 @@ Preencher em `helm/trisla/values-nasp.yaml`:
 
 ---
 
-## 3. Configuração de Helm Values
+## 3. Configuration de Helm Values
 
 ### 3.1 Revisar `values-nasp.yaml`
 

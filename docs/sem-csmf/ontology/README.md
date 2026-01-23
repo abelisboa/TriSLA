@@ -1,6 +1,6 @@
 # Documentação da Ontologia TriSLA
 
-Este diretório contém a documentação completa da Ontologia TriSLA.
+This directory contains the complete documentation da Ontologia TriSLA.
 
 ## 📚 Documentos Disponíveis
 

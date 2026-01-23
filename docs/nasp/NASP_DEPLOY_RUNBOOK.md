@@ -2,13 +2,13 @@
 
 **Versão:** 1.0  
 **Data:** 2025-11-22  
-**Objetivo:** Guia operacional completo para deploy controlado do TriSLA no ambiente NASP (2 nodes)
+**Objetivo:** Guia operacional completo para deploy controlado do TriSLA in the NASP environment (2 nodes)
 
 ---
 
 ## Visão Geral
 
-Este runbook descreve como realizar um **deploy controlado** do TriSLA no ambiente NASP (cluster Kubernetes com 2 nodes), a partir de um repositório já sanitizado e validado localmente.
+Este runbook descreve como realizar um **deploy controlado** do TriSLA in the NASP environment (cluster Kubernetes com 2 nodes), a partir de um repositório já sanitizado e validado localmente.
 
 O processo é dividido em etapas sequenciais, cada uma com validações específicas, garantindo que o deploy seja realizado de forma segura e auditável.
 

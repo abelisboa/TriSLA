@@ -10,7 +10,7 @@
 
 ## 📋 Sumário Executivo
 
-Este documento fornece instruções completas, formais e acadêmicas para a implantação manual do **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no ambiente **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** para automação e **Helm** para gerenciamento de pacotes Kubernetes.
+This document provides instruções completas, formais e acadêmicas para a implantação manual do **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no ambiente **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** para automação e **Helm** para gerenciamento de pacotes Kubernetes.
 
 ### Objetivo
 
@@ -2033,7 +2033,7 @@ NASP Adapter ───► NASP Real Services
 
 ## 10. Conclusão
 
-Este documento fornece um guia completo, formal e acadêmico para a implantação manual do TriSLA v3.5.0 no ambiente NASP utilizando Ansible e Helm. O processo é dividido em fases claras, desde a preparação inicial até a validação end-to-end, garantindo um deploy controlado e auditável.
+This document provides a complete guide, formal e acadêmico para a implantação manual do TriSLA v3.5.0 in the NASP environment utilizando Ansible e Helm. O processo é dividido em fases claras, desde a preparação inicial até a validação end-to-end, garantindo um deploy controlado e auditável.
 
 ### Principais Características
 
