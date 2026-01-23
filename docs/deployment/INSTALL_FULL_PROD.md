@@ -1,36 +1,36 @@
-# TriSLA — Guia de Instalação Completa para Produção
+# TriSLA — Complete Production Installation Guide
 
 ## 1. Introduction
 
 ### 1.1 Objective this Documento
 
-This document provides instruções completas e automatizadas para instalar o **TriSLA** (Triple-SLA) in production environment real no **NASP** (Network Automation & Slicing Platform). O guia cobre múltiplos métodos de instalação, desde scripts automatizados até pipelines CI/CD completos.
+This document provides complete and automated instructions to install o **TriSLA** (Triple-SLA) in real production environment no **NASP** (Network Automation & Slicing Platform). The guide covers multiple methods de instalação, from automated scripts to complete CI/CD pipelines.
 
-### 1.2 Methods de Instalação Disponíveis
+### 1.2 Available Installation Methods
 
-O TriSLA pode ser instalado através dos seguintes métodos:
+TriSLA can be installed through the following methods:
 
-1. **Scripts Automatizados**: Instalação rápida via scripts bash
-2. **Docker Compose**: Instalação local para desenvolvimento e testes
-3. **Helm Charts**: Instalação em Kubernetes (método recomendado para produção)
-4. **Ansible Playbooks**: Instalação automatizada e idempotente
-5. **CI/CD Pipeline**: Instalação automatizada via GitHub Actions
+1. **Automated Scripts**: Quick installation via bash scripts
+2. **Docker Compose**: Local installation for development and testing
+3. **Helm Charts**: Kubernetes installation (recommended method for production)
+4. **Ansible Playbooks**: Automated and idempotent installation
+5. **CI/CD Pipeline**: Automated installation via GitHub Actions
 
-### 1.3 Pré-requisitos Gerais
+### 1.3 General Prerequisites
 
-Antes de iniciar qualquer método de instalação, certifique-se de possuir:
+Before starting any installation method, ensure you have:
 
-- **Acesso ao cluster Kubernetes** (NASP ou outro)
-- **kubectl** configurado e conectado ao cluster (versão ≥ 1.26)
-- **Helm** instalado (versão ≥ 3.12) — para métodos Helm
-- **Docker** ou **containerd** — para métodos Docker Compose
-- **Ansible** instalado (versão ≥ 2.14) — para métodos Ansible
-- **Acesso ao GitHub Container Registry (GHCR)** — para pull de imagens
-- **Credenciais do NASP** — para integration com a plataforma
+- **Access to Kubernetes cluster** (NASP ou outro)
+- **kubectl** configured and connected to the cluster (versão ≥ 1.26)
+- **Helm** installed (versão ≥ 3.12) — for Helm methods
+- **Docker** ou **containerd** — for Docker Compose methods
+- **Ansible** installed (versão ≥ 2.14) — for Ansible methods
+- **Access to GitHub Container Registry (GHCR)** — for image pull
+- **NASP credentials** — para integration com a plataforma
 
-### 1.4 Estrutura do Documento
+### 1.4 Document Structure
 
-Este documento está organizado por método de instalação, permitindo que o operador escolha o método mais adequado ao seu ambiente. Cada section é independente e pode ser seguida isoladamente.
+This document is organized by installation method, allowing the operator to choose the most suitable method for their environment. Cada section é independente e can be followed independently.
 
 ---
 
@@ -82,7 +82,7 @@ Para instalação em produção, recomenda-se a seguinte ordem:
 
 ### 2.3 Decisão de Method
 
-**Use Scripts Automatizados quando:**
+**Use Automated Scripts quando:**
 - Precisa de instalação rápida
 - Ambiente padrão NASP
 - Primeira instalação
@@ -1183,7 +1183,7 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 ### 12.1 Pré-Instalação
 
 - [ ] Pré-requisitos verificados (kubectl, Helm, Docker, etc.)
-- [ ] Acesso ao cluster Kubernetes configurado
+- [ ] Access to Kubernetes cluster configurado
 - [ ] Secrets criados (GHCR, NASP)
 - [ ] Configurações preparadas (values-nasp.yaml)
 - [ ] Backup realizado (se atualização)
@@ -1224,7 +1224,7 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 
 ## Conclusão
 
-Este guia fornece múltiplos métodos para instalar o TriSLA em produção. Escolha o método mais adequado ao seu ambiente e siga as instruções passo a passo.
+Este guia fornece multiple methods to install o TriSLA em produção. Escolha the most suitable method for their environment e siga as instruções passo a passo.
 
 **Recomendações finais:**
 
