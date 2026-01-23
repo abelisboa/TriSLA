@@ -471,7 +471,7 @@ resources:
 
 ---
 
-### 2.9 Tabela Consolidada: TriSLA → NASP (node1/node2)
+### 2.9 table Consolidada: TriSLA → NASP (node1/node2)
 
 | Módulo | Namespace | Tipo | Replicas | Port HTTP | Port gRPC | Node1 | Node2 | Image Registry |
 |--------|-----------|------|----------|-----------|-----------|-------|-------|----------------|

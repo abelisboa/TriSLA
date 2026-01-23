@@ -2,7 +2,7 @@
 
 **Data:** 2025-11-22  
 **Versão:** 1.0  
-**Objetivo:** Garantir que o TriSLA está pronto para deploy controlado no NASP Node1
+**objective:** Garantir que o TriSLA está pronto para deploy controlado no NASP Node1
 
 ---
 

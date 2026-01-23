@@ -49,7 +49,7 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** para p
 
 ## 2. table de Parâmetros Críticos
 
-| Chave YAML | Descrição | Fonte de Informação | Obrigatório | Exemplo (genérico) |
+| Chave YAML | description | Fonte de Informação | Obrigatório | Exemplo (genérico) |
 |------------|-----------|---------------------|-------------|-------------------|
 | `global.namespace` | Namespace em que o TriSLA será instalado | Padrão do ambiente NASP | Sim | `trisla` |
 | `global.imageRegistry` | Registry de imagens Docker | GHCR configurado | Sim | `ghcr.io/<GHCR_USER>` |

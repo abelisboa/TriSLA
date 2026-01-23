@@ -2,7 +2,7 @@
 
 **Versão:** 1.0  
 **Data:** 2025-11-22  
-**Objetivo:** Guia operacional completo para deploy controlado do TriSLA in the NASP environment (2 nodes)
+**objective:** Guia operacional completo para deploy controlado do TriSLA in the NASP environment (2 nodes)
 
 ---
 
@@ -36,7 +36,7 @@ Antes de iniciar o deploy, certifique-se de que:
 
 ### Passo 1: Descoberta de Endpoints NASP
 
-**Objetivo:** Identificar serviços NASP relevantes sem expor IPs reais.
+**objective:** Identificar serviços NASP relevantes sem expor IPs reais.
 
 **Execução:**
 ```bash
@@ -58,7 +58,7 @@ read_file
 
 ### Passo 2: Revisar Relatório de Contexto
 
-**Objetivo:** Entender o ambiente NASP antes de configurar o TriSLA.
+**objective:** Entender o ambiente NASP antes de configurar o TriSLA.
 
 **Execução:**
 ```bash
@@ -78,7 +78,7 @@ cat tmp/nasp_context_raw.txt
 
 ### Passo 3: Preencher values-nasp.yaml
 
-**Objetivo:** Configurar valores de produção específicos do ambiente NASP.
+**objective:** Configurar valores de produção específicos do ambiente NASP.
 
 **Execução (método guiado):**
 ```bash
@@ -111,7 +111,7 @@ helm template trisla ./helm/trisla \
 
 ### Passo 4: Auditar Imagens GHCR
 
-**Objetivo:** Verifiesr se todas as imagens necessárias estão disponíveis no GHCR.
+**objective:** Verifiesr se todas as imagens necessárias estão disponíveis no GHCR.
 
 **Execução:**
 ```bash
@@ -143,7 +143,7 @@ docker pull ghcr.io/abelisboa/trisla-ui-dashboard:latest
 
 ### Passo 5: Pre-Flight Checks (Ansible)
 
-**Objetivo:** Validar que o cluster NASP está pronto para receber o TriSLA.
+**objective:** Validar que o cluster NASP está pronto para receber o TriSLA.
 
 **Execução:**
 ```bash
@@ -169,7 +169,7 @@ ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
 
 ### Passo 6: Setup de Namespace e Secrets
 
-**Objetivo:** Criar namespace e configurar secrets necessários.
+**objective:** Criar namespace e configurar secrets necessários.
 
 **Execução:**
 ```bash
@@ -199,7 +199,7 @@ kubectl get secret ghcr-secret -n trisla
 
 ### Passo 7: Deploy TriSLA com Helm
 
-**Objetivo:** Instalar o TriSLA no cluster NASP usando Helm.
+**objective:** Instalar o TriSLA no cluster NASP usando Helm.
 
 **Execução:**
 ```bash
@@ -238,7 +238,7 @@ kubectl get deployments -n trisla
 
 ### Passo 8: Validação Pós-Deploy
 
-**Objetivo:** Confirmar que o TriSLA está operacional após o deploy.
+**objective:** Confirmar que o TriSLA está operacional após o deploy.
 
 **Execução:**
 ```bash
@@ -290,7 +290,7 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 
 ### Passo 9: Verifiesr Observabilidade
 
-**Objetivo:** Confirmar que métricas e traces estão sendo coletados.
+**objective:** Confirmar que métricas e traces estão sendo coletados.
 
 **Execução:**
 ```bash

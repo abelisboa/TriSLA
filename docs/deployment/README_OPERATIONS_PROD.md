@@ -1538,7 +1538,7 @@ cosign verify ghcr.io/abelisboa/trisla-sem-csmf:latest
 
 **Principais scripts:**
 
-| Script | Descrição |
+| Script | description |
 |-------|-----------|
 | `deploy-trisla-nasp.sh` | Deploy completo no NASP |
 | `validate-production-real.sh` | Validação de produção |
@@ -1562,7 +1562,7 @@ chmod +x *.sh
 
 **Playbooks principais:**
 
-| Playbook | Descrição |
+| Playbook | description |
 |----------|-----------|
 | `deploy-trisla-nasp.yml` | Deploy completo |
 | `pre-flight.yml` | Validação pré-deploy |
