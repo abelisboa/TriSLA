@@ -6,7 +6,7 @@
 **Phase:** S (SEM-CSMF)  
 **Status:** Stabilized
 
-This directory contains toda a documentação do módulo SEM-CSMF do TriSLA.
+This directory contains all documentation for the SEM-CSMF module of TriSLA.
 
 ---
 
@@ -16,23 +16,23 @@ This directory contains toda a documentação do módulo SEM-CSMF do TriSLA.
 
 Complete guide that includes:
 
-- ✅ **Overview** do módulo
-- ✅ **Architecture** detalhada
+- ✅ **Overview** of the module
+- ✅ **Architecture** details
 - ✅ **Processing Pipeline** (Intent → NEST)
 - ✅ **OWL Ontology** (integração e uso)
 - ✅ **NLP** (processamento de linguagem natural)
 - ✅ **NEST Generation** (Network Slice Template)
 - ✅ **Interfaces** (I-01 HTTP REST, I-02 Kafka)
 - ✅ **Persistence** (PostgreSQL)
-- ✅ **Usage Examples** (código Python)
-- ✅ **Troubleshooting** (soluções para problemas comuns)
+- ✅ **Usage Examples** (Python code)
+- ✅ **Troubleshooting** (solutions for common issues)
 
-### [Documentação da Ontologia](ontology/)
+### [Ontology Documentation](ontology/)
 
-A documentação da ontologia OWL está organizada como subpasta do SEM-CSMF:
+The OWL ontology documentation is organized as a subfolder of SEM-CSMF:
 
-- **[Guia de Implementação da Ontologia](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)** — Guia completo da ontologia OWL, classes, propriedades, diagramas Protégé
-- **[README da Ontologia](ontology/README.md)** — Índice da documentação da ontologia
+- **[Ontology Implementation Guide](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)** — Complete guide da ontologia OWL, classes, propriedades, diagramas Protégé
+- **[Ontology README](ontology/README.md)** — Index da documentação da ontologia
 
 ---
 
@@ -41,13 +41,13 @@ A documentação da ontologia OWL está organizada como subpasta do SEM-CSMF:
 ```
 apps/sem-csmf/
 ├── src/
-│   ├── main.py                 # Aplicação FastAPI
-│   ├── intent_processor.py     # Processamento de intents
-│   ├── nest_generator.py       # Geração de NEST
-│   ├── ontology/               # Ontologia OWL
-│   │   ├── trisla.ttl         # Ontologia principal
-│   │   ├── loader.py          # Carregador de ontologia
-│   │   ├── reasoner.py        # Motor de reasoning
+│   ├── main.py                 # FastAPI Application
+│   ├── intent_processor.py     # Intent Processing
+│   ├── nest_generator.py       # NEST Generation
+│   ├── ontology/               # OWL Ontology
+│   │   ├── trisla.ttl         # Main Ontology
+│   │   ├── loader.py          # Ontology Loader
+│   │   ├── reasoner.py        # Reasoning Engine
 │   │   ├── parser.py          # Parser de intents
 │   │   └── matcher.py         # Matcher semântico
 │   ├── nlp/                    # Processamento de linguagem natural

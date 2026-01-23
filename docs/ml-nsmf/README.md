@@ -1,29 +1,29 @@
-# Documentação do ML-NSMF
+# ML-NSMF Documentation
 
-**Versão:** 3.7.3  
-**Fase:** M (ML-NSMF)  
-**Status:** Estabilizado
+**Version:** 3.7.3  
+**Phase:** M (ML-NSMF)  
+**Status:** Stabilized
 
-Este diretório contém a documentação completa do módulo ML-NSMF.
+This directory contains a documentação completa do módulo ML-NSMF.
 
-## 📚 Documentos Disponíveis
+## 📚 Available Documents
 
-### [Guia Completo do ML-NSMF](ML_NSMF_COMPLETE_GUIDE.md)
+### [ML-NSMF Complete Guide](ML_NSMF_COMPLETE_GUIDE.md)
 
-Guia completo que inclui:
+Complete guide that includes:
 
-- ✅ **Visão Geral** do módulo
-- ✅ **Arquitetura** detalhada
-- ✅ **Funcionamento** do pipeline
-- ✅ **Treinamento do Modelo** (script completo)
-- ✅ **Predição e XAI** (SHAP/LIME)
-- ✅ **Integração** com outros módulos
+- ✅ **Overview** do módulo
+- ✅ **Architecture** detalhada
+- ✅ **Functioning** do pipeline
+- ✅ **Model Training** (script completo)
+- ✅ **Prediction and XAI** (SHAP/LIME)
+- ✅ **Integration** com outros módulos
 - ✅ **Interface I-03** (Kafka)
-- ✅ **Observabilidade** (métricas e traces)
-- ✅ **Exemplos de Uso** (código Python)
+- ✅ **Observability** (métricas e traces)
+- ✅ **Usage Examples** (código Python)
 - ✅ **Troubleshooting** (soluções para problemas comuns)
 
-## 📁 Arquivos Relacionados
+## 📁 Related Files
 
 - **Predictor:** `apps/ml_nsmf/src/predictor.py`
 - **Treinamento:** `apps/ml_nsmf/training/train_model.py`
@@ -32,22 +32,22 @@ Guia completo que inclui:
 - **Metadados:** `apps/ml_nsmf/models/model_metadata.json`
 - **Dataset:** `apps/ml_nsmf/data/datasets/trisla_ml_dataset.csv`
 
-## 🎯 Início Rápido
+## 🎯 Quick Start
 
-1. **Ler o Guia:** [`ML_NSMF_COMPLETE_GUIDE.md`](ML_NSMF_COMPLETE_GUIDE.md)
-2. **Treinar Modelo:** `python apps/ml-nsmf/training/train_model.py`
-3. **Usar Predição:** Ver exemplos no guia completo
+1. **Read the Guide:** [`ML_NSMF_COMPLETE_GUIDE.md`](ML_NSMF_COMPLETE_GUIDE.md)
+2. **Train Model:** `python apps/ml-nsmf/training/train_model.py`
+3. **Use Prediction:** Ver exemplos no guia completo
 
-## 🎓 Treinamento
+## 🎓 Training
 
-### Executar Treinamento
+### Run Training
 
 ```bash
 cd apps/ml-nsmf
 python training/train_model.py
 ```
 
-### Validar Modelo
+### Validate Model
 
 ```bash
 python -c "from src.predictor import RiskPredictor; p = RiskPredictor(); print('Modelo carregado!')"

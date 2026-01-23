@@ -1,36 +1,36 @@
-# Guia de Contribuição — TriSLA
+# Contributing Guide — TriSLA
 
-## 1. Introdução
+## 1. Introduction
 
-### 1.1 Filosofia do Projeto
+### 1.1 Project Philosophy
 
-O **TriSLA** é um projeto open-source dedicado ao gerenciamento automatizado de SLAs em redes 5G/O-RAN. Valorizamos:
+**TriSLA** is an open-source project dedicated to automated management de SLAs em redes 5G/O-RAN. We value:
 
-- **Qualidade sobre velocidade**: Código bem testado e documentado
-- **Colaboração**: Respeito mútuo e comunicação construtiva
-- **Transparência**: Decisões técnicas documentadas e discutidas
-- **Aprendizado contínuo**: Espaço para crescimento e experimentação
+- **Quality over speed**: Código bem testado e documentado
+- **Collaboration**: Respeito mútuo e comunicação construtiva
+- **Transparency**: Decisões técnicas documentadas e discutidas
+- **Continuous learning**: Espaço para crescimento e experimentação
 
-### 1.2 Expectativas para Contribuidores
+### 1.2 Expectations for Contributors
 
-**Antes de contribuir, esperamos que você:**
+**Before contributing, we expect you to:**
 
-- Leia este guia completamente
-- Familiarize-se com a arquitetura do projeto (consulte `ARCHITECTURE_OVERVIEW.md`)
-- Entenda o código existente antes de propor mudanças significativas
-- Siga os padrões de código e convenções estabelecidas
-- Seja respeitoso e construtivo em discussões
+- Read this guide completely
+- Familiarize yourself with a arquitetura do projeto (consulte `ARCHITECTURE_OVERVIEW.md`)
+- Understand existing code antes de propor mudanças significativas
+- Follow code standards e convenções estabelecidas
+- Be respectful e construtivo em discussões
 
-**Tipos de contribuições bem-vindas:**
+**Types of contributions welcome:**
 
-- Correção de bugs
-- Implementação de novas funcionalidades
-- Melhorias na documentação
-- Otimizações de performance
-- Testes e cobertura de código
+- Bug fixes
+- Implementation of new features
+- Documentation improvements
+- Performance optimizations
+- Tests and code coverage
 - Melhorias na experiência do desenvolvedor
 
-### 1.3 Código de Conduta
+### 1.3 Code of Conduct
 
 Este projeto segue o [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). Ao participar, você concorda em manter este código. Comportamentos inaceitáveis incluem:
 
@@ -42,11 +42,11 @@ Este projeto segue o [Contributor Covenant Code of Conduct](https://www.contribu
 
 ---
 
-## 2. Como Abrir Issues
+## 2. How to Open Issues
 
 ### 2.1 Bugs
 
-**Antes de abrir um bug report:**
+**Before opening a bug report:**
 
 1. Verifique se o bug já foi reportado (busque nas issues existentes)
 2. Teste na versão mais recente do código
@@ -1254,7 +1254,7 @@ git push origin feature/minha-feature --force-with-lease
 
 Este guia fornece as diretrizes necessárias para contribuir efetivamente com o TriSLA. Lembre-se:
 
-- **Qualidade sobre velocidade**: Código bem testado e documentado
+- **Quality over speed**: Código bem testado e documentado
 - **Comunicação**: Seja claro e respeitoso
 - **Aprendizado**: Este é um espaço para crescer e aprender
 
