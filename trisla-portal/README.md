@@ -1,87 +1,43 @@
-# TriSLA Observability Portal v4.0
+# TriSLA Observability Portal
 
-Portal completo de observabilidade para o TriSLA, desenvolvido em fases controladas.
+Complete observability portal for TriSLA, providing comprehensive monitoring and management capabilities.
 
-## 🎯 Objetivo
+## Overview
 
-Fornecer uma interface completa de observabilidade para o TriSLA, incluindo:
-- Visualização de métricas, traces e logs
-- Gerenciamento de contratos SLA (criação, estado, violações, renegociações)
-- Módulo de PLN + Templates NEST para criação de SLAs
-- Batch SLA Request
-- XAI (Explainable AI) completo
-- Integração com Prometheus, Loki, Tempo e OTEL Collector
+The TriSLA Observability Portal provides a unified interface for:
+- Metrics, traces, and logs visualization
+- SLA contract management (creation, status, violations, renegotiations)
+- Natural Language Processing (NLP) + NEST templates for SLA creation
+- Batch SLA requests
+- Explainable AI (XAI) module
+- Integration with Prometheus, Loki, Tempo, and OTEL Collector
 
-## 📁 Estrutura do Projeto
+## Project Structure
 
-```
-trisla-portal/
-├── frontend/          # Next.js 15 + Tailwind + Shadcn/UI
-├── backend/           # FastAPI (Python 3.11)
-├── infra/             # Docker, Compose, Helm Charts
-├── docs/              # Documentação técnica
-└── prompts/           # Prompts e documentação de desenvolvimento
-```
 
-## 🚀 Status do Desenvolvimento
 
-- [x] **FASE 0**: Estrutura inicial de diretórios ✅
-- [x] **FASE 1**: Arquitetura Completa ✅
-- [x] **FASE 2**: Frontend (Next.js 15 + Tailwind + Shadcn/UI) ✅
-- [x] **FASE 3**: Backend FastAPI (Python 3.11) ✅
-- [x] **FASE 4**: Docker, Compose e Helm Charts ✅
-- [x] **FASE 5**: Testes E2E + XAI + Batch + Contratos ✅
-- [x] **FASE 6**: Documentação técnica final ✅
-- [x] **FASE FINAL**: Síntese executiva + Prompts ✅
-
-**🎉 PROJETO CONCLUÍDO**
-
-## 🛠️ Stack Tecnológico
+## Components
 
 ### Frontend
-- Next.js 15
-- Tailwind CSS
-- Shadcn/UI
-- Zustand (state management)
-- TypeScript
+- **Framework**: Next.js 15
+- **Styling**: Tailwind CSS + Shadcn/UI
+- **Features**: Real-time dashboards, SLA management, XAI visualization
 
 ### Backend
-- FastAPI (Python 3.11)
-- SQLite/PostgreSQL
-- Redis (cache)
-- OpenTelemetry
-- Pydantic
+- **Framework**: FastAPI (Python 3.11)
+- **APIs**: RESTful endpoints for observability data
+- **Integration**: Prometheus, Loki, Tempo, OpenTelemetry
 
-### Observabilidade
-- Prometheus
-- Loki
-- Tempo
-- OTEL Collector
+## Deployment
 
-## 📋 Requisitos
+See [Deployment Guide](../docs/DEPLOYMENT.md) for detailed instructions.
 
-- Node.js 20+
-- Python 3.11+
-- Docker & Docker Compose
-- Kubernetes (para deploy no NASP)
-- Helm 3.14+
+## Documentation
 
-## 🔗 Alinhamento
+- [Architecture](../docs/ARCHITECTURE.md)
+- [Installation](../docs/INSTALLATION.md)
+- [Reproducibility](../docs/REPRODUCIBILITY.md)
 
-Este portal está alinhado com:
-- Relatório Técnico FASE 6
-- Arquitetura TriSLA v3.7.10
-- Especificações NASP
+## Version
 
----
-
-**Versão:** 4.0  
-**Data de Início:** 2025-01-XX  
-**Ambiente:** Local + NASP
-
-
-
-
-
-
-
+This portal is part of TriSLA v3.9.3 (frozen scientific version).
