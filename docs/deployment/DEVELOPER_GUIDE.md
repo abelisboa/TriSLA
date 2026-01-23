@@ -1,42 +1,42 @@
-# TriSLA — Guia do Desenvolvedor
+# TriSLA — Developer Guide
 
-## 1. Introdução
+## 1. Introduction
 
-Este documento fornece um guia completo para desenvolvedores que desejam contribuir com o projeto **TriSLA** (Triple-SLA). O TriSLA é uma plataforma de gerenciamento de SLA para redes 5G/O-RAN baseada em microserviços, utilizando Python, gRPC, Kafka, blockchain e integração com NASP.
+This document provides a complete guide for developers who want to contribute to the project **TriSLA** (Triple-SLA). O TriSLA é uma plataforma de gerenciamento de SLA para redes 5G/O-RAN baseada em microserviços, utilizando Python, gRPC, Kafka, blockchain e integração com NASP.
 
-**Objetivos deste guia:**
+**Objectives of this guide:**
 
-- Facilitar o setup do ambiente de desenvolvimento local
-- Documentar a estrutura do código e arquitetura
-- Estabelecer padrões de código e práticas recomendadas
-- Explicar o fluxo de contribuição e processo de PR
-- Fornecer ferramentas e scripts úteis para desenvolvimento
+- Facilitate setup do ambiente de desenvolvimento local
+- Document the structure do código e arquitetura
+- Establish standards de código e práticas recomendadas
+- Explain the flow de contribuição e processo de PR
+- Provide tools e scripts úteis para desenvolvimento
 
-**Público-alvo:**
+**Target audience:**
 
-- Desenvolvedores Python
-- Engenheiros de DevOps
-- Contribuidores open source
-- Integradores de sistemas O-RAN
+- Python Developers
+- DevOps Engineers
+- Open Source Contributors
+- O-RAN System Integrators
 
 ---
 
-## 2. Ferramentas Necessárias
+## 2. Required Tools
 
-### 2.1 Requisitos de Sistema
+### 2.1 System Requirements
 
-**Sistema Operacional:**
+**Operating System:**
 - Linux (Ubuntu 20.04+ recomendado)
 - macOS (10.15+)
 - Windows 10/11 (com WSL2 recomendado)
 
-**Versões mínimas:**
+**Minimum versions:**
 - Python 3.10+
 - Docker 20.10+
 - Docker Compose 2.0+
 - Git 2.30+
 
-### 2.2 Instalação de Dependências
+### 2.2 Dependency Installation
 
 **Python 3.10+:**
 
