@@ -493,3 +493,28 @@ __pycache__/
 # Arquivos de relatórios específicos (manter apenas em docs/)
 !docs/**/*.md
 
+
+# PROMPT_S6 - Internal audit and experiments (DO NOT PUBLISH)
+docs/audit/
+docs/technical/
+PROMPTS/
+scripts/
+e2e_controlada/
+fix_e2e/
+trisla_avaliacao/
+trisla_evidencia/
+trisla_experimentos/
+snapshots/
+inventory/
+run_*/
+logs/
+tmp/
+
+# Artifacts (internal use only)
+*.log
+*.csv
+*.sha256
+*.tar.gz
+
+# Internal deployment artifacts
+docs/deployment/FROZEN_IMAGES_v3.9.3.md
