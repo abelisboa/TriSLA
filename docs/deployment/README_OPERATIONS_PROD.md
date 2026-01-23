@@ -336,7 +336,7 @@ curl -k https://<NASP_TRANSPORT_ENDPOINT>/health
 curl -k https://<NASP_CORE_ENDPOINT>/health
 ```
 
-**Nota**: Ajuste os endpoints conforme sua configuração NASP real.
+**Nota**: Ajuste os endpoints according to sua configuração NASP real.
 
 ### 4.5 Rodar Pre-flight Automático
 
@@ -374,7 +374,7 @@ global:
     - name: ghcr-secret
   namespace: trisla
 
-# Network Configuration (ajustar conforme NASP)
+# Network Configuration (ajustar according to NASP)
 network:
   interface: "eth0"  # Interface de rede principal do cluster
   nodeIP: "192.168.10.16"  # IP do nó Kubernetes (ajustar)
@@ -477,7 +477,7 @@ bcNssmf:
     OTLP_ENDPOINT: "http://otlp-collector:4317"
     LOG_LEVEL: "INFO"
     BLOCKCHAIN_NETWORK: "besu"  # ou "goquorum"
-    BLOCKCHAIN_ENDPOINT: "http://besu-node:8545"  # Ajustar conforme blockchain
+    BLOCKCHAIN_ENDPOINT: "http://besu-node:8545"  # Ajustar according to blockchain
 
 # SLA-Agent Layer
 slaAgentLayer:
@@ -544,7 +544,7 @@ uiDashboard:
     enabled: true
     className: nginx
     hosts:
-      - host: trisla.nasp.local  # ⚠️ AJUSTAR conforme DNS
+      - host: trisla.nasp.local  # ⚠️ AJUSTAR according to DNS
         paths:
           - path: /
             pathType: Prefix
@@ -574,7 +574,7 @@ kafka:
   replicas: 3
   storage:
     size: 20Gi
-    storageClass: "standard"  # ⚠️ AJUSTAR conforme StorageClass
+    storageClass: "standard"  # ⚠️ AJUSTAR according to StorageClass
 
 # PostgreSQL
 postgres:
@@ -584,7 +584,7 @@ postgres:
     tag: "15-alpine"
   storage:
     size: 10Gi
-    storageClass: "standard"  # ⚠️ AJUSTAR conforme StorageClass
+    storageClass: "standard"  # ⚠️ AJUSTAR according to StorageClass
   env:
     POSTGRES_DB: "trisla"
     POSTGRES_USER: "trisla"
@@ -610,7 +610,7 @@ prometheus:
     tag: latest
   storage:
     size: 50Gi
-    storageClass: "standard"  # ⚠️ AJUSTAR conforme StorageClass
+    storageClass: "standard"  # ⚠️ AJUSTAR according to StorageClass
   retention: "30d"
 
 # Grafana
@@ -622,7 +622,7 @@ grafana:
   adminPassword: "<GERAR_SENHA_SEGURA>"  # ⚠️ ALTERAR
   storage:
     size: 5Gi
-    storageClass: "standard"  # ⚠️ AJUSTAR conforme StorageClass
+    storageClass: "standard"  # ⚠️ AJUSTAR according to StorageClass
 
 # Alertmanager
 alertmanager:
@@ -632,7 +632,7 @@ alertmanager:
     tag: latest
   storage:
     size: 1Gi
-    storageClass: "standard"  # ⚠️ AJUSTAR conforme StorageClass
+    storageClass: "standard"  # ⚠️ AJUSTAR according to StorageClass
 
 # Production Settings
 production:
@@ -659,9 +659,9 @@ Os seguintes campos **devem** ser ajustados antes do deploy:
 
 ### 5.3 Configurações Opcionais
 
-- **Recursos (CPU/Memory)**: Ajustar conforme capacidade do cluster
+- **Recursos (CPU/Memory)**: Ajustar according to capacidade do cluster
 - **Replicas**: Aumentar para alta disponibilidade
-- **StorageClass**: Ajustar conforme storage disponível
+- **StorageClass**: Ajustar according to storage disponível
 - **Ingress TLS**: Configurar certificados SSL/TLS
 
 ### 5.4 Referência aos Templates
@@ -861,7 +861,7 @@ kubectl get pods -n trisla -o wide
 kubectl describe pod <POD_NAME> -n trisla
 ```
 
-Todos os pods devem ter `READY` como `1/1` ou `2/2` (conforme replicas).
+Todos os pods devem ter `READY` como `1/1` ou `2/2` (according to replicas).
 
 **Verifiesr liveness probes:**
 
@@ -955,7 +955,7 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 
 # Acessar http://localhost:3000
 # Usuário: admin
-# Senha: (conforme values-nasp.yaml)
+# Senha: (according to values-nasp.yaml)
 ```
 
 **Importar dashboards:**
