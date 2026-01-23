@@ -32,7 +32,7 @@
 
 ### 1.3 Code of Conduct
 
-Este projeto segue o [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). Ao participar, você concorda em manter este código. Comportamentos inaceitáveis incluem:
+This project segue o [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). Ao participar, você concorda em manter this code. Comportamentos inaceitáveis incluem:
 
 - Uso de linguagem ou imagens sexualizadas
 - Comentários insultuosos ou depreciativos
@@ -55,8 +55,8 @@ Este projeto segue o [Contributor Covenant Code of Conduct](https://www.contribu
 **Template para bug report:**
 
 ```markdown
-## Descrição
-Descrição clara e concisa do bug.
+## Description
+Clear and concise description do bug.
 
 ## Passos para Reproduzir
 1. Vá para '...'
@@ -92,14 +92,14 @@ Qualquer outra informação relevante.
 
 **Antes de propor uma feature:**
 
-1. Verifique se a feature já foi proposta
+1. Verifique se a feature has already been proposed
 2. Considere se a feature se alinha com os objetivos do projeto
-3. Prepare uma proposta detalhada
+3. Prepare a detailed proposal
 
 **Template para feature request:**
 
 ```markdown
-## Descrição
+## Description
 Descrição clara da funcionalidade desejada.
 
 ## Motivação
@@ -141,7 +141,7 @@ Liste os arquivos de documentação.
 - [ ] Adição de conteúdo
 - [ ] Reorganização
 
-## Descrição
+## Description
 Descrição das mudanças propostas.
 ```
 
@@ -465,7 +465,7 @@ usando exceções customizadas e logging estruturado."
 ```bash
 git commit -m "docs: atualizar guia de contribuição
 
-Adicionar seção sobre testes E2E e melhorar exemplos
+Add section about testes E2E e melhorar exemplos
 de commits."
 ```
 
@@ -535,7 +535,7 @@ Antes de abrir um PR, verifique:
 **Template de PR:**
 
 ```markdown
-## Descrição
+## Description
 Breve descrição das mudanças.
 
 ## Tipo de Mudança

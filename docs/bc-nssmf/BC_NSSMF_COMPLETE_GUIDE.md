@@ -311,7 +311,7 @@ class SLAStatusUpdate(BaseModel):
 
 **Status:** Placeholder funcional (estrutura mínima)
 
-**Nota:** A implementação completa de gRPC está nas interfaces I-01 a I-07.
+**Note:** The complete implementation de gRPC está nas interfaces I-01 a I-07.
 
 ---
 
@@ -719,7 +719,7 @@ docker-compose -f docker-compose-kafka.yaml up -d
 
 ### Métricas Prometheus
 
-| Métrica | Tipo | Descrição |
+| Métrica | Tipo | Description |
 |---------|------|-----------|
 | `bc_nssmf_transactions_total` | Counter | Total de transações enviadas |
 | `bc_nssmf_transaction_duration_seconds` | Histogram | Tempo de confirmação |

@@ -541,7 +541,7 @@ ml-nsmf:
 
 **Variáveis comuns:**
 
-| Variável | Descrição | Valor Padrão |
+| Variável | Description | Valor Padrão |
 |----------|-----------|--------------|
 | `POSTGRES_URL` | URL do PostgreSQL | `postgresql://trisla:trisla_password@postgres:5432/trisla` |
 | `KAFKA_BOOTSTRAP_SERVERS` | Servidores Kafka | `kafka:9092` |
@@ -1533,8 +1533,8 @@ git commit -m "test(ml-nsmf): adicionar testes unitários para predições"
 **2. Template de PR:**
 
 ```markdown
-## Descrição
-Breve descrição das mudanças.
+## Description
+Brief description das mudanças.
 
 ## Tipo de mudança
 - [ ] Bug fix
@@ -1590,7 +1590,7 @@ git push origin feature/nova-funcionalidade --force-with-lease
 ### 12.1 Template de Bug Report
 
 ```markdown
-## Descrição
+## Description
 Descrição clara e concisa do bug.
 
 ## Passos para reproduzir
@@ -1622,13 +1622,13 @@ Se aplicável.
 ### 12.2 Template de Feature Request
 
 ```markdown
-## Descrição
+## Description
 Descrição clara da funcionalidade desejada.
 
 ## Motivação
 Por que essa funcionalidade é necessária?
 
-## Solução proposta
+## Proposed solution
 Como você imagina que isso funcionaria?
 
 ## Alternativas consideradas
@@ -1893,7 +1893,7 @@ ENVIRONMENT=production
 
 ### 12.1 Teste E2E Local
 
-**Objetivo:** Validar o fluxo completo I-01 → I-07 em ambiente local com Docker Compose.
+**Objective:** Validar o fluxo completo I-01 → I-07 em ambiente local com Docker Compose.
 
 **Iniciar ambiente:**
 ```bash
@@ -1918,7 +1918,7 @@ pytest tests/e2e/test_trisla_e2e.py -v
 
 ### 12.2 Deploy NASP Node1
 
-**Objetivo:** Deploy controlado no ambiente NASP real.
+**Objective:** Deploy controlado no ambiente NASP real.
 
 **Pré-requisitos:**
 - Seguir `docs/NASP_PREDEPLOY_CHECKLIST.md`
@@ -2046,7 +2046,7 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 
 ## Conclusão
 
-Este guia fornece todas as informações necessárias para desenvolvedores contribuírem com o TriSLA. Para dúvidas adicionais, consulte a documentação específica de cada módulo ou abra uma issue no GitHub.
+This guide fornece todas as informações necessárias para desenvolvedores contribuírem com o TriSLA. Para dúvidas adicionais, consulte a documentação específica de cada módulo ou abra uma issue no GitHub.
 
 **Última atualização:** 2025-11-22  
 **Versão do documento:** 1.0.0
