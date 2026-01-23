@@ -1,33 +1,33 @@
-# TriSLA — Referência de API
+# TriSLA — API Reference
 
-## 1. Introdução
+## 1. Introduction
 
-### 1.1 Objetivo deste Documento
+### 1.1 Document Objective
 
-Este documento fornece a referência técnica completa das APIs do **TriSLA** (Triple-SLA), cobrindo todas as interfaces internas (I-01 a I-07) e APIs externas dos módulos. O documento serve como guia para desenvolvedores que precisam integrar com o TriSLA ou entender a comunicação entre seus módulos.
+This document provides the complete technical reference of **TriSLA** APIs (Triple-SLA), cobrindo todas as interfaces internas (I-01 a I-07) e APIs externas dos módulos. The document serves as a guide for developers who need to integrate with TriSLA or understand the communication between its modules.
 
-### 1.2 Arquitetura de APIs do TriSLA
+### 1.2 TriSLA API Architecture
 
-O TriSLA utiliza uma arquitetura de microserviços com comunicação assíncrona e síncrona:
+TriSLA uses a microservices architecture with asynchronous and synchronous communication:
 
-- **gRPC**: Para comunicação síncrona de alta performance (I-01)
-- **REST HTTP**: Para APIs externas e comunicação entre módulos (I-02, I-06, I-07)
-- **Kafka**: Para mensageria assíncrona e eventos (I-03, I-04, I-05)
-- **OTLP**: Para observabilidade e telemetria (I-06)
+- **gRPC**: For synchronous communication de alta performance (I-01)
+- **REST HTTP**: For external APIs e comunicação entre módulos (I-02, I-06, I-07)
+- **Kafka**: For asynchronous messaging e eventos (I-03, I-04, I-05)
+- **OTLP**: For observability e telemetria (I-06)
 
-### 1.3 Convenções
+### 1.3 Conventions
 
-**Formato de dados:**
+**Data Format:**
 - **gRPC**: Protocol Buffers (protobuf)
 - **REST**: JSON
 - **Kafka**: JSON (serializado como string UTF-8)
 
-**Autenticação:**
+**Authentication:**
 - **gRPC**: mTLS + JWT (quando aplicável)
 - **REST**: JWT Bearer Token
 - **Kafka**: SASL/SCRAM + TLS
 
-**Versionamento:**
+**Versioning:**
 - APIs seguem versionamento semântico (v1, v2, etc.)
 - Versão atual: **v1.0.0**
 
@@ -1033,7 +1033,7 @@ Authorization: Bearer <JWT_TOKEN>
 - **Transport**: `https://nasp-transport.local/api/v1/connections`
 - **Core**: `https://nasp-core.local/api/v1/sessions`
 
-**Autenticação:**
+**Authentication:**
 
 ```python
 import requests
@@ -1234,7 +1234,7 @@ async def create_intent(intent: IntentRequest):
 
 ### 11.1 Estratégia de Versionamento
 
-O TriSLA utiliza versionamento semântico para APIs:
+TriSLA uses versionamento semântico para APIs:
 
 - **Versão atual**: v1.0.0
 - **Formato**: `v<major>.<minor>.<patch>`
@@ -1767,7 +1767,7 @@ python -m grpc_tools.protoc \
 
 ## Conclusão
 
-Este documento fornece a referência completa das APIs do TriSLA. Para integração, consulte os exemplos práticos fornecidos em cada seção.
+This document provides a referência completa das APIs do TriSLA. Para integração, consulte os exemplos práticos fornecidos em cada seção.
 
 **Última atualização:** 2025-01-XX  
 **Versão do documento:** 1.0.0  
