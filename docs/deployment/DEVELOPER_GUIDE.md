@@ -1591,7 +1591,7 @@ git push origin feature/nova-funcionalidade --force-with-lease
 
 ```markdown
 ## Description
-Descrição clara e concisa do bug.
+Description clara e concisa do bug.
 
 ## Passos para reproduzir
 1. ...
@@ -1623,7 +1623,7 @@ Se aplicável.
 
 ```markdown
 ## Description
-Descrição clara da funcionalidade desejada.
+Description clara da funcionalidade desejada.
 
 ## Motivação
 Por que essa funcionalidade é necessária?

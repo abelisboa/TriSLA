@@ -100,12 +100,12 @@ Qualquer outra informação relevante.
 
 ```markdown
 ## Description
-Descrição clara da funcionalidade desejada.
+Description clara da funcionalidade desejada.
 
 ## Motivação
 Por que essa funcionalidade é necessária? Qual problema ela resolve?
 
-## Solução Proposta
+## Solução proposal
 Como você imagina que isso funcionaria?
 
 ## Alternativas Consideradas
@@ -142,7 +142,7 @@ Liste os arquivos de documentação.
 - [ ] Reorganização
 
 ## Description
-Descrição das mudanças propostas.
+Description das mudanças propostas.
 ```
 
 ---
@@ -326,7 +326,7 @@ docker compose down
 **Formato:**
 
 ```
-<tipo>/<descrição-curta>
+<tipo>/<Description-curta>
 ```
 
 **Tipos de branch:**
@@ -495,7 +495,7 @@ Cobrir casos de borda e cenários de falha."
 **Footer (opcional):**
 
 - Referências a issues: `Fixes #123`, `Closes #456`
-- Breaking changes: `BREAKING CHANGE: descrição`
+- Breaking changes: `BREAKING CHANGE: Description`
 
 **Evitar:**
 
@@ -536,7 +536,7 @@ Antes de abrir um PR, verifique:
 
 ```markdown
 ## Description
-Breve descrição das mudanças.
+Breve Description das mudanças.
 
 ## Tipo de Mudança
 - [ ] Bug fix
@@ -942,7 +942,7 @@ export const IntentList: React.FC<IntentListProps> = ({
 - `ARCHITECTURE_OVERVIEW.md`: Arquitetura
 - `DEVELOPER_GUIDE.md`: Guia de desenvolvimento
 - `API_REFERENCE.md`: Referência de APIs
-- `CONTRIBUTING.md`: Este arquivo
+- `CONTRIBUTING.md`: This arquivo
 
 **Documentação de módulos:**
 
@@ -984,7 +984,7 @@ nest = process_intent(intent, tenant_id)
 
 ### Parâmetros
 
-| Parâmetro | Tipo | Descrição |
+| Parâmetro | Tipo | Description |
 |-----------|------|-----------|
 | `intent` | `Intent` | Intent a ser processado |
 | `tenant_id` | `str` | ID do tenant |
@@ -1079,7 +1079,7 @@ API_TOKEN = os.getenv("GITHUB_TOKEN")
 
 **Para contribuições grandes (>500 linhas):**
 
-1. **Discutir primeiro**: Abra uma issue para discutir a proposta
+1. **Discutir primeiro**: Abra uma issue para discutir a proposal
 2. **Dividir em partes**: Quebre em PRs menores e incrementais
 3. **Documentar**: Documente a arquitetura e decisões técnicas
 4. **Testar**: Garanta cobertura de testes adequada
@@ -1173,7 +1173,7 @@ Commits:
 4. docs: atualizar documentação do módulo
 ```
 
-### 14.3 Descrição Clara
+### 14.3 Description Clara
 
 **Inclua:**
 
@@ -1252,11 +1252,11 @@ git push origin feature/minha-feature --force-with-lease
 
 ## Conclusão
 
-Este guia fornece as diretrizes necessárias para contribuir efetivamente com o TriSLA. Lembre-se:
+This guia fornece as diretrizes necessárias para contribuir efetivamente com o TriSLA. Lembre-se:
 
 - **Quality over speed**: Código bem testado e documentado
 - **Comunicação**: Seja claro e respeitoso
-- **Aprendizado**: Este é um espaço para crescer e aprender
+- **Aprendizado**: This é um espaço para crescer e aprender
 
 **Recursos adicionais:**
 
