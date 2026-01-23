@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-### 1.1 Objetivo this Documento
+### 1.1 Objective this Documento
 
 This document provides instruções completas e automatizadas para instalar o **TriSLA** (Triple-SLA) in production environment real no **NASP** (Network Automation & Slicing Platform). O guia cobre múltiplos métodos de instalação, desde scripts automatizados até pipelines CI/CD completos.
 
