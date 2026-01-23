@@ -8,7 +8,7 @@
 
 ## Visão Geral
 
-Este runbook descreve como realizar um **deploy controlado** do TriSLA in the NASP environment (cluster Kubernetes com 2 nodes), a partir de um repositório já sanitizado e validado localmente.
+This runbook descreve como realizar um **deploy controlado** do TriSLA in the NASP environment (cluster Kubernetes com 2 nodes), a partir de um repositório já sanitizado e validado localmente.
 
 O processo é dividido em etapas sequenciais, cada uma com validações específicas, garantindo que o deploy seja realizado de forma segura e auditável.
 

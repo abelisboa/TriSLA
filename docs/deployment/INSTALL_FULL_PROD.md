@@ -30,7 +30,7 @@ Antes de iniciar qualquer método de instalação, certifique-se de possuir:
 
 ### 1.4 Estrutura do Documento
 
-Este documento está organizado por método de instalação, permitindo que o operador escolha o método mais adequado ao seu ambiente. Cada seção é independente e pode ser seguida isoladamente.
+Este documento está organizado por método de instalação, permitindo que o operador escolha o método mais adequado ao seu ambiente. Cada section é independente e pode ser seguida isoladamente.
 
 ---
 
@@ -1228,10 +1228,10 @@ Este guia fornece múltiplos métodos para instalar o TriSLA em produção. Esco
 
 **Recomendações finais:**
 
-- **Produção**: Use Helm (seção 5)
-- **Desenvolvimento**: Use Docker Compose (seção 4)
-- **Automação**: Use Ansible (seção 6) ou CI/CD (seção 7)
-- **Rápido**: Use Scripts (seção 3)
+- **Produção**: Use Helm (section 5)
+- **Desenvolvimento**: Use Docker Compose (section 4)
+- **Automação**: Use Ansible (section 6) ou CI/CD (section 7)
+- **Rápido**: Use Scripts (section 3)
 
 **Lembre-se:**
 

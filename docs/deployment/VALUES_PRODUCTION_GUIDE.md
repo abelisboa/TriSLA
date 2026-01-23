@@ -47,7 +47,7 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** para p
 
 ---
 
-## 2. Tabela de Parâmetros Críticos
+## 2. table de Parâmetros Críticos
 
 | Chave YAML | Descrição | Fonte de Informação | Obrigatório | Exemplo (genérico) |
 |------------|-----------|---------------------|-------------|-------------------|

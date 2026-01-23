@@ -370,7 +370,7 @@ kubectl run test-pull --image=ghcr.io/abelisboa/trisla-sem-csmf:latest \
   --rm -it --restart=Never -n trisla -- echo "Pull successful"
 ```
 
-**Nota**: O namespace `trisla` será criado na seção de pre-flight. Se ainda não existir, criar primeiro:
+**Note**: O namespace `trisla` será criado in the section de pre-flight. Se ainda não existir, criar primeiro:
 
 ```bash
 kubectl create namespace trisla
@@ -393,7 +393,7 @@ grep
 **Testar conectividade com NASP:**
 
 ```bash
-# Testar endpoints NASP (ajustar conforme configuração)
+# Testar endpoints NASP (ajustar according to configuração)
 curl -k https://<NASP_RAN_ENDPOINT>/health
 curl -k https://<NASP_TRANSPORT_ENDPOINT>/health
 curl -k https://<NASP_CORE_ENDPOINT>/health
@@ -540,7 +540,7 @@ cd TriSLA-clean/ansible
 vim inventory.yaml
 # Atualizar:
 #   - ansible_host para Node1 e Node2
-#   - Outras variáveis conforme necessário
+#   - Outras variáveis according to necessário
 
 # Executar pre-flight
 ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
@@ -611,7 +611,7 @@ data:
   LOG_LEVEL: "INFO"
 EOF
 
-# Deploy via Helm (será feito na seção 7)
+# Deploy via Helm (será feito in the section 7)
 # Ou manualmente via kubectl (não recomendado em produção)
 ```
 
@@ -775,7 +775,7 @@ kubectl get pods -n trisla -l app=sla-agent-layer
 kubectl logs -n trisla -l app=sla-agent-layer --tail=50
 ```
 
-**Nota**: A instalação modular acima é apenas para referência. O deploy completo via Helm (seção 7) é o método recomendado em produção.
+**Note**: A instalação modular acima é apenas para referência. O deploy completo via Helm (section 7) é o método recomendado em produção.
 
 ---
 
@@ -1553,7 +1553,7 @@ kubectl get events -n trisla --sort-by='.lastTimestamp' | grep -i "evict\|oom"
 
 ```bash
 # Ajustar recursos no values-nasp.yaml
-# Aumentar limits conforme necessário
+# Aumentar limits according to necessário
 vim helm/trisla/values-nasp.yaml
 
 # Aplicar atualização

@@ -82,7 +82,7 @@ O TriSLA utiliza imagens Docker hospedadas no GitHub Container Registry. É nece
    - `read:packages` (para pull de imagens)
    - `write:packages` (se for necessário fazer push)
 
-2. **Registrar o token como Secret no Kubernetes** (ver seção 4.2)
+2. **Registrar o token como Secret no Kubernetes** (ver section 4.2)
 
 ### 2.4 Ferramentas Necessárias no Operador
 
@@ -1140,7 +1140,7 @@ kubectl get ingress -n trisla
 **Via Prometheus/Grafana:**
 
 ```bash
-# Acessar dashboards (ver seção 8.3)
+# Acessar dashboards (ver section 8.3)
 ```
 
 ### 10.2 Restart Seguro
@@ -1255,7 +1255,7 @@ kubectl run test-pull --image=ghcr.io/abelisboa/trisla-sem-csmf:latest --rm -it 
 ```
 
 **Solução:**
-- Recriar secret GHCR (ver seção 4.2)
+- Recriar secret GHCR (ver section 4.2)
 - Verifiesr token GitHub
 
 **Problema 3: Falha de conexão com NASP**
@@ -1699,7 +1699,7 @@ kubectl get svc -n trisla
 
 ### 7.5 Validação Pós-Deploy
 
-Siga a seção "5. Validação Pós-Deploy" do checklist em `docs/NASP_PREDEPLOY_CHECKLIST.md`.
+Siga a section "5. Validação Pós-Deploy" do checklist em `docs/NASP_PREDEPLOY_CHECKLIST.md`.
 
 ---
 

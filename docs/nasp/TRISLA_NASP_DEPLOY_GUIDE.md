@@ -12,7 +12,7 @@
 
 This document provides instruções completas, formais e acadêmicas para a implantação manual do **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no ambiente **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** para automação e **Helm** para gerenciamento de pacotes Kubernetes.
 
-### Objetivo
+### Objective
 
 O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambiente de produção real no NASP, cobrindo desde a preparação inicial até a validação end-to-end (E2E) do sistema.
 
@@ -40,7 +40,7 @@ O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambi
 
 ### 1.1 Configuração de Rede
 
-| Componente | Valor | Descrição |
+| Componente | Valor | Description |
 |------------|-------|-----------|
 | **Interface Main** | `my5g` | Interface de rede física do NASP |
 | **Node1 IP** | `192.168.10.16` | IP do node1 (control plane + worker) |
@@ -50,7 +50,7 @@ O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambi
 
 ### 1.2 Cluster Kubernetes
 
-| Componente | Valor | Descrição |
+| Componente | Valor | Description |
 |------------|-------|-----------|
 | **Versão Kubernetes** | ≥ 1.26 | Versão mínima requerida |
 | **CNI** | Calico | Container Network Interface |
@@ -60,7 +60,7 @@ O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambi
 
 ### 1.3 Observabilidade NASP
 
-| Componente | Namespace | Tipo | Descrição |
+| Componente | Namespace | Tipo | Description |
 |------------|-----------|------|-----------|
 | **Prometheus** | `monitoring` | ClusterIP/NodePort | Coleta de métricas |
 | **Grafana** | `monitoring` | ClusterIP | Visualização de métricas |
@@ -85,13 +85,13 @@ O TriSLA é composto por **7 módulos principais** que se integram ao ambiente N
 
 ### 2.2 Módulo 1: SEM-CSMF (Semantic-enhanced Communication Service Management Function)
 
-#### Objetivo Técnico
+#### Objective Técnico
 
 O SEM-CSMF é responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) para provisionamento de network slices.
 
 #### Configuração de Deploy
 
-| Parâmetro | Valor | Descrição |
+| Parâmetro | Valor | Description |
 |-----------|-------|-----------|
 | **Namespace** | `trisla` | Namespace do TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
@@ -148,13 +148,13 @@ resources:
 
 ### 2.3 Módulo 2: ML-NSMF (Machine Learning Network Slice Management Function)
 
-#### Objetivo Técnico
+#### Objective Técnico
 
 O ML-NSMF é responsável por prever a viabilidade de SLA de network slices usando modelos de machine learning (LSTM/GRU) e fornecer explicações usando XAI (SHAP/LIME).
 
 #### Configuração de Deploy
 
-| Parâmetro | Valor | Descrição |
+| Parâmetro | Valor | Description |
 |-----------|-------|-----------|
 | **Namespace** | `trisla` | Namespace do TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
@@ -206,13 +206,13 @@ resources:
 
 ### 2.4 Módulo 3: BC-NSSMF (Blockchain Network Slice Service Management Function)
 
-#### Objetivo Técnico
+#### Objective Técnico
 
 O BC-NSSMF é responsável por registrar SLAs em blockchain (Hyperledger Besu/GoQuorum) usando smart contracts Solidity, garantindo imutabilidade e auditabilidade.
 
 #### Configuração de Deploy
 
-| Parâmetro | Valor | Descrição |
+| Parâmetro | Valor | Description |
 |-----------|-------|-----------|
 | **Namespace** | `trisla` | Namespace do TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
@@ -265,13 +265,13 @@ resources:
 
 ### 2.5 Módulo 4: Decision Engine
 
-#### Objetivo Técnico
+#### Objective Técnico
 
 O Decision Engine é responsável por tomar decisões baseadas em regras sobre a admissão, reconfiguração ou rejeição de network slices, integrando informações do ML-NSMF e do SEM-CSMF.
 
 #### Configuração de Deploy
 
-| Parâmetro | Valor | Descrição |
+| Parâmetro | Valor | Description |
 |-----------|-------|-----------|
 | **Namespace** | `trisla` | Namespace do TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
@@ -321,13 +321,13 @@ resources:
 
 ### 2.6 Módulo 5: SLA-Agent Layer
 
-#### Objetivo Técnico
+#### Objective Técnico
 
 O SLA-Agent Layer é responsável por monitorar e garantir SLAs em cada domínio (RAN, Transport, Core) usando agentes federados que coletam métricas reais do NASP.
 
 #### Configuração de Deploy
 
-| Parâmetro | Valor | Descrição |
+| Parâmetro | Valor | Description |
 |-----------|-------|-----------|
 | **Namespace** | `trisla` | Namespace do TriSLA |
 | **Tipo de Deploy** | `DaemonSet` | Um pod por node |
@@ -375,13 +375,13 @@ resources:
 
 ### 2.7 Módulo 6: NASP Adapter
 
-#### Objetivo Técnico
+#### Objective Técnico
 
 O NASP Adapter é responsável por conectar o TriSLA aos serviços reais do NASP (RAN, Transport, Core), provisionando slices e coletando métricas reais.
 
 #### Configuração de Deploy
 
-| Parâmetro | Valor | Descrição |
+| Parâmetro | Valor | Description |
 |-----------|-------|-----------|
 | **Namespace** | `trisla` | Namespace do TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
@@ -428,13 +428,13 @@ resources:
 
 ### 2.8 Módulo 7: UI Dashboard
 
-#### Objetivo Técnico
+#### Objective Técnico
 
 O UI Dashboard fornece uma interface web para visualização e gerenciamento do TriSLA, incluindo dashboards de métricas, status de slices e configurações.
 
 #### Configuração de Deploy
 
-| Parâmetro | Valor | Descrição |
+| Parâmetro | Valor | Description |
 |-----------|-------|-----------|
 | **Namespace** | `trisla` | Namespace do TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
@@ -1011,7 +1011,7 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/pre-flight.yml --ch
 
 ---
 
-### 6.2 Execução Real (Descrição, Não Execução)
+### 6.2 Execução Real (Description, Não Execução)
 
 **IMPORTANTE:** Este documento descreve o processo, mas **NÃO executa** comandos reais.
 

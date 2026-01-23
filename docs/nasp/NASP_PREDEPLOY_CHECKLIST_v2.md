@@ -2,7 +2,7 @@
 
 **Data:** 2025-11-22  
 **Versão:** 2.0  
-**Objetivo:** Garantir que o TriSLA está pronto para deploy controlado no NASP (deploy local no node1)
+**Objective:** Garantir que o TriSLA está pronto para deploy controlado no NASP (deploy local no node1)
 
 ---
 
@@ -74,7 +74,7 @@ kubectl get namespaces
 
 - [ ] **Agentes SLA estão configurados para apontar para o NASP Adapter**
   - Verificar: `naspAdapter.naspEndpoints.*` em `values-nasp.yaml`
-  - Verificar: Agentes não usam métricas hardcoded (conforme FASE 5)
+  - Verificar: Agentes não usam métricas hardcoded (according to FASE 5)
 
 - [ ] **Configuração de SLOs por domínio**
   - Verificar: `apps/sla-agent-layer/src/config/slo_*.yaml` existem
@@ -99,7 +99,7 @@ kubectl get namespaces
 
 ### 3.1 values-nasp.yaml
 
-- [ ] **`helm/trisla/values-nasp.yaml` preenchido conforme `docs/deployment/VALUES_PRODUCTION_GUIDE.md`**
+- [ ] **`helm/trisla/values-nasp.yaml` preenchido according to `docs/deployment/VALUES_PRODUCTION_GUIDE.md`**
   - Executar: `scripts/fill_values_production.sh` (ou preencher manualmente)
   - Revisar: Todos os placeholders substituídos por valores válidos
 
@@ -134,7 +134,7 @@ kubectl get namespaces
 ### 4.1 Auditoria GHCR
 
 - [ ] **`docs/ghcr/IMAGES_GHCR_MATRIX.md` revisado**
-  - Revisar: Status de cada imagem conforme matriz documentada
+  - Revisar: Status de cada imagem according to matriz documentada
   - Verificar: Todas as 7 imagens principais estão listadas e marcadas como OK
 
 - [ ] **Imagens GHCR validadas localmente**
@@ -227,7 +227,7 @@ kubectl get namespaces
   - Verificar: Exemplos usam placeholders
 
 - [ ] **`docs/ghcr/IMAGES_GHCR_MATRIX.md` revisado**
-  - Revisar: Status de imagens conforme documentação
+  - Revisar: Status de imagens according to documentação
   - Verificar: Todas as imagens necessárias estão listadas
 
 - [ ] **`docs/NASP_DEPLOY_RUNBOOK.md` revisado**
@@ -237,11 +237,11 @@ kubectl get namespaces
 ### 7.2 READMEs Atualizados
 
 - [ ] **`README_OPERATIONS_PROD.md` atualizado**
-  - Verificar: Seção sobre NASP adicionada
+  - Verificar: Section sobre NASP adicionada
   - Verificar: Links para documentos em `docs/`
 
 - [ ] **`DEVELOPER_GUIDE.md` atualizado**
-  - Verificar: Seção sobre integração NASP adicionada
+  - Verificar: Section sobre integração NASP adicionada
   - Verificar: Diferenças entre local e NASP documentadas
 
 ---
