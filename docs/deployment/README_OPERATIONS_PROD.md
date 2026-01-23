@@ -336,7 +336,7 @@ curl -k https://<NASP_TRANSPORT_ENDPOINT>/health
 curl -k https://<NASP_CORE_ENDPOINT>/health
 ```
 
-**Nota**: Ajuste os endpoints according to sua configuração NASP real.
+**Note**: Ajuste os endpoints according to sua configuração NASP real.
 
 ### 4.5 Rodar Pre-flight Automático
 
@@ -1717,7 +1717,7 @@ Para realizar um deploy controlado do TriSLA no ambiente NASP, siga a documenta�
 
 2. **`docs/VALUES_PRODUCTION_GUIDE.md`** — Guia de preenchimento de `values-production.yaml`
    - Explicação conceitual de values.yaml vs values-production.yaml
-   - Tabela de parâmetros críticos
+   - Table de parâmetros críticos
    - Erros comuns e como evitar
 
 3. **`docs/IMAGES_GHCR_MATRIX.md`** — Matriz de imagens Docker no GHCR
