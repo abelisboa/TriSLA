@@ -44,6 +44,8 @@ class DecisionEngineConfig(BaseModel):
     decision_engine_http_port: int = int(os.getenv("HTTP_PORT", "8082"))
     
     # OTLP Collector (OpenTelemetry)
+    # Prometheus (para queries de métricas de recursos)
+    prometheus_url: str = os.getenv("PROMETHEUS_URL", "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090")
     otlp_endpoint: str = os.getenv("OTLP_ENDPOINT", "http://localhost:4318")
     otlp_endpoint_grpc: str = os.getenv("OTLP_ENDPOINT_GRPC", "http://localhost:4317")
     

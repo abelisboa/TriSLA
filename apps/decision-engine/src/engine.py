@@ -15,6 +15,7 @@ from models import (
 from sem_client import SEMClient
 from ml_client import MLClient
 from bc_client import BCClient
+from resource_evaluator import ResourceEvaluator
 
 tracer = trace.get_tracer(__name__)
 
@@ -29,6 +30,7 @@ class DecisionEngine:
         self.sem_client = SEMClient()
         self.ml_client = MLClient()
         self.bc_client = BCClient()
+        self.resource_evaluator = ResourceEvaluator()
     
     async def decide(
         self,
@@ -84,6 +86,13 @@ class DecisionEngine:
             span.set_attribute("ml.risk_score", ml_prediction.risk_score)
             span.set_attribute("ml.risk_level", ml_prediction.risk_level.value)
             
+            # 3.5. Avaliar recursos disponíveis
+            resources = await self.resource_evaluator.evaluate_resources()
+            span.set_attribute("resources.cpu_score", resources.get("cpu_score", 0.5))
+            span.set_attribute("resources.memory_score", resources.get("memory_score", 0.5))
+            span.set_attribute("resources.disk_score", resources.get("disk_score", 0.5))
+            span.set_attribute("resources.network_score", resources.get("network_score", 0.5))
+            
             # 4. Aplicar regras de decisão
             action, reasoning, slos, domains = self._apply_decision_rules(
                 intent, nest, ml_prediction, context
@@ -116,10 +125,11 @@ class DecisionEngine:
             # 6. Registrar no blockchain se aceito (Interface I-06)
             blockchain_tx_hash = None
             if action == DecisionAction.ACCEPT:
-                blockchain_tx_hash = await self.bc_client.register_sla_on_chain(decision_result)
-                if blockchain_tx_hash:
-                    decision_result.metadata["blockchain_tx_hash"] = blockchain_tx_hash
-                    span.set_attribute("bc.tx_hash", blockchain_tx_hash)
+                pass  # TODO: Implement blockchain registration
+                pass  # TODO: Implement blockchain registration
+            if blockchain_tx_hash:
+                decision_result.metadata["blockchain_tx_hash"] = blockchain_tx_hash
+                span.set_attribute("bc.tx_hash", blockchain_tx_hash)
             
             return decision_result
     
