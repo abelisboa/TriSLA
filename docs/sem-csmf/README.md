@@ -1,30 +1,30 @@
-# Documentação do SEM-CSMF
+# SEM-CSMF Documentation
 
 **Semantic-enhanced Communication Service Management Function**
 
-**Versão:** 3.7.1  
-**Fase:** S (SEM-CSMF)  
-**Status:** Estabilizado
+**Version:** 3.7.1  
+**Phase:** S (SEM-CSMF)  
+**Status:** Stabilized
 
-Este diretório contém toda a documentação do módulo SEM-CSMF do TriSLA.
+This directory contains toda a documentação do módulo SEM-CSMF do TriSLA.
 
 ---
 
-## 📚 Documentação Disponível
+## 📚 Available Documentation
 
-### [Guia Completo do SEM-CSMF](SEM_CSMF_COMPLETE_GUIDE.md)
+### [SEM-CSMF Complete Guide](SEM_CSMF_COMPLETE_GUIDE.md)
 
-Guia completo que inclui:
+Complete guide that includes:
 
-- ✅ **Visão Geral** do módulo
-- ✅ **Arquitetura** detalhada
-- ✅ **Pipeline de Processamento** (Intent → NEST)
-- ✅ **Ontologia OWL** (integração e uso)
+- ✅ **Overview** do módulo
+- ✅ **Architecture** detalhada
+- ✅ **Processing Pipeline** (Intent → NEST)
+- ✅ **OWL Ontology** (integração e uso)
 - ✅ **NLP** (processamento de linguagem natural)
-- ✅ **Geração de NEST** (Network Slice Template)
+- ✅ **NEST Generation** (Network Slice Template)
 - ✅ **Interfaces** (I-01 HTTP REST, I-02 Kafka)
-- ✅ **Persistência** (PostgreSQL)
-- ✅ **Exemplos de Uso** (código Python)
+- ✅ **Persistence** (PostgreSQL)
+- ✅ **Usage Examples** (código Python)
 - ✅ **Troubleshooting** (soluções para problemas comuns)
 
 ### [Documentação da Ontologia](ontology/)
@@ -36,7 +36,7 @@ A documentação da ontologia OWL está organizada como subpasta do SEM-CSMF:
 
 ---
 
-## 📁 Estrutura do Módulo
+## 📁 Module Structure
 
 ```
 apps/sem-csmf/
