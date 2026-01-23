@@ -19,7 +19,7 @@ semCsmf:
   enabled: true
   image:
     repository: trisla-sem-csmf
-    tag: latest
+    tag: v3.9.3
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -38,7 +38,7 @@ mlNsmf:
   enabled: true
   image:
     repository: trisla-ml-nsmf
-    tag: latest
+    tag: v3.9.3
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -57,7 +57,7 @@ decisionEngine:
   enabled: true
   image:
     repository: trisla-decision-engine
-    tag: latest
+    tag: v3.9.3
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -76,7 +76,7 @@ bcNssmf:
   enabled: true
   image:
     repository: trisla-bc-nssmf
-    tag: latest
+    tag: v3.9.3
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -95,7 +95,7 @@ slaAgentLayer:
   enabled: true
   image:
     repository: trisla-sla-agent-layer
-    tag: latest
+    tag: v3.9.3
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -114,7 +114,7 @@ naspAdapter:
   enabled: true
   image:
     repository: trisla-nasp-adapter
-    tag: latest
+    tag: v3.9.3
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -133,7 +133,7 @@ uiDashboard:
   enabled: true
   image:
     repository: trisla-ui-dashboard
-    tag: latest
+    tag: v3.9.3
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -160,7 +160,7 @@ kafka:
   enabled: true
   image:
     repository: apache/kafka
-    tag: latest
+    tag: v3.9.3
   replicas: 3
 
 # OpenTelemetry Collector
@@ -168,7 +168,7 @@ otelCollector:
   enabled: true
   image:
     repository: otel/opentelemetry-collector
-    tag: latest
+    tag: v3.9.3
   service:
     type: ClusterIP
     ports:
@@ -180,14 +180,14 @@ prometheus:
   enabled: true
   image:
     repository: prom/prometheus
-    tag: latest
+    tag: v3.9.3
 
 # Grafana
 grafana:
   enabled: true
   image:
     repository: grafana/grafana
-    tag: latest
+    tag: v3.9.3
   adminPassword: admin  # ⚠️ ALTERAR EM PRODUÇÃO
 
 # Production Settings

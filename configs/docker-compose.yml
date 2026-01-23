@@ -1,3 +1,6 @@
+# Example configuration for local testing only.
+# Do NOT use in production.
+
 services:
   # ============================================
   # Database (PostgreSQL)
@@ -8,7 +11,7 @@ services:
     environment:
       POSTGRES_DB: trisla
       POSTGRES_USER: trisla
-      POSTGRES_PASSWORD: trisla_password
+      POSTGRES_PASSWORD: <CHANGE_ME>
     ports:
       - "5432:5432"
     volumes:
@@ -147,7 +150,7 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=<CHANGE_ME>
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
@@ -178,10 +181,10 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - OTLP_ENDPOINT=http://otlp-collector:4317
       - LOG_LEVEL=INFO
-      - DATABASE_URL=postgresql://trisla:trisla_password@postgres:5432/trisla
+      - DATABASE_URL=postgresql://trisla:<CHANGE_ME>@postgres:5432/trisla
       - DECISION_ENGINE_GRPC=decision-engine:50051
       - ENABLE_AUTH=true
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-trisla-secret-key-change-in-production}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-<CHANGE_ME>}
       - RATE_LIMIT_ENABLED=true
     networks:
       - trisla-network
