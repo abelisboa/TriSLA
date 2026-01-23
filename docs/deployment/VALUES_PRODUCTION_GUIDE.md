@@ -1,7 +1,7 @@
 # Guia de Preenchimento de values-nasp.yaml — TriSLA
 
 **Versão:** 1.0  
-**Objetivo:** Explicar como preencher corretamente o arquivo `helm/trisla/values-nasp.yaml` para deploy no NASP
+**Objective:** Explicar como preencher corretamente o arquivo `helm/trisla/values-nasp.yaml` para deploy no NASP
 
 ---
 

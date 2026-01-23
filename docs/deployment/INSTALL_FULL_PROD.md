@@ -121,7 +121,7 @@ O repositório TriSLA inclui scripts automatizados para facilitar a instalação
 
 ### 3.2 auto-config-nasp.sh
 
-**Objetivo**: Detectar automaticamente configurações de rede do NASP e gerar arquivos de configuração.
+**Objective**: Detectar automaticamente configurações de rede do NASP e gerar arquivos de configuração.
 
 **Uso:**
 
@@ -174,7 +174,7 @@ cp configs/generated/trisla_values_autogen.yaml helm/trisla/values-nasp.yaml
 
 ### 3.3 deploy-trisla-nasp.sh
 
-**Objetivo**: Deploy completo e automatizado do TriSLA no NASP.
+**Objective**: Deploy completo e automatizado do TriSLA no NASP.
 
 **Uso básico:**
 
@@ -256,7 +256,7 @@ export GHCR_REGISTRY=ghcr.io/abelisboa
 
 ### 3.4 validate-nasp-infra.sh
 
-**Objetivo**: Validar infraestrutura NASP antes e após instalação.
+**Objective**: Validar infraestrutura NASP antes e após instalação.
 
 **Uso:**
 

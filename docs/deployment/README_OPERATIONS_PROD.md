@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-### 1.1 Objetivo do Documento
+### 1.1 Document Objective
 
 This document provides instruções completas para implantar, operar e manter o **TriSLA** (Triple-SLA) in production environment real, especificamente no **NASP** (Network Automation & Slicing Platform). O guia cobre desde a preparação inicial do ambiente até operações diárias, troubleshooting e boas práticas de segurança.
 
