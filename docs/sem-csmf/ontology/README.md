@@ -1,55 +1,55 @@
-# Documentação da Ontologia TriSLA
+# TriSLA Ontology Documentation
 
-This directory contains the complete documentation da Ontologia TriSLA.
+This directory contains the complete documentation of the **TriSLA Ontology**.
 
-## 📚 Documentos Disponíveis
+## 📚 Available Documents
 
-### [guide Completo de Implementação](ONTOLOGY_IMPLEMENTATION_GUIDE.md)
+### [Ontology Implementation Complete Guide](ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 
-guide completo que inclui:
+A complete guide that includes:
 
-- ✅ **Visão Geral** da ontologia
-- ✅ **Estrutura Completa** (classes, propriedades, indivíduos)
-- ✅ **Hierarquia de Classes** detalhada
-- ✅ **Diagramas Conceituais** (texto ASCII)
-- ✅ **guide de Uso no Protégé** (passo a passo)
-- ✅ **Integração com SEM-CSMF** (código de exemplo)
-- ✅ **Queries SPARQL** (exemplos práticos)
-- ✅ **validation e Reasoning** (como validar)
-- ✅ **Exemplos de Uso** (código Python)
-- ✅ **Manutenção e Extensão** (como adicionar classes/propriedades)
+- ✅ **Ontology Overview**
+- ✅ **Complete Structure** (classes, properties, individuals)
+- ✅ **Detailed Class Hierarchy**
+- ✅ **Conceptual Diagrams** (ASCII text)
+- ✅ **Protégé Usage Guide** (step by step)
+- ✅ **Integration with SEM-CSMF** (code examples)
+- ✅ **SPARQL Queries** (practical examples)
+- ✅ **Validation and Reasoning** (how to validate)
+- ✅ **Usage Examples** (Python code)
+- ✅ **Maintenance and Extension** (how to add classes/properties)
 
-## 📁 Arquivos Relacionados
+## 📁 Related Files
 
-- **Ontologia:** `apps/sem-csmf/src/ontology/trisla.ttl`
+- **Ontology:** `apps/sem-csmf/src/ontology/trisla.ttl`
 - **Loader:** `apps/sem-csmf/src/ontology/loader.py`
 - **Reasoner:** `apps/sem-csmf/src/ontology/reasoner.py`
 - **Parser:** `apps/sem-csmf/src/ontology/parser.py`
 - **Matcher:** `apps/sem-csmf/src/ontology/matcher.py`
 
-## 📚 Documentação Relacionada
+## 📚 Related Documentation
 
-- **[guide Completo do SEM-CSMF](../SEM_CSMF_COMPLETE_GUIDE.md)** — guide completo do módulo SEM-CSMF
-- **[README do SEM-CSMF](../README.md)** — Índice da documentação do SEM-CSMF
+- **[SEM-CSMF Complete Guide](../SEM_CSMF_COMPLETE_GUIDE.md)** — Complete guide of the SEM-CSMF module
+- **[SEM-CSMF README](../README.md)** — Index of SEM-CSMF documentation
 
-## 🎯 Início Rápido
+## 🎯 Quick Start
 
-1. **Ler o guide:** [`ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ONTOLOGY_IMPLEMENTATION_GUIDE.md)
-2. **Abrir no Protégé:** `File` → `Open` → `apps/sem-csmf/src/ontology/trisla.ttl`
-3. **Validar:** `Reasoner` → `Check consistency`
-4. **Exportar Diagramas:** `Window` → `Views` → `Class hierarchy (graph)`
+1. **Read the guide:** [`ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ONTOLOGY_IMPLEMENTATION_GUIDE.md)
+2. **Open in Protégé:** `File` → `Open` → `apps/sem-csmf/src/ontology/trisla.ttl`
+3. **Validate ontology:** `Reasoner` → `Check consistency`
+4. **Export diagrams:** `Window` → `Views` → `Class hierarchy (graph)`
 
-## 📊 Diagramas
+## 📊 Diagrams
 
-Os diagramas devem ser exportados do Protégé:
+Diagrams should be exported directly from Protégé:
 
-1. **Hierarquia de Classes:** `Window` → `Views` → `Class hierarchy (graph)`
-2. **Relações de Propriedades:** `Window` → `Views` → `Property hierarchy (graph)`
+1. **Class Hierarchy:** `Window` → `Views` → `Class hierarchy (graph)`
+2. **Property Relationships:** `Window` → `Views` → `Property hierarchy (graph)`
 3. **OntoGraf:** `Window` → `Views` → `OntoGraf`
 
-**Nota:** Os diagramas conceituais estão descritos em texto ASCII no guide completo.
+**Note:** Conceptual diagrams are described using ASCII text in the complete guide.
 
 ---
 
-**Última atualização:** 2025-01-27
+**Last updated:** 2025-01-27
 

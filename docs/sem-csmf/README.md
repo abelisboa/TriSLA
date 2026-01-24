@@ -1,6 +1,6 @@
 # SEM-CSMF Documentation
 
-**Semantic-enhanced Communication Service Management Function**
+**Semantic-Enhanced Communication Service Management Function**
 
 **Version:** 3.7.1  
 **Phase:** S (SEM-CSMF)  
@@ -16,84 +16,83 @@ This directory contains all documentation for the SEM-CSMF module of TriSLA.
 
 Complete guide that includes:
 
-- ✅ **Overview** of the module
-- ✅ **Architecture** details
-- ✅ **Processing Pipeline** (Intent → NEST)
-- ✅ **OWL Ontology** (integration e uso)
-- ✅ **NLP** (processamento de linguagem natural)
-- ✅ **NEST Generation** (Network Slice Template)
-- ✅ **Interfaces** (I-01 HTTP REST, I-02 Kafka)
-- ✅ **Persistence** (PostgreSQL)
-- ✅ **Usage Examples** (Python code)
-- ✅ **Troubleshooting** (solutions for common issues)
+- ✅ **Overview** of the module  
+- ✅ **Architecture** details  
+- ✅ **Processing Pipeline** (Intent → NEST)  
+- ✅ **OWL Ontology** (integration and usage)  
+- ✅ **NLP** (natural language processing)  
+- ✅ **NEST Generation** (Network Slice Template)  
+- ✅ **Interfaces** (I-01 gRPC, I-02 Kafka)  
+- ✅ **Persistence** (PostgreSQL)  
+- ✅ **Usage Examples** (Python code)  
+- ✅ **Troubleshooting** (solutions for common issues)  
 
 ### [Ontology Documentation](ontology/)
 
 The OWL ontology documentation is organized as a subfolder of SEM-CSMF:
 
-- **[Ontology Implementation Guide](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)** — Complete guide of ontologia OWL, classes, propriedades, diagramas Protégé
-- **[Ontology README](ontology/README.md)** — Index of documentação of ontologia
+- **[Ontology Implementation Guide](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)** — Complete guide to the OWL ontology, including classes, properties, and Protégé diagrams  
+- **[Ontology README](ontology/README.md)** — Index of the ontology documentation  
 
 ---
 
 ## 📁 Module Structure
 
-```
 apps/sem-csmf/
 ├── src/
-│   ├── main.py                 # FastAPI Application
-│   ├── intent_processor.py     # Intent Processing
-│   ├── nest_generator.py       # NEST Generation
-│   ├── ontology/               # OWL Ontology
-│   │   ├── trisla.ttl         # Main Ontology
-│   │   ├── loader.py          # Ontology Loader
-│   │   ├── reasoner.py        # Reasoning Engine
-│   │   ├── parser.py          # Parser de intents
-│   │   └── matcher.py         # Matcher semântico
-│   ├── nlp/                    # Processamento de linguagem natural
-│   │   └── parser.py          # Parser NLP
-│   ├── grpc_server.py          # Servidor gRPC (I-01)
-│   ├── grpc_client.py          # Cliente gRPC
-│   └── models/                 # Modelos Pydantic
-│       ├── intent.py
-│       └── nest.py
+│ ├── main.py # FastAPI application
+│ ├── intent_processor.py # Intent processing
+│ ├── nest_generator.py # NEST generation
+│ ├── ontology/ # OWL ontology
+│ │ ├── trisla.ttl # Main ontology
+│ │ ├── loader.py # Ontology loader
+│ │ ├── reasoner.py # Reasoning engine
+│ │ ├── parser.py # Intent parser
+│ │ └── matcher.py # Semantic matcher
+│ ├── nlp/ # Natural language processing
+│ │ └── parser.py # NLP parser
+│ ├── grpc_server.py # gRPC server (I-01)
+│ ├── grpc_client.py # gRPC client
+│ └── models/ # Pydantic models
+│ ├── intent.py
+│ └── nest.py
 ├── tests/
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
-```
+
 
 ---
 
-## 🎯 Funcionalidades Principais
+## 🎯 Main Capabilities
 
-### 1. Processamento de Intents
+### 1. Intent Processing
 
-- Recebe intents de alto nível (linguagem natural ou estruturado)
-- validates semanticamente usando ontologia OWL
-- Processa com NLP for extrair informações
-- Gera NEST (Network Slice Template)
+- Receives high-level intents (natural language or structured)
+- Performs semantic validation using an OWL ontology
+- Processes intents with NLP to extract information
+- Generates NESTs (Network Slice Templates)
 
-### 2. Ontologia OWL
+### 2. OWL Ontology
 
-- Ontologia completa in Turtle (`.ttl`)
-- Classes, propriedades e indivíduos
-- Reasoning semântico com Pellet
-- validation de requisitos SLA
+- Complete ontology in Turtle format (`.ttl`)
+- Classes, properties, and individuals
+- Semantic reasoning using Pellet
+- SLA requirement validation
 
 ### 3. NLP (Natural Language Processing)
 
-- Extração de tipo de slice (eMBB, URLLC, mMTC)
-- Extração de requisitos de SLA
-- Processamento de linguagem natural
-- Fallback for processamento estruturado
+- Slice type extraction (eMBB, URLLC, mMTC)
+- SLA requirement extraction
+- Natural language processing
+- Fallback to structured processing when needed
 
-### 4. Geração de NEST
+### 4. NEST Generation
 
-- Conversão de GST for NEST
-- validation contra ontologia
-- Persistência in PostgreSQL
-- Envio for Decision Engine (I-01)
+- GST-to-NEST conversion
+- Ontology-based validation
+- Persistence in PostgreSQL
+- Dispatch to the Decision Engine (I-01)
 
 ---
 
@@ -101,38 +100,38 @@ apps/sem-csmf/
 
 ### Interface I-01 (gRPC)
 
-**Tipo:** gRPC  
-**Direção:** SEM-CSMF → Decision Engine  
-**Payload:** NEST + Metadados
+**Type:** gRPC  
+**Direction:** SEM-CSMF → Decision Engine  
+**Payload:** NEST + Metadata  
 
-**Documentação:** Ver [guide Completo](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-01-grpc)
+**Documentation:** See the [Complete Guide](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-01-grpc)
 
 ### Interface I-02 (Kafka)
 
-**Tipo:** Kafka  
-**Direção:** SEM-CSMF → ML-NSMF  
-**topic:** `sem-csmf-nests`  
-**Payload:** NEST completo
+**Type:** Kafka  
+**Direction:** SEM-CSMF → ML-NSMF  
+**Topic:** `sem-csmf-nests`  
+**Payload:** Complete NEST  
 
-**Documentação:** Ver [guide Completo](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-02-kafka)
+**Documentation:** See the [Complete Guide](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-02-kafka)
 
 ---
 
-## 📖 Guias Rápidos
+## 📖 Quick Guides
 
-### Início Rápido
+### Quick Start
 
-1. **Ler o guide Completo:** [`SEM_CSMF_COMPLETE_GUIDE.md`](SEM_CSMF_COMPLETE_GUIDE.md)
-2. **Entender a Ontologia:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
-3. **Ver Exemplos:** Ver section de exemplos no guide completo
+1. **Read the Complete Guide:** [`SEM_CSMF_COMPLETE_GUIDE.md`](SEM_CSMF_COMPLETE_GUIDE.md)  
+2. **Understand the Ontology:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)  
+3. **Review Examples:** See the examples section in the complete guide  
 
-### Uso of Ontologia
+### Ontology Usage
 
-1. **Abrir no Protégé:** `apps/sem-csmf/src/ontology/trisla.ttl`
-2. **Validar:** `Reasoner` → `Check consistency`
-3. **Exportar Diagramas:** `Window` → `Views` → `Class hierarchy (graph)`
+1. **Open in Protégé:** `apps/sem-csmf/src/ontology/trisla.ttl`  
+2. **Validate Consistency:** `Reasoner` → `Check consistency`  
+3. **Export Diagrams:** `Window` → `Views` → `Class hierarchy (graph)`  
 
-### Processamento de Intents
+### Intent Processing
 
 ```python
 from intent_processor import IntentProcessor
@@ -147,15 +146,9 @@ intent = Intent(
 )
 
 validated = await processor.validate_semantic(intent)
-```
 
----
-
-## 🔧 Configuração
-
-### variables de environment
-
-```bash
+🔧 Configuration
+Environment Variables
 # Database
 DATABASE_URL=postgresql://user:pass@localhost/trisla
 
@@ -167,59 +160,55 @@ KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 
 # OpenTelemetry
 OTLP_ENDPOINT=http://otlp-collector:4317
-```
 
-### Dependências
+Dependencies
 
-Ver `apps/sem-csmf/requirements.txt`:
+See apps/sem-csmf/requirements.txt:
 
-- `fastapi` — Framework web
-- `owlready2` — Ontologia OWL
-- `spacy` — NLP
-- `rdflib` — RDF/OWL
-- `grpcio` — gRPC
-- `kafka-python` — Kafka
-- `sqlalchemy` — ORM
-- `opentelemetry` — Observabilidade
+fastapi — Web framework
 
----
+owlready2 — OWL ontology
 
-## 🧪 Testes
+spacy — NLP
 
-### Testes Unitários
+rdflib — RDF/OWL
 
-```bash
+grpcio — gRPC
+
+kafka-python — Kafka
+
+sqlalchemy — ORM
+
+opentelemetry — Observability
+
+🧪 Tests
+Unit Tests
 pytest tests/unit/test_sem_csmf.py
 pytest tests/unit/test_ontology_parser.py
 pytest tests/unit/test_nlp_parser.py
-```
 
-### Testes de Integração
-
-```bash
+Integration Tests
 pytest tests/integration/test_interfaces.py
 pytest tests/integration/test_grpc_communication.py
-```
 
----
+📚 References
 
-## 📚 Referências
+OWL Ontology: ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md
 
-- **Ontologia OWL:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
-- **ML-NSMF:** [`../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md)
-- **Decision Engine:** Ver documentação of Decision Engine
-- **README of Módulo:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
+ML-NSMF: ../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md
 
----
+Decision Engine: See Decision Engine documentation
 
-## 🎯 Próximos Passos
+Module README: ../../apps/sem-csmf/README.md
 
-1. **Ler o guide Completo** for entender todo o funcionamento
-2. **Explorar a Ontologia** no Protégé
-3. **Testar Processamento** de intents
-4. **Validar Integrações** com outros módulos
+🎯 Next Steps
 
----
+Read the Complete Guide to understand the full workflow
 
-**Última atualização:** 2025-01-27
+Explore the Ontology in Protégé
 
+Test Intent Processing
+
+Validate Integrations with other modules
+
+Last updated: 2025-01-27

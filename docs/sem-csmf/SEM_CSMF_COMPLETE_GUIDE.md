@@ -1,263 +1,269 @@
-# guide Completo of Module SEM-CSMF
+# SEM-CSMF Module Complete Guide
 
-**Versão:** 3.5.0  
-**Data:** 2025-01-27  
-**Module:** Semantic-enhanced Communication Service Management Function
+**Version:** 3.5.0  
+**Date:** 2025-01-27  
+**Module:** Semantic-Enhanced Communication Service Management Function
 
 ---
 
-## 📋 Sumário
+## 📋 Table of Contents
 
-1. [Visão Geral](#visão-geral)
-2. [Arquitetura of Module](#arquitetura-do-Module)
-3. [Pipeline de Processamento](#pipeline-de-processamento)
-4. [Ontologia OWL](#ontologia-owl)
+1. [Overview](#overview)
+2. [Module Architecture](#module-architecture)
+3. [Processing Pipeline](#processing-pipeline)
+4. [OWL Ontology](#owl-ontology)
 5. [NLP (Natural Language Processing)](#nlp-natural-language-processing)
-6. [Geração de NEST](#geração-de-nest)
+6. [NEST Generation](#nest-generation)
 7. [Interfaces](#interfaces)
-8. [Persistência](#persistência)
-9. [Exemplos de Uso](#exemplos-de-uso)
+8. [Persistence](#persistence)
+9. [Usage Examples](#usage-examples)
 10. [Troubleshooting](#troubleshooting)
 
 ---
 
-## 🎯 Visão Geral
+## 🎯 Overview
 
-O **SEM-CSMF (Semantic-enhanced Communication Service Management Function)** is o Module responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) for provisioning de network slices.
+The **SEM-CSMF (Semantic-Enhanced Communication Service Management Function)** is the module responsible for receiving high-level intents, validating them semantically using an OWL ontology, processing them with NLP, and generating NESTs (Network Slice Templates) for network slice provisioning.
 
-### Objetivos
+### Objectives
 
-1. **Interpretação Semântica:** Validar intents contra ontologia OWL
-2. **Processamento NLP:** Extrair informações de linguagem natural
-3. **Geração de NEST:** Converter intents in Network Slice Templates
-4. **Integração:** Comunicar-se com Decision Engine e ML-NSMF
+1. **Semantic Interpretation:** Validate intents against an OWL ontology  
+2. **NLP Processing:** Extract structured information from natural language  
+3. **NEST Generation:** Convert intents into Network Slice Templates  
+4. **Integration:** Communicate with the Decision Engine and ML-NSMF  
 
-### Características Principais
+### Key Features
 
-- **Ontologia OWL:** Ontologia completa in Turtle (`.ttl`)
-- **NLP:** Processamento de linguagem natural com spaCy
-- **Reasoning:** Motor de reasoning semântico com Pellet
-- **Persistência:** PostgreSQL for intents e NESTs
-- **Observabilidade:** OpenTelemetry for traces e metrics
+- **OWL Ontology:** Complete ontology in Turtle format (`.ttl`)  
+- **NLP:** Natural language processing using spaCy  
+- **Reasoning:** Semantic reasoning engine using Pellet  
+- **Persistence:** PostgreSQL for intents and NESTs  
+- **Observability:** OpenTelemetry for traces and metrics  
 
 ---
 
-## 🏗️ Arquitetura of Module
+## 🏗️ Module Architecture
 
-### Estrutura de Diretórios
+### Directory Structure
 
-```
 apps/sem-csmf/
 ├── src/
-│   ├── main.py                 # Aplicação FastAPI
-│   ├── intent_processor.py     # Processamento de intents
-│   ├── nest_generator.py       # Geração de NEST
-│   ├── nest_generator_db.py    # Geração com persistência
-│   ├── ontology/               # Ontologia OWL
-│   │   ├── trisla.ttl         # Ontologia main
-│   │   ├── loader.py          # Carregador de ontologia
-│   │   ├── reasoner.py        # Motor de reasoning
-│   │   ├── parser.py          # Parser de intents
-│   │   └── matcher.py         # Matcher semântico
-│   ├── nlp/                    # Processamento de linguagem natural
-│   │   └── parser.py          # Parser NLP
-│   ├── grpc_server.py          # Servidor gRPC (I-01)
-│   ├── grpc_client.py          # Cliente gRPC
-│   ├── grpc_client_retry.py    # Cliente com retry
-│   ├── kafka_producer.py       # Producer Kafka (I-02)
-│   ├── kafka_producer_retry.py # Producer com retry
-│   ├── database.py             # Database Configuration
-│   ├── repository.py           # Repositório de Data
-│   ├── models/                 # Modelos Pydantic
-│   │   ├── intent.py
-│   │   └── nest.py
-│   └── models/                 # Modelos SQLAlchemy
-│       └── db_models.py
+│ ├── main.py # FastAPI application
+│ ├── intent_processor.py # Intent processing
+│ ├── nest_generator.py # NEST generation
+│ ├── nest_generator_db.py # NEST generation with persistence
+│ ├── ontology/ # OWL ontology
+│ │ ├── trisla.ttl # Main ontology
+│ │ ├── loader.py # Ontology loader
+│ │ ├── reasoner.py # Reasoning engine
+│ │ ├── parser.py # Intent parser
+│ │ └── matcher.py # Semantic matcher
+│ ├── nlp/ # Natural language processing
+│ │ └── parser.py # NLP parser
+│ ├── grpc_server.py # gRPC server (I-01)
+│ ├── grpc_client.py # gRPC client
+│ ├── grpc_client_retry.py # gRPC client with retry
+│ ├── kafka_producer.py # Kafka producer (I-02)
+│ ├── kafka_producer_retry.py # Kafka producer with retry
+│ ├── database.py # Database configuration
+│ ├── repository.py # Data repository
+│ ├── models/ # Pydantic models
+│ │ ├── intent.py
+│ │ └── nest.py
+│ └── models/ # SQLAlchemy models
+│ └── db_models.py
 ├── tests/
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
-```
 
-### Componentes Principais
 
-1. **IntentProcessor** — Processador main de intents
-2. **OntologyLoader** — Carregador de ontologia OWL
-3. **SemanticReasoner** — Motor de reasoning semântico
-4. **NLPParser** — Parser de linguagem natural
-5. **NESTGenerator** — Gerador de NESTs
-6. **DecisionEngineClient** — Cliente gRPC for Decision Engine
+### Main Components
+
+1. **IntentProcessor** — Core intent processing component  
+2. **OntologyLoader** — OWL ontology loader  
+3. **SemanticReasoner** — Semantic reasoning engine  
+4. **NLPParser** — Natural language parser  
+5. **NESTGenerator** — NEST generator  
+6. **DecisionEngineClient** — gRPC client for the Decision Engine  
 
 ---
 
-## ⚙️ Pipeline de Processamento
+## ⚙️ Processing Pipeline
 
-### Fluxo Completo
+### End-to-End Flow
 
-```
 ┌─────────────────┐
-│  Intent Recebido│  (HTTP REST ou gRPC)
-│  (Linguagem     │
-│   Natural ou    │
-│   Estruturado)  │
+│ Intent Received│ (HTTP REST or gRPC)
+│ (Natural │
+│ Language or │
+│ Structured) │
 └────────┬────────┘
-         │
-         ▼
+│
+▼
 ┌─────────────────┐
-│  NLP Parser     │  (Extrai tipo de slice e requisitos)
+│ NLP Parser │ (Extracts slice type and requirements)
 └────────┬────────┘
-         │
-         ▼
+│
+▼
 ┌─────────────────┐
-│  Ontology       │  (validates semanticamente)
-│  Parser         │
+│ Ontology │ (Semantic validation)
+│ Parser │
 └────────┬────────┘
-         │
-         ▼
+│
+▼
 ┌─────────────────┐
-│  Semantic       │  (Match semântico)
-│  Matcher        │
+│ Semantic │ (Semantic matching)
+│ Matcher │
 └────────┬────────┘
-         │
-         ▼
+│
+▼
 ┌─────────────────┐
-│  NEST Generator │  (Gera Network Slice Template)
+│ NEST Generator │ (Generates Network Slice Template)
 └────────┬────────┘
-         │
-         ├───► I-01 (gRPC) ──► Decision Engine
-         │
-         └───► I-02 (Kafka) ──► ML-NSMF
-```
+│
+├───► I-01 (gRPC) ──► Decision Engine
+│
+└───► I-02 (Kafka) ──► ML-NSMF
 
-### Etapas Detalhadas
 
-1. **Recepção de Intent**
+### Detailed Steps
+
+1. **Intent Reception**
    - HTTP REST: `POST /api/v1/intents`
    - gRPC: `ProcessIntent`
 
-2. **Processamento NLP** (se linguagem natural)
-   - Extração de tipo de slice
-   - Extração de requisitos de SLA
-   - Normalização de Data
+2. **NLP Processing** (for natural language)
+   - Slice type extraction  
+   - SLA requirement extraction  
+   - Data normalization  
 
-3. **validation Semântica**
-   - Carregamento of ontologia OWL
-   - validation contra classes e propriedades
-   - Reasoning semântico
+3. **Semantic Validation**
+   - OWL ontology loading  
+   - Validation against classes and properties  
+   - Semantic reasoning  
 
-4. **Geração de NEST**
-   - Conversão de GST for NEST
-   - validation de requisitos
-   - Persistência in PostgreSQL
+4. **NEST Generation**
+   - GST-to-NEST conversion  
+   - Requirement validation  
+   - Persistence in PostgreSQL  
 
-5. **Envio for Módulos Downstream**
-   - I-01 (gRPC): Metadados for Decision Engine
-   - I-02 (Kafka): NEST completo for ML-NSMF
+5. **Downstream Dispatch**
+   - I-01 (gRPC): Metadata for the Decision Engine  
+   - I-02 (Kafka): Complete NEST for ML-NSMF  
 
 ---
 
-## 📜 Ontologia OWL
+## 📜 OWL Ontology
 
-### Visão Geral
+### Overview
 
-A ontologia OWL está localizada in `apps/sem-csmf/src/ontology/trisla.ttl` e is carregada dinamicamente pelo Module.
+The OWL ontology is located at `apps/sem-csmf/src/ontology/trisla.ttl` and is dynamically loaded by the module.
 
-**Documentação Completa:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
+**Full Documentation:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 
-### Uso no SEM-CSMF
+### Usage in SEM-CSMF
 
 ```python
 from ontology.loader import OntologyLoader
 from ontology.reasoner import SemanticReasoner
 
-# Carregar ontologia
+# Load ontology
 loader = OntologyLoader()
 loader.load(apply_reasoning=True)
 
-# Criar reasoner
+# Create reasoner
 reasoner = SemanticReasoner(loader)
 reasoner.initialize()
 
-# Validar requisitos
+# Validate requirements
 sla_dict = {"latency": "10ms", "throughput": "100Mbps"}
 is_valid = reasoner.validate_sla_requirements("URLLC", sla_dict)
-```
 
-### Classes Principais
 
-- **Intent** — Intenção de service
-- **SliceType** — Tipo de slice (eMBB, URLLC, mMTC)
-- **SLA** — Service Level Agreement
-- **SLO** — Service Level Objective
-- **Metric** — metrics de performance
+Main Classes
 
----
+Intent — Service intent
 
-## 💬 NLP (Natural Language Processing)
+SliceType — Slice type (eMBB, URLLC, mMTC)
 
-### Visão Geral
+SLA — Service Level Agreement
 
-O NLP is usado for processar intents in linguagem natural e extrair informações estruturadas.
+SLO — Service Level Objective
 
-**Arquivo:** `apps/sem-csmf/src/nlp/parser.py`
+Metric — Performance metrics
 
-### Funcionalidades
+💬 NLP (Natural Language Processing)
+Overview
 
-1. **Extração de Tipo de Slice**
-   - Identifica eMBB, URLLC, mMTC
-   - Usa heurísticas e spaCy
+NLP is used to process natural language intents and extract structured information.
 
-2. **Extração de Requisitos SLA**
-   - Latência
-   - Throughput
-   - Confiabilidade
-   - Jitter
-   - Perda de pacotes
+File: apps/sem-csmf/src/nlp/parser.py
 
-### Exemplo de Uso
+Capabilities
 
-```python
+Slice Type Extraction
+
+Identifies eMBB, URLLC, mMTC
+
+Uses heuristics and spaCy
+
+SLA Requirement Extraction
+
+Latency
+
+Throughput
+
+Reliability
+
+Jitter
+
+Packet loss
+
+Usage Example
+
 from nlp.parser import NLPParser
 
 parser = NLPParser()
 
-text = "Preciso de um slice URLLC com latência máxima de 10ms"
+text = "I need a URLLC slice with maximum latency of 10ms"
 result = parser.parse_intent_text(text)
 
-# Resultado:
+# Result:
 # {
 #   "slice_type": "URLLC",
 #   "requirements": {"latency": "10ms"}
 # }
-```
 
----
+🏗️ NEST Generation
+Overview
 
-## 🏗️ Geração de NEST
+The NEST (Network Slice Template) is generated from a semantically validated intent.
 
-### Visão Geral
+File: apps/sem-csmf/src/nest_generator.py
 
-O NEST (Network Slice Template) is gerado a partir of intent validado semanticamente.
+Process
 
-**Arquivo:** `apps/sem-csmf/src/nest_generator.py`
+GST → NEST Conversion
 
-### Processo
+GST (Generic Slice Template) is converted into NEST
 
-1. **Conversão GST → NEST**
-   - GST (Generic Slice Template) is convertido for NEST
-   - validation contra ontologia
+Ontology-based validation
 
-2. **Persistência**
-   - Salvo in PostgreSQL
-   - Metadados armazenados
+Persistence
 
-3. **Envio**
-   - gRPC for Decision Engine (I-01)
-   - Kafka for ML-NSMF (I-02)
+Stored in PostgreSQL
 
-### Exemplo de NEST
+Metadata recorded
 
-```json
+Dispatch
+
+gRPC to Decision Engine (I-01)
+
+Kafka to ML-NSMF (I-02)
+
+Example NEST
+
 {
   "nest_id": "nest-urllc-001",
   "intent_id": "intent-001",
@@ -270,20 +276,16 @@ O NEST (Network Slice Template) is gerado a partir of intent validado semanticam
   "domains": ["RAN", "Transport", "Core"],
   "created_at": "2025-01-27T10:00:00Z"
 }
-```
 
----
+🔌 Interfaces
+Interface I-01 (gRPC)
 
-## 🔌 Interfaces
+Type: gRPC
+Direction: SEM-CSMF → Decision Engine
+Endpoint: decision-engine:50051
 
-### Interface I-01 (gRPC)
+Payload:
 
-**Tipo:** gRPC  
-**Direção:** SEM-CSMF → Decision Engine  
-**Endpoint:** `decision-engine:50051`
-
-**Payload:**
-```protobuf
 message NESTMetadata {
   string nest_id = 1;
   string intent_id = 2;
@@ -291,10 +293,9 @@ message NESTMetadata {
   string service_type = 4;
   map<string, string> sla_requirements = 5;
 }
-```
 
-**Código:**
-```python
+Example:
+
 from grpc_client import DecisionEngineClient
 
 client = DecisionEngineClient()
@@ -305,16 +306,23 @@ await client.send_nest_metadata(
     service_type="URLLC",
     sla_requirements={"latency": "10ms"}
 )
-```
 
-### Interface I-02 (Kafka)
+Interface I-02 (Kafka)
 
-**Tipo:** Kafka  
-**Direção:** SEM-CSMF → ML-NSMF  
-**topic:** `sem-csmf-nests`
+Type: Kafka
+Direction: SEM-CSMF → ML-NSMF
+Topic: sem-csmf-nests
 
-**Payload:**
-```json
+Payload:
+
+Interface I-02 (Kafka)
+
+Type: Kafka
+Direction: SEM-CSMF → ML-NSMF
+Topic: sem-csmf-nests
+
+Payload:
+
 {
   "nest_id": "nest-urllc-001",
   "intent_id": "intent-001",
@@ -322,46 +330,30 @@ await client.send_nest_metadata(
   "sla_requirements": {...},
   "timestamp": "2025-01-27T10:00:00Z"
 }
-```
 
-**Código:**
-```python
-from kafka_producer import NESTProducer
+💾 Persistence
+PostgreSQL
 
-producer = NESTProducer()
-await producer.send_nest(nest_data)
-```
+Configuration:
 
----
-
-## 💾 Persistência
-
-### PostgreSQL
-
-**Configuration:**
-```python
 DATABASE_URL=postgresql://user:pass@localhost/trisla
-```
 
-**Modelos:**
-- `IntentModel` — Intents armazenados
-- `NESTModel` — NESTs gerados
 
-**Repositório:**
-```python
+Models:
+
+IntentModel — Stored intents
+
+NESTModel — Generated NESTs
+
+Repository Example:
+
 from repository import IntentRepository
 
 repo = IntentRepository()
 intent = await repo.create_intent(intent_data)
-```
 
----
-
-## 💡 Exemplos de Uso
-
-### Exemplo 1: Processar Intent Estruturado
-
-```python
+💡 Usage Examples
+Example 1: Process Structured Intent
 from intent_processor import IntentProcessor
 from models.intent import Intent, SliceType, SLARequirements
 
@@ -380,139 +372,112 @@ intent = Intent(
 
 validated = await processor.validate_semantic(intent)
 nest = await processor.generate_nest(validated)
-```
 
-### Exemplo 2: Processar Intent in Linguagem Natural
-
-```python
+Example 2: Process Natural Language Intent
 intent = Intent(
     intent_id="intent-002",
     sla_requirements=SLARequirements()
 )
 
-# Processar com NLP
 validated = await processor.validate_semantic(
     intent,
-    intent_text="Preciso de um slice URLLC com latência máxima de 10ms"
+    intent_text="I need a URLLC slice with maximum latency of 10ms"
 )
-```
 
-### Exemplo 3: Consultar Ontologia
+🔧 Troubleshooting
+Problem 1: Ontology does not load
 
-```python
-from ontology.loader import OntologyLoader
+Symptom: ImportError: owlready2 is not installed
 
-loader = OntologyLoader()
-loader.load()
+Solution:
 
-# Consultar classe
-slice_type = loader.get_class("URLLC_Slice")
-
-# Consultar indivíduo
-individual = loader.get_individual("URLLC_Type")
-
-# Query SPARQL
-query = """
-PREFIX : <http://trisla.org/ontology#>
-SELECT ?sliceType ?latency
-WHERE {
-    ?sliceType a :SliceType .
-    ?sliceType :hasLatency ?latency .
-}
-"""
-results = loader.query(query)
-```
-
----
-
-## 🔧 Troubleshooting
-
-### problem 1: Ontologia não carrega
-
-**Sintoma:** `ImportError: owlready2 is not installed`
-
-**solution:**
-```bash
 pip install owlready2==0.40
-```
 
-### problem 2: NLP não funciona
+Problem 2: NLP does not work
 
-**Sintoma:** `OSError: SpaCy model not found`
+Symptom: OSError: SpaCy model not found
 
-**solution:**
-```bash
+Solution:
+
 python -m spacy download en_core_web_sm
-```
 
-### problem 3: gRPC não conecta
+Problem 3: gRPC connection failure
 
-**Sintoma:** `grpc._channel._InactiveRpcError`
+Symptom: grpc._channel._InactiveRpcError
 
-**solution:**
-- verify se Decision Engine está rodando
-- verify endpoint: `DECISION_ENGINE_GRPC`
-- verify conectividade de rede
+Solution:
 
-### problem 4: Kafka não envia
+Verify that the Decision Engine is running
 
-**Sintoma:** `kafka.errors.KafkaError`
+Check endpoint DECISION_ENGINE_GRPC
 
-**solution:**
-- verify se Kafka está rodando
-- verify `KAFKA_BOOTSTRAP_SERVERS`
-- verify topic existe
+Verify network connectivity
 
----
+Problem 4: Kafka message not sent
 
-## 📊 Observabilidade
+Symptom: kafka.errors.KafkaError
 
-### metrics Prometheus
+Solution:
 
-| Métrica | Tipo | Descrição |
-|---------|------|-----------|
-| `sem_csmf_intents_total` | Counter | Total de intents processados |
-| `sem_csmf_processing_duration_seconds` | Histogram | Tempo de processamento |
-| `sem_csmf_ontology_validations_total` | Counter | Total de validações ontológicas |
-| `sem_csmf_nests_generated_total` | Counter | Total de NESTs gerados |
+Verify that Kafka is running
 
-### Traces OTLP
+Check KAFKA_BOOTSTRAP_SERVERS
 
-**Spans:**
-- `process_intent` — Processamento completo
-- `validate_semantic` — validation semântica
-- `generate_nest` — Geração de NEST
-- `send_i01` — Envio I-01 (gRPC)
-- `send_i02` — Envio I-02 (Kafka)
+Verify that the topic exists
 
----
+📊 Observability
+Prometheus Metrics
+Metric	Type	Description
+sem_csmf_intents_total	Counter	Total processed intents
+sem_csmf_processing_duration_seconds	Histogram	Processing time
+sem_csmf_ontology_validations_total	Counter	Total ontology validations
+sem_csmf_nests_generated_total	Counter	Total generated NESTs
+OTLP Traces
 
-## 📚 Referências
+Spans:
 
-- **Ontologia:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
-- **ML-NSMF:** [`../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md)
-- **Decision Engine:** Ver documentação of Decision Engine
-- **README of Module:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
+process_intent — Full intent processing
 
----
+validate_semantic — Semantic validation
 
-## 🎯 Conclusão
+generate_nest — NEST generation
 
-O SEM-CSMF fornece interpretação semântica inteligente de intents usando ontologia OWL e NLP. O Module:
+send_i01 — I-01 dispatch (gRPC)
 
-- ✅ **Processa intents** com validation semântica
-- ✅ **Usa ontologia OWL** for reasoning
-- ✅ **Processa linguagem natural** com NLP
-- ✅ **Gera NESTs** for provisioning
-- ✅ **Integra-se** com Decision Engine e ML-NSMF
-- ✅ **Observável** via Prometheus e OpenTelemetry
+send_i02 — I-02 dispatch (Kafka)
 
-Para mais informações, consulte:
-- `apps/sem-csmf/src/intent_processor.py` — Processador main
-- `apps/sem-csmf/src/ontology/` — Ontologia OWL
-- `apps/sem-csmf/src/nlp/parser.py` — Parser NLP
+📚 References
 
----
+Ontology: ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md
 
-**end of guide**
+ML-NSMF: ../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md
 
+Decision Engine: See Decision Engine documentation
+
+Module README: ../../apps/sem-csmf/README.md
+
+🎯 Conclusion
+
+The SEM-CSMF provides intelligent semantic interpretation of intents using OWL ontology and NLP. The module:
+
+✅ Processes intents with semantic validation
+
+✅ Uses OWL ontology for reasoning
+
+✅ Processes natural language with NLP
+
+✅ Generates NESTs for provisioning
+
+✅ Integrates with the Decision Engine and ML-NSMF
+
+✅ Is observable via Prometheus and OpenTelemetry
+
+For more information, refer to:
+
+apps/sem-csmf/src/intent_processor.py — Core processor
+
+apps/sem-csmf/src/ontology/ — OWL ontology
+
+apps/sem-csmf/src/nlp/parser.py — NLP parser
+
+End of Guide

@@ -1,17 +1,15 @@
-# Nasp Adapter
+# NASP Adapter
 
-## Overview
+**Role.** NASP Adapter is the integration layer between TriSLA and the NASP environment. It exposes a stable API for retrieving platform metrics and, when applicable, invoking platform-specific actions.
 
-This module is part of the TriSLA v3.9.3 architecture.
+## Responsibilities
+- Normalize and expose platform metrics to TriSLA modules
+- Provide a stable endpoint for metrics oracle consumers (e.g., BC-NSSMF)
+- Support integration calls required by SLA-Agent and Decision Engine
 
-## Purpose
+## Observability
+- Prometheus: request/latency metrics
+- OpenTelemetry: spans for upstream/downstream calls
 
-[Module-specific purpose - to be detailed]
-
-## Configuration
-
-See module README for configuration details.
-
-## Version
-
-Part of TriSLA v3.9.3 (frozen scientific version).
+## Troubleshooting
+- If metrics appear empty: verify platform connectivity and the configured endpoint in Helm values.

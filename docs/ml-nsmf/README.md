@@ -2,58 +2,59 @@
 
 **Version:** 3.7.3  
 **Phase:** M (ML-NSMF)  
-**Status:** Stabilized
+**Status:** Stabilized  
 
-This directory contains a documentação completa of Module ML-NSMF.
+This directory contains the complete documentation of the **ML-NSMF (Machine Learning Network Slice Management Function)** module.
+
+---
 
 ## 📚 Available Documents
 
 ### [ML-NSMF Complete Guide](ML_NSMF_COMPLETE_GUIDE.md)
 
-Complete guide that includes:
+Comprehensive guide that includes:
 
-- ✅ **Overview** of Module
-- ✅ **Architecture** detalhada
-- ✅ **Functioning** of pipeline
-- ✅ **Model Training** (script completo)
+- ✅ **Module Overview**
+- ✅ **Detailed Architecture**
+- ✅ **Pipeline Operation**
+- ✅ **Model Training** (complete script)
 - ✅ **Prediction and XAI** (SHAP/LIME)
-- ✅ **Integration** com outros módulos
+- ✅ **Integration** with other modules
 - ✅ **Interface I-03** (Kafka)
-- ✅ **Observability** (metrics e traces)
-- ✅ **Usage Examples** (código Python)
-- ✅ **Troubleshooting** (solutions for problems comuns)
-
-## 📁 Related Files
-
-- **Predictor:** `apps/ml_nsmf/src/predictor.py`
-- **Treinamento:** `apps/ml_nsmf/training/train_model.py`
-- **Modelo:** `apps/ml_nsmf/models/viability_model.pkl`
-- **Scaler:** `apps/ml_nsmf/models/scaler.pkl`
-- **Metadados:** `apps/ml_nsmf/models/model_metadata.json`
-- **Dataset:** `apps/ml_nsmf/data/datasets/trisla_ml_dataset.csv`
-
-## 🎯 Quick Start
-
-1. **Read the Guide:** [`ML_NSMF_COMPLETE_GUIDE.md`](ML_NSMF_COMPLETE_GUIDE.md)
-2. **Train Model:** `python apps/ml-nsmf/training/train_model.py`
-3. **Use Prediction:** Ver exemplos no guide completo
-
-## 🎓 Training
-
-### Run Training
-
-```bash
-cd apps/ml-nsmf
-python training/train_model.py
-```
-
-### Validate Model
-
-```bash
-python -c "from src.predictor import RiskPredictor; p = RiskPredictor(); print('Modelo carregado!')"
-```
+- ✅ **Observability** (metrics and traces)
+- ✅ **Usage Examples** (Python code)
+- ✅ **Troubleshooting** (solutions for common issues)
 
 ---
 
-**Última atualização:** 2025-01-27
+## 📁 Related Files
 
+- **Predictor:** `apps/ml-nsmf/src/predictor.py`  
+- **Training:** `apps/ml-nsmf/training/train_model.py`  
+- **Model:** `apps/ml-nsmf/models/viability_model.pkl`  
+- **Scaler:** `apps/ml-nsmf/models/scaler.pkl`  
+- **Metadata:** `apps/ml-nsmf/models/model_metadata.json`  
+- **Dataset:** `apps/ml-nsmf/data/datasets/trisla_ml_dataset.csv`  
+
+---
+
+## 🎯 Quick Start
+
+1. **Read the Guide:** [`ML_NSMF_COMPLETE_GUIDE.md`](ML_NSMF_COMPLETE_GUIDE.md)  
+2. **Train the Model:**  
+   ```bash
+   python apps/ml-nsmf/training/train_model.py
+
+Run Predictions: See usage examples in the complete guide
+
+🎓 Training
+Run Training
+
+cd apps/ml-nsmf
+python training/train_model.py
+
+Validate Model
+
+python -c "from src.predictor import RiskPredictor; p = RiskPredictor(); print('Model loaded successfully!')"
+
+Last updated: 2025-01-27

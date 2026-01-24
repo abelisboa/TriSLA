@@ -1,753 +1,274 @@
-# guide Completo of Module ML-NSMF
+# ML-NSMF Module Complete Guide
 
-**Versão:** 3.5.0  
-**Data:** 2025-01-27  
+**Version:** 3.5.0  
+**Date:** 2025-01-27  
 **Module:** Machine Learning Network Slice Management Function
 
 ---
 
-## 📋 Sumário
+## 📋 Table of Contents
 
-1. [Visão Geral](#visão-geral)
-2. [Arquitetura of Module](#arquitetura-do-Module)
-3. [Funcionamento of Module](#funcionamento-do-Module)
-4. [Treinamento of Modelo](#treinamento-do-modelo)
-5. [Predição e XAI](#predição-e-xai)
-6. [Integração com Outros Módulos](#integração-com-outros-módulos)
-7. [Interface I-03 (Kafka)](#interface-i-03-kafka)
-8. [Observabilidade](#observabilidade)
-9. [Exemplos de Uso](#exemplos-de-uso)
-10. [Troubleshooting](#troubleshooting)
-
----
-
-## 🎯 Visão Geral
-
-O **ML-NSMF (Machine Learning Network Slice Management Function)** is responsável por prever a viabilidade de aceitação de SLAs baseado in metrics históricas, características of NEST e estado atual dos recursos of infraestrutura.
-
-### Objetivos
-
-1. **Predição de Viabilidade:** Prever se um SLA pode ser atendido (score 0-1)
-2. **Explicabilidade (XAI):** provide explicações das predições usando SHAP e LIME
-3. **Recomendações:** Sugerir ajustes de requisitos quando necessário
-4. **Integração:** Comunicar-se com Decision Engine via interface I-03 (Kafka)
-
-### Características Principais
-
-- **Modelo ML:** Random Forest (atual) ou LSTM/GRU (futuro)
-- **XAI:** SHAP e LIME for explicações
-- **Tempo de Resposta:** < 500ms
-- **Acurácia:** > 85% (modelo treinado)
+1. [Overview](#overview)  
+2. [Module Architecture](#module-architecture)  
+3. [Module Operation](#module-operation)  
+4. [Model Training](#model-training)  
+5. [Prediction and XAI](#prediction-and-xai)  
+6. [Integration with Other Modules](#integration-with-other-modules)  
+7. [Interface I-03 (Kafka)](#interface-i-03-kafka)  
+8. [Observability](#observability)  
+9. [Usage Examples](#usage-examples)  
+10. [Troubleshooting](#troubleshooting)  
 
 ---
 
-## 🏗️ Arquitetura of Module
+## 🎯 Overview
 
-### Estrutura de Diretórios
+The **ML-NSMF (Machine Learning Network Slice Management Function)** is responsible for predicting the feasibility of SLA acceptance based on historical metrics, NEST characteristics, and the current state of infrastructure resources.
 
-```
+### Objectives
+
+1. **Feasibility Prediction:** Predict whether an SLA can be satisfied (score 0–1)  
+2. **Explainability (XAI):** Provide explanations for predictions using SHAP and LIME  
+3. **Recommendations:** Suggest requirement adjustments when necessary  
+4. **Integration:** Communicate with the Decision Engine via Interface I-03 (Kafka)  
+
+### Key Features
+
+- **ML Model:** Random Forest (current) or LSTM/GRU (future)  
+- **XAI:** SHAP and LIME for explainability  
+- **Response Time:** < 500 ms  
+- **Accuracy:** > 85% (trained model)  
+
+---
+
+## 🏗️ Module Architecture
+
+### Directory Structure
+
+# ML-NSMF Module Complete Guide
+
+**Version:** 3.5.0  
+**Date:** 2025-01-27  
+**Module:** Machine Learning Network Slice Management Function
+
+---
+
+## 📋 Table of Contents
+
+1. [Overview](#overview)  
+2. [Module Architecture](#module-architecture)  
+3. [Module Operation](#module-operation)  
+4. [Model Training](#model-training)  
+5. [Prediction and XAI](#prediction-and-xai)  
+6. [Integration with Other Modules](#integration-with-other-modules)  
+7. [Interface I-03 (Kafka)](#interface-i-03-kafka)  
+8. [Observability](#observability)  
+9. [Usage Examples](#usage-examples)  
+10. [Troubleshooting](#troubleshooting)  
+
+---
+
+## 🎯 Overview
+
+The **ML-NSMF (Machine Learning Network Slice Management Function)** is responsible for predicting the feasibility of SLA acceptance based on historical metrics, NEST characteristics, and the current state of infrastructure resources.
+
+### Objectives
+
+1. **Feasibility Prediction:** Predict whether an SLA can be satisfied (score 0–1)  
+2. **Explainability (XAI):** Provide explanations for predictions using SHAP and LIME  
+3. **Recommendations:** Suggest requirement adjustments when necessary  
+4. **Integration:** Communicate with the Decision Engine via Interface I-03 (Kafka)  
+
+### Key Features
+
+- **ML Model:** Random Forest (current) or LSTM/GRU (future)  
+- **XAI:** SHAP and LIME for explainability  
+- **Response Time:** < 500 ms  
+- **Accuracy:** > 85% (trained model)  
+
+---
+
+## 🏗️ Module Architecture
+
+### Directory Structure
+
 apps/ml-nsmf/
 ├── src/
-│   ├── main.py                 # Aplicação FastAPI
-│   ├── predictor.py            # Classe RiskPredictor (predição)
-│   ├── kafka_consumer.py       # Consumer Kafka (recebe NESTs)
-│   ├── kafka_producer.py       # Producer Kafka (envia predições)
-│   └── __init__.py
+│ ├── main.py # FastAPI application
+│ ├── predictor.py # RiskPredictor class (prediction)
+│ ├── kafka_consumer.py # Kafka consumer (receives NESTs)
+│ ├── kafka_producer.py # Kafka producer (sends predictions)
+│ └── init.py
 ├── models/
-│   ├── viability_model.pkl    # Modelo treinado (Random Forest)
-│   ├── scaler.pkl              # Scaler for normalização
-│   └── model_metadata.json     # Metadados of modelo
+│ ├── viability_model.pkl # Trained model (Random Forest)
+│ ├── scaler.pkl # Normalization scaler
+│ └── model_metadata.json # Model metadata
 ├── data/
-│   ├── datasets/
-│   │   └── trisla_ml_dataset.csv  # Dataset de treinamento
-│   └── training/               # Scripts de treinamento
+│ ├── datasets/
+│ │ └── trisla_ml_dataset.csv # Training dataset
+│ └── training/ # Training scripts
 ├── tests/
-│   └── unit/                   # Testes unitários
+│ └── unit/ # Unit tests
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
-```
 
-### Componentes Principais
+### Main Components
 
-1. **RiskPredictor** — Classe main for predição
-2. **MetricsConsumer** — Consome metrics of NASP via Kafka
-3. **PredictionProducer** — Envia predições ao Decision Engine via Kafka
-4. **Modelo ML** — Modelo treinado (Random Forest ou LSTM/GRU)
-5. **XAI Explainer** — Explicador usando SHAP/LIME
-
----
-
-## ⚙️ Funcionamento of Module
-
-### Pipeline de Processamento
-
-```
-┌─────────────────┐
-│  Recebe NEST    │  (via Kafka I-02)
-│  of SEM-CSMF    │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Coleta metrics│  (do NASP via NASP Adapter)
-│  Atuais         │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Extrai Features│  (do NEST + metrics)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Normaliza      │  (usando scaler treinado)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Predição ML    │  (modelo treinado)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Explicação XAI │  (SHAP/LIME)
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Envia ao       │  (via Kafka I-03)
-│  Decision Engine│
-└─────────────────┘
-```
-
-### Fluxo Detalhado
-
-1. **Recepção de NEST**
-   - Consumer Kafka recebe NEST of SEM-CSMF
-   - topic: `sem-csmf-nests`
-
-2. **Coleta de metrics**
-   - Queries NASP Adapter for metrics atuais
-   - Domínios: RAN, Transport, Core
-
-3. **Extração de Features**
-   - Do NEST: `sliceType`, `latency_requirement`, `throughput_requirement`, `reliability_requirement`
-   - Das metrics: `cpu_utilization`, `memory_utilization`, `network_bandwidth_available`, `active_slices_count`
-   - Feature engineering: `latency_throughput_ratio`, `reliability_packet_loss_ratio`, etc.
-
-4. **Normalização**
-   - Usa `scaler.pkl` treinado
-   - Normalização StandardScaler ou MinMaxScaler
-
-5. **Predição**
-   - Modelo ML gera score de viabilidade (0-1)
-   - Threshold configurável (ex: 0.7)
-
-6. **Explicação (XAI)**
-   - SHAP ou LIME gera explicação
-   - Feature importance ranking
-   - Reasoning textual
-
-7. **Envio ao Decision Engine**
-   - Producer Kafka envia predição
-   - topic: `ml-nsmf-predictions`
+1. **RiskPredictor** — Core prediction class  
+2. **MetricsConsumer** — Consumes NASP metrics via Kafka  
+3. **PredictionProducer** — Sends predictions to the Decision Engine via Kafka  
+4. **ML Model** — Trained model (Random Forest or LSTM/GRU)  
+5. **XAI Explainer** — Explanation engine using SHAP/LIME  
 
 ---
 
-## 🎓 Treinamento of Modelo
+## ⚙️ Module Operation
 
-### 1. Preparação dos Data
+### Processing Pipeline
 
-#### Dataset de Treinamento
+Receive NEST (Kafka I-02 from SEM-CSMF)
+│
+▼
+Collect Current Metrics (NASP Adapter)
+│
+▼
+Feature Extraction (NEST + metrics)
+│
+▼
+Normalization (trained scaler)
+│
+▼
+ML Prediction (trained model)
+│
+▼
+XAI Explanation (SHAP/LIME)
+│
+▼
+Send to Decision Engine (Kafka I-03)
 
-**Arquivo:** `apps/ml-nsmf/data/datasets/trisla_ml_dataset.csv`
 
-**Estrutura of Dataset:**
+### Detailed Flow
 
-| Coluna | Tipo | Descrição |
-|--------|------|-----------|
-| `latency` | float | Latência requerida (ms) |
-| `throughput` | float | Throughput requerido (Mbps) |
-| `reliability` | float | Confiabilidade requerida (0-1) |
-| `jitter` | float | Jitter requerido (ms) |
-| `packet_loss` | float | Perda de pacotes (0-1) |
-| `cpu_utilization` | float | Utilização de CPU (0-1) |
-| `memory_utilization` | float | Utilização de memória (0-1) |
-| `network_bandwidth_available` | float | Largura de banda disponível (Mbps) |
-| `active_slices_count` | int | Número de slices ativos |
-| `slice_type_encoded` | int | Tipo de slice codificado (1=eMBB, 2=URLLC, 3=mMTC) |
-| `viability_score` | float | Score de viabilidade (0-1) - **TARGET** |
+1. **NEST Reception**
+   - Kafka consumer receives NEST from SEM-CSMF  
+   - Topic: `sem-csmf-nests`
 
-**Feature Engineering:**
+2. **Metrics Collection**
+   - Queries NASP Adapter for current metrics  
+   - Domains: RAN, Transport, Core  
+
+3. **Feature Extraction**
+   - From NEST: `sliceType`, `latency_requirement`, `throughput_requirement`, `reliability_requirement`  
+   - From metrics: `cpu_utilization`, `memory_utilization`, `network_bandwidth_available`, `active_slices_count`  
+   - Feature engineering: `latency_throughput_ratio`, `reliability_packet_loss_ratio`, etc.  
+
+4. **Normalization**
+   - Uses trained `scaler.pkl`  
+   - StandardScaler or MinMaxScaler  
+
+5. **Prediction**
+   - ML model outputs feasibility score (0–1)  
+   - Configurable threshold (e.g., 0.7)  
+
+6. **Explanation (XAI)**
+   - SHAP or LIME generates explanations  
+   - Feature importance ranking  
+   - Textual reasoning  
+
+7. **Delivery to Decision Engine**
+   - Kafka producer sends prediction  
+   - Topic: `ml-nsmf-predictions`  
+
+---
+
+## 🎓 Model Training
+
+### 1. Data Preparation
+
+#### Training Dataset
+
+**File:** `apps/ml-nsmf/data/datasets/trisla_ml_dataset.csv`
+
+**Dataset Structure:**
+
+| Column | Type | Description |
+|------|------|-------------|
+| `latency` | float | Required latency (ms) |
+| `throughput` | float | Required throughput (Mbps) |
+| `reliability` | float | Required reliability (0–1) |
+| `jitter` | float | Required jitter (ms) |
+| `packet_loss` | float | Packet loss (0–1) |
+| `cpu_utilization` | float | CPU utilization (0–1) |
+| `memory_utilization` | float | Memory utilization (0–1) |
+| `network_bandwidth_available` | float | Available bandwidth (Mbps) |
+| `active_slices_count` | int | Number of active slices |
+| `slice_type_encoded` | int | Encoded slice type (1=eMBB, 2=URLLC, 3=mMTC) |
+| `viability_score` | float | Feasibility score (0–1) — **TARGET** |
+
+### Feature Engineering
 
 ```python
-# Features derivadas
 features['latency_throughput_ratio'] = features['latency'] / features['throughput']
 features['reliability_packet_loss_ratio'] = features['reliability'] / (features['packet_loss'] + 0.001)
 features['jitter_latency_ratio'] = features['jitter'] / (features['latency'] + 0.001)
 features['resource_ratio'] = features['required_cpu'] / features['available_cpu']
-```
 
-### 2. Script de Treinamento
+🔮 Prediction and XAI
+Feasibility Interpretation
 
-**Arquivo:** `apps/ml-nsmf/training/train_model.py` (a ser criado)
+0.0 – 0.4: Low risk (ACCEPT)
 
-```python
-"""
-Script de Treinamento of Modelo ML-NSMF
-"""
+0.4 – 0.7: Medium risk (CONDITIONAL_ACCEPT)
 
-import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import pickle
-import json
-from datetime import datetime
-import os
+0.7 – 1.0: High risk (REJECT)
 
-# Carregar dataset
-def load_dataset(path: str) -> pd.DataFrame:
-    """Carrega dataset de treinamento"""
-    df = pd.read_csv(path)
-    return df
+XAI Methods
 
-# Feature engineering
-def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Cria features derivadas"""
-    df['latency_throughput_ratio'] = df['latency'] / (df['throughput'] + 0.001)
-    df['reliability_packet_loss_ratio'] = df['reliability'] / (df['packet_loss'] + 0.001)
-    df['jitter_latency_ratio'] = df['jitter'] / (df['latency'] + 0.001)
-    return df
+SHAP: Primary explanation method
 
-# Treinar modelo
-def train_model(X_train, y_train):
-    """Treina modelo Random Forest"""
-    model = RandomForestRegressor(
-        n_estimators=100,
-        max_depth=10,
-        min_samples_split=5,
-        min_samples_leaf=2,
-        random_state=42,
-        n_jobs=-1
-    )
-    
-    model.fit(X_train, y_train)
-    return model
+LIME: Fallback when SHAP is unavailable
 
-# Avaliar modelo
-def evaluate_model(model, X_test, y_test):
-    """Avalia modelo"""
-    y_pred = model.predict(X_test)
-    
-    mse = mean_squared_error(y_test, y_pred)
-    mae = mean_absolute_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
-    
-    return {
-        "mse": mse,
-        "mae": mae,
-        "r2": r2
-    }
+Fallback: Static feature importance when neither is available
 
-# function main
-def main():
-    # 1. Carregar dataset
-    dataset_path = "data/datasets/trisla_ml_dataset.csv"
-    df = load_dataset(dataset_path)
-    
-    # 2. Feature engineering
-    df = engineer_features(df)
-    
-    # 3. Separar features e target
-    feature_columns = [
-        "latency", "throughput", "reliability", "jitter", "packet_loss",
-        "cpu_utilization", "memory_utilization", "network_bandwidth_available",
-        "active_slices_count", "slice_type_encoded",
-        "latency_throughput_ratio", "reliability_packet_loss_ratio",
-        "jitter_latency_ratio"
-    ]
-    
-    X = df[feature_columns]
-    y = df['viability_score']
-    
-    # 4. Split train/test
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-    
-    # 5. Normalização
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-    
-    # 6. Treinar modelo
-    model = train_model(X_train_scaled, y_train)
-    
-    # 7. Avaliar modelo
-    train_metrics = evaluate_model(model, X_train_scaled, y_train)
-    test_metrics = evaluate_model(model, X_test_scaled, y_test)
-    
-    # 8. Cross-validation
-    cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5, scoring='r2')
-    
-    # 9. Feature importance
-    feature_importance = dict(zip(feature_columns, model.feature_importances_))
-    
-    # 10. Salvar modelo
-    os.makedirs("models", exist_ok=True)
-    
-    # Salvar modelo
-    with open("models/viability_model.pkl", "wb") as f:
-        pickle.dump(model, f)
-    
-    # Salvar scaler
-    with open("models/scaler.pkl", "wb") as f:
-        pickle.dump(scaler, f)
-    
-    # Salvar metadados
-    metadata = {
-        "model_type": "random_forest",
-        "feature_columns": feature_columns,
-        "training_history": {
-            "model_type": "random_forest",
-            "train_samples": len(X_train),
-            "test_samples": len(X_test),
-            "train_mse": train_metrics["mse"],
-            "test_mse": test_metrics["mse"],
-            "train_mae": train_metrics["mae"],
-            "test_mae": test_metrics["mae"],
-            "train_r2": train_metrics["r2"],
-            "test_r2": test_metrics["r2"],
-            "cv_mean": cv_scores.mean(),
-            "cv_std": cv_scores.std(),
-            "feature_importance": feature_importance,
-            "timestamp": datetime.utcnow().isoformat() + "Z"
-        },
-        "model_path": "viability_model.pkl",
-        "scaler_path": "scaler.pkl"
-    }
-    
-    with open("models/model_metadata.json", "w") as f:
-        json.dump(metadata, f, indent=2)
-    
-    print("Modelo treinado e salvo com sucesso!")
-    print(f"Test R²: {test_metrics['r2']:.4f}")
-    print(f"Test MAE: {test_metrics['mae']:.4f}")
+📊 Observability
+Prometheus Metrics
+Metric	Type	Description
+ml_nsmf_predictions_total	Counter	Total predictions
+ml_nsmf_prediction_duration_seconds	Histogram	Prediction latency
+ml_nsmf_model_accuracy	Gauge	Model accuracy
+ml_nsmf_viability_scores	Histogram	Score distribution
+ml_nsmf_training_duration_seconds	Histogram	Training duration
+OpenTelemetry Traces
 
-if __name__ == "__main__":
-    main()
-```
+predict_risk
 
-### 3. Executar Treinamento
+normalize_metrics
 
-**Comando:**
-```bash
-cd apps/ml-nsmf
-python training/train_model.py
-```
+explain_prediction
 
-**output expected:**
-```
-Modelo treinado e salvo com sucesso!
-Test R²: 0.9028
-Test MAE: 0.0464
-```
+send_prediction
 
-### 4. validation of Modelo
+🎯 Conclusion
 
-**metrics de Avaliação:**
+The ML-NSMF provides intelligent SLA feasibility prediction with explainable AI. The module:
 
-- **R² Score:** > 0.85 (objetivo)
-- **MAE (Mean Absolute Error):** < 0.05
-- **MSE (Mean Squared Error):** < 0.01
-- **Cross-Validation:** CV score > 0.85
+✅ Predicts SLA feasibility using real metrics
 
-**Feature Importance:**
+✅ Explains predictions with SHAP/LIME
 
-O modelo calcula importância de features automaticamente. Exemplo:
+✅ Integrates with SEM-CSMF and Decision Engine
 
-```json
-{
-  "reliability": 0.370,
-  "latency_throughput_ratio": 0.254,
-  "latency": 0.130,
-  "throughput": 0.089,
-  ...
-}
-```
+✅ Is observable via Prometheus and OpenTelemetry
 
-### 5. Retreinamento
+✅ Can be retrained with new data
 
-**Quando Retreinar:**
+For further details, see:
 
-1. **Novos Data disponíveis:** Acumular novos exemplos
-2. **Degradação de performance:** R² < 0.80
-3. **Mudanças no environment:** Novos tipos de slice, mudanças na infraestrutura
-4. **Período regular:** Mensal ou trimestral
+apps/ml-nsmf/src/predictor.py
 
-**Processo de Retreinamento:**
+apps/ml-nsmf/models/model_metadata.json
 
-1. Coletar novos Data of NASP
-2. Adicionar ao dataset existente
-3. Executar script de treinamento
-4. Validar novo modelo
-5. Se melhor, substituir modelo antigo
-6. Se pior, manter modelo atual
+apps/ml-nsmf/README.md
 
----
-
-## 🔮 Predição e XAI
-
-### 1. Predição de Viabilidade
-
-**Classe:** `RiskPredictor`
-
-**Método:** `predict()`
-
-```python
-from predictor import RiskPredictor
-import numpy as np
-
-predictor = RiskPredictor()
-
-# metrics normalizadas
-normalized_metrics = np.array([0.15, 0.5, 0.001, 0.2])
-
-# Predição
-prediction = await predictor.predict(normalized_metrics)
-
-# Resultado
-{
-    "risk_score": 0.75,
-    "risk_level": "high",
-    "confidence": 0.85,
-    "timestamp": "2025-01-27T10:00:00Z"
-}
-```
-
-**Interpretação of Score:**
-
-- **0.0 - 0.4:** Baixo risco (ACCEPT)
-- **0.4 - 0.7:** Risco médio (CONDITIONAL_ACCEPT)
-- **0.7 - 1.0:** Alto risco (REJECT)
-
-### 2. Explicabilidade (XAI)
-
-**Método:** `explain()`
-
-**SHAP (SHapley Additive exPlanations):**
-
-```python
-explanation = await predictor.explain(prediction, normalized_metrics, model)
-
-# Resultado
-{
-    "method": "SHAP",
-    "features_importance": {
-        "latency": 0.40,
-        "throughput": 0.30,
-        "packet_loss": 0.20,
-        "jitter": 0.10
-    },
-    "reasoning": "Risk level high devido principalmente a latency (importância: 40.00%)",
-    "shap_available": True,
-    "lime_available": False
-}
-```
-
-**LIME (Local Interpretable Model-agnostic Explanations):**
-
-Se SHAP não estiver disponível, usa LIME:
-
-```python
-{
-    "method": "LIME",
-    "features_importance": {...},
-    "reasoning": "...",
-    "shap_available": False,
-    "lime_available": True
-}
-```
-
-**Fallback:**
-
-Se nem SHAP nem LIME estiverem disponíveis:
-
-```python
-{
-    "method": "fallback",
-    "features_importance": {
-        "latency": 0.4,
-        "throughput": 0.3,
-        "packet_loss": 0.2,
-        "jitter": 0.1
-    },
-    "reasoning": "Risk level high devido principalmente à latência"
-}
-```
-
----
-
-## 🔗 Integração com Outros Módulos
-
-### 1. SEM-CSMF (Interface I-02)
-
-**Tipo:** Kafka Consumer  
-**topic:** `sem-csmf-nests`  
-**Payload:** NEST (Network Slice Template)
-
-**Código:**
-```python
-from kafka_consumer import MetricsConsumer
-
-consumer = MetricsConsumer()
-
-# consume NESTs
-for message in consumer.consume_nests():
-    nest = message.value
-    # Processar NEST
-    prediction = await predictor.predict_from_nest(nest)
-```
-
-### 2. Decision Engine (Interface I-03)
-
-**Tipo:** Kafka Producer  
-**topic:** `ml-nsmf-predictions`  
-**Payload:** Predição + Explicação
-
-**Código:**
-```python
-from kafka_producer import PredictionProducer
-
-producer = PredictionProducer()
-
-# Enviar predição
-await producer.send_prediction(prediction, explanation)
-```
-
-### 3. NASP Adapter
-
-**Tipo:** HTTP REST  
-**Endpoint:** `http://nasp-adapter:8080/api/v1/metrics`
-
-**Código:**
-```python
-import httpx
-
-async with httpx.AsyncClient() as client:
-    response = await client.get("http://nasp-adapter:8080/api/v1/metrics")
-    metrics = response.json()
-```
-
----
-
-## 📡 Interface I-03 (Kafka)
-
-### topic Kafka
-
-**Nome:** `ml-nsmf-predictions`
-
-### Schema of Mensagem
-
-```json
-{
-  "nest_id": "nest-001",
-  "intent_id": "intent-001",
-  "viability_score": 0.75,
-  "risk_level": "high",
-  "confidence": 0.85,
-  "explanation": {
-    "method": "SHAP",
-    "features_importance": {
-      "latency": 0.40,
-      "throughput": 0.30,
-      "packet_loss": 0.20,
-      "jitter": 0.10
-    },
-    "reasoning": "Risk level high devido principalmente a latency"
-  },
-  "timestamp": "2025-01-27T10:00:00Z"
-}
-```
-
-### Producer Kafka
-
-**Arquivo:** `apps/ml-nsmf/src/kafka_producer.py`
-
-```python
-from kafka import KafkaProducer
-import json
-
-producer = KafkaProducer(
-    bootstrap_servers=['kafka:9092'],
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
-)
-
-# Enviar predição
-producer.send('ml-nsmf-predictions', value=prediction_data)
-```
-
----
-
-## 📊 Observabilidade
-
-### metrics Prometheus
-
-| Métrica | Tipo | Descrição |
-|---------|------|-----------|
-| `ml_nsmf_predictions_total` | Counter | Total de predições realizadas |
-| `ml_nsmf_prediction_duration_seconds` | Histogram | Tempo de predição |
-| `ml_nsmf_model_accuracy` | Gauge | Acurácia of modelo |
-| `ml_nsmf_viability_scores` | Histogram | Distribuição de scores |
-| `ml_nsmf_training_duration_seconds` | Histogram | Tempo de treinamento |
-
-### Traces OTLP
-
-**Spans:**
-- `predict_risk` — Predição completa
-- `normalize_metrics` — Normalização
-- `explain_prediction` — Explicação XAI
-- `send_prediction` — Envio ao Decision Engine
-
----
-
-## 💡 Exemplos de Uso
-
-### Exemplo 1: Predição Simples
-
-```python
-from predictor import RiskPredictor
-
-predictor = RiskPredictor()
-
-# metrics of NEST
-metrics = {
-    "latency": 15.0,
-    "throughput": 500.0,
-    "packet_loss": 0.001,
-    "jitter": 2.0
-}
-
-# Normalizar
-normalized = await predictor.normalize(metrics)
-
-# Predizer
-prediction = await predictor.predict(normalized)
-
-print(f"Score: {prediction['risk_score']}")
-print(f"Level: {prediction['risk_level']}")
-```
-
-### Exemplo 2: Predição com Explicação
-
-```python
-# Predição
-prediction = await predictor.predict(normalized)
-
-# Explicação
-explanation = await predictor.explain(prediction, normalized)
-
-print(f"Method: {explanation['method']}")
-print(f"Top Feature: {max(explanation['features_importance'].items(), key=lambda x: x[1])}")
-print(f"Reasoning: {explanation['reasoning']}")
-```
-
-### Exemplo 3: Treinamento of Modelo
-
-```bash
-# 1. Preparar dataset
-python scripts/prepare_dataset.py
-
-# 2. Treinar modelo
-cd apps/ml-nsmf
-python training/train_model.py
-
-# 3. Validar modelo
-python scripts/validate_model.py
-
-# 4. Deploy modelo
-cp models/viability_model.pkl /path/to/production/models/
-cp models/scaler.pkl /path/to/production/models/
-```
-
----
-
-## 🔧 Troubleshooting
-
-### problem 1: Modelo não carrega
-
-**Sintoma:** `FileNotFoundError: models/viability_model.pkl`
-
-**solution:**
-```bash
-# verify se modelo existe
-ls -la apps/ml-nsmf/models/
-
-# Se não existir, treinar modelo
-cd apps/ml-nsmf
-python training/train_model.py
-```
-
-### problem 2: SHAP/LIME não disponível
-
-**Sintoma:** `ImportError: No module named 'shap'`
-
-**solution:**
-```bash
-pip install shap==0.43.0 lime==0.2.0.1
-```
-
-### problem 3: Predição muito lenta
-
-**Sintoma:** Tempo de predição > 500ms
-
-**solutions:**
-1. Otimizar modelo (reduzir número de árvores)
-2. Usar modelo mais simples (Linear Regression)
-3. Cache de predições similares
-
-### problem 4: Acurácia baixa
-
-**Sintoma:** R² < 0.80
-
-**solutions:**
-1. Coletar mais Data de treinamento
-2. Feature engineering adicional
-3. Ajustar hiperparâmetros of modelo
-4. Tentar modelo diferente (XGBoost, Neural Network)
-
----
-
-## 📚 Referências
-
-- **scikit-learn:** https://scikit-learn.org/
-- **SHAP:** https://shap.readthedocs.io/
-- **LIME:** https://github.com/marcotcr/lime
-- **Kafka Python:** https://kafka-python.readthedocs.io/
-- **Random Forest:** https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html
-
----
-
-## 🎯 Conclusão
-
-O ML-NSMF fornece predições de viabilidade de SLA com explicações usando XAI. O Module:
-
-- ✅ **Prediz viabilidade** de SLAs baseado in metrics
-- ✅ **Explica predições** usando SHAP/LIME
-- ✅ **Integra-se** com SEM-CSMF e Decision Engine
-- ✅ **Observável** via Prometheus e OpenTelemetry
-- ✅ **Treinável** com novos Data
-
-Para mais informações, consulte:
-- `apps/ml-nsmf/src/predictor.py` — Classe main
-- `apps/ml-nsmf/models/model_metadata.json` — Metadados of modelo
-- `apps/ml-nsmf/README.md` — README of Module
-
----
-
-**end of guide**
-
+End of Guide
