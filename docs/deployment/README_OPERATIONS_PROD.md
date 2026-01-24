@@ -23,9 +23,9 @@ O **TriSLA** é uma arquitetura SLA-Aware, explicável e automatizada for garant
 Antes de start o deploy, certifique-se de que o operador possui:
 
 - **Acesso ao cluster NASP** com permissões de administrador
-- **kubectl** configurado e conectado ao cluster (versão ≥ 1.26)
-- **Helm** instalado (versão ≥ 3.12)
-- **Ansible** instalado (versão ≥ 2.14) — opcional, for automação
+- **kubectl** configured e conectado ao cluster (versão ≥ 1.26)
+- **Helm** installed (versão ≥ 3.12)
+- **Ansible** installed (versão ≥ 2.14) — opcional, for automação
 - **Acesso ao GitHub Container Registry (GHCR)** com token válido
 - **Conhecimento básico** de Kubernetes, Helm, e arquitetura 5G/O-RAN
 - **Credenciais de acesso** ao environment NASP (endpoints, tokens, certificados)
@@ -36,13 +36,13 @@ Antes de start o deploy, certifique-se de que o operador possui:
 
 ### 2.1 NASP Cluster
 
-O TriSLA requer um cluster Kubernetes configurado com:
+O TriSLA requer um cluster Kubernetes configured com:
 
 - **Versão Kubernetes**: ≥ 1.26
 - **CNI**: Calico (recomendado for políticas de rede)
 - **StorageClass**: Configurada e funcional (para volumes persistentes)
 - **Ingress Controller**: Nginx ou similar (para exposição de serviços)
-- **RBAC**: Habilitado e configurado
+- **RBAC**: Habilitado e configured
 
 **validation of cluster:**
 
@@ -76,7 +76,7 @@ kubectl get ingressclass
 
 ### 2.3 Acesso ao Registry GHCR
 
-O TriSLA utiliza imagens Docker hospedadas no GitHub Container Registry. É necessário:
+O TriSLA uses imagens Docker hospedadas no GitHub Container Registry. É necessário:
 
 1. **Criar um Personal Access Token (PAT) no GitHub** com permissões:
    - `read:packages` (para pull de imagens)
@@ -105,7 +105,7 @@ pip install ansible
 ```bash
 kubectl version --client
 helm version
-ansible --version  # se instalado
+ansible --version  # se installed
 ```
 
 ---
@@ -141,7 +141,7 @@ ansible --version  # se instalado
 - Health: `http://ml-nsmf:8081/health`
 
 **Dependências**:
-- Kafka (consumo de metrics e publicação de predições)
+- Kafka (Consumption de metrics e publicação de predições)
 - OTLP Collector (exportação de metrics)
 
 **Modelos ML**:
@@ -212,7 +212,7 @@ ansible --version  # se instalado
 - REST API: `http://nasp-adapter:8085`
 - Health: `http://nasp-adapter:8085/health`
 
-**Configuração NASP**:
+**configuration NASP**:
 - `NASP_RAN_ENDPOINT`: Endpoint of API NASP for RAN
 - `NASP_TRANSPORT_ENDPOINT`: Endpoint of API NASP for Transport
 - `NASP_CORE_ENDPOINT`: Endpoint of API NASP for Core
@@ -220,7 +220,7 @@ ansible --version  # se instalado
 
 **Dependências**:
 - APIs NASP reais (não mocks)
-- Kafka (consumo de ações)
+- Kafka (Consumption de ações)
 - OTLP Collector
 
 ### 3.7 Observabilidade OTLP
@@ -336,7 +336,7 @@ curl -k https://<NASP_TRANSPORT_ENDPOINT>/health
 curl -k https://<NASP_CORE_ENDPOINT>/health
 ```
 
-**Note**: Ajuste os endpoints according to sua configuração NASP real.
+**Note**: Ajuste os endpoints according to sua configuration NASP real.
 
 ### 4.5 Rodar Pre-flight Automático
 
@@ -357,7 +357,7 @@ Este playbook verifica:
 
 ---
 
-## 5. Configuração dos Valores Helm
+## 5. configuration dos Valores Helm
 
 ### 5.1 Exemplo Completo de `values-nasp.yaml`
 
@@ -696,7 +696,7 @@ helm upgrade --install trisla ./helm/trisla \
 **Explicação dos parâmetros:**
 
 - `upgrade --install`: Instala se não existir, Updates se existir
-- `--namespace trisla`: Namespace onde será instalado
+- `--namespace trisla`: Namespace onde será installed
 - `--create-namespace`: Cria o namespace se não existir
 - `--values`: Arquivo de valores customizado
 - `--wait`: Waits os recursos ficarem prontos
@@ -898,11 +898,11 @@ curl http://localhost:8085/health
 
 ---
 
-## 8. Configuração of Monitoring
+## 8. configuration of Monitoring
 
 ### 8.1 Exportação OTLP
 
-Todos os módulos TriSLA exportam metrics, traces e logs via OpenTelemetry. O OTLP Collector está configurado para:
+Todos os módulos TriSLA exportam metrics, traces e logs via OpenTelemetry. O OTLP Collector está configured para:
 
 - **Receber**: gRPC (porta 4317) e HTTP (porta 4318)
 - **Exportar for Prometheus**: metrics
@@ -1238,7 +1238,7 @@ kubectl top pod <POD_NAME> -n trisla
 
 **Causas comuns:**
 - Falta de recursos (CPU/Memory)
-- error de configuração (variables de environment)
+- error de configuration (variables de environment)
 - Falha de dependência (PostgreSQL, Kafka)
 
 **problem 2: Imagens não são puxadas of GHCR**
@@ -1290,7 +1290,7 @@ kubectl get pvc -n trisla | grep kafka
 **solution:**
 - Verifiesr StorageClass
 - Verifiesr recursos disponíveis
-- Verifiesr configuração de replicas
+- Verifiesr configuration de replicas
 
 ### 11.2 Como Diagnosticar Falhas
 
@@ -1515,7 +1515,7 @@ helm upgrade trisla ./helm/trisla \
 
 ### 12.4 Imagens Assinadas
 
-**Verifiesr assinatura de imagens (se configurado):**
+**Verifiesr assinatura de imagens (se configured):**
 
 ```bash
 # Verifiesr se imagens são assinadas (requer cosign)
@@ -1637,7 +1637,7 @@ Antes de fazer o deploy no NASP Node1, siga o checklist completo em:
 O checklist inclui:
 - Pré-requisitos no cluster NASP
 - Descoberta de endpoints NASP
-- Configuração de Helm values
+- configuration de Helm values
 - Deploy e validation pós-deploy
 - Troubleshooting
 
@@ -1660,7 +1660,7 @@ kubectl get svc -n <core-namespace> | grep -E "upf|amf|smf"
 kubectl get svc -n <transport-namespace> | grep -i transport
 ```
 
-### 7.3 Configuração de values-production.yaml
+### 7.3 configuration de values-production.yaml
 
 1. **Substituir placeholders:**
    - Editar `helm/trisla/values-production.yaml`
@@ -1727,7 +1727,7 @@ Para realizar um deploy controlado of TriSLA no environment NASP, siga a documen
 4. **`docs/NASP_PREDEPLOY_CHECKLIST_v2.md`** — Checklist completo de pré-deploy
    - Infraestrutura NASP
    - Dependências técnicas of TriSLA
-   - Configuração de Helm
+   - configuration de Helm
    - Imagens e registro
    - Segurança e conformidade
 

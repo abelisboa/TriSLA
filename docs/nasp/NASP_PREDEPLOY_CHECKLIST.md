@@ -11,10 +11,10 @@
 ### 1.1 Kubernetes Cluster
 
 - [ ] **Versão Kubernetes:** ≥ 1.26
-- [ ] **CNI:** Calico configurado e funcional
+- [ ] **CNI:** Calico configured e funcional
 - [ ] **StorageClass:** Configurada e funcional
-- [ ] **Ingress Controller:** Nginx ou similar configurado
-- [ ] **RBAC:** Habilitado e configurado
+- [ ] **Ingress Controller:** Nginx ou similar configured
+- [ ] **RBAC:** Habilitado e configured
 
 **Comandos de validation:**
 ```bash
@@ -26,7 +26,7 @@ kubectl get ingressclass
 
 ### 1.2 Namespaces
 
-- [ ] **Namespace `trisla`:** Criado e configurado
+- [ ] **Namespace `trisla`:** Criado e configured
 - [ ] **Namespace for NASP services:** Identificado e acessível
 - [ ] **Network Policies:** Configuradas (se aplicável)
 
@@ -52,8 +52,8 @@ kubectl get namespaces
 
 ### 1.4 Ferramentas no Operador
 
-- [ ] **kubectl:** Instalado e configurado (versão ≥ 1.26)
-- [ ] **Helm:** Instalado (versão ≥ 3.12)
+- [ ] **kubectl:** installed e configured (versão ≥ 1.26)
+- [ ] **Helm:** installed (versão ≥ 3.12)
 - [ ] **Acesso local:** Você já está dentro of node1 of NASP
 - [ ] **Conectividade:** Testada entre operador e cluster
 
@@ -116,7 +116,7 @@ Preencher in `helm/trisla/values-nasp.yaml`:
 
 - [ ] **Verifiesr imagens GHCR:**
   - Todas as imagens apontam for `ghcr.io/abelisboa/trisla-*:latest` ou versão específica
-  - Secret `ghcr-secret` está configurado corretamente
+  - Secret `ghcr-secret` está configured corretamente
 
 - [ ] **variables de environment:**
   - `KAFKA_BOOTSTRAP_SERVERS`: Endpoint Kafka of cluster
@@ -124,7 +124,7 @@ Preencher in `helm/trisla/values-nasp.yaml`:
   - `BESU_RPC_URL`: Endpoint Besu (se aplicável)
   - `NASP_*_ENDPOINT`: Endpoints NASP descobertos
 
-### 3.2 Validar Configuração
+### 3.2 Validar configuration
 
 ```bash
 helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug

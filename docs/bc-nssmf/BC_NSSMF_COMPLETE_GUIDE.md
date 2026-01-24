@@ -733,7 +733,7 @@ docker-compose -f docker-compose-kafka.yaml up -d
 - `register_sla` — Registro de SLA
 - `update_status` — Atualização de status
 - `get_sla` — Queries de SLA
-- `consume_i04` — Consumo de decisions
+- `consume_i04` — Consumption de decisions
 - `execute_contract` — Execução de contrato
 
 ---

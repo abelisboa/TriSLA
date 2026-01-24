@@ -130,7 +130,7 @@ TriSLA/
 │   ├── integration/
 │   └── e2e/
 ├── docker-compose.yml             # environment local
-├── pytest.ini                    # Configuração pytest
+├── pytest.ini                    # configuration pytest
 ├── requirements-dev.txt           # Dependências de development
 └── README.md                      # Documentação main
 ```
@@ -686,7 +686,7 @@ curl -X POST http://localhost:8085/api/v1/actions \
 pip install black==23.11.0
 ```
 
-**Configuração (`pyproject.toml`):**
+**configuration (`pyproject.toml`):**
 
 ```toml
 [tool.black]
@@ -729,7 +729,7 @@ black apps/
 pip install isort==5.12.0
 ```
 
-**Configuração (`pyproject.toml`):**
+**configuration (`pyproject.toml`):**
 
 ```toml
 [tool.isort]
@@ -764,7 +764,7 @@ isort apps/
 pip install flake8==6.1.0
 ```
 
-**Configuração (`.flake8` ou `setup.cfg`):**
+**configuration (`.flake8` ou `setup.cfg`):**
 
 ```ini
 [flake8]
@@ -804,7 +804,7 @@ flake8 --statistics apps/
 pip install mypy==1.7.0
 ```
 
-**Configuração (`mypy.ini` ou `pyproject.toml`):**
+**configuration (`mypy.ini` ou `pyproject.toml`):**
 
 ```ini
 [mypy]
@@ -834,7 +834,7 @@ pip install pre-commit==3.5.0
 pre-commit install
 ```
 
-**Configuração (`.pre-commit-config.yaml`):**
+**configuration (`.pre-commit-config.yaml`):**
 
 ```yaml
 repos:
@@ -918,7 +918,7 @@ tests/
 │   └── test_module_integration.py
 ├── e2e/                     # Testes end-to-end
 │   └── test_full_workflow.py
-└── conftest.py             # Configuração pytest
+└── conftest.py             # configuration pytest
 ```
 
 ### 8.2 Testes Unitários
@@ -1125,7 +1125,7 @@ pytest tests/e2e/ -v -m e2e
 pytest tests/e2e/ -v --timeout=300
 ```
 
-### 8.5 Configuração pytest
+### 8.5 configuration pytest
 
 **`pytest.ini`:**
 
@@ -1914,7 +1914,7 @@ pytest tests/e2e/test_trisla_e2e.py -v
 - eMBB (vídeo 4K / banda larga móvel)
 - mMTC (IoT massivo)
 
-**Arquivo de configuração:** `tests/e2e/scenarios_e2e_trisla.yaml`
+**Arquivo de configuration:** `tests/e2e/scenarios_e2e_trisla.yaml`
 
 ### 12.2 Deploy NASP Node1
 
@@ -1923,7 +1923,7 @@ pytest tests/e2e/test_trisla_e2e.py -v
 **Pré-requisitos:**
 - Seguir `docs/NASP_PREDEPLOY_CHECKLIST.md`
 - Descoberta de endpoints NASP
-- Configuração de `helm/trisla/values-production.yaml`
+- configuration de `helm/trisla/values-production.yaml`
 
 **Deploy:**
 ```bash
