@@ -1,120 +1,615 @@
-# Portal Backend
+# Portal Backend Complete Guide
 
-**Role.** Public entry point for SLA submission. It validates request schemas and forwards them to the TriSLA decision pipeline.
+This document provides comprehensive technical documentation for the Portal Backend module, based on the real TriSLA implementation.
 
-## Purpose and Responsibilities
-- Accept user-facing SLA requests (template + form values)
-- Validate request schemas and required fields
-- Provide consistent correlation fields for tracing (intent_id)
-- Forward validated requests to Decision Engine pipeline
-- Return the decision response to the UI
-- Handle authentication and authorization (if enabled)
+## 1. Module Purpose and Design Rationale
 
-## What the Module Does Not Do
-- Does not make admission decisions (delegated to Decision Engine)
-- Does not process semantic intent (delegated to SEM-CSMF)
-- Does not perform ML predictions (delegated to ML-NSMF)
-- Does not manage SLA lifecycle (delegated to SLA-Agent)
+### Why a Backend Portal Exists
 
-## Architecture Overview
+The Portal Backend exists to provide a stable, public-facing API interface for SLA submission and lifecycle management. Without this backend, every client (Portal Frontend, CLI tools, external systems) would need to:
 
-The Portal Backend is a REST API service that acts as the public gateway:
-- **Input**: HTTP POST requests with SLA request payloads
-- **Output**: HTTP responses with decision outcomes
-- **Protocol**: REST API (HTTP/HTTPS)
+- Directly integrate with multiple TriSLA modules (SEM-CSMF, ML-NSMF, Decision Engine, BC-NSSMF)
+- Understand internal module protocols and data formats
+- Handle correlation ID generation and propagation
+- Implement error handling and retry logic for each module
+- Manage complex orchestration flows
 
-## Interfaces
+### Why It Is Decoupled from SEM-CSMF
 
-### REST API Endpoints
+The Portal Backend is decoupled from SEM-CSMF (and other TriSLA modules) to:
 
--  — Submit a new SLA request
--  — Retrieve SLA request status
--  — Retrieve decision outcome
--  — Health check endpoint
--  — Readiness check endpoint
+1. **Enable Independent Evolution**: Backend API contracts can evolve without changing internal module interfaces
+2. **Support Multiple Clients**: Portal Frontend, CLI tools, and external systems can use the same API
+3. **Centralize Orchestration**: Complex multi-module flows are managed in one place
+4. **Simplify Client Integration**: Clients interact with a single API instead of multiple module endpoints
 
-### Request Format
+### Why It Does Not Implement Business Logic
 
-```json
-{
-  template_id: urllc-v1,
-  requirements: {
-    latency_ms: 10,
-    throughput_mbps: 100,
-    reliability: 0.999
-  },
-  metadata: {
-    submitted_by: user@example.com,
-    priority: high
-  }
-}
-```
+The Portal Backend is intentionally thin and does not implement business logic because:
 
-### Response Format
+- **Separation of Concerns**: Business logic belongs in domain modules (SEM-CSMF for semantics, ML-NSMF for predictions, Decision Engine for decisions)
+- **Testability**: Thin orchestration layer is easier to test and mock
+- **Maintainability**: Business logic changes do not require backend changes
+- **Reusability**: The same backend can support different business logic implementations
 
-```json
-{
-  intent_id: intent-12345,
-  decision: ACCEPT,
-  confidence: 0.95,
-  justification: All thresholds met,
-  timestamp: 2024-01-24T12:00:00Z
-}
-```
+## 2. Internal Architecture
 
-## Configuration
+### Component Breakdown
 
-### Environment Variables
-- : Decision Engine service URL
-- : Kafka broker addresses (for event emission)
-- : JWT secret for authentication (if enabled)
-- : Allowed CORS origins (comma-separated)
+The Portal Backend consists of the following components:
 
-### Helm Configuration
-The Portal Backend is deployed as part of the TriSLA Helm chart under  section in .
 
-## Deployment Method
 
-The Portal Backend is deployed via Helm:
-```bash
-helm upgrade --install trisla ./helm/trisla -n trisla -f ./helm/trisla/values.yaml
-```
+### API Layer
 
-## Runtime Behavior
+The FastAPI application () registers routers and middleware:
 
-1. Receives SLA submission request from Portal Frontend
-2. Validates request schema and required fields
-3. Generates correlation identifier (intent_id)
-4. Forwards request to Decision Engine pipeline
-5. Waits for decision response
-6. Returns decision outcome to Portal Frontend
+- **SLA Router**: Handles  endpoints
+- **CORS Middleware**: Enables cross-origin requests (if configured)
+- **Error Handlers**: Global exception handlers for standardized error responses
 
-## Observability Hooks
+### Validation Layer
 
-- **Prometheus metrics**: 
-  - : Total API requests
-  - : Request latency histogram
-  - : Error counter
-- **OpenTelemetry traces**: End-to-end spans from submission to decision response
+Request validation is performed using Pydantic models ():
 
-## Known Issues & Resolved Errors
+- **SLASubmitRequest**: Validates SLA submission payloads
+  - : Required string
+  - : Required dictionary with SLA requirements
+  - : Optional string (defaults to default)
+- **SLAInterpretRequest**: Validates intent interpretation requests
+- **Field Validation**: Custom validators check service_type, required fields, format constraints
 
-### Issue: ERR_NAME_NOT_RESOLVED in browser
-**Symptom**: Frontend cannot reach backend  
-**Resolution**: Validate NodePort, DNS resolution, and the configured backend base URL in the frontend environment configuration
+### Forwarding/Orchestration Logic
 
-### Issue: Decision Engine connection fails
-**Symptom**: Backend cannot forward requests to Decision Engine  
-**Resolution**: Verify  configuration and service discovery
+The  class orchestrates calls to TriSLA modules:
 
-## Integration with Other TriSLA Modules
+1. **submit_template_to_nasp()**: Full pipeline orchestration
+   - Calls SEM-CSMF for intent interpretation
+   - Calls ML-NSMF for viability prediction
+   - Calls Decision Engine for admission decision
+   - Calls BC-NSSMF for on-chain registration (if ACCEPT)
+2. **call_sem_csmf()**: Direct SEM-CSMF call for interpretation
+3. **get_sla_status()**: Retrieve SLA lifecycle status
+4. **get_sla_metrics()**: Retrieve SLA performance metrics
 
-- **Decision Engine**: Forwards SLA requests and receives decision outcomes
-- **Portal Frontend**: Receives user submissions and returns decision results
-- **Kafka**: Emits submission events (if configured)
-- **Observability**: Emits metrics and traces
+### Error Mapping
 
-## Troubleshooting
+Errors from upstream modules are normalized into standardized  format:
 
--  in browser: validate NodePort, DNS resolution, and the configured backend base URL in the frontend
-- If requests fail: verify Decision Engine connectivity and service discovery
+- **ErrorResponse Model**: Pydantic model with fields:
+  - : Boolean (always  for errors)
+  - : Error category (, , )
+  - : Human-readable error message
+  - : Processing phase where error occurred (, , , )
+  - : HTTP status code from upstream module
+
+- **Phase Inference**: Error phase is inferred from:
+  - Error message content (e.g., SEM-CSMF → )
+  - HTTP status code (4xx → , 5xx → )
+  - Explicit phase parameter in error detail
+
+## 3. REST API Specification
+
+### Endpoints
+
+#### POST /api/v1/sla/interpret
+
+**Purpose**: Interpret SLA intent using SEM-CSMF only (no full pipeline).
+
+**Request Body**:
+
+
+**Response** (200 OK):
+
+
+**Error Response** (400/500):
+
+
+**Status Codes**:
+- : Intent interpreted successfully
+- : Invalid request payload
+- : SEM-CSMF unavailable or error
+
+#### POST /api/v1/sla/submit
+
+**Purpose**: Submit SLA request through full TriSLA pipeline (SEM-CSMF → ML-NSMF → Decision Engine → BC-NSSMF).
+
+**Request Body**:
+
+
+**Response** (200 OK) - ACCEPT:
+
+
+**Response** (200 OK) - RENEG:
+
+
+**Response** (200 OK) - REJECT:
+
+
+**Error Response** (400/500):
+
+
+**Status Codes**:
+- : Request processed (ACCEPT, RENEG, or REJECT)
+- : Invalid request payload
+- : Pipeline error or module unavailable
+
+**Correlation Fields**:
+- : Generated by SEM-CSMF, propagated through pipeline
+- : Generated by Decision Engine or BC-NSSMF
+- : Generated by SEM-CSMF
+
+#### GET /api/v1/sla/status/{sla_id}
+
+**Purpose**: Retrieve SLA request lifecycle status.
+
+**Path Parameters**:
+- : SLA identifier (string)
+
+**Response** (200 OK):
+
+
+**Error Response** (404):
+
+
+**Status Codes**:
+- : Status retrieved
+- : SLA ID not found
+
+#### GET /api/v1/sla/metrics/{sla_id}
+
+**Purpose**: Retrieve SLA performance metrics.
+
+**Path Parameters**:
+- : SLA identifier (string)
+
+**Response** (200 OK):
+
+
+**Status Codes**:
+- : Metrics retrieved
+- : SLA ID not found
+
+#### GET /health
+
+**Purpose**: Health check endpoint.
+
+**Response** (200 OK):
+
+
+## 4. Execution Flow (Step-by-Step)
+
+### Example: SLA Submission Request (Full Pipeline)
+
+1. **Portal Frontend** sends HTTP POST to  with SLA request payload
+
+2. **FastAPI** routes request to  handler in 
+
+3. **Validation Layer** validates request:
+   - Checks  is not empty
+   - Checks  is not empty
+   - Extracts  from  (keys: , , ) or from  (format: )
+   - Validates  is one of: , , 
+   - Normalizes  format (e.g.,  → )
+
+4. **NEST Template Construction**:
+   - Builds  dict:
+     
+
+5. **NASPService.submit_template_to_nasp()** is invoked:
+   - Calls SEM-CSMF for intent interpretation and NEST generation
+   - Calls ML-NSMF for viability prediction
+   - Calls Decision Engine for admission decision
+   - Calls BC-NSSMF for on-chain registration (only if decision == ACCEPT)
+
+6. **Decision Gate Logic**:
+   - If :
+     - Returns  with 
+     - Includes blockchain data (, , , )
+     - Sets 
+   - If :
+     - Returns  with 
+     - Sets blockchain fields to 
+     - Sets 
+   - If :
+     - Returns  with 
+     - Sets blockchain fields to 
+     - Sets 
+
+7. **FastAPI** returns  as JSON
+
+8. **Portal Frontend** receives response and displays decision outcome
+
+### Example: Intent Interpretation Request (SEM-CSMF Only)
+
+1. **Portal Frontend** sends HTTP POST to  with intent payload
+
+2. **FastAPI** routes to  handler
+
+3. **Validation Layer** validates request payload
+
+4. **NASPService.call_sem_csmf()** is invoked:
+   - Constructs SEM-CSMF payload with , , , 
+   - Calls SEM-CSMF HTTP endpoint
+   - Receives NEST and technical parameters
+
+5. **Response Enrichment**:
+   - Merges SEM-CSMF response with locally extracted technical parameters
+   - Infers slice type if not provided by SEM-CSMF
+   - Adds default technical parameters if SEM-CSMF did not return them
+
+6. **FastAPI** returns enriched interpretation response
+
+## 5. Data Models
+
+### Intent Submission Payloads
+
+**SLASubmitRequest** (Pydantic model):
+
+
+**SLASubmitResponse** (Pydantic model):
+
+
+### SLA Identifiers
+
+- **intent_id**: Generated by SEM-CSMF, uniquely identifies the intent interpretation
+- **sla_id**: Generated by Decision Engine or BC-NSSMF, uniquely identifies the SLA request
+- **nest_id**: Generated by SEM-CSMF, uniquely identifies the NEST (Network Slice Template)
+
+### Decision Status Mapping
+
+- **ACCEPT** → , includes blockchain data
+- **RENEG** → , no blockchain data
+- **REJECT** → , no blockchain data
+
+### Lifecycle Representation
+
+**SLAStatusResponse**:
+
+
+## 6. Integration with Other TriSLA Modules
+
+### SEM-CSMF
+
+**Call Direction**: Portal Backend → SEM-CSMF
+
+**Data Exchanged**:
+- **Request**: HTTP POST to SEM-CSMF with:
+  - : URLLC, eMBB, or mMTC
+  - : Intent description or template reference
+  - : Tenant identifier
+  - : SLA requirement dictionary
+- **Response**: NEST (Network Slice Template) with:
+  - : Generated intent identifier
+  - : Generated NEST identifier
+  - : Normalized SLA requirements
+  - : Technical parameter suggestions
+
+**Responsibility Boundary**:
+- **Portal Backend**: Validates request, extracts service_type, constructs payload, enriches response
+- **SEM-CSMF**: Interprets intent, generates NEST, provides technical parameters
+
+**Integration Points**:
+- Service URL:  (configured via  environment variable)
+- Endpoint:  (or similar, depends on SEM-CSMF implementation)
+
+### Decision Engine
+
+**Call Direction**: Portal Backend → Decision Engine (via NASPService)
+
+**Data Exchanged**:
+- **Request**: SLA evaluation request with NEST and context
+- **Response**: Decision outcome with:
+  - : ACCEPT, RENEG, or REJECT
+  - : Decision justification
+  - : Generated SLA identifier
+  - : ML prediction metadata
+
+**Responsibility Boundary**:
+- **Portal Backend**: Orchestrates pipeline, formats response
+- **Decision Engine**: Evaluates SLA request, makes admission decision
+
+**Integration Points**:
+- Service URL:  (configured via  environment variable)
+- Called indirectly via 
+
+### SLA-Agent
+
+**Call Direction**: Portal Backend → SLA-Agent (indirect, via Decision Engine or NASPService)
+
+**Data Exchanged**:
+- **Request**: Lifecycle action requests (if applicable)
+- **Response**: Lifecycle status updates
+
+**Responsibility Boundary**:
+- **Portal Backend**: May query SLA-Agent for lifecycle status
+- **SLA-Agent**: Manages SLA lifecycle after decision
+
+**Integration Points**:
+- Service URL:  (configured via  environment variable)
+- Typically called by Decision Engine, not directly by Portal Backend
+
+### BC-NSSMF
+
+**Call Direction**: Portal Backend → BC-NSSMF (via NASPService, only for ACCEPT decisions)
+
+**Data Exchanged**:
+- **Request**: On-chain registration request with SLA data
+- **Response**: Blockchain transaction hash and block number
+
+**Responsibility Boundary**:
+- **Portal Backend**: Triggers BC-NSSMF call only when decision == ACCEPT
+- **BC-NSSMF**: Registers SLA on blockchain, returns transaction hash
+
+**Integration Points**:
+- Service URL:  (configured via  environment variable)
+- Called via  only for ACCEPT decisions
+
+### Observability
+
+**Call Direction**: Portal Backend → Observability Stack
+
+**Data Exchanged**:
+- **OpenTelemetry Traces**: Spans for request processing, module calls, error handling
+- **Prometheus Metrics**: Request counts, latency histograms, error counters
+- **Logs**: Structured logging for validation, orchestration, errors
+
+**Responsibility Boundary**:
+- **Portal Backend**: Emits observability signals
+- **Observability Stack**: Collects, stores, visualizes signals
+
+**Integration Points**:
+- OpenTelemetry: OTLP endpoint (if )
+- Prometheus: Scrapes FastAPI metrics endpoint
+- Logs: Standard output, collected by cluster logging system
+
+## 7. Deployment and Configuration
+
+### Helm Chart Configuration
+
+The Portal Backend is deployed as part of the TriSLA Portal Helm chart. Configuration is provided in :
+
+
+
+### Required Environment Variables
+
+- **SEM_CSMF_URL**: SEM-CSMF service URL. Default: 
+- **ML_NSMF_URL**: ML-NSMF service URL. Default: 
+- **DECISION_ENGINE_URL**: Decision Engine service URL. Default: 
+- **BC_NSSMF_URL**: BC-NSSMF service URL. Default: 
+- **SLA_AGENT_URL**: SLA-Agent service URL. Default: 
+
+### Optional Environment Variables
+
+- **OTEL_SDK_DISABLED**: Disable OpenTelemetry SDK. Default:  (disabled)
+- **CORS_ORIGINS**: Allowed CORS origins (comma-separated). Default:  (all origins)
+
+### Example Deployment Snippet
+
+
+
+### Network Exposure
+
+The Portal Backend is exposed via:
+- **NodePort**: Port 32002 (configurable)
+- **ClusterIP**: Internal service at 
+
+## 8. Observability
+
+### Metrics Exposed
+
+The Portal Backend exposes Prometheus metrics via FastAPI instrumentation (if enabled):
+
+- **Request Count**: Total HTTP requests received ()
+- **Request Latency**: Histogram of request processing time ()
+- **Error Counter**: Total errors by status code ()
+
+### Logs Generated
+
+Structured logging is used throughout:
+
+**Request Validation**:
+
+
+**Decision Processing**:
+
+
+**Error Handling**:
+
+
+### Traces Propagated
+
+OpenTelemetry traces (if enabled) include:
+
+- **Span Names**:
+  -  (SLA submission endpoint)
+  -  (Intent interpretation endpoint)
+  -  (Status retrieval endpoint)
+  -  (Metrics retrieval endpoint)
+- **Span Attributes**:
+  - : Intent identifier
+  - : SLA identifier
+  - : Decision outcome (ACCEPT, RENEG, REJECT)
+  - : Service type (URLLC, eMBB, mMTC)
+  - : Template identifier
+
+### How to Debug a Failed Request
+
+1. **Check Logs**:
+   
+   Look for:
+   - Request payload logs ()
+   - Service type extraction logs ()
+   - Decision logs ()
+   - Error messages
+
+2. **Check Health Endpoint**:
+   
+
+3. **Check Upstream Services**:
+   
+
+4. **Check OpenTelemetry Traces** (if enabled):
+   - Query OTLP collector for spans with 
+   - Verify spans are created for all module calls
+   - Check span attributes for correlation IDs
+
+5. **Check Prometheus Metrics** (if enabled):
+   - Query  for request counts
+   - Query  for latency
+   - Query  for error rates
+
+## 9. Failure Modes and Resolved Issues
+
+### Issue: SEM-CSMF Unavailable
+
+**Symptom**:  returns  with , , .
+
+**Root Cause**: SEM-CSMF service is down, unreachable, or returning errors.
+
+**Resolution**:
+1. Verify SEM-CSMF service is running: 
+2. Check SEM-CSMF health endpoint: 
+3. Verify service URL configuration: Check  environment variable
+4. Check network connectivity: 
+
+**Validation Evidence**: SEM-CSMF health endpoint returns , Portal Backend logs show successful SEM-CSMF calls.
+
+### Issue: Invalid Intent Payload
+
+**Symptom**:  returns  with , ,  or .
+
+**Root Cause**: Request payload is missing required fields or has invalid format.
+
+**Resolution**:
+1. Verify  is provided and not empty
+2. Verify  is provided and not empty
+3. Verify  is present in  (keys: , , ) or in  (format: )
+4. Verify  is one of: , , 
+
+**Validation Evidence**: Request with valid payload returns  with decision response.
+
+### Issue: Timeout Waiting for Decision
+
+**Symptom**:  hangs or returns  after long delay.
+
+**Root Cause**: Decision Engine or upstream module is slow to respond or timing out.
+
+**Resolution**:
+1. Check Decision Engine health: 
+2. Check Decision Engine logs for errors or slow processing
+3. Verify network connectivity between Portal Backend and Decision Engine
+4. Increase HTTP client timeout in NASPService (if configurable)
+
+**Validation Evidence**: Requests complete within expected timeout window, Decision Engine responds promptly.
+
+### Issue: Misconfigured Service URL
+
+**Symptom**:  returns  with connection errors (e.g., , ).
+
+**Root Cause**: Environment variable contains incorrect service URL or service name.
+
+**Resolution**:
+1. Verify environment variables in deployment: 
+2. Verify service names match Kubernetes service names: 
+3. Test service discovery: 
+4. Update Helm values with correct service URLs
+
+**Validation Evidence**: Service URLs resolve correctly, Portal Backend can reach upstream services.
+
+### Issue: service_type Fallback to automatic
+
+**Symptom**: SEM-CSMF returns  with error about .
+
+**Root Cause**: Portal Backend did not extract  from request and NASPService used fallback value .
+
+**Resolution** (applied in code):
+1. Extract  from  (keys: , , )
+2. Extract  from  if format is 
+3. Validate  is one of: , , 
+4. Normalize  format (e.g.,  → )
+5. Always include  in NEST template sent to SEM-CSMF
+
+**Validation Evidence**: Logs show  with correct value, SEM-CSMF accepts requests without  errors.
+
+### Issue: BC-NSSMF Called for RENEG/REJECT
+
+**Symptom**: RENEG or REJECT decisions include blockchain data (, , , ), which should be .
+
+**Root Cause**: BC-NSSMF was called even for non-ACCEPT decisions, or response formatting did not filter blockchain data.
+
+**Resolution** (applied in code):
+1. Implement explicit decision gate logic:
+   -  → Call BC-NSSMF, include blockchain data, 
+   -  → Skip BC-NSSMF, set blockchain fields to , 
+   -  → Skip BC-NSSMF, set blockchain fields to , 
+2. Log decision gate actions for traceability
+
+**Validation Evidence**: RENEG/REJECT responses have , , logs show gate logic execution.
+
+## 10. Reproducibility Notes
+
+### What Is Required to Reproduce Portal Backend Behavior
+
+1. **Kubernetes Cluster**: Single-node or multi-node cluster with:
+   - Service discovery (DNS for )
+   - Network policies allowing Portal Backend to reach TriSLA modules
+
+2. **TriSLA Modules**: All upstream modules must be deployed and healthy:
+   - SEM-CSMF: 
+   - ML-NSMF: 
+   - Decision Engine: 
+   - BC-NSSMF:  (optional, only for ACCEPT)
+   - SLA-Agent:  (optional)
+
+3. **Portal Backend Image**: Container image  (or compatible version)
+
+4. **Helm Chart**: TriSLA Portal Helm chart with correct service URL configuration
+
+5. **Observability (Optional)**:
+   - OpenTelemetry collector (if )
+   - Prometheus (for metrics scraping)
+
+### Mocking Strategies for SEM-CSMF
+
+For testing without real SEM-CSMF:
+
+1. **Mock HTTP Server**: Deploy a simple HTTP server that returns SEM-CSMF-compatible responses:
+   
+
+2. **Update Service URL**: Point  to mock service endpoint
+
+3. **Mock NASPService**: In unit tests, mock  to return predefined responses
+
+### Minimal Required Dependencies
+
+- **FastAPI**: Web framework for REST API
+- **Pydantic**: Data validation and serialization
+- **httpx**: HTTP client for upstream module calls (if not using NASPService abstraction)
+- **Python 3.8+**: Runtime environment
+
+### Deterministic Behavior Guarantees
+
+- **Request Validation**: Deterministic (same payload always validates the same way)
+- **Service Type Extraction**: Deterministic (extraction logic is explicit and reproducible)
+- **Decision Gate Logic**: Deterministic (ACCEPT/RENEG/REJECT mapping is explicit)
+- **Error Formatting**: Deterministic (error responses follow standardized format)
+
+### Known Non-Reproducible Elements
+
+1. **Upstream Module Responses**: Decision outcomes depend on real-time infrastructure state and ML model predictions
+2. **Network Latency**: HTTP request/response times vary with network conditions
+3. **Correlation IDs**:  and  are generated by upstream modules (non-deterministic if not mocked)
+4. **Blockchain Transaction Hashes**: Transaction hashes from BC-NSSMF are non-deterministic
+
+### Validation Checklist for Reproduction
+
+- [ ] Portal Backend pod is Running
+- [ ] Health endpoint returns 
+- [ ]  accepts valid requests
+- [ ] Decision responses include correct  field (CONFIRMED, RENEGOTIATION_REQUIRED, or REJECTED)
+- [ ] RENEG/REJECT responses have  and 
+- [ ] ACCEPT responses include blockchain data (if BC-NSSMF is enabled)
+- [ ] Logs show decision gate logic execution
+- [ ] No repeated errors in logs
+- [ ] OpenTelemetry spans are created (if OTLP enabled)
