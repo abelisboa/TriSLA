@@ -2,12 +2,12 @@
 
 ## 1. Introduction
 
-This document provides a complete guide for developers who want to contribute to the project **TriSLA** (Triple-SLA). O TriSLA é uma plataforma de gerenciamento de SLA for redes 5G/O-RAN baseada in microserviços, utilizando Python, gRPC, Kafka, blockchain e integration com NASP.
+This document provides a complete guide for developers who want to contribute to the project **TriSLA** (Triple-SLA). O TriSLA is uma plataforma de management de SLA for redes 5G/O-RAN baseada in microserviços, utilizando Python, gRPC, Kafka, blockchain e integration com NASP.
 
 **Objectives of this guide:**
 
 - Facilitate setup of environment de development local
-- Document the structure of código e arquitetura
+- Document the structure of code and architecture
 - Establish standards de código e práticas recomendadas
 - Explain the flow de contribuição e processo de PR
 - Provide tools e scripts úteis for development
@@ -130,31 +130,31 @@ TriSLA/
 │   ├── integration/
 │   └── e2e/
 ├── docker-compose.yml             # environment local
-├── pytest.ini                    # configuration pytest
+├── pytest.ini                    # pytest configuration
 ├── requirements-dev.txt           # Dependências de development
 └── README.md                      # Documentação main
 ```
 
-### 3.2 Estrutura de um Módulo
+### 3.2 Estrutura de um Module
 
-Cada módulo in `apps/` segue a seguinte estrutura:
+Cada Module in `apps/` segue a seguinte estrutura:
 
 ```
 apps/<module-name>/
 ├── src/
 │   ├── __init__.py
 │   ├── main.py                    # Ponto de entrada
-│   ├── config.py                  # Configurações
+│   ├── config.py                  # Configurations
 │   ├── models/                    # Modelos de Data
 │   ├── api/                       # Endpoints REST/gRPC
 │   ├── services/                  # Lógica de negócio
 │   └── utils/                     # Utilitários
-├── tests/                         # Testes of módulo
+├── tests/                         # Testes of Module
 │   ├── unit/
 │   └── integration/
 ├── Dockerfile                     # Imagem Docker
 ├── requirements.txt               # Dependências Python
-└── README.md                      # Documentação of módulo
+└── README.md                      # Documentação of Module
 ```
 
 ### 3.3 Convenções de Nomenclatura
@@ -484,7 +484,7 @@ grafana:
     GF_SECURITY_ADMIN_USER: admin
     GF_SECURITY_ADMIN_PASSWORD: admin
   # Porta: 3000
-  # Uso: Visualização de metrics e dashboards
+  # Uso: visualization de metrics e dashboards
 ```
 
 **Services TriSLA:**
@@ -918,7 +918,7 @@ tests/
 │   └── test_module_integration.py
 ├── e2e/                     # Testes end-to-end
 │   └── test_full_workflow.py
-└── conftest.py             # configuration pytest
+└── conftest.py             # pytest configuration
 ```
 
 ### 8.2 Testes Unitários
@@ -1125,7 +1125,7 @@ pytest tests/e2e/ -v -m e2e
 pytest tests/e2e/ -v --timeout=300
 ```
 
-### 8.5 configuration pytest
+### 8.5 pytest configuration
 
 **`pytest.ini`:**
 
@@ -1463,7 +1463,7 @@ git remote add upstream https://github.com/abelisboa/TriSLA.git
 **2. Criar branch:**
 
 ```bash
-# Atualizar main
+# Update main
 git checkout main
 git pull upstream main
 
@@ -1517,7 +1517,7 @@ git push origin feature/nova-funcionalidade
 ```bash
 git commit -m "feat(sem-csmf): adicionar suporte a intents OWL"
 git commit -m "fix(decision-engine): corrigir timeout in gRPC"
-git commit -m "docs: atualizar guide de desenvolvedor"
+git commit -m "docs: Update guide de desenvolvedor"
 git commit -m "test(ml-nsmf): adicionar testes unitários for predições"
 ```
 
@@ -1564,13 +1564,13 @@ Como testar as mudanças:
 
 1. **CI deve passar**: Todos os checks devem estar verdes
 2. **Code review**: Pelo menos 1 aprovação necessária
-3. **Resolução de comentários**: Responder e fazer alterações se necessário
+3. **Resolution of comments**: Responder e fazer alterações se necessário
 4. **Merge**: Mantenedor faz merge após aprovação
 
 **Comandos úteis:**
 
 ```bash
-# Atualizar branch com main
+# Update branch com main
 git checkout main
 git pull upstream main
 git checkout feature/nova-funcionalidade
@@ -1626,13 +1626,13 @@ Se aplicável.
 Description clara of funcionalidade desejada.
 
 ## Motivação
-Por que essa funcionalidade é necessária?
+Por que essa funcionalidade is necessária?
 
 ## Proposed solution
 Como você imagina que isso funcionaria?
 
 ## Alternativas consideradas
-Outras soluções que você considerou.
+Outras solutions que você considerou.
 
 ## Contexto adicional
 Qualquer outra informação relevante.
@@ -1861,7 +1861,7 @@ ENVIRONMENT=production
 
 **Código:**
 
-- `apps/*/README.md`: Documentação de cada módulo
+- `apps/*/README.md`: Documentação de cada Module
 - `helm/trisla/README.md`: Documentação of Helm chart
 - `monitoring/README.md`: Documentação de observabilidade
 
@@ -1914,7 +1914,7 @@ pytest tests/e2e/test_trisla_e2e.py -v
 - eMBB (vídeo 4K / banda larga móvel)
 - mMTC (IoT massivo)
 
-**Arquivo de configuration:** `tests/e2e/scenarios_e2e_trisla.yaml`
+**Configuration file:** `tests/e2e/scenarios_e2e_trisla.yaml`
 
 ### 12.2 Deploy NASP Node1
 
@@ -1923,7 +1923,7 @@ pytest tests/e2e/test_trisla_e2e.py -v
 **Pré-requisitos:**
 - Seguir `docs/NASP_PREDEPLOY_CHECKLIST.md`
 - Descoberta de endpoints NASP
-- configuration de `helm/trisla/values-production.yaml`
+- configuration of `helm/trisla/values-production.yaml`
 
 **Deploy:**
 ```bash
@@ -1953,7 +1953,7 @@ helm upgrade --install trisla ./helm/trisla \
 
 ### 12.4 Troubleshooting E2E
 
-**Problemas comuns:**
+**problems comuns:**
 
 1. **Services não iniciam:**
    - Verifiesr logs: `docker compose logs <service-name>`
@@ -2046,7 +2046,7 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 
 ## Conclusão
 
-This guide fornece todas as informações necessárias for desenvolvedores contribuírem com o TriSLA. Para dúvidas adicionais, consulte a documentação específica de cada módulo ou abra uma issue no GitHub.
+This guide fornece todas as informações necessárias for desenvolvedores contribuírem com o TriSLA. Para dúvidas adicionais, consulte a documentação específica de cada Module ou abra uma issue no GitHub.
 
 **Última atualização:** 2025-11-22  
 **Versão of documento:** 1.0.0

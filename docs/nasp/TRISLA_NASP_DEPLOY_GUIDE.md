@@ -10,7 +10,7 @@
 
 ## 📋 Sumário Executivo
 
-This document provides instruções completas, formais e acadêmicas for a implantação manual of **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no environment **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** for automação e **Helm** for gerenciamento de pacotes Kubernetes.
+This document provides instruções completas, formais e acadêmicas for a implantação manual of **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no environment **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** for automação e **Helm** for management de pacotes Kubernetes.
 
 ### Objective
 
@@ -29,16 +29,16 @@ O presente guide documenta o processo completo de deploy of TriSLA v3.5.0 in env
 
 - Acesso administrativo ao cluster NASP
 - Execução local no node1 (sem SSH)
-- `kubectl` configurado e conectado ao cluster
+- `kubectl` configured e conectado ao cluster
 - `helm` instalado (versão ≥ 3.12)
 - `ansible` instalado (versão ≥ 2.14)
-- Acesso ao GHCR configurado (token e secret criado)
+- Acesso ao GHCR configured (token e secret criado)
 
 ---
 
 ## 1. Informações of environment NASP
 
-### 1.1 Configuração de Rede
+### 1.1 Configuration of Rede
 
 | Componente | Valor | Description |
 |------------|-------|-----------|
@@ -56,15 +56,15 @@ O presente guide documenta o processo completo de deploy of TriSLA v3.5.0 in env
 | **CNI** | Calico | Container Network Interface |
 | **Instalação** | Kubespray | Ferramenta de instalação |
 | **Control Plane** | HA (2 nodes) | Alta disponibilidade |
-| **StorageClass** | `local-path` ou `nfs` | Provisionamento de volumes |
+| **StorageClass** | `local-path` ou `nfs` | provisioning de volumes |
 
 ### 1.3 Observabilidade NASP
 
 | Componente | Namespace | Tipo | Description |
 |------------|-----------|------|-----------|
 | **Prometheus** | `monitoring` | ClusterIP/NodePort | Coleta de metrics |
-| **Grafana** | `monitoring` | ClusterIP | Visualização de metrics |
-| **Alertmanager** | `monitoring` | ClusterIP | Gerenciamento de alertas |
+| **Grafana** | `monitoring` | ClusterIP | visualization de metrics |
+| **Alertmanager** | `monitoring` | ClusterIP | management de alertas |
 | **Loki** | `monitoring` | ClusterIP | Sistema de logs (se disponível) |
 
 ---
@@ -73,7 +73,7 @@ O presente guide documenta o processo completo de deploy of TriSLA v3.5.0 in env
 
 ### 2.1 Visão Geral of Arquitetura
 
-O TriSLA é composto por **7 módulos principais** que se integram ao environment NASP:
+O TriSLA is composto por **7 módulos principais** que se integram ao environment NASP:
 
 1. **SEM-CSMF** — Interpretação Semântica
 2. **ML-NSMF** — Predição ML com XAI
@@ -83,13 +83,13 @@ O TriSLA é composto por **7 módulos principais** que se integram ao environmen
 6. **NASP Adapter** — Adaptador NASP
 7. **UI Dashboard** — Interface Web
 
-### 2.2 Módulo 1: SEM-CSMF (Semantic-enhanced Communication Service Management Function)
+### 2.2 Module 1: SEM-CSMF (Semantic-enhanced Communication Service Management Function)
 
 #### Objective Técnico
 
-O SEM-CSMF é responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) for provisionamento de network slices.
+O SEM-CSMF is responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) for provisioning de network slices.
 
-#### Configuração de Deploy
+#### Configuration of Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
@@ -120,8 +120,8 @@ resources:
 
 #### ConfigMaps
 
-- `trisla-config` — Configurações gerais
-- `ontology-config` — Configurações of ontologia
+- `trisla-config` — Configurations gerais
+- `ontology-config` — Configurations of ontologia
 
 #### PVCs
 
@@ -146,13 +146,13 @@ resources:
 
 ---
 
-### 2.3 Módulo 2: ML-NSMF (Machine Learning Network Slice Management Function)
+### 2.3 Module 2: ML-NSMF (Machine Learning Network Slice Management Function)
 
 #### Objective Técnico
 
-O ML-NSMF é responsável por prever a viabilidade de SLA de network slices usando modelos de machine learning (LSTM/GRU) e provide explicações usando XAI (SHAP/LIME).
+O ML-NSMF is responsável por prever a viabilidade de SLA de network slices usando modelos de machine learning (LSTM/GRU) e provide explicações usando XAI (SHAP/LIME).
 
-#### Configuração de Deploy
+#### Configuration of Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
@@ -181,8 +181,8 @@ resources:
 
 #### ConfigMaps
 
-- `trisla-config` — Configurações gerais
-- `ml-model-config` — Configurações of modelo ML
+- `trisla-config` — Configurations gerais
+- `ml-model-config` — Configurations of modelo ML
 
 #### PVCs
 
@@ -204,13 +204,13 @@ resources:
 
 ---
 
-### 2.4 Módulo 3: BC-NSSMF (Blockchain Network Slice Service Management Function)
+### 2.4 Module 3: BC-NSSMF (Blockchain Network Slice Service Management Function)
 
 #### Objective Técnico
 
-O BC-NSSMF é responsável por registrar SLAs in blockchain (Hyperledger Besu/GoQuorum) usando smart contracts Solidity, garantindo imutabilidade e auditabilidade.
+O BC-NSSMF is responsável por registrar SLAs in blockchain (Hyperledger Besu/GoQuorum) usando smart contracts Solidity, garantindo imutabilidade e auditabilidade.
 
-#### Configuração de Deploy
+#### Configuration of Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
@@ -240,8 +240,8 @@ resources:
 
 #### ConfigMaps
 
-- `trisla-config` — Configurações gerais
-- `besu-config` — Configurações of Besu
+- `trisla-config` — Configurations gerais
+- `besu-config` — Configurations of Besu
 
 #### PVCs
 
@@ -263,13 +263,13 @@ resources:
 
 ---
 
-### 2.5 Módulo 4: Decision Engine
+### 2.5 Module 4: Decision Engine
 
 #### Objective Técnico
 
-O Decision Engine é responsável por tomar decisions baseadas in regras sobre a admissão, reconfiguração ou rejeição de network slices, integrando informações of ML-NSMF e of SEM-CSMF.
+O Decision Engine is responsável por tomar decisions baseadas in regras sobre a admissão, reconfiguração ou rejeição de network slices, integrando informações of ML-NSMF e of SEM-CSMF.
 
-#### Configuração de Deploy
+#### Configuration of Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
@@ -299,7 +299,7 @@ resources:
 
 #### ConfigMaps
 
-- `trisla-config` — Configurações gerais
+- `trisla-config` — Configurations gerais
 - `decision-rules` — Regras de decisão (YAML)
 
 #### Dependências
@@ -319,13 +319,13 @@ resources:
 
 ---
 
-### 2.6 Módulo 5: SLA-Agent Layer
+### 2.6 Module 5: SLA-Agent Layer
 
 #### Objective Técnico
 
-O SLA-Agent Layer é responsável por monitorar e garantir SLAs in cada domínio (RAN, Transport, Core) usando agentes federados que coletam metrics reais of NASP.
+O SLA-Agent Layer is responsável por monitorar e garantir SLAs in cada domínio (RAN, Transport, Core) usando agentes federados que coletam metrics reais of NASP.
 
-#### Configuração de Deploy
+#### Configuration of Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
@@ -355,7 +355,7 @@ resources:
 
 #### ConfigMaps
 
-- `trisla-config` — Configurações gerais
+- `trisla-config` — Configurations gerais
 - `slo-config-ran` — SLOs for RAN
 - `slo-config-transport` — SLOs for Transport
 - `slo-config-core` — SLOs for Core
@@ -373,13 +373,13 @@ resources:
 
 ---
 
-### 2.7 Módulo 6: NASP Adapter
+### 2.7 Module 6: NASP Adapter
 
 #### Objective Técnico
 
-O NASP Adapter é responsável por conectar o TriSLA aos serviços reais of NASP (RAN, Transport, Core), provisionando slices e coletando metrics reais.
+O NASP Adapter is responsável por conectar o TriSLA aos serviços reais of NASP (RAN, Transport, Core), provisionando slices e coletando metrics reais.
 
-#### Configuração de Deploy
+#### Configuration of Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
@@ -409,7 +409,7 @@ resources:
 
 #### ConfigMaps
 
-- `trisla-config` — Configurações gerais
+- `trisla-config` — Configurations gerais
 - `nasp-endpoints` — Endpoints reais of NASP
 
 #### Dependências
@@ -426,13 +426,13 @@ resources:
 
 ---
 
-### 2.8 Módulo 7: UI Dashboard
+### 2.8 Module 7: UI Dashboard
 
 #### Objective Técnico
 
-O UI Dashboard fornece uma interface web for visualização e gerenciamento of TriSLA, incluindo dashboards de metrics, status de slices e configurações.
+O UI Dashboard fornece uma interface web for visualization e management of TriSLA, incluindo dashboards de metrics, status de slices e Configurations.
 
-#### Configuração de Deploy
+#### Configuration of Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
@@ -461,8 +461,8 @@ resources:
 
 #### ConfigMaps
 
-- `trisla-config` — Configurações gerais
-- `ui-config` — Configurações of UI
+- `trisla-config` — Configurations gerais
+- `ui-config` — Configurations of UI
 
 #### Dependências
 
@@ -473,7 +473,7 @@ resources:
 
 ### 2.9 table Consolidada: TriSLA → NASP (node1/node2)
 
-| Módulo | Namespace | Tipo | Replicas | Port HTTP | Port gRPC | Node1 | Node2 | Image Registry |
+| Module | Namespace | Tipo | Replicas | Port HTTP | Port gRPC | Node1 | Node2 | Image Registry |
 |--------|-----------|------|----------|-----------|-----------|-------|-------|----------------|
 | **SEM-CSMF** | `trisla` | Deployment | 3 | 8080 | 50051 | ✅ | ✅ | `ghcr.io/abelisboa/trisla-sem-csmf:3.5.0` |
 | **ML-NSMF** | `trisla` | Deployment | 3 | 8081 | - | ✅ | ✅ | `ghcr.io/abelisboa/trisla-ml-nsmf:3.5.0` |
@@ -489,7 +489,7 @@ resources:
 
 ### 3.1 Estrutura of Inventário
 
-O inventário Ansible está localizado in `ansible/inventory.yaml` e utiliza conexão local (sem SSH):
+O inventário Ansible está localizado in `ansible/inventory.yaml` e uses conexão local (sem SSH):
 
 ```yaml
 # ============================================
@@ -502,7 +502,7 @@ O inventário Ansible está localizado in `ansible/inventory.yaml` e utiliza con
 127.0.0.1 ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 ```
 
-### 3.2 variables de Grupo
+### 3.2 variables of Grupo
 
 #### 3.2.1 `ansible/group_vars/all.yml`
 
@@ -511,18 +511,18 @@ O inventário Ansible está localizado in `ansible/inventory.yaml` e utiliza con
 # variables Globais Ansible - TriSLA
 # ============================================
 
-# Configurações de rede NASP
+# Configurations of rede NASP
 trisla_network:
   interface: "my5g"
   node_ip: "192.168.10.16"
   gateway: "192.168.10.1"
 
-# Configurações of Kubernetes
+# Configurations of Kubernetes
 kubernetes:
   namespace: "trisla"
   kubeconfig_path: "/etc/kubernetes/admin.conf"
 
-# Configurações of TriSLA
+# Configurations of TriSLA
 trisla:
   namespace: "trisla"
   image_registry: "ghcr.io/abelisboa"
@@ -565,14 +565,14 @@ trisla:
       image: "{{ trisla.image_registry }}/trisla-ui-dashboard"
       tag: "3.5.0"
 
-# Configurações de production
+# Configurations of production
 production:
   enabled: true
   simulation_mode: false
   use_real_services: true
   execute_real_actions: true
 
-# Configurações de observabilidade
+# Configurations of observabilidade
 observability:
   enabled: true
   otlp_collector:
@@ -584,9 +584,9 @@ observability:
   
   grafana:
     enabled: true
-    admin_password: "admin"  # ⚠️ ALTERAR In Production
+    admin_password: "admin"  # ⚠️ ALTERAR in Production
 
-# Configurações de recursos
+# Configurations of recursos
 resources:
   requests:
     cpu: "500m"
@@ -599,7 +599,7 @@ resources:
 #### 3.2.2 `ansible/group_vars/nasp.yml` (se necessário)
 
 ```yaml
-# Configurações específicas of NASP
+# Configurations específicas of NASP
 nasp:
   cluster_name: "nasp-cluster"
   kubeconfig: "/etc/kubernetes/admin.conf"
@@ -609,19 +609,19 @@ nasp:
 #### 3.2.3 `ansible/group_vars/trisla.yml` (se necessário)
 
 ```yaml
-# Configurações específicas of TriSLA
+# Configurations específicas of TriSLA
 trisla:
   helm_chart_path: "{{ playbook_dir }}/../helm/trisla"
   values_file: "{{ helm_chart_path }}/values-nasp.yaml"
   release_name: "trisla"
 ```
 
-### 3.3 variables de Host
+### 3.3 variables of Host
 
 #### 3.3.1 `ansible/host_vars/node1.yml` (se necessário)
 
 ```yaml
-# Configurações específicas of node1
+# Configurations específicas of node1
 node1:
   ip: "192.168.10.16"
   interface: "my5g"
@@ -631,7 +631,7 @@ node1:
 #### 3.3.2 `ansible/host_vars/node2.yml` (se necessário)
 
 ```yaml
-# Configurações específicas of node2
+# Configurations específicas of node2
 node2:
   ip: "192.168.10.15"
   interface: "my5g"
@@ -750,7 +750,7 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.1 `ansible/roles/sem_csmf/`
 
-**Propósito:** Deploy of módulo SEM-CSMF
+**Propósito:** Deploy of Module SEM-CSMF
 
 **Tasks:**
 - Deploy Helm chart for SEM-CSMF
@@ -762,7 +762,7 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.2 `ansible/roles/ml_nsmf/`
 
-**Propósito:** Deploy of módulo ML-NSMF
+**Propósito:** Deploy of Module ML-NSMF
 
 **Tasks:**
 - Deploy Helm chart for ML-NSMF
@@ -774,7 +774,7 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.3 `ansible/roles/bc_nssmf/`
 
-**Propósito:** Deploy of módulo BC-NSSMF
+**Propósito:** Deploy of Module BC-NSSMF
 
 **Tasks:**
 - Deploy Helm chart for BC-NSSMF
@@ -834,7 +834,7 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.8 `ansible/roles/monitoring/`
 
-**Propósito:** Configuração de observabilidade
+**Propósito:** Configuration of observabilidade
 
 **Tasks:**
 - configure OpenTelemetry Collector
@@ -979,10 +979,10 @@ kubectl top nodes
 - [ ] DNS interno funcionando
 - [ ] Portas livres (8080-8085, 50051, etc.)
 - [ ] Recursos suficientes (CPU, memória)
-- [ ] `kubectl` configurado e conectado
+- [ ] `kubectl` configured e conectado
 - [ ] `helm` instalado (versão ≥ 3.12)
 - [ ] `ansible` instalado (versão ≥ 2.14)
-- [ ] Acesso ao GHCR configurado
+- [ ] Acesso ao GHCR configured
 - [ ] `values-nasp.yaml` preenchido com valores reais
 - [ ] Imagens GHCR disponíveis
 
@@ -1080,7 +1080,7 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/validate-cluster.ym
 
 ### 6.3 Ordem Oficial de Instalação
 
-A ordem de instalação dos módulos é gerenciada pelo Helm chart, mas a sequência lógica é:
+A ordem de instalação dos módulos is gerenciada pelo Helm chart, mas a sequência lógica is:
 
 1. **SEM-CSMF** — Base semântica
 2. **ML-NSMF** — Predição ML
@@ -1093,7 +1093,7 @@ A ordem de instalação dos módulos é gerenciada pelo Helm chart, mas a sequê
 
 ---
 
-### 6.4 Recursos Criados por Módulo
+### 6.4 Recursos Criados por Module
 
 #### 6.4.1 SEM-CSMF
 
@@ -1266,7 +1266,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=nasp-adapter
 **Recursos Esperados:**
 - Deployment: `trisla-ui-dashboard`
 - Service: `trisla-ui-dashboard` (ClusterIP, port 3000)
-- Ingress: `trisla-ingress` (se configurado)
+- Ingress: `trisla-ingress` (se configured)
 - ConfigMap: `trisla-config`, `ui-config`
 
 **Comando de Verifiesção:**
@@ -1285,7 +1285,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=ui-dashboard
 
 **Endpoints Expostos:**
 - HTTP: `http://trisla-ui-dashboard.trisla.svc.cluster.local:3000`
-- Ingress: `http://trisla.local` (se configurado)
+- Ingress: `http://trisla.local` (se configured)
 
 ---
 
@@ -1577,7 +1577,7 @@ kubectl logs -n trisla -l app.kubernetes.io/component=otel-collector --tail=100
 - OTLP Collector in `Running`
 - Traces sendo coletados
 - metrics sendo exportadas for Prometheus
-- Logs sendo coletados (se configurado)
+- Logs sendo coletados (se configured)
 
 ---
 
@@ -1622,7 +1622,7 @@ kubectl get daemonset -n trisla
 - Todos os pods com `READY 1/1`
 - Nenhum pod in `CrashLoopBackOff` ou `Error`
 - Todos os serviços criados
-- Deployments com réplicas corretas
+- Deployments com Replicas corretas
 - DaemonSet com pods in ambos os nodes
 
 ---
@@ -1923,20 +1923,20 @@ NASP Adapter ───► NASP Real Services
 - [ ] DNS interno funcionando (CoreDNS)
 - [ ] Portas livres (8080-8085, 50051, 9090, 3000, 4317, 9092)
 - [ ] Recursos suficientes (CPU ≥ 16 cores, RAM ≥ 32 GiB)
-- [ ] `kubectl` configurado e conectado
+- [ ] `kubectl` configured e conectado
 - [ ] `helm` instalado (versão ≥ 3.12)
 - [ ] `ansible` instalado (versão ≥ 2.14)
-- [ ] Acesso ao GHCR configurado (token e secret criado)
+- [ ] Acesso ao GHCR configured (token e secret criado)
 
 ---
 
 ### 9.2 Inventário Final Aprovado
 
-- [ ] `ansible/inventory.yaml` configurado (127.0.0.1, local)
+- [ ] `ansible/inventory.yaml` configured (127.0.0.1, local)
 - [ ] `ansible/group_vars/all.yml` preenchido
-- [ ] variables de rede configuradas (interface, IPs, gateway)
-- [ ] variables of TriSLA configuradas (namespace, registry, tags)
-- [ ] variables de production configuradas (simulation_mode: false)
+- [ ] variables of rede configured (interface, IPs, gateway)
+- [ ] variables of TriSLA configured (namespace, registry, tags)
+- [ ] variables of production configured (simulation_mode: false)
 
 ---
 
@@ -1947,7 +1947,7 @@ NASP Adapter ───► NASP Real Services
 - [ ] Endpoints NASP configurados (FQDNs Kubernetes)
 - [ ] Autenticação OAuth2 configurada (se necessário)
 - [ ] Recursos ajustados for production
-- [ ] Replicas configuradas corretamente
+- [ ] Replicas configured corretamente
 
 ---
 
@@ -2033,15 +2033,15 @@ NASP Adapter ───► NASP Real Services
 
 ## 10. Conclusão
 
-This document provides a complete guide, formal e acadêmico for a implantação manual of TriSLA v3.5.0 in the NASP environment utilizando Ansible e Helm. O processo é dividido in fases claras, desde a preparação inicial até a validation end-to-end, garantindo um deploy controlado e auditável.
+This document provides a complete guide, formal e acadêmico for a implantação manual of TriSLA v3.5.0 in the NASP environment utilizando Ansible e Helm. O processo is dividido in fases claras, desde a preparação inicial até a validation end-to-end, garantindo um deploy controlado e auditável.
 
 ### Principais Características
 
 - **Deploy Local:** Execução no node1 (127.0.0.1), sem SSH
-- **Automação:** Ansible for orquestração, Helm for gerenciamento
-- **production Real:** Configurações for environment de production, sem simulação
+- **Automação:** Ansible for orquestração, Helm for management
+- **production Real:** Configurations for production environment, sem simulação
 - **Observabilidade:** Integração completa com Prometheus, Grafana e OpenTelemetry
-- **Alta Disponibilidade:** Réplicas configuradas for todos os módulos
+- **Alta Disponibilidade:** Replicas configured for todos os módulos
 - **Distribuição:** SLA-Agent Layer distribuído in node1 e node2
 
 ### Próximos Passos
@@ -2050,7 +2050,7 @@ Após a conclusão bem-sucedida of deploy:
 
 1. **Monitoramento Contínuo:** Acompanhar metrics e logs
 2. **Otimização:** Ajustar recursos conforme necessário
-3. **Manutenção:** Atualizar imagens e configurações
+3. **Manutenção:** Update images and configurations
 4. **Expansão:** Adicionar novos módulos ou funcionalidades
 
 ---
@@ -2073,7 +2073,7 @@ Após a conclusão bem-sucedida of deploy:
 - **Checklist Pré-Deploy:** `docs/nasp/NASP_PREDEPLOY_CHECKLIST_v2.md`
 - **Relatório Contexto:** `docs/nasp/NASP_CONTEXT_REPORT.md`
 
-### Arquivos de Configuração
+### Arquivos de Configuration
 
 - **Values NASP:** `helm/trisla/values-nasp.yaml`
 - **Inventory Ansible:** `ansible/inventory.yaml`

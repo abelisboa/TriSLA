@@ -1,15 +1,15 @@
-# guide Completo of Módulo SEM-CSMF
+# guide Completo of Module SEM-CSMF
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
-**Módulo:** Semantic-enhanced Communication Service Management Function
+**Module:** Semantic-enhanced Communication Service Management Function
 
 ---
 
 ## 📋 Sumário
 
 1. [Visão Geral](#visão-geral)
-2. [Arquitetura of Módulo](#arquitetura-do-módulo)
+2. [Arquitetura of Module](#arquitetura-do-Module)
 3. [Pipeline de Processamento](#pipeline-de-processamento)
 4. [Ontologia OWL](#ontologia-owl)
 5. [NLP (Natural Language Processing)](#nlp-natural-language-processing)
@@ -23,7 +23,7 @@
 
 ## 🎯 Visão Geral
 
-O **SEM-CSMF (Semantic-enhanced Communication Service Management Function)** é o módulo responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) for provisionamento de network slices.
+O **SEM-CSMF (Semantic-enhanced Communication Service Management Function)** is o Module responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) for provisioning de network slices.
 
 ### Objetivos
 
@@ -42,7 +42,7 @@ O **SEM-CSMF (Semantic-enhanced Communication Service Management Function)** é 
 
 ---
 
-## 🏗️ Arquitetura of Módulo
+## 🏗️ Arquitetura of Module
 
 ### Estrutura de Diretórios
 
@@ -66,7 +66,7 @@ apps/sem-csmf/
 │   ├── grpc_client_retry.py    # Cliente com retry
 │   ├── kafka_producer.py       # Producer Kafka (I-02)
 │   ├── kafka_producer_retry.py # Producer com retry
-│   ├── database.py             # Configuração of banco
+│   ├── database.py             # Database Configuration
 │   ├── repository.py           # Repositório de Data
 │   ├── models/                 # Modelos Pydantic
 │   │   ├── intent.py
@@ -160,7 +160,7 @@ apps/sem-csmf/
 
 ### Visão Geral
 
-A ontologia OWL está localizada in `apps/sem-csmf/src/ontology/trisla.ttl` e é carregada dinamicamente pelo módulo.
+A ontologia OWL está localizada in `apps/sem-csmf/src/ontology/trisla.ttl` e is carregada dinamicamente pelo Module.
 
 **Documentação Completa:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 
@@ -197,7 +197,7 @@ is_valid = reasoner.validate_sla_requirements("URLLC", sla_dict)
 
 ### Visão Geral
 
-O NLP é usado for processar intents in linguagem natural e extrair informações estruturadas.
+O NLP is usado for processar intents in linguagem natural e extrair informações estruturadas.
 
 **Arquivo:** `apps/sem-csmf/src/nlp/parser.py`
 
@@ -237,14 +237,14 @@ result = parser.parse_intent_text(text)
 
 ### Visão Geral
 
-O NEST (Network Slice Template) é gerado a partir of intent validado semanticamente.
+O NEST (Network Slice Template) is gerado a partir of intent validado semanticamente.
 
 **Arquivo:** `apps/sem-csmf/src/nest_generator.py`
 
 ### Processo
 
 1. **Conversão GST → NEST**
-   - GST (Generic Slice Template) é convertido for NEST
+   - GST (Generic Slice Template) is convertido for NEST
    - validation contra ontologia
 
 2. **Persistência**
@@ -338,7 +338,7 @@ await producer.send_nest(nest_data)
 
 ### PostgreSQL
 
-**Configuração:**
+**Configuration:**
 ```python
 DATABASE_URL=postgresql://user:pass@localhost/trisla
 ```
@@ -492,18 +492,18 @@ python -m spacy download en_core_web_sm
 - **Ontologia:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 - **ML-NSMF:** [`../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md)
 - **Decision Engine:** Ver documentação of Decision Engine
-- **README of Módulo:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
+- **README of Module:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
 
 ---
 
 ## 🎯 Conclusão
 
-O SEM-CSMF fornece interpretação semântica inteligente de intents usando ontologia OWL e NLP. O módulo:
+O SEM-CSMF fornece interpretação semântica inteligente de intents usando ontologia OWL e NLP. O Module:
 
 - ✅ **Processa intents** com validation semântica
 - ✅ **Usa ontologia OWL** for reasoning
 - ✅ **Processa linguagem natural** com NLP
-- ✅ **Gera NESTs** for provisionamento
+- ✅ **Gera NESTs** for provisioning
 - ✅ **Integra-se** com Decision Engine e ML-NSMF
 - ✅ **Observável** via Prometheus e OpenTelemetry
 

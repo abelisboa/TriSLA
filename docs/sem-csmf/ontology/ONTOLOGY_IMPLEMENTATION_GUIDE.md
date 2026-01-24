@@ -23,7 +23,7 @@
 
 ## 🎯 Visão Geral
 
-A **Ontologia TriSLA** é uma ontologia OWL 2.0 formal que modela o domínio de gerenciamento de Network Slices com garantia de SLA in ambientes 5G/O-RAN. A ontologia foi desenvolvida for suportar o módulo SEM-CSMF (Semantic Communication Service Management Function) of TriSLA.
+A **Ontologia TriSLA** is uma ontologia OWL 2.0 formal que modela o domínio de management de Network Slices com garantia de SLA in environments 5G/O-RAN. A ontologia foi desenvolvida to support o Module SEM-CSMF (Semantic Communication Service Management Function) of TriSLA.
 
 ### Características Principais
 
@@ -37,7 +37,7 @@ A **Ontologia TriSLA** é uma ontologia OWL 2.0 formal que modela o domínio de 
 
 1. **Modelagem Semântica:** Representar formalmente conceitos de Network Slicing, SLA, SLO, SLI
 2. **Reasoning:** Permitir inferência automática de tipos de slice e validation de requisitos
-3. **Integração:** Suportar o pipeline semântico of SEM-CSMF
+3. **Integração:** support o pipeline semântico of SEM-CSMF
 4. **validation:** Validar conformidade de intents com requisitos 3GPP
 
 ---
@@ -436,7 +436,7 @@ owl:Thing
 - Menu: `Window` → `Views` → `Property hierarchy (graph)`
 - Exportar: `File` → `Export` → `PNG` ou `SVG`
 
-**OntoGraf (Visualização Completa):**
+**OntoGraf (visualization Completa):**
 - Menu: `Window` → `Views` → `OntoGraf`
 - Visualizar todas as classes e relações
 - Exportar: `File` → `Export` → `PNG` ou `SVG`
@@ -783,12 +783,12 @@ for result in results:
 
 ## 🎯 Conclusão
 
-A Ontologia TriSLA fornece uma base semântica formal for o gerenciamento de Network Slices com garantia de SLA. Ela suporta:
+A Ontologia TriSLA fornece uma base semântica formal for o management de Network Slices com garantia de SLA. Ela suporta:
 
 - ✅ **Modelagem formal** de conceitos de Network Slicing
 - ✅ **Reasoning semântico** for inferência automática
 - ✅ **validation** de requisitos contra padrões 3GPP
-- ✅ **Integração** com o módulo SEM-CSMF
+- ✅ **Integração** com o Module SEM-CSMF
 - ✅ **Extensibilidade** for novos casos de uso
 
 Para mais informações, consulte:

@@ -42,7 +42,7 @@ This guide provides step-by-step instructions to deploy **TriSLA** in the NASP e
 **Verifiestion (run locally on node1):**
 
 ```bash
-# Verifiesr status of Kubernetes
+# Verify status of Kubernetes
 kubectl get nodes
 kubectl get pods -n kube-system
 ```
@@ -55,52 +55,52 @@ kubectl get pods -n kube-system
 - **Resources**: Minimum 8 cores CPU, 16 GiB RAM, 100 GiB storage
 - **Services**: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, kube-proxy
 
-**Nota:** O deploy é feito localmente no node1, mas o cluster inclui o node2 como parte of control plane.
+**Nota:** O deploy is feito localmente no node1, mas o cluster inclui o node2 como parte of control plane.
 
 ### 2.2 Kubespray
 
-O cluster NASP é instalado usando **Kubespray**, uma ferramenta de instalação e configuração de clusters Kubernetes. O Kubespray utiliza Ansible for automatizar a instalação.
+O cluster NASP is installed usando **Kubespray**, uma ferramenta de instalação e Configuration de clusters Kubernetes. O Kubespray uses Ansible to automate a instalação.
 
 **Características of instalação Kubespray:**
 - Kubernetes versão ≥ 1.26
 - Alta disponibilidade of control plane
 - etcd clusterizado
-- Configuração de rede via Calico
+- Network Configuration via Calico
 - RBAC habilitado por padrão
 
-**Verifiesr instalação Kubespray:**
+**Verify instalação Kubespray:**
 
 ```bash
-# Verifiesr versão of Kubernetes
+# Verify versão of Kubernetes
 kubectl version --short
 
-# Verifiesr componentes of control plane
+# Verify componentes of control plane
 kubectl get pods -n kube-system | grep -E "etcd|kube-apiserver|kube-controller|kube-scheduler"
 ```
 
 ### 2.3 Calico
 
-**Calico** é o CNI (Container Network Interface) utilizado no cluster NASP. Ele fornece:
+**Calico** is o CNI (Container Network Interface) utilizado no cluster NASP. Ele fornece:
 
 - **Networking**: Conectividade entre pods e serviços
 - **Network Policies**: Controle de tráfego entre pods
-- **IPAM**: Gerenciamento de endereços IP
+- **IPAM**: management de endereços IP
 - **BGP**: Roteamento entre nós (opcional)
 
-**Verifiesr Calico:**
+**Verify Calico:**
 
 ```bash
-# Verifiesr pods of Calico
+# Verify pods of Calico
 kubectl get pods -n kube-system -l k8s-app=calico-node
 
-# Verifiesr status of Calico
+# Verify status of Calico
 kubectl get nodes -o wide
 
-# Verifiesr Network Policies
+# Verify Network Policies
 kubectl get networkpolicies --all-namespaces
 ```
 
-**Configuração típica of Calico no NASP:**
+**Typical Configuration of Calico no NASP:**
 
 ```yaml
 # ConfigMap of Calico (exemplo)
@@ -136,18 +136,18 @@ data:
 
 ### 2.4 Storage
 
-O cluster NASP utiliza **StorageClass** for provisionamento dinâmico de volumes persistentes. A StorageClass padrão é tipicamente configurada como `local-path` ou `nfs`.
+O cluster NASP uses **StorageClass** for provisioning dinâmico de volumes persistentes. A StorageClass padrão is tipicamente configurada como `local-path` ou `nfs`.
 
-**Verifiesr Storage:**
+**Verify Storage:**
 
 ```bash
 # Listar StorageClasses
 kubectl get storageclass
 
-# Verifiesr StorageClass padrão
+# Verify StorageClass padrão
 kubectl get storageclass -o jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}'
 
-# Verifiesr volumes persistentes
+# Verify volumes persistentes
 kubectl get pv
 kubectl get pvc --all-namespaces
 ```
@@ -171,21 +171,21 @@ reclaimPolicy: Delete
 O cluster NASP inclui uma stack completa de observabilidade:
 
 - **Prometheus**: Coleta e armazena metrics
-- **Grafana**: Visualização de metrics e dashboards
-- **Alertmanager**: Gerenciamento de alertas
+- **Grafana**: visualization de metrics e dashboards
+- **Alertmanager**: management de alertas
 - **Node Exporter**: metrics de nós
 - **kube-state-metrics**: metrics of estado of Kubernetes
 
-**Verifiesr Prometheus Stack:**
+**Verify Prometheus Stack:**
 
 ```bash
-# Verifiesr pods of Prometheus
+# Verify pods of Prometheus
 kubectl get pods -n monitoring | grep prometheus
 
-# Verifiesr pods of Grafana
+# Verify pods of Grafana
 kubectl get pods -n monitoring | grep grafana
 
-# Verifiesr ServiceMonitors
+# Verify ServiceMonitors
 kubectl get servicemonitor --all-namespaces
 ```
 
@@ -216,19 +216,19 @@ kubectl port-forward -n monitoring svc/grafana 3000:3000
 
 Antes de start o deploy, o operador deve possuir:
 
-- **Acesso local ao node1 of NASP** (você já está dentro of node1)
+- **Acesso local ao node1 of NASP** (you are already inside node1)
 - **Acesso ao kubeconfig** of cluster (arquivo `/etc/kubernetes/admin.conf` ou equivalente)
 - **Acesso à rede NASP** for comunicação com endpoints RAN, Transport e Core
 - **Credenciais of GitHub** for acesso ao GHCR (GitHub Container Registry)
 
 ### 3.2 Requisitos de Software
 
-**No node1 of NASP (onde o deploy é executado):**
+**No node1 of NASP (onde o deploy is executado):**
 
 - **kubectl** versão ≥ 1.26 (já instalado via Kubespray)
 - **Helm** versão ≥ 3.12 (instalar se não estiver presente)
 - **Ansible** versão ≥ 2.14 (opcional, for automação)
-- **Docker** ou **containerd** (já configurado)
+- **Docker** ou **containerd** (already configured)
 - **Calico CNI** (já instalado)
 - **Python 3** (para scripts auxiliares)
 
@@ -248,7 +248,7 @@ Antes de start o deploy, o operador deve possuir:
 
 - **Conectividade entre nós**: Node1 e Node2 devem se comunicar via interface `my5g`
 - **Conectividade com NASP**: Cluster deve ter acesso aos endpoints NASP (RAN, Transport, Core)
-- **DNS**: Resolução DNS funcional (CoreDNS configurado)
+- **DNS**: Resolution DNS funcional (CoreDNS configured)
 - **Portas abertas**: Portas padrão of Kubernetes (6443, 10250, etc.)
 
 ---
@@ -257,20 +257,20 @@ Antes de start o deploy, o operador deve possuir:
 
 ### 4.1 Acesso Local
 
-**O deploy of TriSLA é feito localmente no node1 of NASP.**
+**O deploy of TriSLA is feito localmente no node1 of NASP.**
 
 Você já está dentro of node1 of NASP.
 
-**Verifiesr acesso ao cluster:**
+**Verify acesso ao cluster:**
 
 ```bash
-# Verifiesr se kubectl está configurado
+# Verify se kubectl está configured
 kubectl cluster-info
 
-# Verifiesr nós of cluster
+# Verify nós of cluster
 kubectl get nodes
 
-# Verifiesr acesso ao kubeconfig
+# Verify acesso ao kubeconfig
 kubectl config view
 ```
 
@@ -279,21 +279,21 @@ kubectl config view
 **O kubeconfig já está disponível localmente no node1:**
 
 ```bash
-# Verifiesr kubeconfig padrão
+# Verify kubeconfig padrão
 kubectl config view
 
 # Se necessário, configure KUBECONFIG
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Verifiesr acesso
+# Verify acesso
 kubectl cluster-info
 kubectl get nodes
 ```
 
-**Verifiesr contexto:**
+**Verify contexto:**
 
 ```bash
-# Verifiesr contexto atual
+# Verify contexto atual
 kubectl config current-context
 
 # Listar contextos
@@ -314,7 +314,7 @@ kubectl config use-context <context-name>
 # Baixar e instalar Helm
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-# Verifiesr instalação
+# Verify instalação
 helm version
 ```
 
@@ -330,14 +330,14 @@ brew install helm
 # Windows (via Chocolatey)
 choco install kubernetes-helm
 
-# Verifiesr instalação
+# Verify instalação
 helm version
 ```
 
 **configure Helm for usar o kubeconfig:**
 
 ```bash
-# Helm usa automaticamente o KUBECONFIG configurado
+# Helm usa automaticamente o KUBECONFIG configured
 export KUBECONFIG=~/.kube/nasp-config
 helm list --all-namespaces
 ```
@@ -362,7 +362,7 @@ kubectl create secret docker-registry ghcr-secret \
   --docker-email=<GITHUB_EMAIL> \
   --namespace=trisla
 
-# Verifiesr secret criado
+# Verify secret criado
 kubectl get secret ghcr-secret -n trisla
 
 # Testar pull de imagem (opcional)
@@ -381,7 +381,7 @@ kubectl create namespace trisla
 **Testar conectividade entre nós (executar localmente no node1):**
 
 ```bash
-# Verifiesr nós of cluster
+# Verify nós of cluster
 kubectl get nodes -o wide
 
 # Testar conectividade via pod de teste
@@ -393,7 +393,7 @@ grep
 **Testar conectividade com NASP:**
 
 ```bash
-# Testar endpoints NASP (ajustar according to configuração)
+# Testar endpoints NASP (adjust according to configuration)
 curl -k https://<NASP_RAN_ENDPOINT>/health
 curl -k https://<NASP_TRANSPORT_ENDPOINT>/health
 curl -k https://<NASP_CORE_ENDPOINT>/health
@@ -406,7 +406,7 @@ curl -k https://<NASP_CORE_ENDPOINT>/health
 kubectl run -it --rm debug --image=busybox --restart=Never -- \
   nslookup kubernetes.default
 
-# Testar resolução de serviços
+# Test resolution de serviços
 kubectl run -it --rm debug --image=busybox --restart=Never -- \
   nslookup kube-dns.kube-system.svc.cluster.local
 ```
@@ -414,7 +414,7 @@ kubectl run -it --rm debug --image=busybox --restart=Never -- \
 **Testar storage:**
 
 ```bash
-# Verifiesr StorageClass
+# Verify StorageClass
 kubectl get storageclass
 
 # Criar PVC de teste
@@ -433,7 +433,7 @@ spec:
   storageClassName: local-path
 EOF
 
-# Verifiesr PVC
+# Verify PVC
 kubectl get pvc test-pvc
 
 # Limpar teste
@@ -446,79 +446,79 @@ kubectl delete pvc test-pvc
 
 ### 5.1 Pre-flight Manual
 
-**Verifiesr versão of Kubernetes:**
+**Verify versão of Kubernetes:**
 
 ```bash
 kubectl version --short
 # Deve retornar versão ≥ 1.26
 ```
 
-**Verifiesr nodes:**
+**Verify nodes:**
 
 ```bash
 kubectl get nodes -o wide
 # Ambos Node1 e Node2 devem estar in estado Ready
 ```
 
-**Verifiesr componentes of control plane:**
+**Verify componentes of control plane:**
 
 ```bash
 kubectl get pods -n kube-system | grep -E "etcd|kube-apiserver|kube-controller|kube-scheduler"
 # Todos devem estar Running
 ```
 
-**Verifiesr Calico:**
+**Verify Calico:**
 
 ```bash
-# Verifiesr pods of Calico
+# Verify pods of Calico
 kubectl get pods -n kube-system -l k8s-app=calico-node
 
-# Verifiesr status of Calico
+# Verify status of Calico
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
 
-**Verifiesr DNS:**
+**Verify DNS:**
 
 ```bash
 # Testar DNS
 kubectl run -it --rm debug --image=busybox --restart=Never -- \
   nslookup kubernetes.default
 
-# Verifiesr CoreDNS
+# Verify CoreDNS
 kubectl get pods -n kube-system -l k8s-app=kube-dns
 ```
 
-**Verifiesr StorageClass:**
+**Verify StorageClass:**
 
 ```bash
 # Listar StorageClasses
 kubectl get storageclass
 
-# Verifiesr se há StorageClass padrão
+# Verify se há StorageClass padrão
 kubectl get storageclass -o jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}'
 ```
 
-**Verifiesr recursos disponíveis:**
+**Verify recursos disponíveis:**
 
 ```bash
-# Verifiesr recursos dos nós
+# Verify recursos dos nós
 kubectl top nodes
 
-# Verifiesr capacidade dos nós
+# Verify capacidade dos nós
 kubectl describe nodes | grep -A 5 "Allocated resources"
 ```
 
-**Verifiesr Helm:**
+**Verify Helm:**
 
 ```bash
-# Verifiesr versão of Helm
+# Verify versão of Helm
 helm version
 
-# Verifiesr se Helm pode acessar o cluster
+# Verify se Helm pode acessar o cluster
 helm list --all-namespaces
 ```
 
-**Verifiesr acesso ao GHCR:**
+**Verify acesso ao GHCR:**
 
 ```bash
 # Testar pull de imagem
@@ -538,7 +538,7 @@ cd TriSLA-clean/ansible
 
 # Editar inventory.yaml com IPs corretos
 vim inventory.yaml
-# Atualizar:
+# Update:
 #   - ansible_host for Node1 e Node2
 #   - Outras variables according to necessário
 
@@ -546,7 +546,7 @@ vim inventory.yaml
 ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
 ```
 
-**Verifiesr output of pre-flight:**
+**Verify output of pre-flight:**
 
 O playbook deve validar:
 - Versão of Kubernetes
@@ -577,7 +577,7 @@ kubectl create namespace trisla
 kubectl label namespace trisla name=trisla
 kubectl label namespace trisla environment=production
 
-# Verifiesr namespace criado
+# Verify namespace criado
 kubectl get namespace trisla
 ```
 
@@ -596,7 +596,7 @@ ansible-playbook -i inventory.yaml playbooks/setup-namespace.yml
 **Deploy of SEM-CSMF:**
 
 ```bash
-# Criar ConfigMap com configurações
+# Create ConfigMap com Configurations
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ConfigMap
@@ -615,13 +615,13 @@ EOF
 # Ou manualmente via kubectl (não recomendado in production)
 ```
 
-**Verifiesr deploy:**
+**Verify deploy:**
 
 ```bash
-# Verifiesr pod
+# Verify pod
 kubectl get pods -n trisla -l app=sem-csmf
 
-# Verifiesr logs
+# Verify logs
 kubectl logs -n trisla -l app=sem-csmf --tail=50
 
 # Testar health endpoint
@@ -634,7 +634,7 @@ curl http://localhost:8080/health
 **Deploy of ML-NSMF:**
 
 ```bash
-# Criar ConfigMap
+# Create ConfigMap
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ConfigMap
@@ -648,7 +648,7 @@ data:
 EOF
 ```
 
-**Verifiesr deploy:**
+**Verify deploy:**
 
 ```bash
 kubectl get pods -n trisla -l app=ml-nsmf
@@ -660,7 +660,7 @@ kubectl logs -n trisla -l app=ml-nsmf --tail=50
 **Deploy of Decision Engine:**
 
 ```bash
-# Criar ConfigMap
+# Create ConfigMap
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ConfigMap
@@ -675,7 +675,7 @@ data:
 EOF
 ```
 
-**Verifiesr deploy:**
+**Verify deploy:**
 
 ```bash
 kubectl get pods -n trisla -l app=decision-engine
@@ -691,7 +691,7 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=decision-engine -o
 **Deploy of BC-NSSMF:**
 
 ```bash
-# Criar ConfigMap
+# Create ConfigMap
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ConfigMap
@@ -707,7 +707,7 @@ data:
 EOF
 ```
 
-**Verifiesr deploy:**
+**Verify deploy:**
 
 ```bash
 kubectl get pods -n trisla -l app=bc-nssmf
@@ -719,7 +719,7 @@ kubectl logs -n trisla -l app=bc-nssmf --tail=50
 **Deploy of NASP Adapter:**
 
 ```bash
-# Criar ConfigMap
+# Create ConfigMap
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ConfigMap
@@ -742,7 +742,7 @@ kubectl create secret generic nasp-credentials \
   --namespace=trisla
 ```
 
-**Verifiesr deploy:**
+**Verify deploy:**
 
 ```bash
 kubectl get pods -n trisla -l app=nasp-adapter
@@ -754,7 +754,7 @@ kubectl logs -n trisla -l app=nasp-adapter --tail=50
 **Deploy of SLA-Agent Layer:**
 
 ```bash
-# Criar ConfigMap
+# Create ConfigMap
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: ConfigMap
@@ -768,14 +768,14 @@ data:
 EOF
 ```
 
-**Verifiesr deploy:**
+**Verify deploy:**
 
 ```bash
 kubectl get pods -n trisla -l app=sla-agent-layer
 kubectl logs -n trisla -l app=sla-agent-layer --tail=50
 ```
 
-**Note**: A instalação modular acima é apenas for referência. O deploy completo via Helm (section 7) é o método recomendado in production.
+**Note**: A instalação modular acima is apenas for referência. O deploy completo via Helm (section 7) is o método recomendado in production.
 
 ---
 
@@ -783,7 +783,7 @@ kubectl logs -n trisla -l app=sla-agent-layer --tail=50
 
 ### 7.1 Preparar values-nasp.yaml
 
-O arquivo `helm/trisla/values-nasp.yaml` é o arquivo canônico for deploy no NASP e já existe no repositório.
+O arquivo `helm/trisla/values-nasp.yaml` is o arquivo canônico for deploy no NASP e já existe no repositório.
 
 **Se necessário, descobrir endpoints NASP:**
 
@@ -1077,9 +1077,9 @@ helm upgrade --install trisla ./helm/trisla \
   --timeout 15m
 ```
 
-### 7.4 Verifiesr Status of Deploy
+### 7.4 Verify Status of Deploy
 
-**Verifiesr status of release:**
+**Verify status of release:**
 
 ```bash
 # Status of release
@@ -1092,7 +1092,7 @@ helm history trisla -n trisla
 helm get manifest trisla -n trisla
 ```
 
-**Verifiesr pods:**
+**Verify pods:**
 
 ```bash
 # Status de todos os pods
@@ -1101,7 +1101,7 @@ kubectl get pods -n trisla
 # Status detalhado
 kubectl get pods -n trisla -o wide
 
-# Verifiesr pods por módulo
+# Verify pods por Module
 kubectl get pods -n trisla -l app=sem-csmf
 kubectl get pods -n trisla -l app=ml-nsmf
 kubectl get pods -n trisla -l app=decision-engine
@@ -1118,7 +1118,7 @@ kubectl get pods -n trisla -l app=nasp-adapter
 
 Após o deploy bem-sucedido, a seguinte estrutura de pods deve estar presente:
 
-| Módulo | Replicas Esperadas | Status Esperado | Porta |
+| Module | Replicas Esperadas | Status Esperado | Porta |
 |--------|-------------------|-----------------|-------|
 | `sem-csmf-*` | 2 | Running | 8080 |
 | `ml-nsmf-*` | 2 | Running | 8081 |
@@ -1147,7 +1147,7 @@ Após o deploy bem-sucedido, a seguinte estrutura de pods deve estar presente:
 # Listar todos os pods no namespace trisla
 kubectl get pods -n trisla
 
-# Verifiesr readiness
+# Verify readiness
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.phase}{"\t"}{.status.containerStatuses[0].ready}{"\n"}{end}'
 
 # Contar pods por status
@@ -1182,10 +1182,10 @@ kubectl get svc -n trisla
 
 ### 9.1 validation de Saúde dos Pods
 
-**Verifiesr todos os pods in Running:**
+**Verify todos os pods in Running:**
 
 ```bash
-# Verifiesr pods não Running
+# Verify pods não Running
 kubectl get pods -n trisla --field-selector=status.phase!=Running
 
 # Se houver pods problemáticos, investigar
@@ -1193,13 +1193,13 @@ kubectl describe pod <pod-name> -n trisla
 kubectl logs <pod-name> -n trisla --previous
 ```
 
-**Verifiesr readiness e liveness:**
+**Verify readiness e liveness:**
 
 ```bash
-# Verifiesr readiness
+# Verify readiness
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 
-# Verifiesr liveness
+# Verify liveness
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.containerStatuses[0].ready}{"\n"}{end}'
 ```
 
@@ -1254,11 +1254,11 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=decision-engine -o
 **Testar Kafka:**
 
 ```bash
-# Verifiesr tópicos Kafka
+# Verify tópicos Kafka
 kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=kafka -o jsonpath='{.items[0].metadata.name}') -- \
   kafka-topics.sh --list --bootstrap-server localhost:9092
 
-# Verifiesr consumer groups
+# Verify consumer groups
 kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=kafka -o jsonpath='{.items[0].metadata.name}') -- \
   kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
 ```
@@ -1280,23 +1280,23 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=postgres -o jsonpa
 kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=nasp-adapter -o jsonpath='{.items[0].metadata.name}') -- \
   curl -k https://<NASP_RAN_ENDPOINT>/health
 
-# Verifiesr logs de conexão
+# Verify logs de conexão
 kubectl logs -n trisla -l app=nasp-adapter | grep -i "nasp\|connection\|error"
 ```
 
 ### 9.5 validation de Observabilidade
 
-**Verifiesr Prometheus:**
+**Verify Prometheus:**
 
 ```bash
 # Port-forward Prometheus
 kubectl port-forward -n trisla svc/prometheus 9090:9090
 
 # Acessar: http://localhost:9090
-# Verifiesr targets: http://localhost:9090/targets
+# Verify targets: http://localhost:9090/targets
 ```
 
-**Verifiesr Grafana:**
+**Verify Grafana:**
 
 ```bash
 # Port-forward Grafana
@@ -1306,10 +1306,10 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 # Credenciais: admin/admin (alterar in production)
 ```
 
-**Verifiesr metrics OTLP:**
+**Verify metrics OTLP:**
 
 ```bash
-# Verifiesr OTLP Collector
+# Verify OTLP Collector
 kubectl logs -n trisla -l app=otlp-collector --tail=50
 ```
 
@@ -1350,39 +1350,39 @@ curl -X POST http://localhost:8080/api/v1/intents \
   }'
 ```
 
-**2. Verifiesr NEST gerado:**
+**2. Verify NEST gerado:**
 
 ```bash
-# Verifiesr NEST no banco de Data
+# Verify NEST no banco de Data
 kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=postgres -o jsonpath='{.items[0].metadata.name}') -- \
   psql -U trisla -d trisla -c "SELECT id, tenant_id, status FROM intents ORDER BY created_at DESC LIMIT 5;"
 ```
 
-**3. Verifiesr predição ML:**
+**3. Verify predição ML:**
 
 ```bash
-# Verifiesr logs of ML-NSMF
+# Verify logs of ML-NSMF
 kubectl logs -n trisla -l app=ml-nsmf | grep -i "predict\|prediction"
 ```
 
-**4. Verifiesr decisão:**
+**4. Verify decisão:**
 
 ```bash
-# Verifiesr logs of Decision Engine
+# Verify logs of Decision Engine
 kubectl logs -n trisla -l app=decision-engine | grep -i "decision\|ACCEPT\|REJECT"
 ```
 
-**5. Verifiesr registro in blockchain:**
+**5. Verify registro in blockchain:**
 
 ```bash
-# Verifiesr logs of BC-NSSMF
+# Verify logs of BC-NSSMF
 kubectl logs -n trisla -l app=bc-nssmf | grep -i "contract\|transaction\|blockchain"
 ```
 
-**6. Verifiesr ação no NASP:**
+**6. Verify ação no NASP:**
 
 ```bash
-# Verifiesr logs of NASP Adapter
+# Verify logs of NASP Adapter
 kubectl logs -n trisla -l app=nasp-adapter | grep -i "action\|provision\|nasp"
 ```
 
@@ -1407,10 +1407,10 @@ kubectl run -it --rm load-test --image=curlimages/curl --restart=Never -n trisla
 # Deletar um pod of SEM-CSMF
 kubectl delete pod -n trisla -l app=sem-csmf --field-selector=status.phase=Running | head -1
 
-# Verifiesr se outro pod assume
+# Verify se outro pod assume
 kubectl get pods -n trisla -l app=sem-csmf
 
-# Verifiesr se service continua funcionando
+# Verify se service continua funcionando
 kubectl port-forward -n trisla svc/sem-csmf 8080:8080 &
 curl http://localhost:8080/health
 ```
@@ -1419,14 +1419,14 @@ curl http://localhost:8080/health
 
 ## 11. Troubleshooting Específico of NASP
 
-### 11.1 Problemas de Conectividade com NASP
+### 11.1 problems de Conectividade com NASP
 
 **Sintoma**: NASP Adapter não consegue conectar aos endpoints NASP
 
 **Diagnóstico:**
 
 ```bash
-# Verifiesr logs
+# Verify logs
 kubectl logs -n trisla -l app=nasp-adapter | grep -i "error\|connection\|timeout"
 
 # Testar conectividade de rede
@@ -1441,29 +1441,29 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=nasp-adapter -o js
 **solution:**
 
 ```bash
-# Verifiesr Network Policies
+# Verify Network Policies
 kubectl get networkpolicies -n trisla
 
-# Verifiesr se egress está permitido
+# Verify se egress está permitido
 kubectl describe networkpolicy <policy-name> -n trisla | grep -A 20 "Egress"
 
 # Se necessário, ajustar Network Policy for permitir egress for NASP
 ```
 
-### 11.2 Problemas com Calico no NASP
+### 11.2 problems com Calico no NASP
 
 **Sintoma**: Pods não conseguem se comunicar entre si
 
 **Diagnóstico:**
 
 ```bash
-# Verifiesr status of Calico
+# Verify status of Calico
 kubectl get pods -n kube-system -l k8s-app=calico-node
 
-# Verifiesr logs of Calico
+# Verify logs of Calico
 kubectl logs -n kube-system -l k8s-app=calico-node --tail=50
 
-# Verifiesr BGP (se configurado)
+# Verify BGP (se configured)
 kubectl exec -n kube-system -l k8s-app=calico-node -- calicoctl node status
 ```
 
@@ -1473,53 +1473,53 @@ kubectl exec -n kube-system -l k8s-app=calico-node -- calicoctl node status
 # Reiniciar pods of Calico
 kubectl delete pod -n kube-system -l k8s-app=calico-node
 
-# Verifiesr se reiniciou
+# Verify se reiniciou
 kubectl get pods -n kube-system -l k8s-app=calico-node
 ```
 
-### 11.3 Problemas com Storage no NASP
+### 11.3 problems com Storage no NASP
 
 **Sintoma**: PVCs não sendo provisionados
 
 **Diagnóstico:**
 
 ```bash
-# Verifiesr PVCs pendentes
+# Verify PVCs pendentes
 kubectl get pvc -n trisla
 
-# Verifiesr eventos
+# Verify eventos
 kubectl describe pvc <pvc-name> -n trisla
 
-# Verifiesr StorageClass
+# Verify StorageClass
 kubectl get storageclass
 ```
 
 **solution:**
 
 ```bash
-# Verifiesr se há espaço disponível nos nós
+# Verify se há espaço disponível nos nós
 kubectl describe nodes | grep -A 5 "Allocated resources"
 
-# Verifiesr volumes locais (se usando local-path)
-# Verifiesr storage localmente
+# Verify volumes locais (se usando local-path)
+# Verify storage localmente
 df -h /opt/local-path-provisioner
 kubectl get nodes -o jsonpath='{.items[*].status.capacity.storage}'
 ```
 
-### 11.4 Problemas com Prometheus no NASP
+### 11.4 problems com Prometheus no NASP
 
 **Sintoma**: metrics não sendo coletadas
 
 **Diagnóstico:**
 
 ```bash
-# Verifiesr Prometheus
+# Verify Prometheus
 kubectl get pods -n monitoring -l app=prometheus
 
-# Verifiesr ServiceMonitors
+# Verify ServiceMonitors
 kubectl get servicemonitor --all-namespaces
 
-# Verifiesr targets no Prometheus
+# Verify targets no Prometheus
 kubectl port-forward -n monitoring svc/prometheus-k8s 9090:9090
 # Acessar: http://localhost:9090/targets
 ```
@@ -1532,20 +1532,20 @@ kubectl port-forward -n monitoring svc/prometheus-k8s 9090:9090
 kubectl apply -f monitoring/prometheus/servicemonitors/
 ```
 
-### 11.5 Problemas de Recursos
+### 11.5 problems de Recursos
 
 **Sintoma**: Pods sendo evicted ou OOMKilled
 
 **Diagnóstico:**
 
 ```bash
-# Verifiesr recursos dos nós
+# Verify recursos dos nós
 kubectl top nodes
 
-# Verifiesr recursos dos pods
+# Verify recursos dos pods
 kubectl top pods -n trisla
 
-# Verifiesr eventos de eviction
+# Verify eventos de eviction
 kubectl get events -n trisla --sort-by='.lastTimestamp' | grep -i "evict\|oom"
 ```
 
@@ -1569,8 +1569,8 @@ helm upgrade trisla ./helm/trisla \
 
 ### 12.1 Pré-Deploy
 
-- [ ] Acesso local ao node1 configurado (você já está dentro of node1)
-- [ ] kubectl configurado e conectado ao cluster
+- [ ] Acesso local ao node1 configured (you are already inside node1)
+- [ ] kubectl configured e conectado ao cluster
 - [ ] Helm instalado e funcionando
 - [ ] GHCR secret criado no namespace trisla
 - [ ] NASP credentials secret criado
@@ -1614,18 +1614,18 @@ helm upgrade trisla ./helm/trisla \
 ### 12.5 Documentação e Handover
 
 - [ ] Logs coletados e arquivados
-- [ ] Configurações documentadas
+- [ ] Configurations documentadas
 - [ ] Credenciais seguras armazenadas (não no repositório)
 - [ ] Equipe treinada no uso of sistema
 - [ ] Runbooks criados for operação
-- [ ] Monitoramento configurado e alertas ativos
+- [ ] Monitoramento configured e alertas ativos
 
 ### 12.6 Checklist de production
 
-- [ ] Backup of banco de Data configurado
+- [ ] Backup of database configured
 - [ ] Rotação de logs configurada
 - [ ] Retenção de metrics configurada
-- [ ] Alertas críticos configurados
+- [ ] Alertas críticos configureds
 - [ ] Processo de atualização documentado
 - [ ] Processo de rollback testado
 - [ ] Documentação de troubleshooting disponível
@@ -1639,7 +1639,7 @@ This guide provides instruções completas for implantar o TriSLA in the NASP en
 
 **Lembre-se:**
 - Sempre validar pre-flight antes of deploy
-- Coletar logs in caso de problemas
+- Coletar logs in caso de problems
 - Testar integration com NASP após deploy
 - Manter documentação atualizada
 - Executar testes E2E regularmente

@@ -9,7 +9,7 @@
 
 ### 1.1 Papel of values.yaml (Default/Dev)
 
-O arquivo `helm/trisla/values.yaml` contém **valores padrão** for development local e testes. Ele é usado quando:
+O arquivo `helm/trisla/values.yaml` contém **valores padrão** for development local e testes. Ele is usado quando:
 
 - Executando `docker-compose.yml` localmente
 - Testes E2E in environment controlado
@@ -18,7 +18,7 @@ O arquivo `helm/trisla/values.yaml` contém **valores padrão** for development 
 **Características:**
 - Valores genéricos e seguros for development
 - Endpoints mockados ou locais
-- Configurações mínimas de recursos
+- Minimum configurations de recursos
 
 ### 1.2 Papel of values-nasp.yaml (production NASP)
 
@@ -27,7 +27,7 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for pr
 **Características:**
 - Valores específicos of environment NASP
 - Endpoints reais descobertos no cluster
-- Configurações de recursos otimizadas for production
+- Resource configurations otimizadas for production
 - Secrets e credenciais (via Kubernetes Secrets, nunca hardcoded)
 
 ### 1.3 Perigos de Subir Valores Genéricos
@@ -52,11 +52,11 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for pr
 | Chave YAML | description | Fonte de Informação | Obrigatório | Exemplo (genérico) |
 |------------|-----------|---------------------|-------------|-------------------|
 | `global.namespace` | Namespace in que o TriSLA será instalado | Padrão of environment NASP | Sim | `trisla` |
-| `global.imageRegistry` | Registry de imagens Docker | GHCR configurado | Sim | `ghcr.io/<GHCR_USER>` |
+| `global.imageRegistry` | Registry de imagens Docker | GHCR configured | Sim | `ghcr.io/<GHCR_USER>` |
 | `semCsmf.service.port` | Porta HTTP of SEM-CSMF | Padrão of Helm / app | Sim | `8080` |
 | `mlNsmf.modelPath` | Caminho of modelo de viabilidade ML | Artefatos ML treinados | Sim | `/models/viability_model.pkl` |
-| `bcNssmf.besu.rpcUrl` | URL RPC of GoQuorum/Besu | Configuração local of Besu | Sim | `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545` |
-| `bcNssmf.besu.chainId` | Chain ID of blockchain | Configuração of Besu | Sim | `1337` |
+| `bcNssmf.besu.rpcUrl` | URL RPC of GoQuorum/Besu | Configuration local of Besu | Sim | `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545` |
+| `bcNssmf.besu.chainId` | Chain ID of blockchain | Besu Configuration | Sim | `1337` |
 | `naspAdapter.naspEndpoints.ran` | Endpoint base of RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>` |
 | `naspAdapter.naspEndpoints.ran_metrics` | Endpoint de metrics RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_METRICS_PORT>` |
 | `naspAdapter.naspEndpoints.core_upf` | Endpoint UPF (Core) | Descoberta NASP | Sim | `http://<UPF_SERVICE>.<CORE_NS>.svc.cluster.local:<UPF_PORT>` |
@@ -66,10 +66,10 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for pr
 | `naspAdapter.naspEndpoints.transport` | Endpoint Transport | Descoberta NASP | Sim | `http://<TRANSPORT_SERVICE>.<TRANSPORT_NS>.svc.cluster.local:<TRANSPORT_PORT>` |
 | `observability.otlp.endpoint` | Endpoint OTLP Collector | Stack de observabilidade NASP | Sim | `http://<OTLP_SERVICE>.<MONITORING_NS>.svc.cluster.local:4317` |
 | `observability.prometheus.endpoint` | Endpoint Prometheus | Stack de observabilidade NASP | Sim | `http://<PROMETHEUS_SERVICE>.<MONITORING_NS>.svc.cluster.local:9090` |
-| `network.interface` | Interface de rede NASP | Configuração of cluster | Sim | `my5g` |
-| `nodes.node1.ip` | IP of Node1 | Configuração of cluster | Sim | `<NODE1_IP>` |
-| `nodes.node2.ip` | IP of Node2 | Configuração of cluster | Sim | `<NODE2_IP>` |
-| `network.gateway` | Gateway IP | Configuração of cluster | Sim | `<GATEWAY_IP>` |
+| `network.interface` | Interface de rede NASP | Cluster Configuration | Sim | `my5g` |
+| `nodes.node1.ip` | IP of Node1 | Cluster Configuration | Sim | `<NODE1_IP>` |
+| `nodes.node2.ip` | IP of Node2 | Cluster Configuration | Sim | `<NODE2_IP>` |
+| `network.gateway` | Gateway IP | Cluster Configuration | Sim | `<GATEWAY_IP>` |
 
 ---
 
@@ -132,7 +132,7 @@ naspAdapter:
 ```
 
 **Vantagens of FQDN:**
-- Resolução automática via DNS of cluster
+- Resolution automática via DNS of cluster
 - Funciona mesmo se IPs mudarem
 - Mais resiliente a mudanças de infraestrutura
 
@@ -277,6 +277,6 @@ production:
 ---
 
 **Versão:** 1.0  
-**ENGINE MASTER:** Sistema de Configuração TriSLA
+**ENGINE MASTER:** Sistema de Configuration TriSLA
 
 

@@ -10,7 +10,7 @@
 
 This runbook descreve como realizar um **deploy controlado** of TriSLA in the NASP environment (cluster Kubernetes com 2 nodes), a partir de um repositório já sanitizado e validado localmente.
 
-O processo é dividido in etapas sequenciais, cada uma com validações específicas, garantindo que o deploy seja realizado de forma segura e auditável.
+O processo is dividido in etapas sequenciais, cada uma com validações específicas, garantindo que o deploy seja realizado de forma segura e auditável.
 
 **Pré-requisito:** Todas as Fases 1-6 concluídas, incluindo validation E2E local e audit técnica v2 aprovada.
 
@@ -22,10 +22,10 @@ Antes de start o deploy, certifique-se de que:
 
 - ✅ Checklist de pré-deploy concluído: `docs/NASP_PREDEPLOY_CHECKLIST_v2.md`
 - ✅ Cluster NASP operacional com 2 nodes
-- ✅ `kubectl` configurado e conectado ao cluster
+- ✅ `kubectl` configured e conectado ao cluster
 - ✅ `helm` instalado (versão ≥ 3.12)
 - ✅ `ansible` instalado (versão ≥ 2.14)
-- ✅ Acesso ao GHCR configurado (token e secret criado)
+- ✅ Acesso ao GHCR configured (token e secret criado)
 - ✅ Endpoints NASP descobertos e documentados
 
 **Referência completa:** `docs/NASP_PREDEPLOY_CHECKLIST_v2.md`
@@ -70,7 +70,7 @@ cat tmp/nasp_context_raw.txt
 **validation:**
 - [ ] Namespaces relevantes identificados
 - [ ] Services NASP mapeados (RAN, Transport, Core)
-- [ ] Problemas de saúde identificados (se houver)
+- [ ] problems de saúde identificados (se houver)
 
 **Próximo passo:** Preencher `values-nasp.yaml` com endpoints descobertos.
 
@@ -160,7 +160,7 @@ ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
 
 **Se falhas:**
 - Revisar erros reportados
-- Corrigir problemas de infraestrutura
+- Corrigir problems de infraestrutura
 - Reexecutar pre-flight
 
 **Próximo passo:** Criar namespace e secrets.
@@ -411,7 +411,7 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
 
 **Ver logs de todos os módulos:**
 ```bash
-# Logs de um módulo específico
+# Logs de um Module específico
 kubectl logs -n trisla -l app.kubernetes.io/name=trisla-sem-csmf --tail=100
 
 # Logs de todos os pods TriSLA
@@ -432,7 +432,7 @@ kubectl get all -n trisla
 
 ## Troubleshooting
 
-### Problemas Comuns
+### problems Comuns
 
 #### 1. Pods in ImagePullBackOff
 
@@ -457,7 +457,7 @@ kubectl create secret docker-registry ghcr-secret \
 
 #### 2. Pods in CrashLoopBackOff
 
-**Causa:** error na aplicação ou configuração incorreta.
+**Causa:** error in application or configuration incorreta.
 
 **solution:**
 ```bash
@@ -470,7 +470,7 @@ kubectl describe pod -n trisla <pod-name>
 
 #### 3. Services não acessíveis
 
-**Causa:** Network Policies ou configuração de rede incorreta.
+**Causa:** Network Policies or configuration de rede incorreta.
 
 **solution:**
 ```bash
@@ -483,7 +483,7 @@ kubectl exec -n trisla <pod-1> -- ping <pod-2-ip>
 
 #### 4. Kafka topics não criados
 
-**Causa:** Kafka não configurado ou tópicos não criados automaticamente.
+**Causa:** Kafka not configured ou tópicos não criados automaticamente.
 
 **solution:**
 ```bash

@@ -15,7 +15,7 @@
 | CNI | Calico |
 | Namespace TriSLA alvo | <TRISLA_NAMESPACE> (ex.: trisla) |
 
-**Nota:** Este relatório é gerado automaticamente. Execute `scripts/discover-nasp-endpoints.sh` no environment NASP for obter valores reais.
+**Nota:** Este relatório is gerado automaticamente. Execute `scripts/discover-nasp-endpoints.sh` no environment NASP for obter valores reais.
 
 ---
 
@@ -24,7 +24,7 @@
 | Componente | Namespace | Tipo de Service | Observação |
 |------------|-----------|-----------------|------------|
 | Prometheus | monitoring | ClusterIP/NodePort | Usado for metrics NASP |
-| Grafana | monitoring | ClusterIP | UI de visualização de metrics |
+| Grafana | monitoring | ClusterIP | UI de visualization de metrics |
 | Kafka | <KAFKA_NS> | ClusterIP | Broker for eventos TriSLA/NASP |
 | NASP Adapter | <NASP_NS> | ClusterIP | Interface entre TriSLA e NASP |
 | Loki | monitoring | ClusterIP | Sistema de logs (se disponível) |
@@ -40,13 +40,13 @@
 
 ## Diagnóstico de Saúde
 
-### Problemas Encontrados
+### problems Encontrados
 
 - ⚠️ Pods in CrashLoopBackOff: Verifiesr `tmp/nasp_context_raw.txt` for detalhes
 - ⚠️ Pods in ImagePullBackOff: Verifiesr `tmp/nasp_context_raw.txt` for detalhes
 - ⚠️ Pods não prontos: Verifiesr `tmp/nasp_context_raw.txt` for detalhes
 
-**Nota:** Este relatório é um template. Execute `scripts/discover-nasp-endpoints.sh` for obter diagnóstico real.
+**Nota:** Este relatório is um template. Execute `scripts/discover-nasp-endpoints.sh` for obter diagnóstico real.
 
 ---
 
@@ -67,7 +67,7 @@
 1. **Revisar relatório raw:** `tmp/nasp_context_raw.txt`
 2. **Identificar endpoints NASP:** Use FQDNs no formato Kubernetes
 3. **Preencher values-nasp.yaml:** Execute `scripts/fill_values_production.sh`
-4. **Validar configuração:** `helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug`
+4. **Validate configuration:** `helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug`
 
 ---
 

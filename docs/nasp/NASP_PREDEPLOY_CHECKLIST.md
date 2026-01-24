@@ -28,7 +28,7 @@ kubectl get ingressclass
 
 - [ ] **Namespace `trisla`:** Criado e configured
 - [ ] **Namespace for NASP services:** Identificado e acessível
-- [ ] **Network Policies:** Configuradas (se aplicável)
+- [ ] **Network Policies:** configured (se aplicável)
 
 **Comandos:**
 ```bash
@@ -102,7 +102,7 @@ Preencher in `helm/trisla/values-nasp.yaml`:
 
 ---
 
-## 3. Configuration de Helm Values
+## 3. Helm Values Configuration
 
 ### 3.1 Revisar `values-nasp.yaml`
 
@@ -124,7 +124,7 @@ Preencher in `helm/trisla/values-nasp.yaml`:
   - `BESU_RPC_URL`: Endpoint Besu (se aplicável)
   - `NASP_*_ENDPOINT`: Endpoints NASP descobertos
 
-### 3.2 Validar configuration
+### 3.2 Validate configuration
 
 ```bash
 helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
@@ -155,7 +155,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
   helm repo update
   ```
 
-- [ ] **Instalar/Atualizar TriSLA:**
+- [ ] **Instalar/Update TriSLA:**
   ```bash
   helm upgrade --install trisla ./helm/trisla \
     --namespace trisla \
@@ -363,7 +363,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
   kubectl describe pod -n trisla <pod-name>
   ```
 
-### 7.2 Problemas de Conectividade
+### 7.2 problems de Conectividade
 
 - [ ] **Verifiesr Network Policies:**
   ```bash
@@ -375,7 +375,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
   kubectl exec -n trisla <pod-1> -- ping <pod-2-ip>
   ```
 
-### 7.3 Problemas com Kafka
+### 7.3 problems com Kafka
 
 - [ ] **Verifiesr estado of Kafka:**
   ```bash
@@ -415,7 +415,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
    - Monitorar SLOs e compliance
 
 3. **Manutenção:**
-   - Atualizar imagens quando necessário
+   - Update imagens quando necessário
    - Aplicar patches de segurança
    - Fazer backup de Data críticos
 

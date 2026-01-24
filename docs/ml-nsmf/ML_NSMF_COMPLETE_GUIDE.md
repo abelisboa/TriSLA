@@ -1,16 +1,16 @@
-# guide Completo of Módulo ML-NSMF
+# guide Completo of Module ML-NSMF
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
-**Módulo:** Machine Learning Network Slice Management Function
+**Module:** Machine Learning Network Slice Management Function
 
 ---
 
 ## 📋 Sumário
 
 1. [Visão Geral](#visão-geral)
-2. [Arquitetura of Módulo](#arquitetura-do-módulo)
-3. [Funcionamento of Módulo](#funcionamento-do-módulo)
+2. [Arquitetura of Module](#arquitetura-do-Module)
+3. [Funcionamento of Module](#funcionamento-do-Module)
 4. [Treinamento of Modelo](#treinamento-do-modelo)
 5. [Predição e XAI](#predição-e-xai)
 6. [Integração com Outros Módulos](#integração-com-outros-módulos)
@@ -23,7 +23,7 @@
 
 ## 🎯 Visão Geral
 
-O **ML-NSMF (Machine Learning Network Slice Management Function)** é responsável por prever a viabilidade de aceitação de SLAs baseado in metrics históricas, características of NEST e estado atual dos recursos of infraestrutura.
+O **ML-NSMF (Machine Learning Network Slice Management Function)** is responsável por prever a viabilidade de aceitação de SLAs baseado in metrics históricas, características of NEST e estado atual dos recursos of infraestrutura.
 
 ### Objetivos
 
@@ -41,7 +41,7 @@ O **ML-NSMF (Machine Learning Network Slice Management Function)** é responsáv
 
 ---
 
-## 🏗️ Arquitetura of Módulo
+## 🏗️ Arquitetura of Module
 
 ### Estrutura de Diretórios
 
@@ -78,7 +78,7 @@ apps/ml-nsmf/
 
 ---
 
-## ⚙️ Funcionamento of Módulo
+## ⚙️ Funcionamento of Module
 
 ### Pipeline de Processamento
 
@@ -705,7 +705,7 @@ pip install shap==0.43.0 lime==0.2.0.1
 
 **Sintoma:** Tempo de predição > 500ms
 
-**Soluções:**
+**solutions:**
 1. Otimizar modelo (reduzir número de árvores)
 2. Usar modelo mais simples (Linear Regression)
 3. Cache de predições similares
@@ -714,7 +714,7 @@ pip install shap==0.43.0 lime==0.2.0.1
 
 **Sintoma:** R² < 0.80
 
-**Soluções:**
+**solutions:**
 1. Coletar mais Data de treinamento
 2. Feature engineering adicional
 3. Ajustar hiperparâmetros of modelo
@@ -734,7 +734,7 @@ pip install shap==0.43.0 lime==0.2.0.1
 
 ## 🎯 Conclusão
 
-O ML-NSMF fornece predições de viabilidade de SLA com explicações usando XAI. O módulo:
+O ML-NSMF fornece predições de viabilidade de SLA com explicações usando XAI. O Module:
 
 - ✅ **Prediz viabilidade** de SLAs baseado in metrics
 - ✅ **Explica predições** usando SHAP/LIME
@@ -745,7 +745,7 @@ O ML-NSMF fornece predições de viabilidade de SLA com explicações usando XAI
 Para mais informações, consulte:
 - `apps/ml-nsmf/src/predictor.py` — Classe main
 - `apps/ml-nsmf/models/model_metadata.json` — Metadados of modelo
-- `apps/ml-nsmf/README.md` — README of módulo
+- `apps/ml-nsmf/README.md` — README of Module
 
 ---
 

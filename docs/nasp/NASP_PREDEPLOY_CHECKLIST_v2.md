@@ -18,7 +18,7 @@
   - verify conectividade: `kubectl cluster-info`
   - verify versão: `kubectl version --short`
 
-- [ ] **CNI configurado e saudável**
+- [ ] **CNI configured e saudável**
   - verify Calico: `kubectl get pods -n kube-system -l k8s-app=calico-node`
   - Esperado: Todos os pods in `Running`
 
@@ -44,7 +44,7 @@ kubectl get namespaces
   - verify Dockerfile: Ontologia copiada for container
 
 - [ ] **PostgreSQL acessível**
-  - verify: Configuração de `DATABASE_URL` in `values-nasp.yaml`
+  - verify: Configuration of `DATABASE_URL` in `values-nasp.yaml`
   - verify: Namespace e service PostgreSQL existem
 
 ### 2.2 ML-NSMF
@@ -62,21 +62,21 @@ kubectl get namespaces
   - verify: `apps/bc-nssmf/src/contracts/contract_address.json` existe
   - verify: contract deployado via `deploy_contracts.py`
 
-- [ ] **Configuração of BC-NSSMF aponta for o RPC correto**
+- [ ] **Configuration of BC-NSSMF aponta for o RPC correto**
   - verify: `bcNssmf.besu.rpcUrl` in `values-nasp.yaml`
   - Formato esperado: `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545`
   - ⚠️ **NÃO expor IP real in documentação**
 
-- [ ] **Chain ID configurado corretamente**
+- [ ] **Chain ID configured corretamente**
   - verify: `bcNssmf.besu.chainId` in `values-nasp.yaml`
 
 ### 2.4 SLA-Agent Layer
 
-- [ ] **Agentes SLA estão configurados for apontar for o NASP Adapter**
+- [ ] **Agentes SLA estão configureds for apontar for o NASP Adapter**
   - verify: `naspAdapter.naspEndpoints.*` in `values-nasp.yaml`
   - verify: Agentes não usam metrics hardcoded (according to FASE 5)
 
-- [ ] **Configuração de SLOs por domínio**
+- [ ] **Configuration of SLOs por domínio**
   - verify: `apps/sla-agent-layer/src/config/slo_*.yaml` existem
   - verify: SLOs carregados corretamente pelos agentes
 
@@ -88,14 +88,14 @@ kubectl get namespaces
 
 ### 2.6 NASP Adapter
 
-- [ ] **Endpoints NASP descobertos e configurados**
+- [ ] **Endpoints NASP descobertos e configureds**
   - Executar: `scripts/discover-nasp-endpoints.sh`
   - Revisar: `docs/nasp/NASP_CONTEXT_REPORT.md`
   - Preencher: `naspAdapter.naspEndpoints.*` in `values-nasp.yaml`
 
 ---
 
-## 3. Configuração de Helm
+## 3. Configuration of Helm
 
 ### 3.1 values-nasp.yaml
 
@@ -111,7 +111,7 @@ kubectl get namespaces
   - Padrão: `trisla`
   - verify: Namespace existe ou será criado durante deploy
 
-- [ ] **Registry de imagens configurado**
+- [ ] **Registry de imagens configured**
   - verify: `global.imageRegistry` aponta for GHCR correto
   - Formato: `ghcr.io/<GHCR_USER>`
 
@@ -157,8 +157,8 @@ kubectl get namespaces
     --namespace=<TRISLA_NAMESPACE>
   ```
 
-- [ ] **Secret configurado no Helm chart**
-  - verify: `imagePullSecrets` configurado nos Deployments
+- [ ] **Secret configured no Helm chart**
+  - verify: `imagePullSecrets` configured nos Deployments
   - verify: Secret referenciado corretamente
 
 ---
@@ -183,7 +183,7 @@ kubectl get namespaces
 
 ### 5.3 Network Policies (Opcional)
 
-- [ ] **Network Policies configuradas (se aplicável)**
+- [ ] **Network Policies configured (se aplicável)**
   - verify: Políticas de rede definidas no Helm chart
   - verify: Comunicação entre módulos permitida
 
@@ -193,9 +193,9 @@ kubectl get namespaces
 
 ### 6.1 Inventory
 
-- [ ] **`ansible/inventory.yaml` configurado**
+- [ ] **`ansible/inventory.yaml` configured**
   - verify: Nodes NASP definidos (usando placeholders in docs)
-  - verify: variables de grupo configuradas
+  - verify: variables de grupo configured
 
 ### 6.2 Playbooks
 

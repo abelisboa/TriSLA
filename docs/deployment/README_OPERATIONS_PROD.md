@@ -8,7 +8,7 @@ This document provides instruções completas for implantar, operar e manter o *
 
 ### 1.2 Visão Geral of TriSLA in production
 
-O **TriSLA** é uma arquitetura SLA-Aware, explicável e automatizada for garantia de Service Level Agreements in redes 5G/O-RAN. In Production, o sistema opera como um conjunto de microserviços distribuídos no Kubernetes, integrando:
+O **TriSLA** is an architecture SLA-Aware, explicável e automatizada for guarantee de Service Level Agreements in redes 5G/O-RAN. in Production, o sistema opera como um conjunto de microserviços distribuídos no Kubernetes, integrando:
 
 - **SEM-CSMF**: Interpretação semântica de intenções de tenant e geração de NEST (Network Slice Template)
 - **ML-NSMF**: Predição de violações de SLA usando modelos LSTM com explicação (XAI)
@@ -27,7 +27,7 @@ Antes de start o deploy, certifique-se de que o operador possui:
 - **Helm** installed (versão ≥ 3.12)
 - **Ansible** installed (versão ≥ 2.14) — opcional, for automação
 - **Acesso ao GitHub Container Registry (GHCR)** com token válido
-- **Conhecimento básico** de Kubernetes, Helm, e arquitetura 5G/O-RAN
+- **Conhecimento básico** de Kubernetes, Helm, and architecture 5G/O-RAN
 - **Credenciais de acesso** ao environment NASP (endpoints, tokens, certificados)
 
 ---
@@ -36,7 +36,7 @@ Antes de start o deploy, certifique-se de que o operador possui:
 
 ### 2.1 NASP Cluster
 
-O TriSLA requer um cluster Kubernetes configured com:
+TriSLA requer um cluster Kubernetes configured com:
 
 - **Versão Kubernetes**: ≥ 1.26
 - **CNI**: Calico (recomendado for políticas de rede)
@@ -76,7 +76,7 @@ kubectl get ingressclass
 
 ### 2.3 Acesso ao Registry GHCR
 
-O TriSLA uses imagens Docker hospedadas no GitHub Container Registry. É necessário:
+TriSLA uses imagens Docker hospedadas no GitHub Container Registry. is necessário:
 
 1. **Criar um Personal Access Token (PAT) no GitHub** com permissões:
    - `read:packages` (para pull de imagens)
@@ -212,7 +212,7 @@ ansible --version  # se installed
 - REST API: `http://nasp-adapter:8085`
 - Health: `http://nasp-adapter:8085/health`
 
-**configuration NASP**:
+**NASP configuration**:
 - `NASP_RAN_ENDPOINT`: Endpoint of API NASP for RAN
 - `NASP_TRANSPORT_ENDPOINT`: Endpoint of API NASP for Transport
 - `NASP_CORE_ENDPOINT`: Endpoint of API NASP for Core
@@ -227,7 +227,7 @@ ansible --version  # se installed
 
 **OpenTelemetry Collector**: Coleta traces, metrics e logs de todos os módulos e exporta para:
 - **Prometheus**: metrics
-- **Grafana**: Visualização
+- **Grafana**: visualization
 - **Alertmanager**: Alertas baseados in SLO
 
 **Endpoints**:
@@ -254,7 +254,7 @@ kubectl get namespace trisla
 
 ### 4.2 Criar Secret GHCR
 
-O secret é necessário for o Kubernetes fazer pull das imagens of GHCR.
+O secret is necessário for o Kubernetes fazer pull das imagens of GHCR.
 
 **Method 1: Via kubectl (recomendado)**
 
@@ -336,7 +336,7 @@ curl -k https://<NASP_TRANSPORT_ENDPOINT>/health
 curl -k https://<NASP_CORE_ENDPOINT>/health
 ```
 
-**Note**: Ajuste os endpoints according to sua configuration NASP real.
+**Note**: Ajuste os endpoints according to sua NASP configuration real.
 
 ### 4.5 Rodar Pre-flight Automático
 
@@ -357,11 +357,11 @@ Este playbook verifica:
 
 ---
 
-## 5. configuration dos Valores Helm
+## 5. configuration of Values Helm
 
 ### 5.1 Exemplo Completo de `values-nasp.yaml`
 
-Crie um arquivo `values-nasp.yaml` com as configurações específicas of seu environment NASP:
+Crie um arquivo `values-nasp.yaml` com as Configurations específicas of your environment NASP:
 
 ```yaml
 # ============================================
@@ -657,7 +657,7 @@ Os seguintes campos **devem** ser ajustados antes of deploy:
 9. **`grafana.adminPassword`**: Senha of administrador Grafana
 10. **`uiDashboard.ingress.hosts[0].host`**: Hostname of dashboard (ajustar DNS)
 
-### 5.3 Configurações Opcionais
+### 5.3 Configurations Opcionais
 
 - **Recursos (CPU/Memory)**: Ajustar according to capacidade of cluster
 - **Replicas**: Aumentar for alta disponibilidade
@@ -670,7 +670,7 @@ Os templates Helm estão localizados in `helm/trisla/templates/`:
 
 - `deployment-*.yaml`: Deployments dos módulos
 - `service-*.yaml`: Services Kubernetes
-- `configmap.yaml`: ConfigMaps com configurações
+- `configmap.yaml`: ConfigMaps com Configurations
 - `secret-ghcr.yaml`: Secret for GHCR
 - `ingress.yaml`: Ingress for UI Dashboard
 - `namespace.yaml`: Namespace `trisla`
@@ -720,10 +720,10 @@ O parâmetro `--atomic` faz rollback automático se o deploy falhar.
 
 ### 6.3 Processo de Upgrade
 
-Para atualizar o TriSLA com novas versões:
+Para Update o TriSLA com novas versões:
 
 ```bash
-# 1. Atualizar valores (se necessário)
+# 1. Update valores (se necessário)
 vim ./helm/trisla/values-nasp.yaml
 
 # 2. Validar o chart
@@ -746,7 +746,7 @@ helm upgrade trisla ./helm/trisla \
 
 ### 6.4 Rollback Automático
 
-Se o deploy falhar ou houver problemas:
+Se o deploy falhar ou houver problems:
 
 ```bash
 # Listar histórico de releases
@@ -801,7 +801,7 @@ kubectl get pods -n trisla
 | `grafana-*` | 1 | Running |
 | `alertmanager-*` | 1 | Running |
 
-### 7.2 Comandos for Verifiesr Cada Módulo
+### 7.2 Comandos for Verifiesr Cada Module
 
 **SEM-CSMF:**
 
@@ -906,7 +906,7 @@ Todos os módulos TriSLA exportam metrics, traces e logs via OpenTelemetry. O OT
 
 - **Receber**: gRPC (porta 4317) e HTTP (porta 4318)
 - **Exportar for Prometheus**: metrics
-- **Exportar for Grafana**: Visualização
+- **Exportar for Grafana**: visualization
 
 **Verifiesr OTLP Collector:**
 
@@ -917,10 +917,10 @@ kubectl logs -n trisla -l app=otlp-collector --tail=50
 
 ### 8.2 Prometheus Rules
 
-As regras de alerta estão configuradas in `monitoring/prometheus/rules/`. Principais alertas:
+As regras de alerta estão configured in `monitoring/prometheus/rules/`. Principais alertas:
 
 - **SLA Violation**: violation de SLA detectada
-- **Module Down**: Módulo TriSLA indisponível
+- **Module Down**: Module TriSLA indisponível
 - **High Latency**: Latência elevada entre módulos
 - **Kafka Lag**: Atraso no processamento de mensagens Kafka
 
@@ -944,7 +944,7 @@ Dashboards pré-configurados estão in `monitoring/grafana/dashboards/`:
 
 - **TriSLA Overview**: Visão geral of sistema
 - **SLO Compliance**: Compliance de SLAs
-- **Module Metrics**: metrics por módulo
+- **Module Metrics**: metrics por Module
 - **Network Metrics**: metrics de rede
 
 **Acessar Grafana:**
@@ -986,7 +986,7 @@ kubectl apply -f monitoring/alertmanager/config.yml -n trisla
 
 ### 8.5 SLO Reports
 
-O módulo de SLO Reports gera relatórios automáticos de compliance. Localização:
+O Module de SLO Reports gera relatórios automáticos de compliance. Localização:
 
 ```bash
 # Executar script de geração
@@ -1105,7 +1105,7 @@ kubectl port-forward -n trisla svc/prometheus 9090:9090
 # Logs de todos os módulos
 kubectl logs -n trisla -l app.kubernetes.io/name=trisla --tail=100
 
-# Logs por módulo
+# Logs por Module
 kubectl logs -n trisla -l app=sem-csmf --tail=100
 kubectl logs -n trisla -l app=ml-nsmf --tail=100
 kubectl logs -n trisla -l app=decision-engine --tail=100
@@ -1145,7 +1145,7 @@ kubectl get ingress -n trisla
 
 ### 10.2 Restart Seguro
 
-**Restart de um módulo específico:**
+**Restart de um Module específico:**
 
 ```bash
 # Deletar pod (Kubernetes recria automaticamente)
@@ -1158,7 +1158,7 @@ kubectl rollout restart deployment/<DEPLOYMENT_NAME> -n trisla
 **Restart de todos os módulos:**
 
 ```bash
-# Restart via Helm (mantém configurações)
+# Restart via Helm (mantém Configurations)
 helm upgrade trisla ./helm/trisla \
   --namespace trisla \
   --values ./helm/trisla/values-nasp.yaml \
@@ -1172,10 +1172,10 @@ Os deployments estão configurados com `strategy: RollingUpdate`, garantindo zer
 
 ### 10.3 Atualização de Imagens GHCR
 
-**Atualizar imagem de um módulo:**
+**Update imagem de um Module:**
 
 ```bash
-# 1. Atualizar tag no values-nasp.yaml
+# 1. Update tag no values-nasp.yaml
 vim ./helm/trisla/values-nasp.yaml
 # Alterar: tag: "v1.1.0" (nova versão)
 
@@ -1189,7 +1189,7 @@ helm upgrade trisla ./helm/trisla \
 **Forçar pull de imagens:**
 
 ```bash
-# Atualizar imagePullPolicy for Always temporariamente
+# Update imagePullPolicy for Always temporariamente
 helm upgrade trisla ./helm/trisla \
   --namespace trisla \
   --values ./helm/trisla/values-nasp.yaml \
@@ -1221,7 +1221,7 @@ kubectl logs -n trisla -l app=ml-nsmf --tail=1000 > ml-nsmf.log
 
 ## 11. Troubleshooting
 
-### 11.1 Problemas Comuns
+### 11.1 problems Comuns
 
 **problem 1: Pods in estado `CrashLoopBackOff`**
 
@@ -1290,7 +1290,7 @@ kubectl get pvc -n trisla | grep kafka
 **solution:**
 - Verifiesr StorageClass
 - Verifiesr recursos disponíveis
-- Verifiesr configuration de replicas
+- Verifiesr configuration of replicas
 
 ### 11.2 Como Diagnosticar Falhas
 
@@ -1322,7 +1322,7 @@ kubectl run -it --rm debug --image=busybox --restart=Never -n trisla -- \
 kubectl get svc -n trisla
 ```
 
-### 11.3 Como Ver Logs por Módulo
+### 11.3 Como Ver Logs por Module
 
 **Logs in real time:**
 
@@ -1463,7 +1463,7 @@ kubectl create secret docker-registry ghcr-secret \
 
 ```bash
 # Gerar novo token
-# Atualizar secret
+# Update secret
 kubectl delete secret ghcr-secret -n trisla
 kubectl create secret docker-registry ghcr-secret \
   --docker-server=ghcr.io \
@@ -1481,7 +1481,7 @@ kubectl rollout restart deployment -n trisla
 **Atualizações de segurança:**
 
 - **Aplicar patches de segurança** imediatamente
-- **Atualizar imagens base** regularmente (mensalmente)
+- **Update imagens base** regularmente (mensalmente)
 - **Monitorar vulnerabilidades** via ferramentas de scanning
 
 **Processo de atualização:**
@@ -1490,7 +1490,7 @@ kubectl rollout restart deployment -n trisla
 # 1. Backup de valores
 cp ./helm/trisla/values-nasp.yaml ./helm/trisla/values-nasp.yaml.backup
 
-# 2. Atualizar valores
+# 2. Update valores
 vim ./helm/trisla/values-nasp.yaml
 
 # 3. Validar
@@ -1603,7 +1603,7 @@ TriSLA-clean/
 │   ├── templates/
 │   ├── values.yaml
 │   └── Chart.yaml
-├── monitoring/             # Configurações de observabilidade
+├── monitoring/             # Configurations de observabilidade
 │   ├── prometheus/
 │   ├── grafana/
 │   ├── alertmanager/
@@ -1622,7 +1622,7 @@ TriSLA-clean/
 - `README.md`: Visão geral of projeto
 - `helm/trisla/README.md`: guide of Helm chart
 - `monitoring/README.md`: guide de observabilidade
-- `apps/*/README.md`: Documentação de cada módulo
+- `apps/*/README.md`: Documentação de cada Module
 
 ---
 
@@ -1637,7 +1637,7 @@ Antes de fazer o deploy no NASP Node1, siga o checklist completo em:
 O checklist inclui:
 - Pré-requisitos no cluster NASP
 - Descoberta de endpoints NASP
-- configuration de Helm values
+- Helm configuration values
 - Deploy e validation pós-deploy
 - Troubleshooting
 
@@ -1660,7 +1660,7 @@ kubectl get svc -n <core-namespace> | grep -E "upf|amf|smf"
 kubectl get svc -n <transport-namespace> | grep -i transport
 ```
 
-### 7.3 configuration de values-production.yaml
+### 7.3 configuration of values-production.yaml
 
 1. **Substituir placeholders:**
    - Editar `helm/trisla/values-production.yaml`
@@ -1727,7 +1727,7 @@ Para realizar um deploy controlado of TriSLA no environment NASP, siga a documen
 4. **`docs/NASP_PREDEPLOY_CHECKLIST_v2.md`** — Checklist completo de pré-deploy
    - Infraestrutura NASP
    - Dependências técnicas of TriSLA
-   - configuration de Helm
+   - Helm configuration
    - Imagens e registro
    - Segurança e conformidade
 
