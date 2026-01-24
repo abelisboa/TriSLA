@@ -1,4 +1,4 @@
-# Deploy TriSLA v3.7.10 — Guia Completo
+# Deploy TriSLA v3.7.10 — guide Completo
 
 **Versão:** 3.7.10  
 **Data:** 2025-12-05  
@@ -20,7 +20,7 @@ Todas as imagens estão disponíveis no GHCR:
 - ✅ `ghcr.io/abelisboa/trisla-nasp-adapter:3.7.10`
 - ✅ `ghcr.io/abelisboa/trisla-ui-dashboard:3.7.10`
 
-**Verificar:**
+**verify:**
 ```bash
 # Listar imagens no GHCR
 docker pull ghcr.io/abelisboa/trisla-sem-csmf:3.7.10
@@ -100,19 +100,19 @@ helm upgrade --install trisla ./helm/trisla \
   --timeout 15m
 ```
 
-### Passo 3: Verificar Deploy
+### Passo 3: verify Deploy
 
 ```bash
-# Verificar pods
+# verify pods
 kubectl get pods -n trisla
 
-# Verificar se estão usando as imagens corretas
+# verify se estão usando as imagens corretas
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
 
-# Verificar serviços
+# verify serviços
 kubectl get svc -n trisla
 
-# Verificar status of Helm release
+# verify status of Helm release
 helm status trisla -n trisla
 ```
 
@@ -124,7 +124,7 @@ helm status trisla -n trisla
 
 ---
 
-## ✅ Validação Pós-Deploy
+## ✅ validation Pós-Deploy
 
 ### 1. Health Checks
 
@@ -146,17 +146,17 @@ kubectl exec -n trisla deployment/trisla-sla-agent-layer -- \
   curl -s http://localhost:8084/health
 ```
 
-### 2. Métricas Prometheus
+### 2. metrics Prometheus
 
 ```bash
-# Verificar métricas expostas
+# verify metrics expostas
 kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080
 curl http://localhost:8080/metrics | grep trisla_
 
-# Verificar ServiceMonitors
+# verify ServiceMonitors
 kubectl get servicemonitors -n trisla
 
-# Verificar targets no Prometheus
+# verify targets no Prometheus
 kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 9090:9090
 # Acessar: http://localhost:9090/targets
 ```
@@ -164,13 +164,13 @@ kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 909
 ### 3. Traces OpenTelemetry
 
 ```bash
-# Verificar logs de traces
+# verify logs de traces
 kubectl logs -n trisla deployment/trisla-sem-csmf | grep -i "otlp\|trace"
 
-# Verificar OTEL Collector
+# verify OTEL Collector
 kubectl logs -n trisla deployment/trisla-otel-collector
 
-# Verificar status of OTEL Collector
+# verify status of OTEL Collector
 kubectl get pods -n trisla | grep otel
 ```
 
@@ -199,7 +199,7 @@ env:
 
 **Status:**
 - ✅ **OTEL Collector**: Deployado no namespace `trisla`
-- ✅ **Serviço**: `trisla-otel-collector` (ClusterIP, porta 4317)
+- ✅ **service**: `trisla-otel-collector` (ClusterIP, porta 4317)
 - ✅ **Versão**: 0.141.0
 - ✅ **Status**: Running
 
@@ -213,7 +213,7 @@ env:
 - `trisla-sem-csmf`
 - `trisla-sla-agent-layer`
 
-**Verificar:**
+**verify:**
 ```bash
 # Listar ServiceMonitors
 kubectl get servicemonitors -n trisla
@@ -253,7 +253,7 @@ kubectl get servicemonitor trisla-sem-csmf -n trisla -o yaml
 ### OTEL Collector
 
 - **Deployment**: `trisla-otel-collector`
-- **Serviço**: `trisla-otel-collector` (ClusterIP, porta 4317)
+- **service**: `trisla-otel-collector` (ClusterIP, porta 4317)
 - **Status**: ✅ Running
 - **Versão**: 0.141.0
 
@@ -278,7 +278,7 @@ Todas as imagens estão na versão **3.7.10**:
 
 **solution:**
 ```bash
-# Verificar secret
+# verify secret
 kubectl get secret ghcr-secret -n trisla
 
 # Recriar secret
@@ -295,7 +295,7 @@ kubectl delete pods -n trisla -l app.kubernetes.io/name=trisla
 
 ### Pods in CrashLoopBackOff
 
-**Causa:** Erro na aplicação ou dependências.
+**Causa:** error na aplicação ou dependências.
 
 **solution:**
 ```bash
@@ -305,11 +305,11 @@ kubectl logs -n trisla <pod-name> --previous
 # Ver eventos
 kubectl describe pod -n trisla <pod-name>
 
-# Verificar variáveis de ambiente
+# verify variables de environment
 kubectl exec -n trisla <pod-name> -- env | grep -E "OTLP|KAFKA|DATABASE"
 ```
 
-### Métricas Não Aparecem
+### metrics Não Aparecem
 
 **solution:**
 ```bash
@@ -317,10 +317,10 @@ kubectl exec -n trisla <pod-name> -- env | grep -E "OTLP|KAFKA|DATABASE"
 kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080
 curl http://localhost:8080/metrics
 
-# Verificar ServiceMonitor
+# verify ServiceMonitor
 kubectl get servicemonitors -n trisla
 
-# Verificar targets no Prometheus
+# verify targets no Prometheus
 kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 9090:9090
 # Acessar: http://localhost:9090/targets
 ```
@@ -329,16 +329,16 @@ kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 909
 
 **solution:**
 ```bash
-# Verificar se OTEL Collector está rodando
+# verify se OTEL Collector está rodando
 kubectl get pods -n trisla | grep otel
 
-# Verificar logs
+# verify logs
 kubectl logs -n trisla deployment/trisla-otel-collector
 
-# Verificar se serviço existe
+# verify se service existe
 kubectl get svc -n trisla | grep otel
 
-# Verificar DNS
+# verify DNS
 kubectl exec -n trisla <pod-name> -- nslookup trisla-otel-collector.trisla.svc.cluster.local
 ```
 
@@ -351,16 +351,16 @@ kubectl exec -n trisla <pod-name> -- nslookup trisla-otel-collector.trisla.svc.c
 Após o deploy, acesse os dashboards Grafana:
 
 - **TriSLA Overview**: Visão geral de todos os módulos
-- **Métricas por Módulo**: Métricas detalhadas de cada módulo
+- **metrics por Módulo**: metrics detalhadas de cada módulo
 - **Latência das Interfaces**: Latência das interfaces I-01 a I-07
 - **Health Status**: Status de saúde de todos os módulos
 
 ### Alertas Prometheus
 
-Configure alertas baseados in métricas:
+Configure alertas baseados in metrics:
 
 - Latência alta (> 1s)
-- Taxa de erro alta (> 5%)
+- Taxa de error alta (> 5%)
 - Health status = 0
 - Pods não prontos
 
@@ -368,7 +368,7 @@ Configure alertas baseados in métricas:
 
 ## 📚 Documentação Relacionada
 
-- **Guia de Deploy NASP**: [`docs/nasp/NASP_DEPLOY_GUIDE.md`](../nasp/NASP_DEPLOY_GUIDE.md)
+- **guide de Deploy NASP**: [`docs/nasp/NASP_DEPLOY_GUIDE.md`](../nasp/NASP_DEPLOY_GUIDE.md)
 - **Observability v3.7.10**: [`docs/OBSERVABILITY_v3.7.10.md`](../OBSERVABILITY_v3.7.10.md)
 - **Changelog v3.7.10**: [`docs/CHANGELOG_v3.7.10.md`](../CHANGELOG_v3.7.10.md)
 - **Relatório Técnico Final**: [`TRISLA_PROMPTS_v3.5/FASE_6_RELATORIO_TECNICO_FINAL.md`](../../TRISLA_PROMPTS_v3.5/FASE_6_RELATORIO_TECNICO_FINAL.md)
@@ -401,9 +401,9 @@ kubectl logs -n trisla <pod-name> --tail=50
 kubectl logs -n trisla -l component=sem-csmf --tail=50
 ```
 
-### Métricas
+### metrics
 ```bash
-# Verificar métricas diretamente no pod
+# verify metrics diretamente no pod
 kubectl exec -n trisla <pod-name> -- curl -s http://localhost:8080/metrics
 ```
 
@@ -416,7 +416,7 @@ kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 909
 # Targets: http://localhost:9090/targets
 ```
 
-### Acessar Métricas dos Módulos
+### Acessar metrics dos Módulos
 ```bash
 # SEM-CSMF
 kubectl port-forward -n trisla svc/trisla-sem-csmf 8000:8080
@@ -439,7 +439,7 @@ kubectl port-forward -n trisla svc/trisla-sla-agent-layer 8004:8084
 curl http://localhost:8004/metrics
 ```
 
-### Verificar OTEL Collector
+### verify OTEL Collector
 ```bash
 # Status
 kubectl get pods -n trisla | grep otel
@@ -450,7 +450,7 @@ kubectl logs -n trisla -l app=trisla-otel-collector --tail=50 -f
 
 ---
 
-**Status:** ✅ Guia completo de deploy v3.7.10
+**Status:** ✅ guide completo de deploy v3.7.10
 
 **Última atualização:** 2025-12-05
 

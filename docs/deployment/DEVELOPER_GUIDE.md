@@ -6,11 +6,11 @@ This document provides a complete guide for developers who want to contribute to
 
 **Objectives of this guide:**
 
-- Facilitate setup of ambiente de desenvolvimento local
+- Facilitate setup of environment de development local
 - Document the structure of código e arquitetura
 - Establish standards de código e práticas recomendadas
 - Explain the flow de contribuição e processo de PR
-- Provide tools e scripts úteis for desenvolvimento
+- Provide tools e scripts úteis for development
 
 **Target audience:**
 
@@ -82,7 +82,7 @@ brew install grpcurl  # macOS
 # ou via Go: go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
 ```
 
-### 2.3 Ferramentas de Desenvolvimento
+### 2.3 Ferramentas de development
 
 **Editores recomendados:**
 - Visual Studio Code (com extensões Python, Docker, YAML)
@@ -129,10 +129,10 @@ TriSLA/
 │   ├── unit/
 │   ├── integration/
 │   └── e2e/
-├── docker-compose.yml             # Ambiente local
+├── docker-compose.yml             # environment local
 ├── pytest.ini                    # Configuração pytest
-├── requirements-dev.txt           # Dependências de desenvolvimento
-└── README.md                      # Documentação principal
+├── requirements-dev.txt           # Dependências de development
+└── README.md                      # Documentação main
 ```
 
 ### 3.2 Estrutura de um Módulo
@@ -145,7 +145,7 @@ apps/<module-name>/
 │   ├── __init__.py
 │   ├── main.py                    # Ponto de entrada
 │   ├── config.py                  # Configurações
-│   ├── models/                    # Modelos de dados
+│   ├── models/                    # Modelos de Data
 │   ├── api/                       # Endpoints REST/gRPC
 │   ├── services/                  # Lógica de negócio
 │   └── utils/                     # Utilitários
@@ -162,7 +162,7 @@ apps/<module-name>/
 **Arquivos Python:**
 - Módulos: `snake_case.py`
 - Classes: `PascalCase`
-- Funções/variáveis: `snake_case`
+- Funções/variables: `snake_case`
 - Constantes: `UPPER_SNAKE_CASE`
 
 **Docker:**
@@ -190,7 +190,7 @@ cd TriSLA
 **Criar venv:**
 
 ```bash
-# Criar ambiente virtual
+# Criar environment virtual
 python3 -m venv .venv
 
 # Ativar (Linux/macOS)
@@ -203,7 +203,7 @@ source .venv/bin/activate
 .venv\Scripts\Activate.ps1
 ```
 
-**Instalar dependências de desenvolvimento:**
+**Instalar dependências de development:**
 
 ```bash
 pip install --upgrade pip
@@ -245,7 +245,7 @@ docker --version
 docker compose version
 ```
 
-**Build das imagens (opcional, for desenvolvimento):**
+**Build das imagens (opcional, for development):**
 
 ```bash
 # Build todas as imagens
@@ -271,7 +271,7 @@ docker compose ps
 docker compose logs -f kafka
 ```
 
-**Variáveis de ambiente (`.env`):**
+**variables de environment (`.env`):**
 
 ```bash
 # Criar arquivo .env na raiz
@@ -288,7 +288,7 @@ EOF
 
 ### 4.5 Rodar SEM-CSMF Localmente
 
-**Opção 1: Via Python (desenvolvimento):**
+**Opção 1: Via Python (development):**
 
 ```bash
 cd apps/sem-csmf
@@ -296,7 +296,7 @@ cd apps/sem-csmf
 # Instalar dependências
 pip install -r requirements.txt
 
-# Configurar variáveis de ambiente
+# configure variables de environment
 export POSTGRES_URL=postgresql://trisla:trisla_password@localhost:5432/trisla
 export DECISION_ENGINE_URL=localhost:50051
 export KAFKA_BOOTSTRAP_SERVERS=localhost:29092
@@ -340,7 +340,7 @@ cd apps/decision-engine
 # Instalar dependências
 pip install -r requirements.txt
 
-# Configurar variáveis
+# configure variables
 export ML_NSMF_URL=http://localhost:8081
 export BC_NSSMF_URL=http://localhost:8083
 export KAFKA_BOOTSTRAP_SERVERS=localhost:29092
@@ -387,7 +387,7 @@ cd apps/ml-nsmf
 # Instalar dependências
 pip install -r requirements.txt
 
-# Configurar variáveis
+# configure variables
 export KAFKA_BOOTSTRAP_SERVERS=localhost:29092
 export MODEL_PATH=./models/lstm_model.h5
 
@@ -454,7 +454,7 @@ postgres:
   volumes:
     - postgres-data:/var/lib/postgresql/data
   # Porta: 5432
-  # Uso: Banco de dados for SEM-CSMF
+  # Uso: Banco de Data for SEM-CSMF
 
 kafka:
   image: confluentinc/cp-kafka:7.4.0
@@ -474,7 +474,7 @@ prometheus:
   volumes:
     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
   # Porta: 9090
-  # Uso: Coleta de métricas
+  # Uso: Coleta de metrics
 
 grafana:
   image: grafana/grafana:latest
@@ -484,7 +484,7 @@ grafana:
     GF_SECURITY_ADMIN_USER: admin
     GF_SECURITY_ADMIN_PASSWORD: admin
   # Porta: 3000
-  # Uso: Visualização de métricas e dashboards
+  # Uso: Visualização de metrics e dashboards
 ```
 
 **Services TriSLA:**
@@ -537,9 +537,9 @@ ml-nsmf:
   # Dependências: Kafka
 ```
 
-### 5.3 Variáveis de Ambiente
+### 5.3 variables de environment
 
-**Variáveis comuns:**
+**variables comuns:**
 
 | Variável | Description | Valor Padrão |
 |----------|-----------|--------------|
@@ -548,9 +548,9 @@ ml-nsmf:
 | `OTLP_ENDPOINT` | Endpoint OTLP | `http://otlp-collector:4317` |
 | `PROMETHEUS_URL` | URL of Prometheus | `http://prometheus:9090` |
 | `LOG_LEVEL` | Nível de log | `INFO` |
-| `ENVIRONMENT` | Ambiente | `development` |
+| `ENVIRONMENT` | environment | `development` |
 
-**Configurar via `.env`:**
+**configure via `.env`:**
 
 ```bash
 # Criar .env
@@ -606,7 +606,7 @@ curl http://localhost:50052/health # Decision Engine
 
 ### 6.1 Mock NASP
 
-Para desenvolvimento local, o `docker-compose.yml` inclui serviços mock of NASP:
+Para development local, o `docker-compose.yml` inclui serviços mock of NASP:
 
 ```yaml
 mock-nasp-ran:
@@ -628,9 +628,9 @@ mock-nasp-core:
   # Mock Core endpoints
 ```
 
-### 6.2 Configurar NASP Adapter for Mock
+### 6.2 configure NASP Adapter for Mock
 
-**Variáveis de ambiente:**
+**variables de environment:**
 
 ```bash
 export NASP_RAN_URL=http://localhost:1080
@@ -645,7 +645,7 @@ export NASP_MOCK_MODE=true
 # start mock NASP
 docker compose up -d mock-nasp-ran mock-nasp-transport mock-nasp-core
 
-# Configurar expectativas no MockServer
+# configure expectativas no MockServer
 curl -X PUT http://localhost:1080/expectation \
   -H "Content-Type: application/json" \
   -d '{
@@ -871,7 +871,7 @@ pre-commit run --all-files
 git commit --no-verify
 ```
 
-### 7.6 Script de Validação
+### 7.6 Script de validation
 
 **Script unificado (`scripts/validate-code.sh`):**
 
@@ -897,7 +897,7 @@ flake8 apps/ tests/
 echo "🔬 Executando mypy..."
 mypy apps/
 
-echo "✅ Validação concluída!"
+echo "✅ validation concluída!"
 ```
 
 ---
@@ -1192,7 +1192,7 @@ pytest -m "not slow"
 
 ## 9. Build e Push das Imagens GHCR
 
-### 9.1 Configurar GitHub Container Registry
+### 9.1 configure GitHub Container Registry
 
 **Autenticação:**
 
@@ -1517,7 +1517,7 @@ git push origin feature/nova-funcionalidade
 ```bash
 git commit -m "feat(sem-csmf): adicionar suporte a intents OWL"
 git commit -m "fix(decision-engine): corrigir timeout in gRPC"
-git commit -m "docs: atualizar guia de desenvolvedor"
+git commit -m "docs: atualizar guide de desenvolvedor"
 git commit -m "test(ml-nsmf): adicionar testes unitários for predições"
 ```
 
@@ -1604,7 +1604,7 @@ O que deveria acontecer.
 ## Comportamento atual
 O que está acontecendo.
 
-## Ambiente
+## environment
 - OS: [e.g., Ubuntu 20.04]
 - Python: [e.g., 3.10.5]
 - Docker: [e.g., 20.10.12]
@@ -1668,7 +1668,7 @@ def process_intent(intent):
 **Comandos:**
 
 - `n` (next): Próxima linha
-- `s` (step): Entrar in função
+- `s` (step): Entrar in function
 - `c` (continue): Continuar
 - `l` (list): Listar código
 - `p <var>`: Imprimir variável
@@ -1707,7 +1707,7 @@ def process_intent(intent):
 # Executar comando in container
 docker compose exec sem-csmf bash
 
-# Ver logs in tempo real
+# Ver logs in real time
 docker compose logs -f sem-csmf
 
 # Ver logs de todos os serviços
@@ -1725,7 +1725,7 @@ docker inspect trisla-sem-csmf
 # Listar serviços
 grpcurl -plaintext localhost:50051 list
 
-# Descrever serviço
+# Descrever service
 grpcurl -plaintext localhost:50051 describe trisla.i01.DecisionEngineService
 
 # Chamar método
@@ -1740,7 +1740,7 @@ grpcurl -plaintext \
 **Usando kafkacat (kcat):**
 
 ```bash
-# Consumir mensagens
+# consume mensagens
 kafkacat -b localhost:29092 -t trisla-ml-predictions -C
 
 # Produzir mensagem
@@ -1778,7 +1778,7 @@ ss -tulpn | grep -E '8080|50051|29092'
 
 ```bash
 #!/bin/bash
-# Inicia ambiente local completo
+# Inicia environment local completo
 
 docker compose up -d
 echo "✅ Services iniciados"
@@ -1790,7 +1790,7 @@ echo "📈 Prometheus: http://localhost:9090"
 
 ```bash
 #!/bin/bash
-# Valida ambiente local
+# validates environment local
 
 echo "🔍 Validando serviços..."
 
@@ -1799,7 +1799,7 @@ curl -f http://localhost:8080/health || echo "❌ SEM-CSMF não está respondend
 curl -f http://localhost:8081/health || echo "❌ ML-NSMF não está respondendo"
 curl -f http://localhost:50052/health || echo "❌ Decision Engine não está respondendo"
 
-echo "✅ Validação concluída"
+echo "✅ validation concluída"
 ```
 
 **`scripts/run-tests.sh`:**
@@ -1822,9 +1822,9 @@ pytest tests/e2e/ -v -m e2e
 echo "✅ Testes concluídos"
 ```
 
-### 14.2 Variáveis de Ambiente
+### 14.2 variables de environment
 
-**Desenvolvimento local:**
+**development local:**
 
 ```bash
 # .env
@@ -1835,7 +1835,7 @@ LOG_LEVEL=DEBUG
 ENVIRONMENT=development
 ```
 
-**Produção:**
+**production:**
 
 ```bash
 # Kubernetes Secrets
@@ -1851,13 +1851,13 @@ ENVIRONMENT=production
 **Documentação:**
 
 - `README.md`: Visão geral of projeto
-- `README_OPERATIONS_PROD.md`: Guia de operações in produção
-- `SECURITY_HARDENING.md`: Guia de segurança
-- `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
+- `README_OPERATIONS_PROD.md`: guide de operações in production
+- `SECURITY_HARDENING.md`: guide de segurança
+- `TROUBLESHOOTING_TRISLA.md`: guide de troubleshooting
 - `API_REFERENCE.md`: Referência de APIs
 - `INTERNAL_INTERFACES_I01_I07.md`: Documentação de interfaces internas
-- `NASP_DEPLOY_GUIDE.md`: Guia de deploy no NASP
-- `INSTALL_FULL_PROD.md`: Guia de instalação completa
+- `NASP_DEPLOY_GUIDE.md`: guide de deploy no NASP
+- `INSTALL_FULL_PROD.md`: guide de instalação completa
 
 **Código:**
 
@@ -1869,7 +1869,7 @@ ENVIRONMENT=production
 
 - `scripts/build-all-images.sh`: Build de todas as imagens
 - `scripts/deploy-trisla-nasp.sh`: Deploy no NASP
-- `scripts/validate-local.sh`: Validação local
+- `scripts/validate-local.sh`: validation local
 
 ### 14.4 Comunidade
 
@@ -1893,9 +1893,9 @@ ENVIRONMENT=production
 
 ### 12.1 Teste E2E Local
 
-**Objective:** Validar o fluxo completo I-01 → I-07 in ambiente local com Docker Compose.
+**Objective:** Validar o fluxo completo I-01 → I-07 in environment local com Docker Compose.
 
-**start ambiente:**
+**start environment:**
 ```bash
 # Linux/macOS
 ./scripts/start-local-e2e.sh
@@ -1918,7 +1918,7 @@ pytest tests/e2e/test_trisla_e2e.py -v
 
 ### 12.2 Deploy NASP Node1
 
-**Objective:** Deploy controlado no ambiente NASP real.
+**Objective:** Deploy controlado no environment NASP real.
 
 **Pré-requisitos:**
 - Seguir `docs/NASP_PREDEPLOY_CHECKLIST.md`
@@ -1935,7 +1935,7 @@ helm upgrade --install trisla ./helm/trisla \
   --timeout 10m
 ```
 
-**Validação:**
+**validation:**
 - Health checks de todos os módulos
 - Teste E2E no cluster NASP
 - Verifiesção de conectividade com NASP
@@ -1964,7 +1964,7 @@ helm upgrade --install trisla ./helm/trisla \
 
 3. **Besu não conecta:**
    - Verifiesr se Besu está rodando: `curl http://localhost:8545`
-   - Verifiesr variáveis de ambiente: `BESU_RPC_URL`, `BESU_CHAIN_ID`
+   - Verifiesr variables de environment: `BESU_RPC_URL`, `BESU_CHAIN_ID`
 
 4. **Testes E2E falham:**
    - Verifiesr se todos os serviços estão saudáveis
@@ -1977,15 +1977,15 @@ helm upgrade --install trisla ./helm/trisla \
 
 ### 13.1 Diferença entre Testes Locais e NASP
 
-**Ambiente Local (Docker Compose):**
-- Desenvolvimento e testes rápidos
+**environment Local (Docker Compose):**
+- development e testes rápidos
 - NASP Adapter in modo mock controlado
 - Besu dev local
 - Kafka container local
 - Observabilidade local (Prometheus/Grafana)
 
-**Ambiente NASP (Kubernetes):**
-- Produção real
+**environment NASP (Kubernetes):**
+- production real
 - NASP Adapter conectado a serviços NASP reais
 - Besu permissionado no cluster
 - Kafka of cluster NASP
@@ -1995,7 +1995,7 @@ helm upgrade --install trisla ./helm/trisla \
 
 **Localização:** `helm/trisla/values-production.yaml`
 
-**Guia completo:** `docs/VALUES_PRODUCTION_GUIDE.md`
+**guide completo:** `docs/VALUES_PRODUCTION_GUIDE.md`
 
 **Script de preenchimento:** `scripts/fill_values_production.sh`
 
@@ -2012,16 +2012,16 @@ helm upgrade --install trisla ./helm/trisla \
 - `pre-flight.yml` — Validações pré-deploy
 - `setup-namespace.yml` — Criação de namespace
 - `deploy-trisla-nasp.yml` — Deploy Helm
-- `validate-cluster.yml` — Validação pós-deploy
+- `validate-cluster.yml` — validation pós-deploy
 
 **Inventory:** `ansible/inventory.yaml`
-- Configurar nodes NASP (usar placeholders in docs)
-- Variáveis de grupo for automação
+- configure nodes NASP (usar placeholders in docs)
+- variables de grupo for automação
 
 **Scripts auxiliares:**
 - `scripts/discover-nasp-endpoints.sh` — Descoberta de endpoints
 - `scripts/fill_values_production.sh` — Preenchimento guiado
-- Validação manual de imagens GHCR via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
+- validation manual de imagens GHCR via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
 
 ### 13.4 Recomendação: Não Colocar IPs Reais in Markdown
 
@@ -2040,7 +2040,7 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 **Valores reais apenas em:**
 - `helm/trisla/values-production.yaml` (arquivo local, não versionado)
 - `ansible/inventory.yaml` (arquivo local, não versionado)
-- Variáveis de ambiente
+- variables de environment
 
 ---
 

@@ -16,7 +16,7 @@
 - [ ] **Ingress Controller:** Nginx ou similar configurado
 - [ ] **RBAC:** Habilitado e configurado
 
-**Comandos de validação:**
+**Comandos de validation:**
 ```bash
 kubectl cluster-info
 kubectl get nodes
@@ -118,7 +118,7 @@ Preencher in `helm/trisla/values-nasp.yaml`:
   - Todas as imagens apontam for `ghcr.io/abelisboa/trisla-*:latest` ou versão específica
   - Secret `ghcr-secret` está configurado corretamente
 
-- [ ] **Variáveis de ambiente:**
+- [ ] **variables de environment:**
   - `KAFKA_BOOTSTRAP_SERVERS`: Endpoint Kafka of cluster
   - `OTEL_EXPORTER_OTLP_ENDPOINT`: Endpoint OTLP Collector
   - `BESU_RPC_URL`: Endpoint Besu (se aplicável)
@@ -186,7 +186,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ---
 
-## 5. Validação Pós-Deploy
+## 5. validation Pós-Deploy
 
 ### 5.1 Health Checks
 
@@ -243,13 +243,13 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ### 5.3 Conectividade com NASP
 
-- [ ] **Testar coleta de métricas RAN:**
+- [ ] **Testar coleta de metrics RAN:**
   ```bash
   kubectl exec -n trisla <nasp-adapter-pod> -- \
     curl -v http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_PORT>/api/v1/metrics
   ```
 
-- [ ] **Testar coleta de métricas Core:**
+- [ ] **Testar coleta de metrics Core:**
   ```bash
   kubectl exec -n trisla <nasp-adapter-pod> -- \
     curl -v http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_METRICS_PORT>/metrics
@@ -265,7 +265,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
       -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
   ```
 
-- [ ] **Verifiesr contrato deployado:**
+- [ ] **Verifiesr contract deployado:**
   ```bash
   kubectl exec -n trisla <bc-nssmf-pod> -- cat /app/src/contracts/contract_address.json
   ```
@@ -284,7 +284,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
   # Acessar http://localhost:3000 (admin/admin)
   ```
 
-- [ ] **Verifiesr métricas:**
+- [ ] **Verifiesr metrics:**
   - `trisla_intents_total`
   - `trisla_decisions_total`
   - `trisla_sla_registrations_total`
@@ -405,8 +405,8 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 ## 9. Próximos Passos Após Deploy
 
 1. **Monitoramento Contínuo:**
-   - Configurar alertas no Prometheus
-   - Configurar dashboards no Grafana
+   - configure alertas no Prometheus
+   - configure dashboards no Grafana
    - Monitorar logs via `kubectl logs -f`
 
 2. **Operação Diária:**
@@ -417,7 +417,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 3. **Manutenção:**
    - Atualizar imagens quando necessário
    - Aplicar patches de segurança
-   - Fazer backup de dados críticos
+   - Fazer backup de Data críticos
 
 ---
 

@@ -1,24 +1,24 @@
-# TriSLA Deployment Guide – NASP Edition (Produção)
+# TriSLA Deployment Guide – NASP Edition (production)
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
-**Ambiente:** NASP (Network Automation & Slicing Platform)  
+**environment:** NASP (Network Automation & Slicing Platform)  
 **Tipo:** Deploy Manual via Ansible  
-**Status:** Documento Oficial de Produção
+**Status:** Documento Oficial de production
 
 ---
 
 ## 📋 Sumário Executivo
 
-This document provides instruções completas, formais e acadêmicas for a implantação manual of **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no ambiente **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** for automação e **Helm** for gerenciamento de pacotes Kubernetes.
+This document provides instruções completas, formais e acadêmicas for a implantação manual of **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no environment **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** for automação e **Helm** for gerenciamento de pacotes Kubernetes.
 
 ### Objective
 
-O presente guia documenta o processo completo de deploy of TriSLA v3.5.0 in ambiente de produção real no NASP, cobrindo desde a preparação inicial até a validação end-to-end (E2E) of sistema.
+O presente guide documenta o processo completo de deploy of TriSLA v3.5.0 in environment de production real no NASP, cobrindo desde a preparação inicial até a validation end-to-end (E2E) of sistema.
 
 ### Escopo
 
-- **Ambiente:** Cluster Kubernetes NASP (2 nodes: node1 e node2)
+- **environment:** Cluster Kubernetes NASP (2 nodes: node1 e node2)
 - **Method:** Deploy local no node1 (127.0.0.1), sem SSH
 - **Ferramentas:** Ansible, Helm, kubectl
 - **Namespace:** `trisla`
@@ -36,7 +36,7 @@ O presente guia documenta o processo completo de deploy of TriSLA v3.5.0 in ambi
 
 ---
 
-## 1. Informações of Ambiente NASP
+## 1. Informações of environment NASP
 
 ### 1.1 Configuração de Rede
 
@@ -62,8 +62,8 @@ O presente guia documenta o processo completo de deploy of TriSLA v3.5.0 in ambi
 
 | Componente | Namespace | Tipo | Description |
 |------------|-----------|------|-----------|
-| **Prometheus** | `monitoring` | ClusterIP/NodePort | Coleta de métricas |
-| **Grafana** | `monitoring` | ClusterIP | Visualização de métricas |
+| **Prometheus** | `monitoring` | ClusterIP/NodePort | Coleta de metrics |
+| **Grafana** | `monitoring` | ClusterIP | Visualização de metrics |
 | **Alertmanager** | `monitoring` | ClusterIP | Gerenciamento de alertas |
 | **Loki** | `monitoring` | ClusterIP | Sistema de logs (se disponível) |
 
@@ -73,7 +73,7 @@ O presente guia documenta o processo completo de deploy of TriSLA v3.5.0 in ambi
 
 ### 2.1 Visão Geral of Arquitetura
 
-O TriSLA é composto por **7 módulos principais** que se integram ao ambiente NASP:
+O TriSLA é composto por **7 módulos principais** que se integram ao environment NASP:
 
 1. **SEM-CSMF** — Interpretação Semântica
 2. **ML-NSMF** — Predição ML com XAI
@@ -125,7 +125,7 @@ resources:
 
 #### PVCs
 
-- `sem-csmf-data` — Dados persistentes (se aplicável)
+- `sem-csmf-data` — Data persistentes (se aplicável)
 
 #### Dependências
 
@@ -141,7 +141,7 @@ resources:
 
 #### Documentação
 
-- **Guia Completo:** `docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`
+- **guide Completo:** `docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`
 - **Ontologia:** `docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`
 
 ---
@@ -150,7 +150,7 @@ resources:
 
 #### Objective Técnico
 
-O ML-NSMF é responsável por prever a viabilidade de SLA de network slices usando modelos de machine learning (LSTM/GRU) e fornecer explicações usando XAI (SHAP/LIME).
+O ML-NSMF é responsável por prever a viabilidade de SLA de network slices usando modelos de machine learning (LSTM/GRU) e provide explicações usando XAI (SHAP/LIME).
 
 #### Configuração de Deploy
 
@@ -200,7 +200,7 @@ resources:
 
 #### Documentação
 
-- **Guia Completo:** `docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`
+- **guide Completo:** `docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`
 
 ---
 
@@ -259,7 +259,7 @@ resources:
 
 #### Documentação
 
-- **Guia Completo:** `docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md`
+- **guide Completo:** `docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md`
 
 ---
 
@@ -267,7 +267,7 @@ resources:
 
 #### Objective Técnico
 
-O Decision Engine é responsável por tomar decisões baseadas in regras sobre a admissão, reconfiguração ou rejeição de network slices, integrando informações of ML-NSMF e of SEM-CSMF.
+O Decision Engine é responsável por tomar decisions baseadas in regras sobre a admissão, reconfiguração ou rejeição de network slices, integrando informações of ML-NSMF e of SEM-CSMF.
 
 #### Configuração de Deploy
 
@@ -323,7 +323,7 @@ resources:
 
 #### Objective Técnico
 
-O SLA-Agent Layer é responsável por monitorar e garantir SLAs in cada domínio (RAN, Transport, Core) usando agentes federados que coletam métricas reais of NASP.
+O SLA-Agent Layer é responsável por monitorar e garantir SLAs in cada domínio (RAN, Transport, Core) usando agentes federados que coletam metrics reais of NASP.
 
 #### Configuração de Deploy
 
@@ -363,7 +363,7 @@ resources:
 #### Dependências
 
 - **Kafka** — Comunicação com Decision Engine (I-05) e NASP Adapter (I-06)
-- **NASP Adapter** — Coleta de métricas reais (I-06)
+- **NASP Adapter** — Coleta de metrics reais (I-06)
 - **OpenTelemetry Collector** — Observabilidade
 
 #### Interfaces Utilizadas
@@ -377,7 +377,7 @@ resources:
 
 #### Objective Técnico
 
-O NASP Adapter é responsável por conectar o TriSLA aos serviços reais of NASP (RAN, Transport, Core), provisionando slices e coletando métricas reais.
+O NASP Adapter é responsável por conectar o TriSLA aos serviços reais of NASP (RAN, Transport, Core), provisionando slices e coletando metrics reais.
 
 #### Configuração de Deploy
 
@@ -430,7 +430,7 @@ resources:
 
 #### Objective Técnico
 
-O UI Dashboard fornece uma interface web for visualização e gerenciamento of TriSLA, incluindo dashboards de métricas, status de slices e configurações.
+O UI Dashboard fornece uma interface web for visualização e gerenciamento of TriSLA, incluindo dashboards de metrics, status de slices e configurações.
 
 #### Configuração de Deploy
 
@@ -467,7 +467,7 @@ resources:
 #### Dependências
 
 - **Backend API** — APIs REST of TriSLA
-- **Grafana** — Dashboards de métricas (opcional)
+- **Grafana** — Dashboards de metrics (opcional)
 
 ---
 
@@ -502,13 +502,13 @@ O inventário Ansible está localizado in `ansible/inventory.yaml` e utiliza con
 127.0.0.1 ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 ```
 
-### 3.2 Variáveis de Grupo
+### 3.2 variables de Grupo
 
 #### 3.2.1 `ansible/group_vars/all.yml`
 
 ```yaml
 # ============================================
-# Variáveis Globais Ansible - TriSLA
+# variables Globais Ansible - TriSLA
 # ============================================
 
 # Configurações de rede NASP
@@ -565,7 +565,7 @@ trisla:
       image: "{{ trisla.image_registry }}/trisla-ui-dashboard"
       tag: "3.5.0"
 
-# Configurações de produção
+# Configurações de production
 production:
   enabled: true
   simulation_mode: false
@@ -584,7 +584,7 @@ observability:
   
   grafana:
     enabled: true
-    admin_password: "admin"  # ⚠️ ALTERAR EM PRODUÇÃO
+    admin_password: "admin"  # ⚠️ ALTERAR In Production
 
 # Configurações de recursos
 resources:
@@ -616,7 +616,7 @@ trisla:
   release_name: "trisla"
 ```
 
-### 3.3 Variáveis de Host
+### 3.3 variables de Host
 
 #### 3.3.1 `ansible/host_vars/node1.yml` (se necessário)
 
@@ -662,7 +662,7 @@ node2:
 
 **Templates Utilizados:** Nenhum
 
-**Variáveis Essenciais:**
+**variables Essenciais:**
 - `namespace`
 - `kubeconfig_path`
 
@@ -683,7 +683,7 @@ node2:
 
 **Templates Utilizados:** Nenhum
 
-**Variáveis Essenciais:**
+**variables Essenciais:**
 - `namespace`
 - `ghcr_user`
 - `ghcr_token`
@@ -699,7 +699,7 @@ node2:
 **Fases Internas:**
 1. Validar pré-requisitos
 2. Criar namespace
-3. Configurar secrets
+3. configure secrets
 4. Validar Helm chart
 5. Dry-run of deploy
 6. Deploy real of TriSLA
@@ -712,7 +712,7 @@ node2:
 
 **Templates Utilizados:** Nenhum
 
-**Variáveis Essenciais:**
+**variables Essenciais:**
 - `namespace`
 - `helm_chart_path`
 - `values_file`
@@ -723,7 +723,7 @@ node2:
 
 #### 4.1.4 `ansible/playbooks/validate-cluster.yml`
 
-**Propósito:** Validação pós-deploy of cluster TriSLA
+**Propósito:** validation pós-deploy of cluster TriSLA
 
 **Fases Internas:**
 1. Verifiesr pods in Running
@@ -737,7 +737,7 @@ node2:
 
 **Templates Utilizados:** Nenhum
 
-**Variáveis Essenciais:**
+**variables Essenciais:**
 - `namespace`
 
 **Ordem Recomendada:** Quarto playbook a ser executado (após deploy)
@@ -837,9 +837,9 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 **Propósito:** Configuração de observabilidade
 
 **Tasks:**
-- Configurar OpenTelemetry Collector
-- Configurar ServiceMonitors
-- Configurar dashboards Grafana (se aplicável)
+- configure OpenTelemetry Collector
+- configure ServiceMonitors
+- configure dashboards Grafana (se aplicável)
 
 ---
 
@@ -853,7 +853,7 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 # Verifiesr nodes
 kubectl get nodes
 
-# Saída esperada:
+# output expected:
 # NAME     STATUS   ROLES           AGE   VERSION
 # node1    Ready    control-plane   30d   v1.26.0
 # node2    Ready    control-plane   30d   v1.26.0
@@ -864,7 +864,7 @@ kubectl get pods -A
 # Verifiesr pods of Calico
 kubectl get pods -n kube-system -l k8s-app=calico-node
 
-# Saída esperada:
+# output expected:
 # NAME                READY   STATUS    RESTARTS   AGE
 # calico-node-xxxxx   1/1     Running   0          30d
 # calico-node-yyyyy   1/1     Running   0          30d
@@ -872,7 +872,7 @@ kubectl get pods -n kube-system -l k8s-app=calico-node
 
 ---
 
-### 5.2 Validação CNI (Calico)
+### 5.2 validation CNI (Calico)
 
 ```bash
 # Verifiesr status of Calico
@@ -887,7 +887,7 @@ kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup kubern
 
 ---
 
-### 5.3 Validação kubelet / kube-proxy
+### 5.3 validation kubelet / kube-proxy
 
 ```bash
 # Verifiesr kubelet
@@ -908,7 +908,7 @@ journalctl -u kubelet -f
 # Listar StorageClasses
 kubectl get storageclass
 
-# Saída esperada:
+# output expected:
 # NAME          PROVISIONER       RECLAIMPOLICY   VOLUMEBINDINGMODE   AGE
 # local-path    rancher.io/local-path   Delete         WaitForFirstConsumer   30d
 
@@ -939,7 +939,7 @@ kubectl get svc --all-namespaces -o jsonpath='{range .items[*]}{.metadata.name}{
 
 ---
 
-### 5.6 Validação DNS Interno of Cluster
+### 5.6 validation DNS Interno of Cluster
 
 ```bash
 # Testar DNS interno
@@ -954,7 +954,7 @@ kubectl get pods -n kube-system -l k8s-app=kube-dns
 
 ---
 
-### 5.7 Validação de Recursos node1 e node2
+### 5.7 validation de Recursos node1 e node2
 
 ```bash
 # Verifiesr recursos of node1
@@ -971,7 +971,7 @@ kubectl top nodes
 
 ### 5.8 Checklist Final de Prontidão
 
-**Antes de prosseguir com o deploy, verificar:**
+**Antes de prosseguir com o deploy, verify:**
 
 - [ ] Cluster Kubernetes operacional (2 nodes Ready)
 - [ ] CNI Calico funcionando
@@ -990,7 +990,7 @@ kubectl top nodes
 
 ## 6. Deploy Completo via Ansible
 
-### 6.1 Pré-Checagem Esperada
+### 6.1 Pré-Checagem expected
 
 **Executar no node1:**
 
@@ -1004,10 +1004,10 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/deploy-trisla-nasp.
 ansible-playbook -i ansible/inventory.yaml ansible/playbooks/pre-flight.yml --check
 ```
 
-**Validação Esperada:**
-- Nenhum erro crítico
+**validation expected:**
+- Nenhum error crítico
 - Todas as tasks marcadas como `ok` ou `changed` (sem `failed`)
-- Warnings são aceitáveis (verificar se não são críticos)
+- Warnings são aceitáveis (verify se não são críticos)
 
 ---
 
@@ -1062,7 +1062,7 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/deploy-trisla-nasp.
 
 ---
 
-#### 6.2.4 Passo 4: Validação Pós-Deploy
+#### 6.2.4 Passo 4: validation Pós-Deploy
 
 ```bash
 # Validar deploy
@@ -1109,10 +1109,10 @@ A ordem de instalação dos módulos é gerenciada pelo Helm chart, mas a sequê
 kubectl get pods,svc,configmap -n trisla -l app.kubernetes.io/component=sem-csmf
 ```
 
-**Readiness Esperada:**
+**Readiness expected:**
 ```bash
 kubectl get pods -n trisla -l app.kubernetes.io/component=sem-csmf
-# Saída esperada:
+# output expected:
 # NAME                              READY   STATUS    RESTARTS   AGE
 # trisla-sem-csmf-xxxxx-xxxxx       1/1     Running   0          5m
 # trisla-sem-csmf-yyyyy-yyyyy       1/1     Running   0          5m
@@ -1138,10 +1138,10 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=sem-csmf
 kubectl get pods,svc,pvc -n trisla -l app.kubernetes.io/component=ml-nsmf
 ```
 
-**Readiness Esperada:**
+**Readiness expected:**
 ```bash
 kubectl get pods -n trisla -l app.kubernetes.io/component=ml-nsmf
-# Saída esperada:
+# output expected:
 # NAME                            READY   STATUS    RESTARTS   AGE
 # trisla-ml-nsmf-xxxxx-xxxxx     1/1     Running   0          5m
 # trisla-ml-nsmf-yyyyy-yyyyy     1/1     Running   0          5m
@@ -1166,10 +1166,10 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=ml-nsmf
 kubectl get pods,svc,pvc -n trisla -l app.kubernetes.io/component=bc-nssmf
 ```
 
-**Readiness Esperada:**
+**Readiness expected:**
 ```bash
 kubectl get pods -n trisla -l app.kubernetes.io/component=bc-nssmf
-# Saída esperada:
+# output expected:
 # NAME                              READY   STATUS    RESTARTS   AGE
 # trisla-bc-nssmf-xxxxx-xxxxx       1/1     Running   0          5m
 # trisla-bc-nssmf-yyyyy-yyyyy       1/1     Running   0          5m
@@ -1193,10 +1193,10 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=bc-nssmf
 kubectl get pods,svc,configmap -n trisla -l app.kubernetes.io/component=decision-engine
 ```
 
-**Readiness Esperada:**
+**Readiness expected:**
 ```bash
 kubectl get pods -n trisla -l app.kubernetes.io/component=decision-engine
-# Saída esperada:
+# output expected:
 # NAME                                    READY   STATUS    RESTARTS   AGE
 # trisla-decision-engine-xxxxx-xxxxx      1/1     Running   0          5m
 # trisla-decision-engine-yyyyy-yyyyy      1/1     Running   0          5m
@@ -1220,10 +1220,10 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=decision-engine
 kubectl get daemonset,pods,svc -n trisla -l app.kubernetes.io/component=sla-agent-layer
 ```
 
-**Readiness Esperada:**
+**Readiness expected:**
 ```bash
 kubectl get pods -n trisla -l app.kubernetes.io/component=sla-agent-layer
-# Saída esperada:
+# output expected:
 # NAME                                    READY   STATUS    RESTARTS   AGE
 # trisla-sla-agent-layer-xxxxx            1/1     Running   0          5m  # node1
 # trisla-sla-agent-layer-yyyyy            1/1     Running   0          5m  # node2
@@ -1247,10 +1247,10 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=sla-agent-layer
 kubectl get pods,svc,configmap -n trisla -l app.kubernetes.io/component=nasp-adapter
 ```
 
-**Readiness Esperada:**
+**Readiness expected:**
 ```bash
 kubectl get pods -n trisla -l app.kubernetes.io/component=nasp-adapter
-# Saída esperada:
+# output expected:
 # NAME                                READY   STATUS    RESTARTS   AGE
 # trisla-nasp-adapter-xxxxx-xxxxx     1/1     Running   0          5m
 # trisla-nasp-adapter-yyyyy-yyyyy     1/1     Running   0          5m
@@ -1274,10 +1274,10 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=nasp-adapter
 kubectl get pods,svc,ingress -n trisla -l app.kubernetes.io/component=ui-dashboard
 ```
 
-**Readiness Esperada:**
+**Readiness expected:**
 ```bash
 kubectl get pods -n trisla -l app.kubernetes.io/component=ui-dashboard
-# Saída esperada:
+# output expected:
 # NAME                              READY   STATUS    RESTARTS   AGE
 # trisla-ui-dashboard-xxxxx-xxxxx   1/1     Running   0          5m
 # trisla-ui-dashboard-yyyyy-yyyyy   1/1     Running   0          5m
@@ -1289,7 +1289,7 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=ui-dashboard
 
 ---
 
-## 7. Pós-Deploy (Validação E2E)
+## 7. Pós-Deploy (validation E2E)
 
 ### 7.1 Testes de Endpoints
 
@@ -1303,7 +1303,7 @@ kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080 &
 # Health check
 curl http://localhost:8080/health
 
-# Resposta esperada:
+# Resposta expected:
 # {"status":"healthy","version":"3.5.0"}
 ```
 
@@ -1323,7 +1323,7 @@ curl -X POST http://localhost:8080/api/v1/intents \
     }
   }'
 
-# Resposta esperada:
+# Resposta expected:
 # {"intent_id":"test-urllc-001","status":"validated","nest_id":"nest-urllc-001"}
 ```
 
@@ -1339,7 +1339,7 @@ kubectl port-forward -n trisla svc/trisla-ml-nsmf 8081:8081 &
 # Health check
 curl http://localhost:8081/health
 
-# Resposta esperada:
+# Resposta expected:
 # {"status":"healthy","version":"3.5.0"}
 ```
 
@@ -1358,7 +1358,7 @@ curl -X POST http://localhost:8081/predict \
     }
   }'
 
-# Resposta esperada:
+# Resposta expected:
 # {"risk_score":0.2,"risk_level":"low","confidence":0.95,"explanation":{...}}
 ```
 
@@ -1374,13 +1374,13 @@ kubectl port-forward -n trisla svc/trisla-bc-nssmf 8083:8083 &
 # Health check
 curl http://localhost:8083/health
 
-# Resposta esperada:
+# Resposta expected:
 # {"status":"healthy","version":"3.5.0"}
 ```
 
-**Teste de Validação de Contrato:**
+**Teste de validation de contract:**
 ```bash
-# Validar contrato
+# Validar contract
 curl -X POST http://localhost:8083/contract/validate \
   -H "Content-Type: application/json" \
   -d '{
@@ -1388,7 +1388,7 @@ curl -X POST http://localhost:8083/contract/validate \
     "sla_id": "sla-001"
   }'
 
-# Resposta esperada:
+# Resposta expected:
 # {"valid":true,"contract_address":"0x...","sla_id":"sla-001"}
 ```
 
@@ -1404,7 +1404,7 @@ kubectl port-forward -n trisla svc/trisla-decision-engine 8082:8082 &
 # Health check
 curl http://localhost:8082/health
 
-# Resposta esperada:
+# Resposta expected:
 # {"status":"healthy","version":"3.5.0"}
 ```
 
@@ -1421,7 +1421,7 @@ curl -X POST http://localhost:8082/decision/evaluate \
     }
   }'
 
-# Resposta esperada:
+# Resposta expected:
 # {"decision":"ADMIT","nest_id":"nest-urllc-001","confidence":0.95}
 ```
 
@@ -1437,7 +1437,7 @@ kubectl port-forward -n trisla svc/trisla-sla-agent-layer 8084:8084 &
 # Health check
 curl http://localhost:8084/health
 
-# Resposta esperada:
+# Resposta expected:
 # {"status":"healthy","version":"3.5.0"}
 ```
 
@@ -1446,7 +1446,7 @@ curl http://localhost:8084/health
 # Verifiesr SLO
 curl http://localhost:8084/agents/slo?domain=RAN
 
-# Resposta esperada:
+# Resposta expected:
 # {"domain":"RAN","slo_status":"compliant","metrics":{...}}
 ```
 
@@ -1462,13 +1462,13 @@ kubectl port-forward -n trisla svc/trisla-api 8086:8086 &
 # Health check
 curl http://localhost:8086/health
 
-# Resposta esperada:
+# Resposta expected:
 # {"status":"healthy","version":"3.5.0"}
 ```
 
 ---
 
-### 7.2 Validação of Ciclo Fechado TriSLA
+### 7.2 validation of Ciclo Fechado TriSLA
 
 **Fluxo Completo:**
 
@@ -1517,21 +1517,21 @@ DECISION_RESPONSE=$(curl -X POST http://localhost:8082/decision/evaluate \
 SLA_RESPONSE=$(curl http://localhost:8084/agents/slo?domain=RAN)
 
 # 7. Verifiesr observabilidade (Prometheus)
-# (Waitsr coleta de métricas)
+# (Waitsr coleta de metrics)
 ```
 
-**Validação Esperada:**
+**validation expected:**
 - Intent processado com sucesso
 - NEST gerado
 - Predição ML realizada
 - Decisão tomada (ADMIT/REJECT/RECONFIGURE)
 - SLA registrado in blockchain
-- Métricas coletadas
+- metrics coletadas
 - Observabilidade funcionando
 
 ---
 
-### 7.3 Validação de Dashboards TriSLA no Grafana
+### 7.3 validation de Dashboards TriSLA no Grafana
 
 **Acessar Grafana:**
 ```bash
@@ -1539,27 +1539,27 @@ SLA_RESPONSE=$(curl http://localhost:8084/agents/slo?domain=RAN)
 kubectl port-forward -n monitoring svc/grafana 3000:3000 &
 
 # Acessar: http://localhost:3000
-# Credenciais: admin/admin (alterar in produção)
+# Credenciais: admin/admin (alterar in production)
 ```
 
 **Dashboards Esperados:**
 - **TriSLA Overview** — Visão geral of sistema
-- **SEM-CSMF Metrics** — Métricas de intents e NESTs
-- **ML-NSMF Metrics** — Métricas de predições e XAI
-- **Decision Engine Metrics** — Métricas de decisões
-- **BC-NSSMF Metrics** — Métricas de blockchain
-- **SLA-Agent Layer Metrics** — Métricas de SLOs por domínio
-- **NASP Adapter Metrics** — Métricas de integration NASP
+- **SEM-CSMF Metrics** — metrics de intents e NESTs
+- **ML-NSMF Metrics** — metrics de predições e XAI
+- **Decision Engine Metrics** — metrics de decisions
+- **BC-NSSMF Metrics** — metrics de blockchain
+- **SLA-Agent Layer Metrics** — metrics de SLOs por domínio
+- **NASP Adapter Metrics** — metrics de integration NASP
 
-**Validação:**
+**validation:**
 - [ ] Dashboards carregados
-- [ ] Métricas sendo coletadas
+- [ ] metrics sendo coletadas
 - [ ] Gráficos atualizando
 - [ ] Alertas configurados (se aplicável)
 
 ---
 
-### 7.4 Validação de Ingestão OTLP
+### 7.4 validation de Ingestão OTLP
 
 **Verifiesr OpenTelemetry Collector:**
 ```bash
@@ -1569,26 +1569,26 @@ kubectl get pods -n trisla -l app.kubernetes.io/component=otel-collector
 # Verifiesr logs
 kubectl logs -n trisla -l app.kubernetes.io/component=otel-collector --tail=100
 
-# Verifiesr métricas no Prometheus
+# Verifiesr metrics no Prometheus
 # (Waitsr coleta)
 ```
 
-**Validação Esperada:**
+**validation expected:**
 - OTLP Collector in `Running`
 - Traces sendo coletados
-- Métricas sendo exportadas for Prometheus
+- metrics sendo exportadas for Prometheus
 - Logs sendo coletados (se configurado)
 
 ---
 
-### 7.5 Validação Final dos Pods e Services
+### 7.5 validation Final dos Pods e Services
 
 **Comando Completo:**
 ```bash
 # Verifiesr todos os pods
 kubectl get pods -n trisla
 
-# Saída esperada:
+# output expected:
 # NAME                                    READY   STATUS    RESTARTS   AGE
 # trisla-sem-csmf-xxxxx-xxxxx             1/1     Running   0          10m
 # trisla-sem-csmf-yyyyy-yyyyy             1/1     Running   0          10m
@@ -1617,7 +1617,7 @@ kubectl get deployments -n trisla
 kubectl get daemonset -n trisla
 ```
 
-**Validação Esperada:**
+**validation expected:**
 - Todos os pods in `Running`
 - Todos os pods com `READY 1/1`
 - Nenhum pod in `CrashLoopBackOff` ou `Error`
@@ -1719,7 +1719,7 @@ kubectl get daemonset -n trisla
 ┌─────────────────┐
 │   SEM-CSMF      │  • Recebe intent (linguagem natural ou estruturado)
 │                 │  • Processa com NLP
-│                 │  • Valida com ontologia OWL
+│                 │  • validates com ontologia OWL
 │                 │  • Gera NEST (Network Slice Template)
 └────────┬────────┘
          │ I-01 (gRPC)
@@ -1742,7 +1742,7 @@ kubectl get daemonset -n trisla
          │ I-07 (REST)
          ▼
 ┌─────────────────┐
-│   BC-NSSMF      │  • Registra SLA in blockchain
+│   BC-NSSMF      │  • Registers SLA in blockchain
 │                 │  • Smart contract Solidity
 │                 │  • Imutabilidade e auditabilidade
 └────────┬────────┘
@@ -1750,7 +1750,7 @@ kubectl get daemonset -n trisla
          ▼
 ┌─────────────────┐
 │ SLA-Agent Layer │  • Monitora SLOs in RAN/Transport/Core
-│  (DaemonSet)    │  • Coleta métricas reais of NASP
+│  (DaemonSet)    │  • Coleta metrics reais of NASP
 │                 │  • Garante conformidade de SLA
 └────────┬────────┘
          │ I-06 (Kafka)
@@ -1758,7 +1758,7 @@ kubectl get daemonset -n trisla
 ┌─────────────────┐
 │ NASP Adapter    │  • Connects a serviços reais of NASP
 │                 │  • Provisiona slices
-│                 │  • Coleta métricas
+│                 │  • Coleta metrics
 └────────┬────────┘
          │
          ▼
@@ -1769,8 +1769,8 @@ kubectl get daemonset -n trisla
 └─────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                    Observabilidade (Tempo Real)                         │
-│  • Métricas: Prometheus                                                 │
+│                    Observabilidade (real time)                         │
+│  • metrics: Prometheus                                                 │
 │  • Traces: OpenTelemetry                                                │
 │  • Logs: Loki (se disponível)                                           │
 │  • Dashboards: Grafana                                                  │
@@ -1824,7 +1824,7 @@ kubectl get daemonset -n trisla
    └─► Verifiesr serviços
    │
    ▼
-5. VALIDAÇÃO PÓS-DEPLOY (Ansible)
+5. validation PÓS-DEPLOY (Ansible)
    │
    ├─► ansible-playbook validate-cluster.yml
    ├─► Verifiesr pods in Running
@@ -1842,7 +1842,7 @@ kubectl get daemonset -n trisla
    └─► Validar integration NASP
    │
    ▼
-7. PRODUÇÃO APROVADA ✅
+7. production APROVADA ✅
 ```
 
 ---
@@ -1898,10 +1898,10 @@ KAFKA:           Todos os módulos ────────► Kafka Broker
 SLA-AGENT LAYER (Distribuído):
 
 node1:           SLA-Agent Layer Pod ─────► NASP Adapter
-                 Coleta métricas RAN/Transport/Core
+                 Coleta metrics RAN/Transport/Core
 
 node2:           SLA-Agent Layer Pod ─────► NASP Adapter
-                 Coleta métricas RAN/Transport/Core
+                 Coleta metrics RAN/Transport/Core
 
 NASP INTEGRATION:
 
@@ -1913,7 +1913,7 @@ NASP Adapter ───► NASP Real Services
 
 ---
 
-## 9. Checklist de Produção (Oficial)
+## 9. Checklist de production (Oficial)
 
 ### 9.1 Pré-requisitos Verifiesdos
 
@@ -1934,19 +1934,19 @@ NASP Adapter ───► NASP Real Services
 
 - [ ] `ansible/inventory.yaml` configurado (127.0.0.1, local)
 - [ ] `ansible/group_vars/all.yml` preenchido
-- [ ] Variáveis de rede configuradas (interface, IPs, gateway)
-- [ ] Variáveis of TriSLA configuradas (namespace, registry, tags)
-- [ ] Variáveis de produção configuradas (simulation_mode: false)
+- [ ] variables de rede configuradas (interface, IPs, gateway)
+- [ ] variables of TriSLA configuradas (namespace, registry, tags)
+- [ ] variables de production configuradas (simulation_mode: false)
 
 ---
 
-### 9.3 Variáveis Corretas
+### 9.3 variables Corretas
 
 - [ ] `helm/trisla/values-nasp.yaml` preenchido com valores reais
 - [ ] Todos os placeholders substituídos
 - [ ] Endpoints NASP configurados (FQDNs Kubernetes)
 - [ ] Autenticação OAuth2 configurada (se necessário)
-- [ ] Recursos ajustados for produção
+- [ ] Recursos ajustados for production
 - [ ] Replicas configuradas corretamente
 
 ---
@@ -2014,13 +2014,13 @@ NASP Adapter ───► NASP Real Services
 - [ ] Prometheus acessível (port-forward ou NodePort)
 - [ ] Grafana acessível (port-forward ou NodePort)
 - [ ] Dashboards TriSLA carregados
-- [ ] Métricas sendo coletadas
+- [ ] metrics sendo coletadas
 - [ ] Gráficos atualizando
 - [ ] Alertas configurados (se aplicável)
 
 ---
 
-### 9.10 Produção Aprovada
+### 9.10 production Aprovada
 
 - [ ] Testes E2E executados com sucesso
 - [ ] Ciclo fechado TriSLA validado
@@ -2033,13 +2033,13 @@ NASP Adapter ───► NASP Real Services
 
 ## 10. Conclusão
 
-This document provides a complete guide, formal e acadêmico for a implantação manual of TriSLA v3.5.0 in the NASP environment utilizando Ansible e Helm. O processo é dividido in fases claras, desde a preparação inicial até a validação end-to-end, garantindo um deploy controlado e auditável.
+This document provides a complete guide, formal e acadêmico for a implantação manual of TriSLA v3.5.0 in the NASP environment utilizando Ansible e Helm. O processo é dividido in fases claras, desde a preparação inicial até a validation end-to-end, garantindo um deploy controlado e auditável.
 
 ### Principais Características
 
 - **Deploy Local:** Execução no node1 (127.0.0.1), sem SSH
 - **Automação:** Ansible for orquestração, Helm for gerenciamento
-- **Produção Real:** Configurações for ambiente de produção, sem simulação
+- **production Real:** Configurações for environment de production, sem simulação
 - **Observabilidade:** Integração completa com Prometheus, Grafana e OpenTelemetry
 - **Alta Disponibilidade:** Réplicas configuradas for todos os módulos
 - **Distribuição:** SLA-Agent Layer distribuído in node1 e node2
@@ -2048,7 +2048,7 @@ This document provides a complete guide, formal e acadêmico for a implantação
 
 Após a conclusão bem-sucedida of deploy:
 
-1. **Monitoramento Contínuo:** Acompanhar métricas e logs
+1. **Monitoramento Contínuo:** Acompanhar metrics e logs
 2. **Otimização:** Ajustar recursos conforme necessário
 3. **Manutenção:** Atualizar imagens e configurações
 4. **Expansão:** Adicionar novos módulos ou funcionalidades
@@ -2060,15 +2060,15 @@ Após a conclusão bem-sucedida of deploy:
 ### Documentação TriSLA
 
 - **README Main:** `README.md`
-- **Guia SEM-CSMF:** `docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`
-- **Guia Ontologia:** `docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`
-- **Guia ML-NSMF:** `docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`
-- **Guia BC-NSSMF:** `docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md`
-- **Relatório Validação Produção:** `docs/reports/PRODUCTION_VALIDATION_REPORT_v3.5.0.md`
+- **guide SEM-CSMF:** `docs/sem-csmf/SEM_CSMF_COMPLETE_GUIDE.md`
+- **guide Ontologia:** `docs/sem-csmf/ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`
+- **guide ML-NSMF:** `docs/ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`
+- **guide BC-NSSMF:** `docs/bc-nssmf/BC_NSSMF_COMPLETE_GUIDE.md`
+- **Relatório validation production:** `docs/reports/PRODUCTION_VALIDATION_REPORT_v3.5.0.md`
 
 ### Documentação NASP
 
-- **Guia Deploy NASP:** `docs/nasp/NASP_DEPLOY_GUIDE.md`
+- **guide Deploy NASP:** `docs/nasp/NASP_DEPLOY_GUIDE.md`
 - **Runbook Deploy:** `docs/nasp/NASP_DEPLOY_RUNBOOK.md`
 - **Checklist Pré-Deploy:** `docs/nasp/NASP_PREDEPLOY_CHECKLIST_v2.md`
 - **Relatório Contexto:** `docs/nasp/NASP_CONTEXT_REPORT.md`
@@ -2081,10 +2081,10 @@ Após a conclusão bem-sucedida of deploy:
 
 ---
 
-**Fim of Documento**
+**end of Documento**
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
-**Status:** Documento Oficial de Produção  
+**Status:** Documento Oficial de production  
 **Autor:** TriSLA Team
 

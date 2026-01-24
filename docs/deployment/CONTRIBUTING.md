@@ -8,7 +8,7 @@
 
 - **Quality over speed**: Código bem testado e documentado
 - **Collaboration**: Respeito mútuo e comunicação construtiva
-- **Transparency**: Decisões técnicas documentadas e discutidas
+- **Transparency**: decisions técnicas documentadas e discutidas
 - **Continuous learning**: Espaço for crescimento e experimentação
 
 ### 1.2 Expectations for Contributors
@@ -62,7 +62,7 @@ Clear and concise description of bug.
 1. Vá for '...'
 2. Clique in '...'
 3. Role até '...'
-4. Veja o erro
+4. Veja o error
 
 ## Comportamento Esperado
 O que deveria acontecer.
@@ -73,7 +73,7 @@ O que está acontecendo.
 ## Screenshots
 Se aplicável, adicione screenshots.
 
-## Ambiente
+## environment
 - OS: [e.g., Ubuntu 20.04]
 - Python: [e.g., 3.10.5]
 - Docker: [e.g., 20.10.12]
@@ -103,7 +103,7 @@ Qualquer outra informação relevante.
 Description clara of funcionalidade desejada.
 
 ## Motivação
-Por que essa funcionalidade é necessária? Qual problema ela resolve?
+Por que essa funcionalidade é necessária? Qual problem ela resolve?
 
 ## solution proposal
 Como você imagina que isso funcionaria?
@@ -136,7 +136,7 @@ Qualquer outra informação relevante.
 Liste os arquivos de documentação.
 
 ## Tipo de Mudança
-- [ ] Correção de erro
+- [ ] Correção de error
 - [ ] Melhoria de clareza
 - [ ] Adição de conteúdo
 - [ ] Reorganização
@@ -155,7 +155,7 @@ Description das mudanças propostas.
 
 1. Acesse: https://github.com/abelisboa/TriSLA
 2. Clique no botão "Fork" no canto superior direito
-3. Escolha sua conta/organização for o fork
+3. Escolha sua account/organização for o fork
 
 **Passo 2: Clonar Fork Localmente**
 
@@ -244,7 +244,7 @@ brew install docker docker-compose
 **Criar e ativar venv:**
 
 ```bash
-# Criar ambiente virtual
+# Criar environment virtual
 python3 -m venv .venv
 
 # Ativar (Linux/macOS)
@@ -267,13 +267,13 @@ which python
 
 ### 4.4 Instalar Dependências
 
-**Dependências de desenvolvimento:**
+**Dependências de development:**
 
 ```bash
 # Atualizar pip
 pip install --upgrade pip
 
-# Instalar dependências de desenvolvimento
+# Instalar dependências de development
 pip install -r requirements-dev.txt
 ```
 
@@ -333,7 +333,7 @@ docker compose down
 
 - `feature/`: Nova funcionalidade
 - `fix/` ou `bugfix/`: Correção de bug
-- `hotfix/`: Correção urgente in produção
+- `hotfix/`: Correção urgente in production
 - `refactor/`: Refatoração de código
 - `docs/`: Mudanças apenas in documentação
 - `test/`: Adição ou correção de testes
@@ -463,7 +463,7 @@ usando exceções customizadas e logging estruturado."
 **Commit de documentação:**
 
 ```bash
-git commit -m "docs: atualizar guia de contribuição
+git commit -m "docs: atualizar guide de contribuição
 
 Add section about testes E2E e melhorar exemplos
 de commits."
@@ -504,7 +504,7 @@ Cobrir casos de borda e cenários de falha."
 git commit -m "fix: bug"
 
 # ❌ Muito longo
-git commit -m "fix: corrigir problema de timeout que ocorre quando o Decision Engine tenta se comunicar com o ML-NSMF in situações de alta carga"
+git commit -m "fix: corrigir problem de timeout que ocorre quando o Decision Engine tenta se comunicar com o ML-NSMF in situações de alta carga"
 
 # ❌ Não imperativo
 git commit -m "feat: adicionando nova funcionalidade"
@@ -528,7 +528,7 @@ Antes de abrir um PR, verifique:
 - [ ] Branch atualizada com `main` of upstream
 - [ ] Sem conflitos de merge
 - [ ] CI passa (se configurado)
-- [ ] Sem dados sensíveis ou tokens no código
+- [ ] Sem Data sensíveis ou tokens no código
 
 ### 7.2 Como Descrever Mudanças
 
@@ -578,7 +578,7 @@ Passos for testar as mudanças:
 - [ ] Documentação atualizada
 - [ ] CI passa
 - [ ] Sem conflitos
-- [ ] Sem dados sensíveis
+- [ ] Sem Data sensíveis
 
 ## Screenshots (se aplicável)
 ...
@@ -709,7 +709,7 @@ isort apps/ tests/
 
 ### 9.1 Black (Formatação)
 
-**Configuração esperada:**
+**Configuração expected:**
 
 ```toml
 # pyproject.toml
@@ -736,7 +736,7 @@ black apps/ tests/
 
 ### 9.2 isort (Ordenação de Imports)
 
-**Configuração esperada:**
+**Configuração expected:**
 
 ```toml
 [tool.isort]
@@ -816,7 +816,7 @@ flake8 apps/ tests/
 - Usar type hints quando possível
 - Docstrings no formato Google ou NumPy
 
-**Exemplo de função:**
+**Exemplo de function:**
 
 ```python
 def process_intent(
@@ -830,7 +830,7 @@ def process_intent(
     Args:
         intent: Objeto Intent a ser processado
         tenant_id: ID of tenant
-        validate: Se True, valida o intent antes de processar
+        validate: Se True, validates o intent antes de processar
     
     Returns:
         NEST gerado a partir of intent
@@ -850,7 +850,7 @@ def process_intent(
 **Nomenclatura:**
 
 - Classes: `PascalCase` (ex: `IntentProcessor`)
-- Funções/variáveis: `snake_case` (ex: `process_intent`)
+- Funções/variables: `snake_case` (ex: `process_intent`)
 - Constantes: `UPPER_SNAKE_CASE` (ex: `MAX_RETRIES`)
 - Privado: prefixo `_` (ex: `_internal_method`)
 
@@ -920,7 +920,7 @@ export const IntentList: React.FC<IntentListProps> = ({
 **Nomenclatura:**
 
 - Componentes: `PascalCase` (ex: `IntentList`)
-- Funções/variáveis: `camelCase` (ex: `fetchIntents`)
+- Funções/variables: `camelCase` (ex: `fetchIntents`)
 - Constantes: `UPPER_SNAKE_CASE` (ex: `API_BASE_URL`)
 - Arquivos: `kebab-case` (ex: `intent-list.tsx`)
 
@@ -940,7 +940,7 @@ export const IntentList: React.FC<IntentListProps> = ({
 
 - `README.md`: Visão geral
 - `ARCHITECTURE_OVERVIEW.md`: Arquitetura
-- `DEVELOPER_GUIDE.md`: Guia de desenvolvimento
+- `DEVELOPER_GUIDE.md`: guide de development
 - `API_REFERENCE.md`: Referência de APIs
 - `CONTRIBUTING.md`: This arquivo
 
@@ -955,7 +955,7 @@ export const IntentList: React.FC<IntentListProps> = ({
 - Adicionar nova funcionalidade
 - Modificar comportamento existente
 - Adicionar novos endpoints ou interfaces
-- Mudar configurações ou variáveis de ambiente
+- Mudar configurações ou variables de environment
 - Adicionar novos módulos ou componentes
 
 ### 11.3 Formato de Documentação
@@ -1016,10 +1016,10 @@ nest = process_intent(intent, "tenant-001")
 
 **O que fazer:**
 
-- Use variáveis de ambiente
+- Use variables de environment
 - Use arquivos `.env` (já no `.gitignore`)
 - Use secrets management (Kubernetes Secrets, etc.)
-- Documente variáveis necessárias in `README.md`
+- Documente variables necessárias in `README.md`
 
 **Exemplo incorreto:**
 
@@ -1036,20 +1036,20 @@ import os
 API_TOKEN = os.getenv("GITHUB_TOKEN")
 ```
 
-### 12.2 Não Expor Dados Sensíveis
+### 12.2 Não Expor Data Sensíveis
 
 **Evite:**
 
-- Dados de produção in código de exemplo
+- Data de production in código de exemplo
 - IPs ou hostnames de ambientes reais
-- Estruturas de dados com informações reais
+- Estruturas de Data com informações reais
 - Logs com informações sensíveis
 
 **Use:**
 
-- Dados de exemplo genéricos
-- Variáveis de ambiente
-- Configurações de desenvolvimento
+- Data de exemplo genéricos
+- variables de environment
+- Configurações de development
 - Sanitização de logs
 
 ### 12.3 Não Alterar Branch main Diretamente
@@ -1081,7 +1081,7 @@ API_TOKEN = os.getenv("GITHUB_TOKEN")
 
 1. **Discutir primeiro**: Abra uma issue for discutir a proposal
 2. **Dividir in partes**: Quebre in PRs menores e incrementais
-3. **Documentar**: Documente a arquitetura e decisões técnicas
+3. **Documentar**: Documente a arquitetura e decisions técnicas
 4. **Testar**: Garanta cobertura de testes adequada
 
 ### 13.2 Estratégia de Branch
@@ -1089,7 +1089,7 @@ API_TOKEN = os.getenv("GITHUB_TOKEN")
 **Para features grandes:**
 
 ```bash
-# Branch principal of feature
+# Branch main of feature
 feature/nova-funcionalidade
 
 # Branches de sub-features (opcionais)
@@ -1100,7 +1100,7 @@ feature/nova-funcionalidade-part3
 
 **Fluxo:**
 
-1. Criar branch principal
+1. Criar branch main
 2. Desenvolver incrementalmente
 3. Abrir PRs incrementais (se possível)
 4. Ou um PR grande com commits bem organizados
@@ -1112,7 +1112,7 @@ feature/nova-funcionalidade-part3
 ```bash
 # ✅ Bom: commits pequenos e focados
 git commit -m "feat: adicionar parser de ontologia"
-git commit -m "feat: adicionar validação de NEST"
+git commit -m "feat: adicionar validation de NEST"
 git commit -m "test: adicionar testes for parser"
 
 # ❌ Evitar: commit gigante com tudo
@@ -1130,9 +1130,9 @@ git commit -m "feat: adicionar nova funcionalidade completa"
 **Incluir no PR:**
 
 - Diagrama de arquitetura (se aplicável)
-- Decisões de design documentadas
+- decisions de design documentadas
 - Plano de migração (se breaking change)
-- Guia de teste
+- guide de teste
 
 ---
 
@@ -1218,7 +1218,7 @@ aumentando flexibilidade of sistema.
 ```markdown
 Obrigado pelo feedback! Fiz as alterações solicitadas:
 
-- ✅ Refatorei a função `parse_ontology` for melhor legibilidade
+- ✅ Refatorei a function `parse_ontology` for melhor legibilidade
 - ✅ Adicionei testes for o caso de borda mencionado
 - ✅ Atualizei a documentação
 
@@ -1252,7 +1252,7 @@ git push origin feature/minha-feature --force-with-lease
 
 ## Conclusão
 
-This guia fornece as diretrizes necessárias for contribuir efetivamente com o TriSLA. Lembre-se:
+This guide fornece as diretrizes necessárias for contribuir efetivamente com o TriSLA. Lembre-se:
 
 - **Quality over speed**: Código bem testado e documentado
 - **Comunicação**: Seja claro e respeitoso
@@ -1260,7 +1260,7 @@ This guia fornece as diretrizes necessárias for contribuir efetivamente com o T
 
 **Recursos adicionais:**
 
-- `DEVELOPER_GUIDE.md`: Guia completo de desenvolvimento
+- `DEVELOPER_GUIDE.md`: guide completo de development
 - `ARCHITECTURE_OVERVIEW.md`: Visão geral of arquitetura
 - `API_REFERENCE.md`: Referência de APIs
 - Issues no GitHub: Para discussões e perguntas

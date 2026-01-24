@@ -11,22 +11,22 @@
 ### 1.1 Cluster Kubernetes
 
 - [ ] **Existe um cluster com 2 nodes operacionais**
-  - Verificar: `kubectl get nodes`
+  - verify: `kubectl get nodes`
   - Esperado: 2 nodes no status `Ready`
 
 - [ ] **Nós visíveis via kubectl get nodes**
-  - Verificar conectividade: `kubectl cluster-info`
-  - Verificar versão: `kubectl version --short`
+  - verify conectividade: `kubectl cluster-info`
+  - verify versão: `kubectl version --short`
 
 - [ ] **CNI configurado e saudável**
-  - Verificar Calico: `kubectl get pods -n kube-system -l k8s-app=calico-node`
+  - verify Calico: `kubectl get pods -n kube-system -l k8s-app=calico-node`
   - Esperado: Todos os pods in `Running`
 
 - [ ] **Namespaces padrão of NASP funcionando**
-  - Verificar namespaces: `kubectl get namespaces`
+  - verify namespaces: `kubectl get namespaces`
   - Esperado: Namespaces como `monitoring`, `nasp`, etc. existem
 
-**Comandos de validação:**
+**Comandos de validation:**
 ```bash
 kubectl get nodes
 kubectl get pods -n kube-system
@@ -40,51 +40,51 @@ kubectl get namespaces
 ### 2.1 SEM-CSMF
 
 - [ ] **Ontologia `trisla.ttl` presente no container SEM-CSMF**
-  - Verificar: `apps/sem-csmf/src/ontology/trisla.ttl` existe
-  - Verificar Dockerfile: Ontologia copiada for container
+  - verify: `apps/sem-csmf/src/ontology/trisla.ttl` existe
+  - verify Dockerfile: Ontologia copiada for container
 
 - [ ] **PostgreSQL acessível**
-  - Verificar: Configuração de `DATABASE_URL` in `values-nasp.yaml`
-  - Verificar: Namespace e serviço PostgreSQL existem
+  - verify: Configuração de `DATABASE_URL` in `values-nasp.yaml`
+  - verify: Namespace e service PostgreSQL existem
 
 ### 2.2 ML-NSMF
 
 - [ ] **Modelo ML (`viability_model.pkl`) presente no ML-NSMF**
-  - Verificar: `apps/ml-nsmf/models/viability_model.pkl` existe
-  - Verificar Dockerfile: Modelo copiado for container
+  - verify: `apps/ml-nsmf/models/viability_model.pkl` existe
+  - verify Dockerfile: Modelo copiado for container
 
 - [ ] **Scaler (`scaler.pkl`) presente**
-  - Verificar: `apps/ml-nsmf/models/scaler.pkl` existe (se aplicável)
+  - verify: `apps/ml-nsmf/models/scaler.pkl` existe (se aplicável)
 
 ### 2.3 BC-NSSMF
 
-- [ ] **Contrato Solidity já deployado no GoQuorum/Besu**
-  - Verificar: `apps/bc-nssmf/src/contracts/contract_address.json` existe
-  - Verificar: Contrato deployado via `deploy_contracts.py`
+- [ ] **contract Solidity já deployado no GoQuorum/Besu**
+  - verify: `apps/bc-nssmf/src/contracts/contract_address.json` existe
+  - verify: contract deployado via `deploy_contracts.py`
 
 - [ ] **Configuração of BC-NSSMF aponta for o RPC correto**
-  - Verificar: `bcNssmf.besu.rpcUrl` in `values-nasp.yaml`
+  - verify: `bcNssmf.besu.rpcUrl` in `values-nasp.yaml`
   - Formato esperado: `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545`
   - ⚠️ **NÃO expor IP real in documentação**
 
 - [ ] **Chain ID configurado corretamente**
-  - Verificar: `bcNssmf.besu.chainId` in `values-nasp.yaml`
+  - verify: `bcNssmf.besu.chainId` in `values-nasp.yaml`
 
 ### 2.4 SLA-Agent Layer
 
 - [ ] **Agentes SLA estão configurados for apontar for o NASP Adapter**
-  - Verificar: `naspAdapter.naspEndpoints.*` in `values-nasp.yaml`
-  - Verificar: Agentes não usam métricas hardcoded (according to FASE 5)
+  - verify: `naspAdapter.naspEndpoints.*` in `values-nasp.yaml`
+  - verify: Agentes não usam metrics hardcoded (according to FASE 5)
 
 - [ ] **Configuração de SLOs por domínio**
-  - Verificar: `apps/sla-agent-layer/src/config/slo_*.yaml` existem
-  - Verificar: SLOs carregados corretamente pelos agentes
+  - verify: `apps/sla-agent-layer/src/config/slo_*.yaml` existem
+  - verify: SLOs carregados corretamente pelos agentes
 
 ### 2.5 Decision Engine
 
 - [ ] **Regras YAML presentes**
-  - Verificar: `apps/decision-engine/config/decision_rules.yaml` existe
-  - Verificar: Regras carregadas corretamente (sem `eval()`)
+  - verify: `apps/decision-engine/config/decision_rules.yaml` existe
+  - verify: Regras carregadas corretamente (sem `eval()`)
 
 ### 2.6 NASP Adapter
 
@@ -109,13 +109,13 @@ kubectl get namespaces
 
 - [ ] **Namespace alvo (`global.namespace`) definido corretamente**
   - Padrão: `trisla`
-  - Verificar: Namespace existe ou será criado durante deploy
+  - verify: Namespace existe ou será criado durante deploy
 
 - [ ] **Registry de imagens configurado**
-  - Verificar: `global.imageRegistry` aponta for GHCR correto
+  - verify: `global.imageRegistry` aponta for GHCR correto
   - Formato: `ghcr.io/<GHCR_USER>`
 
-### 3.2 Validação de Helm Chart
+### 3.2 validation de Helm Chart
 
 - [ ] **Helm chart validado**
   ```bash
@@ -123,9 +123,9 @@ kubectl get namespaces
   helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
   ```
 
-- [ ] **Nenhum erro crítico no template**
-  - Verificar: Saída of `helm template` não contém erros
-  - Verificar: Todos os recursos Kubernetes gerados são válidos
+- [ ] **Nenhum error crítico no template**
+  - verify: output of `helm template` não contém erros
+  - verify: Todos os recursos Kubernetes gerados são válidos
 
 ---
 
@@ -135,10 +135,10 @@ kubectl get namespaces
 
 - [ ] **`docs/ghcr/IMAGES_GHCR_MATRIX.md` revisado**
   - Revisar: Status de cada imagem according to matriz documentada
-  - Verificar: Todas as 7 imagens principais estão listadas e marcadas como OK
+  - verify: Todas as 7 imagens principais estão listadas e marcadas como OK
 
 - [ ] **Imagens GHCR validadas localmente**
-  - Verificar: Imagens podem ser puxadas of GHCR
+  - verify: Imagens podem ser puxadas of GHCR
   - Comando de teste: `docker pull ghcr.io/abelisboa/trisla-<module-name>:latest`
   - Imagens críticas: SEM-CSMF, ML-NSMF, Decision Engine, BC-NSSMF, SLA-Agent Layer, NASP Adapter
   - Imagem opcional: UI Dashboard
@@ -158,8 +158,8 @@ kubectl get namespaces
   ```
 
 - [ ] **Secret configurado no Helm chart**
-  - Verificar: `imagePullSecrets` configurado nos Deployments
-  - Verificar: Secret referenciado corretamente
+  - verify: `imagePullSecrets` configurado nos Deployments
+  - verify: Secret referenciado corretamente
 
 ---
 
@@ -168,24 +168,24 @@ kubectl get namespaces
 ### 5.1 Sem Tokens ou Segredos in Arquivos Públicos
 
 - [ ] **Sem tokens ou segredos in arquivos `.md` públicos**
-  - Verificar: Nenhum token hardcoded in `docs/`
-  - Verificar: Nenhum token hardcoded in `README*.md`
+  - verify: Nenhum token hardcoded in `docs/`
+  - verify: Nenhum token hardcoded in `README*.md`
 
 - [ ] **`TriSLA_PROMPTS/` continua ignorado pelo Git**
-  - Verificar: `.gitignore` contém `TriSLA_PROMPTS/`
-  - Verificar: Nenhum arquivo de `TriSLA_PROMPTS/` foi commitado
+  - verify: `.gitignore` contém `TriSLA_PROMPTS/`
+  - verify: Nenhum arquivo de `TriSLA_PROMPTS/` foi commitado
 
 ### 5.2 Scripts Internos
 
 - [ ] **Scripts internos de limpeza e backup revisados**
-  - Verificar: Scripts não expõem informações sensíveis
-  - Verificar: Scripts são executáveis e bem documentados
+  - verify: Scripts não expõem informações sensíveis
+  - verify: Scripts são executáveis e bem documentados
 
 ### 5.3 Network Policies (Opcional)
 
 - [ ] **Network Policies configuradas (se aplicável)**
-  - Verificar: Políticas de rede definidas no Helm chart
-  - Verificar: Comunicação entre módulos permitida
+  - verify: Políticas de rede definidas no Helm chart
+  - verify: Comunicação entre módulos permitida
 
 ---
 
@@ -194,8 +194,8 @@ kubectl get namespaces
 ### 6.1 Inventory
 
 - [ ] **`ansible/inventory.yaml` configurado**
-  - Verificar: Nodes NASP definidos (usando placeholders in docs)
-  - Verificar: Variáveis de grupo configuradas
+  - verify: Nodes NASP definidos (usando placeholders in docs)
+  - verify: variables de grupo configuradas
 
 ### 6.2 Playbooks
 
@@ -203,7 +203,7 @@ kubectl get namespaces
   - `ansible/playbooks/pre-flight.yml` — Validações pré-deploy
   - `ansible/playbooks/setup-namespace.yml` — Criação de namespace
   - `ansible/playbooks/deploy-trisla-nasp.yml` — Deploy Helm
-  - `ansible/playbooks/validate-cluster.yml` — Validação pós-deploy
+  - `ansible/playbooks/validate-cluster.yml` — validation pós-deploy
 
 ### 6.3 Teste de Playbooks
 
@@ -223,26 +223,26 @@ kubectl get namespaces
   - Revisar: Relatório não contém IPs reais
 
 - [ ] **`docs/deployment/VALUES_PRODUCTION_GUIDE.md` revisado**
-  - Verificar: Guia completo e claro
-  - Verificar: Exemplos usam placeholders
+  - verify: guide completo e claro
+  - verify: Exemplos usam placeholders
 
 - [ ] **`docs/ghcr/IMAGES_GHCR_MATRIX.md` revisado**
   - Revisar: Status de imagens according to documentação
-  - Verificar: Todas as imagens necessárias estão listadas
+  - verify: Todas as imagens necessárias estão listadas
 
 - [ ] **`docs/NASP_DEPLOY_RUNBOOK.md` revisado**
-  - Verificar: Runbook completo e seguível
-  - Verificar: Comandos não expõem IPs reais
+  - verify: Runbook completo e seguível
+  - verify: Comandos não expõem IPs reais
 
 ### 7.2 READMEs Atualizados
 
 - [ ] **`README_OPERATIONS_PROD.md` atualizado**
-  - Verificar: Section sobre NASP adicionada
-  - Verificar: Links for documentos in `docs/`
+  - verify: Section sobre NASP adicionada
+  - verify: Links for documentos in `docs/`
 
 - [ ] **`DEVELOPER_GUIDE.md` atualizado**
-  - Verificar: Section sobre integração NASP adicionada
-  - Verificar: Diferenças entre local e NASP documentadas
+  - verify: Section sobre integração NASP adicionada
+  - verify: Diferenças entre local e NASP documentadas
 
 ---
 
@@ -266,9 +266,9 @@ kubectl get namespaces
    - Executar playbooks Ansible na ordem recomendada
    - Monitorar logs durante deploy
 
-3. **Validação Pós-Deploy:**
+3. **validation Pós-Deploy:**
    - Executar `ansible/playbooks/validate-cluster.yml`
-   - Verificar health checks de todos os módulos
+   - verify health checks de todos os módulos
 
 ---
 

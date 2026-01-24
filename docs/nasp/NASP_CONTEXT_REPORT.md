@@ -2,7 +2,7 @@
 
 **Data:** <DATA_GERADA>  
 **Gerado por:** scripts/discover-nasp-endpoints.sh  
-**Objetivo:** Documentar o ambiente NASP sem expor informações sensíveis
+**Objetivo:** Documentar o environment NASP sem expor informações sensíveis
 
 ---
 
@@ -15,7 +15,7 @@
 | CNI | Calico |
 | Namespace TriSLA alvo | <TRISLA_NAMESPACE> (ex.: trisla) |
 
-**Nota:** Este relatório é gerado automaticamente. Execute `scripts/discover-nasp-endpoints.sh` no ambiente NASP for obter valores reais.
+**Nota:** Este relatório é gerado automaticamente. Execute `scripts/discover-nasp-endpoints.sh` no environment NASP for obter valores reais.
 
 ---
 
@@ -23,8 +23,8 @@
 
 | Componente | Namespace | Tipo de Service | Observação |
 |------------|-----------|-----------------|------------|
-| Prometheus | monitoring | ClusterIP/NodePort | Usado for métricas NASP |
-| Grafana | monitoring | ClusterIP | UI de visualização de métricas |
+| Prometheus | monitoring | ClusterIP/NodePort | Usado for metrics NASP |
+| Grafana | monitoring | ClusterIP | UI de visualização de metrics |
 | Kafka | <KAFKA_NS> | ClusterIP | Broker for eventos TriSLA/NASP |
 | NASP Adapter | <NASP_NS> | ClusterIP | Interface entre TriSLA e NASP |
 | Loki | monitoring | ClusterIP | Sistema de logs (se disponível) |

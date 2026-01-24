@@ -70,7 +70,7 @@ apps/sem-csmf/
 ### 1. Processamento de Intents
 
 - Recebe intents de alto nível (linguagem natural ou estruturado)
-- Valida semanticamente usando ontologia OWL
+- validates semanticamente usando ontologia OWL
 - Processa com NLP for extrair informações
 - Gera NEST (Network Slice Template)
 
@@ -79,7 +79,7 @@ apps/sem-csmf/
 - Ontologia completa in Turtle (`.ttl`)
 - Classes, propriedades e indivíduos
 - Reasoning semântico com Pellet
-- Validação de requisitos SLA
+- validation de requisitos SLA
 
 ### 3. NLP (Natural Language Processing)
 
@@ -91,7 +91,7 @@ apps/sem-csmf/
 ### 4. Geração de NEST
 
 - Conversão de GST for NEST
-- Validação contra ontologia
+- validation contra ontologia
 - Persistência in PostgreSQL
 - Envio for Decision Engine (I-01)
 
@@ -105,16 +105,16 @@ apps/sem-csmf/
 **Direção:** SEM-CSMF → Decision Engine  
 **Payload:** NEST + Metadados
 
-**Documentação:** Ver [Guia Completo](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-01-grpc)
+**Documentação:** Ver [guide Completo](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-01-grpc)
 
 ### Interface I-02 (Kafka)
 
 **Tipo:** Kafka  
 **Direção:** SEM-CSMF → ML-NSMF  
-**Tópico:** `sem-csmf-nests`  
+**topic:** `sem-csmf-nests`  
 **Payload:** NEST completo
 
-**Documentação:** Ver [Guia Completo](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-02-kafka)
+**Documentação:** Ver [guide Completo](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-02-kafka)
 
 ---
 
@@ -122,9 +122,9 @@ apps/sem-csmf/
 
 ### Início Rápido
 
-1. **Ler o Guia Completo:** [`SEM_CSMF_COMPLETE_GUIDE.md`](SEM_CSMF_COMPLETE_GUIDE.md)
+1. **Ler o guide Completo:** [`SEM_CSMF_COMPLETE_GUIDE.md`](SEM_CSMF_COMPLETE_GUIDE.md)
 2. **Entender a Ontologia:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
-3. **Ver Exemplos:** Ver seção de exemplos no guia completo
+3. **Ver Exemplos:** Ver seção de exemplos no guide completo
 
 ### Uso of Ontologia
 
@@ -153,7 +153,7 @@ validated = await processor.validate_semantic(intent)
 
 ## 🔧 Configuração
 
-### Variáveis de Ambiente
+### variables de environment
 
 ```bash
 # Database
@@ -214,7 +214,7 @@ pytest tests/integration/test_grpc_communication.py
 
 ## 🎯 Próximos Passos
 
-1. **Ler o Guia Completo** for entender todo o funcionamento
+1. **Ler o guide Completo** for entender todo o funcionamento
 2. **Explorar a Ontologia** no Protégé
 3. **Testar Processamento** de intents
 4. **Validar Integrações** com outros módulos

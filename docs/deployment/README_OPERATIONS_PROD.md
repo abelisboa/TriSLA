@@ -4,17 +4,17 @@
 
 ### 1.1 Document Objective
 
-This document provides instruções completas for implantar, operar e manter o **TriSLA** (Triple-SLA) in production environment real, especificamente no **NASP** (Network Automation & Slicing Platform). O guia cobre desde a preparação inicial of ambiente até operações diárias, troubleshooting e boas práticas de segurança.
+This document provides instruções completas for implantar, operar e manter o **TriSLA** (Triple-SLA) in production environment real, especificamente no **NASP** (Network Automation & Slicing Platform). O guide cobre desde a preparação inicial of environment até operações diárias, troubleshooting e boas práticas de segurança.
 
-### 1.2 Visão Geral of TriSLA in Produção
+### 1.2 Visão Geral of TriSLA in production
 
-O **TriSLA** é uma arquitetura SLA-Aware, explicável e automatizada for garantia de Service Level Agreements in redes 5G/O-RAN. Em produção, o sistema opera como um conjunto de microserviços distribuídos no Kubernetes, integrando:
+O **TriSLA** é uma arquitetura SLA-Aware, explicável e automatizada for garantia de Service Level Agreements in redes 5G/O-RAN. In Production, o sistema opera como um conjunto de microserviços distribuídos no Kubernetes, integrando:
 
 - **SEM-CSMF**: Interpretação semântica de intenções de tenant e geração de NEST (Network Slice Template)
 - **ML-NSMF**: Predição de violações de SLA usando modelos LSTM com explicação (XAI)
 - **Decision Engine**: Motor de decisão automatizado baseado in regras e ML
 - **BC-NSSMF**: Execução de smart contracts in blockchain for registro imutável de SLAs
-- **SLA-Agent Layer**: Agentes federados for coleta de métricas in RAN, Transport e Core
+- **SLA-Agent Layer**: Agentes federados for coleta de metrics in RAN, Transport e Core
 - **NASP Adapter**: Integração com a plataforma NASP for execução de ações reais
 - **UI Dashboard**: Interface visual for monitoramento e administração
 
@@ -28,7 +28,7 @@ Antes de start o deploy, certifique-se de que o operador possui:
 - **Ansible** instalado (versão ≥ 2.14) — opcional, for automação
 - **Acesso ao GitHub Container Registry (GHCR)** com token válido
 - **Conhecimento básico** de Kubernetes, Helm, e arquitetura 5G/O-RAN
-- **Credenciais de acesso** ao ambiente NASP (endpoints, tokens, certificados)
+- **Credenciais de acesso** ao environment NASP (endpoints, tokens, certificados)
 
 ---
 
@@ -44,7 +44,7 @@ O TriSLA requer um cluster Kubernetes configurado com:
 - **Ingress Controller**: Nginx ou similar (para exposição de serviços)
 - **RBAC**: Habilitado e configurado
 
-**Validação of cluster:**
+**validation of cluster:**
 
 ```bash
 kubectl cluster-info
@@ -100,7 +100,7 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 pip install ansible
 ```
 
-**Validação:**
+**validation:**
 
 ```bash
 kubectl version --client
@@ -114,7 +114,7 @@ ansible --version  # se instalado
 
 ### 3.1 SEM-CSMF (Semantic Communication Service Management Function)
 
-**Função**: Processa intenções de tenant in linguagem natural e gera NEST (Network Slice Template) usando ontologia OWL.
+**function**: Processa intenções de tenant in linguagem natural e gera NEST (Network Slice Template) usando ontologia OWL.
 
 **Endpoints**:
 - REST API: `http://sem-csmf:8080`
@@ -122,11 +122,11 @@ ansible --version  # se instalado
 - gRPC: `sem-csmf:50051` (Interface I-01)
 
 **Dependências**:
-- PostgreSQL (banco de dados de intenções e NESTs)
+- PostgreSQL (banco de Data de intenções e NESTs)
 - Kafka (mensageria)
 - Decision Engine (via gRPC)
 
-**Variáveis de ambiente críticas**:
+**variables de environment críticas**:
 - `DATABASE_URL`: String de conexão PostgreSQL
 - `DECISION_ENGINE_GRPC`: Endpoint gRPC of Decision Engine
 - `KAFKA_BOOTSTRAP_SERVERS`: Lista de brokers Kafka
@@ -134,15 +134,15 @@ ansible --version  # se instalado
 
 ### 3.2 ML-NSMF (Machine Learning Network Slice Management Function)
 
-**Função**: Prediz violações de SLA usando modelos LSTM e fornece explicações (XAI) for decisões.
+**function**: Prediz violações de SLA usando modelos LSTM e fornece explicações (XAI) for decisions.
 
 **Endpoints**:
 - REST API: `http://ml-nsmf:8081`
 - Health: `http://ml-nsmf:8081/health`
 
 **Dependências**:
-- Kafka (consumo de métricas e publicação de predições)
-- OTLP Collector (exportação de métricas)
+- Kafka (consumo de metrics e publicação de predições)
+- OTLP Collector (exportação de metrics)
 
 **Modelos ML**:
 - Modelo LSTM pré-treinado for predição de violações
@@ -150,7 +150,7 @@ ansible --version  # se instalado
 
 ### 3.3 Decision Engine
 
-**Função**: Motor de decisão automatizado que combina regras de negócio, predições ML e estado atual of rede for tomar decisões sobre slices.
+**function**: Motor de decisão automatizado que combina regras de negócio, predições ML e estado atual of rede for tomar decisions sobre slices.
 
 **Endpoints**:
 - REST API: `http://decision-engine:8082`
@@ -166,12 +166,12 @@ ansible --version  # se instalado
 **Lógica de decisão**:
 - Avalia predições de ML-NSMF
 - Aplica regras de negócio configuráveis
-- Consulta estado atual via SLA-Agent Layer
+- Queries estado atual via SLA-Agent Layer
 - Executa ações via NASP Adapter
 
 ### 3.4 BC-NSSMF (Blockchain Network Slice Subnet Management Function)
 
-**Função**: Gerencia smart contracts in blockchain (GoQuorum/Besu) for registro imutável de SLAs e compliance.
+**function**: Gerencia smart contracts in blockchain (GoQuorum/Besu) for registro imutável de SLAs e compliance.
 
 **Endpoints**:
 - REST API: `http://bc-nssmf:8083`
@@ -184,29 +184,29 @@ ansible --version  # se instalado
 - OTLP Collector
 
 **Smart Contracts**:
-- `SLAContract.sol`: Contrato principal for registro de SLAs
+- `SLAContract.sol`: contract main for registro de SLAs
 
 ### 3.5 SLA-Agent Layer
 
-**Função**: Agentes federados que coletam métricas in tempo real de RAN, Transport e Core.
+**function**: Agentes federados que coletam metrics in real time de RAN, Transport e Core.
 
 **Endpoints**:
 - REST API: `http://sla-agent-layer:8084`
 - Health: `http://sla-agent-layer:8084/health`
 
 **Agentes**:
-- **Agent RAN**: Coleta métricas de RAN (CPU, memória, throughput)
-- **Agent Transport**: Coleta métricas de transporte (bandwidth, latency, jitter)
-- **Agent Core**: Coleta métricas de core (connections, packets/sec, error rate)
+- **Agent RAN**: Coleta metrics de RAN (CPU, memória, throughput)
+- **Agent Transport**: Coleta metrics de transporte (bandwidth, latency, jitter)
+- **Agent Core**: Coleta metrics de core (connections, packets/sec, error rate)
 
 **Dependências**:
 - NASP Adapter (para acesso aos endpoints NASP)
-- Kafka (publicação de métricas)
+- Kafka (publicação de metrics)
 - OTLP Collector
 
 ### 3.6 NASP Adapter
 
-**Função**: Adaptador que traduz ações of Decision Engine in chamadas reais à API NASP.
+**function**: Adaptador que traduz ações of Decision Engine in chamadas reais à API NASP.
 
 **Endpoints**:
 - REST API: `http://nasp-adapter:8085`
@@ -216,7 +216,7 @@ ansible --version  # se instalado
 - `NASP_RAN_ENDPOINT`: Endpoint of API NASP for RAN
 - `NASP_TRANSPORT_ENDPOINT`: Endpoint of API NASP for Transport
 - `NASP_CORE_ENDPOINT`: Endpoint of API NASP for Core
-- `NASP_MODE`: `production` (não usar `mock` in produção)
+- `NASP_MODE`: `production` (não usar `mock` in production)
 
 **Dependências**:
 - APIs NASP reais (não mocks)
@@ -226,7 +226,7 @@ ansible --version  # se instalado
 ### 3.7 Observabilidade OTLP
 
 **OpenTelemetry Collector**: Coleta traces, metrics e logs de todos os módulos e exporta para:
-- **Prometheus**: Métricas
+- **Prometheus**: metrics
 - **Grafana**: Visualização
 - **Alertmanager**: Alertas baseados in SLO
 
@@ -236,7 +236,7 @@ ansible --version  # se instalado
 
 ---
 
-## 4. Preparação of Ambiente NASP
+## 4. Preparação of environment NASP
 
 ### 4.1 Criar Namespace `trisla`
 
@@ -246,7 +246,7 @@ kubectl label namespace trisla name=trisla
 kubectl label namespace trisla environment=production
 ```
 
-**Validação:**
+**validation:**
 
 ```bash
 kubectl get namespace trisla
@@ -294,7 +294,7 @@ Aplique o secret:
 kubectl apply -f ghcr-secret.yaml
 ```
 
-**Validação:**
+**validation:**
 
 ```bash
 kubectl get secret ghcr-secret -n trisla
@@ -361,7 +361,7 @@ Este playbook verifica:
 
 ### 5.1 Exemplo Completo de `values-nasp.yaml`
 
-Crie um arquivo `values-nasp.yaml` com as configurações específicas of seu ambiente NASP:
+Crie um arquivo `values-nasp.yaml` com as configurações específicas of seu environment NASP:
 
 ```yaml
 # ============================================
@@ -376,7 +376,7 @@ global:
 
 # Network Configuration (ajustar according to NASP)
 network:
-  interface: "eth0"  # Interface de rede principal of cluster
+  interface: "eth0"  # Interface de rede main of cluster
   nodeIP: "192.168.10.16"  # IP of nó Kubernetes (ajustar)
   gateway: "192.168.10.1"  # Gateway padrão (ajustar)
 
@@ -524,7 +524,7 @@ naspAdapter:
     KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     OTLP_ENDPOINT: "http://otlp-collector:4317"
     LOG_LEVEL: "INFO"
-    NASP_MODE: "production"  # ⚠️ NÃO usar "mock" in produção
+    NASP_MODE: "production"  # ⚠️ NÃO usar "mock" in production
     NASP_RAN_ENDPOINT: "https://<NASP_RAN_ENDPOINT>/api/v1"  # ⚠️ AJUSTAR
     NASP_TRANSPORT_ENDPOINT: "https://<NASP_TRANSPORT_ENDPOINT>/api/v1"  # ⚠️ AJUSTAR
     NASP_CORE_ENDPOINT: "https://<NASP_CORE_ENDPOINT>/api/v1"  # ⚠️ AJUSTAR
@@ -646,7 +646,7 @@ production:
 
 Os seguintes campos **devem** ser ajustados antes of deploy:
 
-1. **`network.nodeIP`**: IP of nó Kubernetes principal
+1. **`network.nodeIP`**: IP of nó Kubernetes main
 2. **`network.gateway`**: Gateway padrão of rede
 3. **`naspAdapter.env.NASP_RAN_ENDPOINT`**: Endpoint real of API NASP for RAN
 4. **`naspAdapter.env.NASP_TRANSPORT_ENDPOINT`**: Endpoint real of API NASP for Transport
@@ -662,7 +662,7 @@ Os seguintes campos **devem** ser ajustados antes of deploy:
 - **Recursos (CPU/Memory)**: Ajustar according to capacidade of cluster
 - **Replicas**: Aumentar for alta disponibilidade
 - **StorageClass**: Ajustar according to storage disponível
-- **Ingress TLS**: Configurar certificados SSL/TLS
+- **Ingress TLS**: configure certificados SSL/TLS
 
 ### 5.4 Referência aos Templates
 
@@ -695,14 +695,14 @@ helm upgrade --install trisla ./helm/trisla \
 
 **Explicação dos parâmetros:**
 
-- `upgrade --install`: Instala se não existir, atualiza se existir
+- `upgrade --install`: Instala se não existir, Updates se existir
 - `--namespace trisla`: Namespace onde será instalado
 - `--create-namespace`: Cria o namespace se não existir
 - `--values`: Arquivo de valores customizado
 - `--wait`: Waits os recursos ficarem prontos
 - `--timeout 10m`: Timeout de 10 minutos
 
-### 6.2 Deploy com Validação Automática (`--atomic`)
+### 6.2 Deploy com validation Automática (`--atomic`)
 
 Para garantir rollback automático in caso de falha:
 
@@ -729,7 +729,7 @@ vim ./helm/trisla/values-nasp.yaml
 # 2. Validar o chart
 helm lint ./helm/trisla
 
-# 3. Dry-run for verificar mudanças
+# 3. Dry-run for verify mudanças
 helm upgrade trisla ./helm/trisla \
   --namespace trisla \
   --values ./helm/trisla/values-nasp.yaml \
@@ -873,7 +873,7 @@ kubectl get events -n trisla --sort-by='.lastTimestamp'
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
 
-### 7.4 Validação of Infraestrutura NASP
+### 7.4 validation of Infraestrutura NASP
 
 **Testar conectividade com NASP:**
 
@@ -902,10 +902,10 @@ curl http://localhost:8085/health
 
 ### 8.1 Exportação OTLP
 
-Todos os módulos TriSLA exportam métricas, traces e logs via OpenTelemetry. O OTLP Collector está configurado para:
+Todos os módulos TriSLA exportam metrics, traces e logs via OpenTelemetry. O OTLP Collector está configurado para:
 
 - **Receber**: gRPC (porta 4317) e HTTP (porta 4318)
-- **Exportar for Prometheus**: Métricas
+- **Exportar for Prometheus**: metrics
 - **Exportar for Grafana**: Visualização
 
 **Verifiesr OTLP Collector:**
@@ -919,7 +919,7 @@ kubectl logs -n trisla -l app=otlp-collector --tail=50
 
 As regras de alerta estão configuradas in `monitoring/prometheus/rules/`. Principais alertas:
 
-- **SLA Violation**: Violação de SLA detectada
+- **SLA Violation**: violation de SLA detectada
 - **Module Down**: Módulo TriSLA indisponível
 - **High Latency**: Latência elevada entre módulos
 - **Kafka Lag**: Atraso no processamento de mensagens Kafka
@@ -944,8 +944,8 @@ Dashboards pré-configurados estão in `monitoring/grafana/dashboards/`:
 
 - **TriSLA Overview**: Visão geral of sistema
 - **SLO Compliance**: Compliance de SLAs
-- **Module Metrics**: Métricas por módulo
-- **Network Metrics**: Métricas de rede
+- **Module Metrics**: metrics por módulo
+- **Network Metrics**: metrics de rede
 
 **Acessar Grafana:**
 
@@ -970,13 +970,13 @@ kubectl get configmap -n trisla | grep grafana
 
 Alertas críticos configurados:
 
-1. **SLA Violation Critical**: Violação de SLA com impacto crítico
+1. **SLA Violation Critical**: violation de SLA com impacto crítico
 2. **Module Crash Loop**: Pod in crash loop
 3. **Database Connection Failure**: Falha de conexão com PostgreSQL
 4. **Kafka Unavailable**: Kafka indisponível
 5. **NASP Adapter Failure**: Falha na comunicação com NASP
 
-**Configurar notificações (Alertmanager):**
+**configure notificações (Alertmanager):**
 
 Edite `monitoring/alertmanager/config.yml` e aplique:
 
@@ -1012,7 +1012,7 @@ O fluxo end-to-end of TriSLA segue os seguintes passos:
 4. **ML-NSMF retorna predição** → Decision Engine
 5. **Decision Engine toma decisão** → BC-NSSMF (registro) + NASP Adapter (execução)
 6. **NASP Adapter executa ações** → NASP (RAN/Transport/Core)
-7. **SLA-Agent Layer coleta métricas** → Kafka → ML-NSMF (feedback loop)
+7. **SLA-Agent Layer coleta metrics** → Kafka → ML-NSMF (feedback loop)
 
 ### 9.2 Workflow de Tenant → SLA → Slice
 
@@ -1042,10 +1042,10 @@ curl http://<SEM-CSMF_ENDPOINT>/api/v1/nests/<NEST_ID>
 curl http://<DECISION_ENGINE_ENDPOINT>/api/v1/decisions/<DECISION_ID>
 ```
 
-**4. BC-NSSMF registra SLA in blockchain:**
+**4. BC-NSSMF Registers SLA in blockchain:**
 
 ```bash
-# Verifiesr contrato
+# Verifiesr contract
 curl http://<BC-NSSMF_ENDPOINT>/api/v1/contracts/<CONTRACT_ADDRESS>
 ```
 
@@ -1058,7 +1058,7 @@ curl http://<NASP_ADAPTER_ENDPOINT>/api/v1/actions
 
 ### 9.3 Integração com ML-NSMF
 
-O ML-NSMF recebe métricas via Kafka e gera predições:
+O ML-NSMF recebe metrics via Kafka e gera predições:
 
 ```bash
 # Verifiesr predições
@@ -1085,15 +1085,15 @@ curl http://<BC-NSSMF_ENDPOINT>/api/v1/contracts/<CONTRACT_ADDRESS>/compliance
 
 - **SLA Compliance Rate**: Taxa de compliance de SLAs
 - **Prediction Accuracy**: Precisão das predições ML
-- **Decision Latency**: Latência de decisões
+- **Decision Latency**: Latência de decisions
 - **Action Execution Time**: Tempo de execução de ações
 
-**Acessar métricas:**
+**Acessar metrics:**
 
 ```bash
 # Via Prometheus
 kubectl port-forward -n trisla svc/prometheus 9090:9090
-# Acessar http://localhost:9090 e consultar métricas:
+# Acessar http://localhost:9090 e consultar metrics:
 # - trisla_sla_compliance_rate
 # - trisla_prediction_accuracy
 # - trisla_decision_latency_seconds
@@ -1197,15 +1197,15 @@ helm upgrade trisla ./helm/trisla \
   --wait
 ```
 
-### 10.4 Coleta de Métricas
+### 10.4 Coleta de metrics
 
-**Exportar métricas of Prometheus:**
+**Exportar metrics of Prometheus:**
 
 ```bash
 # Via API of Prometheus
 kubectl port-forward -n trisla svc/prometheus 9090:9090
 
-# Consultar métricas
+# Consultar metrics
 curl 'http://localhost:9090/api/v1/query?query=trisla_sla_compliance_rate'
 ```
 
@@ -1223,7 +1223,7 @@ kubectl logs -n trisla -l app=ml-nsmf --tail=1000 > ml-nsmf.log
 
 ### 11.1 Problemas Comuns
 
-**Problema 1: Pods in estado `CrashLoopBackOff`**
+**problem 1: Pods in estado `CrashLoopBackOff`**
 
 ```bash
 # Verifiesr logs
@@ -1238,10 +1238,10 @@ kubectl top pod <POD_NAME> -n trisla
 
 **Causas comuns:**
 - Falta de recursos (CPU/Memory)
-- Erro de configuração (variáveis de ambiente)
+- error de configuração (variables de environment)
 - Falha de dependência (PostgreSQL, Kafka)
 
-**Problema 2: Imagens não são puxadas of GHCR**
+**problem 2: Imagens não são puxadas of GHCR**
 
 ```bash
 # Verifiesr secret
@@ -1258,7 +1258,7 @@ kubectl run test-pull --image=ghcr.io/abelisboa/trisla-sem-csmf:latest --rm -it 
 - Recriar secret GHCR (ver section 4.2)
 - Verifiesr token GitHub
 
-**Problema 3: Falha de conexão com NASP**
+**problem 3: Falha de conexão com NASP**
 
 ```bash
 # Verifiesr logs of NASP Adapter
@@ -1274,7 +1274,7 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=nasp-adapter -o js
 - Verifiesr token de autenticação
 - Verifiesr conectividade de rede
 
-**Problema 4: Kafka não está disponível**
+**problem 4: Kafka não está disponível**
 
 ```bash
 # Verifiesr pods Kafka
@@ -1324,7 +1324,7 @@ kubectl get svc -n trisla
 
 ### 11.3 Como Ver Logs por Módulo
 
-**Logs in tempo real:**
+**Logs in real time:**
 
 ```bash
 # SEM-CSMF
@@ -1382,13 +1382,13 @@ kubectl get events -n trisla | grep -i "restart\|backoff"
 **Scripts úteis:**
 
 ```bash
-# Validação de produção
+# validation de production
 ./scripts/validate-production-real.sh
 
-# Validação de infraestrutura NASP
+# validation de infraestrutura NASP
 ./scripts/validate-nasp-infra.sh
 
-# Validação E2E
+# validation E2E
 ./scripts/validate-e2e-pipeline.sh
 
 # Verifiesção de estrutura
@@ -1401,11 +1401,11 @@ kubectl get events -n trisla | grep -i "restart\|backoff"
 **Playbooks Ansible:**
 
 ```bash
-# Validação completa
+# validation completa
 cd ansible
 ansible-playbook -i inventory.yaml playbooks/validate-cluster.yml
 
-# Deploy com validação
+# Deploy com validation
 ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
 ```
 
@@ -1497,7 +1497,7 @@ vim ./helm/trisla/values-nasp.yaml
 helm lint ./helm/trisla
 helm template trisla ./helm/trisla --values ./helm/trisla/values-nasp.yaml
 
-# 4. Aplicar in ambiente de teste primeiro
+# 4. Aplicar in environment de teste primeiro
 helm upgrade trisla-test ./helm/trisla \
   --namespace trisla-test \
   --values ./helm/trisla/values-nasp.yaml
@@ -1505,7 +1505,7 @@ helm upgrade trisla-test ./helm/trisla \
 # 5. Validar in teste
 # ... validações ...
 
-# 6. Aplicar in produção
+# 6. Aplicar in production
 helm upgrade trisla ./helm/trisla \
   --namespace trisla \
   --values ./helm/trisla/values-nasp.yaml \
@@ -1524,7 +1524,7 @@ cosign verify ghcr.io/abelisboa/trisla-sem-csmf:latest
 
 **Boas práticas:**
 
-- Use imagens com tags específicas (não `latest` in produção)
+- Use imagens com tags específicas (não `latest` in production)
 - Verifique checksums de imagens
 - Use image scanning (Trivy, Snyk)
 
@@ -1541,8 +1541,8 @@ cosign verify ghcr.io/abelisboa/trisla-sem-csmf:latest
 | Script | description |
 |-------|-----------|
 | `deploy-trisla-nasp.sh` | Deploy completo no NASP |
-| `validate-production-real.sh` | Validação de produção |
-| `validate-nasp-infra.sh` | Validação de infraestrutura NASP |
+| `validate-production-real.sh` | validation de production |
+| `validate-nasp-infra.sh` | validation de infraestrutura NASP |
 | `test-module-connections.sh` | Teste de conexões entre módulos |
 | `rollback.sh` | Rollback de deploy |
 | `backup-postgres.sh` | Backup of banco PostgreSQL |
@@ -1565,9 +1565,9 @@ chmod +x *.sh
 | Playbook | description |
 |----------|-----------|
 | `deploy-trisla-nasp.yml` | Deploy completo |
-| `pre-flight.yml` | Validação pré-deploy |
+| `pre-flight.yml` | validation pré-deploy |
 | `setup-namespace.yml` | Criação de namespace |
-| `validate-cluster.yml` | Validação de cluster |
+| `validate-cluster.yml` | validation de cluster |
 
 **Uso:**
 
@@ -1576,7 +1576,7 @@ cd TriSLA-clean/ansible
 ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
 ```
 
-**Variáveis importantes (em `group_vars/all.yml`):**
+**variables importantes (em `group_vars/all.yml`):**
 
 ```yaml
 trisla:
@@ -1612,7 +1612,7 @@ TriSLA-clean/
 │   ├── playbooks/
 │   └── inventory.yaml
 ├── scripts/                # Scripts de automação
-├── docker-compose.yml      # Para desenvolvimento local
+├── docker-compose.yml      # Para development local
 ├── README.md               # Documentação geral
 └── README_OPERATIONS_PROD.md # Este documento
 ```
@@ -1620,8 +1620,8 @@ TriSLA-clean/
 **Documentação adicional:**
 
 - `README.md`: Visão geral of projeto
-- `helm/trisla/README.md`: Guia of Helm chart
-- `monitoring/README.md`: Guia de observabilidade
+- `helm/trisla/README.md`: guide of Helm chart
+- `monitoring/README.md`: guide de observabilidade
 - `apps/*/README.md`: Documentação de cada módulo
 
 ---
@@ -1638,7 +1638,7 @@ O checklist inclui:
 - Pré-requisitos no cluster NASP
 - Descoberta de endpoints NASP
 - Configuração de Helm values
-- Deploy e validação pós-deploy
+- Deploy e validation pós-deploy
 - Troubleshooting
 
 ### 7.2 Descoberta de Endpoints NASP
@@ -1697,9 +1697,9 @@ kubectl get pods -n trisla
 kubectl get svc -n trisla
 ```
 
-### 7.5 Validação Pós-Deploy
+### 7.5 validation Pós-Deploy
 
-Siga a section "5. Validação Pós-Deploy" of checklist in `docs/NASP_PREDEPLOY_CHECKLIST.md`.
+Siga a section "5. validation Pós-Deploy" of checklist in `docs/NASP_PREDEPLOY_CHECKLIST.md`.
 
 ---
 
@@ -1707,7 +1707,7 @@ Siga a section "5. Validação Pós-Deploy" of checklist in `docs/NASP_PREDEPLOY
 
 ### 8.1 Documentação de Deploy NASP
 
-Para realizar um deploy controlado of TriSLA no ambiente NASP, siga a documentação completa:
+Para realizar um deploy controlado of TriSLA no environment NASP, siga a documentação completa:
 
 **Documentos principais:**
 
@@ -1715,13 +1715,13 @@ Para realizar um deploy controlado of TriSLA no ambiente NASP, siga a documenta�
    - Gerado por: `scripts/discover-nasp-endpoints.sh`
    - Contém: Visão geral of cluster, serviços detectados, diagnóstico de saúde
 
-2. **`docs/VALUES_PRODUCTION_GUIDE.md`** — Guia de preenchimento de `values-production.yaml`
+2. **`docs/VALUES_PRODUCTION_GUIDE.md`** — guide de preenchimento de `values-production.yaml`
    - Explicação conceitual de values.yaml vs values-production.yaml
    - Table de parâmetros críticos
    - Erros comuns e como evitar
 
 3. **`docs/IMAGES_GHCR_MATRIX.md`** — Matriz de imagens Docker no GHCR
-   - Gerado por: Validação manual via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
+   - Gerado por: validation manual via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
    - Contém: Status de cada imagem, dependências, como publicar imagens faltantes
 
 4. **`docs/NASP_PREDEPLOY_CHECKLIST_v2.md`** — Checklist completo de pré-deploy
@@ -1734,7 +1734,7 @@ Para realizar um deploy controlado of TriSLA no ambiente NASP, siga a documenta�
 5. **`docs/NASP_DEPLOY_RUNBOOK.md`** — Runbook operacional de deploy
    - Fluxo de execução passo a passo
    - Comandos de rollback
-   - Validação pós-deploy
+   - validation pós-deploy
    - Troubleshooting
 
 ### 8.2 Scripts Auxiliares
@@ -1762,14 +1762,14 @@ docker manifest inspect ghcr.io/abelisboa/trisla-ml-nsmf:latest
 1. **Descoberta:** Executar `scripts/discover-nasp-endpoints.sh`
 2. **Configuration:** Preencher `values-production.yaml` com `scripts/fill_values_production.sh`
 3. **Publicação de Imagens:** Publicar imagens no GHCR manualmente ou via scripts (`scripts/build-all-images.sh`, `scripts/push-all-images.ps1`) - ver `docs/ghcr/GHCR_PUBLISH_GUIDE.md`
-4. **Validação:** Validar imagens manualmente via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)`
+4. **validation:** Validar imagens manualmente via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)`
 5. **Deploy:** Seguir `docs/NASP_DEPLOY_RUNBOOK.md`
 
 ---
 
 ## Conclusão
 
-Este guia fornece todas as informações necessárias for operar o TriSLA in produção no ambiente NASP. Para suporte adicional, consulte a documentação técnica in `README.md` ou entre in contato através of repositório GitHub.
+Este guide fornece todas as informações necessárias for operar o TriSLA in production no environment NASP. Para suporte adicional, consulte a documentação técnica in `README.md` ou entre in contato através of repositório GitHub.
 
 **Última atualização:** 2025-11-22  
 **Versão of documento:** 1.0.0  

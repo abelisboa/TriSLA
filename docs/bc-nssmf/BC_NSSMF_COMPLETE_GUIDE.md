@@ -273,18 +273,18 @@ class BCConfig:
 **Endpoints:**
 
 1. **`POST /bc/register`**
-   - Registra SLA on-chain
+   - Registers SLA on-chain
    - Body: `SLARequest`
    - Returns: `{"status": "ok", "tx": "0x..."}`
 
 2. **`POST /bc/update`**
-   - Atualiza status de SLA
+   - Updates SLA status
    - Body: `SLAStatusUpdate`
    - Returns: `{"status": "ok", "tx": "0x..."}`
 
 3. **`GET /bc/{sla_id}`**
-   - Consulta SLA
-   - Returns: Dados of SLA
+   - Queries SLA
+   - Returns: SLA data
 
 **Modelos Pydantic:**
 
@@ -323,7 +323,7 @@ class SLAStatusUpdate(BaseModel):
 
 **Class:** `MetricsOracle`
 
-**Função:** obtains métricas reais of NASP for validação de smart contracts.
+**Function:** obtains real metrics from NASP for smart contract validation.
 
 #### Main Method
 
@@ -343,10 +343,10 @@ metrics = await metrics_oracle.get_metrics()
 }
 ```
 
-**Em Produção:**
+**In Production:**
 - Connects to NASP Adapter via HTTP REST
-- obtains métricas in tempo real
-- Valida contra thresholds of SLA
+- obtains metrics in real time
+- Validates against SLA thresholds
 
 ---
 
@@ -355,7 +355,7 @@ metrics = await metrics_oracle.get_metrics()
 ### 1. Decision Engine (Interface I-04)
 
 **Tipo:** Kafka Consumer  
-**Tópico:** `trisla-i04-decisions`  
+**Topic:** `trisla-i04-decisions`  
 **Payload:** Decisão de aceitação/rejeição
 
 **Código:**
@@ -364,43 +364,43 @@ from kafka_consumer import DecisionConsumer
 
 consumer = DecisionConsumer(contract_executor, metrics_oracle)
 
-# Consumir decisões
+# Consume decisions
 result = await consumer.consume_and_execute()
 ```
 
 **Fluxo:**
 1. Decision Engine sends decision `ACCEPT` via Kafka
-2. BC-NSSMF consome mensagem
-3. BC-NSSMF registra SLA on-chain
+2. BC-NSSMF consome message
+3. BC-NSSMF Registers SLA on-chain
 4. BC-NSSMF retorna `tx_hash` e `block_number`
 
 ### 2. SLO Reporter
 
 **Tipo:** HTTP REST  
 **Endpoint:** `POST /bc/update`  
-**Payload:** Violação de SLA
+**Payload:** violation de SLA
 
 **Fluxo:**
-1. SLO Reporter detecta violação
-2. SLO Reporter chama BC-NSSMF
-3. BC-NSSMF atualiza status for `VIOLATED`
+1. SLO Reporter detects violation
+2. SLO Reporter calls BC-NSSMF
+3. BC-NSSMF Updates status for `VIOLATED`
 4. BC-NSSMF emits event `SLAUpdated`
 
 ### 3. NASP Adapter
 
 **Tipo:** HTTP REST  
 **Endpoint:** `http://nasp-adapter:8080/api/v1/metrics`  
-**Função:** Fornecer métricas ao Oracle
+**Function:** provide metrics ao Oracle
 
 ---
 
 ## 📡 Interface I-04 (Kafka)
 
-### Tópico Kafka
+### topic Kafka
 
 **Nome:** `trisla-i04-decisions`
 
-### Schema of Mensagem
+### schema of Message
 
 ```json
 {
@@ -462,17 +462,17 @@ cd apps/bc-nssmf
 python src/deploy_contracts.py
 ```
 
-**Saída Esperada:**
+**output expected:**
 ```
 [TriSLA] Compiling Solidity contract...
 [TriSLA] Usando conta: 0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1
-[TriSLA] Saldo of conta: 100.0 ETH
+[TriSLA] Saldo of account: 100.0 ETH
 [TriSLA] Enviando transação de deploy: 0x...
 [TriSLA] Contrato implantado em: 0x42699A7612A82f1d9C36148af9C77354759b210b
-[TriSLA] Endereço e ABI salvos in contract_address.json
+[TriSLA] address e ABI salvos to contract_address.json
 ```
 
-### 3. Configurar Variáveis de Ambiente
+### 3. Configurar Environment Variables
 
 **File:** `.env` ou variáveis de ambiente
 
@@ -480,8 +480,8 @@ python src/deploy_contracts.py
 # Blockchain
 TRISLA_RPC_URL=http://127.0.0.1:8545
 TRISLA_CHAIN_ID=1337
-TRISLA_PRIVATE_KEY=0x...  # Produção
-TRISLA_DEV_PRIVATE_KEY=0x...  # Desenvolvimento
+TRISLA_PRIVATE_KEY=0x...  # production
+TRISLA_DEV_PRIVATE_KEY=0x...  # development
 
 # Kafka
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -589,7 +589,7 @@ customer, service_name, status, created_at, updated_at = sla_data
 print(f"Customer: {customer}, Status: {status}")
 ```
 
-### Exemplo 4: Consumir Decisões of Decision Engine
+### Exemplo 4: consume decisions from Decision Engine
 
 **Código:**
 ```python
@@ -601,7 +601,7 @@ executor = SmartContractExecutor()
 oracle = MetricsOracle()
 consumer = DecisionConsumer(executor, oracle)
 
-# Consumir continuamente
+# consume continuamente
 while True:
     result = await consumer.consume_and_execute()
     print(f"Contrato executado: {result}")
@@ -662,7 +662,7 @@ docker-compose -f docker-compose-besu.yaml up -d
 ```bash
 # Em modo DEV, usar conta padrão of Besu
 # Chave privada: 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
-# Endereço: 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73
+# address: 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73
 
 # Verificar saldo
 w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
@@ -717,7 +717,7 @@ docker-compose -f docker-compose-kafka.yaml up -d
 
 ## 📊 Observabilidade
 
-### Métricas Prometheus
+### metrics Prometheus
 
 | Métrica | Tipo | Description |
 |---------|------|-----------|
@@ -732,8 +732,8 @@ docker-compose -f docker-compose-kafka.yaml up -d
 **Spans:**
 - `register_sla` — Registro de SLA
 - `update_status` — Atualização de status
-- `get_sla` — Consulta de SLA
-- `consume_i04` — Consumo de decisões
+- `get_sla` — Queries de SLA
+- `consume_i04` — Consumo de decisions
 - `execute_contract` — Execução de contrato
 
 ---
@@ -752,19 +752,19 @@ docker-compose -f docker-compose-kafka.yaml up -d
 
 O BC-NSSMF fornece registro on-chain de SLAs com imutabilidade e audit completa. O módulo:
 
-- ✅ **Registra SLAs** on-chain após aprovação of Decision Engine
-- ✅ **Atualiza status** de SLAs (ACTIVE, VIOLATED, TERMINATED)
-- ✅ **Registra violações** in an immutable way
+- ✅ **Registers SLAs** on-chain após aprovação from Decision Engine
+- ✅ **Updates status** de SLAs (ACTIVE, VIOLATED, TERMINATED)
+- ✅ **Registers violações** in an immutable way
 - ✅ **Fornece audit** via on-chain events
 - ✅ **Integra-se** com Decision Engine e SLO Reporter
 - ✅ **Observável** via Prometheus e OpenTelemetry
 
 Para mais informações, consulte:
-- `apps/bc-nssmf/src/service.py` — Serviço principal
+- `apps/bc-nssmf/src/service.py` — service main
 - `apps/bc-nssmf/src/contracts/SLAContract.sol` — Smart Contract
 - `apps/bc-nssmf/src/deploy_contracts.py` — Script de deploy
 
 ---
 
-**Fim of Guia**
+**end of Guia**
 

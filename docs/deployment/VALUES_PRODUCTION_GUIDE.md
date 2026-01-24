@@ -1,4 +1,4 @@
-# Guia de Preenchimento de values-nasp.yaml — TriSLA
+# guide de Preenchimento de values-nasp.yaml — TriSLA
 
 **Versão:** 1.0  
 **Objective:** Explicar como preencher corretamente o arquivo `helm/trisla/values-nasp.yaml` for deploy no NASP
@@ -9,25 +9,25 @@
 
 ### 1.1 Papel of values.yaml (Default/Dev)
 
-O arquivo `helm/trisla/values.yaml` contém **valores padrão** for desenvolvimento local e testes. Ele é usado quando:
+O arquivo `helm/trisla/values.yaml` contém **valores padrão** for development local e testes. Ele é usado quando:
 
 - Executando `docker-compose.yml` localmente
-- Testes E2E in ambiente controlado
-- Desenvolvimento de novos módulos
+- Testes E2E in environment controlado
+- development de novos módulos
 
 **Características:**
-- Valores genéricos e seguros for desenvolvimento
+- Valores genéricos e seguros for development
 - Endpoints mockados ou locais
 - Configurações mínimas de recursos
 
-### 1.2 Papel of values-nasp.yaml (Produção NASP)
+### 1.2 Papel of values-nasp.yaml (production NASP)
 
-O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for produção no ambiente NASP. Ele **sobrescreve** valores of `values.yaml` durante o deploy.
+O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for production no environment NASP. Ele **sobrescreve** valores of `values.yaml` durante o deploy.
 
 **Características:**
-- Valores específicos of ambiente NASP
+- Valores específicos of environment NASP
 - Endpoints reais descobertos no cluster
-- Configurações de recursos otimizadas for produção
+- Configurações de recursos otimizadas for production
 - Secrets e credenciais (via Kubernetes Secrets, nunca hardcoded)
 
 ### 1.3 Perigos de Subir Valores Genéricos
@@ -36,7 +36,7 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for pr
 
 - IPs reais de nodes ou serviços
 - Tokens ou credenciais hardcoded
-- Endpoints específicos of seu ambiente (use placeholders in documentação)
+- Endpoints específicos of seu environment (use placeholders in documentação)
 
 ✅ **SEMPRE:**
 
@@ -51,16 +51,16 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for pr
 
 | Chave YAML | description | Fonte de Informação | Obrigatório | Exemplo (genérico) |
 |------------|-----------|---------------------|-------------|-------------------|
-| `global.namespace` | Namespace in que o TriSLA será instalado | Padrão of ambiente NASP | Sim | `trisla` |
+| `global.namespace` | Namespace in que o TriSLA será instalado | Padrão of environment NASP | Sim | `trisla` |
 | `global.imageRegistry` | Registry de imagens Docker | GHCR configurado | Sim | `ghcr.io/<GHCR_USER>` |
 | `semCsmf.service.port` | Porta HTTP of SEM-CSMF | Padrão of Helm / app | Sim | `8080` |
 | `mlNsmf.modelPath` | Caminho of modelo de viabilidade ML | Artefatos ML treinados | Sim | `/models/viability_model.pkl` |
 | `bcNssmf.besu.rpcUrl` | URL RPC of GoQuorum/Besu | Configuração local of Besu | Sim | `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545` |
 | `bcNssmf.besu.chainId` | Chain ID of blockchain | Configuração of Besu | Sim | `1337` |
 | `naspAdapter.naspEndpoints.ran` | Endpoint base of RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>` |
-| `naspAdapter.naspEndpoints.ran_metrics` | Endpoint de métricas RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_METRICS_PORT>` |
+| `naspAdapter.naspEndpoints.ran_metrics` | Endpoint de metrics RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_METRICS_PORT>` |
 | `naspAdapter.naspEndpoints.core_upf` | Endpoint UPF (Core) | Descoberta NASP | Sim | `http://<UPF_SERVICE>.<CORE_NS>.svc.cluster.local:<UPF_PORT>` |
-| `naspAdapter.naspEndpoints.core_upf_metrics` | Endpoint de métricas UPF | Descoberta NASP | Sim | `http://<UPF_SERVICE>.<CORE_NS>.svc.cluster.local:<UPF_METRICS_PORT>` |
+| `naspAdapter.naspEndpoints.core_upf_metrics` | Endpoint de metrics UPF | Descoberta NASP | Sim | `http://<UPF_SERVICE>.<CORE_NS>.svc.cluster.local:<UPF_METRICS_PORT>` |
 | `naspAdapter.naspEndpoints.core_amf` | Endpoint AMF (Core) | Descoberta NASP | Sim | `http://<AMF_SERVICE>.<CORE_NS>.svc.cluster.local:<AMF_PORT>` |
 | `naspAdapter.naspEndpoints.core_smf` | Endpoint SMF (Core) | Descoberta NASP | Sim | `http://<SMF_SERVICE>.<CORE_NS>.svc.cluster.local:<SMF_PORT>` |
 | `naspAdapter.naspEndpoints.transport` | Endpoint Transport | Descoberta NASP | Sim | `http://<TRANSPORT_SERVICE>.<TRANSPORT_NS>.svc.cluster.local:<TRANSPORT_PORT>` |
@@ -77,7 +77,7 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for pr
 
 ### 3.1 Valores Vazios in Campos Obrigatórios
 
-**Problema:**
+**problem:**
 ```yaml
 naspAdapter:
   naspEndpoints:
@@ -91,7 +91,7 @@ naspAdapter:
 
 ### 3.2 Usar IP Real in Documentação
 
-**Problema:**
+**problem:**
 ```markdown
 # ❌ NUNCA faça isso in .md:
 Endpoint: http://192.168.10.16:8080
@@ -105,19 +105,19 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 
 ### 3.3 Não Alinhar Portas com docker-compose ou values.yaml
 
-**Problema:**
+**problem:**
 - `docker-compose.yml` usa porta `8080`
 - `values-nasp.yaml` usa porta `8081`
 - Resultado: Incompatibilidade
 
 **solution:**
-- Mantenha portas consistentes entre dev e produção
+- Mantenha portas consistentes entre dev e production
 - Documente mudanças de porta quando necessário
-- Use variáveis de ambiente quando possível
+- Use variables de environment quando possível
 
 ### 3.4 Endpoints com IPs Hardcoded
 
-**Problema:**
+**problem:**
 ```yaml
 naspAdapter:
   naspEndpoints:
@@ -138,7 +138,7 @@ naspAdapter:
 
 ### 3.5 Secrets Hardcoded
 
-**Problema:**
+**problem:**
 ```yaml
 # ❌ NUNCA faça isso:
 secrets:
@@ -213,7 +213,7 @@ helm template trisla ./helm/trisla \
 
 ```yaml
 # ============================================
-# Values for PRODUÇÃO REAL - NASP Node1
+# Values for production REAL - NASP Node1
 # ============================================
 
 global:

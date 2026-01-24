@@ -19,7 +19,7 @@ Complete guide that includes:
 - ✅ **Prediction and XAI** (SHAP/LIME)
 - ✅ **Integration** com outros módulos
 - ✅ **Interface I-03** (Kafka)
-- ✅ **Observability** (métricas e traces)
+- ✅ **Observability** (metrics e traces)
 - ✅ **Usage Examples** (código Python)
 - ✅ **Troubleshooting** (soluções for problemas comuns)
 
@@ -36,7 +36,7 @@ Complete guide that includes:
 
 1. **Read the Guide:** [`ML_NSMF_COMPLETE_GUIDE.md`](ML_NSMF_COMPLETE_GUIDE.md)
 2. **Train Model:** `python apps/ml-nsmf/training/train_model.py`
-3. **Use Prediction:** Ver exemplos no guia completo
+3. **Use Prediction:** Ver exemplos no guide completo
 
 ## 🎓 Training
 

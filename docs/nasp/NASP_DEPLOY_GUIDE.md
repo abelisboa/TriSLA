@@ -170,11 +170,11 @@ reclaimPolicy: Delete
 
 O cluster NASP inclui uma stack completa de observabilidade:
 
-- **Prometheus**: Coleta e armazena métricas
-- **Grafana**: Visualização de métricas e dashboards
+- **Prometheus**: Coleta e armazena metrics
+- **Grafana**: Visualização de metrics e dashboards
 - **Alertmanager**: Gerenciamento de alertas
-- **Node Exporter**: Métricas de nós
-- **kube-state-metrics**: Métricas of estado of Kubernetes
+- **Node Exporter**: metrics de nós
+- **kube-state-metrics**: metrics of estado of Kubernetes
 
 **Verifiesr Prometheus Stack:**
 
@@ -205,7 +205,7 @@ kubectl port-forward -n monitoring svc/prometheus-k8s 9090:9090
 kubectl port-forward -n monitoring svc/grafana 3000:3000
 
 # Acessar: http://localhost:3000
-# Credenciais default: admin/admin (alterar in produção)
+# Credenciais default: admin/admin (alterar in production)
 ```
 
 ---
@@ -282,7 +282,7 @@ kubectl config view
 # Verifiesr kubeconfig padrão
 kubectl config view
 
-# Se necessário, configurar KUBECONFIG
+# Se necessário, configure KUBECONFIG
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Verifiesr acesso
@@ -334,7 +334,7 @@ choco install kubernetes-helm
 helm version
 ```
 
-**Configurar Helm for usar o kubeconfig:**
+**configure Helm for usar o kubeconfig:**
 
 ```bash
 # Helm usa automaticamente o KUBECONFIG configurado
@@ -540,13 +540,13 @@ cd TriSLA-clean/ansible
 vim inventory.yaml
 # Atualizar:
 #   - ansible_host for Node1 e Node2
-#   - Outras variáveis according to necessário
+#   - Outras variables according to necessário
 
 # Executar pre-flight
 ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
 ```
 
-**Verifiesr saída of pre-flight:**
+**Verifiesr output of pre-flight:**
 
 O playbook deve validar:
 - Versão of Kubernetes
@@ -556,7 +556,7 @@ O playbook deve validar:
 - Helm instalado
 - Acesso ao GHCR (se token fornecido)
 
-**Exemplo de saída esperada:**
+**Exemplo de output expected:**
 
 ```
 TASK [Resumo of pré-flight]
@@ -612,7 +612,7 @@ data:
 EOF
 
 # Deploy via Helm (será feito in the section 7)
-# Ou manualmente via kubectl (não recomendado in produção)
+# Ou manualmente via kubectl (não recomendado in production)
 ```
 
 **Verifiesr deploy:**
@@ -775,7 +775,7 @@ kubectl get pods -n trisla -l app=sla-agent-layer
 kubectl logs -n trisla -l app=sla-agent-layer --tail=50
 ```
 
-**Note**: A instalação modular acima é apenas for referência. O deploy completo via Helm (section 7) é o método recomendado in produção.
+**Note**: A instalação modular acima é apenas for referência. O deploy completo via Helm (section 7) é o método recomendado in production.
 
 ---
 
@@ -1033,7 +1033,7 @@ helm template trisla ./helm/trisla \
 **Dry-run of deploy:**
 
 ```bash
-# Dry-run for verificar sem aplicar
+# Dry-run for verify sem aplicar
 helm install trisla ./helm/trisla \
   --namespace trisla \
   --create-namespace \
@@ -1057,7 +1057,7 @@ helm upgrade --install trisla ./helm/trisla \
 ```
 
 **Explicação dos parâmetros:**
-- `upgrade --install`: Instala se não existir, atualiza se existir
+- `upgrade --install`: Instala se não existir, Updates se existir
 - `--namespace trisla`: Namespace onde será instalado
 - `--create-namespace`: Cria o namespace se não existir
 - `--values`: Arquivo de valores customizado
@@ -1112,7 +1112,7 @@ kubectl get pods -n trisla -l app=nasp-adapter
 
 ---
 
-## 8. Estrutura Esperada dos Pods
+## 8. Estrutura expected dos Pods
 
 ### 8.1 Pods dos Módulos TriSLA
 
@@ -1141,7 +1141,7 @@ Após o deploy bem-sucedido, a seguinte estrutura de pods deve estar presente:
 
 ### 8.3 Verifiesção Completa
 
-**Comando for verificar todos os pods:**
+**Comando for verify todos os pods:**
 
 ```bash
 # Listar todos os pods no namespace trisla
@@ -1154,7 +1154,7 @@ kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{
 kubectl get pods -n trisla --no-headers | awk '{print $3}' | sort | uniq -c
 ```
 
-**Estrutura esperada de Services:**
+**Estrutura expected de Services:**
 
 ```bash
 # Listar services
@@ -1180,7 +1180,7 @@ kubectl get svc -n trisla
 
 ## 9. Validações Após Deploy
 
-### 9.1 Validação de Saúde dos Pods
+### 9.1 validation de Saúde dos Pods
 
 **Verifiesr todos os pods in Running:**
 
@@ -1203,7 +1203,7 @@ kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.containerStatuses[0].ready}{"\n"}{end}'
 ```
 
-### 9.2 Validação de Endpoints
+### 9.2 validation de Endpoints
 
 **Testar health endpoints:**
 
@@ -1233,7 +1233,7 @@ kubectl port-forward -n trisla svc/nasp-adapter 8085:8085 &
 curl http://localhost:8085/health
 ```
 
-### 9.3 Validação de Conectividade
+### 9.3 validation de Conectividade
 
 **Testar comunicação entre módulos:**
 
@@ -1271,7 +1271,7 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=postgres -o jsonpa
   psql -U trisla -d trisla -c "SELECT version();"
 ```
 
-### 9.4 Validação de Integração com NASP
+### 9.4 validation de Integração com NASP
 
 **Testar conectividade com NASP:**
 
@@ -1284,7 +1284,7 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=nasp-adapter -o js
 kubectl logs -n trisla -l app=nasp-adapter | grep -i "nasp\|connection\|error"
 ```
 
-### 9.5 Validação de Observabilidade
+### 9.5 validation de Observabilidade
 
 **Verifiesr Prometheus:**
 
@@ -1303,28 +1303,28 @@ kubectl port-forward -n trisla svc/prometheus 9090:9090
 kubectl port-forward -n trisla svc/grafana 3000:3000
 
 # Acessar: http://localhost:3000
-# Credenciais: admin/admin (alterar in produção)
+# Credenciais: admin/admin (alterar in production)
 ```
 
-**Verifiesr métricas OTLP:**
+**Verifiesr metrics OTLP:**
 
 ```bash
 # Verifiesr OTLP Collector
 kubectl logs -n trisla -l app=otlp-collector --tail=50
 ```
 
-### 9.6 Script de Validação Automática
+### 9.6 Script de validation Automática
 
-**Executar script de validação:**
+**Executar script de validation:**
 
 ```bash
-# Validação completa
+# validation completa
 ./scripts/validate-production-real.sh
 
-# Validação de infraestrutura NASP
+# validation de infraestrutura NASP
 ./scripts/validate-nasp-infra.sh
 
-# Validação E2E
+# validation E2E
 ./scripts/validate-e2e-pipeline.sh
 ```
 
@@ -1353,7 +1353,7 @@ curl -X POST http://localhost:8080/api/v1/intents \
 **2. Verifiesr NEST gerado:**
 
 ```bash
-# Verifiesr NEST no banco de dados
+# Verifiesr NEST no banco de Data
 kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=postgres -o jsonpath='{.items[0].metadata.name}') -- \
   psql -U trisla -d trisla -c "SELECT id, tenant_id, status FROM intents ORDER BY created_at DESC LIMIT 5;"
 ```
@@ -1410,7 +1410,7 @@ kubectl delete pod -n trisla -l app=sem-csmf --field-selector=status.phase=Runni
 # Verifiesr se outro pod assume
 kubectl get pods -n trisla -l app=sem-csmf
 
-# Verifiesr se serviço continua funcionando
+# Verifiesr se service continua funcionando
 kubectl port-forward -n trisla svc/sem-csmf 8080:8080 &
 curl http://localhost:8080/health
 ```
@@ -1508,7 +1508,7 @@ kubectl get nodes -o jsonpath='{.items[*].status.capacity.storage}'
 
 ### 11.4 Problemas com Prometheus no NASP
 
-**Sintoma**: Métricas não sendo coletadas
+**Sintoma**: metrics não sendo coletadas
 
 **Diagnóstico:**
 
@@ -1589,15 +1589,15 @@ helm upgrade trisla ./helm/trisla \
 - [ ] Services criados corretamente
 - [ ] ConfigMaps e Secrets aplicados
 
-### 12.3 Validação
+### 12.3 validation
 
 - [ ] Health endpoints respondendo (todos os módulos)
 - [ ] Comunicação entre módulos funcionando
 - [ ] Kafka funcionando (tópicos criados, consumer groups ativos)
 - [ ] PostgreSQL acessível e funcionando
 - [ ] Integração com NASP funcionando
-- [ ] OTLP Collector coletando métricas
-- [ ] Prometheus coletando métricas dos módulos
+- [ ] OTLP Collector coletando metrics
+- [ ] Prometheus coletando metrics dos módulos
 - [ ] Grafana acessível e dashboards carregando
 
 ### 12.4 Testes E2E
@@ -1620,11 +1620,11 @@ helm upgrade trisla ./helm/trisla \
 - [ ] Runbooks criados for operação
 - [ ] Monitoramento configurado e alertas ativos
 
-### 12.6 Checklist de Produção
+### 12.6 Checklist de production
 
-- [ ] Backup of banco de dados configurado
+- [ ] Backup of banco de Data configurado
 - [ ] Rotação de logs configurada
-- [ ] Retenção de métricas configurada
+- [ ] Retenção de metrics configurada
 - [ ] Alertas críticos configurados
 - [ ] Processo de atualização documentado
 - [ ] Processo de rollback testado
@@ -1649,8 +1649,8 @@ This guide provides instruções completas for implantar o TriSLA in the NASP en
 **Versão of TriSLA:** 1.0.0
 
 **Referências:**
-- `README_OPERATIONS_PROD.md`: Guia de operações in produção
-- `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
-- `SECURITY_HARDENING.md`: Guia de segurança e hardening
+- `README_OPERATIONS_PROD.md`: guide de operações in production
+- `TROUBLESHOOTING_TRISLA.md`: guide de troubleshooting
+- `SECURITY_HARDENING.md`: guide de segurança e hardening
 
 

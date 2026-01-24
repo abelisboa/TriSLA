@@ -1,4 +1,4 @@
-# Guia Completo de Implementação of Ontologia TriSLA
+# guide Completo de Implementação of Ontologia TriSLA
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
@@ -17,7 +17,7 @@
 7. [Uso no Protégé](#uso-no-protégé)
 8. [Integração com SEM-CSMF](#integração-com-sem-csmf)
 9. [Queries SPARQL](#queries-sparql)
-10. [Validação e Reasoning](#validação-e-reasoning)
+10. [validation e Reasoning](#validation-e-reasoning)
 
 ---
 
@@ -36,19 +36,19 @@ A **Ontologia TriSLA** é uma ontologia OWL 2.0 formal que modela o domínio de 
 ### Objetivos
 
 1. **Modelagem Semântica:** Representar formalmente conceitos de Network Slicing, SLA, SLO, SLI
-2. **Reasoning:** Permitir inferência automática de tipos de slice e validação de requisitos
+2. **Reasoning:** Permitir inferência automática de tipos de slice e validation de requisitos
 3. **Integração:** Suportar o pipeline semântico of SEM-CSMF
-4. **Validação:** Validar conformidade de intents com requisitos 3GPP
+4. **validation:** Validar conformidade de intents com requisitos 3GPP
 
 ---
 
 ## 🏗️ Estrutura of Ontologia
 
-### Arquivo Principal
+### Arquivo main
 
 ```
 apps/sem-csmf/src/ontology/
-├── trisla.ttl              # Ontologia principal (OWL 2.0 Turtle)
+├── trisla.ttl              # Ontologia main (OWL 2.0 Turtle)
 ├── loader.py               # Carregador de ontologia (owlready2)
 ├── reasoner.py             # Motor de reasoning semântico
 ├── parser.py               # Parser de intents usando ontologia
@@ -115,7 +115,7 @@ owl:Thing
 
 #### 1. Intent e UseCaseIntent
 
-**`Intent`** — Classe base for intenções de serviço
+**`Intent`** — Classe base for intenções de service
 - **Descrição:** Representa uma intenção de criar ou modificar um network slice
 - **Propriedades:** `hasSliceType`, `hasSLA`
 - **Uso:** Modela intents recebidos pelo SEM-CSMF
@@ -154,16 +154,16 @@ owl:Thing
 #### 3. SLA, SLO, SLI, Metric
 
 **`SLA`** — Service Level Agreement
-- **Descrição:** Acordo de nível de serviço
+- **Descrição:** Acordo de nível de service
 - **Propriedades:** `hasSLO`
 
 **`SLO`** — Service Level Objective
-- **Descrição:** Objetivo de nível de serviço
+- **Descrição:** Objetivo de nível de service
 - **Restrições:** Deve pertencer a um SLA (`belongsToSLA`)
 - **Propriedades:** `hasSLI`, `hasLatency`, `hasThroughput`, `hasReliability`
 
 **`SLI`** — Service Level Indicator
-- **Descrição:** Indicador de nível de serviço
+- **Descrição:** Indicador de nível de service
 - **Restrições:** Deve medir um SLO (`measuresSLO`)
 - **Propriedades:** `hasMetric`
 
@@ -226,10 +226,10 @@ owl:Thing
 #### 9. Observabilidade
 
 **`TelemetrySample`** — Amostra de telemetria
-- **Descrição:** Amostra de métricas coletadas
+- **Descrição:** Amostra de metrics coletadas
 
-**`ObservationWindow`** — Janela de observação de métricas
-- **Descrição:** Janela temporal for coleta de métricas
+**`ObservationWindow`** — Janela de observação de metrics
+- **Descrição:** Janela temporal for coleta de metrics
 
 ---
 
@@ -248,11 +248,11 @@ owl:Thing
 | `measuresSLO` | SLI | SLO | SLI mede SLO |
 | `hasDomain` | Slice | Domain | Slice tem domínio |
 | `generatedFromGST` | NESTTemplate | GSTTemplate | NEST gerado a partir de GST |
-| `registersSLA` | OnChainSLAContract | SLA | Contrato registra SLA |
+| `registersSLA` | OnChainSLAContract | SLA | contract Registers SLA |
 | `generatedBy` | Prediction | MLModel | Predição gerada por modelo ML |
 | `explainsPrediction` | Explanation | Prediction | Explicação explica predição |
 
-### Data Properties (Propriedades de Dados)
+### Data Properties (Propriedades de Data)
 
 | Propriedade | Domínio | Range | Descrição |
 |-------------|---------|-------|-----------|
@@ -301,7 +301,7 @@ owl:Thing
 
 ## 📊 Diagramas Conceituais
 
-### Diagrama 1: Hierarquia de Classes Principal
+### Diagrama 1: Hierarquia de Classes main
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -389,8 +389,8 @@ owl:Thing
 - Selecionar: `apps/sem-csmf/src/ontology/trisla.ttl`
 - Formato: **Turtle (TTL)**
 
-**Passo 3:** Verificar carregamento
-- Aba `Entities` → Verificar classes, propriedades e indivíduos
+**Passo 3:** verify carregamento
+- Aba `Entities` → verify classes, propriedades e indivíduos
 
 ### 2. Visualizar Hierarquia de Classes
 
@@ -416,7 +416,7 @@ owl:Thing
 - Lista todas as Data Properties
 - Clicar in uma propriedade for ver:
   - **Domain:** Domínio of propriedade
-  - **Range:** Tipo de dados (xsd:float, xsd:string, etc.)
+  - **Range:** Tipo de Data (xsd:float, xsd:string, etc.)
 
 ### 4. Visualizar Indivíduos
 
@@ -443,7 +443,7 @@ owl:Thing
 
 ### 6. Aplicar Reasoning
 
-**Configurar Reasoner:**
+**configure Reasoner:**
 - Menu: `Reasoner` → `Configure reasoner...`
 - Selecionar: **Pellet** ou **HermiT**
 - Clicar: `OK`
@@ -451,9 +451,9 @@ owl:Thing
 **Executar Reasoning:**
 - Menu: `Reasoner` → `Start reasoner`
 - Aguardar conclusão
-- Verificar inferências na aba `Entities`
+- verify inferências na aba `Entities`
 
-**Verificar Inconsistências:**
+**verify Inconsistências:**
 - Menu: `Reasoner` → `Check consistency`
 - Se houver inconsistências, serão listadas
 
@@ -492,7 +492,7 @@ loader = OntologyLoader()
 # Carregar ontologia
 loader.load(apply_reasoning=True)
 
-# Verificar se foi carregada
+# verify se foi carregada
 if loader.is_loaded():
     print("Ontologia carregada com sucesso!")
 ```
@@ -618,9 +618,9 @@ WHERE {
 
 ---
 
-## ✅ Validação e Reasoning
+## ✅ validation e Reasoning
 
-### 1. Validação de Sintaxe
+### 1. validation de Sintaxe
 
 **Usando rdflib:**
 ```python
@@ -631,7 +631,7 @@ g.parse("apps/sem-csmf/src/ontology/trisla.ttl", format="turtle")
 print("Ontologia válida!")
 ```
 
-### 2. Validação de Consistência
+### 2. validation de Consistência
 
 **No Protégé:**
 - Menu: `Reasoner` → `Check consistency`
@@ -643,7 +643,7 @@ print("Ontologia válida!")
 **No Protégé:**
 - Menu: `Reasoner` → `Configure reasoner...` → Selecionar **Pellet**
 - Menu: `Reasoner` → `Start reasoner`
-- Verificar inferências na aba `Entities`
+- verify inferências na aba `Entities`
 
 **No Código:**
 ```python
@@ -657,7 +657,7 @@ loader.load(apply_reasoning=True)  # Aplica reasoning automaticamente
 
 O reasoner pode inferir:
 - **Tipo de slice** baseado in requisitos
-- **Validação de SLA** contra limites of ontologia
+- **validation de SLA** contra limites of ontologia
 - **Relações implícitas** entre classes
 - **Propriedades transitivas**
 
@@ -740,7 +740,7 @@ for result in results:
 
 2. **Validar no Protégé:**
    - Abrir ontologia
-   - Verificar nova classe
+   - verify nova classe
    - Aplicar reasoning
 
 ### Adicionar Nova Propriedade
@@ -787,7 +787,7 @@ A Ontologia TriSLA fornece uma base semântica formal for o gerenciamento de Net
 
 - ✅ **Modelagem formal** de conceitos de Network Slicing
 - ✅ **Reasoning semântico** for inferência automática
-- ✅ **Validação** de requisitos contra padrões 3GPP
+- ✅ **validation** de requisitos contra padrões 3GPP
 - ✅ **Integração** com o módulo SEM-CSMF
 - ✅ **Extensibilidade** for novos casos de uso
 
@@ -798,5 +798,5 @@ Para mais informações, consulte:
 
 ---
 
-**Fim of Guia**
+**end of guide**
 

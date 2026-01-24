@@ -2,7 +2,7 @@
 
 **Versão:** 1.0  
 **Data:** 2025-11-22  
-**objective:** Guia operacional completo for deploy controlado of TriSLA in the NASP environment (2 nodes)
+**objective:** guide operacional completo for deploy controlado of TriSLA in the NASP environment (2 nodes)
 
 ---
 
@@ -12,7 +12,7 @@ This runbook descreve como realizar um **deploy controlado** of TriSLA in the NA
 
 O processo é dividido in etapas sequenciais, cada uma com validações específicas, garantindo que o deploy seja realizado de forma segura e auditável.
 
-**Pré-requisito:** Todas as Fases 1-6 concluídas, incluindo validação E2E local e audit técnica v2 aprovada.
+**Pré-requisito:** Todas as Fases 1-6 concluídas, incluindo validation E2E local e audit técnica v2 aprovada.
 
 ---
 
@@ -47,7 +47,7 @@ cd ~/gtp5g/trisla
 <｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
 read_file
 
-**Validação:**
+**validation:**
 - [ ] Arquivo `tmp/nasp_context_raw.txt` gerado
 - [ ] Arquivo `docs/NASP_CONTEXT_REPORT.md` atualizado
 - [ ] Services relevantes identificados (Prometheus, Grafana, Kafka, NASP Adapter, etc.)
@@ -58,7 +58,7 @@ read_file
 
 ### Passo 2: Revisar Relatório de Contexto
 
-**objective:** Entender o ambiente NASP antes de configurar o TriSLA.
+**objective:** Entender o environment NASP antes de configure o TriSLA.
 
 **Execução:**
 ```bash
@@ -67,7 +67,7 @@ cat docs/NASP_CONTEXT_REPORT.md
 cat tmp/nasp_context_raw.txt
 ```
 
-**Validação:**
+**validation:**
 - [ ] Namespaces relevantes identificados
 - [ ] Services NASP mapeados (RAN, Transport, Core)
 - [ ] Problemas de saúde identificados (se houver)
@@ -78,7 +78,7 @@ cat tmp/nasp_context_raw.txt
 
 ### Passo 3: Preencher values-nasp.yaml
 
-**objective:** Configurar valores de produção específicos of ambiente NASP.
+**objective:** configure valores de production específicos of environment NASP.
 
 **Execução (método guiado):**
 ```bash
@@ -88,10 +88,10 @@ cd ~/gtp5g/trisla
 
 **Ou manualmente:**
 1. Editar `helm/trisla/values-nasp.yaml`
-2. Seguir guia: `docs/deployment/VALUES_PRODUCTION_GUIDE.md`
+2. Seguir guide: `docs/deployment/VALUES_PRODUCTION_GUIDE.md`
 3. Substituir todos os placeholders `<...>` por valores reais
 
-**Validação:**
+**validation:**
 ```bash
 # Validar sintaxe e valores
 helm template trisla ./helm/trisla \
@@ -103,7 +103,7 @@ helm template trisla ./helm/trisla \
 - [ ] Todos os placeholders substituídos
 - [ ] Endpoints usando FQDNs Kubernetes (não IPs)
 - [ ] Nenhum token hardcoded (usar Kubernetes Secrets)
-- [ ] Validação `helm template` sem erros críticos
+- [ ] validation `helm template` sem erros críticos
 
 **Próximo passo:** Auditar imagens GHCR.
 
@@ -127,10 +127,10 @@ docker pull ghcr.io/abelisboa/trisla-nasp-adapter:latest
 docker pull ghcr.io/abelisboa/trisla-ui-dashboard:latest
 ```
 
-**Validação:**
+**validation:**
 - [ ] Matriz de imagens revisada in `docs/ghcr/IMAGES_GHCR_MATRIX.md`
 - [ ] Todas as imagens críticas podem ser puxadas of GHCR
-- [ ] Nenhuma imagem crítica retorna erro ao fazer pull
+- [ ] Nenhuma imagem crítica retorna error ao fazer pull
 
 **Se imagens faltando:**
 1. Buildar imagens faltantes usando Dockerfiles in `apps/<module>/`
@@ -151,7 +151,7 @@ cd ansible
 ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
 ```
 
-**Validação esperada:**
+**validation expected:**
 - ✅ Kubernetes versão ≥ 1.26
 - ✅ Helm instalado e funcional
 - ✅ Calico operacional
@@ -169,7 +169,7 @@ ansible-playbook -i inventory.yaml playbooks/pre-flight.yml
 
 ### Passo 6: Setup de Namespace e Secrets
 
-**objective:** Criar namespace e configurar secrets necessários.
+**objective:** Criar namespace e configure secrets necessários.
 
 **Execução:**
 ```bash
@@ -184,7 +184,7 @@ kubectl create secret docker-registry ghcr-secret \
   --namespace=trisla
 ```
 
-**Validação:**
+**validation:**
 ```bash
 # Verifiesr namespace
 kubectl get namespace trisla
@@ -215,7 +215,7 @@ helm upgrade --install trisla ./helm/trisla \
   --timeout 15m
 ```
 
-**Validação:**
+**validation:**
 ```bash
 # Verifiesr pods
 kubectl get pods -n trisla
@@ -232,20 +232,20 @@ kubectl get deployments -n trisla
 - Readiness probes passando
 - Liveness probes passando
 
-**Próximo passo:** Validação pós-deploy.
+**Próximo passo:** validation pós-deploy.
 
 ---
 
-### Passo 8: Validação Pós-Deploy
+### Passo 8: validation Pós-Deploy
 
 **objective:** Confirmar que o TriSLA está operacional após o deploy.
 
 **Execução:**
 ```bash
-# Validação via Ansible
+# validation via Ansible
 ansible-playbook -i inventory.yaml playbooks/validate-cluster.yml
 
-# OU validação manual
+# OU validation manual
 kubectl get pods -n trisla
 kubectl get svc -n trisla
 ```
@@ -277,7 +277,7 @@ kubectl port-forward -n trisla svc/trisla-nasp-adapter 8085:8085 &
 curl http://localhost:8085/health
 ```
 
-**Validação de Kafka Topics:**
+**validation de Kafka Topics:**
 ```bash
 # Listar tópicos (se Kafka estiver no cluster)
 kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
@@ -290,7 +290,7 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 
 ### Passo 9: Verifiesr Observabilidade
 
-**objective:** Confirmar que métricas e traces estão sendo coletados.
+**objective:** Confirmar que metrics e traces estão sendo coletados.
 
 **Execução:**
 ```bash
@@ -303,8 +303,8 @@ kubectl port-forward -n monitoring svc/<GRAFANA_SERVICE> 3000:3000
 # Acessar http://localhost:3000 (admin/admin)
 ```
 
-**Validação:**
-- [ ] Métricas TriSLA visíveis no Prometheus
+**validation:**
+- [ ] metrics TriSLA visíveis no Prometheus
   - `trisla_intents_total`
   - `trisla_decisions_total`
   - `trisla_sla_registrations_total`
@@ -339,11 +339,11 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
 
 ---
 
-## Validação Pós-Deploy
+## validation Pós-Deploy
 
 ### Teste E2E no Cluster NASP
 
-**Adaptar teste E2E local for ambiente NASP:**
+**Adaptar teste E2E local for environment NASP:**
 
 1. **Criar intent de teste:**
    ```bash
@@ -457,7 +457,7 @@ kubectl create secret docker-registry ghcr-secret \
 
 #### 2. Pods in CrashLoopBackOff
 
-**Causa:** Erro na aplicação ou configuração incorreta.
+**Causa:** error na aplicação ou configuração incorreta.
 
 **solution:**
 ```bash
@@ -506,7 +506,7 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
    - Revisar `docs/nasp/NASP_CONTEXT_REPORT.md`
    - Preencher `values-nasp.yaml` com `scripts/fill_values_production.sh`
 
-2. **Validação:**
+2. **validation:**
    - Revisar `docs/ghcr/IMAGES_GHCR_MATRIX.md` e validar que imagens podem ser puxadas
    - Revisar `docs/IMAGES_GHCR_MATRIX.md`
    - Validar `values-nasp.yaml` com `helm template`
@@ -516,7 +516,7 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
    - Executar `ansible-playbook -i inventory.yaml playbooks/setup-namespace.yml`
    - Executar `ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml`
 
-4. **Validação Pós-Deploy:**
+4. **validation Pós-Deploy:**
    - Executar `ansible-playbook -i inventory.yaml playbooks/validate-cluster.yml`
    - Verifiesr health checks de todos os módulos
    - Verifiesr observabilidade (Prometheus/Grafana)
@@ -526,10 +526,10 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 ## Referências
 
 - **Checklist de Pré-Deploy:** `docs/NASP_PREDEPLOY_CHECKLIST_v2.md`
-- **Guia de Valores:** `docs/VALUES_PRODUCTION_GUIDE.md`
+- **guide de Valores:** `docs/VALUES_PRODUCTION_GUIDE.md`
 - **Matriz de Imagens:** `docs/IMAGES_GHCR_MATRIX.md`
 - **Relatório de Contexto:** `docs/NASP_CONTEXT_REPORT.md`
-- **Operações in Produção:** `README_OPERATIONS_PROD.md`
+- **Operações in production:** `README_OPERATIONS_PROD.md`
 
 ---
 

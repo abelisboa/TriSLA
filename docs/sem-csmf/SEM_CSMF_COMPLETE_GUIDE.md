@@ -1,4 +1,4 @@
-# Guia Completo of Módulo SEM-CSMF
+# guide Completo of Módulo SEM-CSMF
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
@@ -38,7 +38,7 @@ O **SEM-CSMF (Semantic-enhanced Communication Service Management Function)** é 
 - **NLP:** Processamento de linguagem natural com spaCy
 - **Reasoning:** Motor de reasoning semântico com Pellet
 - **Persistência:** PostgreSQL for intents e NESTs
-- **Observabilidade:** OpenTelemetry for traces e métricas
+- **Observabilidade:** OpenTelemetry for traces e metrics
 
 ---
 
@@ -54,7 +54,7 @@ apps/sem-csmf/
 │   ├── nest_generator.py       # Geração de NEST
 │   ├── nest_generator_db.py    # Geração com persistência
 │   ├── ontology/               # Ontologia OWL
-│   │   ├── trisla.ttl         # Ontologia principal
+│   │   ├── trisla.ttl         # Ontologia main
 │   │   ├── loader.py          # Carregador de ontologia
 │   │   ├── reasoner.py        # Motor de reasoning
 │   │   ├── parser.py          # Parser de intents
@@ -67,7 +67,7 @@ apps/sem-csmf/
 │   ├── kafka_producer.py       # Producer Kafka (I-02)
 │   ├── kafka_producer_retry.py # Producer com retry
 │   ├── database.py             # Configuração of banco
-│   ├── repository.py           # Repositório de dados
+│   ├── repository.py           # Repositório de Data
 │   ├── models/                 # Modelos Pydantic
 │   │   ├── intent.py
 │   │   └── nest.py
@@ -81,7 +81,7 @@ apps/sem-csmf/
 
 ### Componentes Principais
 
-1. **IntentProcessor** — Processador principal de intents
+1. **IntentProcessor** — Processador main de intents
 2. **OntologyLoader** — Carregador de ontologia OWL
 3. **SemanticReasoner** — Motor de reasoning semântico
 4. **NLPParser** — Parser de linguagem natural
@@ -109,7 +109,7 @@ apps/sem-csmf/
          │
          ▼
 ┌─────────────────┐
-│  Ontology       │  (Valida semanticamente)
+│  Ontology       │  (validates semanticamente)
 │  Parser         │
 └────────┬────────┘
          │
@@ -138,16 +138,16 @@ apps/sem-csmf/
 2. **Processamento NLP** (se linguagem natural)
    - Extração de tipo de slice
    - Extração de requisitos de SLA
-   - Normalização de dados
+   - Normalização de Data
 
-3. **Validação Semântica**
+3. **validation Semântica**
    - Carregamento of ontologia OWL
-   - Validação contra classes e propriedades
+   - validation contra classes e propriedades
    - Reasoning semântico
 
 4. **Geração de NEST**
    - Conversão de GST for NEST
-   - Validação de requisitos
+   - validation de requisitos
    - Persistência in PostgreSQL
 
 5. **Envio for Módulos Downstream**
@@ -185,11 +185,11 @@ is_valid = reasoner.validate_sla_requirements("URLLC", sla_dict)
 
 ### Classes Principais
 
-- **Intent** — Intenção de serviço
+- **Intent** — Intenção de service
 - **SliceType** — Tipo de slice (eMBB, URLLC, mMTC)
 - **SLA** — Service Level Agreement
 - **SLO** — Service Level Objective
-- **Metric** — Métricas de performance
+- **Metric** — metrics de performance
 
 ---
 
@@ -245,7 +245,7 @@ O NEST (Network Slice Template) é gerado a partir of intent validado semanticam
 
 1. **Conversão GST → NEST**
    - GST (Generic Slice Template) é convertido for NEST
-   - Validação contra ontologia
+   - validation contra ontologia
 
 2. **Persistência**
    - Salvo in PostgreSQL
@@ -311,7 +311,7 @@ await client.send_nest_metadata(
 
 **Tipo:** Kafka  
 **Direção:** SEM-CSMF → ML-NSMF  
-**Tópico:** `sem-csmf-nests`
+**topic:** `sem-csmf-nests`
 
 **Payload:**
 ```json
@@ -427,7 +427,7 @@ results = loader.query(query)
 
 ## 🔧 Troubleshooting
 
-### Problema 1: Ontologia não carrega
+### problem 1: Ontologia não carrega
 
 **Sintoma:** `ImportError: owlready2 is not installed`
 
@@ -436,7 +436,7 @@ results = loader.query(query)
 pip install owlready2==0.40
 ```
 
-### Problema 2: NLP não funciona
+### problem 2: NLP não funciona
 
 **Sintoma:** `OSError: SpaCy model not found`
 
@@ -445,29 +445,29 @@ pip install owlready2==0.40
 python -m spacy download en_core_web_sm
 ```
 
-### Problema 3: gRPC não conecta
+### problem 3: gRPC não conecta
 
 **Sintoma:** `grpc._channel._InactiveRpcError`
 
 **solution:**
-- Verificar se Decision Engine está rodando
-- Verificar endpoint: `DECISION_ENGINE_GRPC`
-- Verificar conectividade de rede
+- verify se Decision Engine está rodando
+- verify endpoint: `DECISION_ENGINE_GRPC`
+- verify conectividade de rede
 
-### Problema 4: Kafka não envia
+### problem 4: Kafka não envia
 
 **Sintoma:** `kafka.errors.KafkaError`
 
 **solution:**
-- Verificar se Kafka está rodando
-- Verificar `KAFKA_BOOTSTRAP_SERVERS`
-- Verificar tópico existe
+- verify se Kafka está rodando
+- verify `KAFKA_BOOTSTRAP_SERVERS`
+- verify topic existe
 
 ---
 
 ## 📊 Observabilidade
 
-### Métricas Prometheus
+### metrics Prometheus
 
 | Métrica | Tipo | Descrição |
 |---------|------|-----------|
@@ -480,7 +480,7 @@ python -m spacy download en_core_web_sm
 
 **Spans:**
 - `process_intent` — Processamento completo
-- `validate_semantic` — Validação semântica
+- `validate_semantic` — validation semântica
 - `generate_nest` — Geração de NEST
 - `send_i01` — Envio I-01 (gRPC)
 - `send_i02` — Envio I-02 (Kafka)
@@ -500,7 +500,7 @@ python -m spacy download en_core_web_sm
 
 O SEM-CSMF fornece interpretação semântica inteligente de intents usando ontologia OWL e NLP. O módulo:
 
-- ✅ **Processa intents** com validação semântica
+- ✅ **Processa intents** com validation semântica
 - ✅ **Usa ontologia OWL** for reasoning
 - ✅ **Processa linguagem natural** com NLP
 - ✅ **Gera NESTs** for provisionamento
@@ -508,11 +508,11 @@ O SEM-CSMF fornece interpretação semântica inteligente de intents usando onto
 - ✅ **Observável** via Prometheus e OpenTelemetry
 
 Para mais informações, consulte:
-- `apps/sem-csmf/src/intent_processor.py` — Processador principal
+- `apps/sem-csmf/src/intent_processor.py` — Processador main
 - `apps/sem-csmf/src/ontology/` — Ontologia OWL
 - `apps/sem-csmf/src/nlp/parser.py` — Parser NLP
 
 ---
 
-**Fim of Guia**
+**end of guide**
 

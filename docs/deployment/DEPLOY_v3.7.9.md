@@ -1,4 +1,4 @@
-# Deploy TriSLA v3.7.9 — Guia Completo
+# Deploy TriSLA v3.7.9 — guide Completo
 
 **Versão:** 3.7.9  
 **Data:** 2025-01-XX  
@@ -18,7 +18,7 @@ Todas as imagens devem estar disponíveis no GHCR:
 - ✅ `ghcr.io/abelisboa/trisla-bc-nssmf:3.7.9`
 - ✅ `ghcr.io/abelisboa/trisla-sla-agent-layer:3.7.9`
 
-**Verificar:**
+**verify:**
 ```bash
 # Listar imagens no GHCR
 docker pull ghcr.io/abelisboa/trisla-sem-csmf:3.7.9
@@ -90,25 +90,25 @@ helm upgrade --install trisla ./helm/trisla \
   --timeout 15m
 ```
 
-### Passo 3: Verificar Deploy
+### Passo 3: verify Deploy
 
 ```bash
-# Verificar pods
+# verify pods
 kubectl get pods -n trisla
 
-# Verificar se estão usando as imagens corretas
+# verify se estão usando as imagens corretas
 kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
 
-# Verificar serviços
+# verify serviços
 kubectl get svc -n trisla
 
-# Verificar status of Helm release
+# verify status of Helm release
 helm status trisla -n trisla
 ```
 
 ---
 
-## ✅ Validação Pós-Deploy
+## ✅ validation Pós-Deploy
 
 ### 1. Health Checks
 
@@ -130,10 +130,10 @@ kubectl exec -n trisla deployment/trisla-sla-agent-layer -- \
   curl -s http://localhost:8084/health
 ```
 
-### 2. Métricas Prometheus
+### 2. metrics Prometheus
 
 ```bash
-# Verificar métricas expostas
+# verify metrics expostas
 kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080
 curl http://localhost:8080/metrics | grep trisla_
 ```
@@ -141,10 +141,10 @@ curl http://localhost:8080/metrics | grep trisla_
 ### 3. Traces OpenTelemetry
 
 ```bash
-# Verificar logs de traces
+# verify logs de traces
 kubectl logs -n trisla deployment/trisla-sem-csmf | grep -i "otlp\|trace"
 
-# Verificar OTLP Collector (se configurado)
+# verify OTLP Collector (se configurado)
 kubectl logs -n monitoring deployment/otel-collector
 ```
 
@@ -206,7 +206,7 @@ spec:
 
 **solution:**
 ```bash
-# Verificar secret
+# verify secret
 kubectl get secret ghcr-secret -n trisla
 
 # Recriar secret
@@ -223,7 +223,7 @@ kubectl delete pods -n trisla -l app.kubernetes.io/name=trisla
 
 ### Pods in CrashLoopBackOff
 
-**Causa:** Erro na aplicação ou dependências.
+**Causa:** error na aplicação ou dependências.
 
 **solution:**
 ```bash
@@ -233,11 +233,11 @@ kubectl logs -n trisla <pod-name> --previous
 # Ver eventos
 kubectl describe pod -n trisla <pod-name>
 
-# Verificar variáveis de ambiente
+# verify variables de environment
 kubectl exec -n trisla <pod-name> -- env | grep -E "OTLP|KAFKA|DATABASE"
 ```
 
-### Métricas Não Aparecem
+### metrics Não Aparecem
 
 **solution:**
 ```bash
@@ -245,10 +245,10 @@ kubectl exec -n trisla <pod-name> -- env | grep -E "OTLP|KAFKA|DATABASE"
 kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080
 curl http://localhost:8080/metrics
 
-# Verificar ServiceMonitor
+# verify ServiceMonitor
 kubectl get servicemonitor -n trisla
 
-# Verificar targets no Prometheus
+# verify targets no Prometheus
 kubectl port-forward -n monitoring svc/prometheus 9090:9090
 # Acessar: http://localhost:9090/targets
 ```
@@ -262,16 +262,16 @@ kubectl port-forward -n monitoring svc/prometheus 9090:9090
 Após o deploy, acesse os dashboards Grafana:
 
 - **TriSLA Overview**: Visão geral de todos os módulos
-- **Métricas por Módulo**: Métricas detalhadas de cada módulo
+- **metrics por Módulo**: metrics detalhadas de cada módulo
 - **Latência das Interfaces**: Latência das interfaces I-01 a I-07
 - **Health Status**: Status de saúde de todos os módulos
 
 ### Alertas Prometheus
 
-Configure alertas baseados in métricas:
+Configure alertas baseados in metrics:
 
 - Latência alta (> 1s)
-- Taxa de erro alta (> 5%)
+- Taxa de error alta (> 5%)
 - Health status = 0
 - Pods não prontos
 
@@ -279,14 +279,14 @@ Configure alertas baseados in métricas:
 
 ## 📚 Documentação Relacionada
 
-- **Guia de Deploy NASP**: [`docs/nasp/NASP_DEPLOY_GUIDE.md`](../nasp/NASP_DEPLOY_GUIDE.md)
+- **guide de Deploy NASP**: [`docs/nasp/NASP_DEPLOY_GUIDE.md`](../nasp/NASP_DEPLOY_GUIDE.md)
 - **Observability v3.7.9**: [`docs/OBSERVABILITY_v3.7.9.md`](../OBSERVABILITY_v3.7.9.md)
-- **Validação Build**: [`VALIDACAO_BUILD_3.7.9_PROXIMOS_PASSOS.md`](../../VALIDACAO_BUILD_3.7.9_PROXIMOS_PASSOS.md)
+- **validation Build**: [`VALIDACAO_BUILD_3.7.9_PROXIMOS_PASSOS.md`](../../VALIDACAO_BUILD_3.7.9_PROXIMOS_PASSOS.md)
 - **Atualização Helm**: [`ATUALIZACAO_HELM_VALUES_3.7.9.md`](../../ATUALIZACAO_HELM_VALUES_3.7.9.md)
 
 ---
 
-**Status:** ✅ Guia completo de deploy v3.7.9
+**Status:** ✅ guide completo de deploy v3.7.9
 
 
 
