@@ -474,7 +474,7 @@ python src/deploy_contracts.py
 
 ### 3. Configurar Environment Variables
 
-**File:** `.env` ou variáveis de ambiente
+**File:** `.env` ou environment variables
 
 ```bash
 # Blockchain

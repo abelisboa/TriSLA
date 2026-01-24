@@ -124,7 +124,7 @@ apps/sem-csmf/
 
 1. **Ler o guide Completo:** [`SEM_CSMF_COMPLETE_GUIDE.md`](SEM_CSMF_COMPLETE_GUIDE.md)
 2. **Entender a Ontologia:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
-3. **Ver Exemplos:** Ver seção de exemplos no guide completo
+3. **Ver Exemplos:** Ver section de exemplos no guide completo
 
 ### Uso of Ontologia
 
