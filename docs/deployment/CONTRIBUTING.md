@@ -4,12 +4,12 @@
 
 ### 1.1 Project Philosophy
 
-**TriSLA** is an open-source project dedicated to automated management de SLAs in redes 5G/O-RAN. We value:
+**TriSLA** is an open-source project dedicated to automated management of SLAs in 5G networks/O-RAN. We value:
 
 - **Quality over speed**: Código bem testado e documentado
 - **Collaboration**: Respeito mútuo e comunicação construtiva
 - **Transparency**: decisions técnicas documentadas e discutidas
-- **Continuous learning**: Espaço for crescimento e experimentação
+- **Continuous learning**: Space for growth e experimentação
 
 ### 1.2 Expectations for Contributors
 

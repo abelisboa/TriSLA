@@ -197,7 +197,7 @@ python src/deploy_contracts.py
 6. Saves address and ABI to `contract_address.json`
 
 **Environment Variables:**
-- `TRISLA_RPC_URL` — URL of RPC Besu (default: `http://127.0.0.1:8545`)
+- `TRISLA_RPC_URL` — Besu RPC URL (default: `http://127.0.0.1:8545`)
 - `TRISLA_PRIVATE_KEY` — Private key (production)
 - `TRISLA_DEV_PRIVATE_KEY` — Private key (development)
 - `TRISLA_CHAIN_ID` — Chain ID (default: `1337`)
@@ -466,7 +466,7 @@ python src/deploy_contracts.py
 ```
 [TriSLA] Compiling Solidity contract...
 [TriSLA] Usando conta: 0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1
-[TriSLA] Saldo of account: 100.0 ETH
+[TriSLA] Account balance: 100.0 ETH
 [TriSLA] Enviando transação de deploy: 0x...
 [TriSLA] Contrato implantado em: 0x42699A7612A82f1d9C36148af9C77354759b210b
 [TriSLA] address e ABI salvos to contract_address.json
@@ -660,7 +660,7 @@ docker-compose -f docker-compose-besu.yaml up -d
 
 **solution:**
 ```bash
-# Em modo DEV, usar conta padrão of Besu
+# Em modo DEV, usar default Besu account
 # Chave privada: 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
 # address: 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73
 
@@ -693,7 +693,7 @@ python src/deploy_contracts.py
 # Instalar solc
 pip install py-solc-x
 
-# Instalar versão específica of Solidity
+# Instalar specific Solidity version
 python -c "from solcx import install_solc; install_solc('0.8.20')"
 ```
 
@@ -766,5 +766,5 @@ Para mais informações, consulte:
 
 ---
 
-**end of Guia**
+**end of Guide**
 
