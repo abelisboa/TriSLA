@@ -2,15 +2,15 @@
 
 ## 1. Introduction
 
-This document provides a complete guide for developers who want to contribute to the project **TriSLA** (Triple-SLA). O TriSLA é uma plataforma de gerenciamento de SLA para redes 5G/O-RAN baseada em microserviços, utilizando Python, gRPC, Kafka, blockchain e integration com NASP.
+This document provides a complete guide for developers who want to contribute to the project **TriSLA** (Triple-SLA). O TriSLA é uma plataforma de gerenciamento de SLA for redes 5G/O-RAN baseada in microserviços, utilizando Python, gRPC, Kafka, blockchain e integration com NASP.
 
 **Objectives of this guide:**
 
-- Facilitate setup do ambiente de desenvolvimento local
-- Document the structure do código e arquitetura
+- Facilitate setup of ambiente de desenvolvimento local
+- Document the structure of código e arquitetura
 - Establish standards de código e práticas recomendadas
 - Explain the flow de contribuição e processo de PR
-- Provide tools e scripts úteis para desenvolvimento
+- Provide tools e scripts úteis for desenvolvimento
 
 **Target audience:**
 
@@ -70,11 +70,11 @@ brew install docker docker-compose
 **Ferramentas adicionais:**
 
 ```bash
-# Kubernetes CLI (opcional, para testes locais)
+# Kubernetes CLI (opcional, for testes locais)
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-# Helm (opcional, para deploy em Kubernetes)
+# Helm (opcional, for deploy in Kubernetes)
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 # gRPCurl (para testes de gRPC)
@@ -98,7 +98,7 @@ brew install grpcurl  # macOS
 
 ---
 
-## 3. Estrutura do Repositório
+## 3. Estrutura of Repositório
 
 ### 3.1 Visão Geral
 
@@ -137,7 +137,7 @@ TriSLA/
 
 ### 3.2 Estrutura de um Módulo
 
-Cada módulo em `apps/` segue a seguinte estrutura:
+Cada módulo in `apps/` segue a seguinte estrutura:
 
 ```
 apps/<module-name>/
@@ -149,12 +149,12 @@ apps/<module-name>/
 │   ├── api/                       # Endpoints REST/gRPC
 │   ├── services/                  # Lógica de negócio
 │   └── utils/                     # Utilitários
-├── tests/                         # Testes do módulo
+├── tests/                         # Testes of módulo
 │   ├── unit/
 │   └── integration/
 ├── Dockerfile                     # Imagem Docker
 ├── requirements.txt               # Dependências Python
-└── README.md                      # Documentação do módulo
+└── README.md                      # Documentação of módulo
 ```
 
 ### 3.3 Convenções de Nomenclatura
@@ -245,7 +245,7 @@ docker --version
 docker compose version
 ```
 
-**Build das imagens (opcional, para desenvolvimento):**
+**Build das imagens (opcional, for desenvolvimento):**
 
 ```bash
 # Build todas as imagens
@@ -258,10 +258,10 @@ docker build -t ghcr.io/abelisboa/trisla-sem-csmf:dev .
 
 ### 4.4 Docker Compose
 
-**Iniciar serviços de infraestrutura:**
+**start serviços de infraestrutura:**
 
 ```bash
-# Iniciar apenas infraestrutura (PostgreSQL, Kafka, Prometheus, etc.)
+# start apenas infraestrutura (PostgreSQL, Kafka, Prometheus, etc.)
 docker compose up -d postgres kafka zookeeper prometheus grafana otlp-collector
 
 # Verifiesr status
@@ -308,7 +308,7 @@ python -m uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload
 **Opção 2: Via Docker Compose:**
 
 ```bash
-# Na raiz do projeto
+# Na raiz of projeto
 docker compose up -d sem-csmf
 
 # Ver logs
@@ -326,7 +326,7 @@ curl -X POST http://localhost:8080/api/v1/intents \
   -H "Content-Type: application/json" \
   -d '{
     "tenant_id": "tenant-001",
-    "intent": "Criar slice para AR com latência < 10ms"
+    "intent": "Criar slice for AR com latência < 10ms"
   }'
 ```
 
@@ -407,7 +407,7 @@ docker compose up -d ml-nsmf
 # Health check
 curl http://localhost:8081/health
 
-# Sendsr NEST para predição
+# Sendsr NEST for predição
 curl -X POST http://localhost:8081/api/v1/nest \
   -H "Content-Type: application/json" \
   -d @examples/nest_example.json
@@ -419,10 +419,10 @@ curl -X POST http://localhost:8081/api/v1/nest \
 
 ### 5.1 Docker Compose Completo
 
-**Iniciar todos os serviços:**
+**start todos os serviços:**
 
 ```bash
-# Iniciar stack completo
+# start stack completo
 docker compose up -d
 
 # Verifiesr status de todos os serviços
@@ -438,7 +438,7 @@ docker compose down
 docker compose down -v
 ```
 
-### 5.2 Explicação do docker-compose.yml
+### 5.2 Explicação of docker-compose.yml
 
 **Services de infraestrutura:**
 
@@ -454,7 +454,7 @@ postgres:
   volumes:
     - postgres-data:/var/lib/postgresql/data
   # Porta: 5432
-  # Uso: Banco de dados para SEM-CSMF
+  # Uso: Banco de dados for SEM-CSMF
 
 kafka:
   image: confluentinc/cp-kafka:7.4.0
@@ -543,10 +543,10 @@ ml-nsmf:
 
 | Variável | Description | Valor Padrão |
 |----------|-----------|--------------|
-| `POSTGRES_URL` | URL do PostgreSQL | `postgresql://trisla:trisla_password@postgres:5432/trisla` |
+| `POSTGRES_URL` | URL of PostgreSQL | `postgresql://trisla:trisla_password@postgres:5432/trisla` |
 | `KAFKA_BOOTSTRAP_SERVERS` | Servidores Kafka | `kafka:9092` |
 | `OTLP_ENDPOINT` | Endpoint OTLP | `http://otlp-collector:4317` |
-| `PROMETHEUS_URL` | URL do Prometheus | `http://prometheus:9090` |
+| `PROMETHEUS_URL` | URL of Prometheus | `http://prometheus:9090` |
 | `LOG_LEVEL` | Nível de log | `INFO` |
 | `ENVIRONMENT` | Ambiente | `development` |
 
@@ -606,7 +606,7 @@ curl http://localhost:50052/health # Decision Engine
 
 ### 6.1 Mock NASP
 
-Para desenvolvimento local, o `docker-compose.yml` inclui serviços mock do NASP:
+Para desenvolvimento local, o `docker-compose.yml` inclui serviços mock of NASP:
 
 ```yaml
 mock-nasp-ran:
@@ -628,7 +628,7 @@ mock-nasp-core:
   # Mock Core endpoints
 ```
 
-### 6.2 Configurar NASP Adapter para Mock
+### 6.2 Configurar NASP Adapter for Mock
 
 **Variáveis de ambiente:**
 
@@ -642,7 +642,7 @@ export NASP_MOCK_MODE=true
 ### 6.3 Testar Integração com Mock
 
 ```bash
-# Iniciar mock NASP
+# start mock NASP
 docker compose up -d mock-nasp-ran mock-nasp-transport mock-nasp-core
 
 # Configurar expectativas no MockServer
@@ -933,19 +933,19 @@ from apps.sem_csmf.src.models.intent import Intent
 
 
 class TestIntentProcessor:
-    """Testes unitários para IntentProcessor"""
+    """Testes unitários for IntentProcessor"""
     
     @pytest.fixture
     def processor(self):
-        """Fixture para IntentProcessor"""
+        """Fixture for IntentProcessor"""
         return IntentProcessor()
     
     @pytest.fixture
     def sample_intent(self):
-        """Fixture para intent de exemplo"""
+        """Fixture for intent de exemplo"""
         return Intent(
             tenant_id="tenant-001",
-            intent="Criar slice para AR",
+            intent="Criar slice for AR",
             service_type="eMBB"
         )
     
@@ -998,7 +998,7 @@ from apps.decision_engine.src.proto.proto import i01_interface_pb2_grpc
 
 @pytest.fixture(scope="module")
 def grpc_channel():
-    """Fixture para canal gRPC"""
+    """Fixture for canal gRPC"""
     channel = grpc.insecure_channel('localhost:50051')
     yield channel
     channel.close()
@@ -1006,7 +1006,7 @@ def grpc_channel():
 
 @pytest.fixture(scope="module")
 def grpc_stub(grpc_channel):
-    """Fixture para stub gRPC"""
+    """Fixture for stub gRPC"""
     return i01_interface_pb2_grpc.DecisionEngineServiceStub(grpc_channel)
 
 
@@ -1072,7 +1072,7 @@ def test_full_workflow(base_urls):
         f"{base_urls['sem_csmf']}/api/v1/intents",
         json={
             "tenant_id": "tenant-001",
-            "intent": "Criar slice para AR com latência < 10ms"
+            "intent": "Criar slice for AR com latência < 10ms"
         }
     )
     assert intent_response.status_code == 200
@@ -1104,7 +1104,7 @@ def test_full_workflow(base_urls):
     decision_data = decision_response.json()
     assert decision_data["decision"] in ["ACCEPT", "REJECT", "RENEGOTIATE"]
     
-    # 6. Verifiesr registro em blockchain (se ACCEPT)
+    # 6. Verifiesr registro in blockchain (se ACCEPT)
     if decision_data["decision"] == "ACCEPT":
         blockchain_response = requests.get(
             f"{base_urls['bc_nssmf']}/api/v1/slas/{intent_id}"
@@ -1244,7 +1244,7 @@ for module in sem-csmf ml-nsmf decision-engine bc-nssmf sla-agent-layer nasp-ada
 done
 ```
 
-### 9.3 Push para GHCR
+### 9.3 Push for GHCR
 
 **Push individual:**
 
@@ -1296,7 +1296,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Copiar dependências do builder
+# Copiar dependências of builder
 COPY --from=builder /root/.local /root/.local
 
 # Copiar código
@@ -1328,7 +1328,7 @@ docker run -p 8080:8080 ghcr.io/abelisboa/trisla-sem-csmf:latest
 
 ---
 
-## 10. Pipeline CI/CD para Desenvolvedores
+## 10. Pipeline CI/CD for Desenvolvedores
 
 ### 10.1 GitHub Actions
 
@@ -1450,7 +1450,7 @@ act -j build
 
 ### 11.1 Processo de Contribuição
 
-**1. Fork do repositório:**
+**1. Fork of repositório:**
 
 ```bash
 # Fork no GitHub (via interface web)
@@ -1486,7 +1486,7 @@ git add .
 # Commitar (seguindo Conventional Commits)
 git commit -m "feat: adicionar nova funcionalidade X"
 
-# Push para fork
+# Push for fork
 git push origin feature/nova-funcionalidade
 ```
 
@@ -1516,9 +1516,9 @@ git push origin feature/nova-funcionalidade
 
 ```bash
 git commit -m "feat(sem-csmf): adicionar suporte a intents OWL"
-git commit -m "fix(decision-engine): corrigir timeout em gRPC"
+git commit -m "fix(decision-engine): corrigir timeout in gRPC"
 git commit -m "docs: atualizar guia de desenvolvedor"
-git commit -m "test(ml-nsmf): adicionar testes unitários para predições"
+git commit -m "test(ml-nsmf): adicionar testes unitários for predições"
 ```
 
 ### 11.3 Criar Pull Request
@@ -1526,8 +1526,8 @@ git commit -m "test(ml-nsmf): adicionar testes unitários para predições"
 **1. Abrir PR no GitHub:**
 
 - Acessar: https://github.com/abelisboa/TriSLA/pulls
-- Clicar em "New Pull Request"
-- Selecionar branch do fork
+- Clicar in "New Pull Request"
+- Selecionar branch of fork
 - Preencher template de PR
 
 **2. Template de PR:**
@@ -1543,7 +1543,7 @@ Brief description das mudanças.
 - [ ] Documentação
 
 ## Checklist
-- [ ] Código segue estilo do projeto (black, isort, flake8)
+- [ ] Código segue estilo of projeto (black, isort, flake8)
 - [ ] Testes adicionados/atualizados
 - [ ] Documentação atualizada
 - [ ] CI passa
@@ -1591,9 +1591,9 @@ git push origin feature/nova-funcionalidade --force-with-lease
 
 ```markdown
 ## Description
-Description clara e concisa do bug.
+Description clara e concisa of bug.
 
-## Passos para reproduzir
+## Passos for reproduzir
 1. ...
 2. ...
 3. ...
@@ -1623,7 +1623,7 @@ Se aplicável.
 
 ```markdown
 ## Description
-Description clara da funcionalidade desejada.
+Description clara of funcionalidade desejada.
 
 ## Motivação
 Por que essa funcionalidade é necessária?
@@ -1645,7 +1645,7 @@ Qualquer outra informação relevante.
 - `documentation`: Melhorias na documentação
 - `question`: Pergunta
 - `help wanted`: Precisa de ajuda
-- `good first issue`: Bom para iniciantes
+- `good first issue`: Bom for iniciantes
 
 ---
 
@@ -1668,7 +1668,7 @@ def process_intent(intent):
 **Comandos:**
 
 - `n` (next): Próxima linha
-- `s` (step): Entrar em função
+- `s` (step): Entrar in função
 - `c` (continue): Continuar
 - `l` (list): Listar código
 - `p <var>`: Imprimir variável
@@ -1701,13 +1701,13 @@ def process_intent(intent):
 
 ### 13.3 Docker Debug
 
-**Entrar em container:**
+**Entrar in container:**
 
 ```bash
-# Executar comando em container
+# Executar comando in container
 docker compose exec sem-csmf bash
 
-# Ver logs em tempo real
+# Ver logs in tempo real
 docker compose logs -f sem-csmf
 
 # Ver logs de todos os serviços
@@ -1850,8 +1850,8 @@ ENVIRONMENT=production
 
 **Documentação:**
 
-- `README.md`: Visão geral do projeto
-- `README_OPERATIONS_PROD.md`: Guia de operações em produção
+- `README.md`: Visão geral of projeto
+- `README_OPERATIONS_PROD.md`: Guia de operações in produção
 - `SECURITY_HARDENING.md`: Guia de segurança
 - `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
 - `API_REFERENCE.md`: Referência de APIs
@@ -1862,7 +1862,7 @@ ENVIRONMENT=production
 **Código:**
 
 - `apps/*/README.md`: Documentação de cada módulo
-- `helm/trisla/README.md`: Documentação do Helm chart
+- `helm/trisla/README.md`: Documentação of Helm chart
 - `monitoring/README.md`: Documentação de observabilidade
 
 **Scripts:**
@@ -1882,7 +1882,7 @@ ENVIRONMENT=production
 **Contribuindo:**
 
 1. Fork o repositório
-2. Crie uma branch para sua feature
+2. Crie uma branch for sua feature
 3. Faça commit das mudanças
 4. Abra um Pull Request
 5. Aguarde revisão e merge
@@ -1893,9 +1893,9 @@ ENVIRONMENT=production
 
 ### 12.1 Teste E2E Local
 
-**Objective:** Validar o fluxo completo I-01 → I-07 em ambiente local com Docker Compose.
+**Objective:** Validar o fluxo completo I-01 → I-07 in ambiente local com Docker Compose.
 
-**Iniciar ambiente:**
+**start ambiente:**
 ```bash
 # Linux/macOS
 ./scripts/start-local-e2e.sh
@@ -1946,9 +1946,9 @@ helm upgrade --install trisla ./helm/trisla \
 |---------|------------------------|-------------------|
 | **NASP Adapter** | Modo mock controlado | Modo real (endpoints reais) |
 | **Blockchain** | Besu dev local | Besu permissionado no cluster |
-| **Kafka** | Container local | Kafka do cluster NASP |
-| **Observabilidade** | Prometheus/Grafana local | Stack do cluster NASP |
-| **Network** | Bridge network Docker | CNI do cluster (Calico) |
+| **Kafka** | Container local | Kafka of cluster NASP |
+| **Observabilidade** | Prometheus/Grafana local | Stack of cluster NASP |
+| **Network** | Bridge network Docker | CNI of cluster (Calico) |
 | **Storage** | Volumes Docker | StorageClass Kubernetes |
 
 ### 12.4 Troubleshooting E2E
@@ -1979,7 +1979,7 @@ helm upgrade --install trisla ./helm/trisla \
 
 **Ambiente Local (Docker Compose):**
 - Desenvolvimento e testes rápidos
-- NASP Adapter em modo mock controlado
+- NASP Adapter in modo mock controlado
 - Besu dev local
 - Kafka container local
 - Observabilidade local (Prometheus/Grafana)
@@ -1988,8 +1988,8 @@ helm upgrade --install trisla ./helm/trisla \
 - Produção real
 - NASP Adapter conectado a serviços NASP reais
 - Besu permissionado no cluster
-- Kafka do cluster NASP
-- Observabilidade do cluster NASP
+- Kafka of cluster NASP
+- Observabilidade of cluster NASP
 
 ### 13.2 Onde Ajustar values-production.yaml
 
@@ -2000,7 +2000,7 @@ helm upgrade --install trisla ./helm/trisla \
 **Script de preenchimento:** `scripts/fill_values_production.sh`
 
 **⚠️ IMPORTANTE:**
-- Nunca colocar IPs reais em documentação Markdown
+- Nunca colocar IPs reais in documentação Markdown
 - Usar FQDNs Kubernetes: `http://<SERVICE>.<NS>.svc.cluster.local:<PORT>`
 - Valores reais apenas no arquivo YAML local (não versionado)
 
@@ -2015,15 +2015,15 @@ helm upgrade --install trisla ./helm/trisla \
 - `validate-cluster.yml` — Validação pós-deploy
 
 **Inventory:** `ansible/inventory.yaml`
-- Configurar nodes NASP (usar placeholders em docs)
-- Variáveis de grupo para automação
+- Configurar nodes NASP (usar placeholders in docs)
+- Variáveis de grupo for automação
 
 **Scripts auxiliares:**
 - `scripts/discover-nasp-endpoints.sh` — Descoberta de endpoints
 - `scripts/fill_values_production.sh` — Preenchimento guiado
 - Validação manual de imagens GHCR via `docker manifest inspect` (ver `docs/ghcr/IMAGES_GHCR_MATRIX.md`)
 
-### 13.4 Recomendação: Não Colocar IPs Reais em Markdown
+### 13.4 Recomendação: Não Colocar IPs Reais in Markdown
 
 **❌ NUNCA faça:**
 ```markdown
@@ -2046,8 +2046,8 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 
 ## Conclusão
 
-This guide fornece todas as informações necessárias para desenvolvedores contribuírem com o TriSLA. Para dúvidas adicionais, consulte a documentação específica de cada módulo ou abra uma issue no GitHub.
+This guide fornece todas as informações necessárias for desenvolvedores contribuírem com o TriSLA. Para dúvidas adicionais, consulte a documentação específica de cada módulo ou abra uma issue no GitHub.
 
 **Última atualização:** 2025-11-22  
-**Versão do documento:** 1.0.0
+**Versão of documento:** 1.0.0
 

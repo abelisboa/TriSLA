@@ -4,22 +4,22 @@
 
 ### 1.1 Project Philosophy
 
-**TriSLA** is an open-source project dedicated to automated management de SLAs em redes 5G/O-RAN. We value:
+**TriSLA** is an open-source project dedicated to automated management de SLAs in redes 5G/O-RAN. We value:
 
 - **Quality over speed**: Código bem testado e documentado
 - **Collaboration**: Respeito mútuo e comunicação construtiva
 - **Transparency**: Decisões técnicas documentadas e discutidas
-- **Continuous learning**: Espaço para crescimento e experimentação
+- **Continuous learning**: Espaço for crescimento e experimentação
 
 ### 1.2 Expectations for Contributors
 
 **Before contributing, we expect you to:**
 
 - Read this guide completely
-- Familiarize yourself with a arquitetura do projeto (consulte `ARCHITECTURE_OVERVIEW.md`)
+- Familiarize yourself with a arquitetura of projeto (consulte `ARCHITECTURE_OVERVIEW.md`)
 - Understand existing code antes de propor mudanças significativas
 - Follow code standards e convenções estabelecidas
-- Be respectful e construtivo em discussões
+- Be respectful e construtivo in discussões
 
 **Types of contributions welcome:**
 
@@ -28,11 +28,11 @@
 - Documentation improvements
 - Performance optimizations
 - Tests and code coverage
-- Melhorias na experiência do desenvolvedor
+- Melhorias na experiência of desenvolvedor
 
 ### 1.3 Code of Conduct
 
-This project segue o [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). Ao participar, você concorda em manter this code. Comportamentos inaceitáveis incluem:
+This project segue o [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). Ao participar, você concorda in manter this code. Comportamentos inaceitáveis incluem:
 
 - Uso de linguagem ou imagens sexualizadas
 - Comentários insultuosos ou depreciativos
@@ -49,18 +49,18 @@ This project segue o [Contributor Covenant Code of Conduct](https://www.contribu
 **Before opening a bug report:**
 
 1. Verifique se o bug já foi reportado (busque nas issues existentes)
-2. Teste na versão mais recente do código
+2. Teste na versão mais recente of código
 3. Tente reproduzir o bug de forma consistente
 
-**Template para bug report:**
+**Template for bug report:**
 
 ```markdown
 ## Description
-Clear and concise description do bug.
+Clear and concise description of bug.
 
-## Passos para Reproduzir
-1. Vá para '...'
-2. Clique em '...'
+## Passos for Reproduzir
+1. Vá for '...'
+2. Clique in '...'
 3. Role até '...'
 4. Veja o erro
 
@@ -77,7 +77,7 @@ Se aplicável, adicione screenshots.
 - OS: [e.g., Ubuntu 20.04]
 - Python: [e.g., 3.10.5]
 - Docker: [e.g., 20.10.12]
-- Versão do TriSLA: [e.g., v1.0.0]
+- Versão of TriSLA: [e.g., v1.0.0]
 
 ## Logs
 ```
@@ -93,19 +93,19 @@ Qualquer outra informação relevante.
 **Antes de propor uma feature:**
 
 1. Verifique se a feature has already been proposed
-2. Considere se a feature se alinha com os objetivos do projeto
+2. Considere se a feature se alinha com os objetivos of projeto
 3. Prepare a detailed proposal
 
-**Template para feature request:**
+**Template for feature request:**
 
 ```markdown
 ## Description
-Description clara da funcionalidade desejada.
+Description clara of funcionalidade desejada.
 
 ## Motivação
 Por que essa funcionalidade é necessária? Qual problema ela resolve?
 
-## Solução proposal
+## solution proposal
 Como você imagina que isso funcionaria?
 
 ## Alternativas Consideradas
@@ -129,7 +129,7 @@ Qualquer outra informação relevante.
 - Adição de exemplos ou casos de uso
 - Traduções (quando aplicável)
 
-**Template para documentação:**
+**Template for documentação:**
 
 ```markdown
 ## Arquivo(s) Afetado(s)
@@ -147,7 +147,7 @@ Description das mudanças propostas.
 
 ---
 
-## 3. Como Criar um Fork do Repositório
+## 3. Como Criar um Fork of Repositório
 
 ### 3.1 Processo de Fork
 
@@ -155,7 +155,7 @@ Description das mudanças propostas.
 
 1. Acesse: https://github.com/abelisboa/TriSLA
 2. Clique no botão "Fork" no canto superior direito
-3. Escolha sua conta/organização para o fork
+3. Escolha sua conta/organização for o fork
 
 **Passo 2: Clonar Fork Localmente**
 
@@ -179,12 +179,12 @@ git remote -v
 **Passo 3: Manter Fork Atualizado**
 
 ```bash
-# Atualizar branch main do upstream
+# Atualizar branch main of upstream
 git fetch upstream
 git checkout main
 git merge upstream/main
 
-# Push para seu fork
+# Push for seu fork
 git push origin main
 ```
 
@@ -261,7 +261,7 @@ source .venv/bin/activate
 
 ```bash
 which python
-# Deve apontar para .venv/bin/python (Linux/macOS)
+# Deve apontar for .venv/bin/python (Linux/macOS)
 # ou .venv\Scripts\python.exe (Windows)
 ```
 
@@ -298,10 +298,10 @@ cd ../..
 
 ### 4.5 Docker Compose (Infraestrutura)
 
-**Iniciar serviços de infraestrutura:**
+**start serviços de infraestrutura:**
 
 ```bash
-# Iniciar PostgreSQL, Kafka, Prometheus, Grafana
+# start PostgreSQL, Kafka, Prometheus, Grafana
 docker compose up -d postgres kafka zookeeper prometheus grafana otlp-collector
 
 # Verifiesr status
@@ -333,9 +333,9 @@ docker compose down
 
 - `feature/`: Nova funcionalidade
 - `fix/` ou `bugfix/`: Correção de bug
-- `hotfix/`: Correção urgente em produção
+- `hotfix/`: Correção urgente in produção
 - `refactor/`: Refatoração de código
-- `docs/`: Mudanças apenas em documentação
+- `docs/`: Mudanças apenas in documentação
 - `test/`: Adição ou correção de testes
 - `chore/`: Tarefas de manutenção (dependências, build, etc.)
 
@@ -378,7 +378,7 @@ git branch
 # Deve mostrar * feature/nome-da-feature
 ```
 
-**Push para seu fork:**
+**Push for seu fork:**
 
 ```bash
 # Primeiro push (definir upstream)
@@ -410,13 +410,13 @@ O TriSLA segue o padrão [Conventional Commits](https://www.conventionalcommits.
 
 - `feat`: Nova funcionalidade
 - `fix`: Correção de bug
-- `docs`: Mudanças em documentação
+- `docs`: Mudanças in documentação
 - `style`: Formatação, ponto-e-vírgula faltando, etc. (não afeta código)
 - `refactor`: Refatoração de código
 - `test`: Adição ou correção de testes
-- `chore`: Mudanças em build, dependências, etc.
+- `chore`: Mudanças in build, dependências, etc.
 - `perf`: Melhoria de performance
-- `ci`: Mudanças em CI/CD
+- `ci`: Mudanças in CI/CD
 
 **Scopes (opcionais):**
 
@@ -442,10 +442,10 @@ git commit -m "feat(sem-csmf): adicionar parser de ontologia OWL"
 **Commit com corpo:**
 
 ```bash
-git commit -m "fix(decision-engine): corrigir timeout em chamadas gRPC
+git commit -m "fix(decision-engine): corrigir timeout in chamadas gRPC
 
-O timeout estava configurado para 5s, mas em alguns casos
-a chamada pode levar até 10s. Aumentar timeout para 15s
+O timeout estava configurado for 5s, mas in alguns casos
+a chamada pode levar até 10s. Aumentar timeout for 15s
 e adicionar retry com backoff exponencial.
 
 Fixes #123"
@@ -472,7 +472,7 @@ de commits."
 **Commit de teste:**
 
 ```bash
-git commit -m "test(decision-engine): adicionar testes unitários para rule engine
+git commit -m "test(decision-engine): adicionar testes unitários for rule engine
 
 Cobrir casos de borda e cenários de falha."
 ```
@@ -489,8 +489,8 @@ Cobrir casos de borda e cenários de falha."
 **Body (opcional):**
 
 - Explique o "o quê" e "por quê", não o "como"
-- Quebre linhas em 72 caracteres
-- Use para contexto adicional ou breaking changes
+- Quebre linhas in 72 caracteres
+- Use for contexto adicional ou breaking changes
 
 **Footer (opcional):**
 
@@ -504,13 +504,13 @@ Cobrir casos de borda e cenários de falha."
 git commit -m "fix: bug"
 
 # ❌ Muito longo
-git commit -m "fix: corrigir problema de timeout que ocorre quando o Decision Engine tenta se comunicar com o ML-NSMF em situações de alta carga"
+git commit -m "fix: corrigir problema de timeout que ocorre quando o Decision Engine tenta se comunicar com o ML-NSMF in situações de alta carga"
 
 # ❌ Não imperativo
 git commit -m "feat: adicionando nova funcionalidade"
 
 # ✅ Bom
-git commit -m "fix(decision-engine): corrigir timeout em alta carga"
+git commit -m "fix(decision-engine): corrigir timeout in alta carga"
 ```
 
 ---
@@ -521,11 +521,11 @@ git commit -m "fix(decision-engine): corrigir timeout em alta carga"
 
 Antes de abrir um PR, verifique:
 
-- [ ] Código segue os padrões do projeto (black, isort, flake8)
+- [ ] Código segue os padrões of projeto (black, isort, flake8)
 - [ ] Testes adicionados/atualizados e passando
 - [ ] Documentação atualizada (se aplicável)
 - [ ] Commits seguem Conventional Commits
-- [ ] Branch atualizada com `main` do upstream
+- [ ] Branch atualizada com `main` of upstream
 - [ ] Sem conflitos de merge
 - [ ] CI passa (se configurado)
 - [ ] Sem dados sensíveis ou tokens no código
@@ -567,7 +567,7 @@ Breve Description das mudanças.
 - [ ] I-07 (REST)
 
 ## Como Testar
-Passos para testar as mudanças:
+Passos for testar as mudanças:
 1. ...
 2. ...
 3. ...
@@ -591,7 +591,7 @@ Qualquer informação adicional relevante.
 
 **Process:**
 
-1. **Abertura do PR**: Mantenedor será notificado automaticamente
+1. **Abertura of PR**: Mantenedor será notificado automaticamente
 2. **Revisão inicial**: Verifiesção de checklist e CI
 3. **Code review**: Pelo menos 1 aprovação necessária
 4. **Feedback**: Discussão construtiva sobre mudanças
@@ -614,14 +614,14 @@ Qualquer informação adicional relevante.
 
 ---
 
-## 8. Rodar Testes Antes do PR
+## 8. Rodar Testes Antes of PR
 
 ### 8.1 Testes Unitários
 
 **Executar todos os testes unitários:**
 
 ```bash
-# Na raiz do projeto
+# Na raiz of projeto
 pytest tests/unit/ -v
 
 # Com cobertura
@@ -643,7 +643,7 @@ pytest tests/unit/test_decision_engine.py -v
 **Pré-requisitos:**
 
 ```bash
-# Iniciar serviços de infraestrutura
+# start serviços de infraestrutura
 docker compose up -d postgres kafka zookeeper
 ```
 
@@ -658,7 +658,7 @@ pytest tests/integration/ -v -m integration
 **Pré-requisitos:**
 
 ```bash
-# Iniciar stack completo
+# start stack completo
 docker compose up -d
 ```
 
@@ -731,8 +731,8 @@ black apps/ tests/
 **Regras:**
 
 - Linha máxima: 100 caracteres
-- Aspas duplas para strings
-- Trailing comma em estruturas multi-linha
+- Aspas duplas for strings
+- Trailing comma in estruturas multi-linha
 
 ### 9.2 isort (Ordenação de Imports)
 
@@ -812,7 +812,7 @@ flake8 apps/ tests/
 
 **Estilo:**
 
-- Seguir PEP 8 (com exceções do black)
+- Seguir PEP 8 (com exceções of black)
 - Usar type hints quando possível
 - Docstrings no formato Google ou NumPy
 
@@ -829,11 +829,11 @@ def process_intent(
     
     Args:
         intent: Objeto Intent a ser processado
-        tenant_id: ID do tenant
+        tenant_id: ID of tenant
         validate: Se True, valida o intent antes de processar
     
     Returns:
-        NEST gerado a partir do intent
+        NEST gerado a partir of intent
     
     Raises:
         ValueError: Se intent for inválido
@@ -932,8 +932,8 @@ export const IntentList: React.FC<IntentListProps> = ({
 
 **Documentação de código:**
 
-- Docstrings em funções e classes
-- Type hints para clareza
+- Docstrings in funções e classes
+- Type hints for clareza
 - Comentários inline quando necessário
 
 **Documentação de projeto:**
@@ -946,7 +946,7 @@ export const IntentList: React.FC<IntentListProps> = ({
 
 **Documentação de módulos:**
 
-- `apps/<module>/README.md`: Documentação específica do módulo
+- `apps/<module>/README.md`: Documentação específica of módulo
 
 ### 11.2 Quando Atualizar Documentação
 
@@ -964,7 +964,7 @@ export const IntentList: React.FC<IntentListProps> = ({
 
 - Use títulos hierárquicos (`#`, `##`, `###`)
 - Blocos de código com syntax highlighting
-- Listas para itens múltiplos
+- Listas for itens múltiplos
 - Tabelas quando apropriado
 
 **Exemplo:**
@@ -987,14 +987,14 @@ nest = process_intent(intent, tenant_id)
 | Parâmetro | Tipo | Description |
 |-----------|------|-----------|
 | `intent` | `Intent` | Intent a ser processado |
-| `tenant_id` | `str` | ID do tenant |
+| `tenant_id` | `str` | ID of tenant |
 
 ### Exemplo
 
 ```python
 intent = Intent(
     tenant_id="tenant-001",
-    intent="Criar slice para AR"
+    intent="Criar slice for AR"
 )
 nest = process_intent(intent, "tenant-001")
 ```
@@ -1019,7 +1019,7 @@ nest = process_intent(intent, "tenant-001")
 - Use variáveis de ambiente
 - Use arquivos `.env` (já no `.gitignore`)
 - Use secrets management (Kubernetes Secrets, etc.)
-- Documente variáveis necessárias em `README.md`
+- Documente variáveis necessárias in `README.md`
 
 **Exemplo incorreto:**
 
@@ -1040,7 +1040,7 @@ API_TOKEN = os.getenv("GITHUB_TOKEN")
 
 **Evite:**
 
-- Dados de produção em código de exemplo
+- Dados de produção in código de exemplo
 - IPs ou hostnames de ambientes reais
 - Estruturas de dados com informações reais
 - Logs com informações sensíveis
@@ -1057,13 +1057,13 @@ API_TOKEN = os.getenv("GITHUB_TOKEN")
 **Regra fundamental:**
 
 - **Nunca** faça commit direto na branch `main`
-- **Sempre** crie uma branch para suas mudanças
-- **Sempre** use Pull Requests para merge em `main`
+- **Sempre** crie uma branch for suas mudanças
+- **Sempre** use Pull Requests for merge in `main`
 
 **Proteção:**
 
 - A branch `main` está protegida
-- PRs são obrigatórios para merge
+- PRs são obrigatórios for merge
 - Revisão de código é necessária
 
 **Exceções:**
@@ -1073,14 +1073,14 @@ API_TOKEN = os.getenv("GITHUB_TOKEN")
 
 ---
 
-## 13. Estrutura Recomendada para Contribuições Grandes
+## 13. Estrutura Recomendada for Contribuições Grandes
 
 ### 13.1 Planejamento
 
 **Para contribuições grandes (>500 linhas):**
 
-1. **Discutir primeiro**: Abra uma issue para discutir a proposal
-2. **Dividir em partes**: Quebre em PRs menores e incrementais
+1. **Discutir primeiro**: Abra uma issue for discutir a proposal
+2. **Dividir in partes**: Quebre in PRs menores e incrementais
 3. **Documentar**: Documente a arquitetura e decisões técnicas
 4. **Testar**: Garanta cobertura de testes adequada
 
@@ -1089,7 +1089,7 @@ API_TOKEN = os.getenv("GITHUB_TOKEN")
 **Para features grandes:**
 
 ```bash
-# Branch principal da feature
+# Branch principal of feature
 feature/nova-funcionalidade
 
 # Branches de sub-features (opcionais)
@@ -1113,7 +1113,7 @@ feature/nova-funcionalidade-part3
 # ✅ Bom: commits pequenos e focados
 git commit -m "feat: adicionar parser de ontologia"
 git commit -m "feat: adicionar validação de NEST"
-git commit -m "test: adicionar testes para parser"
+git commit -m "test: adicionar testes for parser"
 
 # ❌ Evitar: commit gigante com tudo
 git commit -m "feat: adicionar nova funcionalidade completa"
@@ -1121,7 +1121,7 @@ git commit -m "feat: adicionar nova funcionalidade completa"
 
 **Histórico limpo:**
 
-- Use `git rebase -i` para organizar commits antes do PR
+- Use `git rebase -i` for organizar commits antes of PR
 - Combine commits relacionados
 - Remova commits de WIP ou debug
 
@@ -1136,9 +1136,9 @@ git commit -m "feat: adicionar nova funcionalidade completa"
 
 ---
 
-## 14. Boas Práticas para PRs Limpos e Fáceis de Revisar
+## 14. Boas Práticas for PRs Limpos e Fáceis de Revisar
 
-### 14.1 Tamanho do PR
+### 14.1 Tamanho of PR
 
 **Ideal:**
 
@@ -1148,11 +1148,11 @@ git commit -m "feat: adicionar nova funcionalidade completa"
 
 **Dicas:**
 
-- Divida PRs grandes em múltiplos PRs menores
+- Divida PRs grandes in múltiplos PRs menores
 - Cada PR deve ter um propósito claro
 - PRs incrementais são mais fáceis de revisar
 
-### 14.2 Organização do Código
+### 14.2 Organização of Código
 
 **Estrutura:**
 
@@ -1169,8 +1169,8 @@ PR: feat(sem-csmf): adicionar suporte a múltiplas ontologias
 Commits:
 1. feat: adicionar parser de ontologia OWL
 2. feat: adicionar suporte a múltiplas ontologias
-3. test: adicionar testes para parser
-4. docs: atualizar documentação do módulo
+3. test: adicionar testes for parser
+4. docs: atualizar documentação of módulo
 ```
 
 ### 14.3 Description Clara
@@ -1186,11 +1186,11 @@ Commits:
 
 ```markdown
 ## O que foi mudado
-Adicionado suporte para múltiplas ontologias OWL no SEM-CSMF.
+Adicionado suporte for múltiplas ontologias OWL no SEM-CSMF.
 
 ## Por quê
 Permite que diferentes tenants usem ontologias customizadas,
-aumentando flexibilidade do sistema.
+aumentando flexibilidade of sistema.
 
 ## Como testar
 1. Criar intent com ontologia customizada
@@ -1218,8 +1218,8 @@ aumentando flexibilidade do sistema.
 ```markdown
 Obrigado pelo feedback! Fiz as alterações solicitadas:
 
-- ✅ Refatorei a função `parse_ontology` para melhor legibilidade
-- ✅ Adicionei testes para o caso de borda mencionado
+- ✅ Refatorei a função `parse_ontology` for melhor legibilidade
+- ✅ Adicionei testes for o caso de borda mencionado
 - ✅ Atualizei a documentação
 
 Por favor, revise novamente quando tiver tempo.
@@ -1230,7 +1230,7 @@ Por favor, revise novamente quando tiver tempo.
 **Atualizar com main:**
 
 ```bash
-# Atualizar branch do PR
+# Atualizar branch of PR
 git checkout feature/minha-feature
 git fetch upstream
 git rebase upstream/main
@@ -1252,28 +1252,28 @@ git push origin feature/minha-feature --force-with-lease
 
 ## Conclusão
 
-This guia fornece as diretrizes necessárias para contribuir efetivamente com o TriSLA. Lembre-se:
+This guia fornece as diretrizes necessárias for contribuir efetivamente com o TriSLA. Lembre-se:
 
 - **Quality over speed**: Código bem testado e documentado
 - **Comunicação**: Seja claro e respeitoso
-- **Aprendizado**: This é um espaço para crescer e aprender
+- **Aprendizado**: This é um espaço for crescer e aprender
 
 **Recursos adicionais:**
 
 - `DEVELOPER_GUIDE.md`: Guia completo de desenvolvimento
-- `ARCHITECTURE_OVERVIEW.md`: Visão geral da arquitetura
+- `ARCHITECTURE_OVERVIEW.md`: Visão geral of arquitetura
 - `API_REFERENCE.md`: Referência de APIs
 - Issues no GitHub: Para discussões e perguntas
 
 **Dúvidas?**
 
-Abra uma issue no GitHub com a tag `question` ou entre em contato com os mantenedores.
+Abra uma issue no GitHub com a tag `question` ou entre in contato com os mantenedores.
 
 **Obrigado por contribuir com o TriSLA! 🚀**
 
 ---
 
 **Última atualização:** 2025-01-XX  
-**Versão do documento:** 1.0.0
+**Versão of documento:** 1.0.0
 
 

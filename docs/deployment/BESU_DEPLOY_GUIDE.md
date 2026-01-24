@@ -51,7 +51,7 @@ Basic Commands (Beginner):
   create          Create a resource from a file or from stdin
   expose          Take a replication controller, service, deployment or pod and expose it as a new Kubernetes service
   run             Executa uma imagem específica no cluster
-  set             Define funcionalidades específicas em objetos
+  set             Define funcionalidades específicas in objetos
 
 Basic Commands (Intermediate):
   explain         Get documentation for a resource
@@ -70,16 +70,16 @@ Cluster Management Commands:
   top             Display resource (CPU/memory) usage
   cordon          Marca o node como não agendável
   uncordon        Marca o node como agendável
-  drain           Drenar o node para preparação de manutenção
+  drain           Drenar o node for preparação de manutenção
   taint           Atualizar o taints de um ou mais nodes
 
 Troubleshooting and Debugging Commands:
   describe        Mostra os detalhes de um recurso específico ou de um grupo de recursos
-  logs            Mostra os logs de um container em um pod
-  attach          Se conecta a um container em execução
-  exec            Executa um comando em um container
-  port-forward    Encaminhar uma ou mais portas locais para um pod
-  proxy           Executa um proxy para o servidor de API do Kubernetes
+  logs            Mostra os logs de um container in um pod
+  attach          Se conecta a um container in execução
+  exec            Executa um comando in um container
+  port-forward    Encaminhar uma ou mais portas locais for um pod
+  proxy           Executa um proxy for o servidor de API of Kubernetes
   cp              Copy files and directories to and from containers
   auth            Inspect authorization
   debug           Create debugging sessions for troubleshooting workloads and nodes
@@ -103,7 +103,7 @@ Other Commands:
   api-versions    Print the supported API versions on the server, in the form of "group/version"
   config          Edita o arquivo kubeconfig
   plugin          Provides utilities for interacting with plugins
-  version         Mostra a informação de versão do cliente e do servidor
+  version         Mostra a informação de versão of cliente e of servidor
 
 Usage:
   kubectl [flags] [options]

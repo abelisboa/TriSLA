@@ -112,13 +112,13 @@ kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{
 # Verificar serviços
 kubectl get svc -n trisla
 
-# Verificar status do Helm release
+# Verificar status of Helm release
 helm status trisla -n trisla
 ```
 
 **Status Esperado:**
 - ✅ **Helm Release**: Revision 32 (deployed)
-- ✅ **Pods**: 14 pods em Running
+- ✅ **Pods**: 14 pods in Running
 - ✅ **ServiceMonitors**: 6 configurados
 - ✅ **OTEL Collector**: Running
 
@@ -170,7 +170,7 @@ kubectl logs -n trisla deployment/trisla-sem-csmf | grep -i "otlp\|trace"
 # Verificar OTEL Collector
 kubectl logs -n trisla deployment/trisla-otel-collector
 
-# Verificar status do OTEL Collector
+# Verificar status of OTEL Collector
 kubectl get pods -n trisla | grep otel
 ```
 
@@ -224,7 +224,7 @@ kubectl get servicemonitor trisla-sem-csmf -n trisla -o yaml
 
 ---
 
-## 📊 Status Atual do Deploy
+## 📊 Status Atual of Deploy
 
 ### Helm Release
 
@@ -233,9 +233,9 @@ kubectl get servicemonitor trisla-sem-csmf -n trisla -o yaml
 - **Revision**: 32
 - **Status**: ✅ deployed
 
-### Pods em Execução
+### Pods in Execução
 
-- **Total**: 14 pods em Running
+- **Total**: 14 pods in Running
   - SEM-CSMF: 2 pods
   - ML-NSMF: 2 pods
   - Decision Engine: 3 pods
@@ -272,11 +272,11 @@ Todas as imagens estão na versão **3.7.10**:
 
 ## 🐛 Troubleshooting
 
-### Pods em ImagePullBackOff
+### Pods in ImagePullBackOff
 
 **Causa:** Secret GHCR não configurado ou token inválido.
 
-**Solução:**
+**solution:**
 ```bash
 # Verificar secret
 kubectl get secret ghcr-secret -n trisla
@@ -293,11 +293,11 @@ kubectl create secret docker-registry ghcr-secret \
 kubectl delete pods -n trisla -l app.kubernetes.io/name=trisla
 ```
 
-### Pods em CrashLoopBackOff
+### Pods in CrashLoopBackOff
 
 **Causa:** Erro na aplicação ou dependências.
 
-**Solução:**
+**solution:**
 ```bash
 # Ver logs
 kubectl logs -n trisla <pod-name> --previous
@@ -311,7 +311,7 @@ kubectl exec -n trisla <pod-name> -- env | grep -E "OTLP|KAFKA|DATABASE"
 
 ### Métricas Não Aparecem
 
-**Solução:**
+**solution:**
 ```bash
 # Testar endpoint diretamente
 kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080
@@ -327,7 +327,7 @@ kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 909
 
 ### OTEL Collector Não Recebe Traces
 
-**Solução:**
+**solution:**
 ```bash
 # Verificar se OTEL Collector está rodando
 kubectl get pods -n trisla | grep otel
@@ -357,7 +357,7 @@ Após o deploy, acesse os dashboards Grafana:
 
 ### Alertas Prometheus
 
-Configure alertas baseados em métricas:
+Configure alertas baseados in métricas:
 
 - Latência alta (> 1s)
 - Taxa de erro alta (> 5%)
@@ -409,7 +409,7 @@ kubectl exec -n trisla <pod-name> -- curl -s http://localhost:8080/metrics
 
 ### Acessar Prometheus
 ```bash
-# Port-forward para Prometheus
+# Port-forward for Prometheus
 kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 9090:9090
 
 # Acessar: http://localhost:9090

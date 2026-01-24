@@ -26,7 +26,7 @@ Before starting any installation method, ensure you have:
 - **Docker** ou **containerd** — for Docker Compose methods
 - **Ansible** installed (versão ≥ 2.14) — for Ansible methods
 - **Access to GitHub Container Registry (GHCR)** — for image pull
-- **NASP credentials** — para integration com a plataforma
+- **NASP credentials** — for integration com a plataforma
 
 ### 1.4 Document Structure
 
@@ -34,14 +34,14 @@ This document is organized by installation method, allowing the operator to choo
 
 ---
 
-## 2. Fluxo de Instalação em Alto Nível
+## 2. Fluxo de Instalação in Alto Nível
 
-### 2.1 Visão Geral do Processo
+### 2.1 Visão Geral of Processo
 
-O processo de instalação do TriSLA segue os seguintes passos principais:
+O processo de instalação of TriSLA segue os seguintes passos principais:
 
 ```
-1. Preparação do Ambiente
+1. Preparação of Ambiente
    ├── Verifiesr pré-requisitos
    ├── Configurar acesso ao cluster
    ├── Criar secrets necessários
@@ -71,7 +71,7 @@ O processo de instalação do TriSLA segue os seguintes passos principais:
 
 ### 2.2 Ordem Recomendada de Instalação
 
-Para instalação em produção, recomenda-se a seguinte ordem:
+Para instalação in produção, recomenda-se a seguinte ordem:
 
 1. **Preparação**: Executar pre-flight checks
 2. **Configuração**: Auto-configurar ou configurar manualmente
@@ -109,24 +109,24 @@ Para instalação em produção, recomenda-se a seguinte ordem:
 
 ---
 
-## 3. Instalação via Scripts do Repositório
+## 3. Instalação via Scripts of Repositório
 
 ### 3.1 Visão Geral dos Scripts
 
-O repositório TriSLA inclui scripts automatizados para facilitar a instalação:
+O repositório TriSLA inclui scripts automatizados for facilitar a instalação:
 
-- `auto-config-nasp.sh`: Auto-configuração do ambiente NASP
-- `deploy-trisla-nasp.sh`: Deploy completo do TriSLA
-- `validate-nasp-infra.sh`: Validação da infraestrutura
+- `auto-config-nasp.sh`: Auto-configuração of ambiente NASP
+- `deploy-trisla-nasp.sh`: Deploy completo of TriSLA
+- `validate-nasp-infra.sh`: Validação of infraestrutura
 
 ### 3.2 auto-config-nasp.sh
 
-**Objective**: Detectar automaticamente configurações de rede do NASP e gerar arquivos de configuração.
+**Objective**: Detectar automaticamente configurações de rede of NASP e gerar arquivos de configuração.
 
 **Uso:**
 
 ```bash
-# Navegar para o diretório do repositório
+# Navegar for o diretório of repositório
 cd TriSLA-clean
 
 # Executar auto-configuração
@@ -136,16 +136,16 @@ cd TriSLA-clean
 **O que o script faz:**
 
 1. Detecta interface de rede principal (`my5g`)
-2. Identifica IP do nó Kubernetes
+2. Identifica IP of nó Kubernetes
 3. Identifica gateway padrão
 4. Gera `configs/generated/trisla_values_autogen.yaml`
 5. Gera `configs/generated/inventory_autogen.yaml` (Ansible)
-6. Gera trechos para `values-nasp.yaml`
+6. Gera trechos for `values-nasp.yaml`
 
 **Saída esperada:**
 
 ```
-🔍 Coletando informações do NASP...
+🔍 Coletando informações of NASP...
 Interface física principal detectada: my5g
 IP utilizado pelo Kubernetes: 192.168.10.16
 Gateway default: 192.168.10.1
@@ -158,14 +158,14 @@ Gateway default: 192.168.10.1
 # Verifiesr arquivos gerados
 ls -la configs/generated/
 
-# Ver conteúdo do values gerado
+# Ver conteúdo of values gerado
 cat configs/generated/trisla_values_autogen.yaml
 ```
 
 **Integração com values-nasp.yaml:**
 
 ```bash
-# Copiar configurações geradas para values-nasp.yaml
+# Copiar configurações geradas for values-nasp.yaml
 cat configs/generated/trisla_values_autogen.yaml >> helm/trisla/values-nasp.yaml
 
 # Ou usar diretamente
@@ -174,7 +174,7 @@ cp configs/generated/trisla_values_autogen.yaml helm/trisla/values-nasp.yaml
 
 ### 3.3 deploy-trisla-nasp.sh
 
-**Objective**: Deploy completo e automatizado do TriSLA no NASP.
+**Objective**: Deploy completo e automatizado of TriSLA no NASP.
 
 **Uso básico:**
 
@@ -218,7 +218,7 @@ export GHCR_REGISTRY=ghcr.io/abelisboa
 ./scripts/deploy-trisla-nasp.sh --helm-install
 ```
 
-**Fluxo do script:**
+**Fluxo of script:**
 
 1. **Pre-flight checks** (se `--pre-flight`):
    - Verifies kubectl
@@ -239,7 +239,7 @@ export GHCR_REGISTRY=ghcr.io/abelisboa
 
 4. **Logs** (se `--logs`):
    - Exibe logs dos módulos
-   - Exibe eventos do Kubernetes
+   - Exibe eventos of Kubernetes
 
 **Exemplo de saída:**
 
@@ -248,7 +248,7 @@ export GHCR_REGISTRY=ghcr.io/abelisboa
 [INFO] ✅ kubectl encontrado
 [INFO] ✅ Helm encontrado
 [INFO] ✅ Cluster Kubernetes acessível
-[INFO] 🚀 Iniciando deploy do TriSLA...
+[INFO] 🚀 Iniciando deploy of TriSLA...
 [INFO] ✅ Deploy concluído com sucesso
 [INFO] 🔍 Executando health checks...
 [INFO] ✅ Todos os módulos estão saudáveis
@@ -288,7 +288,7 @@ export GHCR_REGISTRY=ghcr.io/abelisboa
    - Resolução de serviços
 
 4. **Kubernetes**:
-   - Nodes em estado Ready
+   - Nodes in estado Ready
    - Control plane funcionando
    - RBAC configurado
 
@@ -327,7 +327,7 @@ export GHCR_REGISTRY=ghcr.io/abelisboa
 
 ### 4.1 Visão Geral
 
-O Docker Compose é ideal para instalação local, desenvolvimento e testes. Não é recomendado para produção, mas é útil para validação antes do deploy em Kubernetes.
+O Docker Compose é ideal for instalação local, desenvolvimento e testes. Não é recomendado for produção, mas é útil for validação antes of deploy in Kubernetes.
 
 ### 4.2 Pré-requisitos
 
@@ -345,7 +345,7 @@ docker ps
 **Passo 1: Preparar ambiente**
 
 ```bash
-# Navegar para diretório do repositório
+# Navegar for diretório of repositório
 cd TriSLA-clean
 
 # Verifiesr docker-compose.yml
@@ -364,10 +364,10 @@ OTLP_ENDPOINT=http://otlp-collector:4317
 EOF
 ```
 
-**Passo 3: Iniciar serviços**
+**Passo 3: start serviços**
 
 ```bash
-# Iniciar todos os serviços
+# start todos os serviços
 docker-compose up -d
 
 # Verifiesr status
@@ -400,7 +400,7 @@ curl http://localhost:3000/api/health
 **Modificar docker-compose.yml:**
 
 ```yaml
-# Exemplo: Aumentar recursos do ML-NSMF
+# Exemplo: Aumentar recursos of ML-NSMF
 ml-nsmf:
   deploy:
     resources:
@@ -438,10 +438,10 @@ docker-compose down -v
 docker-compose down --rmi all
 ```
 
-### 4.6 Limitações do Docker Compose
+### 4.6 Limitações of Docker Compose
 
-- **Não é adequado para produção**: Falta alta disponibilidade
-- **Recursos limitados**: Depende dos recursos da máquina local
+- **Não é adequado for produção**: Falta alta disponibilidade
+- **Recursos limitados**: Depende dos recursos of máquina local
 - **Sem auto-scaling**: Não escala automaticamente
 - **Sem Network Policies**: Menor isolamento de rede
 
@@ -451,7 +451,7 @@ docker-compose down --rmi all
 
 ### 5.1 Visão Geral
 
-Helm é o método **recomendado** para instalação em produção. Oferece controle granular, versionamento e facilita upgrades e rollbacks.
+Helm é o método **recomendado** for instalação in produção. Oferece controle granular, versionamento e facilita upgrades e rollbacks.
 
 ### 5.2 Pré-requisitos
 
@@ -479,7 +479,7 @@ kubectl label namespace trisla name=trisla environment=production
 **Passo 2: Criar secrets**
 
 ```bash
-# Secret para GHCR
+# Secret for GHCR
 kubectl create secret docker-registry ghcr-secret \
   --docker-server=ghcr.io \
   --docker-username=<GITHUB_USERNAME> \
@@ -487,7 +487,7 @@ kubectl create secret docker-registry ghcr-secret \
   --docker-email=<GITHUB_EMAIL> \
   --namespace=trisla
 
-# Secret para NASP (se necessário)
+# Secret for NASP (se necessário)
 kubectl create secret generic nasp-credentials \
   --from-literal=auth-token="<NASP_AUTH_TOKEN>" \
   --namespace=trisla
@@ -546,7 +546,7 @@ helm upgrade --install trisla ./helm/trisla \
 **Method 3: Com rollback automático**
 
 ```bash
-# Com rollback automático em caso de falha
+# Com rollback automático in caso de falha
 helm upgrade --install trisla ./helm/trisla \
   --namespace trisla \
   --create-namespace \
@@ -559,7 +559,7 @@ helm upgrade --install trisla ./helm/trisla \
 ### 5.5 Verifiesção
 
 ```bash
-# Verifiesr status do release
+# Verifiesr status of release
 helm status trisla -n trisla
 
 # Verifiesr pods
@@ -600,7 +600,7 @@ helm upgrade --install trisla ./helm/trisla \
 
 ### 6.1 Visão Geral
 
-Ansible oferece instalação automatizada, idempotente e repetível. Ideal para múltiplos ambientes e automação completa.
+Ansible oferece instalação automatizada, idempotente e repetível. Ideal for múltiplos ambientes e automação completa.
 
 ### 6.2 Pré-requisitos
 
@@ -615,7 +615,7 @@ ansible --version
 ansible-galaxy collection install kubernetes.core
 ```
 
-### 6.3 Configuração do Inventory
+### 6.3 Configuração of Inventory
 
 **Editar inventory.yaml:**
 
@@ -669,7 +669,7 @@ ansible-playbook -i inventory.yaml playbooks/setup-namespace.yml
 **Deploy completo:**
 
 ```bash
-# Deploy completo do TriSLA
+# Deploy completo of TriSLA
 ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
 ```
 
@@ -680,7 +680,7 @@ ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml
 ansible-playbook -i inventory.yaml playbooks/validate-cluster.yml
 ```
 
-### 6.5 Variáveis do Ansible
+### 6.5 Variáveis of Ansible
 
 **Editar group_vars/all.yml:**
 
@@ -702,10 +702,10 @@ ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml \
   -e "trisla_image_registry=ghcr.io/abelisboa"
 ```
 
-### 6.6 Vantagens do Ansible
+### 6.6 Vantagens of Ansible
 
 - **Idempotência**: Executar múltiplas vezes produz o mesmo resultado
-- **Repetibilidade**: Mesmo resultado em diferentes ambientes
+- **Repetibilidade**: Mesmo resultado in diferentes ambientes
 - **Automação completa**: Cobre todo o processo de instalação
 - **Inventário centralizado**: Gerencia múltiplos ambientes
 
@@ -715,9 +715,9 @@ ansible-playbook -i inventory.yaml playbooks/deploy-trisla-nasp.yml \
 
 ### 7.1 Visão Geral
 
-GitHub Actions permite instalação automatizada via pipeline CI/CD. Ideal para deploy contínuo e múltiplos ambientes.
+GitHub Actions permite instalação automatizada via pipeline CI/CD. Ideal for deploy contínuo e múltiplos ambientes.
 
-### 7.2 Estrutura do Workflow
+### 7.2 Estrutura of Workflow
 
 **File: `.github/workflows/deploy-production.yml`**
 
@@ -803,10 +803,10 @@ jobs:
 
 **Secrets necessários:**
 
-1. `KUBECONFIG`: Configuração do cluster Kubernetes (base64 encoded)
-2. `GHCR_USERNAME`: Usuário do GitHub
-3. `GHCR_TOKEN`: Personal Access Token do GitHub
-4. `GHCR_EMAIL`: Email do GitHub
+1. `KUBECONFIG`: Configuração of cluster Kubernetes (base64 encoded)
+2. `GHCR_USERNAME`: Usuário of GitHub
+3. `GHCR_TOKEN`: Personal Access Token of GitHub
+4. `GHCR_EMAIL`: Email of GitHub
 
 **Como configurar:**
 
@@ -816,10 +816,10 @@ jobs:
 
 ### 7.4 Executar Deploy
 
-**Method 1: Push para main**
+**Method 1: Push for main**
 
 ```bash
-# Push para branch main dispara deploy automático
+# Push for branch main dispara deploy automático
 git push origin main
 ```
 
@@ -827,13 +827,13 @@ git push origin main
 
 1. Acessar: `https://github.com/<repo>/actions`
 2. Selecionar workflow "Deploy TriSLA to Production"
-3. Clicar em "Run workflow"
+3. Clicar in "Run workflow"
 4. Selecionar ambiente
 5. Executar
 
-### 7.5 Monitoramento do Deploy
+### 7.5 Monitoramento of Deploy
 
-**Ver logs do workflow:**
+**Ver logs of workflow:**
 
 1. Acessar: `https://github.com/<repo>/actions`
 2. Clicar no workflow run
@@ -897,7 +897,7 @@ helm upgrade trisla ./helm/trisla \
 **Method 3: Atualizar todas as imagens**
 
 ```bash
-# Atualizar todas as imagens para nova versão
+# Atualizar todas as imagens for nova versão
 helm upgrade trisla ./helm/trisla \
   --namespace trisla \
   --set global.imageTag=v1.1.0 \
@@ -950,13 +950,13 @@ helm history trisla -n trisla
 helm get manifest trisla -n trisla --revision 3
 ```
 
-**Rollback para versão anterior:**
+**Rollback for versão anterior:**
 
 ```bash
-# Rollback para última versão estável
+# Rollback for última versão estável
 helm rollback trisla -n trisla
 
-# Rollback para revisão específica
+# Rollback for revisão específica
 helm rollback trisla <revision-number> -n trisla
 
 # Verifiesr status após rollback
@@ -1004,7 +1004,7 @@ helm install trisla ./helm/trisla \
 **Se necessário rollback de banco de dados:**
 
 ```bash
-# Restaurar backup do PostgreSQL
+# Restaurar backup of PostgreSQL
 ./scripts/restore-postgres.sh <backup-file>
 
 # Ou manualmente
@@ -1018,7 +1018,7 @@ kubectl exec -n trisla -it $(kubectl get pod -n trisla -l app=postgres -o jsonpa
 
 ### 10.1 Backup Antes de Migração
 
-**Backup do PostgreSQL:**
+**Backup of PostgreSQL:**
 
 ```bash
 # Via script
@@ -1041,13 +1041,13 @@ kubectl get secret -n trisla -o yaml > secrets-backup.yaml
 
 ### 10.2 Migração de Dados
 
-**Migração do PostgreSQL:**
+**Migração of PostgreSQL:**
 
 ```bash
 # 1. Fazer backup
 ./scripts/backup-postgres.sh
 
-# 2. Parar aplicação (opcional, para migração sem downtime)
+# 2. Parar aplicação (opcional, for migração sem downtime)
 kubectl scale deployment sem-csmf -n trisla --replicas=0
 
 # 3. Executar migrações (se houver)
@@ -1193,7 +1193,7 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 - [ ] Method de instalação escolhido
 - [ ] Pre-flight checks executados
 - [ ] Deploy executado com sucesso
-- [ ] Todos os pods em estado Running
+- [ ] Todos os pods in estado Running
 - [ ] Todos os serviços criados
 
 ### 12.3 Pós-Instalação
@@ -1224,7 +1224,7 @@ kubectl port-forward -n trisla svc/grafana 3000:3000
 
 ## Conclusão
 
-Este guia fornece multiple methods to install o TriSLA em produção. Escolha the most suitable method for their environment e siga as instruções passo a passo.
+Este guia fornece multiple methods to install o TriSLA in produção. Escolha the most suitable method for their environment e siga as instruções passo a passo.
 
 **Recomendações finais:**
 
@@ -1235,19 +1235,19 @@ Este guia fornece multiple methods to install o TriSLA em produção. Escolha th
 
 **Lembre-se:**
 
-- Sempre executar pre-flight checks antes do deploy
+- Sempre executar pre-flight checks antes of deploy
 - Validar instalação após deploy
 - Manter backups regulares
 - Documentar todas as mudanças
 - Testar rollback antes de produção
 
 **Última atualização:** 2025-01-XX  
-**Versão do documento:** 1.0.0  
-**Versão do TriSLA:** 1.0.0
+**Versão of documento:** 1.0.0  
+**Versão of TriSLA:** 1.0.0
 
 **Referências:**
 - `README_OPERATIONS_PROD.md`: Guia de operações
-- `NASP_DEPLOY_GUIDE.md`: Guia específico para NASP
+- `NASP_DEPLOY_GUIDE.md`: Guia específico for NASP
 - `TROUBLESHOOTING_TRISLA.md`: Guia de troubleshooting
 - `SECURITY_HARDENING.md`: Guia de segurança
 

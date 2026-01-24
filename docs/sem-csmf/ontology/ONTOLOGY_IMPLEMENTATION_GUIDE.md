@@ -1,4 +1,4 @@
-# Guia Completo de Implementação da Ontologia TriSLA
+# Guia Completo de Implementação of Ontologia TriSLA
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
@@ -9,10 +9,10 @@
 ## 📋 Sumário
 
 1. [Visão Geral](#visão-geral)
-2. [Estrutura da Ontologia](#estrutura-da-ontologia)
-3. [Classes da Ontologia](#classes-da-ontologia)
-4. [Propriedades da Ontologia](#propriedades-da-ontologia)
-5. [Indivíduos da Ontologia](#indivíduos-da-ontologia)
+2. [Estrutura of Ontologia](#estrutura-da-ontologia)
+3. [Classes of Ontologia](#classes-da-ontologia)
+4. [Propriedades of Ontologia](#propriedades-da-ontologia)
+5. [Indivíduos of Ontologia](#indivíduos-da-ontologia)
 6. [Diagramas Conceituais](#diagramas-conceituais)
 7. [Uso no Protégé](#uso-no-protégé)
 8. [Integração com SEM-CSMF](#integração-com-sem-csmf)
@@ -23,7 +23,7 @@
 
 ## 🎯 Visão Geral
 
-A **Ontologia TriSLA** é uma ontologia OWL 2.0 formal que modela o domínio de gerenciamento de Network Slices com garantia de SLA em ambientes 5G/O-RAN. A ontologia foi desenvolvida para suportar o módulo SEM-CSMF (Semantic Communication Service Management Function) do TriSLA.
+A **Ontologia TriSLA** é uma ontologia OWL 2.0 formal que modela o domínio de gerenciamento de Network Slices com garantia de SLA in ambientes 5G/O-RAN. A ontologia foi desenvolvida for suportar o módulo SEM-CSMF (Semantic Communication Service Management Function) of TriSLA.
 
 ### Características Principais
 
@@ -37,12 +37,12 @@ A **Ontologia TriSLA** é uma ontologia OWL 2.0 formal que modela o domínio de 
 
 1. **Modelagem Semântica:** Representar formalmente conceitos de Network Slicing, SLA, SLO, SLI
 2. **Reasoning:** Permitir inferência automática de tipos de slice e validação de requisitos
-3. **Integração:** Suportar o pipeline semântico do SEM-CSMF
+3. **Integração:** Suportar o pipeline semântico of SEM-CSMF
 4. **Validação:** Validar conformidade de intents com requisitos 3GPP
 
 ---
 
-## 🏗️ Estrutura da Ontologia
+## 🏗️ Estrutura of Ontologia
 
 ### Arquivo Principal
 
@@ -67,7 +67,7 @@ apps/sem-csmf/src/ontology/
 
 ---
 
-## 📦 Classes da Ontologia
+## 📦 Classes of Ontologia
 
 ### Hierarquia de Classes
 
@@ -115,18 +115,18 @@ owl:Thing
 
 #### 1. Intent e UseCaseIntent
 
-**`Intent`** — Classe base para intenções de serviço
+**`Intent`** — Classe base for intenções de serviço
 - **Descrição:** Representa uma intenção de criar ou modificar um network slice
 - **Propriedades:** `hasSliceType`, `hasSLA`
 - **Uso:** Modela intents recebidos pelo SEM-CSMF
 
-**`UseCaseIntent`** — Intenção baseada em caso de uso específico
-- **Descrição:** Subclasse de `Intent` para casos de uso específicos
+**`UseCaseIntent`** — Intenção baseada in caso de uso específico
+- **Descrição:** Subclasse de `Intent` for casos de uso específicos
 - **Exemplos:** Remote Surgery, XR, Massive IoT
 
 #### 2. Slice e Tipos
 
-**`Slice`** — Classe base para network slice
+**`Slice`** — Classe base for network slice
 - **Descrição:** Representa um network slice conforme 3GPP
 - **Propriedades:** `hasSLA`, `hasDomain`, `hasLatency`, `hasThroughput`, `hasReliability`
 
@@ -148,7 +148,7 @@ owl:Thing
   - Throughput: 160bps-100Kbps
   - Confiabilidade: 0.9
 
-**`UseCaseSlice`** — Slice baseado em caso de uso específico
+**`UseCaseSlice`** — Slice baseado in caso de uso específico
 - **Exemplos:** RemoteSurgery, XR, IoTMassive
 
 #### 3. SLA, SLO, SLI, Metric
@@ -195,7 +195,7 @@ owl:Thing
 
 #### 6. Decision
 
-**`Decision`** — Decisão do Decision Engine
+**`Decision`** — Decisão of Decision Engine
 - **Subclasses:**
   - `AdmissionDecision` — Decisão de admissão
   - `ReconfigurationDecision` — Decisão de reconfiguração
@@ -205,7 +205,7 @@ owl:Thing
 
 #### 7. Blockchain
 
-**`SmartContract`** — Smart contract para registro de SLA
+**`SmartContract`** — Smart contract for registro de SLA
 - **Subclasse:** `OnChainSLAContract` — SLA registrado on-chain
 - **Propriedades:** `registersSLA`
 
@@ -214,7 +214,7 @@ owl:Thing
 #### 8. ML
 
 **`MLModel`** — Modelo de Machine Learning
-- **Descrição:** Modelo ML usado para predição
+- **Descrição:** Modelo ML usado for predição
 
 **`Prediction`** — Predição de viabilidade de SLA
 - **Restrições:** Deve ser gerada por um MLModel (`generatedBy`)
@@ -229,11 +229,11 @@ owl:Thing
 - **Descrição:** Amostra de métricas coletadas
 
 **`ObservationWindow`** — Janela de observação de métricas
-- **Descrição:** Janela temporal para coleta de métricas
+- **Descrição:** Janela temporal for coleta de métricas
 
 ---
 
-## 🔗 Propriedades da Ontologia
+## 🔗 Propriedades of Ontologia
 
 ### Object Properties (Propriedades de Objeto)
 
@@ -256,10 +256,10 @@ owl:Thing
 
 | Propriedade | Domínio | Range | Descrição |
 |-------------|---------|-------|-----------|
-| `hasLatency` | Slice, SLO, Metric | xsd:float | Latência máxima em milissegundos |
-| `hasThroughput` | Slice, SLO, Metric | xsd:float | Throughput mínimo em Mbps |
+| `hasLatency` | Slice, SLO, Metric | xsd:float | Latência máxima in milissegundos |
+| `hasThroughput` | Slice, SLO, Metric | xsd:float | Throughput mínimo in Mbps |
 | `hasReliability` | Slice, SLO, Metric | xsd:float | Confiabilidade (0-1) |
-| `hasJitter` | Slice, SLO, Metric | xsd:float | Jitter máximo em milissegundos |
+| `hasJitter` | Slice, SLO, Metric | xsd:float | Jitter máximo in milissegundos |
 | `hasPacketLoss` | Slice, SLO, Metric | xsd:float | Perda de pacotes (0-1) |
 | `hasCoverage` | Slice | xsd:string | Cobertura (Urban, Rural, etc.) |
 | `hasMobility` | Slice | xsd:string | Mobilidade (Stationary, Mobile, etc.) |
@@ -271,7 +271,7 @@ owl:Thing
 
 ---
 
-## 👤 Indivíduos da Ontologia
+## 👤 Indivíduos of Ontologia
 
 ### Domains (Domínios)
 
@@ -395,34 +395,34 @@ owl:Thing
 ### 2. Visualizar Hierarquia de Classes
 
 **Aba `Classes`:**
-- Expandir hierarquia para ver todas as classes
-- Clicar em uma classe para ver detalhes
+- Expandir hierarquia for ver todas as classes
+- Clicar in uma classe for ver detalhes
 - Painel direito mostra:
-  - **Description:** Comentário da classe
+  - **Description:** Comentário of classe
   - **Subclasses:** Subclasses diretas
   - **Superclasses:** Superclasses
-  - **Instances:** Indivíduos da classe
+  - **Instances:** Indivíduos of classe
 
 ### 3. Visualizar Propriedades
 
 **Aba `Object Properties`:**
 - Lista todas as Object Properties
-- Clicar em uma propriedade para ver:
-  - **Domain:** Domínio da propriedade
-  - **Range:** Range da propriedade
+- Clicar in uma propriedade for ver:
+  - **Domain:** Domínio of propriedade
+  - **Range:** Range of propriedade
   - **Characteristics:** Funcional, transitiva, etc.
 
 **Aba `Data Properties`:**
 - Lista todas as Data Properties
-- Clicar em uma propriedade para ver:
-  - **Domain:** Domínio da propriedade
+- Clicar in uma propriedade for ver:
+  - **Domain:** Domínio of propriedade
   - **Range:** Tipo de dados (xsd:float, xsd:string, etc.)
 
 ### 4. Visualizar Indivíduos
 
 **Aba `Individuals`:**
 - Lista todos os indivíduos
-- Clicar em um indivíduo para ver:
+- Clicar in um indivíduo for ver:
   - **Types:** Classes às quais pertence
   - **Property assertions:** Valores de propriedades
 
@@ -479,7 +479,7 @@ WHERE {
 
 ## 🔌 Integração com SEM-CSMF
 
-### 1. Carregamento da Ontologia
+### 1. Carregamento of Ontologia
 
 **Arquivo:** `apps/sem-csmf/src/ontology/loader.py`
 
@@ -533,7 +533,7 @@ matcher = SemanticMatcher(ontology_loader=loader)
 validated_intent = await matcher.match(ontology_result, intent)
 ```
 
-### 4. Uso do Reasoner
+### 4. Uso of Reasoner
 
 **Arquivo:** `apps/sem-csmf/src/ontology/reasoner.py`
 
@@ -656,8 +656,8 @@ loader.load(apply_reasoning=True)  # Aplica reasoning automaticamente
 ### 4. Inferências Automáticas
 
 O reasoner pode inferir:
-- **Tipo de slice** baseado em requisitos
-- **Validação de SLA** contra limites da ontologia
+- **Tipo de slice** baseado in requisitos
+- **Validação de SLA** contra limites of ontologia
 - **Relações implícitas** entre classes
 - **Propriedades transitivas**
 
@@ -677,7 +677,7 @@ loader.load()
 reasoner = SemanticReasoner(loader)
 reasoner.initialize()
 
-# Requisitos do intent
+# Requisitos of intent
 sla_dict = {
     "latency": "5ms",
     "throughput": "50Mbps",
@@ -734,7 +734,7 @@ for result in results:
 1. **Editar `trisla.ttl`:**
 ```turtle
 :NewClass a owl:Class ;
-    rdfs:comment "Descrição da nova classe" ;
+    rdfs:comment "Descrição of nova classe" ;
     rdfs:subClassOf :ParentClass .
 ```
 
@@ -750,7 +750,7 @@ for result in results:
 :newProperty a owl:ObjectProperty ;
     rdfs:domain :DomainClass ;
     rdfs:range :RangeClass ;
-    rdfs:comment "Descrição da propriedade" .
+    rdfs:comment "Descrição of propriedade" .
 ```
 
 2. **Data Property:**
@@ -758,14 +758,14 @@ for result in results:
 :newDataProperty a owl:DatatypeProperty ;
     rdfs:domain :DomainClass ;
     rdfs:range xsd:float ;
-    rdfs:comment "Descrição da propriedade" .
+    rdfs:comment "Descrição of propriedade" .
 ```
 
 ### Adicionar Novo Indivíduo
 
 ```turtle
 :NewIndividual a :Class ;
-    rdfs:label "Label do Indivíduo" ;
+    rdfs:label "Label of Indivíduo" ;
     :hasProperty "value" .
 ```
 
@@ -783,13 +783,13 @@ for result in results:
 
 ## 🎯 Conclusão
 
-A Ontologia TriSLA fornece uma base semântica formal para o gerenciamento de Network Slices com garantia de SLA. Ela suporta:
+A Ontologia TriSLA fornece uma base semântica formal for o gerenciamento de Network Slices com garantia de SLA. Ela suporta:
 
 - ✅ **Modelagem formal** de conceitos de Network Slicing
-- ✅ **Reasoning semântico** para inferência automática
+- ✅ **Reasoning semântico** for inferência automática
 - ✅ **Validação** de requisitos contra padrões 3GPP
 - ✅ **Integração** com o módulo SEM-CSMF
-- ✅ **Extensibilidade** para novos casos de uso
+- ✅ **Extensibilidade** for novos casos de uso
 
 Para mais informações, consulte:
 - `apps/sem-csmf/src/ontology/trisla.ttl` — Ontologia completa
@@ -798,5 +798,5 @@ Para mais informações, consulte:
 
 ---
 
-**Fim do Guia**
+**Fim of Guia**
 

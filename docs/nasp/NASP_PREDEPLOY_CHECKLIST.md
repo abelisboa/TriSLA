@@ -2,7 +2,7 @@
 
 **Data:** 2025-11-22  
 **Versão:** 1.0  
-**objective:** Garantir que o TriSLA está pronto para deploy controlado no NASP Node1
+**objective:** Garantir que o TriSLA está pronto for deploy controlado no NASP Node1
 
 ---
 
@@ -27,7 +27,7 @@ kubectl get ingressclass
 ### 1.2 Namespaces
 
 - [ ] **Namespace `trisla`:** Criado e configurado
-- [ ] **Namespace para NASP services:** Identificado e acessível
+- [ ] **Namespace for NASP services:** Identificado e acessível
 - [ ] **Network Policies:** Configuradas (se aplicável)
 
 **Comandos:**
@@ -54,7 +54,7 @@ kubectl get namespaces
 
 - [ ] **kubectl:** Instalado e configurado (versão ≥ 1.26)
 - [ ] **Helm:** Instalado (versão ≥ 3.12)
-- [ ] **Acesso local:** Você já está dentro do node1 do NASP
+- [ ] **Acesso local:** Você já está dentro of node1 of NASP
 - [ ] **Conectividade:** Testada entre operador e cluster
 
 ---
@@ -82,7 +82,7 @@ kubectl get svc -n <transport-namespace> | grep -i transport
 
 ### 2.2 Documentar Endpoints
 
-Preencher em `helm/trisla/values-nasp.yaml`:
+Preencher in `helm/trisla/values-nasp.yaml`:
 
 - [ ] **RAN Endpoint:** `http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_PORT>`
 - [ ] **RAN Metrics Endpoint:** `http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_METRICS_PORT>`
@@ -108,18 +108,18 @@ Preencher em `helm/trisla/values-nasp.yaml`:
 
 - [ ] **Substituir placeholders:**
   - `<INTERFACE_NAME>` → Interface real (ex: `my5g`)
-  - `<NODE_IP>` → IP do Node1 (ex: `192.168.10.16`)
+  - `<NODE_IP>` → IP of Node1 (ex: `192.168.10.16`)
   - `<GATEWAY_IP>` → Gateway IP (ex: `192.168.10.1`)
   - `<RAN_SERVICE>`, `<RAN_NAMESPACE>`, `<RAN_PORT>` → Valores reais
   - `<UPF_SERVICE>`, `<CORE_NAMESPACE>`, `<UPF_PORT>` → Valores reais
   - `<TRANSPORT_SERVICE>`, `<TRANSPORT_NAMESPACE>`, `<TRANSPORT_PORT>` → Valores reais
 
 - [ ] **Verifiesr imagens GHCR:**
-  - Todas as imagens apontam para `ghcr.io/abelisboa/trisla-*:latest` ou versão específica
+  - Todas as imagens apontam for `ghcr.io/abelisboa/trisla-*:latest` ou versão específica
   - Secret `ghcr-secret` está configurado corretamente
 
 - [ ] **Variáveis de ambiente:**
-  - `KAFKA_BOOTSTRAP_SERVERS`: Endpoint Kafka do cluster
+  - `KAFKA_BOOTSTRAP_SERVERS`: Endpoint Kafka of cluster
   - `OTEL_EXPORTER_OTLP_ENDPOINT`: Endpoint OTLP Collector
   - `BESU_RPC_URL`: Endpoint Besu (se aplicável)
   - `NASP_*_ENDPOINT`: Endpoints NASP descobertos
@@ -351,7 +351,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ## 7. Troubleshooting
 
-### 7.1 Pods em CrashLoopBackOff
+### 7.1 Pods in CrashLoopBackOff
 
 - [ ] **Verifiesr logs:**
   ```bash
@@ -377,7 +377,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ### 7.3 Problemas com Kafka
 
-- [ ] **Verifiesr estado do Kafka:**
+- [ ] **Verifiesr estado of Kafka:**
   ```bash
   kubectl exec -n trisla <kafka-pod> -- kafka-broker-api-versions --bootstrap-server localhost:9092
   ```
@@ -421,7 +421,7 @@ helm template trisla ./helm/trisla -f ./helm/trisla/values-nasp.yaml --debug
 
 ---
 
-**Status do Checklist:** ⬜ Não iniciado | 🟡 Em progresso | ✅ Concluído
+**Status of Checklist:** ⬜ Não iniciado | 🟡 Em progresso | ✅ Concluído
 
 **Data de Conclusão:** _______________
 

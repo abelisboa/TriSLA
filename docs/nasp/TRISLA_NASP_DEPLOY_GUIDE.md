@@ -10,11 +10,11 @@
 
 ## 📋 Sumário Executivo
 
-This document provides instruções completas, formais e acadêmicas para a implantação manual do **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no ambiente **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** para automação e **Helm** para gerenciamento de pacotes Kubernetes.
+This document provides instruções completas, formais e acadêmicas for a implantação manual of **TriSLA (Trustworthy, Reasoned, Intelligent SLA)** no ambiente **NASP (Network Automation & Slicing Platform)**, utilizando **Ansible** for automação e **Helm** for gerenciamento de pacotes Kubernetes.
 
 ### Objective
 
-O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambiente de produção real no NASP, cobrindo desde a preparação inicial até a validação end-to-end (E2E) do sistema.
+O presente guia documenta o processo completo de deploy of TriSLA v3.5.0 in ambiente de produção real no NASP, cobrindo desde a preparação inicial até a validação end-to-end (E2E) of sistema.
 
 ### Escopo
 
@@ -36,16 +36,16 @@ O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambi
 
 ---
 
-## 1. Informações do Ambiente NASP
+## 1. Informações of Ambiente NASP
 
 ### 1.1 Configuração de Rede
 
 | Componente | Valor | Description |
 |------------|-------|-----------|
-| **Interface Main** | `my5g` | Interface de rede física do NASP |
-| **Node1 IP** | `192.168.10.16` | IP do node1 (control plane + worker) |
-| **Node2 IP** | `192.168.10.15` | IP do node2 (control plane + worker) |
-| **Gateway** | `192.168.10.1` | Gateway padrão da rede |
+| **Interface Main** | `my5g` | Interface de rede física of NASP |
+| **Node1 IP** | `192.168.10.16` | IP of node1 (control plane + worker) |
+| **Node2 IP** | `192.168.10.15` | IP of node2 (control plane + worker) |
+| **Gateway** | `192.168.10.1` | Gateway padrão of rede |
 | **Conexão Ansible** | `local` | Execução local (127.0.0.1), sem SSH |
 
 ### 1.2 Cluster Kubernetes
@@ -71,7 +71,7 @@ O presente guia documenta o processo completo de deploy do TriSLA v3.5.0 em ambi
 
 ## 2. Arquitetura TriSLA Integrada ao NASP
 
-### 2.1 Visão Geral da Arquitetura
+### 2.1 Visão Geral of Arquitetura
 
 O TriSLA é composto por **7 módulos principais** que se integram ao ambiente NASP:
 
@@ -87,19 +87,19 @@ O TriSLA é composto por **7 módulos principais** que se integram ao ambiente N
 
 #### Objective Técnico
 
-O SEM-CSMF é responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) para provisionamento de network slices.
+O SEM-CSMF é responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) for provisionamento de network slices.
 
 #### Configuração de Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
-| **Namespace** | `trisla` | Namespace do TriSLA |
+| **Namespace** | `trisla` | Namespace of TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
 | **Replicas** | `3` | Alta disponibilidade |
 | **Port HTTP** | `8080` | Porta REST API |
 | **Port gRPC** | `50051` | Porta gRPC (I-01) |
 | **Image** | `ghcr.io/abelisboa/trisla-sem-csmf:3.5.0` | Imagem Docker |
-| **Node Affinity** | `node1, node2` | Pode rodar em ambos os nodes |
+| **Node Affinity** | `node1, node2` | Pode rodar in ambos os nodes |
 
 #### Recursos
 
@@ -121,7 +121,7 @@ resources:
 #### ConfigMaps
 
 - `trisla-config` — Configurações gerais
-- `ontology-config` — Configurações da ontologia
+- `ontology-config` — Configurações of ontologia
 
 #### PVCs
 
@@ -156,12 +156,12 @@ O ML-NSMF é responsável por prever a viabilidade de SLA de network slices usan
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
-| **Namespace** | `trisla` | Namespace do TriSLA |
+| **Namespace** | `trisla` | Namespace of TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
 | **Replicas** | `3` | Alta disponibilidade |
 | **Port HTTP** | `8081` | Porta REST API |
 | **Image** | `ghcr.io/abelisboa/trisla-ml-nsmf:3.5.0` | Imagem Docker |
-| **Node Affinity** | `node1, node2` | Pode rodar em ambos os nodes |
+| **Node Affinity** | `node1, node2` | Pode rodar in ambos os nodes |
 
 #### Recursos
 
@@ -182,7 +182,7 @@ resources:
 #### ConfigMaps
 
 - `trisla-config` — Configurações gerais
-- `ml-model-config` — Configurações do modelo ML
+- `ml-model-config` — Configurações of modelo ML
 
 #### PVCs
 
@@ -208,18 +208,18 @@ resources:
 
 #### Objective Técnico
 
-O BC-NSSMF é responsável por registrar SLAs em blockchain (Hyperledger Besu/GoQuorum) usando smart contracts Solidity, garantindo imutabilidade e auditabilidade.
+O BC-NSSMF é responsável por registrar SLAs in blockchain (Hyperledger Besu/GoQuorum) usando smart contracts Solidity, garantindo imutabilidade e auditabilidade.
 
 #### Configuração de Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
-| **Namespace** | `trisla` | Namespace do TriSLA |
+| **Namespace** | `trisla` | Namespace of TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
 | **Replicas** | `2` | Alta disponibilidade |
 | **Port HTTP** | `8083` | Porta REST API |
 | **Image** | `ghcr.io/abelisboa/trisla-bc-nssmf:3.5.0` | Imagem Docker |
-| **Node Affinity** | `node1, node2` | Pode rodar em ambos os nodes |
+| **Node Affinity** | `node1, node2` | Pode rodar in ambos os nodes |
 
 #### Recursos
 
@@ -241,7 +241,7 @@ resources:
 #### ConfigMaps
 
 - `trisla-config` — Configurações gerais
-- `besu-config` — Configurações do Besu
+- `besu-config` — Configurações of Besu
 
 #### PVCs
 
@@ -267,19 +267,19 @@ resources:
 
 #### Objective Técnico
 
-O Decision Engine é responsável por tomar decisões baseadas em regras sobre a admissão, reconfiguração ou rejeição de network slices, integrando informações do ML-NSMF e do SEM-CSMF.
+O Decision Engine é responsável por tomar decisões baseadas in regras sobre a admissão, reconfiguração ou rejeição de network slices, integrando informações of ML-NSMF e of SEM-CSMF.
 
 #### Configuração de Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
-| **Namespace** | `trisla` | Namespace do TriSLA |
+| **Namespace** | `trisla` | Namespace of TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
 | **Replicas** | `2` | Alta disponibilidade |
 | **Port HTTP** | `8082` | Porta REST API |
 | **Port gRPC** | `50051` | Porta gRPC (I-01) |
 | **Image** | `ghcr.io/abelisboa/trisla-decision-engine:3.5.0` | Imagem Docker |
-| **Node Affinity** | `node1, node2` | Pode rodar em ambos os nodes |
+| **Node Affinity** | `node1, node2` | Pode rodar in ambos os nodes |
 
 #### Recursos
 
@@ -323,18 +323,18 @@ resources:
 
 #### Objective Técnico
 
-O SLA-Agent Layer é responsável por monitorar e garantir SLAs em cada domínio (RAN, Transport, Core) usando agentes federados que coletam métricas reais do NASP.
+O SLA-Agent Layer é responsável por monitorar e garantir SLAs in cada domínio (RAN, Transport, Core) usando agentes federados que coletam métricas reais of NASP.
 
 #### Configuração de Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
-| **Namespace** | `trisla` | Namespace do TriSLA |
+| **Namespace** | `trisla` | Namespace of TriSLA |
 | **Tipo de Deploy** | `DaemonSet` | Um pod por node |
-| **Replicas** | `2` (um por node) | Distribuído em node1 e node2 |
+| **Replicas** | `2` (um por node) | Distribuído in node1 e node2 |
 | **Port HTTP** | `8084` | Porta REST API |
 | **Image** | `ghcr.io/abelisboa/trisla-sla-agent-layer:3.5.0` | Imagem Docker |
-| **Node Affinity** | `node1, node2` | Deve rodar em ambos os nodes |
+| **Node Affinity** | `node1, node2` | Deve rodar in ambos os nodes |
 
 #### Recursos
 
@@ -356,9 +356,9 @@ resources:
 #### ConfigMaps
 
 - `trisla-config` — Configurações gerais
-- `slo-config-ran` — SLOs para RAN
-- `slo-config-transport` — SLOs para Transport
-- `slo-config-core` — SLOs para Core
+- `slo-config-ran` — SLOs for RAN
+- `slo-config-transport` — SLOs for Transport
+- `slo-config-core` — SLOs for Core
 
 #### Dependências
 
@@ -377,18 +377,18 @@ resources:
 
 #### Objective Técnico
 
-O NASP Adapter é responsável por conectar o TriSLA aos serviços reais do NASP (RAN, Transport, Core), provisionando slices e coletando métricas reais.
+O NASP Adapter é responsável por conectar o TriSLA aos serviços reais of NASP (RAN, Transport, Core), provisionando slices e coletando métricas reais.
 
 #### Configuração de Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
-| **Namespace** | `trisla` | Namespace do TriSLA |
+| **Namespace** | `trisla` | Namespace of TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
 | **Replicas** | `2` | Alta disponibilidade |
 | **Port HTTP** | `8085` | Porta REST API |
 | **Image** | `ghcr.io/abelisboa/trisla-nasp-adapter:3.5.0` | Imagem Docker |
-| **Node Affinity** | `node1, node2` | Pode rodar em ambos os nodes |
+| **Node Affinity** | `node1, node2` | Pode rodar in ambos os nodes |
 
 #### Recursos
 
@@ -410,11 +410,11 @@ resources:
 #### ConfigMaps
 
 - `trisla-config` — Configurações gerais
-- `nasp-endpoints` — Endpoints reais do NASP
+- `nasp-endpoints` — Endpoints reais of NASP
 
 #### Dependências
 
-- **NASP Services** — Services reais do NASP (RAN, Transport, Core)
+- **NASP Services** — Services reais of NASP (RAN, Transport, Core)
 - **Kafka** — Comunicação com SLA-Agent Layer (I-06)
 - **Decision Engine** — Comunicação REST (I-07)
 - **OpenTelemetry Collector** — Observabilidade
@@ -430,18 +430,18 @@ resources:
 
 #### Objective Técnico
 
-O UI Dashboard fornece uma interface web para visualização e gerenciamento do TriSLA, incluindo dashboards de métricas, status de slices e configurações.
+O UI Dashboard fornece uma interface web for visualização e gerenciamento of TriSLA, incluindo dashboards de métricas, status de slices e configurações.
 
 #### Configuração de Deploy
 
 | Parâmetro | Valor | Description |
 |-----------|-------|-----------|
-| **Namespace** | `trisla` | Namespace do TriSLA |
+| **Namespace** | `trisla` | Namespace of TriSLA |
 | **Tipo de Deploy** | `Deployment` | Deployment Kubernetes |
 | **Replicas** | `2` | Alta disponibilidade |
 | **Port HTTP** | `3000` | Porta Web UI |
 | **Image** | `ghcr.io/abelisboa/trisla-ui-dashboard:3.5.0` | Imagem Docker |
-| **Node Affinity** | `node1, node2` | Pode rodar em ambos os nodes |
+| **Node Affinity** | `node1, node2` | Pode rodar in ambos os nodes |
 
 #### Recursos
 
@@ -462,11 +462,11 @@ resources:
 #### ConfigMaps
 
 - `trisla-config` — Configurações gerais
-- `ui-config` — Configurações da UI
+- `ui-config` — Configurações of UI
 
 #### Dependências
 
-- **Backend API** — APIs REST do TriSLA
+- **Backend API** — APIs REST of TriSLA
 - **Grafana** — Dashboards de métricas (opcional)
 
 ---
@@ -487,15 +487,15 @@ resources:
 
 ## 3. Inventário Ansible Completo
 
-### 3.1 Estrutura do Inventário
+### 3.1 Estrutura of Inventário
 
-O inventário Ansible está localizado em `ansible/inventory.yaml` e utiliza conexão local (sem SSH):
+O inventário Ansible está localizado in `ansible/inventory.yaml` e utiliza conexão local (sem SSH):
 
 ```yaml
 # ============================================
 # Inventory Ansible YAML - TriSLA NASP
 # ============================================
-# Inventário para deploy local 127.0.0.1
+# Inventário for deploy local 127.0.0.1
 # ============================================
 
 [nasp]
@@ -517,12 +517,12 @@ trisla_network:
   node_ip: "192.168.10.16"
   gateway: "192.168.10.1"
 
-# Configurações do Kubernetes
+# Configurações of Kubernetes
 kubernetes:
   namespace: "trisla"
   kubeconfig_path: "/etc/kubernetes/admin.conf"
 
-# Configurações do TriSLA
+# Configurações of TriSLA
 trisla:
   namespace: "trisla"
   image_registry: "ghcr.io/abelisboa"
@@ -599,7 +599,7 @@ resources:
 #### 3.2.2 `ansible/group_vars/nasp.yml` (se necessário)
 
 ```yaml
-# Configurações específicas do NASP
+# Configurações específicas of NASP
 nasp:
   cluster_name: "nasp-cluster"
   kubeconfig: "/etc/kubernetes/admin.conf"
@@ -609,7 +609,7 @@ nasp:
 #### 3.2.3 `ansible/group_vars/trisla.yml` (se necessário)
 
 ```yaml
-# Configurações específicas do TriSLA
+# Configurações específicas of TriSLA
 trisla:
   helm_chart_path: "{{ playbook_dir }}/../helm/trisla"
   values_file: "{{ helm_chart_path }}/values-nasp.yaml"
@@ -621,7 +621,7 @@ trisla:
 #### 3.3.1 `ansible/host_vars/node1.yml` (se necessário)
 
 ```yaml
-# Configurações específicas do node1
+# Configurações específicas of node1
 node1:
   ip: "192.168.10.16"
   interface: "my5g"
@@ -631,7 +631,7 @@ node1:
 #### 3.3.2 `ansible/host_vars/node2.yml` (se necessário)
 
 ```yaml
-# Configurações específicas do node2
+# Configurações específicas of node2
 node2:
   ip: "192.168.10.15"
   interface: "my5g"
@@ -646,15 +646,15 @@ node2:
 
 #### 4.1.1 `ansible/playbooks/pre-flight.yml`
 
-**Propósito:** Validações pré-deploy do cluster NASP
+**Propósito:** Validações pré-deploy of cluster NASP
 
 **Fases Internas:**
-1. Verifiesr versão do Kubernetes
-2. Verifiesr certificados do cluster
+1. Verifiesr versão of Kubernetes
+2. Verifiesr certificados of cluster
 3. Verifiesr DNS interno
 4. Verifiesr autenticação GHCR
 5. Verifiesr suporte a NetworkPolicy
-6. Verifiesr saúde do Calico
+6. Verifiesr saúde of Calico
 7. Verifiesr Helm
 8. Verifiesr StorageClass
 
@@ -694,16 +694,16 @@ node2:
 
 #### 4.1.3 `ansible/playbooks/deploy-trisla-nasp.yml`
 
-**Propósito:** Deploy completo do TriSLA no NASP
+**Propósito:** Deploy completo of TriSLA no NASP
 
 **Fases Internas:**
 1. Validar pré-requisitos
 2. Criar namespace
 3. Configurar secrets
 4. Validar Helm chart
-5. Dry-run do deploy
-6. Deploy real do TriSLA
-7. Verifiesr status do deploy
+5. Dry-run of deploy
+6. Deploy real of TriSLA
+7. Verifiesr status of deploy
 8. Waitsr pods estarem prontos
 9. Verifiesr serviços
 10. Validar deploy
@@ -723,10 +723,10 @@ node2:
 
 #### 4.1.4 `ansible/playbooks/validate-cluster.yml`
 
-**Propósito:** Validação pós-deploy do cluster TriSLA
+**Propósito:** Validação pós-deploy of cluster TriSLA
 
 **Fases Internas:**
-1. Verifiesr pods em Running
+1. Verifiesr pods in Running
 2. Verifiesr readiness probes
 3. Verifiesr liveness probes
 4. Verifiesr serviços
@@ -750,10 +750,10 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.1 `ansible/roles/sem_csmf/`
 
-**Propósito:** Deploy do módulo SEM-CSMF
+**Propósito:** Deploy of módulo SEM-CSMF
 
 **Tasks:**
-- Deploy Helm chart para SEM-CSMF
+- Deploy Helm chart for SEM-CSMF
 - Verifiesr pods
 - Verifiesr serviços
 - Validar health checks
@@ -762,10 +762,10 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.2 `ansible/roles/ml_nsmf/`
 
-**Propósito:** Deploy do módulo ML-NSMF
+**Propósito:** Deploy of módulo ML-NSMF
 
 **Tasks:**
-- Deploy Helm chart para ML-NSMF
+- Deploy Helm chart for ML-NSMF
 - Verifiesr pods
 - Verifiesr serviços
 - Validar health checks
@@ -774,10 +774,10 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.3 `ansible/roles/bc_nssmf/`
 
-**Propósito:** Deploy do módulo BC-NSSMF
+**Propósito:** Deploy of módulo BC-NSSMF
 
 **Tasks:**
-- Deploy Helm chart para BC-NSSMF
+- Deploy Helm chart for BC-NSSMF
 - Verifiesr pods
 - Verifiesr serviços
 - Validar health checks
@@ -786,10 +786,10 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.4 `ansible/roles/decision_engine/`
 
-**Propósito:** Deploy do Decision Engine
+**Propósito:** Deploy of Decision Engine
 
 **Tasks:**
-- Deploy Helm chart para Decision Engine
+- Deploy Helm chart for Decision Engine
 - Verifiesr pods
 - Verifiesr serviços
 - Validar health checks
@@ -798,22 +798,22 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.5 `ansible/roles/sla_agents/`
 
-**Propósito:** Deploy do SLA-Agent Layer
+**Propósito:** Deploy of SLA-Agent Layer
 
 **Tasks:**
-- Deploy Helm chart para SLA-Agent Layer
+- Deploy Helm chart for SLA-Agent Layer
 - Verifiesr DaemonSet
-- Verifiesr pods em cada node
+- Verifiesr pods in cada node
 - Validar health checks
 
 ---
 
 #### 4.2.6 `ansible/roles/api_backend/`
 
-**Propósito:** Deploy do Backend/API (se separado)
+**Propósito:** Deploy of Backend/API (se separado)
 
 **Tasks:**
-- Deploy Helm chart para Backend
+- Deploy Helm chart for Backend
 - Verifiesr pods
 - Verifiesr serviços
 - Validar health checks
@@ -822,10 +822,10 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 #### 4.2.7 `ansible/roles/portal/`
 
-**Propósito:** Deploy do UI Dashboard
+**Propósito:** Deploy of UI Dashboard
 
 **Tasks:**
-- Deploy Helm chart para UI Dashboard
+- Deploy Helm chart for UI Dashboard
 - Verifiesr pods
 - Verifiesr serviços
 - Validar health checks
@@ -845,7 +845,7 @@ Embora o repositório atual não possua roles separadas, a estrutura recomendada
 
 ## 5. Preparação Manual (Somente no node1)
 
-### 5.1 Verifiesção da Saúde do Cluster
+### 5.1 Verifiesção of Saúde of Cluster
 
 **Executar localmente no node1:**
 
@@ -858,10 +858,10 @@ kubectl get nodes
 # node1    Ready    control-plane   30d   v1.26.0
 # node2    Ready    control-plane   30d   v1.26.0
 
-# Verifiesr pods do sistema
+# Verifiesr pods of sistema
 kubectl get pods -A
 
-# Verifiesr pods do Calico
+# Verifiesr pods of Calico
 kubectl get pods -n kube-system -l k8s-app=calico-node
 
 # Saída esperada:
@@ -875,7 +875,7 @@ kubectl get pods -n kube-system -l k8s-app=calico-node
 ### 5.2 Validação CNI (Calico)
 
 ```bash
-# Verifiesr status do Calico
+# Verifiesr status of Calico
 kubectl get nodes -o wide
 
 # Verifiesr Network Policies
@@ -896,7 +896,7 @@ systemctl status kubelet
 # Verifiesr kube-proxy
 kubectl get pods -n kube-system -l k8s-app=kube-proxy
 
-# Verifiesr logs do kubelet (se necessário)
+# Verifiesr logs of kubelet (se necessário)
 journalctl -u kubelet -f
 ```
 
@@ -927,7 +927,7 @@ kubectl get pvc --all-namespaces
 **Executar no node1:**
 
 ```bash
-# Verifiesr portas em uso
+# Verifiesr portas in uso
 ss -tulnp | grep -E "8080|8081|8082|8083|8084|8085|50051|9090|3000|4317|9092"
 
 # Verifiesr portas dos serviços Kubernetes
@@ -939,7 +939,7 @@ kubectl get svc --all-namespaces -o jsonpath='{range .items[*]}{.metadata.name}{
 
 ---
 
-### 5.6 Validação DNS Interno do Cluster
+### 5.6 Validação DNS Interno of Cluster
 
 ```bash
 # Testar DNS interno
@@ -957,10 +957,10 @@ kubectl get pods -n kube-system -l k8s-app=kube-dns
 ### 5.7 Validação de Recursos node1 e node2
 
 ```bash
-# Verifiesr recursos do node1
+# Verifiesr recursos of node1
 kubectl describe node node1 | grep -A 10 "Allocated resources"
 
-# Verifiesr recursos do node2
+# Verifiesr recursos of node2
 kubectl describe node node2 | grep -A 10 "Allocated resources"
 
 # Verifiesr capacidade total
@@ -997,10 +997,10 @@ kubectl top nodes
 ```bash
 cd ~/gtp5g/trisla
 
-# Pré-checagem do playbook de deploy
+# Pré-checagem of playbook de deploy
 ansible-playbook -i ansible/inventory.yaml ansible/playbooks/deploy-trisla-nasp.yml --check
 
-# Pré-checagem do playbook de pre-flight
+# Pré-checagem of playbook de pre-flight
 ansible-playbook -i ansible/inventory.yaml ansible/playbooks/pre-flight.yml --check
 ```
 
@@ -1049,14 +1049,14 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/setup-namespace.yml
 #### 6.2.3 Passo 3: Deploy TriSLA
 
 ```bash
-# Deploy completo do TriSLA
+# Deploy completo of TriSLA
 ansible-playbook -i ansible/inventory.yaml ansible/playbooks/deploy-trisla-nasp.yml
 ```
 
 **Resultado Esperado:**
 - Helm chart validado
 - Deploy executado com sucesso
-- Pods em status `Running`
+- Pods in status `Running`
 - Services criados
 - Readiness probes passando
 
@@ -1070,7 +1070,7 @@ ansible-playbook -i ansible/inventory.yaml ansible/playbooks/validate-cluster.ym
 ```
 
 **Resultado Esperado:**
-- Todos os pods em `Running`
+- Todos os pods in `Running`
 - Readiness probes passando
 - Liveness probes passando
 - Services acessíveis
@@ -1468,7 +1468,7 @@ curl http://localhost:8086/health
 
 ---
 
-### 7.2 Validação do Ciclo Fechado TriSLA
+### 7.2 Validação of Ciclo Fechado TriSLA
 
 **Fluxo Completo:**
 
@@ -1525,7 +1525,7 @@ SLA_RESPONSE=$(curl http://localhost:8084/agents/slo?domain=RAN)
 - NEST gerado
 - Predição ML realizada
 - Decisão tomada (ADMIT/REJECT/RECONFIGURE)
-- SLA registrado em blockchain
+- SLA registrado in blockchain
 - Métricas coletadas
 - Observabilidade funcionando
 
@@ -1539,11 +1539,11 @@ SLA_RESPONSE=$(curl http://localhost:8084/agents/slo?domain=RAN)
 kubectl port-forward -n monitoring svc/grafana 3000:3000 &
 
 # Acessar: http://localhost:3000
-# Credenciais: admin/admin (alterar em produção)
+# Credenciais: admin/admin (alterar in produção)
 ```
 
 **Dashboards Esperados:**
-- **TriSLA Overview** — Visão geral do sistema
+- **TriSLA Overview** — Visão geral of sistema
 - **SEM-CSMF Metrics** — Métricas de intents e NESTs
 - **ML-NSMF Metrics** — Métricas de predições e XAI
 - **Decision Engine Metrics** — Métricas de decisões
@@ -1563,7 +1563,7 @@ kubectl port-forward -n monitoring svc/grafana 3000:3000 &
 
 **Verifiesr OpenTelemetry Collector:**
 ```bash
-# Verifiesr pods do OTLP Collector
+# Verifiesr pods of OTLP Collector
 kubectl get pods -n trisla -l app.kubernetes.io/component=otel-collector
 
 # Verifiesr logs
@@ -1574,9 +1574,9 @@ kubectl logs -n trisla -l app.kubernetes.io/component=otel-collector --tail=100
 ```
 
 **Validação Esperada:**
-- OTLP Collector em `Running`
+- OTLP Collector in `Running`
 - Traces sendo coletados
-- Métricas sendo exportadas para Prometheus
+- Métricas sendo exportadas for Prometheus
 - Logs sendo coletados (se configurado)
 
 ---
@@ -1618,18 +1618,18 @@ kubectl get daemonset -n trisla
 ```
 
 **Validação Esperada:**
-- Todos os pods em `Running`
+- Todos os pods in `Running`
 - Todos os pods com `READY 1/1`
-- Nenhum pod em `CrashLoopBackOff` ou `Error`
+- Nenhum pod in `CrashLoopBackOff` ou `Error`
 - Todos os serviços criados
 - Deployments com réplicas corretas
-- DaemonSet com pods em ambos os nodes
+- DaemonSet com pods in ambos os nodes
 
 ---
 
 ## 8. Diagramas ASCII
 
-### 8.1 Arquitetura TriSLA dentro do NASP
+### 8.1 Arquitetura TriSLA dentro of NASP
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -1742,21 +1742,21 @@ kubectl get daemonset -n trisla
          │ I-07 (REST)
          ▼
 ┌─────────────────┐
-│   BC-NSSMF      │  • Registra SLA em blockchain
+│   BC-NSSMF      │  • Registra SLA in blockchain
 │                 │  • Smart contract Solidity
 │                 │  • Imutabilidade e auditabilidade
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ SLA-Agent Layer │  • Monitora SLOs em RAN/Transport/Core
-│  (DaemonSet)    │  • Coleta métricas reais do NASP
+│ SLA-Agent Layer │  • Monitora SLOs in RAN/Transport/Core
+│  (DaemonSet)    │  • Coleta métricas reais of NASP
 │                 │  • Garante conformidade de SLA
 └────────┬────────┘
          │ I-06 (Kafka)
          ▼
 ┌─────────────────┐
-│ NASP Adapter    │  • Connects a serviços reais do NASP
+│ NASP Adapter    │  • Connects a serviços reais of NASP
 │                 │  • Provisiona slices
 │                 │  • Coleta métricas
 └────────┬────────┘
@@ -1818,7 +1818,7 @@ kubectl get daemonset -n trisla
    │
    ├─► ansible-playbook deploy-trisla-nasp.yml
    ├─► Validar Helm chart
-   ├─► Dry-run do deploy
+   ├─► Dry-run of deploy
    ├─► Deploy real (helm upgrade --install)
    ├─► Waitsr pods prontos
    └─► Verifiesr serviços
@@ -1827,7 +1827,7 @@ kubectl get daemonset -n trisla
 5. VALIDAÇÃO PÓS-DEPLOY (Ansible)
    │
    ├─► ansible-playbook validate-cluster.yml
-   ├─► Verifiesr pods em Running
+   ├─► Verifiesr pods in Running
    ├─► Verifiesr readiness probes
    ├─► Verifiesr liveness probes
    └─► Verifiesr health checks
@@ -1935,7 +1935,7 @@ NASP Adapter ───► NASP Real Services
 - [ ] `ansible/inventory.yaml` configurado (127.0.0.1, local)
 - [ ] `ansible/group_vars/all.yml` preenchido
 - [ ] Variáveis de rede configuradas (interface, IPs, gateway)
-- [ ] Variáveis do TriSLA configuradas (namespace, registry, tags)
+- [ ] Variáveis of TriSLA configuradas (namespace, registry, tags)
 - [ ] Variáveis de produção configuradas (simulation_mode: false)
 
 ---
@@ -1946,7 +1946,7 @@ NASP Adapter ───► NASP Real Services
 - [ ] Todos os placeholders substituídos
 - [ ] Endpoints NASP configurados (FQDNs Kubernetes)
 - [ ] Autenticação OAuth2 configurada (se necessário)
-- [ ] Recursos ajustados para produção
+- [ ] Recursos ajustados for produção
 - [ ] Replicas configuradas corretamente
 
 ---
@@ -1990,7 +1990,7 @@ NASP Adapter ───► NASP Real Services
 - [ ] Secrets criados
 - [ ] Helm chart validado
 - [ ] Deploy executado (`helm upgrade --install`)
-- [ ] Todos os pods em `Running`
+- [ ] Todos os pods in `Running`
 - [ ] Todos os serviços criados
 - [ ] Readiness probes passando
 - [ ] Liveness probes passando
@@ -2033,20 +2033,20 @@ NASP Adapter ───► NASP Real Services
 
 ## 10. Conclusão
 
-This document provides a complete guide, formal e acadêmico para a implantação manual do TriSLA v3.5.0 in the NASP environment utilizando Ansible e Helm. O processo é dividido em fases claras, desde a preparação inicial até a validação end-to-end, garantindo um deploy controlado e auditável.
+This document provides a complete guide, formal e acadêmico for a implantação manual of TriSLA v3.5.0 in the NASP environment utilizando Ansible e Helm. O processo é dividido in fases claras, desde a preparação inicial até a validação end-to-end, garantindo um deploy controlado e auditável.
 
 ### Principais Características
 
 - **Deploy Local:** Execução no node1 (127.0.0.1), sem SSH
-- **Automação:** Ansible para orquestração, Helm para gerenciamento
-- **Produção Real:** Configurações para ambiente de produção, sem simulação
+- **Automação:** Ansible for orquestração, Helm for gerenciamento
+- **Produção Real:** Configurações for ambiente de produção, sem simulação
 - **Observabilidade:** Integração completa com Prometheus, Grafana e OpenTelemetry
-- **Alta Disponibilidade:** Réplicas configuradas para todos os módulos
-- **Distribuição:** SLA-Agent Layer distribuído em node1 e node2
+- **Alta Disponibilidade:** Réplicas configuradas for todos os módulos
+- **Distribuição:** SLA-Agent Layer distribuído in node1 e node2
 
 ### Próximos Passos
 
-Após a conclusão bem-sucedida do deploy:
+Após a conclusão bem-sucedida of deploy:
 
 1. **Monitoramento Contínuo:** Acompanhar métricas e logs
 2. **Otimização:** Ajustar recursos conforme necessário
@@ -2081,7 +2081,7 @@ Após a conclusão bem-sucedida do deploy:
 
 ---
 
-**Fim do Documento**
+**Fim of Documento**
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  

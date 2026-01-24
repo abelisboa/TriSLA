@@ -2,23 +2,23 @@
 
 **Versão:** 1.0  
 **Data:** 2025-11-22  
-**objective:** Guia operacional completo para deploy controlado do TriSLA in the NASP environment (2 nodes)
+**objective:** Guia operacional completo for deploy controlado of TriSLA in the NASP environment (2 nodes)
 
 ---
 
 ## Visão Geral
 
-This runbook descreve como realizar um **deploy controlado** do TriSLA in the NASP environment (cluster Kubernetes com 2 nodes), a partir de um repositório já sanitizado e validado localmente.
+This runbook descreve como realizar um **deploy controlado** of TriSLA in the NASP environment (cluster Kubernetes com 2 nodes), a partir de um repositório já sanitizado e validado localmente.
 
-O processo é dividido em etapas sequenciais, cada uma com validações específicas, garantindo que o deploy seja realizado de forma segura e auditável.
+O processo é dividido in etapas sequenciais, cada uma com validações específicas, garantindo que o deploy seja realizado de forma segura e auditável.
 
-**Pré-requisito:** Todas as Fases 1-6 concluídas, incluindo validação E2E local e auditoria técnica v2 aprovada.
+**Pré-requisito:** Todas as Fases 1-6 concluídas, incluindo validação E2E local e audit técnica v2 aprovada.
 
 ---
 
 ## Pré-requisitos Absolutos
 
-Antes de iniciar o deploy, certifique-se de que:
+Antes de start o deploy, certifique-se de que:
 
 - ✅ Checklist de pré-deploy concluído: `docs/NASP_PREDEPLOY_CHECKLIST_v2.md`
 - ✅ Cluster NASP operacional com 2 nodes
@@ -40,7 +40,7 @@ Antes de iniciar o deploy, certifique-se de que:
 
 **Execução:**
 ```bash
-# No node1 do NASP (executar localmente)
+# No node1 of NASP (executar localmente)
 cd ~/gtp5g/trisla
 ./scripts/discover-nasp-endpoints.sh
 ```
@@ -78,7 +78,7 @@ cat tmp/nasp_context_raw.txt
 
 ### Passo 3: Preencher values-nasp.yaml
 
-**objective:** Configurar valores de produção específicos do ambiente NASP.
+**objective:** Configurar valores de produção específicos of ambiente NASP.
 
 **Execução (método guiado):**
 ```bash
@@ -128,12 +128,12 @@ docker pull ghcr.io/abelisboa/trisla-ui-dashboard:latest
 ```
 
 **Validação:**
-- [ ] Matriz de imagens revisada em `docs/ghcr/IMAGES_GHCR_MATRIX.md`
-- [ ] Todas as imagens críticas podem ser puxadas do GHCR
+- [ ] Matriz de imagens revisada in `docs/ghcr/IMAGES_GHCR_MATRIX.md`
+- [ ] Todas as imagens críticas podem ser puxadas of GHCR
 - [ ] Nenhuma imagem crítica retorna erro ao fazer pull
 
 **Se imagens faltando:**
-1. Buildar imagens faltantes usando Dockerfiles em `apps/<module>/`
+1. Buildar imagens faltantes usando Dockerfiles in `apps/<module>/`
 2. Publicar no GHCR manualmente ou via CI/CD
 3. Validar que imagens estão acessíveis
 
@@ -143,7 +143,7 @@ docker pull ghcr.io/abelisboa/trisla-ui-dashboard:latest
 
 ### Passo 5: Pre-Flight Checks (Ansible)
 
-**objective:** Validar que o cluster NASP está pronto para receber o TriSLA.
+**objective:** Validar que o cluster NASP está pronto for receber o TriSLA.
 
 **Execução:**
 ```bash
@@ -193,7 +193,7 @@ kubectl get namespace trisla
 kubectl get secret ghcr-secret -n trisla
 ```
 
-**Próximo passo:** Deploy do TriSLA via Helm.
+**Próximo passo:** Deploy of TriSLA via Helm.
 
 ---
 
@@ -228,7 +228,7 @@ kubectl get deployments -n trisla
 ```
 
 **Waitsr:**
-- Todos os pods em status `Running`
+- Todos os pods in status `Running`
 - Readiness probes passando
 - Liveness probes passando
 
@@ -322,14 +322,14 @@ kubectl port-forward -n monitoring svc/<GRAFANA_SERVICE> 3000:3000
 helm history trisla -n <TRISLA_NAMESPACE>
 ```
 
-**Rollback para revisão anterior:**
+**Rollback for revisão anterior:**
 ```bash
 helm rollback trisla <REVISION> -n <TRISLA_NAMESPACE>
 ```
 
-**Rollback para versão específica:**
+**Rollback for versão específica:**
 ```bash
-helm rollback trisla 1 -n <TRISLA_NAMESPACE>  # Volta para primeira instalação
+helm rollback trisla 1 -n <TRISLA_NAMESPACE>  # Volta for primeira instalação
 ```
 
 **Desinstalar completamente (último recurso):**
@@ -343,7 +343,7 @@ helm uninstall trisla -n <TRISLA_NAMESPACE>
 
 ### Teste E2E no Cluster NASP
 
-**Adaptar teste E2E local para ambiente NASP:**
+**Adaptar teste E2E local for ambiente NASP:**
 
 1. **Criar intent de teste:**
    ```bash
@@ -418,7 +418,7 @@ kubectl logs -n trisla -l app.kubernetes.io/name=trisla-sem-csmf --tail=100
 kubectl logs -n trisla -l app.kubernetes.io/part-of=trisla --tail=50
 ```
 
-**Ver eventos do namespace:**
+**Ver eventos of namespace:**
 ```bash
 kubectl get events -n trisla --sort-by='.lastTimestamp'
 ```
@@ -434,11 +434,11 @@ kubectl get all -n trisla
 
 ### Problemas Comuns
 
-#### 1. Pods em ImagePullBackOff
+#### 1. Pods in ImagePullBackOff
 
 **Causa:** Imagem não encontrada ou secret GHCR incorreto.
 
-**Solução:**
+**solution:**
 ```bash
 # Verifiesr secret
 kubectl get secret ghcr-secret -n trisla
@@ -455,11 +455,11 @@ kubectl create secret docker-registry ghcr-secret \
   --namespace=trisla
 ```
 
-#### 2. Pods em CrashLoopBackOff
+#### 2. Pods in CrashLoopBackOff
 
 **Causa:** Erro na aplicação ou configuração incorreta.
 
-**Solução:**
+**solution:**
 ```bash
 # Ver logs
 kubectl logs -n trisla <pod-name> --previous
@@ -472,7 +472,7 @@ kubectl describe pod -n trisla <pod-name>
 
 **Causa:** Network Policies ou configuração de rede incorreta.
 
-**Solução:**
+**solution:**
 ```bash
 # Verifiesr Network Policies
 kubectl get networkpolicies -n trisla
@@ -485,7 +485,7 @@ kubectl exec -n trisla <pod-1> -- ping <pod-2-ip>
 
 **Causa:** Kafka não configurado ou tópicos não criados automaticamente.
 
-**Solução:**
+**solution:**
 ```bash
 # Criar tópicos manualmente
 kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
@@ -529,7 +529,7 @@ kubectl exec -n <KAFKA_NS> <kafka-pod> -- \
 - **Guia de Valores:** `docs/VALUES_PRODUCTION_GUIDE.md`
 - **Matriz de Imagens:** `docs/IMAGES_GHCR_MATRIX.md`
 - **Relatório de Contexto:** `docs/NASP_CONTEXT_REPORT.md`
-- **Operações em Produção:** `README_OPERATIONS_PROD.md`
+- **Operações in Produção:** `README_OPERATIONS_PROD.md`
 
 ---
 

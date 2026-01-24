@@ -4,7 +4,7 @@
 **Phase:** M (ML-NSMF)  
 **Status:** Stabilized
 
-This directory contains a documentação completa do módulo ML-NSMF.
+This directory contains a documentação completa of módulo ML-NSMF.
 
 ## 📚 Available Documents
 
@@ -12,16 +12,16 @@ This directory contains a documentação completa do módulo ML-NSMF.
 
 Complete guide that includes:
 
-- ✅ **Overview** do módulo
+- ✅ **Overview** of módulo
 - ✅ **Architecture** detalhada
-- ✅ **Functioning** do pipeline
+- ✅ **Functioning** of pipeline
 - ✅ **Model Training** (script completo)
 - ✅ **Prediction and XAI** (SHAP/LIME)
 - ✅ **Integration** com outros módulos
 - ✅ **Interface I-03** (Kafka)
 - ✅ **Observability** (métricas e traces)
 - ✅ **Usage Examples** (código Python)
-- ✅ **Troubleshooting** (soluções para problemas comuns)
+- ✅ **Troubleshooting** (soluções for problemas comuns)
 
 ## 📁 Related Files
 

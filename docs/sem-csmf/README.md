@@ -31,8 +31,8 @@ Complete guide that includes:
 
 The OWL ontology documentation is organized as a subfolder of SEM-CSMF:
 
-- **[Ontology Implementation Guide](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)** — Complete guide da ontologia OWL, classes, propriedades, diagramas Protégé
-- **[Ontology README](ontology/README.md)** — Index da documentação da ontologia
+- **[Ontology Implementation Guide](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)** — Complete guide of ontologia OWL, classes, propriedades, diagramas Protégé
+- **[Ontology README](ontology/README.md)** — Index of documentação of ontologia
 
 ---
 
@@ -71,12 +71,12 @@ apps/sem-csmf/
 
 - Recebe intents de alto nível (linguagem natural ou estruturado)
 - Valida semanticamente usando ontologia OWL
-- Processa com NLP para extrair informações
+- Processa com NLP for extrair informações
 - Gera NEST (Network Slice Template)
 
 ### 2. Ontologia OWL
 
-- Ontologia completa em Turtle (`.ttl`)
+- Ontologia completa in Turtle (`.ttl`)
 - Classes, propriedades e indivíduos
 - Reasoning semântico com Pellet
 - Validação de requisitos SLA
@@ -86,14 +86,14 @@ apps/sem-csmf/
 - Extração de tipo de slice (eMBB, URLLC, mMTC)
 - Extração de requisitos de SLA
 - Processamento de linguagem natural
-- Fallback para processamento estruturado
+- Fallback for processamento estruturado
 
 ### 4. Geração de NEST
 
-- Conversão de GST para NEST
+- Conversão de GST for NEST
 - Validação contra ontologia
-- Persistência em PostgreSQL
-- Envio para Decision Engine (I-01)
+- Persistência in PostgreSQL
+- Envio for Decision Engine (I-01)
 
 ---
 
@@ -126,7 +126,7 @@ apps/sem-csmf/
 2. **Entender a Ontologia:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 3. **Ver Exemplos:** Ver seção de exemplos no guia completo
 
-### Uso da Ontologia
+### Uso of Ontologia
 
 1. **Abrir no Protégé:** `apps/sem-csmf/src/ontology/trisla.ttl`
 2. **Validar:** `Reasoner` → `Check consistency`
@@ -207,14 +207,14 @@ pytest tests/integration/test_grpc_communication.py
 
 - **Ontologia OWL:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 - **ML-NSMF:** [`../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md)
-- **Decision Engine:** Ver documentação do Decision Engine
-- **README do Módulo:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
+- **Decision Engine:** Ver documentação of Decision Engine
+- **README of Módulo:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
 
 ---
 
 ## 🎯 Próximos Passos
 
-1. **Ler o Guia Completo** para entender todo o funcionamento
+1. **Ler o Guia Completo** for entender todo o funcionamento
 2. **Explorar a Ontologia** no Protégé
 3. **Testar Processamento** de intents
 4. **Validar Integrações** com outros módulos

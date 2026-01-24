@@ -2,7 +2,7 @@
 
 **Versão:** 3.7.9  
 **Data:** 2025-01-XX  
-**Status:** ✅ Pronto para Deploy
+**Status:** ✅ Pronto for Deploy
 
 ---
 
@@ -102,7 +102,7 @@ kubectl get pods -n trisla -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{
 # Verificar serviços
 kubectl get svc -n trisla
 
-# Verificar status do Helm release
+# Verificar status of Helm release
 helm status trisla -n trisla
 ```
 
@@ -200,11 +200,11 @@ spec:
 
 ## 🐛 Troubleshooting
 
-### Pods em ImagePullBackOff
+### Pods in ImagePullBackOff
 
 **Causa:** Secret GHCR não configurado ou token inválido.
 
-**Solução:**
+**solution:**
 ```bash
 # Verificar secret
 kubectl get secret ghcr-secret -n trisla
@@ -221,11 +221,11 @@ kubectl create secret docker-registry ghcr-secret \
 kubectl delete pods -n trisla -l app.kubernetes.io/name=trisla
 ```
 
-### Pods em CrashLoopBackOff
+### Pods in CrashLoopBackOff
 
 **Causa:** Erro na aplicação ou dependências.
 
-**Solução:**
+**solution:**
 ```bash
 # Ver logs
 kubectl logs -n trisla <pod-name> --previous
@@ -239,7 +239,7 @@ kubectl exec -n trisla <pod-name> -- env | grep -E "OTLP|KAFKA|DATABASE"
 
 ### Métricas Não Aparecem
 
-**Solução:**
+**solution:**
 ```bash
 # Testar endpoint diretamente
 kubectl port-forward -n trisla svc/trisla-sem-csmf 8080:8080
@@ -268,7 +268,7 @@ Após o deploy, acesse os dashboards Grafana:
 
 ### Alertas Prometheus
 
-Configure alertas baseados em métricas:
+Configure alertas baseados in métricas:
 
 - Latência alta (> 1s)
 - Taxa de erro alta (> 5%)

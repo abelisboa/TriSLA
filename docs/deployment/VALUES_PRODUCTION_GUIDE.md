@@ -1,33 +1,33 @@
 # Guia de Preenchimento de values-nasp.yaml — TriSLA
 
 **Versão:** 1.0  
-**Objective:** Explicar como preencher corretamente o arquivo `helm/trisla/values-nasp.yaml` para deploy no NASP
+**Objective:** Explicar como preencher corretamente o arquivo `helm/trisla/values-nasp.yaml` for deploy no NASP
 
 ---
 
 ## 1. Explicação Conceitual
 
-### 1.1 Papel do values.yaml (Default/Dev)
+### 1.1 Papel of values.yaml (Default/Dev)
 
-O arquivo `helm/trisla/values.yaml` contém **valores padrão** para desenvolvimento local e testes. Ele é usado quando:
+O arquivo `helm/trisla/values.yaml` contém **valores padrão** for desenvolvimento local e testes. Ele é usado quando:
 
 - Executando `docker-compose.yml` localmente
-- Testes E2E em ambiente controlado
+- Testes E2E in ambiente controlado
 - Desenvolvimento de novos módulos
 
 **Características:**
-- Valores genéricos e seguros para desenvolvimento
+- Valores genéricos e seguros for desenvolvimento
 - Endpoints mockados ou locais
 - Configurações mínimas de recursos
 
-### 1.2 Papel do values-nasp.yaml (Produção NASP)
+### 1.2 Papel of values-nasp.yaml (Produção NASP)
 
-O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** para produção no ambiente NASP. Ele **sobrescreve** valores do `values.yaml` durante o deploy.
+O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** for produção no ambiente NASP. Ele **sobrescreve** valores of `values.yaml` durante o deploy.
 
 **Características:**
-- Valores específicos do ambiente NASP
+- Valores específicos of ambiente NASP
 - Endpoints reais descobertos no cluster
-- Configurações de recursos otimizadas para produção
+- Configurações de recursos otimizadas for produção
 - Secrets e credenciais (via Kubernetes Secrets, nunca hardcoded)
 
 ### 1.3 Perigos de Subir Valores Genéricos
@@ -36,14 +36,14 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** para p
 
 - IPs reais de nodes ou serviços
 - Tokens ou credenciais hardcoded
-- Endpoints específicos do seu ambiente (use placeholders em documentação)
+- Endpoints específicos of seu ambiente (use placeholders in documentação)
 
 ✅ **SEMPRE:**
 
-- Use placeholders em documentação Markdown
+- Use placeholders in documentação Markdown
 - Armazene valores reais apenas no arquivo YAML local (não versionado)
-- Use Kubernetes Secrets para credenciais
-- Valide com `helm template` antes do deploy
+- Use Kubernetes Secrets for credenciais
+- Valide com `helm template` antes of deploy
 
 ---
 
@@ -51,13 +51,13 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** para p
 
 | Chave YAML | description | Fonte de Informação | Obrigatório | Exemplo (genérico) |
 |------------|-----------|---------------------|-------------|-------------------|
-| `global.namespace` | Namespace em que o TriSLA será instalado | Padrão do ambiente NASP | Sim | `trisla` |
+| `global.namespace` | Namespace in que o TriSLA será instalado | Padrão of ambiente NASP | Sim | `trisla` |
 | `global.imageRegistry` | Registry de imagens Docker | GHCR configurado | Sim | `ghcr.io/<GHCR_USER>` |
-| `semCsmf.service.port` | Porta HTTP do SEM-CSMF | Padrão do Helm / app | Sim | `8080` |
-| `mlNsmf.modelPath` | Caminho do modelo de viabilidade ML | Artefatos ML treinados | Sim | `/models/viability_model.pkl` |
-| `bcNssmf.besu.rpcUrl` | URL RPC do GoQuorum/Besu | Configuração local do Besu | Sim | `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545` |
-| `bcNssmf.besu.chainId` | Chain ID da blockchain | Configuração do Besu | Sim | `1337` |
-| `naspAdapter.naspEndpoints.ran` | Endpoint base do RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>` |
+| `semCsmf.service.port` | Porta HTTP of SEM-CSMF | Padrão of Helm / app | Sim | `8080` |
+| `mlNsmf.modelPath` | Caminho of modelo de viabilidade ML | Artefatos ML treinados | Sim | `/models/viability_model.pkl` |
+| `bcNssmf.besu.rpcUrl` | URL RPC of GoQuorum/Besu | Configuração local of Besu | Sim | `http://<BESU_SERVICE>.<BESU_NS>.svc.cluster.local:8545` |
+| `bcNssmf.besu.chainId` | Chain ID of blockchain | Configuração of Besu | Sim | `1337` |
+| `naspAdapter.naspEndpoints.ran` | Endpoint base of RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>` |
 | `naspAdapter.naspEndpoints.ran_metrics` | Endpoint de métricas RAN | Descoberta NASP | Sim | `http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_METRICS_PORT>` |
 | `naspAdapter.naspEndpoints.core_upf` | Endpoint UPF (Core) | Descoberta NASP | Sim | `http://<UPF_SERVICE>.<CORE_NS>.svc.cluster.local:<UPF_PORT>` |
 | `naspAdapter.naspEndpoints.core_upf_metrics` | Endpoint de métricas UPF | Descoberta NASP | Sim | `http://<UPF_SERVICE>.<CORE_NS>.svc.cluster.local:<UPF_METRICS_PORT>` |
@@ -66,16 +66,16 @@ O arquivo `helm/trisla/values-nasp.yaml` contém **valores específicos** para p
 | `naspAdapter.naspEndpoints.transport` | Endpoint Transport | Descoberta NASP | Sim | `http://<TRANSPORT_SERVICE>.<TRANSPORT_NS>.svc.cluster.local:<TRANSPORT_PORT>` |
 | `observability.otlp.endpoint` | Endpoint OTLP Collector | Stack de observabilidade NASP | Sim | `http://<OTLP_SERVICE>.<MONITORING_NS>.svc.cluster.local:4317` |
 | `observability.prometheus.endpoint` | Endpoint Prometheus | Stack de observabilidade NASP | Sim | `http://<PROMETHEUS_SERVICE>.<MONITORING_NS>.svc.cluster.local:9090` |
-| `network.interface` | Interface de rede NASP | Configuração do cluster | Sim | `my5g` |
-| `nodes.node1.ip` | IP do Node1 | Configuração do cluster | Sim | `<NODE1_IP>` |
-| `nodes.node2.ip` | IP do Node2 | Configuração do cluster | Sim | `<NODE2_IP>` |
-| `network.gateway` | Gateway IP | Configuração do cluster | Sim | `<GATEWAY_IP>` |
+| `network.interface` | Interface de rede NASP | Configuração of cluster | Sim | `my5g` |
+| `nodes.node1.ip` | IP of Node1 | Configuração of cluster | Sim | `<NODE1_IP>` |
+| `nodes.node2.ip` | IP of Node2 | Configuração of cluster | Sim | `<NODE2_IP>` |
+| `network.gateway` | Gateway IP | Configuração of cluster | Sim | `<GATEWAY_IP>` |
 
 ---
 
 ## 3. Erros Comuns e Como Evitar
 
-### 3.1 Valores Vazios em Campos Obrigatórios
+### 3.1 Valores Vazios in Campos Obrigatórios
 
 **Problema:**
 ```yaml
@@ -84,20 +84,20 @@ naspAdapter:
     ran: ""  # ❌ Vazio
 ```
 
-**Solução:**
-- Execute `scripts/discover-nasp-endpoints.sh` para descobrir endpoints
-- Use `scripts/fill_values_production.sh` para preenchimento guiado
-- Valide com `helm template` antes do deploy
+**solution:**
+- Execute `scripts/discover-nasp-endpoints.sh` for descobrir endpoints
+- Use `scripts/fill_values_production.sh` for preenchimento guiado
+- Valide com `helm template` antes of deploy
 
-### 3.2 Usar IP Real em Documentação
+### 3.2 Usar IP Real in Documentação
 
 **Problema:**
 ```markdown
-# ❌ NUNCA faça isso em .md:
+# ❌ NUNCA faça isso in .md:
 Endpoint: http://192.168.10.16:8080
 ```
 
-**Solução:**
+**solution:**
 ```markdown
 # ✅ SEMPRE use placeholders:
 Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
@@ -110,7 +110,7 @@ Endpoint: http://<RAN_SERVICE>.<RAN_NS>.svc.cluster.local:<RAN_PORT>
 - `values-nasp.yaml` usa porta `8081`
 - Resultado: Incompatibilidade
 
-**Solução:**
+**solution:**
 - Mantenha portas consistentes entre dev e produção
 - Documente mudanças de porta quando necessário
 - Use variáveis de ambiente quando possível
@@ -124,15 +124,15 @@ naspAdapter:
     ran: "http://192.168.10.16:8080"  # ❌ IP hardcoded
 ```
 
-**Solução:**
+**solution:**
 ```yaml
 naspAdapter:
   naspEndpoints:
     ran: "http://ran-controller.ran-namespace.svc.cluster.local:8080"  # ✅ FQDN Kubernetes
 ```
 
-**Vantagens do FQDN:**
-- Resolução automática via DNS do cluster
+**Vantagens of FQDN:**
+- Resolução automática via DNS of cluster
 - Funciona mesmo se IPs mudarem
 - Mais resiliente a mudanças de infraestrutura
 
@@ -145,7 +145,7 @@ secrets:
   ghcr_token: "ghp_xxxxxxxxxxxx"
 ```
 
-**Solução:**
+**solution:**
 ```yaml
 # ✅ Use Kubernetes Secrets:
 secrets:
@@ -170,7 +170,7 @@ kubectl create secret docker-registry ghcr-secret \
 ### Passo 1: Descobrir Endpoints
 
 ```bash
-# No node1 do NASP
+# No node1 of NASP
 ./scripts/discover-nasp-endpoints.sh
 ```
 
@@ -200,10 +200,10 @@ helm template trisla ./helm/trisla \
   --debug
 ```
 
-### Passo 5: Revisar Antes do Deploy
+### Passo 5: Revisar Antes of Deploy
 
 - ✅ Todos os placeholders substituídos?
-- ✅ Nenhum IP real em documentação?
+- ✅ Nenhum IP real in documentação?
 - ✅ Secrets configurados via Kubernetes?
 - ✅ Endpoints usando FQDNs?
 
@@ -213,7 +213,7 @@ helm template trisla ./helm/trisla \
 
 ```yaml
 # ============================================
-# Values para PRODUÇÃO REAL - NASP Node1
+# Values for PRODUÇÃO REAL - NASP Node1
 # ============================================
 
 global:

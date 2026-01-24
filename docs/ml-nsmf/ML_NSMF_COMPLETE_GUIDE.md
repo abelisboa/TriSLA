@@ -1,4 +1,4 @@
-# Guia Completo do Módulo ML-NSMF
+# Guia Completo of Módulo ML-NSMF
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
@@ -9,9 +9,9 @@
 ## 📋 Sumário
 
 1. [Visão Geral](#visão-geral)
-2. [Arquitetura do Módulo](#arquitetura-do-módulo)
-3. [Funcionamento do Módulo](#funcionamento-do-módulo)
-4. [Treinamento do Modelo](#treinamento-do-modelo)
+2. [Arquitetura of Módulo](#arquitetura-do-módulo)
+3. [Funcionamento of Módulo](#funcionamento-do-módulo)
+4. [Treinamento of Modelo](#treinamento-do-modelo)
 5. [Predição e XAI](#predição-e-xai)
 6. [Integração com Outros Módulos](#integração-com-outros-módulos)
 7. [Interface I-03 (Kafka)](#interface-i-03-kafka)
@@ -23,7 +23,7 @@
 
 ## 🎯 Visão Geral
 
-O **ML-NSMF (Machine Learning Network Slice Management Function)** é responsável por prever a viabilidade de aceitação de SLAs baseado em métricas históricas, características do NEST e estado atual dos recursos da infraestrutura.
+O **ML-NSMF (Machine Learning Network Slice Management Function)** é responsável por prever a viabilidade de aceitação de SLAs baseado in métricas históricas, características of NEST e estado atual dos recursos of infraestrutura.
 
 ### Objetivos
 
@@ -35,13 +35,13 @@ O **ML-NSMF (Machine Learning Network Slice Management Function)** é responsáv
 ### Características Principais
 
 - **Modelo ML:** Random Forest (atual) ou LSTM/GRU (futuro)
-- **XAI:** SHAP e LIME para explicações
+- **XAI:** SHAP e LIME for explicações
 - **Tempo de Resposta:** < 500ms
 - **Acurácia:** > 85% (modelo treinado)
 
 ---
 
-## 🏗️ Arquitetura do Módulo
+## 🏗️ Arquitetura of Módulo
 
 ### Estrutura de Diretórios
 
@@ -55,8 +55,8 @@ apps/ml-nsmf/
 │   └── __init__.py
 ├── models/
 │   ├── viability_model.pkl    # Modelo treinado (Random Forest)
-│   ├── scaler.pkl              # Scaler para normalização
-│   └── model_metadata.json     # Metadados do modelo
+│   ├── scaler.pkl              # Scaler for normalização
+│   └── model_metadata.json     # Metadados of modelo
 ├── data/
 │   ├── datasets/
 │   │   └── trisla_ml_dataset.csv  # Dataset de treinamento
@@ -70,22 +70,22 @@ apps/ml-nsmf/
 
 ### Componentes Principais
 
-1. **RiskPredictor** — Classe principal para predição
-2. **MetricsConsumer** — Consome métricas do NASP via Kafka
+1. **RiskPredictor** — Classe principal for predição
+2. **MetricsConsumer** — Consome métricas of NASP via Kafka
 3. **PredictionProducer** — Envia predições ao Decision Engine via Kafka
 4. **Modelo ML** — Modelo treinado (Random Forest ou LSTM/GRU)
 5. **XAI Explainer** — Explicador usando SHAP/LIME
 
 ---
 
-## ⚙️ Funcionamento do Módulo
+## ⚙️ Funcionamento of Módulo
 
 ### Pipeline de Processamento
 
 ```
 ┌─────────────────┐
 │  Recebe NEST    │  (via Kafka I-02)
-│  do SEM-CSMF    │
+│  of SEM-CSMF    │
 └────────┬────────┘
          │
          ▼
@@ -124,11 +124,11 @@ apps/ml-nsmf/
 ### Fluxo Detalhado
 
 1. **Recepção de NEST**
-   - Consumer Kafka recebe NEST do SEM-CSMF
+   - Consumer Kafka recebe NEST of SEM-CSMF
    - Tópico: `sem-csmf-nests`
 
 2. **Coleta de Métricas**
-   - Consulta NASP Adapter para métricas atuais
+   - Consulta NASP Adapter for métricas atuais
    - Domínios: RAN, Transport, Core
 
 3. **Extração de Features**
@@ -155,7 +155,7 @@ apps/ml-nsmf/
 
 ---
 
-## 🎓 Treinamento do Modelo
+## 🎓 Treinamento of Modelo
 
 ### 1. Preparação dos Dados
 
@@ -163,7 +163,7 @@ apps/ml-nsmf/
 
 **Arquivo:** `apps/ml-nsmf/data/datasets/trisla_ml_dataset.csv`
 
-**Estrutura do Dataset:**
+**Estrutura of Dataset:**
 
 | Coluna | Tipo | Descrição |
 |--------|------|-----------|
@@ -195,7 +195,7 @@ features['resource_ratio'] = features['required_cpu'] / features['available_cpu'
 
 ```python
 """
-Script de Treinamento do Modelo ML-NSMF
+Script de Treinamento of Modelo ML-NSMF
 """
 
 import pandas as pd
@@ -357,7 +357,7 @@ Test R²: 0.9028
 Test MAE: 0.0464
 ```
 
-### 4. Validação do Modelo
+### 4. Validação of Modelo
 
 **Métricas de Avaliação:**
 
@@ -391,7 +391,7 @@ O modelo calcula importância de features automaticamente. Exemplo:
 
 **Processo de Retreinamento:**
 
-1. Coletar novos dados do NASP
+1. Coletar novos dados of NASP
 2. Adicionar ao dataset existente
 3. Executar script de treinamento
 4. Validar novo modelo
@@ -429,7 +429,7 @@ prediction = await predictor.predict(normalized_metrics)
 }
 ```
 
-**Interpretação do Score:**
+**Interpretação of Score:**
 
 - **0.0 - 0.4:** Baixo risco (ACCEPT)
 - **0.4 - 0.7:** Risco médio (CONDITIONAL_ACCEPT)
@@ -551,7 +551,7 @@ async with httpx.AsyncClient() as client:
 
 **Nome:** `ml-nsmf-predictions`
 
-### Schema da Mensagem
+### Schema of Mensagem
 
 ```json
 {
@@ -601,7 +601,7 @@ producer.send('ml-nsmf-predictions', value=prediction_data)
 |---------|------|-----------|
 | `ml_nsmf_predictions_total` | Counter | Total de predições realizadas |
 | `ml_nsmf_prediction_duration_seconds` | Histogram | Tempo de predição |
-| `ml_nsmf_model_accuracy` | Gauge | Acurácia do modelo |
+| `ml_nsmf_model_accuracy` | Gauge | Acurácia of modelo |
 | `ml_nsmf_viability_scores` | Histogram | Distribuição de scores |
 | `ml_nsmf_training_duration_seconds` | Histogram | Tempo de treinamento |
 
@@ -624,7 +624,7 @@ from predictor import RiskPredictor
 
 predictor = RiskPredictor()
 
-# Métricas do NEST
+# Métricas of NEST
 metrics = {
     "latency": 15.0,
     "throughput": 500.0,
@@ -656,7 +656,7 @@ print(f"Top Feature: {max(explanation['features_importance'].items(), key=lambda
 print(f"Reasoning: {explanation['reasoning']}")
 ```
 
-### Exemplo 3: Treinamento do Modelo
+### Exemplo 3: Treinamento of Modelo
 
 ```bash
 # 1. Preparar dataset
@@ -682,7 +682,7 @@ cp models/scaler.pkl /path/to/production/models/
 
 **Sintoma:** `FileNotFoundError: models/viability_model.pkl`
 
-**Solução:**
+**solution:**
 ```bash
 # Verificar se modelo existe
 ls -la apps/ml-nsmf/models/
@@ -696,7 +696,7 @@ python training/train_model.py
 
 **Sintoma:** `ImportError: No module named 'shap'`
 
-**Solução:**
+**solution:**
 ```bash
 pip install shap==0.43.0 lime==0.2.0.1
 ```
@@ -717,7 +717,7 @@ pip install shap==0.43.0 lime==0.2.0.1
 **Soluções:**
 1. Coletar mais dados de treinamento
 2. Feature engineering adicional
-3. Ajustar hiperparâmetros do modelo
+3. Ajustar hiperparâmetros of modelo
 4. Tentar modelo diferente (XGBoost, Neural Network)
 
 ---
@@ -736,7 +736,7 @@ pip install shap==0.43.0 lime==0.2.0.1
 
 O ML-NSMF fornece predições de viabilidade de SLA com explicações usando XAI. O módulo:
 
-- ✅ **Prediz viabilidade** de SLAs baseado em métricas
+- ✅ **Prediz viabilidade** de SLAs baseado in métricas
 - ✅ **Explica predições** usando SHAP/LIME
 - ✅ **Integra-se** com SEM-CSMF e Decision Engine
 - ✅ **Observável** via Prometheus e OpenTelemetry
@@ -744,10 +744,10 @@ O ML-NSMF fornece predições de viabilidade de SLA com explicações usando XAI
 
 Para mais informações, consulte:
 - `apps/ml-nsmf/src/predictor.py` — Classe principal
-- `apps/ml-nsmf/models/model_metadata.json` — Metadados do modelo
-- `apps/ml-nsmf/README.md` — README do módulo
+- `apps/ml-nsmf/models/model_metadata.json` — Metadados of modelo
+- `apps/ml-nsmf/README.md` — README of módulo
 
 ---
 
-**Fim do Guia**
+**Fim of Guia**
 

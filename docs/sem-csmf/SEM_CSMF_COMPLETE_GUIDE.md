@@ -1,4 +1,4 @@
-# Guia Completo do Módulo SEM-CSMF
+# Guia Completo of Módulo SEM-CSMF
 
 **Versão:** 3.5.0  
 **Data:** 2025-01-27  
@@ -9,7 +9,7 @@
 ## 📋 Sumário
 
 1. [Visão Geral](#visão-geral)
-2. [Arquitetura do Módulo](#arquitetura-do-módulo)
+2. [Arquitetura of Módulo](#arquitetura-do-módulo)
 3. [Pipeline de Processamento](#pipeline-de-processamento)
 4. [Ontologia OWL](#ontologia-owl)
 5. [NLP (Natural Language Processing)](#nlp-natural-language-processing)
@@ -23,26 +23,26 @@
 
 ## 🎯 Visão Geral
 
-O **SEM-CSMF (Semantic-enhanced Communication Service Management Function)** é o módulo responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) para provisionamento de network slices.
+O **SEM-CSMF (Semantic-enhanced Communication Service Management Function)** é o módulo responsável por receber intents de alto nível, validá-los semanticamente usando uma ontologia OWL, processá-los com NLP e gerar NESTs (Network Slice Templates) for provisionamento de network slices.
 
 ### Objetivos
 
 1. **Interpretação Semântica:** Validar intents contra ontologia OWL
 2. **Processamento NLP:** Extrair informações de linguagem natural
-3. **Geração de NEST:** Converter intents em Network Slice Templates
+3. **Geração de NEST:** Converter intents in Network Slice Templates
 4. **Integração:** Comunicar-se com Decision Engine e ML-NSMF
 
 ### Características Principais
 
-- **Ontologia OWL:** Ontologia completa em Turtle (`.ttl`)
+- **Ontologia OWL:** Ontologia completa in Turtle (`.ttl`)
 - **NLP:** Processamento de linguagem natural com spaCy
 - **Reasoning:** Motor de reasoning semântico com Pellet
-- **Persistência:** PostgreSQL para intents e NESTs
-- **Observabilidade:** OpenTelemetry para traces e métricas
+- **Persistência:** PostgreSQL for intents e NESTs
+- **Observabilidade:** OpenTelemetry for traces e métricas
 
 ---
 
-## 🏗️ Arquitetura do Módulo
+## 🏗️ Arquitetura of Módulo
 
 ### Estrutura de Diretórios
 
@@ -66,7 +66,7 @@ apps/sem-csmf/
 │   ├── grpc_client_retry.py    # Cliente com retry
 │   ├── kafka_producer.py       # Producer Kafka (I-02)
 │   ├── kafka_producer_retry.py # Producer com retry
-│   ├── database.py             # Configuração do banco
+│   ├── database.py             # Configuração of banco
 │   ├── repository.py           # Repositório de dados
 │   ├── models/                 # Modelos Pydantic
 │   │   ├── intent.py
@@ -86,7 +86,7 @@ apps/sem-csmf/
 3. **SemanticReasoner** — Motor de reasoning semântico
 4. **NLPParser** — Parser de linguagem natural
 5. **NESTGenerator** — Gerador de NESTs
-6. **DecisionEngineClient** — Cliente gRPC para Decision Engine
+6. **DecisionEngineClient** — Cliente gRPC for Decision Engine
 
 ---
 
@@ -141,18 +141,18 @@ apps/sem-csmf/
    - Normalização de dados
 
 3. **Validação Semântica**
-   - Carregamento da ontologia OWL
+   - Carregamento of ontologia OWL
    - Validação contra classes e propriedades
    - Reasoning semântico
 
 4. **Geração de NEST**
-   - Conversão de GST para NEST
+   - Conversão de GST for NEST
    - Validação de requisitos
-   - Persistência em PostgreSQL
+   - Persistência in PostgreSQL
 
-5. **Envio para Módulos Downstream**
-   - I-01 (gRPC): Metadados para Decision Engine
-   - I-02 (Kafka): NEST completo para ML-NSMF
+5. **Envio for Módulos Downstream**
+   - I-01 (gRPC): Metadados for Decision Engine
+   - I-02 (Kafka): NEST completo for ML-NSMF
 
 ---
 
@@ -160,7 +160,7 @@ apps/sem-csmf/
 
 ### Visão Geral
 
-A ontologia OWL está localizada em `apps/sem-csmf/src/ontology/trisla.ttl` e é carregada dinamicamente pelo módulo.
+A ontologia OWL está localizada in `apps/sem-csmf/src/ontology/trisla.ttl` e é carregada dinamicamente pelo módulo.
 
 **Documentação Completa:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 
@@ -197,7 +197,7 @@ is_valid = reasoner.validate_sla_requirements("URLLC", sla_dict)
 
 ### Visão Geral
 
-O NLP é usado para processar intents em linguagem natural e extrair informações estruturadas.
+O NLP é usado for processar intents in linguagem natural e extrair informações estruturadas.
 
 **Arquivo:** `apps/sem-csmf/src/nlp/parser.py`
 
@@ -237,23 +237,23 @@ result = parser.parse_intent_text(text)
 
 ### Visão Geral
 
-O NEST (Network Slice Template) é gerado a partir do intent validado semanticamente.
+O NEST (Network Slice Template) é gerado a partir of intent validado semanticamente.
 
 **Arquivo:** `apps/sem-csmf/src/nest_generator.py`
 
 ### Processo
 
 1. **Conversão GST → NEST**
-   - GST (Generic Slice Template) é convertido para NEST
+   - GST (Generic Slice Template) é convertido for NEST
    - Validação contra ontologia
 
 2. **Persistência**
-   - Salvo em PostgreSQL
+   - Salvo in PostgreSQL
    - Metadados armazenados
 
 3. **Envio**
-   - gRPC para Decision Engine (I-01)
-   - Kafka para ML-NSMF (I-02)
+   - gRPC for Decision Engine (I-01)
+   - Kafka for ML-NSMF (I-02)
 
 ### Exemplo de NEST
 
@@ -382,7 +382,7 @@ validated = await processor.validate_semantic(intent)
 nest = await processor.generate_nest(validated)
 ```
 
-### Exemplo 2: Processar Intent em Linguagem Natural
+### Exemplo 2: Processar Intent in Linguagem Natural
 
 ```python
 intent = Intent(
@@ -431,7 +431,7 @@ results = loader.query(query)
 
 **Sintoma:** `ImportError: owlready2 is not installed`
 
-**Solução:**
+**solution:**
 ```bash
 pip install owlready2==0.40
 ```
@@ -440,7 +440,7 @@ pip install owlready2==0.40
 
 **Sintoma:** `OSError: SpaCy model not found`
 
-**Solução:**
+**solution:**
 ```bash
 python -m spacy download en_core_web_sm
 ```
@@ -449,7 +449,7 @@ python -m spacy download en_core_web_sm
 
 **Sintoma:** `grpc._channel._InactiveRpcError`
 
-**Solução:**
+**solution:**
 - Verificar se Decision Engine está rodando
 - Verificar endpoint: `DECISION_ENGINE_GRPC`
 - Verificar conectividade de rede
@@ -458,7 +458,7 @@ python -m spacy download en_core_web_sm
 
 **Sintoma:** `kafka.errors.KafkaError`
 
-**Solução:**
+**solution:**
 - Verificar se Kafka está rodando
 - Verificar `KAFKA_BOOTSTRAP_SERVERS`
 - Verificar tópico existe
@@ -491,8 +491,8 @@ python -m spacy download en_core_web_sm
 
 - **Ontologia:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)
 - **ML-NSMF:** [`../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md`](../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md)
-- **Decision Engine:** Ver documentação do Decision Engine
-- **README do Módulo:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
+- **Decision Engine:** Ver documentação of Decision Engine
+- **README of Módulo:** [`../../apps/sem-csmf/README.md`](../../apps/sem-csmf/README.md)
 
 ---
 
@@ -501,9 +501,9 @@ python -m spacy download en_core_web_sm
 O SEM-CSMF fornece interpretação semântica inteligente de intents usando ontologia OWL e NLP. O módulo:
 
 - ✅ **Processa intents** com validação semântica
-- ✅ **Usa ontologia OWL** para reasoning
+- ✅ **Usa ontologia OWL** for reasoning
 - ✅ **Processa linguagem natural** com NLP
-- ✅ **Gera NESTs** para provisionamento
+- ✅ **Gera NESTs** for provisionamento
 - ✅ **Integra-se** com Decision Engine e ML-NSMF
 - ✅ **Observável** via Prometheus e OpenTelemetry
 
@@ -514,5 +514,5 @@ Para mais informações, consulte:
 
 ---
 
-**Fim do Guia**
+**Fim of Guia**
 

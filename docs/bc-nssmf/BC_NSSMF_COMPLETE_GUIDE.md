@@ -31,7 +31,7 @@ The **BC-NSSMF (Blockchain-enabled Network Slice Subnet Management Function)** i
 1. **On-Chain Registration:** Register approved SLAs by the Decision Engine on the blockchain
 2. **Status Update:** Update SLA status (ACTIVE, VIOLATED, TERMINATED)
 3. **Violation Registration:** Register SLA violations in an immutable way
-4. **Auditoria:** Provide complete audit via on-chain events
+4. **audit:** Provide complete audit via on-chain events
 5. **Enforcement:** Automatically execute contractual rules
 
 ### Main Features
@@ -197,7 +197,7 @@ python src/deploy_contracts.py
 6. Saves address and ABI to `contract_address.json`
 
 **Environment Variables:**
-- `TRISLA_RPC_URL` — URL do RPC Besu (default: `http://127.0.0.1:8545`)
+- `TRISLA_RPC_URL` — URL of RPC Besu (default: `http://127.0.0.1:8545`)
 - `TRISLA_PRIVATE_KEY` — Private key (production)
 - `TRISLA_DEV_PRIVATE_KEY` — Private key (development)
 - `TRISLA_CHAIN_ID` — Chain ID (default: `1337`)
@@ -284,7 +284,7 @@ class BCConfig:
 
 3. **`GET /bc/{sla_id}`**
    - Consulta SLA
-   - Returns: Dados do SLA
+   - Returns: Dados of SLA
 
 **Modelos Pydantic:**
 
@@ -323,7 +323,7 @@ class SLAStatusUpdate(BaseModel):
 
 **Class:** `MetricsOracle`
 
-**Função:** Obtém métricas reais do NASP para validação de smart contracts.
+**Função:** obtains métricas reais of NASP for validação de smart contracts.
 
 #### Main Method
 
@@ -331,7 +331,7 @@ class SLAStatusUpdate(BaseModel):
 metrics = await metrics_oracle.get_metrics()
 ```
 
-**Retorno:**
+**return:**
 ```python
 {
     "latency": 12.5,
@@ -345,8 +345,8 @@ metrics = await metrics_oracle.get_metrics()
 
 **Em Produção:**
 - Connects to NASP Adapter via HTTP REST
-- Obtém métricas em tempo real
-- Valida contra thresholds do SLA
+- obtains métricas in tempo real
+- Valida contra thresholds of SLA
 
 ---
 
@@ -383,7 +383,7 @@ result = await consumer.consume_and_execute()
 **Fluxo:**
 1. SLO Reporter detecta violação
 2. SLO Reporter chama BC-NSSMF
-3. BC-NSSMF atualiza status para `VIOLATED`
+3. BC-NSSMF atualiza status for `VIOLATED`
 4. BC-NSSMF emits event `SLAUpdated`
 
 ### 3. NASP Adapter
@@ -400,7 +400,7 @@ result = await consumer.consume_and_execute()
 
 **Nome:** `trisla-i04-decisions`
 
-### Schema da Mensagem
+### Schema of Mensagem
 
 ```json
 {
@@ -439,7 +439,7 @@ consumer = KafkaConsumer(
 
 ## 🚀 Deployment and Configuration
 
-### 1. Iniciar Blockchain Besu
+### 1. start Blockchain Besu
 
 **Docker Compose:** `apps/bc-nssmf/blockchain/besu/docker-compose-besu.yaml`
 
@@ -454,7 +454,7 @@ docker-compose -f docker-compose-besu.yaml up -d
 curl http://127.0.0.1:8545
 ```
 
-### 2. Deploy do Smart Contract
+### 2. Deploy of Smart Contract
 
 **Command:**
 ```bash
@@ -466,10 +466,10 @@ python src/deploy_contracts.py
 ```
 [TriSLA] Compiling Solidity contract...
 [TriSLA] Usando conta: 0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1
-[TriSLA] Saldo da conta: 100.0 ETH
+[TriSLA] Saldo of conta: 100.0 ETH
 [TriSLA] Enviando transação de deploy: 0x...
 [TriSLA] Contrato implantado em: 0x42699A7612A82f1d9C36148af9C77354759b210b
-[TriSLA] Endereço e ABI salvos em contract_address.json
+[TriSLA] Endereço e ABI salvos in contract_address.json
 ```
 
 ### 3. Configurar Variáveis de Ambiente
@@ -487,7 +487,7 @@ TRISLA_DEV_PRIVATE_KEY=0x...  # Desenvolvimento
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 ```
 
-### 4. Iniciar Aplicação
+### 4. start Aplicação
 
 **Command:**
 ```bash
@@ -589,7 +589,7 @@ customer, service_name, status, created_at, updated_at = sla_data
 print(f"Customer: {customer}, Status: {status}")
 ```
 
-### Exemplo 4: Consumir Decisões do Decision Engine
+### Exemplo 4: Consumir Decisões of Decision Engine
 
 **Código:**
 ```python
@@ -641,7 +641,7 @@ for event in events:
 
 **Sintoma:** `RuntimeError: Erro: RPC Besu não conectado`
 
-**Solução:**
+**solution:**
 ```bash
 # Verificar se Besu está rodando
 docker ps | grep besu
@@ -649,7 +649,7 @@ docker ps | grep besu
 # Verificar RPC
 curl http://127.0.0.1:8545
 
-# Se não estiver rodando, iniciar
+# Se não estiver rodando, start
 cd apps/bc-nssmf/blockchain/besu
 docker-compose -f docker-compose-besu.yaml up -d
 ```
@@ -658,9 +658,9 @@ docker-compose -f docker-compose-besu.yaml up -d
 
 **Sintoma:** `RuntimeError: Saldo insuficiente`
 
-**Solução:**
+**solution:**
 ```bash
-# Em modo DEV, usar conta padrão do Besu
+# Em modo DEV, usar conta padrão of Besu
 # Chave privada: 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
 # Endereço: 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73
 
@@ -674,7 +674,7 @@ print(f"Saldo: {w3.from_wei(balance, 'ether')} ETH")
 
 **Sintoma:** `ValueError: Contrato não encontrado`
 
-**Solução:**
+**solution:**
 ```bash
 # Verificar se contrato foi deployado
 cat apps/bc-nssmf/src/contracts/contract_address.json
@@ -688,12 +688,12 @@ python src/deploy_contracts.py
 
 **Sintoma:** `solcx.exceptions.SolcError`
 
-**Solução:**
+**solution:**
 ```bash
 # Instalar solc
 pip install py-solc-x
 
-# Instalar versão específica do Solidity
+# Instalar versão específica of Solidity
 python -c "from solcx import install_solc; install_solc('0.8.20')"
 ```
 
@@ -701,7 +701,7 @@ python -c "from solcx import install_solc; install_solc('0.8.20')"
 
 **Sintoma:** `kafka.errors.KafkaError`
 
-**Solução:**
+**solution:**
 ```bash
 # Verificar se Kafka está rodando
 docker ps | grep kafka
@@ -709,7 +709,7 @@ docker ps | grep kafka
 # Verificar conectividade
 telnet kafka 9092
 
-# Se não estiver rodando, iniciar
+# Se não estiver rodando, start
 docker-compose -f docker-compose-kafka.yaml up -d
 ```
 
@@ -750,12 +750,12 @@ docker-compose -f docker-compose-kafka.yaml up -d
 
 ## 🎯 Conclusão
 
-O BC-NSSMF fornece registro on-chain de SLAs com imutabilidade e auditoria completa. O módulo:
+O BC-NSSMF fornece registro on-chain de SLAs com imutabilidade e audit completa. O módulo:
 
-- ✅ **Registra SLAs** on-chain após aprovação do Decision Engine
+- ✅ **Registra SLAs** on-chain após aprovação of Decision Engine
 - ✅ **Atualiza status** de SLAs (ACTIVE, VIOLATED, TERMINATED)
 - ✅ **Registra violações** in an immutable way
-- ✅ **Fornece auditoria** via on-chain events
+- ✅ **Fornece audit** via on-chain events
 - ✅ **Integra-se** com Decision Engine e SLO Reporter
 - ✅ **Observável** via Prometheus e OpenTelemetry
 
@@ -766,5 +766,5 @@ Para mais informações, consulte:
 
 ---
 
-**Fim do Guia**
+**Fim of Guia**
 
