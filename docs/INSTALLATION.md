@@ -8,7 +8,7 @@ This document describes **what TriSLA is**, **what must exist before you deploy 
 
 ### 1.1 Definition
 
-**TriSLA** (Triangulated Service Level Agreement Platform) is an **SLA-aware control-plane architecture** for 5G network slice admission and lifecycle management. It combines:
+**TriSLA** (Triangulated Service Level Agreement Platform) is an **SLA-aware control-plane architecture based on Artificial Intelligence, Ontology, and Smart Contracts for SLA assurance in 5G and O-RAN networks**.
 
 - **Semantic processing** (SEM-CSMF): intent normalization, ontology-based validation.
 - **ML inference** (ML-NSMF): risk prediction, confidence scores, slice-type awareness.

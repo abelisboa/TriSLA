@@ -1,6 +1,6 @@
 # TriSLA End-to-End Deployment Guide (Operational Manual)
 
-This document is a **line-by-line operational manual** for deploying TriSLA in a generic Kubernetes environment. It enables full reproduction of the control plane and validation of correct operation. Prerequisites (tools, cluster, registry) are in `docs/INSTALLATION.md`. This guide is **procedural and validation-focused**; concepts live in `docs/INSTALLATION.md`.
+This document is a **line-by-line operational manual** for deploying the TriSLA architecture (an SLA-aware control-plane architecture based on Artificial Intelligence, Ontology, and Smart Contracts for SLA assurance in 5G and O-RAN networks) in a generic Kubernetes environment. It enables full reproduction of the control plane and validation of correct operation. Prerequisites (tools, cluster, registry) are in `docs/INSTALLATION.md`. This guide is **procedural and validation-focused**; concepts live in `docs/INSTALLATION.md`.
 
 ---
 
