@@ -1,45 +1,69 @@
-# TriSLA - Triangulated Service Level Agreement Platform
+# TriSLA - Trustworthy, Reasoned and Intelligent SLA-Aware
 
 **Scientific Version**: v3.9.3 (Frozen)
 
 ## Overview
 
-**TriSLA** (Triangulated Service Level Agreement Platform) is an SLA-aware control-plane architecture based on Artificial Intelligence, Ontology, and Smart Contracts for SLA assurance in 5G and O-RAN networks.
+**TriSLA** (Trustworthy, Reasoned and Intelligent SLA-Aware) is a control-plane architecture focused on validation, decision-making, and automated execution of Service Level Agreements (SLAs) in Network Slicing environments for 5G/O-RAN networks, based on the integration of ontology, artificial intelligence, and smart contracts.
 
-TriSLA provides automated SLA negotiation, monitoring, and enforcement through a distributed microservices architecture that combines:
+TriSLA addresses the heterogeneity of RAN, Transport, and Core domains, providing end-to-end automation in the slice lifecycle while prioritizing reliability, traceability, predictability, and transparency.
 
-- **Artificial Intelligence**: Machine learning models for risk prediction and decision optimization
-- **Ontology**: Semantic processing and intent normalization for SLA validation
-- **Smart Contracts**: Blockchain-based governance for on-chain SLA lifecycle management
+## What Problem Does TriSLA Solve?
+
+TriSLA addresses the challenge of automated SLA validation, decision-making, and execution in 5G/O-RAN Network Slicing environments. It provides:
+
+- **Semantic interpretation** of natural language intents using ontology
+- **Intelligent decision-making** through Deep Learning and Explainable AI (XAI)
+- **Automated lifecycle orchestration** from admission to execution and monitoring
+- **Contractual formalization** via smart contracts on Distributed Ledger Technology (DLT)
 
 ## Architecture
 
-TriSLA follows a microservices-based architecture deployed on Kubernetes with the following core components:
+TriSLA is composed exclusively of the following architectural elements:
 
-- **SEM-CSMF**: Semantic Core Service Management Function - intent normalization and ontology-based validation
-- **ML-NSMF**: Machine Learning Network Slice Management Function - risk prediction and confidence scoring
-- **Decision Engine**: Orchestrates semantic validation and ML inference to produce SLA admission decisions
-- **BC-NSSMF**: Blockchain-based Network Slice Subnet Management Function - on-chain SLA registration and governance
-- **SLA-Agent**: Event-driven agent layer for SLA enforcement, lifecycle actions, and SLO monitoring
-- **NASP Adapter**: Platform abstraction layer for integration with external RAN, Transport, and Core platforms
-- **Portal**: Web-based management interface for SLA submission and status monitoring
+### SEM-CSMF
+- Semantic interpretation of natural language intents
+- Ontology-based validation
+- Generation of SLA-aware specifications
 
-## High-Level Flow
+### ML-NSMF + Decision Engine
+- Resource viability prediction
+- Deep Learning models
+- Explainable AI (XAI) support
+- Decision process support (ACCEPT / REJECT / RENEG)
 
-The system processes SLA requests through an event-driven pipeline:
+### BC-NSSMF
+- Contractual clause formalization
+- Execution via Smart Contracts
+- Based on Distributed Ledger Technology (DLT)
 
-1. **SLA Submission**: Client submits SLA request via Portal or API
-2. **Semantic Validation**: SEM-CSMF validates intent against ontology and normalizes the request
-3. **ML Inference**: ML-NSMF predicts compliance risk and provides confidence scores
-4. **Decision Making**: Decision Engine orchestrates validation and inference to produce ACCEPT/REJECT/RENEG decision
-5. **Event Publishing**: Decision events are published to Kafka (event backbone)
-6. **Lifecycle Actions**: SLA-Agent consumes events and executes post-admission actions
-7. **Blockchain Recording**: BC-NSSMF (optional) records SLA lifecycle on-chain via smart contracts
+### SLA-Agent Layer
+- Slice lifecycle orchestration
+- Integration between decision, execution, and monitoring
+- End-to-end automation
+
+## Scope and Limitations
+
+### What TriSLA Is
+
+- **Control-plane only**: Operates exclusively in the control plane
+- **SLA-aware**: From semantic input to lifecycle execution
+- **Domain-agnostic**: Addresses heterogeneity of RAN, Transport, and Core domains
+- **5G/O-RAN focused**: Designed for 5G and O-RAN network environments
+- **End-to-end automation**: Provides complete automation in slice lifecycle
+
+### What TriSLA Is NOT
+
+- **Direct RAN/Transport/Core configuration**: TriSLA does not directly configure radios, transport, or core. It delegates to the NASP Adapter and underlying platform.
+- **Data-plane or user-plane**: No packet processing or user-plane functions.
+- **Network orchestration platform replacement**: Does not replace network orchestration platforms.
+- **End-user authentication**: No built-in IdP or RBAC for end-users; cluster-level access control applies.
+- **Generic slicing platform**: Not a generic platform for network slicing.
 
 ## Documentation
 
 - **[Installation Guide](docs/INSTALLATION.md)**: Conceptual prerequisites, infrastructure requirements, and environment validation
-- **[Deployment Guide](docs/deployment/DEPLOYMENT.md)**: Step-by-step operational manual for deploying TriSLA
+- **[Deployment Guide](docs/DEPLOYMENT.md)**: Step-by-step operational manual for deploying TriSLA
 - **[Reproducibility](docs/REPRODUCIBILITY.md)**: Scientific reproducibility criteria and validation
 - **[Architecture](docs/ARCHITECTURE.md)**: Detailed architectural documentation
 

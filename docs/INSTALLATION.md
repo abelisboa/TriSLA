@@ -1,6 +1,6 @@
 # TriSLA Installation Prerequisites
 
-This document describes **what TriSLA is**, **what must exist before you deploy it**, and **how to validate your environment**. It is conceptual and infrastructural. The procedural deployment guide is in `docs/deployment/DEPLOYMENT.md`.
+This document describes **what TriSLA is**, **what must exist before you deploy it**, and **how to validate your environment**. It is conceptual and infrastructural. The procedural deployment guide is in `docs/DEPLOYMENT.md`.
 
 ---
 
@@ -8,13 +8,12 @@ This document describes **what TriSLA is**, **what must exist before you deploy 
 
 ### 1.1 Definition
 
-**TriSLA** (Triangulated Service Level Agreement Platform) is an **SLA-aware control-plane architecture based on Artificial Intelligence, Ontology, and Smart Contracts for SLA assurance in 5G and O-RAN networks**.
+**TriSLA** (Trustworthy, Reasoned and Intelligent SLA-Aware) is a control-plane architecture focused on validation, decision-making, and automated execution of Service Level Agreements (SLAs) in Network Slicing environments for 5G/O-RAN networks, based on the integration of ontology, artificial intelligence, and smart contracts.
 
-- **Semantic processing** (SEM-CSMF): intent normalization, ontology-based validation.
-- **ML inference** (ML-NSMF): risk prediction, confidence scores, slice-type awareness.
-- **Event-driven decision-making** (Decision Engine): ACCEPT / REJECT / RENEG based on semantic + ML outputs.
-- **Lifecycle coordination** (SLA-Agent Layer): post-admission actions, SLO monitoring, event emission.
-- **Optional governance** (BC-NSSMF): on-chain SLA registration, violation reporting, renegotiation.
+- **SEM-CSMF**: Semantic interpretation of natural language intents, ontology-based validation, and generation of SLA-aware specifications.
+- **ML-NSMF + Decision Engine**: Resource viability prediction using Deep Learning models, Explainable AI (XAI) support, and decision process support (ACCEPT / REJECT / RENEG).
+- **BC-NSSMF**: Contractual clause formalization, execution via Smart Contracts, based on Distributed Ledger Technology (DLT).
+- **SLA-Agent Layer**: Slice lifecycle orchestration, integration between decision, execution, and monitoring, providing end-to-end automation.
 
 ### 1.2 What TriSLA Does
 
@@ -408,9 +407,9 @@ If Kafka is deployed in-cluster, ensure it is running and that the intended boot
 ### 12.2 Why This Does Not Break Scientific Reproducibility
 
 - **Deployment**: TriSLA can be deployed on any conformant Kubernetes cluster using the same Helm charts and images.
-- **Configuration**: Required inputs (Kafka bootstrap servers, image tags, optional Besu RPC) are described in this document and in `docs/deployment/DEPLOYMENT.md`.
+- **Configuration**: Required inputs (Kafka bootstrap servers, image tags, optional Besu RPC) are described in this document and in `docs/DEPLOYMENT.md`.
 - **Validation**: Metrics, health checks, and E2E flows are defined in terms of standard Prometheus and HTTP/gRPC interfaces. Reproducibility is achieved by following the installation and deployment guides and using the same versions and topology.
 
 ---
 
-**Next step**: Proceed to `docs/deployment/DEPLOYMENT.md` for step-by-step deployment, validation gates, and failure resolutions.
+**Next step**: Proceed to `docs/DEPLOYMENT.md` for step-by-step deployment, validation gates, and failure resolutions.
