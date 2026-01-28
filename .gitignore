@@ -545,3 +545,8 @@ tmp/
 RESULTADOS*
 EVIDENCIAS*
 VALIDATION*
+
+# PROMPT_S35 - Release v3.9.11 protection
+_snapshots/
+CHECKSUMS*.sha256
+kubeconfig*

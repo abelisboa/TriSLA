@@ -1,24 +1,42 @@
+# ML-NSMF Requirements
+
+# Web Framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
 
-numpy==1.23.5
-pandas==1.5.3
-scikit-learn==1.2.2
+# Machine Learning
+# TensorFlow não compatível com Python 3.12 - usando scikit-learn como alternativa
+# tensorflow==2.15.0  # Desabilitado - incompatível com Python 3.12
+scikit-learn>=1.5,<2.0
+# torch>=2.0.0  # Alternativa ao TensorFlow
+numpy>=1.24.0,<2.0.0
 joblib==1.2.0
+pandas==1.5.3
 
-shap==0.45.0
+# XAI (Explainable AI)
+shap>=0.45.0
 lime==0.2.0.1
 
+# Kafka
 kafka-python==2.0.2
-requests==2.31.0
 
-prometheus_client>=0.20.0
+# OpenTelemetry
 opentelemetry-api>=1.24.0
 opentelemetry-sdk>=1.24.0
-opentelemetry-exporter-otlp-proto-grpc>=1.24.0
 opentelemetry-instrumentation-fastapi>=0.44b0
+opentelemetry-exporter-otlp-proto-grpc>=1.24.0
 opentelemetry-instrumentation-requests>=0.44b0
 opentelemetry-propagator-b3>=1.24.0
+# opentelemetry-propagator-tracecontext está incluído no opentelemetry-api
+
+# Métricas Prometheus
+prometheus_client>=0.20.0
+
+# HTTP Client (para integração com Prometheus)
 httpx>=0.25.0
+
+# Utilitários
 python-dateutil==2.8.2
+requests==2.31.0
+

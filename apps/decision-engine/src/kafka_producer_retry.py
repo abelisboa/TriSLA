@@ -207,6 +207,90 @@ class DecisionProducerWithRetry:
             span.set_attribute("decision.action", decision.get("action"))
             span.set_attribute("send.success", success)
     
+    async def publish_decision_event(
+        self,
+        snapshot: Dict[str, Any],
+        system_xai: Dict[str, Any],
+        decision_result: Dict[str, Any]
+    ) -> bool:
+        """
+        Publica evento completo de decisão no tópico trisla-decision-events.
+        
+        Este método publica snapshot causal + System-Aware XAI para observabilidade
+        externa e auditoria posterior (S31.1).
+        
+        Args:
+            snapshot: Snapshot causal da decisão (de decision_snapshot.py)
+            system_xai: Explicação System-Aware XAI (de system_xai.py)
+            decision_result: Resultado da decisão completo
+            
+        Returns:
+            True se publicado com sucesso, False caso contrário
+        """
+        # Verificar se está habilitado via env var
+        decision_events_enabled = os.getenv("DECISION_EVENTS_ENABLED", "true").lower() == "true"
+        decision_events_topic = os.getenv("DECISION_EVENTS_TOPIC", "trisla-decision-events")
+        
+        if not decision_events_enabled:
+            logger.debug(f"Decision events publishing disabled (DECISION_EVENTS_ENABLED=false)")
+            return False
+        
+        with tracer.start_as_current_span("publish_decision_event") as span:
+            span.set_attribute("kafka.topic", decision_events_topic)
+            span.set_attribute("decision.sla_id", snapshot.get("sla_id", "unknown"))
+            span.set_attribute("decision.action", snapshot.get("decision", "unknown"))
+            
+            # Construir payload completo
+            event_payload = {
+                "sla_id": snapshot.get("sla_id"),
+                "intent_id": decision_result.get("intent_id") or snapshot.get("sla_id"),
+                "nest_id": decision_result.get("nest_id"),
+                "decision": snapshot.get("decision"),
+                "slice_type": snapshot.get("slice_type"),
+                "timestamp_utc": snapshot.get("timestamp_utc") or self._get_timestamp(),
+                "snapshot": snapshot,
+                "system_xai": system_xai,
+                "decision_metadata": {
+                    "decision_id": snapshot.get("decision_id"),
+                    "confidence": snapshot.get("confidence"),
+                    "ml_risk_score": snapshot.get("ml_risk_score"),
+                    "ml_risk_level": snapshot.get("ml_risk_level"),
+                    "reasoning": snapshot.get("reasoning")
+                }
+            }
+            
+            # Garantir que timestamp_utc está presente
+            if not event_payload.get("timestamp_utc"):
+                event_payload["timestamp_utc"] = self._get_timestamp()
+            
+            try:
+                success = await self.send_with_retry(
+                    decision_events_topic,
+                    event_payload,
+                    key=snapshot.get("sla_id") or snapshot.get("decision_id")
+                )
+                
+                if success:
+                    logger.info(
+                        f"[S31.1] ✅ Decision event published to {decision_events_topic}: "
+                        f"sla_id={snapshot.get('sla_id')}, decision={snapshot.get('decision')}"
+                    )
+                    span.set_attribute("publish.success", True)
+                else:
+                    logger.warning(
+                        f"[S31.1] ⚠️ Failed to publish decision event to {decision_events_topic}"
+                    )
+                    span.set_attribute("publish.success", False)
+                
+                return success
+                
+            except Exception as e:
+                logger.exception(f"[S31.1] ❌ Error publishing decision event: {e}")
+                span.record_exception(e)
+                span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+                span.set_attribute("publish.success", False)
+                return False
+    
     def flush(self):
         """Força envio de todas as mensagens pendentes"""
         if self.producer:

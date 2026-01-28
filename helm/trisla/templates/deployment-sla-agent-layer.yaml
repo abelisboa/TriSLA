@@ -41,7 +41,10 @@ spec:
           value: "http://{{ include "trisla.name" . }}-nasp-adapter:{{ .Values.naspAdapter.service.port }}"
         - name: BC_NSSMF_URL
           value: "http://{{ include "trisla.name" . }}-bc-nssmf:{{ .Values.bcNssmf.service.port }}"
-          value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        - name: KAFKA_ENABLED
+          value: {{ .Values.slaAgentLayer.env.KAFKA_ENABLED | default "false" | quote }}
+        - name: KAFKA_BROKERS
+          value: {{ .Values.slaAgentLayer.env.KAFKA_BROKERS | default "" | quote }}
         livenessProbe:
           httpGet:
             path: /health

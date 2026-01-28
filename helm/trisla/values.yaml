@@ -19,7 +19,7 @@ semCsmf:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-sem-csmf
-    tag: v3.9.3
+    tag: v3.9.11
     pullPolicy: IfNotPresent
   annotations:
     trisla-mode: degraded
@@ -42,7 +42,7 @@ mlNsmf:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-ml-nsmf
-    tag: v3.9.3
+    tag: v3.9.11
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -66,8 +66,8 @@ decisionEngine:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-decision-engine
-    tag: v3.9.3
-    pullPolicy: IfNotPresent
+    tag: v3.9.11
+    pullPolicy: Always
   service:
     type: ClusterIP
     port: 8082
@@ -85,7 +85,7 @@ bcNssmf:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-bc-nssmf
-    tag: v3.9.3
+    tag: v3.9.11
     pullPolicy: Always
   service:
     type: ClusterIP
@@ -113,7 +113,7 @@ besu:
   enabled: false  # Sprint S3.5.1 - Base idempotente
   image:
     repository: trisla-besu
-    tag: v3.9.3
+    tag: v3.9.11
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:
@@ -141,10 +141,13 @@ besu:
 
 # SLA-Agent Layer
 slaAgentLayer:
+  env:
+    KAFKA_ENABLED: true
+    KAFKA_BROKERS: kafka.trisla.svc.cluster.local:9092
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-sla-agent-layer
-    tag: v3.9.3
+    tag: v3.9.11
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -163,7 +166,7 @@ naspAdapter:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-nasp-adapter
-    tag: v3.9.3
+    tag: v3.9.11
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -182,7 +185,7 @@ uiDashboard:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-ui-dashboard
-    tag: v3.9.3
+    tag: v3.9.11
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP

@@ -4,7 +4,6 @@ Aplicação principal FastAPI
 """
 
 from fastapi import FastAPI, Response
-from datetime import datetime
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
@@ -20,8 +19,6 @@ from predictor import RiskPredictor
 from kafka_consumer import MetricsConsumer
 from kafka_producer import PredictionProducer
 from nasp_prometheus_client import PrometheusClient
-from ml_nsmf import assess_viability, explain_prediction
-from xai_logging import log_xai_explanation, save_xai_to_csv  # v3.9.0 - XAI
 
 # Configurar OpenTelemetry (opcional em modo DEV)
 otlp_enabled = os.getenv("OTLP_ENABLED", "false").lower() == "true"
@@ -120,33 +117,8 @@ async def predict_risk(metrics: dict):
             "time_range_minutes": time_range_minutes
         }
         
-        # FASE 6 (C6): Integrar XAI real após inferência ML
+        # Explicar (XAI)
         explanation = predictor.explain(prediction, normalized)
-        
-        # Chamar XAI condicionalmente (após inferência ML, sem bloquear decisão)
-        try:
-            # Extrair slice_type e nest_id das métricas
-            slice_type = metrics.get("slice_type") or metrics.get("service_type", "UNKNOWN")
-            nest_id = metrics.get("nest_id") or metrics.get("slice_id")
-            
-            # Persistir XAI: features, weights, method, confidence, timestamp
-            # Estrutura esperada por log_xai_explanation e save_xai_to_csv
-            xai_explanation = {
-                "method": explanation.get("method", "heuristic"),
-                "explanation_available": explanation.get("explanation_available", False),
-                "confidence": prediction.get("confidence", 0.0),
-                "prediction": prediction.get("risk_level", "UNKNOWN"),
-                "feature_importance": explanation.get("feature_importance", {}),
-                "top_features": explanation.get("top_features", [])
-            }
-            
-            # Log e persistir XAI (sem bloquear decisão)
-            log_xai_explanation(xai_explanation, slice_type, nest_id)
-            save_xai_to_csv(xai_explanation, slice_type, nest_id)
-            
-            logger.info(f"✅ XAI integrado: method={xai_data['method']}, confidence={xai_data['confidence']:.2f}")
-        except Exception as xai_error:
-            logger.warning(f"⚠️ Erro ao integrar XAI (não bloqueia decisão): {xai_error}")
         
         # Enviar para Decision Engine via Kafka (I-03)
         await prediction_producer.send_prediction(prediction, explanation)
@@ -156,101 +128,14 @@ async def predict_risk(metrics: dict):
         
         logger.info(f"✅ Predição gerada: risk_level={prediction.get('risk_level')}, risk_score={prediction.get('risk_score'):.2f}")
         
-        # FASE 1 (C1): Adicionar timestamp UTC
-        timestamp_utc = datetime.utcnow().isoformat() + 'Z'
-        
         return {
             "prediction": prediction,
             "explanation": explanation,
-            "metrics_used": prediction["metrics_used"],
-            "timestamp_utc": timestamp_utc
+            "metrics_used": prediction["metrics_used"]
         }
 
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8081)
-
-
-@app.post("/api/v1/explain")
-async def explain_prediction_endpoint(request: dict):
-    """
-    Endpoint XAI - Explica predição usando SHAP (v3.9.0)
-    
-    Payload versionado:
-    {
-        "version": "v3.9.0",
-        "slice_type": "URLLC|EMBB|MMTC",
-        "sla_requirements": {...},
-        "prediction_result": {...},  # Opcional: resultado de assess_viability
-        "nest_id": "string"  # Opcional
-    }
-    """
-    import logging
-    logger = logging.getLogger(__name__)
-    
-    with tracer.start_as_current_span("explain_prediction") as span:
-        try:
-            # Validar versão do payload
-            version = request.get("version", "v3.9.0")
-            if version != "v3.9.0":
-                logger.warning(f"⚠️ Versão de payload não suportada: {version}")
-            
-            slice_type = request.get("slice_type")
-            if not slice_type:
-                return {
-                    "error": "slice_type é obrigatório",
-                    "version": "v3.9.0"
-                }
-            
-            sla_requirements = request.get("sla_requirements", {})
-            nest_id = request.get("nest_id")
-            
-            # Se prediction_result não foi fornecido, executar assess_viability primeiro
-            prediction_result = request.get("prediction_result")
-            if not prediction_result:
-                logger.info(f"🔍 Executando assess_viability para gerar explicação")
-                prediction_result = assess_viability(
-                    slice_type=slice_type,
-                    sla_requirements=sla_requirements,
-                    nest_id=nest_id
-                )
-            
-            # Gerar explicação XAI
-            explanation = explain_prediction(
-                slice_type=slice_type,
-                sla_requirements=sla_requirements,
-                prediction_result=prediction_result,
-                nest_id=nest_id
-            )
-            
-            span.set_attribute("xai.method", explanation.get("method", "none"))
-            span.set_attribute("xai.available", explanation.get("explanation_available", False))
-            span.set_attribute("xai.confidence", explanation.get("confidence", 0.0))
-            
-            logger.info(
-                f"✅ Explicação XAI gerada: method={explanation.get('method')}, "
-                f"available={explanation.get('explanation_available')}"
-            )
-            
-            # Enviar para Kafka (tópico trisla-ml-xai) - v3.9.0
-            try:
-                await prediction_producer.send_xai_explanation(explanation, slice_type, nest_id)
-            except Exception as kafka_error:
-                logger.warning(f"⚠️ Erro ao enviar XAI para Kafka: {kafka_error}")
-            
-            return {
-                "version": "v3.9.0",
-                "explanation": explanation,
-                "prediction": prediction_result
-            }
-            
-        except Exception as e:
-            logger.error(f"❌ Erro no endpoint /explain: {e}", exc_info=True)
-            span.record_exception(e)
-            return {
-                "error": str(e),
-                "version": "v3.9.0",
-                "explanation_available": False
-            }
 

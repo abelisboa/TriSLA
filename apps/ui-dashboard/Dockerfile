@@ -15,7 +15,6 @@ RUN npm run build:skip-check
 FROM nginx:alpine
 
 # Instalar dependências necessárias
-RUN apk add --no-cache bind-tools
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template

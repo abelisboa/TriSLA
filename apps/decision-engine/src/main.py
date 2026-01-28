@@ -26,6 +26,11 @@ from kafka_producer_retry import DecisionProducerWithRetry
 from decision_producer import DummyProducer
 from grpc_server import serve as serve_grpc
 
+# S30 modules - Decision Snapshot + System-Aware XAI
+from decision_snapshot import build_decision_snapshot
+from system_xai import explain_decision
+from decision_persistence import persist_decision_evidence
+
 # Novos módulos integrados
 from service import DecisionService
 from models import DecisionResult, DecisionInput, SLAIntent, NestSubset, SLAEvaluateInput
@@ -312,31 +317,68 @@ async def debug_grpc():
 @app.post("/api/v1/decide")
 async def make_decision(context: dict):
     """
-    Faz decisão baseada em contexto (endpoint compatível - DEPRECATED)
-    ⚠️ Este endpoint está DEPRECATED. Use /evaluate para fluxo real.
-    Mantido para compatibilidade com código existente.
+    [S31.3] Endpoint DEPRECATED - Forward obrigatório para /evaluate
+    
+    ⚠️ Este endpoint NÃO pode mais decidir nada diretamente.
+    Ele SEMPRE faz forward para /evaluate para garantir fluxo único.
     """
     import logging
     logger = logging.getLogger(__name__)
-    logger.warning("⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.")
+    logger.warning("[S31.3] Deprecated endpoint /api/v1/decide used — forwarding to /evaluate")
     
-    with tracer.start_as_current_span("make_decision") as span:
-        decision = await decision_maker.decide(context)
+    with tracer.start_as_current_span("make_decision_deprecated_forward") as span:
+        span.set_attribute("deprecated_endpoint", True)
+        span.set_attribute("forward_to", "/evaluate")
         
-        # ⚠️ FASE C1: DummyProducer desativado - usar apenas se Kafka estiver habilitado
-        global decision_producer
-        if decision_producer is None:
-            logger.warning("⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.")
-            # Não usar DummyProducer - apenas logar
-            logger.info(f"Decisão gerada (sem encaminhamento): {decision.get('action', 'unknown')}")
-        else:
-            # Apenas enviar se producer real estiver disponível
-            await decision_producer.send_to_bc_nssmf(decision)  # I-04
-            await decision_producer.send_to_sla_agents(decision)  # I-05
-        
-        span.set_attribute("decision.action", decision.get("action"))
-        span.set_attribute("decision.deprecated_endpoint", True)
-        return decision
+        try:
+            # Converter contexto dict para SLAEvaluateInput
+            # Extrair intent_id e nest_id do contexto
+            intent_id = context.get("intent_id") if isinstance(context, dict) else None
+            if not intent_id:
+                # Tentar extrair de outras chaves comuns
+                intent_id = context.get("id") or context.get("sla_id") or "unknown"
+            
+            nest_id = context.get("nest_id") if isinstance(context, dict) else None
+            
+            # Construir SLAEvaluateInput mínimo para forward
+            sla_input = SLAEvaluateInput(
+                intent_id=intent_id or "unknown",
+                nest_id=nest_id,
+                intent=context.get("intent") or {},
+                nest=context.get("nest"),
+                context=context
+            )
+            
+            # Forward obrigatório para /evaluate
+            logger.info(f"[S31.3] Forwarding deprecated endpoint call to /evaluate: intent_id={intent_id}")
+            result = await evaluate_sla(sla_input)
+            
+            # Converter DecisionResult para dict compatível com resposta antiga
+            decision_dict = {
+                "decision_id": result.decision_id,
+                "intent_id": result.intent_id,
+                "nest_id": result.nest_id,
+                "action": result.action.value,
+                "reason": result.reasoning,
+                "reasoning": result.reasoning,
+                "confidence": result.confidence,
+                "ml_risk_score": result.ml_risk_score,
+                "ml_risk_level": result.ml_risk_level.value if result.ml_risk_level else None,
+                "timestamp": result.timestamp,
+                "metadata": result.metadata
+            }
+            
+            span.set_attribute("decision.action", result.action.value)
+            span.set_attribute("forward.success", True)
+            return decision_dict
+            
+        except Exception as e:
+            logger.error(f"[S31.3] ❌ Erro ao fazer forward de /api/v1/decide para /evaluate: {e}", exc_info=True)
+            span.record_exception(e)
+            span.set_attribute("forward.success", False)
+            # Retornar erro compatível
+            from fastapi import HTTPException
+            raise HTTPException(status_code=500, detail=f"Erro ao processar decisão via forward: {str(e)}")
 
 
 @app.post("/api/v1/decide/intent/{intent_id}", response_model=DecisionResult)
@@ -490,6 +532,55 @@ async def evaluate_sla(sla_input: SLAEvaluateInput):
                 "metadata": decision_result.metadata
             }
             logger.info(f"💾 Decisão persistida: {decision_result.decision_id}")
+            
+            # 3.5. [S30] Executar system snapshot + XAI + [S31.1] Publicar no Kafka
+            logger.info("[S30] Executing system snapshot + XAI")
+            
+            # Construir contexto da decisão para snapshot
+            decision_context = {
+                "intent": intent,
+                "nest": nest,
+                "ml_prediction": context.get("ml_prediction") if isinstance(context, dict) else None,
+                "resources": {}
+            }
+            
+            snapshot = None
+            explanation = None
+            
+            try:
+                snapshot = build_decision_snapshot(decision_context, decision_result)
+                explanation = explain_decision(snapshot, decision_result)
+                sla_id = decision_result.intent_id or decision_result.decision_id
+                persist_decision_evidence(sla_id, snapshot, explanation)
+                logger.info(f"[S30] ✅ Snapshot e XAI criados para decision_id={decision_result.decision_id}")
+            except Exception as e:
+                logger.exception("[S30] Failed to create snapshot/XAI")
+            
+            # [S31.1] Publicar evento completo no Kafka trisla-decision-events
+            global decision_producer
+            if decision_producer is not None and snapshot is not None and explanation is not None:
+                try:
+                    decision_dict_for_kafka = {
+                        "decision_id": decision_result.decision_id,
+                        "intent_id": decision_result.intent_id,
+                        "nest_id": decision_result.nest_id,
+                        "action": decision_result.action.value,
+                        "reasoning": decision_result.reasoning,
+                        "confidence": decision_result.confidence,
+                        "ml_risk_score": decision_result.ml_risk_score,
+                        "ml_risk_level": decision_result.ml_risk_level.value if decision_result.ml_risk_level else None,
+                        "timestamp": decision_result.timestamp,
+                        "metadata": decision_result.metadata
+                    }
+                    
+                    # Publicar no tópico trisla-decision-events (S31.1)
+                    await decision_producer.publish_decision_event(
+                        snapshot=snapshot,
+                        system_xai=explanation,
+                        decision_result=decision_dict_for_kafka
+                    )
+                except Exception as e:
+                    logger.warning(f"[S31.1] ⚠️ Falha ao publicar decision event no Kafka: {e}")
             
             # 4. Encaminhar conforme ação
             from models import DecisionAction

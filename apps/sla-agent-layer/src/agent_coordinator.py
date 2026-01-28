@@ -7,6 +7,17 @@ from typing import Dict, Any, List, Optional
 from opentelemetry import trace
 import logging
 
+# S29: Domain causal observability
+try:
+    from domain_snapshot import create_domain_snapshot
+    from domain_compliance import compute_all_domains_compliance
+    from system_xai import generate_causal_explanation
+    S29_ENABLED = True
+except ImportError:
+    S29_ENABLED = False
+    logger.warning("⚠️ Módulos S29 não disponíveis - observabilidade causal desabilitada")
+
+
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 
@@ -306,6 +317,103 @@ class AgentCoordinator:
         
         return ordered
     
+    async def create_causal_snapshot_for_sla(
+        self,
+        sla_id: str,
+        slice_type: str = "EMBB",
+        sla_requirements: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Cria snapshot causal e explicação para um SLA (S29)
+        """
+        if not S29_ENABLED:
+            logger.warning("⚠️ S29 desabilitado - snapshot causal não criado")
+            return {}
+        
+        with tracer.start_as_current_span("create_causal_snapshot_s29") as span:
+            span.set_attribute("sla.id", sla_id)
+            span.set_attribute("slice.type", slice_type)
+            
+            try:
+                all_metrics = await self.collect_all_metrics()
+                metrics_ran = all_metrics.get("domains", {}).get("RAN", {})
+                metrics_transport = all_metrics.get("domains", {}).get("Transport", {})
+                metrics_core = all_metrics.get("domains", {}).get("Core", {})
+                
+                snapshot = create_domain_snapshot(
+                    sla_id=sla_id,
+                    metrics_ran=metrics_ran,
+                    metrics_transport=metrics_transport,
+                    metrics_core=metrics_core
+                )
+                
+                from domain_compliance import compute_all_domains_compliance
+                domain_compliance = compute_all_domains_compliance(
+                    metrics_ran=metrics_ran,
+                    metrics_transport=metrics_transport,
+                    metrics_core=metrics_core,
+                    slice_type=slice_type,
+                    sla_requirements=sla_requirements
+                )
+                
+                span.set_attribute("s29.snapshot.created", True)
+                logger.info(f"✅ Snapshot causal S29 criado para SLA {sla_id}")
+                
+                return {
+                    "snapshot": snapshot,
+                    "domain_compliance": domain_compliance,
+                    "timestamp": snapshot.get("timestamp")
+                }
+            except Exception as e:
+                span.record_exception(e)
+                logger.error(f"❌ Erro ao criar snapshot causal S29: {e}")
+                return {}
+    
+    async def generate_causal_explanation_for_decision(
+        self,
+        sla_id: str,
+        decision: str,
+        slice_type: str = "EMBB",
+        sla_requirements: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Gera explicação causal para uma decisão (S29)
+        """
+        if not S29_ENABLED:
+            return {}
+        
+        with tracer.start_as_current_span("generate_causal_explanation_s29") as span:
+            span.set_attribute("sla.id", sla_id)
+            span.set_attribute("decision", decision)
+            
+            try:
+                all_metrics = await self.collect_all_metrics()
+                metrics_ran = all_metrics.get("domains", {}).get("RAN", {})
+                metrics_transport = all_metrics.get("domains", {}).get("Transport", {})
+                metrics_core = all_metrics.get("domains", {}).get("Core", {})
+                
+                from domain_compliance import compute_all_domains_compliance
+                domain_compliance = compute_all_domains_compliance(
+                    metrics_ran=metrics_ran,
+                    metrics_transport=metrics_transport,
+                    metrics_core=metrics_core,
+                    slice_type=slice_type,
+                    sla_requirements=sla_requirements
+                )
+                
+                explanation = generate_causal_explanation(
+                    sla_id=sla_id,
+                    decision=decision,
+                    domain_compliance=domain_compliance
+                )
+                
+                logger.info(f"✅ Explicação causal S29 gerada para SLA {sla_id}: {decision}")
+                return explanation
+            except Exception as e:
+                span.record_exception(e)
+                logger.error(f"❌ Erro ao gerar explicação causal S29: {e}")
+                return {}
+
     def _get_timestamp(self) -> str:
         """Retorna timestamp atual"""
         from datetime import datetime, timezone

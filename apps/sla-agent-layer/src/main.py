@@ -208,6 +208,48 @@ async def apply_federated_policy(policy: dict):
             raise HTTPException(status_code=500, detail=str(e))
 
 
+
+
+@app.post("/api/v1/s29/create-snapshot")
+async def create_snapshot_s29(request: dict):
+    """Cria snapshot causal para um SLA (S29)"""
+    sla_id = request.get("sla_id")
+    slice_type = request.get("slice_type", "EMBB")
+    sla_requirements = request.get("sla_requirements")
+    
+    if not sla_id:
+        raise HTTPException(status_code=400, detail="sla_id é obrigatório")
+    
+    result = await agent_coordinator.create_causal_snapshot_for_sla(
+        sla_id=sla_id,
+        slice_type=slice_type,
+        sla_requirements=sla_requirements
+    )
+    
+    return result
+
+
+@app.post("/api/v1/s29/generate-explanation")
+async def generate_explanation_s29(request: dict):
+    """Gera explicação causal para uma decisão (S29)"""
+    sla_id = request.get("sla_id")
+    decision = request.get("decision")
+    slice_type = request.get("slice_type", "EMBB")
+    sla_requirements = request.get("sla_requirements")
+    
+    if not sla_id or not decision:
+        raise HTTPException(status_code=400, detail="sla_id e decision são obrigatórios")
+    
+    result = await agent_coordinator.generate_causal_explanation_for_decision(
+        sla_id=sla_id,
+        decision=decision,
+        slice_type=slice_type,
+        sla_requirements=sla_requirements
+    )
+    
+    return result
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8084)

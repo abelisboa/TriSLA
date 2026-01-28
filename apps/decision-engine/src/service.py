@@ -8,8 +8,13 @@ from opentelemetry import trace
 
 from engine import DecisionEngine
 from models import DecisionResult, DecisionInput
+from decision_snapshot import build_decision_snapshot
+from system_xai import explain_decision
+from decision_persistence import persist_decision_evidence
+import logging
 
 tracer = trace.get_tracer(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DecisionService:
@@ -99,6 +104,27 @@ class DecisionService:
                 if blockchain_tx_hash:
                     result.metadata = result.metadata or {}
                     result.metadata["blockchain_tx_hash"] = blockchain_tx_hash
+            
+            # [S30] Executar system snapshot + XAI antes do return
+            logger.info("[S30] Executing system snapshot + XAI")
+            
+            decision_context = {
+                "intent": decision_input.intent,
+                "nest": decision_input.nest,
+                "ml_prediction": ml_prediction,
+                "resources": {}
+            }
+            
+            try:
+                snapshot = build_decision_snapshot(decision_context, result)
+                explanation = explain_decision(snapshot, result)
+                persist_decision_evidence(decision_input.intent.intent_id, snapshot, explanation)
+                
+                result.metadata = result.metadata or {}
+                result.metadata["decision_snapshot"] = snapshot
+                result.metadata["system_xai_explanation"] = explanation
+            except Exception as e:
+                logger.exception("[S30] Failed to persist decision evidence")
             
             return result
     

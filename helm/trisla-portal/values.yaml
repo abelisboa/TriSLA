@@ -4,7 +4,7 @@
 frontend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-frontend
-    tag: v3.7.11
+    tag: v3.9.11
     pullPolicy: Always
   nodePort: 32001
   replicaCount: 1
@@ -15,7 +15,7 @@ frontend:
 backend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-backend
-    tag: v3.7.11
+    tag: v3.9.11
     pullPolicy: Always
   nodePort: 32002
   replicaCount: 1

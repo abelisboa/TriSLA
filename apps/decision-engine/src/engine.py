@@ -16,8 +16,15 @@ from sem_client import SEMClient
 from ml_client import MLClient
 from bc_client import BCClient
 from resource_evaluator import ResourceEvaluator
+from decision_snapshot import build_decision_snapshot
+from system_xai import explain_decision
+from decision_persistence import persist_decision_evidence
+import logging
+import json
 
 tracer = trace.get_tracer(__name__)
+logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DecisionEngine:
@@ -130,6 +137,38 @@ class DecisionEngine:
             if blockchain_tx_hash:
                 decision_result.metadata["blockchain_tx_hash"] = blockchain_tx_hash
                 span.set_attribute("bc.tx_hash", blockchain_tx_hash)
+            
+            # PROMPT_S30 - FASE 1, 2, 3, 4: Snapshot, XAI, Persistência e Kafka
+            decision_context = {
+                'intent': intent,
+                'nest': nest,
+                'ml_prediction': ml_prediction,
+                'resources': resources
+            }
+            try:
+                snapshot = build_decision_snapshot(decision_context, decision_result)
+                explanation = explain_decision(snapshot, decision_result)
+                persist_decision_evidence(intent_id, snapshot, explanation)
+                try:
+                    from kafka_producer import DecisionProducer
+                    kafka_producer = DecisionProducer()
+                    kafka_event = {
+                        "sla_id": intent_id,
+                        "decision": decision_result.action.value,
+                        "snapshot": snapshot,
+                        "explanation": explanation,
+                        "timestamp": snapshot.get("timestamp_utc"),
+                        "decision_id": decision_result.decision_id
+                    }
+                    if kafka_producer.producer is not None:
+                        kafka_producer.producer.send('trisla-decision-events', value=kafka_event)
+                        kafka_producer.producer.flush()
+                except Exception as kafka_error:
+                    logger.warning(f"Kafka error for {intent_id}: {kafka_error}")
+                decision_result.metadata["decision_snapshot"] = snapshot
+                decision_result.metadata["system_xai_explanation"] = explanation
+            except Exception as e:
+                logger.error(f"PROMPT_S30 error for {intent_id}: {e}", exc_info=True)
             
             return decision_result
     
