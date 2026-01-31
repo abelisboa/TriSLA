@@ -101,6 +101,15 @@ trisla/
     └── blockchain.md
 ```
 
+## Repository Structure (v3.10.0 Scientific Baseline)
+
+This repository intentionally contains only:
+- apps/: executable TriSLA modules
+- helm/: official deployment charts
+- docs/: public documentation
+
+Legacy directories were removed to preserve clarity and reproducibility.
+
 ## Technology Stack
 
 - **Frontend**: React, TypeScript, Material-UI, Recharts

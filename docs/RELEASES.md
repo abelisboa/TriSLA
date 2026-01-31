@@ -54,3 +54,9 @@ Used as experimental reference in the MSc dissertation:
 - Initial functional baseline
 - End-to-end pipeline validation
 - Not validated on NASP
+
+### v3.10.0 (Post-release cleanup)
+
+- Removed legacy directories (monitoring/, trisla-portal/, configs/)
+- Repository now reflects only the validated scientific baseline
+- No impact on experiments or NASP environment
