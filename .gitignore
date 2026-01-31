@@ -1,0 +1,35 @@
+# Node modules
+node_modules/
+dist/
+build/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sensitive
+*.pem
+*.key
+credentials.json
+secrets.yaml
+
+# Internal documentation (not for public)
+evidencias_*/
+PROMPTS/
+*.internal.md
+
+# Build artifacts
+*.log
+*.tar.gz

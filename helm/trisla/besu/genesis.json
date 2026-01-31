@@ -1,0 +1,15 @@
+{
+  "config": {
+    "chainId": 20211201,
+    "ethash": {},
+    "berlinBlock": 0,
+    "londonBlock": 0
+  },
+  "alloc": {
+    "0xFE3B557E8Fb62b89F4916B721be55cEb828dBd73": {
+      "balance": "0x3635C9ADC5DEA00000"
+    }
+  },
+  "difficulty": "0x1",
+  "gasLimit": "0x1fffffffffffff"
+}
