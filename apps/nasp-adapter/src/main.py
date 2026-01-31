@@ -42,7 +42,7 @@ if otlp_enabled:
 else:
     print("ℹ️ NASP Adapter: Modo DEV - OTLP desabilitado (OTLP_ENABLED=false)")
 
-app = FastAPI(title="TriSLA NASP Adapter", version="1.0.0")
+app = FastAPI(title="TriSLA NASP Adapter", version="3.10.0")
 FastAPIInstrumentor.instrument_app(app)
 
 # Inicializar

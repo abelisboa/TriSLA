@@ -39,7 +39,7 @@ if otlp_enabled:
 app = FastAPI(
     title="TriSLA ML-NSMF",
     description="Machine Learning Network Slice Management Function",
-    version="1.0.0"
+    version="3.10.0"
 )
 
 FastAPIInstrumentor.instrument_app(app)

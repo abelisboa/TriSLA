@@ -113,7 +113,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="TriSLA Decision Engine",
-    version="1.0.0",
+    version="3.10.0",
     lifespan=lifespan
 )
 

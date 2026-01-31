@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
-# Schema final para /api/v1/register-sla
+# Schema final para /api/v1/register-sla (schema v1.0 + compat legado)
 class SLO(BaseModel):
     name: str
-    threshold: int  # threshold substitui value (schema final)
+    threshold: int  # threshold (schema final) ou valor numérico
+    value: Optional[int] = None  # compat legado; se ausente usa threshold para contrato
 
 class SLARegisterRequest(BaseModel):
     sla_id: int

@@ -3,8 +3,9 @@ BC-NSSMF - Blockchain-enabled Network Slice Subnet Management Function
 Executa Smart Contracts e valida SLAs
 """
 
-from fastapi import FastAPI, HTTPException, Response, APIRouter
+from fastapi import FastAPI, HTTPException, Response, APIRouter, Request
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
@@ -40,7 +41,7 @@ if otlp_enabled:
     except Exception as e:
         print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
 
-app = FastAPI(title="TriSLA BC-NSSMF", version="1.0.0")
+app = FastAPI(title="TriSLA BC-NSSMF", version="3.10.0")
 FastAPIInstrumentor.instrument_app(app)
 
 # Inicializar com fallback para RPC offline (modo DEV)
@@ -118,10 +119,29 @@ async def metrics():
     """Expor métricas Prometheus"""
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
-# Interface I-04 - REST API
+# Interface I-04 - REST API (schema v1.0 + compat legado; nunca acessar SLO.value sem fallback)
+def _normalize_slos_to_contract(slos_list) -> list:
+    """Converte SLOs para formato do contrato (name, value_int, threshold_int). Compat: value opcional."""
+    out = []
+    for s in slos_list:
+        name = getattr(s, "name", "") or (s.get("name") if isinstance(s, dict) else "")
+        th = getattr(s, "threshold", None)
+        if th is None and isinstance(s, dict):
+            th = s.get("threshold")
+        if isinstance(th, dict):
+            th = th.get("value") or th.get("threshold")
+        th = int(th) if th is not None else 0
+        val = getattr(s, "value", None)
+        if val is None and isinstance(s, dict):
+            val = s.get("value")
+        val = int(val) if val is not None else th
+        out.append((str(name), val, th))
+    return out
+
+
 @app.post("/api/v1/register-sla")
-async def register_sla(req: SLARequest):
-    """Registra SLA no blockchain (Interface I-04)"""
+async def register_sla(request: Request):
+    """Registra SLA no blockchain (Interface I-04). Aceita schema v1.0 (slo_set/sla_requirements) e legado (slos)."""
     with tracer.start_as_current_span("register_sla_i04") as span:
         if not enabled or not bc_service:
             span.set_attribute("sla.registered", False)
@@ -132,17 +152,39 @@ async def register_sla(req: SLARequest):
             )
         
         try:
-            # Converter SLOs para formato do contrato
-            slos = [(s.name, s.value, s.threshold) for s in req.slos]
+            body = await request.json()
+            correlation_id = body.get("correlation_id") or body.get("intent_id") or ""
+            span.set_attribute("sla.correlation_id", str(correlation_id)[:64])
+            
+            # Schema v1.0: slo_set ou sla_requirements
+            slos_raw = body.get("slo_set") or body.get("sla_requirements")
+            if slos_raw is not None:
+                slos = _normalize_slos_to_contract(slos_raw)
+                customer = body.get("customer") or body.get("intent_id") or correlation_id or "default"
+                service_name = body.get("service_name") or body.get("action") or "ACCEPT"
+                sla_hash = body.get("slaHash") or body.get("sla_hash") or correlation_id or ""
+            else:
+                # Legado: SLARequest com slos[]
+                try:
+                    req = SLARequest(**body)
+                except ValidationError as e:
+                    raise HTTPException(status_code=422, detail=f"Payload inválido (schema legado): {e.errors()}")
+                slos = _normalize_slos_to_contract(req.slos)
+                customer = req.customer
+                service_name = req.serviceName
+                sla_hash = req.slaHash or ""
+            
+            if not slos:
+                raise HTTPException(status_code=422, detail="Lista de SLOs vazia ou inválida. Use slo_set, sla_requirements ou slos (legado).")
             
             # Converter slaHash para bytes32
             from web3 import Web3
-            sla_hash_bytes = Web3.keccak(text=req.slaHash) if req.slaHash else Web3.keccak(text="")
+            sla_hash_bytes = Web3.keccak(text=str(sla_hash)) if sla_hash else Web3.keccak(text="")
             
             # Registrar SLA no blockchain
             receipt = bc_service.register_sla(
-                req.customer,
-                req.serviceName,
+                customer,
+                service_name,
                 sla_hash_bytes,
                 slos
             )
@@ -154,7 +196,8 @@ async def register_sla(req: SLARequest):
                 "status": "ok",
                 "tx_hash": receipt.transactionHash.hex(),
                 "block_number": receipt.blockNumber,
-                "sla_id": req.customer  # Em produção, extrair do evento
+                "sla_id": customer,
+                "correlation_id": correlation_id
             }
         except BCBusinessError as e:
             span.record_exception(e)

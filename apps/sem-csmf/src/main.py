@@ -55,7 +55,7 @@ else:
 app = FastAPI(
     title="TriSLA SEM-CSMF",
     description="Semantic-enhanced Communication Service Management Function",
-    version="1.0.0"
+    version="3.10.0"
 )
 
 # Security Middleware

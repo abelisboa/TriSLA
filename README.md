@@ -1,81 +1,170 @@
-# TriSLA - Trustworthy, Reasoned and Intelligent SLA-Aware
+# TriSLA - SLA-Aware Architecture for 5G Network Slicing
 
-**Scientific Version**: v3.9.3 (Frozen)
+**Version:** 3.10.0
 
 ## Overview
 
-**TriSLA** (Trustworthy, Reasoned and Intelligent SLA-Aware) is a control-plane architecture focused on validation, decision-making, and automated execution of Service Level Agreements (SLAs) in Network Slicing environments for 5G/O-RAN networks, based on the integration of ontology, artificial intelligence, and smart contracts.
-
-TriSLA addresses the heterogeneity of RAN, Transport, and Core domains, providing end-to-end automation in the slice lifecycle while prioritizing reliability, traceability, predictability, and transparency.
-
-## What Problem Does TriSLA Solve?
-
-TriSLA addresses the challenge of automated SLA validation, decision-making, and execution in 5G/O-RAN Network Slicing environments. It provides:
-
-- **Semantic interpretation** of natural language intents using ontology
-- **Intelligent decision-making** through Deep Learning and Explainable AI (XAI)
-- **Automated lifecycle orchestration** from admission to execution and monitoring
-- **Contractual formalization** via smart contracts on Distributed Ledger Technology (DLT)
+TriSLA is an SLA-aware architecture designed for automated network slice lifecycle management in 5G environments. It leverages Machine Learning for risk prediction, Explainable AI (XAI) for decision transparency, and Blockchain for immutable SLA registration.
 
 ## Architecture
 
-TriSLA is composed exclusively of the following architectural elements:
+![TriSLA Architecture](docs/architecture.png)
 
-### SEM-CSMF
-- Semantic interpretation of natural language intents
-- Ontology-based validation
-- Generation of SLA-aware specifications
+### Key Components
 
-### ML-NSMF + Decision Engine
-- Resource viability prediction
-- Deep Learning models
-- Explainable AI (XAI) support
-- Decision process support (ACCEPT / REJECT / RENEG)
+| Component | Description | Port |
+|-----------|-------------|------|
+| **Portal (UI Dashboard)** | Web interface for SLA creation and monitoring | 80 |
+| **SEM-CSMF** | Service & Experience Management | 8080 |
+| **ML-NSMF** | Machine Learning-based Network Slice Management | 8081 |
+| **Decision Engine** | SLA admission control with XAI | 8082 |
+| **BC-NSSMF** | Blockchain-based Network Slice Subnet Management | 8083 |
+| **SLA-Agent Layer** | SLA enforcement and monitoring | 8084 |
+| **NASP Adapter** | Network Slice Provider integration | 8085 |
 
-### BC-NSSMF
-- Contractual clause formalization
-- Execution via Smart Contracts
-- Based on Distributed Ledger Technology (DLT)
+### End-to-End Flow
 
-### SLA-Agent Layer
-- Slice lifecycle orchestration
-- Integration between decision, execution, and monitoring
-- End-to-end automation
+1. **SLA Submission**: Tenant submits SLA request via Portal
+2. **Intent Translation**: SEM-CSMF translates to network intent
+3. **Risk Prediction**: ML-NSMF predicts SLA fulfillment risk
+4. **Decision**: Decision Engine evaluates and generates XAI explanation
+5. **Blockchain Registration**: BC-NSSMF registers SLA on Hyperledger Besu
+6. **Slice Provisioning**: SLA-Agent delegates to NASP Adapter
+7. **NASP Creation**: Network slice is instantiated in the 5G network
 
-## Scope and Limitations
+## Features
 
-### What TriSLA Is
+### Explainable AI (XAI)
 
-- **Control-plane only**: Operates exclusively in the control plane
-- **SLA-aware**: From semantic input to lifecycle execution
-- **Domain-agnostic**: Addresses heterogeneity of RAN, Transport, and Core domains
-- **5G/O-RAN focused**: Designed for 5G and O-RAN network environments
-- **End-to-end automation**: Provides complete automation in slice lifecycle
+Every SLA decision includes:
+- **Risk Score**: Predicted probability of SLA violation
+- **Confidence**: Model certainty in the prediction
+- **Viability Score**: Overall feasibility assessment
+- **Justification**: Human-readable explanation
+- **Feature Importance**: Contributing factors
 
-### What TriSLA Is NOT
+### Monitoring Dashboard
 
-- **Direct RAN/Transport/Core configuration**: TriSLA does not directly configure radios, transport, or core. It delegates to the NASP Adapter and underlying platform.
-- **Data-plane or user-plane**: No packet processing or user-plane functions.
-- **Network orchestration platform replacement**: Does not replace network orchestration platforms.
-- **End-user authentication**: No built-in IdP or RBAC for end-users; cluster-level access control applies.
-- **Generic slicing platform**: Not a generic platform for network slicing.
+- Real-time SLA statistics
+- Decision distribution charts (ACCEPT/REJECT/RENEG)
+- Service type breakdown (eMBB, URLLC, mMTC)
+- Expandable XAI details per SLA
 
-## Documentation
+### Blockchain Immutability
 
-- **[Installation Guide](docs/INSTALLATION.md)**: Conceptual prerequisites, infrastructure requirements, and environment validation
-- **[Deployment Guide](docs/DEPLOYMENT.md)**: Step-by-step operational manual for deploying TriSLA
-- **[Reproducibility](docs/REPRODUCIBILITY.md)**: Scientific reproducibility criteria and validation
-- **[Architecture](docs/ARCHITECTURE.md)**: Detailed architectural documentation
+- Hyperledger Besu (QBFT consensus)
+- Smart contract for SLA registration
+- Transaction hash and block confirmation
 
-## Version
+## Quick Start
 
-This repository contains the **frozen scientific version v3.9.3** used for academic publication and reproducibility.
+### Prerequisites
+
+- Kubernetes cluster (1.26+)
+- Helm 3.x
+- Docker/Podman
+- Free5GC or Open5GS (for NASP integration)
+
+### Installation
+
+```bash
+# Clone repository
+git clone https://github.com/abelisboa/trisla.git
+cd trisla
+
+# Install with Helm
+helm install trisla ./helm/trisla -n trisla --create-namespace
+
+# Access Portal
+kubectl port-forward svc/trisla-ui-dashboard 8080:80 -n trisla
+```
+
+Open http://localhost:8080 in your browser.
+
+## Project Structure
+
+```
+trisla/
+├── apps/
+│   ├── ui-dashboard/      # React frontend
+│   ├── sem-csmf/          # Service Management
+│   ├── ml-nsmf/           # ML predictions
+│   ├── decision-engine/   # SLA decisions
+│   ├── bc-nssmf/          # Blockchain
+│   ├── sla-agent-layer/   # SLA enforcement
+│   └── nasp-adapter/      # Network integration
+├── helm/
+│   └── trisla/            # Helm chart
+└── docs/
+    ├── architecture.md
+    ├── portal.md
+    └── blockchain.md
+```
+
+## Technology Stack
+
+- **Frontend**: React, TypeScript, Material-UI, Recharts
+- **Backend**: Python, FastAPI, Uvicorn
+- **ML**: scikit-learn, XGBoost
+- **Blockchain**: Hyperledger Besu, Solidity
+- **Messaging**: Apache Kafka
+- **Orchestration**: Kubernetes, Helm
+- **Observability**: OpenTelemetry, Prometheus, Grafana
+
+## API Documentation
+
+Each service exposes Swagger/OpenAPI documentation:
+
+- Portal Backend: `/docs`
+- SEM-CSMF: `/docs`
+- ML-NSMF: `/docs`
+- Decision Engine: `/docs`
+- BC-NSSMF: `/docs`
+- SLA-Agent: `/docs`
+- NASP Adapter: `/docs`
 
 ## License
 
-See [LICENSE](LICENSE) file for details.
+Apache License 2.0
 
-## Repository
+## Citation
 
-- **GitHub**: https://github.com/abelisboa/TriSLA
-- **Container Registry**: ghcr.io/abelisboa
+If you use TriSLA in your research, please cite:
+
+```bibtex
+@inproceedings{trisla2026,
+  title={TriSLA: An SLA-Aware Architecture for Explainable Network Slice Admission Control},
+  author={Lisboa, Abel},
+  year={2026}
+}
+```
+
+## Contributors
+
+- Abel Lisboa ([@abelisboa](https://github.com/abelisboa))
+
+## Baseline v3.10.0
+
+> **This is the scientific baseline v3.10.0, validated on a real NASP (5G/O-RAN-like) environment.**
+
+This version serves as the experimental reference for the MSc dissertation and provides:
+
+- Full end-to-end SLA lifecycle management
+- XAI-based decision transparency
+- Blockchain-backed SLA immutability
+- Kafka-based observability and replay
+- Reproducible deployment via Helm
+
+### Citation
+
+If you use TriSLA in your research, please cite:
+
+```bibtex
+@software{trisla2026,
+  author = {Lisboa, Abel},
+  title = {TriSLA: SLA-Aware Architecture for 5G Network Slicing},
+  version = {3.10.0},
+  year = {2026},
+  url = {https://github.com/abelisboa/TriSLA}
+}
+```

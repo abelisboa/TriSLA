@@ -19,6 +19,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 const drawerWidth = 240;
 
@@ -33,6 +34,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const menuItems = [
     { text: 'Tenant Portal', icon: <PeopleIcon />, path: '/tenant' },
+    { text: 'SLA Dashboard', icon: <AssessmentIcon />, path: '/sla-dashboard' },
     { text: 'Monitoramento', icon: <MonitorHeartIcon />, path: '/monitoring' },
     { text: 'Administração', icon: <SettingsIcon />, path: '/administration' },
     { text: 'Slices & Estado', icon: <NetworkCheckIcon />, path: '/slices' },
@@ -137,4 +139,3 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
-

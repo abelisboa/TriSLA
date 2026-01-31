@@ -1,6 +1,6 @@
 {
   "name": "trisla-ui-dashboard",
-  "version": "3.9.11",
+  "version": "3.10.0",
   "description": "TriSLA UI Dashboard",
   "private": true,
   "scripts": {

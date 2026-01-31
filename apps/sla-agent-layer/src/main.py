@@ -34,7 +34,7 @@ if otlp_enabled:
     except Exception as e:
         print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
 
-app = FastAPI(title="TriSLA SLA-Agent Layer", version="1.0.0")
+app = FastAPI(title="TriSLA SLA-Agent Layer", version="3.10.0")
 FastAPIInstrumentor.instrument_app(app)
 
 # Inicializar agentes

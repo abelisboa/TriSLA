@@ -9,6 +9,7 @@ import TenantPortal from './components/TenantPortal/TenantPortal';
 import Monitoring from './components/Monitoring/Monitoring';
 import Administration from './components/Administration/Administration';
 import SlicesState from './components/SlicesState/SlicesState';
+import SLAListPanel from './components/SLAList/SLAListPanel';
 
 const theme = createTheme({
   palette: {
@@ -32,6 +33,7 @@ function App() {
             <Route path="/" element={<Navigate to="/tenant" replace />} />
             <Route path="/tenant" element={<TenantPortal />} />
             <Route path="/monitoring" element={<Monitoring />} />
+            <Route path="/sla-dashboard" element={<SLAListPanel />} />
             <Route path="/administration" element={<Administration />} />
             <Route path="/slices" element={<SlicesState />} />
           </Routes>
@@ -42,4 +44,3 @@ function App() {
 }
 
 export default App;
-
