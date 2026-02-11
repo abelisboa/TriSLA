@@ -79,6 +79,9 @@ decisionEngine:
       cpu: 2000m
       memory: 2Gi
   replicas: 2
+  # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0): quando true, ACCEPT só após Gate PASS
+  gate3gpp:
+    enabled: false
 
 # BC-NSSMF
 bcNssmf:
