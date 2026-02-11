@@ -2689,7 +2689,7 @@ Após este Runbook (S37), **TODO novo prompt DEVE:**
 
 ---
 
-**Fim do Master Runbook TriSLA v3.9.11**
+**Fim do Master Runbook TriSLA v3.9.20 (Release Final SSOT MDCE v2)**
 
 ---
 
