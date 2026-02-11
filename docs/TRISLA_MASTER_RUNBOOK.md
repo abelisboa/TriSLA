@@ -102,10 +102,18 @@ Este Runbook proíbe explicitamente:
 
 ### Política de Release
 
-1. **Baseline:** Versão atual de referência: **v3.9.11**
+1. **Baseline:** Versão atual de referência: **v3.9.20** (Release Final SSOT MDCE v2)
 2. **Evidências:** Cada release deve incluir evidências em `evidencias_release_v{VERSION}/`
 3. **Validação:** Release só é considerada válida após passar gates oficiais
 4. **Documentação:** Runbook deve ser atualizado antes do release
+
+### 🏁 Release Final SSOT (MDCE v2) — v3.9.20
+
+- **Tag final:** v3.9.20
+- **Imagem GHCR NASP Adapter:** `ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.20`
+- **Conteúdo:** Código MDCE v2 (Capacity Accounting, ledger PENDING/ACTIVE/RELEASED/EXPIRED/ORPHANED, rollback, reconciler), Cost Tuning (COST_EMBB/URLLC/MMTC_* no Helm), CRD TriSLAReservation, Runbook Final Close + Cost Tuning.
+- **Evidências MDCE v2:** As 7 evidências (CRD + Ledger + reserveOnly guard + reconciler TTL/orphan + 422 headroom + Final Close). Cost Tuning: modo degradado (defaults 1) quando métricas multidomain indisponíveis.
+- **Regra anti-regressão:** Se `/api/v1/metrics/multidomain` ou `/api/v1/3gpp/gate` retornar 404, ou se qualquer evidência MDCE v2 falhar → rollback imediato para última tag válida (**v3.9.20** ou v3.9.19) e re-validar checklist antes de promover nova versão.
 
 ### Política de Evidência
 
