@@ -4,18 +4,18 @@
 frontend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-frontend
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: Always
   nodePort: 32001
   replicaCount: 1
   env:
     BACKEND_URL: "http://trisla-portal-backend:8001/api/v1"
 
-# Configuração do Backend
+# Configuração do Backend (PROMPT_SPORTAL_06_ID_RESOLUTION — decision_id → intent_id)
 backend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-backend
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: Always
   nodePort: 32002
   replicaCount: 1
