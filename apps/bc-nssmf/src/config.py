@@ -6,7 +6,9 @@ class BCConfig(BaseModel):
         default="http://127.0.0.1:8545",
         env="BESU_RPC_URL"
     )
-    contract_info_path: str = "apps/bc-nssmf/src/contracts/contract_address.json"
+    contract_info_path: str = Field(
+        default_factory=lambda: os.getenv("CONTRACT_INFO_PATH", "apps/bc-nssmf/src/contracts/contract_address.json")
+    )
     
     @property
     def effective_rpc_url(self) -> str:
