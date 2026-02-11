@@ -53,6 +53,52 @@ spec:
         - name: UPF_MAX_SESSIONS
           value: {{ if kindIs "invalid" .Values.naspAdapter.gate3gpp.upfMaxSessions }}{{ 1000000 | quote }}{{ else }}{{ .Values.naspAdapter.gate3gpp.upfMaxSessions | int | quote }}{{ end }}
         {{- end }}
+        # MDCE v2 Capacity Accounting (PROMPT_SMDCE_V2) — ledger, rollback, reconciler
+        {{- $cap := .Values.naspAdapter.capacityAccounting | default dict }}
+        - name: CAPACITY_ACCOUNTING_ENABLED
+          value: {{ $cap.enabled | default true | quote }}
+        - name: RESERVATION_TTL_SECONDS
+          value: {{ $cap.reservationTtlSeconds | default 300 | quote }}
+        - name: RECONCILE_INTERVAL_SECONDS
+          value: {{ $cap.reconcileIntervalSeconds | default 60 | quote }}
+        - name: CAPACITY_SAFETY_FACTOR
+          value: {{ $cap.capacitySafetyFactor | default "0.1" | quote }}
+        {{- if $cap.costEmbbCore }}
+        - name: COST_EMBB_CORE
+          value: {{ $cap.costEmbbCore | quote }}
+        {{- end }}
+        {{- if $cap.costEmbbRan }}
+        - name: COST_EMBB_RAN
+          value: {{ $cap.costEmbbRan | quote }}
+        {{- end }}
+        {{- if $cap.costEmbbTransport }}
+        - name: COST_EMBB_TRANSPORT
+          value: {{ $cap.costEmbbTransport | quote }}
+        {{- end }}
+        {{- if $cap.costUrllcCore }}
+        - name: COST_URLLC_CORE
+          value: {{ $cap.costUrllcCore | quote }}
+        {{- end }}
+        {{- if $cap.costUrllcRan }}
+        - name: COST_URLLC_RAN
+          value: {{ $cap.costUrllcRan | quote }}
+        {{- end }}
+        {{- if $cap.costUrllcTransport }}
+        - name: COST_URLLC_TRANSPORT
+          value: {{ $cap.costUrllcTransport | quote }}
+        {{- end }}
+        {{- if $cap.costMmtcCore }}
+        - name: COST_MMTC_CORE
+          value: {{ $cap.costMmtcCore | quote }}
+        {{- end }}
+        {{- if $cap.costMmtcRan }}
+        - name: COST_MMTC_RAN
+          value: {{ $cap.costMmtcRan | quote }}
+        {{- end }}
+        {{- if $cap.costMmtcTransport }}
+        - name: COST_MMTC_TRANSPORT
+          value: {{ $cap.costMmtcTransport | quote }}
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /health

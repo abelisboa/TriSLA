@@ -204,8 +204,14 @@ class NSIWatchController:
                 raise
     
     def _ensure_resource_quota(self, namespace_name: str, nsi: Dict[str, Any]):
-        """Cria ResourceQuota se não existir (idempotente)"""
-        quota_name = f"nsi-quota-{nsi.get('spec', {}).get('nsiId', '')}"
+        """Cria ResourceQuota se não existir (idempotente).
+        Nome da quota DEVE ser RFC 1123 válido (nunca terminar em '-').
+        spec.nsiId tem precedência; fallback metadata.name para CRs legados."""
+        nsi_id = nsi.get('spec', {}).get('nsiId') or nsi.get('metadata', {}).get('name') or ''
+        nsi_id = (nsi_id or 'unknown').strip()
+        # RFC 1123: lowercase alphanumeric and hyphen only; must not start/end with hyphen
+        nsi_id_safe = ''.join(c if c.isalnum() or c == '-' else '-' for c in nsi_id.lower()).strip('-') or 'nsi'
+        quota_name = f"nsi-quota-{nsi_id_safe}"
         
         # Calcular recursos baseado no serviceProfile
         service_profile = nsi.get('spec', {}).get('serviceProfile', 'eMBB')
@@ -267,9 +273,11 @@ class NSIWatchController:
     # - Evita falha no reconcile
     
     def _ensure_network_policy(self, namespace_name: str, nsi: Dict[str, Any]):
-        """Cria NetworkPolicy se não existir (idempotente)"""
-        nsi_id = nsi.get('spec', {}).get('nsiId', '')
-        policy_name = f"nsi-netpol-{nsi_id}"
+        """Cria NetworkPolicy se não existir (idempotente). Nome RFC 1123 válido."""
+        nsi_id = nsi.get('spec', {}).get('nsiId') or nsi.get('metadata', {}).get('name') or ''
+        nsi_id_safe = (nsi_id or 'unknown').strip()
+        nsi_id_safe = ''.join(c if c.isalnum() or c == '-' else '-' for c in nsi_id_safe.lower()).strip('-') or 'nsi'
+        policy_name = f"nsi-netpol-{nsi_id_safe}"
         
         try:
             # FASE C3-C3.6A: Correção do NetworkPolicy - usar pod_selector com V1LabelSelector
@@ -278,8 +286,8 @@ class NSIWatchController:
                     name=policy_name,
                     namespace=namespace_name,
                     labels={
-                        "trisla.io/nsi-id": nsi_id,
-                        "trisla.io/nsi": nsi_id
+                        "trisla.io/nsi-id": nsi_id_safe,
+                        "trisla.io/nsi": nsi_id_safe
                     }
                 ),
                 spec=client.V1NetworkPolicySpec(

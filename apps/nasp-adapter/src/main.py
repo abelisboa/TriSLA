@@ -25,6 +25,21 @@ from gate_3gpp import run_gate
 
 logger = logging.getLogger(__name__)
 
+# PROMPT_SMDCE_V2_CAPACITY_ACCOUNTING — Capacity Accounting (ledger + rollback + reconciler)
+CAPACITY_ACCOUNTING_ENABLED = os.getenv("CAPACITY_ACCOUNTING_ENABLED", "true").lower() == "true"
+RESERVATION_TTL_SECONDS = int(os.getenv("RESERVATION_TTL_SECONDS", "300"))
+RECONCILE_INTERVAL_SECONDS = int(os.getenv("RECONCILE_INTERVAL_SECONDS", "60"))
+_reservation_store = None
+
+
+def get_reservation_store():
+    """Lazy init ReservationStore (requires K8s in-cluster)."""
+    global _reservation_store
+    if _reservation_store is None:
+        from reservation_store import ReservationStore
+        _reservation_store = ReservationStore()
+    return _reservation_store
+
 # OpenTelemetry (opcional em modo DEV)
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
@@ -76,6 +91,40 @@ async def startup_event():
         
         if not watch_thread.is_alive():
             raise RuntimeError("NSI Watch Controller thread died immediately after start")
+
+        # PROMPT_SMDCE_V2 — Reconciler (TTL + orphan)
+        if CAPACITY_ACCOUNTING_ENABLED and RECONCILE_INTERVAL_SECONDS > 0:
+            def _reconciler_loop():
+                import time
+                while True:
+                    try:
+                        store = get_reservation_store()
+                        expired = store.expire_pending(RESERVATION_TTL_SECONDS)
+                        if expired:
+                            logger.info("[RECONCILER] expired %d PENDING reservation(s)", expired)
+                        # Orphan check: ACTIVE reservations whose nsi_id no longer exists
+                        for item in store.list_active():
+                            spec = (item.get("spec") or {})
+                            nsi_id = spec.get("nsiId") or ""
+                            if not nsi_id:
+                                continue
+                            try:
+                                from kubernetes import client
+                                from controllers.k8s_auth import load_incluster_config_with_validation
+                                api_client, _, namespace, _ = load_incluster_config_with_validation()
+                                co = client.CustomObjectsApi(api_client=api_client)
+                                co.get_namespaced_custom_object(
+                                    group="trisla.io", version="v1", namespace=namespace,
+                                    plural="networksliceinstances", name=nsi_id,
+                                )
+                            except Exception:
+                                store.mark_orphaned(spec.get("reservationId") or item.get("metadata", {}).get("name"), "nsi_not_found")
+                    except Exception as e:
+                        logger.warning("[RECONCILER] loop error: %s", e)
+                    time.sleep(RECONCILE_INTERVAL_SECONDS)
+            rec_thread = threading.Thread(target=_reconciler_loop, daemon=True, name="Capacity-Reconciler")
+            rec_thread.start()
+            logger.info("[BOOTSTRAP] Capacity Reconciler started (interval=%ss)", RECONCILE_INTERVAL_SECONDS)
         
         logger.info("[BOOTSTRAP] NSI Watch Controller STARTED")
         logger.info(f"[BOOTSTRAP] Watch thread is alive: {watch_thread.is_alive()}")
@@ -212,21 +261,62 @@ async def instantiate_nsi(nsi_spec: dict):
                         status_code=422,
                         detail={"gate": "FAIL", "reasons": reasons, "message": f"3GPP_GATE_FAIL:{msg}"}
                     )
-            
+
+            # PROMPT_SMDCE_V2 — Capacity Accounting: ledger check → reserve → instantiate → activate ou rollback (release)
+            reservation_id = None
+            if CAPACITY_ACCOUNTING_ENABLED:
+                from capacity_accounting import ledger_check
+                from cost_model import cost
+                store = get_reservation_store()
+                multidomain = await metrics_collector.get_multidomain()
+                active = store.list_active()
+                slice_type = nsi_spec.get("serviceProfile") or nsi_spec.get("service_type") or "eMBB"
+                sla_req = nsi_spec.get("sla") or nsi_spec.get("sla_requirements") or {}
+                result = ledger_check(multidomain, active, slice_type, sla_req)
+                if not result.get("pass"):
+                    reasons = result.get("reasons", ["capacity_insufficient"])
+                    logger.warning("[CAPACITY] Ledger FAIL — bloqueando instantiate: %s", reasons)
+                    raise HTTPException(
+                        status_code=422,
+                        detail={"capacity": "FAIL", "reasons": reasons, "message": "CAPACITY_ACCOUNTING:insufficient_headroom"}
+                    )
+                resources = cost(slice_type, sla_req)
+                intent_id = nsi_spec.get("nsiId") or nsi_spec.get("intent_id") or "instantiate"
+                res_obj = store.create_pending(intent_id=intent_id, slice_type=slice_type, resources_reserved=resources, ttl_seconds=RESERVATION_TTL_SECONDS)
+                reservation_id = (res_obj.get("spec") or {}).get("reservationId") or res_obj.get("metadata", {}).get("name")
+                logger.info("[CAPACITY] Reserva PENDING criada: %s", reservation_id)
+
+                # PROMPT_SMDCE_V2_FINAL_CLOSE — teste TTL: reserve-only (não instancia; deixa PENDING para reconciler expirar)
+                if nsi_spec.get("_reserveOnly") is True:
+                    return {
+                        "success": True,
+                        "reservation_id": reservation_id,
+                        "message": "Reservation PENDING created (reserve-only for TTL test)",
+                    }
+
             # Criar NSI
-            created_nsi = nsi_controller.create_nsi(nsi_spec)
-            
-            span.set_attribute("nsi.id", created_nsi.get("spec", {}).get("nsiId"))
+            try:
+                created_nsi = nsi_controller.create_nsi(nsi_spec)
+            except Exception as e:
+                if CAPACITY_ACCOUNTING_ENABLED and reservation_id:
+                    get_reservation_store().release(reservation_id, reason="rollback:instantiate_failed")
+                    logger.info("[CAPACITY] Rollback: reserva %s released após falha de instantiate", reservation_id)
+                raise
+
+            nsi_id = created_nsi.get("spec", {}).get("nsiId") or created_nsi.get("metadata", {}).get("name")
+            if CAPACITY_ACCOUNTING_ENABLED and reservation_id:
+                get_reservation_store().activate(reservation_id, nsi_id)
+
+            span.set_attribute("nsi.id", nsi_id)
             span.set_attribute("nsi.phase", created_nsi.get("status", {}).get("phase"))
-            
-            logger.info(f"✅ [NSI] NSI instanciado: {created_nsi.get('spec', {}).get('nsiId')}")
-            
+            logger.info(f"✅ [NSI] NSI instanciado: {nsi_id}")
+
             return {
                 "success": True,
                 "nsi": created_nsi,
                 "message": "NSI instantiated successfully"
             }
-            
+
         except HTTPException:
             raise
         except Exception as e:

@@ -1022,6 +1022,78 @@ Saída esperada: **`Login Succeeded!`** — confirmado no node1; o mesmo procedi
 
 ---
 
+### MDCE v2 — Capacity Accounting SSOT (PROMPT_SMDCE_V2_CAPACITY_ACCOUNTING)
+
+**Responsabilidade:** Ledger determinístico de reservas no caminho de admissão; rollback em falha de instantiate; reconciler (TTL + orphan). SSOT final no NASP Adapter; Decision Engine mantém MDCE como primeira barreira (defesa em profundidade).
+
+**Artefatos:**
+- **CRD:** `TriSLAReservation` (`trisla.io/v1`, plural `trislareservations`). Instalar antes do deploy: `kubectl apply -f apps/nasp-adapter/crds/trislareservations.trisla.io.yaml`
+- **NASP Adapter:** `reservation_store.py` (ReservationStore), `cost_model.py`, `capacity_accounting.py`; integração em `POST /api/v1/nsi/instantiate`.
+
+**Estados do ledger:** `PENDING` (reserva criada antes de instantiate) → `ACTIVE` (após sucesso) ou `RELEASED`/`EXPIRED`/`ORPHANED` (rollback, TTL, drift).
+
+**Fluxo instantiate (CAPACITY_ACCOUNTING_ENABLED=true):**
+1. Ledger check: métricas multidomain + `sum_reserved_active()` + `cost(slice_type)` → PASS/FAIL por domínio.
+2. Se FAIL → 422 `CAPACITY_ACCOUNTING:insufficient_headroom` com `reasons`.
+3. Se PASS → `create_pending()` → `create_nsi()` → sucesso → `activate(reservation_id, nsi_id)`; exceção → **rollback** `release(reservation_id, "rollback:instantiate_failed")`.
+
+**Reconciler (thread periódica):**
+- Expira PENDING por TTL (`RESERVATION_TTL_SECONDS`).
+- Valida ACTIVE: se NSI (CR NetworkSliceInstance) não existir → `mark_orphaned(reservation_id, "nsi_not_found")`.
+
+**Helm (naspAdapter):**
+- `capacityAccounting.enabled` (default `true`) → env `CAPACITY_ACCOUNTING_ENABLED`
+- `capacityAccounting.reservationTtlSeconds` (default 300) → `RESERVATION_TTL_SECONDS`
+- `capacityAccounting.reconcileIntervalSeconds` (default 60) → `RECONCILE_INTERVAL_SECONDS`
+- `capacityAccounting.capacitySafetyFactor` (default "0.1") → `CAPACITY_SAFETY_FACTOR`
+- Cost model: env `COST_EMBB_CORE`, `COST_EMBB_RAN`, `COST_EMBB_TRANSPORT` (default 1 cada); análogo para URLLC/mMTC.
+
+**Sanity checks:**
+- **Ledger saturação:** Preencher reservas ACTIVE até headroom insuficiente → próximo `POST /api/v1/nsi/instantiate` deve retornar 422 com `capacity: FAIL` e `reasons`.
+- **Rollback:** Forçar falha de instantiate (ex.: namespace inexistente ou CR inválido) → reserva deve transicionar para RELEASED com reason `rollback:instantiate_failed`; logs: `[CAPACITY] Rollback: reserva ... released após falha`.
+- **Reconciler TTL:** Criar reserva PENDING e não completar instantiate → após TTL, reconciler deve marcar EXPIRED; `kubectl get trislareservations -n trisla` deve mostrar status EXPIRED.
+- **Orphan:** Deletar manualmente um NSI cuja reserva está ACTIVE → no próximo ciclo do reconciler a reserva deve ficar ORPHANED.
+
+**Anti-regressão:** Se `POST /api/v1/nsi/instantiate` aceitar quando o ledger indica falta de headroom, ou não liberar reserva em falha de instantiate, verificar imagem NASP Adapter (tag com reservation_store/capacity_accounting) e CRD TriSLAReservation instalada.
+
+**Evidências Ledger v2 (PROMPT_SMDCE_V2_EVIDENCES_v1.0 — 2026-02-11, node006):**
+- **FASE 1 (CRD):** PASS — `kubectl apply -f apps/nasp-adapter/crds/trislareservations.trisla.io.yaml`; `kubectl get crd | grep trislareservations` lista a CRD.
+- **FASE 2 (imagem + multidomain):** PASS — Imagem NASP `ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.18`; `GET /api/v1/metrics/multidomain` → 200 (via pod curl no cluster).
+- **FASE 3 (PENDING → ACTIVE):** Bloqueado — Instantiate completo falha com KeyError `status` no processamento do NSI (CRD com subresource status); correção em andamento (uso de `patch_namespaced_custom_object_status`).
+- **FASE 4 (rollback → RELEASED):** PASS — `POST /api/v1/nsi/instantiate` com payload inválido ou que falha após criar reserva → reserva criada PENDING, então `create_nsi` falha → rollback: `release(reservation_id, "rollback:instantiate_failed")`. Comando: `kubectl get trislareservations.trisla.io -n trisla -o jsonpath='{range .items[*]}{.metadata.name} {.spec.status} {.spec.reason}{\"\\n\"}{end}'` mostra múltiplas reservas com `RELEASED` e `rollback:instantiate_failed`.
+- **FASE 5 (TTL → EXPIRED) / FASE 6 (ORPHANED):** Dependem de FASE 3 (reserva ACTIVE ou PENDING sem release).
+- **FASE 7 (422 headroom):** Não obtido nesta execução; ledger check passou com `capacitySafetyFactor=0.99`. Para reproduzir: reduzir headroom (ex.: COST_* altos ou safety factor próximo de 1) e reexecutar instantiate.
+- **RBAC:** ClusterRole `trisla-nasp-adapter` deve incluir o recurso `trislareservations` no grupo `trisla.io`; sem isso, create_pending retorna 403.
+
+**MDCE v2 — Final Close Evidence (v3.9.19) — PROMPT_SMDCE_V2_FINAL_CLOSE_v1.0 (2026-02-11, node006):**
+
+Todas as 7 evidências obtidas com imagem `ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.19`.
+
+**Checklist obrigatório:**
+- [x] CRD `networksliceinstances.trisla.io` com `subresources: status: {}`
+- [x] Código NASP não acessa `obj["status"]` para NSI; atualização usa apenas `patch_namespaced_custom_object_status`
+- [x] Imagem v3.9.19 deployada (`kubectl get deploy trisla-nasp-adapter -n trisla -o jsonpath='{.spec.template.spec.containers[0].image}'`)
+- [x] **PENDING → ACTIVE:** instantiate válido → reserva PENDING criada → sucesso → ACTIVE com `nsi_id`
+- [x] **RELEASED rollback:** instantiate com nsiId duplicado (409) → reserva criada → falha → RELEASED `rollback:instantiate_failed`
+- [x] **EXPIRED TTL:** `reservationTtlSeconds=10`, `reconcileIntervalSeconds=5`; payload `_reserveOnly: true` → reserva PENDING → após 15s → EXPIRED `ttl_expired`
+- [x] **ORPHANED reconciler:** reserva ACTIVE → deletar NSI (`kubectl delete networksliceinstance <nsi-id> -n trisla`) → após ciclo reconciler → ORPHANED `nsi_not_found`
+- [x] **422 headroom:** `capacityAccounting.costEmbbCore=999` (ou `capacitySafetyFactor` muito alto) → instantiate válido → HTTP 422 `CAPACITY_ACCOUNTING:insufficient_headroom`
+- [x] Logs reconciler visíveis em `kubectl logs -n trisla deploy/trisla-nasp-adapter --tail=100 | grep RECONCILER`
+- [x] Helm values seguros (`$cap := .Values.naspAdapter.capacityAccounting | default dict`)
+
+**Regra de anti-regressão (Final Close):** Se qualquer uma das evidências acima falhar em versões futuras (outra tag ou build), fazer rollback imediato para a última tag válida (v3.9.19) e re-validar o checklist antes de promover nova versão.
+
+**Valores usados em testes:** TTL 10s e reconcile 5s apenas para prova de EXPIRED; valores de produção: `reservationTtlSeconds=300`, `reconcileIntervalSeconds=60`, `capacitySafetyFactor=0.1`. Cost model opcional via `capacityAccounting.costEmbbCore` (e RAN, TRANSPORT) no Helm para teste 422.
+
+**Cost Tuning (PROMPT_SMDCE_V2_COST_TUNING_v1.0):**
+- **Baseline real:** Em ambiente com métricas multidomain disponíveis, executar 5 amostras de `GET /api/v1/metrics/multidomain` e registrar `core.upf.cpu_pct`, `core.upf.mem_pct`, `ran.ue.active_count`, `transport.rtt_p95_ms`; calcular média. Quando métricas estão indisponíveis (todos `null`), baseline é estável mas não numérico.
+- **Consumo incremental:** Criar 1 SLA eMBB (e opcionalmente URLLC/mMTC), registrar multidomain antes e depois, calcular Δcpu, Δmem, Δue_count. Com métricas null, delta não é mensurável.
+- **Fórmula de calibração (quando métricas disponíveis):** `COST_EMBB_CORE ≈ Δcpu * 1.2`, `COST_URLLC_CORE ≈ Δcpu * 1.5`, `COST_MMTC_CORE ≈ Δcpu * 0.5` (fator >1 = margem de segurança). Nunca usar valores artificiais (ex.: 999) em produção.
+- **Valores calibrados (default quando sem observação):** `costEmbbCore/Ran/Transport=1`, `costUrllcCore/Ran/Transport=1`, `costMmtcCore/Ran/Transport=1` em `naspAdapter.capacityAccounting`. Bloqueio 422 ocorre quando headroom < cost; saturação controlada foi validada (antes do limite → ACTIVE, após limite → 422).
+- **Não-regressão:** Após cost tuning, validar que TTL (EXPIRED), ORPHANED e rollback (RELEASED) continuam funcionando; em caso de falha, rollback para última tag válida (v3.9.19).
+
+---
+
 ### BC-NSSMF (S41.3G — Wallet dedicada + Readiness On-Chain)
 
 **Responsabilidade:** Registro de contratos SLA no blockchain

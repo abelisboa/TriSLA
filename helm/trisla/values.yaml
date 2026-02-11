@@ -194,6 +194,22 @@ naspAdapter:
     coreNamespace: "ns-1274485"
     ueransimNamespace: "ueransim"
     upfMaxSessions: 1000000
+  # MDCE v2 Capacity Accounting (PROMPT_SMDCE_V2_CAPACITY_ACCOUNTING) — ledger, rollback, reconciler
+  capacityAccounting:
+    enabled: true
+    reservationTtlSeconds: 300
+    reconcileIntervalSeconds: 60
+    capacitySafetyFactor: "0.1"
+    # Cost model calibrado (PROMPT_SMDCE_V2_COST_TUNING): quando métricas multidomain disponíveis, COST_* ≈ Δ * fator (eMBB 1.2, URLLC 1.5, mMTC 0.5). Sem métricas: defaults 1.
+    costEmbbCore: 1
+    costEmbbRan: 1
+    costEmbbTransport: 1
+    costUrllcCore: 1
+    costUrllcRan: 1
+    costUrllcTransport: 1
+    costMmtcCore: 1
+    costMmtcRan: 1
+    costMmtcTransport: 1
 
 # UI Dashboard
 uiDashboard:

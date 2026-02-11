@@ -36,7 +36,7 @@ class NSIController:
             self.core_v1 = client.CoreV1Api(api_client=api_client)
             self.custom_api = client.CustomObjectsApi(api_client=api_client)
             self.apps_v1 = client.AppsV1Api(api_client=api_client)
-            
+            self.namespace = namespace  # Namespace do pod (trisla) para criar CRs no mesmo ns
             logger.info("✅ NSIController inicializado com sucesso")
             logger.info(f"✅ [NSI] Usando namespace: {namespace}")
         except Exception as e:
@@ -65,13 +65,13 @@ class NSIController:
             
             logger.info(f"🔷 [NSI] Criando NSI: {nsi_id}")
             
-            # Criar objeto NSI
+            # Criar objeto NSI no mesmo namespace do adapter (trisla)
             nsi_body = {
                 "apiVersion": "trisla.io/v1",
                 "kind": "NetworkSliceInstance",
                 "metadata": {
                     "name": nsi_id,
-                    "namespace": "default",
+                    "namespace": self.namespace,
                     "labels": {
                         "trisla.io/nsi-id": nsi_id,
                         "trisla.io/tenant-id": nsi_spec.get("tenantId", "default"),
@@ -95,11 +95,11 @@ class NSIController:
             }
             
             try:
-                # Criar NSI via CustomObjectsApi
+                # Criar NSI via CustomObjectsApi no namespace do adapter
                 created_nsi = self.custom_api.create_namespaced_custom_object(
                     group="trisla.io",
                     version="v1",
-                    namespace="default",
+                    namespace=self.namespace,
                     plural="networksliceinstances",
                     body=nsi_body
                 )
@@ -134,7 +134,7 @@ class NSIController:
                 nsi = self.custom_api.get_namespaced_custom_object(
                     group="trisla.io",
                     version="v1",
-                    namespace="default",
+                    namespace=self.namespace,
                     plural="networksliceinstances",
                     name=nsi_id
                 )
@@ -334,7 +334,7 @@ class NSIController:
             "kind": "NetworkSliceSubnetInstance",
             "metadata": {
                 "name": nssi_id,
-                "namespace": "default",
+                "namespace": self.namespace,
                 "labels": {
                     "trisla.io/nsi-id": nsi_id,
                     "trisla.io/nssi-id": nssi_id,
@@ -365,8 +365,8 @@ class NSIController:
             created_nssi = self.custom_api.create_namespaced_custom_object(
                 group="trisla.io",
                 version="v1",
-                namespace="default",
-                plural="networkslicesubnetinstances",
+namespace=self.namespace,
+                    plural="networkslicesubnetinstances",
                 body=nssi_body
             )
             
@@ -382,56 +382,40 @@ class NSIController:
                 raise
     
     def _update_nsi_phase(self, nsi_id: str, phase: str, message: str):
-        """Atualiza a fase do NSI"""
+        """Atualiza a fase do NSI (via subresource status)."""
         try:
-            nsi = self.custom_api.get_namespaced_custom_object(
+            status_body = {
+                "status": {
+                    "phase": phase,
+                    "message": message,
+                    "updatedAt": datetime.now(timezone.utc).isoformat(),
+                }
+            }
+            self.custom_api.patch_namespaced_custom_object_status(
                 group="trisla.io",
                 version="v1",
-                namespace="default",
-                plural="networksliceinstances",
-                name=nsi_id
-            )
-            
-            nsi["status"]["phase"] = phase
-            nsi["status"]["message"] = message
-            nsi["status"]["updatedAt"] = datetime.now(timezone.utc).isoformat()
-            
-            self.custom_api.patch_namespaced_custom_object(
-                group="trisla.io",
-                version="v1",
-                namespace="default",
+                namespace=self.namespace,
                 plural="networksliceinstances",
                 name=nsi_id,
-                body=nsi
+                body=status_body,
             )
-            
         except ApiException as e:
             logger.error(f"❌ [NSI] Erro ao atualizar fase do NSI {nsi_id}: {e}")
             raise
     
     def _update_nsi_status(self, nsi_id: str, status_updates: Dict[str, Any]):
-        """Atualiza campos do status do NSI"""
+        """Atualiza campos do status do NSI (via subresource status)."""
         try:
-            nsi = self.custom_api.get_namespaced_custom_object(
+            status_body = {"status": dict(status_updates)}
+            status_body["status"]["updatedAt"] = datetime.now(timezone.utc).isoformat()
+            self.custom_api.patch_namespaced_custom_object_status(
                 group="trisla.io",
                 version="v1",
-                namespace="default",
-                plural="networksliceinstances",
-                name=nsi_id
-            )
-            
-            nsi["status"].update(status_updates)
-            nsi["status"]["updatedAt"] = datetime.now(timezone.utc).isoformat()
-            
-            self.custom_api.patch_namespaced_custom_object(
-                group="trisla.io",
-                version="v1",
-                namespace="default",
+                namespace=self.namespace,
                 plural="networksliceinstances",
                 name=nsi_id,
-                body=nsi
+                body=status_body,
             )
-            
         except ApiException as e:
             logger.error(f"❌ [NSI] Erro ao atualizar status do NSI {nsi_id}: {e}")
             raise
