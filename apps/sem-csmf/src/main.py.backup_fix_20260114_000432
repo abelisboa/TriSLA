@@ -24,7 +24,6 @@ from models.intent import Intent, IntentRequest, IntentResponse, SliceType, SLAR
 from models.nest import NEST
 from models.db_models import IntentModel
 from database import get_db, init_db
-from repository import IntentRepository
 from decision_engine_client import DecisionEngineHTTPClient
 from auth import get_current_user, is_auth_enabled, get_current_user_optional
 from services.semantic_generator import generate_default_sla
@@ -56,7 +55,7 @@ else:
 app = FastAPI(
     title="TriSLA SEM-CSMF",
     description="Semantic-enhanced Communication Service Management Function",
-    version="3.10.0"
+    version="1.0.0"
 )
 
 # Security Middleware
@@ -308,8 +307,7 @@ async def create_intent(
             
             span.set_attribute("nest.id", nest.nest_id)
             span.set_attribute("nest.status", "generated")
-            if decision_response.get("decision_id"):
-                span.set_attribute("decision.id", decision_response.get("decision_id"))
+            span.set_attribute("decision.id", decision_response.get("decision_id"))
             span.set_attribute("decision_engine.success", decision_response.get("success", False))
             
             return IntentResponse(
@@ -385,98 +383,6 @@ async def login(credentials: dict):
             status_code=401,
             detail="Credenciais inválidas"
         )
-
-
-@app.get("/api/v1/intents/{intent_id}")
-async def get_intent(
-    intent_id: str,
-    db: Session = Depends(get_db),
-    current_user: str = get_current_user_optional()
-):
-    """
-    Retorna intent por ID (PROMPT_SNASP_01 — Portal consulta status via GET /api/v1/intents/{sla_id}).
-    """
-    with tracer.start_as_current_span("get_intent") as span:
-        span.set_attribute("intent.id", intent_id)
-        db_intent = IntentRepository.get_by_id(db, intent_id)
-        if not db_intent:
-            raise HTTPException(status_code=404, detail="Intent not found")
-        meta = db_intent.extra_metadata or {}
-        out = {
-            "intent_id": db_intent.intent_id,
-            "tenant_id": db_intent.tenant_id,
-            "service_type": db_intent.service_type,
-            "status": meta.get("status", "ACTIVE"),
-            "sla_requirements": db_intent.sla_requirements,
-            "created_at": db_intent.created_at.isoformat() if db_intent.created_at else None,
-            "metadata": meta,
-        }
-        # PROMPT_SNASP_02: expor NSI/NSSI/S-NSSAI quando presentes (retrocompatível)
-        if meta.get("service_intent") is not None:
-            out["service_intent"] = meta["service_intent"]
-        if meta.get("s_nssai") is not None:
-            out["s_nssai"] = meta["s_nssai"]
-        if meta.get("nsi") is not None:
-            out["nsi"] = meta["nsi"]
-        if meta.get("nssi") is not None:
-            out["nssi"] = meta["nssi"]
-        return out
-
-
-@app.post("/api/v1/intents/register")
-async def register_intent(
-    request: dict,
-    db: Session = Depends(get_db),
-    current_user: str = get_current_user_optional()
-):
-    """
-    Registro idempotente de SLA no NASP (PROMPT_SNASP_01).
-    Payload SSOT: sla_id, status, slice_type, template, created_at, source.
-    Se intent já existir, retorna 200 sem alterar.
-    """
-    with tracer.start_as_current_span("register_intent") as span:
-        sla_id = request.get("sla_id")
-        if not sla_id:
-            raise HTTPException(status_code=400, detail="sla_id é obrigatório")
-        span.set_attribute("sla.id", sla_id)
-        existing = IntentRepository.get_by_id(db, sla_id)
-        if existing:
-            logger.info(f"[REGISTER] Intent já existe: {sla_id}")
-            return {"registered": True, "intent_id": sla_id, "message": "already exists"}
-        service_type = (request.get("slice_type") or "eMBB").strip()
-        if service_type.upper() == "URLLC":
-            service_type = "URLLC"
-        elif service_type.upper() == "MMTC":
-            service_type = "mMTC"
-        else:
-            service_type = "eMBB"
-        # PROMPT_SNASP_02: persistir NSI/NSSI/S-NSSAI quando presentes (extra_metadata, backward compatible)
-        meta = {
-            "status": request.get("status", "ACTIVE"),
-            "template": request.get("template"),
-            "created_at": request.get("created_at"),
-            "source": request.get("source", "trisla"),
-        }
-        if request.get("service_intent") is not None:
-            meta["service_intent"] = request["service_intent"]
-        if request.get("s_nssai") is not None:
-            meta["s_nssai"] = request["s_nssai"]
-        if request.get("nsi") is not None:
-            meta["nsi"] = request["nsi"]
-        if request.get("nssi") is not None:
-            meta["nssi"] = request["nssi"]
-        intent_model = IntentModel(
-            intent_id=sla_id,
-            tenant_id="default",
-            service_type=service_type,
-            sla_requirements=request.get("sla_requirements") or {},
-            extra_metadata=meta,
-        )
-        db.add(intent_model)
-        db.commit()
-        db.refresh(intent_model)
-        logger.info(f"[REGISTER] Intent registrado: {sla_id}")
-        return {"registered": True, "intent_id": sla_id}
 
 
 @app.get("/api/v1/nests/{nest_id}", response_model=NEST)
