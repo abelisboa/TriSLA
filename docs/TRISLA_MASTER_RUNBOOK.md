@@ -1,8 +1,8 @@
 # TriSLA Master Runbook — Fonte Única de Verdade (SSOT)
 
-**Versão:** v3.9.12  
+**Versão:** v3.9.15  
 **Data de Criação:** 2026-01-29  
-**Última Atualização:** 2026-02-03  
+**Última Atualização:** 2026-02-11  
 **Ambiente:** NASP (Network Automation & Slicing Platform)  
 **Cluster:** Kubernetes (namespace `trisla`)  
 **Node de Acesso:** node006 (SSH entry point obrigatório; hostname reporta "node1")  
@@ -999,6 +999,29 @@ Saída esperada: **`Login Succeeded!`** — confirmado no node1; o mesmo procedi
 
 ---
 
+### Gate 3GPP — SSOT (PROMPT_S3GPP_GATE_v1.0 / PROMPT_SHELM_DECISIONENGINE_GATE_v1.0)
+
+**Fluxo:** Decision Engine (ACCEPT) → chama NASP Adapter `/api/v1/3gpp/gate` → se Gate FAIL, Decision Engine sobrescreve para **REJECT** com `reasoning: 3GPP_GATE_FAIL:...`. Se Gate PASS, segue fluxo normal (execute_slice_creation). O NASP Adapter também aplica o Gate antes de `POST /api/v1/nsi/instantiate` (422 quando Gate FAIL).
+
+**Flags e defaults (Helm — chart pai `helm/trisla`):**
+
+| Componente        | Chave (values)                              | Default   | Uso |
+|-------------------|---------------------------------------------|-----------|-----|
+| Decision Engine   | `decisionEngine.gate3gpp.enabled`           | `false`   | Env `GATE_3GPP_ENABLED`; quando `true`, ACCEPT só após Gate PASS. |
+| NASP Adapter      | `naspAdapter.gate3gpp.enabled`              | `false`   | Habilita Gate e expõe GET/POST `/api/v1/3gpp/gate`; instantiate exige Gate PASS (422 se FAIL). |
+| NASP Adapter      | `naspAdapter.gate3gpp.coreNamespace`        | `ns-1274485` | Namespace do core 5G. |
+| NASP Adapter      | `naspAdapter.gate3gpp.ueransimNamespace`    | `ueransim`   | Namespace UERANSIM. |
+| NASP Adapter      | `naspAdapter.gate3gpp.upfMaxSessions`        | `1000000` (quando gate enabled) | Capacidade UPF; `0` força Gate FAIL (controle de sanity). |
+
+**Sanity checks (SSOT):**
+- **Gate PASS:** `decisionEngine.gate3gpp.enabled=true`, `naspAdapter.gate3gpp.enabled=true`, `upfMaxSessions=1000000` → `GET http://trisla-nasp-adapter:8085/api/v1/3gpp/gate` → `{"gate":"PASS",...}`.
+- **Gate FAIL:** `naspAdapter.gate3gpp.upfMaxSessions=0` → GET gate → `{"gate":"FAIL",...}`; `POST /api/v1/nsi/instantiate` → 422 com `detail.gate: FAIL`.
+- **REJECT no fluxo:** Com Gate FAIL, submeter um SLA real pelo Portal → nos logs do Decision Engine: `kubectl logs -n trisla deploy/trisla-decision-engine --tail=400 | egrep '3GPP_GATE_FAIL|REJECT|gate|3gpp'` → deve aparecer REJECT com `3GPP_GATE_FAIL`.
+
+**RBAC (Gate no NASP):** O NASP Adapter precisa listar pods nos namespaces do core e UERANSIM. ClusterRole `trisla-nasp-adapter-pod-reader` (get, list, watch pods); RoleBindings em `ns-1274485` e `ueransim` para o ServiceAccount `trisla-nasp-adapter` do namespace `trisla`. Validar: `kubectl auth can-i list pods --as=system:serviceaccount:trisla:trisla-nasp-adapter -n ns-1274485` e `-n ueransim` → `yes`.
+
+---
+
 ### BC-NSSMF (S41.3G — Wallet dedicada + Readiness On-Chain)
 
 **Responsabilidade:** Registro de contratos SLA no blockchain
@@ -1765,6 +1788,12 @@ Evidências são válidas se:
 ### PROMPT_S3GPP_GATE_v1.0 — Gate 3GPP Real (2026-02-11)
 
 - **Resultado:** Implementado. Gate 3GPP Real valida pré-condições (Core + UERANSIM pods Ready, capacidade proxy UPF, política aplicável) antes de ACCEPT/instantiate. NASP Adapter: `GET/POST /api/v1/3gpp/gate`; defesa em profundidade em `POST /api/v1/nsi/instantiate` quando `GATE_3GPP_ENABLED=true`. Decision Engine: se `GATE_3GPP_ENABLED=true`, ACCEPT só após Gate PASS; senão REJECT com motivo `3GPP_GATE_FAIL`. Feature flag `GATE_3GPP_ENABLED` (default `false`) para não quebrar ambiente. Sanity: `kubectl exec -n trisla deploy/trisla-nasp-adapter -- curl -s http://localhost:8085/api/v1/3gpp/gate | jq`; teste de falha com `UPF_MAX_SESSIONS=0`.
+
+---
+
+### PROMPT_SHELM_DECISIONENGINE_GATE_v1.0 — Expor Gate no Decision Engine (Helm) + Validar REJECT + Runbook (2026-02-11)
+
+- **Resultado:** Concluído. Helm (chart pai `helm/trisla`): `decisionEngine.gate3gpp.enabled` (default `false`) exposto; env `GATE_3GPP_ENABLED` injetado em `deployment-decision-engine.yaml` via `ternary "true" "false"`. Tag v3.9.15; deploy com gate ON validado (GATE_3GPP_ENABLED=true no pod; Gate GET PASS com upfMaxSessions=1000000); upfMaxSessions=0 restaurado para 1000000. Runbook: seção **Gate 3GPP — SSOT** adicionada (fluxo DE→Gate→NASP, flags/defaults, sanity PASS/FAIL/422/REJECT, RBAC).
 
 ---
 
