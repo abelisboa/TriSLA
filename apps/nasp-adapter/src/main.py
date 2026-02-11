@@ -105,6 +105,19 @@ async def get_nasp_metrics():
         return metrics
 
 
+@app.get("/api/v1/metrics/multidomain")
+async def get_metrics_multidomain():
+    """
+    Métricas multidomínio no schema SSOT MDCE (PROMPT_SMDCE_V1).
+    Retorna docs/MDCE_SCHEMA.json: core.upf.*, ran.ue.active_count, transport.rtt_p95_ms.
+    Campos indisponíveis = null e reasons incluem metric_unavailable.
+    """
+    with tracer.start_as_current_span("get_metrics_multidomain") as span:
+        out = await metrics_collector.get_multidomain()
+        span.set_attribute("mdce.reasons_count", len(out.get("reasons", [])))
+        return out
+
+
 @app.post("/api/v1/nasp/actions")
 async def execute_nasp_action(action: dict):
     """Executa ação real no NASP (I-07)"""

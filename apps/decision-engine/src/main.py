@@ -626,6 +626,30 @@ async def evaluate_sla(sla_input: SLAEvaluateInput):
                     else:
                         decision_result = decision_result.copy(update=update)
             
+            # MDCE v1 (PROMPT_SMDCE_V1): se habilitado, ACCEPT só após MDCE PASS
+            if decision_result.action == DecisionAction.ACCEPT and config.mdce_enabled:
+                from mdce import evaluate as mdce_evaluate
+                slice_type = getattr(intent.service_type, "value", None) or (decision_result.metadata or {}).get("service_type") or "eMBB"
+                sla_req = intent.sla_requirements if isinstance(intent.sla_requirements, dict) else {}
+                try:
+                    mdce_metrics = await nasp_adapter_client.get_multidomain_metrics()
+                    verdict, mdce_reasons = mdce_evaluate(slice_type, sla_req, mdce_metrics)
+                    if verdict != "PASS":
+                        msg = "; ".join(mdce_reasons)
+                        logger.warning(f"[MDCE] MDCE FAIL → forçando REJECT: {msg}")
+                        update = {"action": DecisionAction.REJECT, "reasoning": f"MDCE_FAIL:{msg}"}
+                        if hasattr(decision_result, "model_copy"):
+                            decision_result = decision_result.model_copy(update=update)
+                        else:
+                            decision_result = decision_result.copy(update=update)
+                except Exception as e:
+                    logger.warning(f"[MDCE] MDCE evaluation failed → REJECT por segurança: {e}")
+                    update = {"action": DecisionAction.REJECT, "reasoning": f"MDCE_FAIL:mdce_error:{e}"}
+                    if hasattr(decision_result, "model_copy"):
+                        decision_result = decision_result.model_copy(update=update)
+                    else:
+                        decision_result = decision_result.copy(update=update)
+            
             if decision_result.action == DecisionAction.ACCEPT:
                 logger.info(f"🚀 Encaminhando ACCEPT para NASP Adapter: decision_id={decision_result.decision_id}")
                 nasp_result = await nasp_adapter_client.execute_slice_creation(decision_result)

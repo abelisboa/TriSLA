@@ -39,6 +39,9 @@ class DecisionEngineConfig(BaseModel):
     # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0): quando true, ACCEPT só após Gate PASS
     gate_3gpp_enabled: bool = os.getenv("GATE_3GPP_ENABLED", "false").lower() == "true"
     
+    # MDCE v1 (PROMPT_SMDCE_V1): quando true, ACCEPT só após MDCE PASS
+    mdce_enabled: bool = os.getenv("MDCE_ENABLED", "true").lower() == "true"
+    
     # Portal Backend (para notificar rejeições)
     portal_backend_url: str = os.getenv("PORTAL_BACKEND_URL", "http://127.0.0.1:8001")
     

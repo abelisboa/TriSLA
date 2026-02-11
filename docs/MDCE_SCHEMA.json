@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MDCE v1 — Schema SSOT de métricas multidomínio",
+  "description": "Schema canônico para Multi-Domain Capacity Evaluation (MDCE). Campos indisponíveis retornam null e reasons incluem 'metric_unavailable'.",
+  "type": "object",
+  "required": ["core", "ran", "transport", "reasons", "timestamp"],
+  "properties": {
+    "core": {
+      "type": "object",
+      "description": "Métricas do Core (UPF)",
+      "properties": {
+        "upf": {
+          "type": "object",
+          "properties": {
+            "cpu_pct": { "type": ["number", "null"], "description": "Uso de CPU do UPF (%)" },
+            "mem_pct": { "type": ["number", "null"], "description": "Uso de memória do UPF (%)" },
+            "tx_mbps": { "type": ["number", "null"], "description": "Throughput TX (Mbps)" },
+            "rx_mbps": { "type": ["number", "null"], "description": "Throughput RX (Mbps)" }
+          }
+        },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "pdu_fail_rate": { "type": ["number", "null"], "description": "Taxa de falha PDU (0.0-1.0)" }
+          }
+        }
+      }
+    },
+    "ran": {
+      "type": "object",
+      "properties": {
+        "ue": {
+          "type": "object",
+          "properties": {
+            "active_count": { "type": ["integer", "null"], "description": "Contagem de UEs ativos (proxy)" }
+          }
+        }
+      }
+    },
+    "transport": {
+      "type": "object",
+      "properties": {
+        "rtt_p95_ms": { "type": ["number", "null"], "description": "RTT P95 (ms) — guardrail" }
+      }
+    },
+    "reasons": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lista de reasons (ex.: metric_unavailable:<key>)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp UTC da coleta"
+    }
+  },
+  "additionalProperties": false
+}

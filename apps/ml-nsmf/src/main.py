@@ -107,6 +107,17 @@ async def predict_risk(metrics: dict):
         # Normalizar métricas (agora com dados reais)
         normalized = predictor.normalize(metrics)
         
+        # PROMPT_SMDCE_V1 — Auditoria: vetor de features canônico (nomes + valores) para regressão
+        submission_id = metrics.get("intent_id") or metrics.get("nest_id") or metrics.get("slice_id") or "n/a"
+        from datetime import datetime, timezone
+        ts = datetime.now(timezone.utc).isoformat()
+        canonical_names = sorted(k for k in metrics.keys() if isinstance(metrics.get(k), (int, float)))
+        canonical_values = [metrics[k] for k in canonical_names]
+        logger.info(
+            "FEATURES_CANONICAL | submission_id=%s | names=%s | values=%s | timestamp=%s",
+            submission_id, canonical_names, canonical_values, ts,
+        )
+        
         # Prever risco baseado em métricas reais
         prediction = predictor.predict(normalized)
         
@@ -119,6 +130,15 @@ async def predict_risk(metrics: dict):
         
         # Explicar (XAI)
         explanation = predictor.explain(prediction, normalized)
+        
+        # PROMPT_SNASP_28 — Log explícito quando SHAP for executado (apenas visibilidade; não altera decisão)
+        if explanation.get("method") == "SHAP" and explanation.get("features_importance"):
+            sla_id = metrics.get("intent_id") or metrics.get("nest_id") or metrics.get("slice_id") or "n/a"
+            logger.info(
+                "XAI_SHAP_EXECUTED | sla_id=%s | features=%s",
+                sla_id,
+                explanation.get("features_importance"),
+            )
         
         # Enviar para Decision Engine via Kafka (I-03)
         await prediction_producer.send_prediction(prediction, explanation)

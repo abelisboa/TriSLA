@@ -82,6 +82,8 @@ decisionEngine:
   # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0): quando true, ACCEPT só após Gate PASS
   gate3gpp:
     enabled: false
+  # MDCE v1 (PROMPT_SMDCE_V1): env adicionais (ex.: MDCE_FORCE_FAIL=true para sanity)
+  # mdceForceFail: false  # usar decisionEngine.env.MDCE_FORCE_FAIL=true para teste
 
 # BC-NSSMF
 bcNssmf:
