@@ -135,6 +135,7 @@ naspAdapter:
     enabled: false
     coreNamespace: "ns-1274485"
     ueransimNamespace: "ueransim"
+    upfMaxSessions: 1000000
 
 # UI Dashboard
 uiDashboard:
