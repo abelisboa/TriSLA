@@ -69,7 +69,9 @@ class RuleEngine:
                 reasoning = f"Rule {rule['id']} matched: {rule['condition']}"
                 action = rule["action"]
             else:
-                reasoning = "No rules matched, default to ACCEPT"
+                # Quando GATE_3GPP_ENABLED=true, main.py valida Gate antes de execute_slice_creation;
+                # não existe default ACCEPT cego sem checks (PROMPT_S3GPP_GATE_v1.0).
+                reasoning = "No rules matched, default to ACCEPT (subject to 3GPP Gate when GATE_3GPP_ENABLED)"
                 action = "ACCEPT"
             
             span.set_attribute("rules.matched", len(matched_rules))

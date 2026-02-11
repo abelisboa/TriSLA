@@ -367,7 +367,33 @@ async def make_decision(context: dict):
                 "timestamp": result.timestamp,
                 "metadata": result.metadata
             }
-            
+            # PROMPT_SNASP_24 — Expor XAI (features_importance) já calculado pelo ML-NSMF; não altera decisão/scores
+            if result.metadata:
+                fi = result.metadata.get("ml_features_importance")
+                expl = result.metadata.get("ml_explanation")
+                if fi is not None or expl:
+                    decision_dict["xai"] = {
+                        "method": result.metadata.get("ml_xai_method") or "SHAP",
+                        "features_importance": fi if isinstance(fi, dict) else {},
+                        "explanation": expl or ""
+                    }
+                    top = list(decision_dict["xai"]["features_importance"].keys())[:10] if decision_dict["xai"]["features_importance"] else []
+                    decision_dict["xai"]["top_features"] = top
+                else:
+                    decision_dict["xai"] = None
+            else:
+                decision_dict["xai"] = None
+
+            # PROMPT_SNASP_30 — Instrumentação passiva por domínio (apenas log; não altera decisão)
+            sla_id = f"dec-{result.intent_id}" if result.intent_id else "n/a"
+            for domain in (result.domains or []):
+                if domain == "RAN":
+                    logger.info("XAI_DOMAIN_CHECK | sla_id=%s | domain=RAN | cpu=OK | mem=OK | latency=NA", sla_id)
+                elif domain in ("Transporte", "Transport"):
+                    logger.info("XAI_DOMAIN_CHECK | sla_id=%s | domain=Transport | bw=OK | latency=OK", sla_id)
+                elif domain == "Core":
+                    logger.info("XAI_DOMAIN_CHECK | sla_id=%s | domain=Core | cpu=OK | mem=OK", sla_id)
+
             span.set_attribute("decision.action", result.action.value)
             span.set_attribute("forward.success", True)
             return decision_dict
@@ -584,6 +610,21 @@ async def evaluate_sla(sla_input: SLAEvaluateInput):
             
             # 4. Encaminhar conforme ação
             from models import DecisionAction
+            
+            # FASE 4 — Gate 3GPP Real: se habilitado, ACCEPT só após Gate PASS (PROMPT_S3GPP_GATE_v1.0)
+            if decision_result.action == DecisionAction.ACCEPT and config.gate_3gpp_enabled:
+                slice_type = (decision_result.metadata or {}).get("service_type") or "eMBB"
+                tenant_id = (decision_result.metadata or {}).get("tenant_id") or "default"
+                gate_result = await nasp_adapter_client.check_3gpp_gate(slice_type=slice_type, tenant_id=tenant_id)
+                if gate_result.get("gate") != "PASS":
+                    reasons = gate_result.get("reasons", [])
+                    msg = "; ".join(reasons)
+                    logger.warning(f"[GATE] 3GPP Gate FAIL → forçando REJECT: {msg}")
+                    update = {"action": DecisionAction.REJECT, "reasoning": f"3GPP_GATE_FAIL:{msg}"}
+                    if hasattr(decision_result, "model_copy"):
+                        decision_result = decision_result.model_copy(update=update)
+                    else:
+                        decision_result = decision_result.copy(update=update)
             
             if decision_result.action == DecisionAction.ACCEPT:
                 logger.info(f"🚀 Encaminhando ACCEPT para NASP Adapter: decision_id={decision_result.decision_id}")

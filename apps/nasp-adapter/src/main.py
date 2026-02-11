@@ -3,7 +3,7 @@ NASP Adapter - Integração com NASP Real
 Interface I-07 - Integração bidirecional
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
@@ -21,6 +21,7 @@ from metrics_collector import MetricsCollector
 from action_executor import ActionExecutor
 from controllers.nsi_controller import NSIController
 from controllers.nsi_watch_controller import start_nsi_watch
+from gate_3gpp import run_gate
 
 logger = logging.getLogger(__name__)
 
@@ -114,22 +115,71 @@ async def execute_nasp_action(action: dict):
         return result
 
 
+# PROMPT_SNASP_01 — Registro de SLA no NASP pós-ACCEPT (SSOT)
+SEM_CSMF_URL = os.getenv("SEM_CSMF_URL", "http://trisla-sem-csmf.trisla.svc.cluster.local:8080")
+
+
+@app.post("/api/v1/sla/register")
+async def register_sla(payload: dict):
+    """
+    Registro idempotente de SLA no NASP (PROMPT_SNASP_01).
+    Payload SSOT: sla_id, status, slice_type, template, created_at, source.
+    Encaminha para SEM-CSMF POST /api/v1/intents/register.
+    """
+    import httpx
+    with tracer.start_as_current_span("register_sla_nasp") as span:
+        sla_id = payload.get("sla_id")
+        if not sla_id:
+            raise HTTPException(status_code=400, detail="sla_id é obrigatório")
+        span.set_attribute("sla.id", sla_id)
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                r = await client.post(
+                    f"{SEM_CSMF_URL}/api/v1/intents/register",
+                    json=payload,
+                )
+                r.raise_for_status()
+                out = r.json()
+                logger.info(f"[REGISTER] SLA registrado no NASP: {sla_id}")
+                return out
+        except httpx.HTTPStatusError as e:
+            logger.warning(f"[REGISTER] SEM-CSMF respondeu {e.response.status_code}: {e.response.text}")
+            if e.response.status_code == 400:
+                raise HTTPException(status_code=400, detail=e.response.text)
+            raise
+        except Exception as e:
+            logger.error(f"[REGISTER] Erro ao registrar SLA no NASP: {e}", exc_info=True)
+            raise HTTPException(status_code=503, detail=f"NASP register failed: {str(e)}")
+
+
+# GATE_3GPP_ENABLED: quando true, instantiate exige Gate PASS (PROMPT_S3GPP_GATE_v1.0)
+GATE_3GPP_ENABLED = os.getenv("GATE_3GPP_ENABLED", "false").lower() == "true"
+
+
+@app.get("/api/v1/3gpp/gate")
+async def get_3gpp_gate():
+    """Status geral do Gate 3GPP Real (GET). Sem payload."""
+    with tracer.start_as_current_span("get_3gpp_gate") as span:
+        result = run_gate(None)
+        span.set_attribute("gate.result", result.get("gate", ""))
+        return result
+
+
+@app.post("/api/v1/3gpp/gate")
+async def post_3gpp_gate(payload: dict = None):
+    """Valida pré-condições 3GPP com payload do SLA (slice_type, thresholds, etc.)."""
+    with tracer.start_as_current_span("post_3gpp_gate") as span:
+        result = run_gate(payload or {})
+        span.set_attribute("gate.result", result.get("gate", ""))
+        return result
+
+
 @app.post("/api/v1/nsi/instantiate")
 async def instantiate_nsi(nsi_spec: dict):
     """
     Instancia um Network Slice Instance (NSI) no Kubernetes
     FASE C3-B2: Criação real de slice sem simulação
-    
-    Args:
-        nsi_spec: Especificação do NSI contendo:
-            - nsiId: ID do NSI (opcional, será gerado se não fornecido)
-            - tenantId: ID do tenant
-            - serviceProfile: URLLC | eMBB | mMTC
-            - nssai: {sst, sd?}
-            - sla: {latency, reliability, availability, throughput}
-    
-    Returns:
-        NSI criado com status
+    FASE 5 (PROMPT_S3GPP_GATE): se GATE_3GPP_ENABLED=true e Gate FAIL → 409/422.
     """
     import logging
     logger = logging.getLogger(__name__)
@@ -137,6 +187,18 @@ async def instantiate_nsi(nsi_spec: dict):
     with tracer.start_as_current_span("instantiate_nsi") as span:
         try:
             logger.info(f"🔷 [NSI] Recebida requisição de instanciação: {nsi_spec.get('nsiId', 'auto')}")
+            
+            # FASE 5 — Defesa em profundidade: Gate obrigatório antes de instantiate
+            if GATE_3GPP_ENABLED:
+                gate_result = run_gate(nsi_spec)
+                if gate_result.get("gate") != "PASS":
+                    reasons = gate_result.get("reasons", [])
+                    msg = "; ".join(reasons)
+                    logger.warning(f"[GATE] 3GPP Gate FAIL — bloqueando instantiate: {msg}")
+                    raise HTTPException(
+                        status_code=422,
+                        detail={"gate": "FAIL", "reasons": reasons, "message": f"3GPP_GATE_FAIL:{msg}"}
+                    )
             
             # Criar NSI
             created_nsi = nsi_controller.create_nsi(nsi_spec)
@@ -152,6 +214,8 @@ async def instantiate_nsi(nsi_spec: dict):
                 "message": "NSI instantiated successfully"
             }
             
+        except HTTPException:
+            raise
         except Exception as e:
             logger.error(f"❌ [NSI] Erro ao instanciar NSI: {e}", exc_info=True)
             span.record_exception(e)

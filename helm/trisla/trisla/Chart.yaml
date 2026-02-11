@@ -3,7 +3,7 @@ name: trisla
 description: TriSLA - SLA-Aware Architecture for 5G/O-RAN
 type: application
 version: 3.5.0
-appVersion: "3.5.0"
+appVersion: "3.9.13"
 keywords:
   - 5g
   - o-ran
