@@ -1,6 +1,7 @@
 """
 Kafka Consumer - SLA-Agent Layer
-Consome decisões do Decision Engine via I-05 e executa ações nos agentes
+Consome decisões do Decision Engine via I-05 e executa ações nos agentes.
+PROMPT_SNASP_01: onDecision(ACCEPT) registra SLA no NASP via NASP Adapter.
 """
 
 import json
@@ -9,6 +10,7 @@ import logging
 from typing import List, Dict, Any, Optional
 from opentelemetry import trace
 import asyncio
+from datetime import datetime, timezone
 
 try:
     from kafka import KafkaConsumer
@@ -155,7 +157,11 @@ class ActionConsumer:
                     f"✅ Mensagem I-05 recebida: action={action}, domain={domain}"
                 )
                 
-                # Obter agente apropriado
+                # PROMPT_SNASP_01: onDecision(ACCEPT) → registrar SLA no NASP via NASP Adapter (idempotente, não bloqueante)
+                if action == "ACCEPT":
+                    await self._register_sla_in_nasp(message_data)
+                
+                # Obter agente apropriado (para ações corretivas I-06; ACCEPT não tem domínio)
                 agent = self._get_agent(domain)
                 
                 if not agent:
@@ -209,6 +215,54 @@ class ActionConsumer:
             return False
         
         return True
+    
+    def _s_nssai_for_slice_type(self, slice_type: str) -> Dict[str, Any]:
+        """PROMPT_SNASP_02: mapeamento determinístico slice_type → S-NSSAI (SST/SD)."""
+        st = (slice_type or "eMBB").strip().upper()
+        if st == "URLLC":
+            return {"sst": 1, "sd": "010203"}
+        if st == "MMTC":
+            return {"sst": 1, "sd": "445566"}
+        return {"sst": 1, "sd": "112233"}  # eMBB default
+
+    async def _register_sla_in_nasp(self, message_data: Dict[str, Any]) -> None:
+        """
+        Registra SLA no NASP via NASP Adapter (PROMPT_SNASP_01 + SNASP_02).
+        Payload SSOT + NSI/NSSI/S-NSSAI (3GPP-O-RAN); enriquecimento após ACCEPT.
+        Idempotente, não bloqueante, log estruturado.
+        """
+        decision = message_data.get("decision", {})
+        sla_id = decision.get("intent_id") or decision.get("sla_id")
+        if not sla_id:
+            logger.warning("[NASP_REGISTER] intent_id/sla_id ausente na decisão ACCEPT, ignorando")
+            return
+        slice_type = (decision.get("metadata") or {}).get("service_type") or "eMBB"
+        payload = {
+            "sla_id": sla_id,
+            "status": "ACTIVE",
+            "slice_type": slice_type,
+            "template": (decision.get("metadata") or {}).get("template") or "GST",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "source": "trisla",
+        }
+        # PROMPT_SNASP_02: alinhamento 3GPP — NSI, NSSI, S-NSSAI (regras determinísticas)
+        payload["service_intent"] = {"slice_type": slice_type}
+        payload["s_nssai"] = self._s_nssai_for_slice_type(slice_type)
+        payload["nsi"] = {"nsi_id": f"nsi-{sla_id}"}
+        payload["nssi"] = {
+            "ran": f"ran-nssi-{sla_id}",
+            "transport": f"tn-nssi-{sla_id}",
+            "core": f"cn-nssi-{sla_id}",
+        }
+        nasp_url = os.getenv("NASP_ADAPTER_URL", "http://trisla-nasp-adapter.trisla.svc.cluster.local:8085")
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                r = await client.post(f"{nasp_url}/api/v1/sla/register", json=payload)
+                r.raise_for_status()
+                logger.info(f"[NASP_REGISTER] SLA registrado no NASP: {sla_id}")
+        except Exception as e:
+            logger.warning(f"[NASP_REGISTER] Falha ao registrar SLA no NASP (não bloqueante): {e}", exc_info=False)
     
     def _get_agent(self, domain: str):
         """Retorna agente pelo domínio"""
