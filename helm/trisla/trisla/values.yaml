@@ -57,7 +57,7 @@ decisionEngine:
   enabled: true
   image:
     repository: trisla-decision-engine
-    tag: v3.9.3
+    tag: v3.9.13
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -70,6 +70,9 @@ decisionEngine:
       cpu: 2000m
       memory: 2Gi
   replicas: 2
+  # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0)
+  gate3gpp:
+    enabled: false
 
 # BC-NSSMF
 bcNssmf:
@@ -114,7 +117,7 @@ naspAdapter:
   enabled: true
   image:
     repository: trisla-nasp-adapter
-    tag: v3.9.3
+    tag: v3.9.13
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -127,6 +130,11 @@ naspAdapter:
       cpu: 2000m
       memory: 2Gi
   replicas: 2
+  # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0)
+  gate3gpp:
+    enabled: false
+    coreNamespace: "ns-1274485"
+    ueransimNamespace: "ueransim"
 
 # UI Dashboard
 uiDashboard:

@@ -36,6 +36,9 @@ class DecisionEngineConfig(BaseModel):
     # NASP Adapter (Interface I-07 - Execução de ações)
     nasp_adapter_url: str = os.getenv("NASP_ADAPTER_URL", "http://127.0.0.1:8085")
     
+    # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0): quando true, ACCEPT só após Gate PASS
+    gate_3gpp_enabled: bool = os.getenv("GATE_3GPP_ENABLED", "false").lower() == "true"
+    
     # Portal Backend (para notificar rejeições)
     portal_backend_url: str = os.getenv("PORTAL_BACKEND_URL", "http://127.0.0.1:8001")
     

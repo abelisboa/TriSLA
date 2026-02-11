@@ -25,6 +25,23 @@ class NASPAdapterClient:
     def __init__(self):
         self.http_client = httpx.AsyncClient(timeout=30.0)
     
+    async def check_3gpp_gate(self, slice_type: str = "eMBB", tenant_id: str = "default") -> Dict[str, Any]:
+        """
+        Chama GET ou POST /api/v1/3gpp/gate no NASP Adapter (PROMPT_S3GPP_GATE_v1.0).
+        Retorna {"gate": "PASS"|"FAIL", "reasons": [...], "checks": {...}, "timestamp": "..."}.
+        """
+        try:
+            response = await self.http_client.post(
+                f"{config.nasp_adapter_url}/api/v1/3gpp/gate",
+                json={"slice_type": slice_type, "tenantId": tenant_id},
+                timeout=15.0,
+            )
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPError as e:
+            logger.warning(f"3GPP Gate request failed: {e}")
+            return {"gate": "FAIL", "reasons": [f"gate_request_error:{e}"], "checks": {}, "timestamp": ""}
+    
     async def execute_slice_creation(self, decision_result: DecisionResult) -> Optional[Dict[str, Any]]:
         """
         Executa criação de slice no NASP após decisão ACCEPT

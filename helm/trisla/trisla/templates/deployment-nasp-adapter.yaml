@@ -30,6 +30,13 @@ spec:
           value: {{ .Values.network.nodeIP | quote }}
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0)
+        - name: GATE_3GPP_ENABLED
+          value: {{ .Values.naspAdapter.gate3gpp.enabled | default false | quote }}
+        - name: GATE_3GPP_CORE_NAMESPACE
+          value: {{ .Values.naspAdapter.gate3gpp.coreNamespace | default "ns-1274485" | quote }}
+        - name: GATE_3GPP_UERANSIM_NAMESPACE
+          value: {{ .Values.naspAdapter.gate3gpp.ueransimNamespace | default "ueransim" | quote }}
         livenessProbe:
           httpGet:
             path: /health
