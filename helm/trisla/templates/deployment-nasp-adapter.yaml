@@ -38,8 +38,21 @@ spec:
           value: {{ .Values.network.interface | quote }}
         - name: TRISLA_NODE_IP
           value: {{ .Values.network.nodeIP | quote }}
+        - name: SEM_CSMF_URL
+          value: "http://{{ include "trisla.name" . }}-sem-csmf.{{ .Values.global.namespace }}.svc.cluster.local:8080"
         - name: OTLP_ENDPOINT
           value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0)
+        - name: GATE_3GPP_ENABLED
+          value: {{ .Values.naspAdapter.gate3gpp.enabled | default false | quote }}
+        - name: GATE_3GPP_CORE_NAMESPACE
+          value: {{ .Values.naspAdapter.gate3gpp.coreNamespace | default "ns-1274485" | quote }}
+        - name: GATE_3GPP_UERANSIM_NAMESPACE
+          value: {{ .Values.naspAdapter.gate3gpp.ueransimNamespace | default "ueransim" | quote }}
+        {{- if .Values.naspAdapter.gate3gpp.enabled }}
+        - name: UPF_MAX_SESSIONS
+          value: {{ if kindIs "invalid" .Values.naspAdapter.gate3gpp.upfMaxSessions }}{{ 1000000 | quote }}{{ else }}{{ .Values.naspAdapter.gate3gpp.upfMaxSessions | int | quote }}{{ end }}
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /health

@@ -19,7 +19,7 @@ semCsmf:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-sem-csmf
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: IfNotPresent
   annotations:
     trisla-mode: degraded
@@ -42,7 +42,7 @@ mlNsmf:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-ml-nsmf
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -66,7 +66,7 @@ decisionEngine:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-decision-engine
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: Always
   service:
     type: ClusterIP
@@ -85,7 +85,7 @@ bcNssmf:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-bc-nssmf
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: Always
   service:
     type: ClusterIP
@@ -97,6 +97,7 @@ bcNssmf:
     trisla-mode: degraded
   env:
     BC_ENABLED: "true"  # Sprint S3.4 - Valor padrão obrigatório
+    BC_TX_RECEIPT_TIMEOUT: "120"  # S55: receipt wait (s) for slow block time
     # Variáveis de ambiente serão injetadas automaticamente se BESU estiver habilitado
     # TRISLA_RPC_URL e BESU_RPC_URL serão configuradas no template deployment-bc-nssmf.yaml
   resources:
@@ -110,10 +111,14 @@ bcNssmf:
 
 # BESU - Hyperledger Besu Blockchain Client (versioned)
 besu:
-  enabled: false  # Sprint S3.5.1 - Base idempotente
+  enabled: true   # S56.1/S56.2 - QBFT single-node; chave SSOT via Secret + initContainer
+  qbft:
+    enabled: true
+    useGenesisFile: true
+  validatorKeySecret: "trisla-besu-validator-key"  # S56.2 - Secret com key do validador; initContainer copia para /opt/besu/data/key
   image:
     repository: trisla-besu
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:
@@ -121,7 +126,7 @@ besu:
     port: 8545
     wsPort: 8546
     p2pPort: 30303
-  # Genesis removed - using --network=dev mode (Sprint S3.5.4)
+  # Genesis via QBFT config (S56)
   persistence:
     enabled: true
     size: 10Gi
@@ -147,7 +152,7 @@ slaAgentLayer:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-sla-agent-layer
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -166,7 +171,7 @@ naspAdapter:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-nasp-adapter
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -179,13 +184,19 @@ naspAdapter:
       cpu: 2000m
       memory: 2Gi
   replicas: 2
+  # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0); upfMaxSessions para FAIL controlado (PROMPT_SHELM_EXPOSE_UPFMAX_v1.0)
+  gate3gpp:
+    enabled: false
+    coreNamespace: "ns-1274485"
+    ueransimNamespace: "ueransim"
+    upfMaxSessions: 1000000
 
 # UI Dashboard
 uiDashboard:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-ui-dashboard
-    tag: v3.9.11
+    tag: v3.11.2
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -206,6 +217,25 @@ uiDashboard:
       cpu: 500m
       memory: 512Mi
   replicas: 2
+
+# Traffic Exporter (PROMPT_S52; PROMPT_SNASP_07 — SLA-aware labels v3.10.8)
+trafficExporter:
+  enabled: true
+  image:
+    repository: trisla-traffic-exporter
+    tag: v3.11.2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9105
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  replicas: 1
 
 # Kafka
 kafka:

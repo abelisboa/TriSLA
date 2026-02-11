@@ -37,6 +37,10 @@ spec:
           value: {{ .Values.naspAdapter.gate3gpp.coreNamespace | default "ns-1274485" | quote }}
         - name: GATE_3GPP_UERANSIM_NAMESPACE
           value: {{ .Values.naspAdapter.gate3gpp.ueransimNamespace | default "ueransim" | quote }}
+        {{- if .Values.naspAdapter.gate3gpp.enabled }}
+        - name: UPF_MAX_SESSIONS
+          value: {{ if kindIs "invalid" .Values.naspAdapter.gate3gpp.upfMaxSessions }}{{ 1000000 | quote }}{{ else }}{{ .Values.naspAdapter.gate3gpp.upfMaxSessions | int | quote }}{{ end }}
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /health
