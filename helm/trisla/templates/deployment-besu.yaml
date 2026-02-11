@@ -28,6 +28,19 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if and .Values.besu.qbft.enabled .Values.besu.qbft.useGenesisFile .Values.besu.validatorKeySecret }}
+      initContainers:
+      - name: copy-validator-key
+        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.besu.image) }}
+        imagePullPolicy: {{ .Values.besu.image.pullPolicy }}
+        command: ["sh", "-c", "cp /secrets/key /opt/besu/data/key && chmod 600 /opt/besu/data/key"]
+        volumeMounts:
+        - name: besu-data
+          mountPath: /opt/besu/data
+        - name: validator-key
+          mountPath: /secrets
+          readOnly: true
+      {{- end }}
       containers:
       - name: besu
         image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.besu.image) }}
@@ -45,18 +58,35 @@ spec:
         command:
         - /opt/besu/bin/besu
         args:
+        {{- if and .Values.besu.qbft.enabled .Values.besu.qbft.useGenesisFile }}
+        - --genesis-file=/data/genesis.json
+        - --data-path=/opt/besu/data
+        - --rpc-http-enabled=true
+        - --rpc-http-host=0.0.0.0
+        - --rpc-http-port=8545
+        - --rpc-http-api=ETH,NET,WEB3,ADMIN,MINER
+        - --host-allowlist=*
+        - --rpc-http-cors-origins=*
+        - --min-gas-price=0
+        {{- else }}
         - --data-path=/opt/besu/data
         - --network=dev
         - --network-id=20211201
         - --rpc-http-enabled
         - --rpc-http-port=8545
         - --rpc-http-api=ETH,NET,WEB3
+        {{- end }}
         env:
         - name: BESU_DATA_PATH
           value: "/opt/besu/data"
         volumeMounts:
         - name: besu-data
           mountPath: /opt/besu/data
+        {{- if and .Values.besu.qbft.enabled .Values.besu.qbft.useGenesisFile }}
+        - name: genesis
+          mountPath: /data
+          readOnly: true
+        {{- end }}
         {{- if .Values.besu.nodeSelector }}
         nodeSelector:
           {{- toYaml .Values.besu.nodeSelector | nindent 10 }}
@@ -85,6 +115,16 @@ spec:
         {{- else }}
         emptyDir: {}
         {{- end }}
+      {{- if and .Values.besu.qbft.enabled .Values.besu.qbft.useGenesisFile }}
+      - name: genesis
+        configMap:
+          name: {{ include "trisla.name" . }}-besu-genesis
+      {{- end }}
+      {{- if and .Values.besu.qbft.enabled .Values.besu.validatorKeySecret }}
+      - name: validator-key
+        secret:
+          secretName: {{ .Values.besu.validatorKeySecret }}
+      {{- end }}
       {{- with .Values.besu.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
