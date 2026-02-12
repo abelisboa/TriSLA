@@ -1,19 +1,95 @@
 """
 Metrics Collector - NASP Adapter
-Coleta métricas reais do NASP.
-PROMPT_SMDCE_V1: endpoint /api/v1/metrics/multidomain retorna schema SSOT (docs/MDCE_SCHEMA.json).
+Coleta métricas reais do NASP e Prometheus (telemetria real).
+PROMPT_SMDCE_V1: endpoint /api/v1/metrics/multidomain retorna schema SSOT.
+PROMPT_STELEMETRY_REAL_ACTIVATION: Prometheus como fonte para CPU%, Mem%, UE count.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from opentelemetry import trace
 
 import sys
 import os
+import requests
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from nasp_client import NASPClient
 
 tracer = trace.get_tracer(__name__)
+
+# Prometheus (telemetria real) — PROMPT_STELEMETRY_REAL_ACTIVATION
+PROM_URL = os.getenv(
+    "PROMETHEUS_URL",
+    "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090",
+)
+
+
+def _prom_query(query: str) -> Optional[Dict[str, Any]]:
+    """Executa query no Prometheus. Em erro retorna None (nunca crasha)."""
+    try:
+        r = requests.get(
+            f"{PROM_URL}/api/v1/query",
+            params={"query": query},
+            timeout=5,
+        )
+        return r.json()
+    except Exception:
+        return None
+
+
+def _prom_scalar(resp: Optional[Dict[str, Any]]) -> Optional[float]:
+    """Extrai valor escalar da resposta Prometheus (data.result[0].value[1])."""
+    if not resp or resp.get("status") != "success":
+        return None
+    data = resp.get("data") or {}
+    results = data.get("result") or []
+    if not results:
+        return None
+    val = results[0].get("value")
+    if not val or len(val) < 2:
+        return None
+    try:
+        return float(val[1])
+    except (TypeError, ValueError):
+        return None
+
+
+def _collect_prometheus_trisla() -> Dict[str, Any]:
+    """
+    Coleta métricas do namespace trisla via Prometheus (telemetria real).
+    Retorna dict com cpu_pct, mem_pct, ue_count (proxy), rtt_p95_ms (null se indisponível).
+    Em falha retorna valores None; nunca levanta exceção.
+    """
+    out: Dict[str, Any] = {
+        "cpu_pct": None,
+        "mem_pct": None,
+        "ue_count": None,
+        "rtt_p95_ms": None,
+    }
+    try:
+        # CPU %: uso trisla / total cluster
+        q_cpu = 'sum(rate(container_cpu_usage_seconds_total{namespace="trisla"}[1m]))/sum(rate(node_cpu_seconds_total[1m]))*100'
+        v = _prom_scalar(_prom_query(q_cpu))
+        if v is not None:
+            out["cpu_pct"] = round(float(v), 2)
+
+        # Mem %: uso trisla / total memória dos nós
+        q_mem_usage = 'sum(container_memory_usage_bytes{namespace="trisla"})'
+        q_mem_total = "sum(node_memory_MemTotal_bytes)"
+        usage = _prom_scalar(_prom_query(q_mem_usage))
+        total = _prom_scalar(_prom_query(q_mem_total))
+        if usage is not None and total is not None and total > 0:
+            out["mem_pct"] = round(float(usage) / float(total) * 100, 2)
+
+        # UE count: proxy = pods Running no trisla (ou ueransim se existir)
+        q_ue = 'count(kube_pod_status_phase{namespace="trisla",phase="Running"})'
+        v = _prom_scalar(_prom_query(q_ue))
+        if v is not None:
+            out["ue_count"] = int(v)
+    except Exception:
+        pass
+    return out
 
 # Chaves canônicas do schema MDCE (SSOT)
 MDCE_KEYS = [
@@ -134,14 +210,37 @@ class MetricsCollector:
             # Coletar métricas Core (UPF, AMF, SMF)
             try:
                 core_metrics = await self.nasp_client.get_core_metrics()
+                if not isinstance(core_metrics, dict):
+                    core_metrics = {}
                 all_metrics["core"] = {
-                    "upf": core_metrics,
+                    "upf": dict(core_metrics),
                     "amf_endpoint": self.nasp_client.core_amf_endpoint,
                     "smf_endpoint": self.nasp_client.core_smf_endpoint
                 }
             except Exception as e:
-                all_metrics["core"] = {"error": str(e)}
-            
+                all_metrics["core"] = {
+                    "upf": {},
+                    "amf_endpoint": getattr(self.nasp_client, "core_amf_endpoint", ""),
+                    "smf_endpoint": getattr(self.nasp_client, "core_smf_endpoint", ""),
+                    "error": str(e),
+                }
+
+            # Telemetria real: Prometheus (CPU%, Mem%, UE proxy) — sobrescreve quando disponível
+            try:
+                prom = _collect_prometheus_trisla()
+                upf = all_metrics["core"].get("upf")
+                if isinstance(upf, dict):
+                    if prom.get("cpu_pct") is not None:
+                        upf["cpu_pct"] = prom["cpu_pct"]
+                    if prom.get("mem_pct") is not None:
+                        upf["mem_pct"] = prom["mem_pct"]
+                if prom.get("ue_count") is not None and isinstance(all_metrics.get("ran"), dict):
+                    all_metrics["ran"]["ue"] = {"active_count": prom["ue_count"]}
+                if prom.get("rtt_p95_ms") is not None and isinstance(all_metrics.get("transport"), dict):
+                    all_metrics["transport"]["rtt_p95_ms"] = prom["rtt_p95_ms"]
+            except Exception:
+                pass
+
             span.set_attribute("metrics.domains", "ran,transport,core")
             span.set_attribute("metrics.source", "nasp_real")
             span.set_attribute("metrics.ran_endpoint", self.nasp_client.ran_endpoint)

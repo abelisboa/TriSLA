@@ -99,6 +99,9 @@ spec:
         - name: COST_MMTC_TRANSPORT
           value: {{ $cap.costMmtcTransport | quote }}
         {{- end }}
+        # Telemetria real (PROMPT_STELEMETRY_REAL_ACTIVATION)
+        - name: PROMETHEUS_URL
+          value: {{ .Values.naspAdapter.prometheusUrl | default "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090" | quote }}
         livenessProbe:
           httpGet:
             path: /health

@@ -210,6 +210,8 @@ naspAdapter:
     costMmtcCore: 1
     costMmtcRan: 1
     costMmtcTransport: 1
+  # Telemetria real (PROMPT_STELEMETRY_REAL_ACTIVATION): CPU%, Mem%, UE via Prometheus
+  prometheusUrl: "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
 
 # UI Dashboard
 uiDashboard:

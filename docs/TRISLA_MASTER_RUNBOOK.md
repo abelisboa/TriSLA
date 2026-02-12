@@ -115,6 +115,14 @@ Este Runbook proíbe explicitamente:
 - **Evidências MDCE v2:** As 7 evidências (CRD + Ledger + reserveOnly guard + reconciler TTL/orphan + 422 headroom + Final Close). Cost Tuning: modo degradado (defaults 1) quando métricas multidomain indisponíveis.
 - **Regra anti-regressão:** Se `/api/v1/metrics/multidomain` ou `/api/v1/3gpp/gate` retornar 404, ou se qualquer evidência MDCE v2 falhar → rollback imediato para última tag válida (**v3.9.20** ou v3.9.19) e re-validar checklist antes de promover nova versão.
 
+### Telemetria Real — Prometheus (v3.9.22)
+
+- **Prompt:** PROMPT_STELEMETRY_REAL_ACTIVATION_v1.0.
+- **Objetivo:** `GET /api/v1/metrics/multidomain` retorna valores reais (não `metric_unavailable`) para CPU%, Mem%, UE count.
+- **Implementação:** NASP Adapter consulta Prometheus (`PROMETHEUS_URL`, default `http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090`). Queries: CPU % = `sum(rate(container_cpu_usage_seconds_total{namespace="trisla"}[1m]))/sum(rate(node_cpu_seconds_total[1m]))*100`; Mem % = uso trisla / `sum(node_memory_MemTotal_bytes)`; UE proxy = `count(kube_pod_status_phase{namespace="trisla",phase="Running"})`. RTT p95 e tx/rx_mbps permanecem null se indisponíveis (documentado em `reasons`).
+- **Validação:** Telemetria ativa quando multidomain retorna `cpu_pct`, `mem_pct`, `ran.ue.active_count` numéricos; NASP Adapter não crasha; MDCE e Gate continuam funcionando.
+- **Próximo passo:** PROMPT_SMDCE_V2_COST_RECALIBRATION_v1.0 para recalibrar cost model com dados reais.
+
 ### Política de Evidência
 
 - **Estrutura:** `evidencias_release_v{VERSION}/{SCENARIO}/`
