@@ -19,7 +19,7 @@ semCsmf:
   enabled: true  # Habilitado para correção infra - Base idempotente
   image:
     repository: trisla-sem-csmf
-    tag: v3.11.2
+    tag: v3.9.22
     pullPolicy: IfNotPresent
   annotations:
     trisla-mode: degraded
