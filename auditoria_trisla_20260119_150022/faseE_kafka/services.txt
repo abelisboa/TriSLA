@@ -1,1 +1,0 @@
-kafka                            ClusterIP   10.233.43.214   <none>        9092/TCP                      5d17h

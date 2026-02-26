@@ -1,1 +1,0 @@
-⚠️ NOTA: Imagens v3.9.3 têm erros de sintaxe. Usando pods funcionais de versões anteriores para validação.

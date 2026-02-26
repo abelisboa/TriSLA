@@ -1,6 +1,0 @@
-helm/trisla/values-nasp.yaml.backup-s6.16:156:    TRISLA_RPC_URL: "http://trisla-besu:8545"
-helm/trisla/templates/deployment-bc-nssmf.yaml:42:        - name: TRISLA_RPC_URL
-helm/trisla/values-nasp.yaml:63:    TRISLA_RPC_URL: "http://trisla-besu:8545"
-helm/trisla/values-nasp.yaml.backup:65:    TRISLA_RPC_URL: "http://trisla-besu:8545"
-helm/trisla/values-nasp.yaml.backup-s6.15:156:    TRISLA_RPC_URL: "http://trisla-besu:8545"
-helm/trisla/values.yaml:99:    # TRISLA_RPC_URL e BESU_RPC_URL serão configuradas no template deployment-bc-nssmf.yaml

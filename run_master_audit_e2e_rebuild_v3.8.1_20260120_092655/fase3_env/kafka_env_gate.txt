@@ -1,3 +1,0 @@
-FAIL
-Decision Engine: KAFKA_ENABLED/USE_KAFKA != true (valor='false')
-Decision Engine: brokers inválidos (valor='')

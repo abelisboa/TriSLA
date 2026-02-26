@@ -1,4 +1,0 @@
-/api/v1/explain
-/api/v1/predict
-/health
-/metrics

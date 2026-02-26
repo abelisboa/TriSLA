@@ -1,1 +1,0 @@
-# Kafka não encontrado ou não configurado

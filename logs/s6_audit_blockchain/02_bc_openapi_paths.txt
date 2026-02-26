@@ -1,7 +1,0 @@
-"/health"
-"/health/ready"
-"/metrics"
-"/api/v1/register-sla"
-"/api/v1/update-sla-status"
-"/api/v1/get-sla/{sla_id}"
-"/api/v1/execute-contract"

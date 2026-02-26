@@ -1,2 +1,0 @@
-trisla-portal-backend            NodePort    10.233.46.159   <none>        8001:32002/TCP                31d
-trisla-portal-frontend           NodePort    10.233.19.22    <none>        80:32001/TCP                  31d

@@ -1,4 +1,0 @@
-NAME         	NAMESPACE	REVISION	UPDATED                                	STATUS  	CHART              	APP VERSION
-trisla       	trisla   	25      	2025-12-21 10:17:50.517823619 -0300 -03	deployed	trisla-3.7.10      	3.7.10     
-trisla-besu  	trisla   	3       	2025-12-21 11:01:04.401039684 -0300 -03	failed  	trisla-besu-1.0.0  	23.10.1    
-trisla-portal	trisla   	8       	2025-12-20 18:34:46.877192758 -0300 -03	deployed	trisla-portal-1.0.2	1.0.0      

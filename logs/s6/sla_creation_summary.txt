@@ -1,4 +1,0 @@
-=== SLA Creation Results ===
-{"success":false,"reason":"nasp_degraded","detail":"SEM-CSMF offline: All connection attempts failed","phase":"blockchain","upstream_status":503}pod "curl-test-3" deleted from trisla namespace
-{"success":false,"reason":"nasp_degraded","detail":"SEM-CSMF offline: All connection attempts failed","phase":"blockchain","upstream_status":503}pod "curl-test-4" deleted from trisla namespace
-{"success":false,"reason":"nasp_degraded","detail":"SEM-CSMF offline: All connection attempts failed","phase":"blockchain","upstream_status":503}pod "curl-test-2" deleted from trisla namespace

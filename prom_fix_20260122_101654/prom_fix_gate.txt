@@ -1,3 +1,0 @@
-cpu_usage EMPTY
-net_node_tx EMPTY
-ok_count 0 / 2

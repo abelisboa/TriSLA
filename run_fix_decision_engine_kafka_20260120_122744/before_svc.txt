@@ -1,2 +1,0 @@
-NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-trisla-decision-engine   ClusterIP   10.233.26.201   <none>        8082/TCP   31d

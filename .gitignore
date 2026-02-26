@@ -1,116 +1,63 @@
-# ==========================================================
-# TRI-SLA — REPOSITÓRIO PÚBLICO LIMPO (CODE ONLY)
-# ==========================================================
+#################################################
+# TRI-SLA PUBLIC REPOSITORY POLICY
+# Only apps/, docs/, helm/ allowed
+#################################################
 
-# ==========================================================
-# 🔒 ARTEFATOS OPERACIONAIS LOCAIS (NUNCA PUBLICAR)
-# ==========================================================
+# Ignore everything
+*
 
-# Evidências experimentais
-evidencias_*/
-evidencias*/
-*_evidencias/
-academico/
-artigos/
+# Allow only:
+!apps/
+!docs/
+!helm/
+!README.md
+!.gitignore
 
-# Patches e imagens locais
-_ml_patch/
-_de_patch/
-*_patch/
-*.tar
-*.tar.gz
-*.tar.xz
-*.img
-*.iso
+# Allow contents inside allowed dirs
+!apps/**
+!docs/**
+!helm/**
 
-# Build digests locais
-digest.txt
+#################################################
+# Explicitly forbidden content
+#################################################
 
-# Runner local
-actions-runner/
+# Prompts
+prompts/
+PROMPTS/
+PROMPT_*.md
 
-# Third party pesado
-third_party/
+# Run artifacts
+run_*/
+sem_*/
+snapshot_*/
+snapshots/
+trisla_avaliacao_*/
+trisla_evidencias_*/
 
-# Dumps
-*.sql
-*.dump
-*.backup
+# Test results
+tests/results/
+*.jsonl
 
-# ==========================================================
-# 🐳 CONTAINERS / BUILD CACHE
-# ==========================================================
-
-dist/
-build/
+# Logs
 *.log
-*.out
-*.cache
-*.pid
+*_logs.txt
+logs/
 
-# Docker / Podman
-*.oci
-*.manifest
+# Helm packaged releases
+*.tgz
 
-# ==========================================================
-# 🌐 FRONTEND / NODE
-# ==========================================================
-
-node_modules/
-.next/
-out/
-coverage/
-
-# Webpack cache
-*.pack
-.cache/
-.next/cache/
-
-# ==========================================================
-# 🐍 PYTHON
-# ==========================================================
-
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
-.venv/
-venv/
-.env
-.env.*
-
-# ==========================================================
-# 🔐 SEGURANÇA
-# ==========================================================
-
-*.pem
-*.key
-*.crt
-credentials.json
-secrets.yaml
-*.kubeconfig
-
-# ==========================================================
-# 🧠 IDE / SISTEMA
-# ==========================================================
-
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
-# ==========================================================
-# 🚫 EXCLUSÕES GLOBAIS (GARANTIA EXTRA)
-# ==========================================================
-
-# Nunca subir arquivos acima de 50MB
-*.zip
-*.7z
-*.rar
-# Virtual environments (ANY)
+# Virtual environments
 venv/
 venv_*/
 .venv/
-*/venv/
-*/venv_*/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+# Block portal entirely
+trisla-portal/

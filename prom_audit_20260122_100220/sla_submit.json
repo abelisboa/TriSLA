@@ -1,8 +1,0 @@
-{
-  "template_id": "template:eMBB",
-  "form_values": {
-    "service_type": "eMBB",
-    "throughput": "5",
-    "latency": "100"
-  }
-}

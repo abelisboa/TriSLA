@@ -1,3 +1,0 @@
-?? TriSLA/
-?? helm/trisla/Chart.lock
-?? helm/trisla/charts/

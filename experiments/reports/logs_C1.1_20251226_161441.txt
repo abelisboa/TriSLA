@@ -1,6 +1,0 @@
-# Logs Coletados - 2025-12-26T16:14:41.061537+00:00
-# Namespace: trisla
-# Componentes: decision-engine, ml-nsmf, sem-csmf, bc-nssmf
-
-================================================================================
-

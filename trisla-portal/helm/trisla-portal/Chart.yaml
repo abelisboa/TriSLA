@@ -1,7 +1,0 @@
-apiVersion: v2
-name: trisla-portal
-description: Portal TriSLA - Frontend e Backend com NodePort
-type: application
-version: 3.7.35
-appVersion: "3.7.35"
-

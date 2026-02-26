@@ -1,3 +1,0 @@
-/home/porvir5g/gtp5g/trisla/evidencias_resultados_v3.8.1/01_slas/sla_embb.json
-/home/porvir5g/gtp5g/trisla/evidencias_resultados_v3.8.1/01_slas/sla_mmtc.json
-/home/porvir5g/gtp5g/trisla/evidencias_resultados_v3.8.1/01_slas/sla_urllc.json

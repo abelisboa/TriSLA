@@ -1,2 +1,0 @@
-trisla-bc-nssmf-7d99b476b7-r75jl          0/1     ImagePullBackOff    0                5d17h
-trisla-decision-engine-c4f9bcf86-8s7jz    0/1     ErrImageNeverPull   0                3h51m

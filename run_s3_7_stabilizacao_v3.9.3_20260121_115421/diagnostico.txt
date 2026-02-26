@@ -1,8 +1,0 @@
-=== DIAGNÓSTICO COMPLETO ===
-
-1. trisla-decision-engine: SyntaxError - decision_producer usado antes de global declaration
-2. trisla-ml-nsmf: SyntaxError - unterminated string literal em predictor.py:75
-
-Pods funcionais encontrados:
-trisla-decision-engine-575dc8866b-4pln4 trisla-decision-engine-8cbf6fdd4-tfk7q
-trisla-ml-nsmf-5fc74f4498-hqkq4 trisla-ml-nsmf-f496b7d77-68v7l

@@ -1,9 +1,0 @@
-kafka-c948b8d64-jgmz5	apache/kafka:latest
-trisla-bc-nssmf-7b5c6fd7b7-zc4zl	ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.21
-trisla-bc-nssmf-7d99b476b7-r75jl	ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.18
-trisla-besu-6448cb6bc6-mxb84	ghcr.io/abelisboa/trisla-besu:v3.7.29
-trisla-decision-engine-7984f6f486-jgn96	localhost/trisla-decision-engine:xai-evaluate-final-v2
-trisla-ml-nsmf-648666b86-7ghmv	ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.36-ml-numpy2
-trisla-portal-backend-69568dbdb7-5z8k9	ghcr.io/abelisboa/trisla-portal-backend:v3.7.35
-trisla-portal-frontend-6dd98dc868-2nx7k	ghcr.io/abelisboa/trisla-portal-frontend:v3.7.21
-trisla-sem-csmf-685985d44-6v9hk	ghcr.io/abelisboa/trisla-sem-csmf:v3.7.34

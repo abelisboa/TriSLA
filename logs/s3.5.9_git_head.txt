@@ -1,2 +1,0 @@
-786c91d fix(helm): remove obsolete trisla-besu dependency and regenerate artifacts (S3.5.8)
-786c91ddf5db9d77006d95126892008bb5ad44a8

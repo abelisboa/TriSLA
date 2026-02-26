@@ -1,3 +1,0 @@
-  Normal   Scheduled       29m                    default-scheduler  Successfully assigned trisla/trisla-sem-csmf-7c4d5765ff-zprtm to node1
-  Normal   AddedInterface  29m                    multus             Add eth0 [10.233.102.158/32] from k8s-pod-network
-  Normal   Pulling         27m (x4 over 29m)      kubelet            Pulling image "ghcr.io/abelisboa/trisla-sem-csmf:v3.9.4"

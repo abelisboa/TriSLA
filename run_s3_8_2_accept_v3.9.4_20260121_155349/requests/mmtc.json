@@ -1,8 +1,0 @@
-{
-  "template_id": "template:mMTC",
-  "form_values": {
-    "service_type": "mMTC",
-    "devices": "500",
-    "latency": "300"
-  }
-}

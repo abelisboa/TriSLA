@@ -1,1 +1,0 @@
-kafka-76696c9d87-vhgvg                      0/1     ImagePullBackOff   0          22m

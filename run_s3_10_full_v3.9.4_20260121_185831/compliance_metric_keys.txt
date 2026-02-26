@@ -1,1 +1,0 @@
-METRICS_KEYS_FOUND= ['latency', 'packet_loss', 'throughput']

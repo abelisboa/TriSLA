@@ -1,7 +1,0 @@
-=== Decision Engine Logs (t_decision) ===
-    global decision_producer
-SyntaxError: name 'decision_producer' is used prior to global declaration
-2026-01-21 14:34:22,817 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
-2026-01-21 14:34:22,817 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
-2026-01-21 14:34:22,996 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
-2026-01-21 14:34:22,996 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.

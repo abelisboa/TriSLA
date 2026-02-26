@@ -1,8 +1,0 @@
-{
-  "template_id": "template:URLLC",
-  "form_values": {
-    "latency": 5,
-    "reliability": 0.999,
-    "throughput": 50
-  }
-}

@@ -1,2 +1,0 @@
-NAME                               READY   STATUS             RESTARTS   AGE
-trisla-sem-csmf-565dbbfc89-sh789   0/1     ImagePullBackOff   0          16s

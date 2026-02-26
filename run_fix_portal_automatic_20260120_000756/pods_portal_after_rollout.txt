@@ -1,2 +1,0 @@
-trisla-portal-backend-7498b598f7-hm7gw    1/1     Running            0                 3h16m   10.233.75.28     node2   <none>           <none>
-trisla-portal-frontend-7dffd67779-mql7r   1/1     Running            0                 5h50m   10.233.75.12     node2   <none>           <none>

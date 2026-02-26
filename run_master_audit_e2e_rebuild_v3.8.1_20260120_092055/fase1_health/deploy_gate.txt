@@ -1,2 +1,0 @@
-FAIL
-trisla-ml-nsmf replicas=1 ready=0 available=0

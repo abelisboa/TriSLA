@@ -1,7 +1,0 @@
-trisla-bc-nssmf:apps/bc-nssmf/Dockerfile:apps/bc-nssmf
-trisla-decision-engine:apps/decision-engine/Dockerfile:apps/decision-engine
-trisla-ml-nsmf:apps/ml-nsmf/Dockerfile:apps/ml-nsmf
-trisla-nasp-adapter:apps/nasp-adapter/Dockerfile:apps/nasp-adapter
-trisla-sem-csmf:apps/sem-csmf/Dockerfile:apps/sem-csmf
-trisla-sla-agent-layer:apps/sla-agent-layer/Dockerfile:apps/sla-agent-layer
-trisla-ui-dashboard:apps/ui-dashboard/Dockerfile:apps/ui-dashboard

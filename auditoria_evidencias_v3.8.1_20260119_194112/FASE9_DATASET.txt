@@ -1,3 +1,0 @@
-[FASE 9] DATASET PARA GRAFICOS
-Linhas dataset (inclui header): 1
-FAIL: Dataset vazio para gráficos (sem decisões válidas em JSON)

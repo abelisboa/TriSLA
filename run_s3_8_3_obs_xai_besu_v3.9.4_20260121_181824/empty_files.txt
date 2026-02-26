@@ -1,4 +1,0 @@
-run_s3_8_3_obs_xai_besu_v3.9.4_20260121_181824/besu_svc_all.txt
-run_s3_8_3_obs_xai_besu_v3.9.4_20260121_181824/besu_pods_all.txt
-run_s3_8_3_obs_xai_besu_v3.9.4_20260121_181824/kafka_create_decision_events.txt
-run_s3_8_3_obs_xai_besu_v3.9.4_20260121_181824/besu_svc_trisla.txt

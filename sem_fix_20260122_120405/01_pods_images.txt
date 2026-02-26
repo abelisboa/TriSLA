@@ -1,1 +1,0 @@
-trisla-sem-csmf-79f754c49b-c8g4f	ghcr.io/abelisboa/trisla-sem-csmf:v3.7.11	Running

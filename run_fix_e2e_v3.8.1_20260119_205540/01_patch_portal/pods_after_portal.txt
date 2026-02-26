@@ -1,2 +1,0 @@
-trisla-portal-backend-79b64b6447-sdk9g    1/1     Terminating        0               22m     10.233.75.55     node2   <none>           <none>
-trisla-portal-backend-7b7b87fcc-4rr9l     1/1     Running            0               16s     10.233.75.33     node2   <none>           <none>

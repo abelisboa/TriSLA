@@ -1,2 +1,0 @@
-13:  - besu
-18:# Dependencies removed - Besu is now integrated directly in templates (Sprint S3.4)

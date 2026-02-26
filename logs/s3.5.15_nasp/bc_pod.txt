@@ -1,1 +1,0 @@
-BC_POD=trisla-bc-nssmf-866ddbf476-pvc2p

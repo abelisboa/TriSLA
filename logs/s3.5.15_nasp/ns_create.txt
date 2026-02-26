@@ -1,3 +1,0 @@
-namespace/trisla created
-NAME     STATUS   AGE
-trisla   Active   0s

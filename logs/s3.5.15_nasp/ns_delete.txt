@@ -1,2 +1,0 @@
-namespace "trisla" deleted
-Namespace removido.

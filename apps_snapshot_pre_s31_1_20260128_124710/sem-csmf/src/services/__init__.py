@@ -1,4 +1,0 @@
-"""
-Serviços do SEM-CSMF
-"""
-

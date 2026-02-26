@@ -1,6 +1,0 @@
-    Image:          ghcr.io/abelisboa/trisla-sem-csmf:v3.9.4
-    Image ID:       ghcr.io/abelisboa/trisla-sem-csmf@sha256:34a644b241e87267e8a2897d00c73f2618ceec90b0036b4104880a10fd31b40b
-    Port:           8080/TCP (http)
-    Host Port:      0/TCP (http)
-    State:          Waiting
-      Reason:       CrashLoopBackOff

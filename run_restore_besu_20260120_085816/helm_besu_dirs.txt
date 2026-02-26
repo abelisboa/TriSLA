@@ -1,3 +1,0 @@
-/home/porvir5g/gtp5g/trisla/helm/trisla/besu
-/home/porvir5g/gtp5g/trisla/helm/trisla-besu
-/home/porvir5g/gtp5g/trisla/helm/trisla-besu/templates

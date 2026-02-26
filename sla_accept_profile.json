@@ -1,9 +1,0 @@
-{
-  "sla_id": "sla_accept_real_plano_dados_1769035441",
-  "service_type": "5G_NSSMF",
-  "latency_ms": 10,
-  "throughput_mbps": 100,
-  "packet_loss_ratio": 0.001,
-  "availability": 0.99,
-  "priority": "high"
-}

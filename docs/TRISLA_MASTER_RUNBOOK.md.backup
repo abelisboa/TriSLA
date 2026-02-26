@@ -1,0 +1,1144 @@
+# TriSLA Master Runbook — Fonte Única de Verdade (SSOT)
+
+**Versão:** v3.9.11  
+**Data de Criação:** 2026-01-29  
+**Ambiente:** NASP (Network Automation & Slicing Platform)  
+**Cluster:** Kubernetes (namespace `trisla`)  
+**Node de Acesso:** node006  
+**Diretório Base:** `/home/porvir5g/gtp5g/trisla`
+
+---
+
+## 1️⃣ Propósito e Regras de Uso do Runbook
+
+### Papel do Documento como SSOT
+
+Este documento é a **fonte única de verdade (Single Source of Truth - SSOT)** para a arquitetura TriSLA. Ele consolida:
+
+- Arquitetura real implantada (runtime truth)
+- Fluxo ponta-a-ponta (E2E) oficial
+- Interfaces e contratos reais entre módulos
+- Regras de engenharia normativas
+- Padrões de evidência e validação
+- Estado operacional atual
+
+### Obrigatoriedade de Uso
+
+**📌 REGRA FUNDAMENTAL:** Após este documento (S37), nenhum novo prompt poderá ser executado sem:
+
+1. **Referenciar este Runbook** explicitamente
+2. **Seguir suas regras** de engenharia
+3. **Atualizar o Runbook** quando houver mudanças no sistema
+
+### Regra de Atualização Contínua
+
+- Qualquer alteração funcional, arquitetural ou operacional **DEVE** ser refletida neste documento
+- Versões do Runbook seguem o versionamento do TriSLA (ex: v3.9.11)
+- Mudanças devem ser documentadas na seção de Changelog (seção 12)
+
+### Proibição de Regressão, Gambiarra e Invenção
+
+Este Runbook proíbe explicitamente:
+
+- ❌ **Regressão:** Alterações que quebram funcionalidades existentes sem justificativa técnica documentada
+- ❌ **Gambiarra:** Workarounds temporários que não são documentados como limitações conhecidas
+- ❌ **Invenção:** Criação de funcionalidades não alinhadas com a arquitetura documentada
+
+---
+
+## 2️⃣ Regras de Engenharia TriSLA (Normativas)
+
+### Anti-Regressão
+
+**Regra:** Qualquer alteração que afete interfaces públicas, contratos de API, ou fluxo E2E deve:
+
+1. Manter compatibilidade retroativa quando possível
+2. Documentar breaking changes explicitamente
+3. Incluir migração path quando necessário
+4. Validar via gates oficiais (S31.x, S34.x, S36.x)
+
+### Anti-Gambiarra
+
+**Regra:** Workarounds são permitidos APENAS se:
+
+1. Documentados como limitações conhecidas (seção 11)
+2. Incluem plano de correção definitiva
+3. Não violam contratos de API
+4. Não introduzem dependências circulares
+
+### Anti-Invenção
+
+**Regra:** Novas funcionalidades devem:
+
+1. Estar alinhadas com a arquitetura documentada
+2. Seguir padrões de evidência estabelecidos
+3. Passar por gates de validação oficiais
+4. Ser documentadas neste Runbook antes de produção
+
+### Política de Versionamento
+
+- **Formato:** `v{Major}.{Minor}.{Patch}`
+- **Major:** Breaking changes arquiteturais
+- **Minor:** Novas funcionalidades compatíveis
+- **Patch:** Correções e melhorias
+- **Tags:** Todas as imagens Docker devem usar tags versionadas (não `latest`)
+
+### Política de Release
+
+1. **Baseline:** Versão atual de referência: **v3.9.11**
+2. **Evidências:** Cada release deve incluir evidências em `evidencias_release_v{VERSION}/`
+3. **Validação:** Release só é considerada válida após passar gates oficiais
+4. **Documentação:** Runbook deve ser atualizado antes do release
+
+### Política de Evidência
+
+- **Estrutura:** `evidencias_release_v{VERSION}/{SCENARIO}/`
+- **Artefatos mínimos:** Logs, métricas, snapshots, checksums
+- **Validade:** Evidências devem ser reproduzíveis e auditáveis
+- **Checksums:** SHA256 obrigatório para artefatos críticos
+
+---
+
+## 3️⃣ Ambiente NASP — Runtime Truth
+
+### Cluster Kubernetes
+
+**Nodes:**
+- `node1` - control-plane, Ready, v1.31.1, Age: 456d
+- `node2` - control-plane, Ready, v1.31.1, Age: 456d
+
+**Namespace:**
+- `trisla` - Active, Age: 40d
+
+### Estado Operacional dos Pods (v3.9.11)
+
+| Pod | Status | Ready | Restarts | Age | Node | IP |
+|-----|--------|-------|----------|-----|------|-----|
+| kafka-c9477555-fjtsc | Running | 1/1 | 0 | 33m | node2 | 10.233.75.44 |
+| trisla-bc-nssmf-6d959b59c8-qzqpb | Running | 1/1 | 0 | 13h | node1 | 10.233.102.155 |
+| trisla-decision-engine-f976f766c-5l8qd | Running | 1/1 | 0 | 13h | node1 | 10.233.102.138 |
+| trisla-ml-nsmf-59698b5cbb-nwx8l | Running | 1/1 | 0 | 13h | node1 | 10.233.102.189 |
+| trisla-nasp-adapter-68f54f99d5-vwjl4 | Running | 1/1 | 0 | 13h | node1 | 10.233.102.164 |
+| trisla-portal-backend-7d46f4587c-4mp2k | Running | 1/1 | 0 | 13h | node2 | 10.233.75.42 |
+| trisla-portal-frontend-7c7f45948f-tz5bw | Running | 1/1 | 0 | 13h | node2 | 10.233.75.55 |
+| trisla-sem-csmf-64889b9447-lwvgw | Running | 1/1 | 0 | 13h | node1 | 10.233.102.178 |
+| trisla-sla-agent-layer-5b5d55df4-bgzpw | Running | 1/1 | 0 | 13h | node1 | 10.233.102.153 |
+| trisla-ui-dashboard-7988b8b6d9-qlpzc | Running | 1/1 | 0 | 13h | node1 | 10.233.102.145 |
+
+### Versões Reais das Imagens
+
+| Módulo | Imagem Docker | Tag |
+|--------|---------------|-----|
+| Kafka | apache/kafka | latest |
+| BC-NSSMF | ghcr.io/abelisboa/trisla-bc-nssmf | v3.9.11 |
+| Decision Engine | ghcr.io/abelisboa/trisla-decision-engine | v3.9.11 |
+| ML-NSMF | ghcr.io/abelisboa/trisla-ml-nsmf | v3.9.11 |
+| NASP Adapter | ghcr.io/abelisboa/trisla-nasp-adapter | v3.9.11 |
+| Portal Backend | ghcr.io/abelisboa/trisla-portal-backend | v3.9.11 |
+| Portal Frontend | ghcr.io/abelisboa/trisla-portal-frontend | v3.9.11 |
+| SEM-CSMF | ghcr.io/abelisboa/trisla-sem-csmf | v3.9.11 |
+| SLA-Agent Layer | ghcr.io/abelisboa/trisla-sla-agent-layer | v3.9.11 |
+| UI Dashboard | ghcr.io/abelisboa/trisla-ui-dashboard | v3.9.11 |
+| Traffic Exporter | ghcr.io/abelisboa/trisla-traffic-exporter | v3 |
+
+### Helm Releases
+
+| Release | Namespace | Revision | Status | Chart | App Version |
+|---------|-----------|----------|--------|-------|-------------|
+| trisla | trisla | 152 | deployed | trisla-3.7.10 | 3.7.10 |
+| trisla-besu | trisla | 3 | failed | trisla-besu-1.0.0 | 23.10.1 |
+| trisla-portal | trisla | 15 | deployed | trisla-portal-1.0.2 | 1.0.0 |
+
+---
+
+## 4️⃣ Arquitetura Implantada (Como Está Rodando)
+
+### Portal Frontend
+
+**Responsabilidade:** Interface web para submissão e visualização de SLAs
+
+**Deployment:** `trisla-portal-frontend`  
+**Service:** `trisla-portal-frontend` (NodePort 32001)  
+**Imagem:** `ghcr.io/abelisboa/trisla-portal-frontend:v3.9.11`  
+**Portas:** 80 (HTTP) → NodePort 32001
+
+**O que faz:**
+- Renderiza formulários de criação de SLA (PLN ou Template)
+- Envia requisições para Portal Backend (`/api/v1/slas/*`)
+- Exibe resultados de decisão (ACCEPT/RENEG/REJECT)
+- Visualiza métricas e status de SLAs
+
+**O que não faz:**
+- Não processa lógica de negócio
+- Não acessa diretamente módulos NASP
+- Não persiste dados (somente visualização)
+
+**Dependências:**
+- Portal Backend (via REST API)
+
+---
+
+### Portal Backend
+
+**Responsabilidade:** Orquestração e gateway para módulos NASP
+
+**Deployment:** `trisla-portal-backend`  
+**Service:** `trisla-portal-backend` (NodePort 32002)  
+**Imagem:** `ghcr.io/abelisboa/trisla-portal-backend:v3.9.11`  
+**Portas:** 8001 (HTTP) → NodePort 32002
+
+**O que faz:**
+- Recebe requisições do Frontend (`POST /api/v1/slas/submit`, `POST /api/v1/slas/interpret`)
+- Orquestra chamadas aos módulos NASP (SEM-CSMF, ML-NSMF, Decision Engine, BC-NSSMF, SLA-Agent)
+- Implementa gate lógico (ACCEPT → BC-NSSMF, RENEG/REJECT → não chama BC-NSSMF)
+- Retorna respostas padronizadas com `decision`, `status`, `reason`, `justification`
+
+**O que não faz:**
+- Não toma decisões de negócio (delega para Decision Engine)
+- Não processa semântica (delega para SEM-CSMF)
+- Não avalia ML (delega para ML-NSMF)
+
+**Dependências:**
+- SEM-CSMF (`http://trisla-sem-csmf:8080`)
+- ML-NSMF (`http://trisla-ml-nsmf:8081`)
+- Decision Engine (`http://trisla-decision-engine:8082`)
+- BC-NSSMF (`http://trisla-bc-nssmf:8083`)
+- SLA-Agent Layer (`http://trisla-sla-agent-layer:8084`)
+
+---
+
+### SEM-CSMF
+
+**Responsabilidade:** Processamento semântico e interpretação de intents
+
+**Deployment:** `trisla-sem-csmf`  
+**Service:** `trisla-sem-csmf` (ClusterIP)  
+**Imagem:** `ghcr.io/abelisboa/trisla-sem-csmf:v3.9.11`  
+**Portas:** 8080 (HTTP)
+
+**O que faz:**
+- Recebe intents via `POST /api/v1/intents`
+- Processa semanticamente e gera NEST (Network Slice Template)
+- Valida conformidade com ontologias (GST/NEST conforme GSMA/3GPP)
+- Retorna `intent_id`, `nest_id`, `service_type`, `sla_requirements`
+
+**O que não faz:**
+- Não avalia viabilidade (delega para ML-NSMF)
+- Não toma decisões (delega para Decision Engine)
+- Não aceita endpoint `/api/v1/sla/submit` (endpoint correto é `/api/v1/intents`)
+
+**Dependências:**
+- Decision Engine (para encaminhar NEST)
+
+**Limitações conhecidas:**
+- Processamento semântico completo com ontologias OWL2 avançadas pode estar limitado em ambiente de teste
+
+---
+
+### Decision Engine
+
+**Responsabilidade:** Orquestração do pipeline e decisão final (ACCEPT/RENEG/REJECT)
+
+**Deployment:** `trisla-decision-engine`  
+**Service:** `trisla-decision-engine` (ClusterIP)  
+**Imagem:** `ghcr.io/abelisboa/trisla-decision-engine:v3.9.11`  
+**Portas:** 8082 (HTTP)
+
+**O que faz:**
+- Recebe NEST do SEM-CSMF via `POST /evaluate`
+- Chama ML-NSMF para avaliação de viabilidade
+- Aplica regras de decisão baseadas em:
+  - `ml_prediction.risk_score`
+  - `ml_prediction.model_used` (obrigatório para ACCEPT)
+  - Thresholds diferenciados por tipo de slice (URLLC, eMBB, mMTC)
+- Retorna decisão: `ACCEPT`, `RENEG`, ou `REJECT`
+- Publica eventos no Kafka para rastreabilidade
+
+**O que não faz:**
+- Não processa semântica (recebe NEST já processado)
+- Não executa ML (delega para ML-NSMF)
+- Não registra no blockchain (delega para BC-NSSMF)
+
+**Dependências:**
+- ML-NSMF (`http://trisla-ml-nsmf:8081`)
+- Kafka (para eventos)
+- BC-NSSMF (chamado apenas se ACCEPT)
+
+---
+
+### ML-NSMF
+
+**Responsabilidade:** Avaliação de viabilidade usando Machine Learning
+
+**Deployment:** `trisla-ml-nsmf`  
+**Service:** `trisla-ml-nsmf` (ClusterIP)  
+**Imagem:** `ghcr.io/abelisboa/trisla-ml-nsmf:v3.9.11`  
+**Portas:** 8081 (HTTP)
+
+**O que faz:**
+- Recebe NEST via `POST /api/v1/predict`
+- Coleta métricas reais do Prometheus (RAN, Transport Network, Core)
+- Executa predição ML (quando modelo disponível) ou fallback
+- Retorna `ml_prediction` com:
+  - `risk_score` (0.0 a 1.0)
+  - `risk_level` (low, medium, high)
+  - `confidence` (0.0 a 1.0)
+  - `model_used` (boolean - obrigatório para ACCEPT)
+  - `timestamp`
+- Gera XAI (Explainable AI) com explicações do modelo e sistema
+
+**O que não faz:**
+- Não toma decisões finais (apenas avalia viabilidade)
+- Não processa semântica (recebe NEST já processado)
+- Não acessa blockchain
+
+**Dependências:**
+- Prometheus (para métricas reais)
+- Modelo ML + Scaler (obrigatórios para `model_used=true`)
+
+**Limitações conhecidas:**
+- Modelo LSTM completo pode não estar disponível em ambiente de teste
+- XAI completo requer infraestrutura adicional (SHAP, LIME)
+
+---
+
+### Kafka
+
+**Responsabilidade:** Trilha auditável de eventos e decisões
+
+**Deployment:** `kafka`  
+**Service:** `kafka` (ClusterIP)  
+**Imagem:** `apache/kafka:latest`  
+**Portas:** 9092 (TCP)
+
+**O que faz:**
+- Recebe eventos de decisão do Decision Engine
+- Armazena eventos de forma persistente
+- Permite consumo para auditoria e evidências
+
+**O que não faz:**
+- Não processa lógica de negócio
+- Não toma decisões
+
+**Limitações conhecidas:**
+- Kafka em modo KRaft (sem Zookeeper)
+- Consumer groups podem ser instáveis em KRaft
+- Workaround permitido: consumo por partição para evidências
+
+---
+
+### SLA-Agent Layer
+
+**Responsabilidade:** Monitoramento contínuo de SLAs e métricas em tempo real
+
+**Deployment:** `trisla-sla-agent-layer`  
+**Service:** `trisla-sla-agent-layer` (ClusterIP)  
+**Imagem:** `ghcr.io/abelisboa/trisla-sla-agent-layer:v3.9.11`  
+**Portas:** 8084 (HTTP)
+
+**O que faz:**
+- Monitora métricas de SLAs ativos
+- Expõe endpoint `/api/v1/metrics/realtime` para consulta de métricas
+- Coleta dados do Prometheus e NASP Adapter
+- Fornece feedback para adaptação automática
+
+**O que não faz:**
+- Não toma decisões de aceitação/rejeição
+- Não processa novos SLAs (apenas monitora existentes)
+
+**Dependências:**
+- Prometheus (para métricas)
+- NASP Adapter (para dados de infraestrutura)
+
+---
+
+### NASP Adapter
+
+**Responsabilidade:** Interface com infraestrutura física NASP
+
+**Deployment:** `trisla-nasp-adapter`  
+**Service:** `trisla-nasp-adapter` (ClusterIP)  
+**Imagem:** `ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.11`  
+**Portas:** 8085 (HTTP)
+
+**O que faz:**
+- Traduz requisições TriSLA para comandos NASP
+- Coleta métricas de infraestrutura física
+- Implementa controle de data plane quando necessário
+
+**O que não faz:**
+- Não processa semântica
+- Não toma decisões
+
+**Dependências:**
+- Infraestrutura física NASP
+
+---
+
+### BC-NSSMF
+
+**Responsabilidade:** Registro de contratos SLA no blockchain
+
+**Deployment:** `trisla-bc-nssmf`  
+**Service:** `trisla-bc-nssmf` (ClusterIP)  
+**Imagem:** `ghcr.io/abelisboa/trisla-bc-nssmf:v3.9.11`  
+**Portas:** 8083 (HTTP)
+
+**O que faz:**
+- Recebe requisições apenas quando `decision=ACCEPT`
+- Registra contratos no Hyperledger Besu
+- Retorna `blockchain_tx_hash` para rastreabilidade
+- Valida conformidade antes de registrar
+
+**O que não faz:**
+- Não é chamado para RENEG ou REJECT
+- Não processa semântica ou ML
+
+**Dependências:**
+- Hyperledger Besu (blockchain node)
+
+**Limitações conhecidas:**
+- Besu em rede privada de teste (não mainnet pública)
+- Consenso federado multi-org não implementado
+
+---
+
+### Hyperledger Besu
+
+**Responsabilidade:** Blockchain node para persistência on-chain
+
+**Deployment:** `trisla-besu` (via Helm)  
+**Status:** Failed (Helm release)  
+**Imagem:** Não disponível (release falhou)
+
+**O que deveria fazer:**
+- Manter blockchain privada
+- Processar transações de contratos inteligentes
+- Fornecer rastreabilidade imutável
+
+**Estado atual:**
+- ⚠️ Helm release em estado `failed`
+- ⚠️ Funcionalidade blockchain pode estar limitada
+
+---
+
+## 5️⃣ Interfaces e Endpoints Reais
+
+### Portal Backend → SEM-CSMF
+
+**Endpoint:** `POST http://trisla-sem-csmf:8080/api/v1/intents`
+
+**Payload Esperado:**
+```json
+{
+  "intent_id": "string (obrigatório)",
+  "service_type": "eMBB | URLLC | mMTC (obrigatório)",
+  "sla_requirements": {
+    "latency_maxima_ms": 10,
+    "disponibilidade_percent": 99.99,
+    ...
+  },
+  "tenant_id": "string (opcional)",
+  "metadata": {} // opcional
+}
+```
+
+**Payload Retornado:**
+```json
+{
+  "intent_id": "string",
+  "nest_id": "nest-{intent_id}",
+  "service_type": "eMBB | URLLC | mMTC",
+  "sla_requirements": {},
+  "status": "processed"
+}
+```
+
+**Quem chama:** Portal Backend  
+**Quem consome:** SEM-CSMF
+
+**⚠️ IMPORTANTE:** Portal Backend NÃO deve chamar `/api/v1/sla/submit` (não existe). Endpoint correto é `/api/v1/intents`.
+
+---
+
+### SEM-CSMF → Decision Engine
+
+**Endpoint:** `POST http://trisla-decision-engine:8082/evaluate`
+
+**Payload Esperado:** NEST (Network Slice Template)
+
+**Payload Retornado:** Decisão com `decision`, `reason`, `justification`
+
+**Quem chama:** SEM-CSMF  
+**Quem consome:** Decision Engine
+
+---
+
+### Decision Engine → ML-NSMF
+
+**Endpoint:** `POST http://trisla-ml-nsmf:8081/api/v1/predict`
+
+**Payload Esperado:** NEST com métricas contextuais
+
+**Payload Retornado:**
+```json
+{
+  "ml_prediction": {
+    "risk_score": 0.0-1.0,
+    "risk_level": "low | medium | high",
+    "confidence": 0.0-1.0,
+    "model_used": true | false,
+    "timestamp": "ISO8601"
+  },
+  "xai": {
+    "modelo": {},
+    "sistema": {}
+  }
+}
+```
+
+**Quem chama:** Decision Engine  
+**Quem consome:** ML-NSMF
+
+---
+
+### Decision Engine → Kafka
+
+**Endpoint:** Kafka Producer → `trisla-decisions` topic
+
+**Payload:** Evento de decisão com `decision`, `intent_id`, `nest_id`, `timestamp`
+
+**Quem chama:** Decision Engine  
+**Quem consome:** Auditores, sistemas de evidência
+
+---
+
+### Portal Backend → BC-NSSMF (apenas ACCEPT)
+
+**Endpoint:** `POST http://trisla-bc-nssmf:8083/api/v1/contracts/register`
+
+**Payload Esperado:** Contrato SLA completo
+
+**Payload Retornado:**
+```json
+{
+  "blockchain_tx_hash": "0x...",
+  "bc_status": "CONFIRMED",
+  "contract_address": "0x..."
+}
+```
+
+**Quem chama:** Portal Backend (apenas quando `decision=ACCEPT`)  
+**Quem consome:** BC-NSSMF
+
+**⚠️ GATE LÓGICO:** BC-NSSMF NÃO é chamado para RENEG ou REJECT.
+
+---
+
+### Portal Backend → SLA-Agent Layer
+
+**Endpoint:** `GET http://trisla-sla-agent-layer:8084/api/v1/metrics/realtime`
+
+**Payload Retornado:** Métricas em tempo real de SLAs ativos
+
+**Quem chama:** Portal Backend (para visualização)  
+**Quem consome:** Portal Frontend (via Backend)
+
+---
+
+### Portal Frontend → Portal Backend
+
+**Endpoints Principais:**
+- `POST /api/v1/slas/interpret` - Interpretação PLN
+- `POST /api/v1/slas/submit` - Submissão completa
+- `GET /api/v1/slas/status/{sla_id}` - Status do SLA
+- `GET /api/v1/slas/metrics/{sla_id}` - Métricas do SLA
+- `GET /nasp/diagnostics` - Diagnóstico de módulos
+
+**Quem chama:** Portal Frontend  
+**Quem consome:** Portal Backend
+
+---
+
+## 6️⃣ Fluxo Ponta-a-Ponta (E2E) Oficial do TriSLA
+
+### Fluxo Completo Passo a Passo
+
+#### 1. Portal UI (Frontend)
+**Entrada:** Usuário preenche formulário (PLN ou Template)
+
+**Ação:**
+- Usuário escolhe método: PLN ou Template
+- **PLN:** Digita texto livre → Frontend chama `/api/v1/slas/interpret`
+- **Template:** Preenche formulário → Frontend chama `/api/v1/slas/submit`
+
+**Saída:** Requisição HTTP para Portal Backend
+
+---
+
+#### 2. Portal Backend
+**Entrada:** Requisição do Frontend (`POST /api/v1/slas/submit` ou `/api/v1/slas/interpret`)
+
+**Ação:**
+- Valida payload básico
+- Transforma para formato SEM-CSMF (se necessário)
+- Chama SEM-CSMF via `POST http://trisla-sem-csmf:8080/api/v1/intents`
+
+**Saída:** Payload para SEM-CSMF
+
+---
+
+#### 3. SEM-CSMF
+**Entrada:** Intent com `intent_id`, `service_type`, `sla_requirements`
+
+**Ação:**
+- Processa semanticamente
+- Gera NEST (Network Slice Template)
+- Valida conformidade ontológica
+- Chama Decision Engine via `POST http://trisla-decision-engine:8082/evaluate`
+
+**Artefatos Gerados:**
+- `nest_id` (formato: `nest-{intent_id}`)
+- NEST completo
+
+**Saída:** NEST para Decision Engine
+
+---
+
+#### 4. Decision Engine
+**Entrada:** NEST do SEM-CSMF
+
+**Ação:**
+- Recebe NEST
+- Chama ML-NSMF via `POST http://trisla-ml-nsmf:8081/api/v1/predict`
+- Aguarda resposta ML
+- Aplica regras de decisão:
+  - Se `ml_prediction.model_used=false` → **NUNCA ACCEPT** (apenas RENEG)
+  - Se `ml_prediction.risk_score < threshold` e `model_used=true` → **ACCEPT**
+  - Se `ml_prediction.risk_score >= threshold` → **RENEG**
+  - Se condições críticas não atendidas → **REJECT**
+- Publica evento no Kafka (trilha auditável)
+
+**Artefatos Gerados:**
+- Decisão: `ACCEPT | RENEG | REJECT`
+- Evento Kafka com `decision`, `intent_id`, `nest_id`, `timestamp`
+
+**Saída:** Decisão para Portal Backend
+
+---
+
+#### 5. ML-NSMF (chamado pelo Decision Engine)
+**Entrada:** NEST com contexto
+
+**Ação:**
+- Coleta métricas reais do Prometheus (RAN, Transport Network, Core)
+- Executa predição ML (se modelo disponível) ou fallback
+- Calcula `risk_score`, `confidence`, `risk_level`
+- Determina `model_used` (true se pelo menos 2 métricas de 2 domínios diferentes)
+- Gera XAI (explicações do modelo e sistema)
+
+**Artefatos Gerados:**
+- `ml_prediction` completo
+- XAI (modelo + sistema)
+
+**Saída:** Predição ML para Decision Engine
+
+---
+
+#### 6. Decision Engine (Regra Final)
+**Entrada:** Predição ML do ML-NSMF
+
+**Ação:**
+- Aplica regras finais de decisão
+- Retorna decisão para Portal Backend
+
+**Saída:** Decisão final (`ACCEPT | RENEG | REJECT`)
+
+---
+
+#### 7. Kafka (Evento)
+**Entrada:** Evento de decisão do Decision Engine
+
+**Ação:**
+- Armazena evento de forma persistente
+- Tópico: `trisla-decisions` (inferido)
+- Permite consumo para auditoria
+
+**Artefatos Gerados:**
+- Evento Kafka com decisão completa
+
+**Saída:** Evento persistido (trilha auditável)
+
+---
+
+#### 8. Portal Backend (Gate Lógico)
+**Entrada:** Decisão do Decision Engine
+
+**Ação:**
+- **Se `decision=ACCEPT`:**
+  - Chama BC-NSSMF via `POST http://trisla-bc-nssmf:8083/api/v1/contracts/register`
+  - Aguarda `blockchain_tx_hash`
+  - Retorna resposta com `status: "CONFIRMED"`, `blockchain_tx_hash`
+- **Se `decision=RENEG`:**
+  - **NÃO chama BC-NSSMF**
+  - Retorna resposta com `status: "RENEGOTIATION_REQUIRED"`, sem `blockchain_tx_hash`
+- **Se `decision=REJECT`:**
+  - **NÃO chama BC-NSSMF**
+  - Retorna resposta com `status: "REJECTED"`, sem `blockchain_tx_hash`
+
+**Saída:** Resposta padronizada para Portal Frontend
+
+---
+
+#### 9. SLA-Agent (Monitoramento Contínuo)
+**Entrada:** SLAs ativos (após ACCEPT)
+
+**Ação:**
+- Monitora métricas em tempo real
+- Expõe `/api/v1/metrics/realtime`
+- Fornece feedback para adaptação
+
+**Saída:** Métricas para Portal Backend/Frontend
+
+---
+
+#### 10. NASP Adapter (Quando Aplicável)
+**Entrada:** Requisições de controle de data plane
+
+**Ação:**
+- Traduz comandos TriSLA para NASP
+- Coleta métricas de infraestrutura
+
+**Saída:** Dados de infraestrutura
+
+---
+
+#### 11. BC-NSSMF / Besu (Quando ACCEPT)
+**Entrada:** Contrato SLA (apenas quando `decision=ACCEPT`)
+
+**Ação:**
+- Registra contrato no Hyperledger Besu
+- Retorna `blockchain_tx_hash`
+
+**Artefatos Gerados:**
+- Transação blockchain
+- `blockchain_tx_hash`
+
+**Saída:** `blockchain_tx_hash` para Portal Backend
+
+**⚠️ LIMITAÇÃO:** Besu Helm release em estado `failed`. Funcionalidade blockchain pode estar limitada.
+
+---
+
+## 7️⃣ Kafka como Trilha Auditável
+
+### Tópicos
+
+**Tópico Principal:** `trisla-decisions` (inferido do código)
+
+**Partições:** Não especificado (configuração padrão do Kafka)
+
+### Payload Esperado
+
+```json
+{
+  "decision": "ACCEPT | RENEG | REJECT",
+  "intent_id": "string",
+  "nest_id": "string",
+  "timestamp": "ISO8601",
+  "ml_prediction": {},
+  "reason": "string",
+  "justification": "string"
+}
+```
+
+### Relação 1:1 com Decisão
+
+Cada decisão do Decision Engine gera **exatamente um evento** no Kafka, garantindo rastreabilidade completa.
+
+### Limitações Atuais
+
+1. **Kafka em modo KRaft:**
+   - Consumer groups podem ser instáveis
+   - Requer configuração específica
+
+2. **Workarounds Permitidos:**
+   - Consumo por partição para evidências (quando consumer groups falham)
+   - Uso de `kafka-console-consumer` para auditoria manual
+
+### Uso para Evidências
+
+- Eventos Kafka são usados para validação E2E (S36.x)
+- Permitem correlação entre decisões e métricas
+- Suportam auditoria e reprodução de cenários
+
+---
+
+## 8️⃣ ML-NSMF — Inferência e XAI (Estado Consolidado)
+
+### Obrigatoriedade de Modelo + Scaler
+
+**Regra:** Para `model_used=true`, ML-NSMF requer:
+
+1. **Modelo ML:** Arquivo de modelo treinado (ex: LSTM)
+2. **Scaler:** Arquivo de normalização (StandardScaler ou similar)
+
+**Critério de `model_used`:**
+- `model_used=true` se:
+  - Pelo menos 2 métricas coletadas
+  - Métricas de pelo menos 2 domínios diferentes (RAN, Transport Network, Core)
+  - Modelo e scaler disponíveis
+- `model_used=false` caso contrário (fallback)
+
+### Ingestão de Métricas Reais
+
+**Fonte:** Prometheus (`http://prometheus.trisla.svc.cluster.local:9090`)
+
+**Métricas Coletadas por Domínio:**
+
+**RAN:**
+- `latency_ms`
+- `jitter_ms`
+- `prb_utilization_percent`
+- `reliability`
+
+**Transport Network:**
+- `throughput_dl_mbps`
+- `throughput_ul_mbps`
+- `packet_loss_percent`
+
+**Core:**
+- `session_setup_time_ms`
+- `availability_percent`
+- `attach_success_rate`
+- `event_throughput`
+
+### Estrutura do `ml_prediction`
+
+```json
+{
+  "risk_score": 0.0-1.0,
+  "risk_level": "low | medium | high",
+  "viability_score": null | number,
+  "confidence": 0.0-1.0,
+  "timestamp": "ISO8601",
+  "model_used": true | false
+}
+```
+
+**Campos Obrigatórios:**
+- `risk_score` (sempre presente)
+- `risk_level` (sempre presente)
+- `confidence` (sempre presente)
+- `timestamp` (sempre presente)
+- `model_used` (sempre presente, obrigatório para ACCEPT)
+
+### Estrutura do XAI
+
+```json
+{
+  "xai": {
+    "modelo": {
+      "feature_importance": {},
+      "prediction_explanation": "string"
+    },
+    "sistema": {
+      "system_aware_explanation": "string",
+      "metrics_used": [],
+      "domains_analyzed": []
+    }
+  }
+}
+```
+
+**Campos Obrigatórios:**
+- `xai.modelo` (explicação do modelo ML)
+- `xai.sistema` (explicação system-aware)
+
+**Limitações conhecidas:**
+- XAI completo requer infraestrutura adicional (SHAP, LIME)
+- Em ambiente de teste, XAI pode estar simplificado
+
+---
+
+## 9️⃣ Padrão de Evidências TriSLA
+
+### Estrutura de Diretórios
+
+```
+evidencias_release_v{VERSION}/
+├── {SCENARIO}/
+│   ├── logs/
+│   ├── metrics/
+│   ├── snapshots/
+│   └── CHECKSUMS.sha256
+```
+
+**Exemplo:**
+```
+evidencias_release_v3.9.11/
+├── s36/
+├── s36_1_control_latency/
+├── s36_2_kafka_fix/
+├── s36_2c_kafka_server_properties/
+└── s37_master_runbook/
+```
+
+### Artefatos Mínimos
+
+Para cada cenário de validação:
+
+1. **Logs:** Logs de todos os módulos envolvidos
+2. **Métricas:** Snapshots de métricas Prometheus
+3. **Snapshots:** Estado de pods, serviços, deployments
+4. **Checksums:** SHA256 de artefatos críticos
+
+### Nomeação
+
+**Formato:** `{SCENARIO}_{DESCRIPTION}_{TIMESTAMP}`
+
+**Exemplos:**
+- `s36_1_control_latency`
+- `s36_2a_kafka_inspect_20260128_231925`
+- `s37_master_runbook`
+
+### Checksums
+
+**Arquivo obrigatório:** `CHECKSUMS.sha256`
+
+**Formato:**
+```
+{SHA256_HASH}  {FILENAME}
+```
+
+**Artefatos que DEVEM ter checksum:**
+- Logs críticos
+- Snapshots de estado
+- Relatórios finais
+- Configurações
+
+### Critérios de Validade
+
+Evidências são válidas se:
+
+1. ✅ Estrutura de diretórios correta
+2. ✅ Artefatos mínimos presentes
+3. ✅ Checksums válidos
+4. ✅ Reproduzíveis (comandos documentados)
+5. ✅ Auditáveis (timestamps e contexto claros)
+
+---
+
+## 🔟 Gates Oficiais de Validação
+
+### S31.x — Kafka
+
+**Objetivo:** Validar funcionalidade Kafka como trilha auditável
+
+**Critérios de PASS:**
+- ✅ Kafka operacional (pod Running)
+- ✅ Eventos publicados pelo Decision Engine
+- ✅ Eventos consumíveis para auditoria
+- ✅ Relação 1:1 entre decisões e eventos
+
+**Critérios de FAIL:**
+- ❌ Kafka não operacional
+- ❌ Eventos não publicados
+- ❌ Eventos não consumíveis
+- ❌ Perda de eventos
+
+**Evidências Obrigatórias:**
+- Logs do Kafka
+- Eventos consumidos
+- Relatório de validação
+
+---
+
+### S34.x — ML-NSMF
+
+**Objetivo:** Validar inferência ML e XAI
+
+**Critérios de PASS:**
+- ✅ ML-NSMF operacional
+- ✅ Métricas reais coletadas do Prometheus
+- ✅ `ml_prediction` completo com todos os campos obrigatórios
+- ✅ XAI gerado (modelo + sistema)
+- ✅ `model_used` correto baseado em critérios
+
+**Critérios de FAIL:**
+- ❌ ML-NSMF não operacional
+- ❌ Métricas não coletadas
+- ❌ Campos obrigatórios ausentes
+- ❌ XAI não gerado
+
+**Evidências Obrigatórias:**
+- Logs do ML-NSMF
+- Respostas de predição
+- Métricas coletadas
+- Relatório de validação
+
+**Status:** S34.3 PASS (conforme evidências v3.9.11)
+
+---
+
+### S36.x — Evidências E2E
+
+**Objetivo:** Validar fluxo end-to-end completo
+
+**Critérios de PASS:**
+- ✅ Fluxo completo executado (Portal → SEM-CSMF → Decision Engine → ML-NSMF → Decision Engine → Kafka → BC-NSSMF se ACCEPT)
+- ✅ Gate lógico respeitado (ACCEPT → BC-NSSMF, RENEG/REJECT → não chama)
+- ✅ Eventos Kafka gerados
+- ✅ Artefatos gerados corretamente (NEST, decisão, eventos)
+
+**Critérios de FAIL:**
+- ❌ Fluxo interrompido
+- ❌ Gate lógico violado
+- ❌ Eventos não gerados
+- ❌ Artefatos ausentes
+
+**Evidências Obrigatórias:**
+- Logs de todos os módulos
+- Eventos Kafka
+- Respostas de API
+- Relatório de validação E2E
+
+**Status:** S36 executado (conforme evidências v3.9.11)
+
+---
+
+## 1️⃣1️⃣ Limitações Conhecidas (Factuais)
+
+### Kafka Consumer Groups (KRaft)
+
+**Fato observado:** Kafka em modo KRaft pode ter consumer groups instáveis.
+
+**Impacto:** Consumo de eventos pode requerer workarounds (consumo por partição).
+
+**Workaround permitido:** Uso de `kafka-console-consumer` ou consumo direto por partição para evidências.
+
+**Plano de correção:** Não especificado (limitação metodológica aceita).
+
+---
+
+### Prometheus Acessível Apenas In-Cluster
+
+**Fato observado:** Prometheus não é acessível externamente ao cluster.
+
+**Impacto:** ML-NSMF e outros módulos devem estar dentro do cluster para coletar métricas.
+
+**Workaround:** Port-forward ou acesso via Service DNS interno.
+
+**Plano de correção:** Não requerido (comportamento esperado).
+
+---
+
+### Latência de Data Plane Depende de UE/Tráfego Real
+
+**Fato observado:** Latência medida depende de dispositivos UE reais e tráfego real.
+
+**Impacto:** Métricas podem variar em ambiente de teste sem UE real.
+
+**Workaround:** Uso de emuladores ou dados sintéticos quando necessário.
+
+**Plano de correção:** Não requerido (limitação metodológica aceita).
+
+---
+
+### Hyperledger Besu Helm Release Failed
+
+**Fato observado:** Helm release `trisla-besu` está em estado `failed`.
+
+**Impacto:** Funcionalidade blockchain pode estar limitada ou não operacional.
+
+**Workaround:** Não especificado.
+
+**Plano de correção:** Requer investigação e correção do Helm release.
+
+---
+
+### Modelo ML Completo Pode Não Estar Disponível
+
+**Fato observado:** Modelo LSTM completo pode não estar disponível em ambiente de teste.
+
+**Impacto:** ML-NSMF pode operar em modo fallback (`model_used=false`).
+
+**Workaround:** Fallback permite RENEG mas bloqueia ACCEPT (conforme regras).
+
+**Plano de correção:** Não requerido para validação acadêmica (limitação metodológica aceita).
+
+---
+
+### XAI Completo Requer Infraestrutura Adicional
+
+**Fato observado:** XAI completo requer SHAP, LIME ou infraestrutura adicional.
+
+**Impacto:** XAI pode estar simplificado em ambiente de teste.
+
+**Workaround:** XAI simplificado fornece explicações básicas.
+
+**Plano de correção:** Não requerido para validação acadêmica (limitação metodológica aceita).
+
+---
+
+## 1️⃣2️⃣ Changelog Vivo por Versão
+
+### v3.9.11 — Release Consolidado
+
+**Data:** 2026-01-29
+
+**Status dos Gates:**
+- ✅ S31.1 PASS — Kafka operacional e eventos publicados
+- ✅ S34.3 PASS — ML-NSMF com inferência e XAI funcionais
+- ✅ S36 executado — Evidências E2E coletadas
+
+**Principais Consolidações:**
+- Master Runbook criado (S37)
+- Arquitetura documentada como SSOT
+- Fluxo E2E oficial estabelecido
+- Padrões de evidência definidos
+
+**Limitações Documentadas:**
+- Kafka consumer groups (KRaft)
+- Prometheus in-cluster
+- Latência depende de UE/tráfego real
+- Besu Helm release failed
+- Modelo ML pode não estar completo
+- XAI pode estar simplificado
+
+---
+
+### Versões Anteriores
+
+**v3.9.10:** Release anterior com evidências S34.2
+
+**v3.7.x:** Versões anteriores com diferentes estados de implementação
+
+---
+
+## 📌 Regra Pós-S37 (Fundamental)
+
+Após este Runbook (S37), **TODO novo prompt DEVE:**
+
+1. ✅ **Referenciar este Runbook** explicitamente
+2. ✅ **Seguir suas regras** de engenharia (anti-regressão, anti-gambiarra, anti-invenção)
+3. ✅ **Atualizar o Runbook** se algo mudar no sistema
+
+**Sem exceções.**
+
+---
+
+## ✅ Estado Esperado ao Final do S37
+
+- ✅ TriSLA com memória técnica permanente
+- ✅ Fim de retrabalho
+- ✅ Fim de improviso
+- ✅ Base sólida para:
+  - Correção definitiva do Kafka
+  - Estratégia de latência (controle vs data plane)
+  - Experimentos com UE/emulador
+  - Evolução controlada do sistema
+
+---
+
+**Fim do Master Runbook TriSLA v3.9.11**

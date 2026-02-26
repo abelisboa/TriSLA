@@ -1,1 +1,0 @@
-[{"name":"TRISLA_NODE_INTERFACE","value":"my5g"},{"name":"TRISLA_NODE_IP","value":"192.168.10.16"},{"name":"OTLP_ENDPOINT","value":"http://trisla-otel-collector:4317"},{"name":"KAFKA_ENABLED","value":"true"},{"name":"KAFKA_BROKERS","value":"kafka:9092"},{"name":"PROMETHEUS_URL","value":"http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"}]

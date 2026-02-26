@@ -1,1 +1,0 @@
-kube-system   kube-proxy                            2         2         2       2            2           kubernetes.io/os=linux   447d

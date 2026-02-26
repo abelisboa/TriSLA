@@ -1,8 +1,0 @@
-[FASE 6] Kafka (tópicos, mensagens, IDs)
-Arquivos Kafka: 1
-MISSING_TOPIC: trisla-i04-decisions
-MISSING_TOPIC: trisla-i05-actions
-OK_TOPIC: trisla-ml-predictions
-Decision IDs em Kafka logs (heurístico): 0
-FAIL: Tópicos ausentes (ver KAFKA_TOPIC_MISSING.txt)
-FAIL: Nenhum decision_id encontrado nos logs Kafka coletados

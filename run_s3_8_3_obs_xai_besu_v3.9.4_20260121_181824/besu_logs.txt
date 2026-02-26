@@ -1,1 +1,0 @@
-Error from server (BadRequest): container "besu" in pod "trisla-besu-59f9fcf4c-2tv7s" is waiting to start: image can't be pulled

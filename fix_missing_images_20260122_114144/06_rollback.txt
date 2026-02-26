@@ -1,2 +1,0 @@
-W0122 11:45:00.892094  354814 warnings.go:70] spec.template.spec.containers[0].env[4]: hides previous definition of "BC_ENABLED", which may be dropped when using apply
-Rollback was a success! Happy Helming!

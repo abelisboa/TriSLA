@@ -1,5 +1,0 @@
-q_cpu_count.json OK
-q_cpu_idle_avg_5m.json EMPTY
-q_cpu_idle_count.json EMPTY
-q_cpu_idle_rate_by_instance.json EMPTY
-q_cpu_usage_avg_5m.json EMPTY

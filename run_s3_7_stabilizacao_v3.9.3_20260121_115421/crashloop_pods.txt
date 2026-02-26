@@ -1,3 +1,0 @@
-ml-curl-20260119                          0/1     Error              0               38h
-trisla-decision-engine-575dc8866b-4pln4   0/1     CrashLoopBackOff   9 (3m14s ago)   25m
-trisla-ml-nsmf-f496b7d77-68v7l            0/1     CrashLoopBackOff   9 (3m14s ago)   25m

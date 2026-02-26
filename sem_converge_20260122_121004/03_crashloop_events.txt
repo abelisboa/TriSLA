@@ -1,9 +1,0 @@
-Events:
-  Type     Reason          Age                From               Message
-  ----     ------          ----               ----               -------
-  Normal   Scheduled       39s                default-scheduler  Successfully assigned trisla/trisla-sem-csmf-8544ffd88d-ldgjt to node1
-  Normal   AddedInterface  38s                multus             Add eth0 [10.233.102.146/32] from k8s-pod-network
-  Normal   Pulled          16s (x3 over 38s)  kubelet            Container image "ghcr.io/abelisboa/trisla-sem-csmf:v3.9.4" already present on machine
-  Normal   Created         16s (x3 over 38s)  kubelet            Created container sem-csmf
-  Normal   Started         16s (x3 over 38s)  kubelet            Started container sem-csmf
-  Warning  BackOff         9s (x7 over 36s)   kubelet            Back-off restarting failed container sem-csmf in pod trisla-sem-csmf-8544ffd88d-ldgjt_trisla(2458b343-e274-4f86-9b5f-43599bdbe9b2)

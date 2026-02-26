@@ -1,1 +1,0 @@
-{"prediction":{"risk_score":0.5,"risk_level":"medium","confidence":0.8,"model_used":true,"metrics_used":{"real_metrics_count":0,"real_metrics":[],"time_range_minutes":10}},"explanation":{"explanation":"Explicação básica","method":"heuristic"},"metrics_used":{"real_metrics_count":0,"real_metrics":[],"time_range_minutes":10}}

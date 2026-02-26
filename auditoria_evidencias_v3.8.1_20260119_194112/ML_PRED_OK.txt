@@ -1,6 +1,0 @@
-INFO:     10.233.75.45:53774 - "POST /api/v1/predict HTTP/1.1" 200 OK
-INFO:     10.233.75.45:53782 - "POST /api/v1/predict HTTP/1.1" 200 OK
-INFO:     10.233.75.45:53790 - "POST /api/v1/predict HTTP/1.1" 200 OK
-INFO:     10.233.75.45:45814 - "POST /api/v1/predict HTTP/1.1" 200 OK
-INFO:     192.168.10.16:58798 - "POST /api/v1/predict HTTP/1.1" 200 OK
-INFO:     10.233.75.45:38168 - "POST /api/v1/predict HTTP/1.1" 200 OK

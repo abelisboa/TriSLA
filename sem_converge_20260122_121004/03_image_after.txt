@@ -1,1 +1,0 @@
-ghcr.io/abelisboa/trisla-sem-csmf:v3.7.11

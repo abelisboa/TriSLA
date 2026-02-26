@@ -1,2 +1,0 @@
-ok
-pod "image-test" deleted from trisla namespace

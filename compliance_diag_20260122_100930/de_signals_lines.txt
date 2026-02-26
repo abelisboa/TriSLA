@@ -1,1 +1,0 @@
-160 /home/porvir5g/gtp5g/trisla/compliance_diag_20260122_100930/de_signals.txt

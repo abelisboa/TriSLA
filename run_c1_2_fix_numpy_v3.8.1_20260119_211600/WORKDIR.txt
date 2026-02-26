@@ -1,1 +1,0 @@
-/home/porvir5g/gtp5g/trisla/run_c1_2_fix_numpy_v3.8.1_20260119_211600

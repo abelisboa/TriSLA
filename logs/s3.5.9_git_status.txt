@@ -1,4 +1,0 @@
-?? TriSLA/
-?? artifacts/s3.5.7_nasp_readonly/
-?? helm/trisla/Chart.lock
-?? helm/trisla/charts/

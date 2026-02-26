@@ -1,2 +1,0 @@
-trisla-bc-nssmf-metrics	http://10.233.102.189:8083/metrics	Get "http://10.233.102.189:8083/metrics": dial tcp 10.233.102.189:8083: connect: connection refused
-trisla-sla-agent-metrics	http://10.233.102.158:8084/metrics	Get "http://10.233.102.158:8084/metrics": dial tcp 10.233.102.158:8084: connect: connection refused

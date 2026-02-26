@@ -1,3 +1,0 @@
-NAME    CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
-node1   3914m        34%      11399Mi         75%         
-node2   1948m        17%      9996Mi          66%         

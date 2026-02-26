@@ -1,3 +1,0 @@
-NAME                               READY   STATUS    RESTARTS      AGE   IP               NODE    NOMINATED NODE   READINESS GATES
-trisla-sem-csmf-6bddd47d88-cmlpf   0/1     Error     2 (26s ago)   40s   10.233.102.145   node1   <none>           <none>
-trisla-sem-csmf-79f754c49b-c8g4f   1/1     Running   0             54m   10.233.102.156   node1   <none>           <none>

@@ -1,2 +1,0 @@
-NAME              ENDPOINTS   AGE
-trisla-sem-csmf               33d

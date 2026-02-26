@@ -1,6 +1,0 @@
-[FASE 5] Decision Engine (decisões, erros 4xx/5xx, XAI)
-Arquivos DE: 1
-Erros (linhas): 28
-Indícios de decisão (linhas): 10
-Indícios XAI (linhas): 0
-FAIL: Erros 422/500 presentes nos logs coletados (ver DE_ERRORS.txt)

@@ -1,1 +1,0 @@
-56:        image: ghcr.io/abelisboa/ghcr.io/abelisboa/trisla-sem-csmf:v3.9.4

@@ -1,4 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   195    0     0  100   195      0    162  0:00:01  0:00:01 --:--:--   162100   195    0     0  100   195      0     88  0:00:02  0:00:02 --:--:--    88100   345  100   150  100   195     57     75  0:00:02  0:00:02 --:--:--   133
-{"success":false,"reason":"nasp_degraded","detail":"ML-NSMF: ML-NSMF erro HTTP 500: Internal Server Error","phase":"blockchain","upstream_status":503}

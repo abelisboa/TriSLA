@@ -1,1 +1,0 @@
-deployment "trisla-decision-engine" successfully rolled out

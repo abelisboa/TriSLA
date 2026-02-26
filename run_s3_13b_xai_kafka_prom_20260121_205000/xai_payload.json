@@ -1,9 +1,0 @@
-{
-  "slice_type": "eMBB",
-  "service_type": "eMBB",
-  "cpu": 2,
-  "memory": 2048,
-  "latency": 20,
-  "bandwidth": 100,
-  "throughput": 50
-}

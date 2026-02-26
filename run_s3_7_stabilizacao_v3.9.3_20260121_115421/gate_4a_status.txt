@@ -1,1 +1,0 @@
-GATE 4A: Estrutura diferente do esperado. Campos encontrados: prediction.confidence, prediction.model_used. Faltando: timestamp_utc (root), probability (root)

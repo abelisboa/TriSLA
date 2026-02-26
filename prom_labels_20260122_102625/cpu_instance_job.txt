@@ -1,3 +1,0 @@
-instance= 192.168.10.15:9100
-job= node-exporter
-mode= idle

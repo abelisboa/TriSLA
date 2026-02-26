@@ -1,4 +1,0 @@
-[EMPTY] cpu_idle_avg file=prom_cpu_idle_avg.json
-[OK] mem_avail count=2 min=4825919488.0 max=7997063168.0 mean=6411491328.0
-[OK] disk_avail count=34 min=5242880.0 max=375312850944.0 mean=15077876254.117647
-[EMPTY] net_tx_rate file=prom_net_tx_rate.json

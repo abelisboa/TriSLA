@@ -1,4 +1,0 @@
-==> Linting helm/trisla
-[INFO] Chart.yaml: icon is recommended
-[ERROR] /home/porvir5g/gtp5g/trisla/helm/trisla: chart metadata is missing these dependencies: trisla-besu
-

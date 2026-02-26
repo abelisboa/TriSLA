@@ -1,4 +1,0 @@
-/api/v1/sla/interpret
-/api/v1/sla/submit
-/api/v1/sla/status/{sla_id}
-/api/v1/sla/metrics/{sla_id}

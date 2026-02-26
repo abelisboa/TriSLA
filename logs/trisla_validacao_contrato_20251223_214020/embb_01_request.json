@@ -1,1 +1,0 @@
-{"template_id":"template:eMBB","intent":"eMBB_controlado_validacao_contrato_01","tenant_id":"default","form_values":{"service_type":"eMBB","latency_max_ms":50,"throughput_min_mbps":50,"availability_target":99.0}}

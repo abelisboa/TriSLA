@@ -1,4 +1,0 @@
-FAIL
-SEM-CSMF: brokers inválidos (valor='http://trisla-otel-collector:4317')
-ML-NSMF: brokers inválidos (valor='http://trisla-otel-collector:4317')
-Decision Engine: brokers inválidos (valor='http://trisla-sla-agent-layer:8084')

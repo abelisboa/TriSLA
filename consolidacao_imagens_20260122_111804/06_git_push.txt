@@ -1,2 +1,0 @@
-To https://github.com/abelisboa/TriSLA.git
-   a62a6eb..0bfb8cf  main -> main

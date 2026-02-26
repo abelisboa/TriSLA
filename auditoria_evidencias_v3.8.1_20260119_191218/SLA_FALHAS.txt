@@ -1,3 +1,0 @@
-Possível falha em /home/porvir5g/gtp5g/trisla/evidencias_resultados_v3.8.1/01_slas/sla_urllc_attempt.json
-1:{"success":false,"reason":"business_error","detail":"SEM-CSMF: service_type inválido no template: automatic. Deve ser URLLC, eMBB ou mMTC","phase":"semantic","upstream_status":422}
-

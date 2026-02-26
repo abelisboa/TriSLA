@@ -1,1 +1,0 @@
-Error from server (NotFound): deployments.apps "trisla-sem-csmf" not found

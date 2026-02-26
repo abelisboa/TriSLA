@@ -1,7 +1,0 @@
-helm/trisla/values-nasp.yaml.backup-s6.16:11:    BC_ENABLED: true
-helm/trisla/values-nasp.yaml.backup-s6.16:158:    BC_ENABLED: "true"
-helm/trisla/templates/deployment-bc-nssmf.yaml:46:        - name: BC_ENABLED
-helm/trisla/templates/deployment-bc-nssmf.yaml:51:        - name: BC_ENABLED
-helm/trisla/values-nasp.yaml.backup-s6.15:11:    BC_ENABLED: true
-helm/trisla/values-nasp.yaml.backup-s6.15:158:    BC_ENABLED: "true"
-helm/trisla/values.yaml:97:    BC_ENABLED: "true"  # Sprint S3.4 - Valor padrão obrigatório

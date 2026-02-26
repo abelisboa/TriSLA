@@ -1,1 +1,0 @@
-MLPOD=trisla-ml-nsmf-6bc9fdf647-rjlp5

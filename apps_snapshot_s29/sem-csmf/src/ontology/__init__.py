@@ -1,4 +1,0 @@
-"""
-Ontology Module
-"""
-

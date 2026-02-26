@@ -1,3 +1,0 @@
-[FASE 0] PRE-CHECK
-Total de arquivos: 16
-Arquivos vazios: 0

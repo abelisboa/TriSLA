@@ -1,8 +1,0 @@
-trisla-bc-nssmf	ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.18
-trisla-decision-engine	ghcr.io/abelisboa/trisla-decision-engine:v3.7.23
-trisla-ml-nsmf	ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.24
-trisla-nasp-adapter	ghcr.io/abelisboa/trisla-nasp-adapter:nasp-a2
-trisla-portal-backend	ghcr.io/abelisboa/trisla-portal-backend:v3.7.21
-trisla-portal-frontend	ghcr.io/abelisboa/trisla-portal-frontend:v3.7.21
-trisla-sla-agent-layer	ghcr.io/abelisboa/trisla-sla-agent-layer:nasp-a2
-trisla-ui-dashboard	ghcr.io/abelisboa/trisla-ui-dashboard:nasp-a2

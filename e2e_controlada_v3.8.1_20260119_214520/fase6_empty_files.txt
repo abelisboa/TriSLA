@@ -1,2 +1,0 @@
-/home/porvir5g/gtp5g/trisla/e2e_controlada_v3.8.1_20260119_214520/fase6_empty_files.txt
-/home/porvir5g/gtp5g/trisla/e2e_controlada_v3.8.1_20260119_214520/fase4_kafka_trace/i04_dump.txt

@@ -1,1 +1,0 @@
-error: Internal error occurred: Internal error occurred: error executing command in container: failed to exec in container: failed to start exec "734976cbaa904c409fe49010c23b5ca85d65420448e4ced823bebc9a1d3b49ba": OCI runtime exec failed: exec failed: unable to start container process: exec: "curl": executable file not found in $PATH: unknown

@@ -1,3 +1,0 @@
-NAME                              READY   STATUS                  RESTARTS      AGE    IP               NODE    NOMINATED NODE   READINESS GATES
-trisla-ml-nsmf-689fc96f59-mzj7c   1/1     Running                 0             26m    10.233.102.156   node1   <none>           <none>
-trisla-ml-nsmf-bf688c5c6-bn8zm    0/2     Init:CrashLoopBackOff   3 (22s ago)   5m1s   10.233.102.178   node1   <none>           <none>

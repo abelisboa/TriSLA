@@ -1,8 +1,0 @@
-=== RESUMO FINAL S3.5.9 ===
-Commit: 786c91d
-SHA256 Artefatos: NÃO COINCIDE
-Besu: Running ✅
-RPC Besu: Funcionando ✅
-BC-NSSMF: Running ✅
-BC-NSSMF Health: DEGRADED_RPC, rpc_connected=false ❌
-API Endpoints: Not Found ❌

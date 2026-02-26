@@ -1,2 +1,0 @@
-kube-proxy-phpdk                                              1/1     Running   0                81d    192.168.10.15    node2   <none>           <none>
-kube-proxy-z29kf                                              1/1     Running   43 (81d ago)     81d    192.168.10.16    node1   <none>           <none>
