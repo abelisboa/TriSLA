@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: trisla-ml-nsmf-compat
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+  - name: trisla.ml.compat
+    rules:
+    - record: slice_cpu_utilization
+      expr: |
+        sum(
+          rate(container_cpu_usage_seconds_total{
+            namespace="ns-1274485",
+            pod=~".*(upf|smf).*"
+          }[5m])
+        )
+    - record: slice_availability
+      expr: |
+        min(
+          kube_pod_status_ready{namespace="ns-1274485",condition="true"}
+        )
+    - record: ran_latency_ms
+      expr: |
+        (1 - slice_availability) * 100
+    - record: packet_loss_rate
+      expr: vector(0)

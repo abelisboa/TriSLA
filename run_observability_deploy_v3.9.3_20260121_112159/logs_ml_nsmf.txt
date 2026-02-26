@@ -1,0 +1,6 @@
+=== ML-NSMF Logs (inference + XAI) ===
+INFO:     127.0.0.1:36008 - "POST /api/v1/predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53332 - "POST /api/v1/predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60226 - "POST /api/v1/predict HTTP/1.1" 200 OK
+    from predictor import RiskPredictor
+  File "/app/src/predictor.py", line 75

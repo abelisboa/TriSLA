@@ -1,0 +1,2 @@
+kafkatools-1769049575                      0/1     ImagePullBackOff    0             12h
+trisla-sem-csmf-7c4d5765ff-zprtm           0/1     CrashLoopBackOff    3 (45s ago)   28m

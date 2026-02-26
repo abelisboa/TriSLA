@@ -1,0 +1,18 @@
+{
+  "intent_id": "ev-reject-placeholder",
+  "nest_id": "nest-ev-reject-placeholder",
+  "intent": {
+    "intent_id": "ev-reject-placeholder",
+    "tenant_id": "default",
+    "service_type": "eMBB",
+    "sla_requirements": {}
+  },
+  "nest": {
+    "nest_id": "nest-ev-reject-placeholder",
+    "intent_id": "ev-reject-placeholder",
+    "network_slices": [],
+    "resources": {},
+    "status": "generated"
+  },
+  "context": {}
+}

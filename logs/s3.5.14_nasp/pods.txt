@@ -1,0 +1,9 @@
+NAME                                      READY   STATUS             RESTARTS        AGE
+trisla-bc-nssmf-866ddbf476-qd5vl          1/1     Running            0               14m
+trisla-besu-7764464ddc-n96wf              0/1     Running            5 (3m59s ago)   14m
+trisla-decision-engine-7d466f9f69-jghxs   1/1     Running            0               14m
+trisla-ml-nsmf-779d6cc88b-tv52l           1/1     Running            0               14m
+trisla-nasp-adapter-74cd854849-9lqcs      1/1     Running            0               14m
+trisla-sla-agent-layer-6b65566595-8nwh8   1/1     Running            0               14m
+trisla-trisla-besu-979b7df9d-8wwnv        0/1     ImagePullBackOff   0               14m
+trisla-ui-dashboard-dfb9ff9cc-l67hb       1/1     Running            0               14m

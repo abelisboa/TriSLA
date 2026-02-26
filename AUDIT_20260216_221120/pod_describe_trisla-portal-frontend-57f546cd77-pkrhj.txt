@@ -1,0 +1,70 @@
+Name:             trisla-portal-frontend-57f546cd77-pkrhj
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node2/192.168.10.15
+Start Time:       Mon, 02 Feb 2026 21:26:23 -0300
+Labels:           app=trisla-portal-frontend
+                  component=frontend
+                  pod-template-hash=57f546cd77
+Annotations:      cni.projectcalico.org/containerID: 9a36e689ebf51cf5377f3bf4a6ab6ce2568d3d47dabf324d9e89af419e49f6d4
+                  cni.projectcalico.org/podIP: 10.233.75.12/32
+                  cni.projectcalico.org/podIPs: 10.233.75.12/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.75.12"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+                  kubectl.kubernetes.io/restartedAt: 2026-01-31T14:49:11-03:00
+Status:           Running
+IP:               10.233.75.12
+IPs:
+  IP:           10.233.75.12
+Controlled By:  ReplicaSet/trisla-portal-frontend-57f546cd77
+Containers:
+  frontend:
+    Container ID:   containerd://1724db39f9ededa34be03bd1bd9131b12cf8e03a61cebf5843028633ee7bd8d7
+    Image:          ghcr.io/abelisboa/trisla-portal-frontend:v3.11.0
+    Image ID:       ghcr.io/abelisboa/trisla-portal-frontend@sha256:1e136b59605cc354155d4fb07f9578ed183556af9b7e418e61cfe61510d245df
+    Port:           80/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 02 Feb 2026 21:26:25 -0300
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  256Mi
+    Requests:
+      cpu:      50m
+      memory:   128Mi
+    Liveness:   http-get http://:80/ delay=30s timeout=5s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:80/ delay=10s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      BACKEND_URL:  http://trisla-portal-backend:8001/api/v1
+      PORT:         80
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-9t2cm (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-9t2cm:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

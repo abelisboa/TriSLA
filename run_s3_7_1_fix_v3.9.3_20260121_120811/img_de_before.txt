@@ -1,0 +1,1 @@
+ghcr.io/abelisboa/trisla-decision-engine:v3.9.3

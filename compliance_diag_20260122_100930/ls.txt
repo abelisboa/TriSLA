@@ -1,0 +1,23 @@
+total 216K
+drwxrwxr-x   2 porvir5g porvir5g 4,0K jan 22 10:11 .
+drwxrwxrwx 189 porvir5g porvir5g  20K jan 22 10:09 ..
+-rw-rw-r--   1 porvir5g porvir5g 2,3K jan 22 10:12 CHECKSUMS.sha256
+-rw-rw-r--   1 porvir5g porvir5g  47K jan 22 10:09 de_logs_20m.txt
+-rw-rw-r--   1 porvir5g porvir5g   79 jan 22 10:09 de_signals_lines.txt
+-rw-rw-r--   1 porvir5g porvir5g  11K jan 22 10:09 de_signals.txt
+-rw-rw-r--   1 porvir5g porvir5g  441 jan 22 10:12 DIAG_FINAL.txt
+-rw-rw-r--   1 porvir5g porvir5g   44 jan 22 10:09 intent.txt
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:12 ls.txt
+-rw-rw-r--   1 porvir5g porvir5g  248 jan 22 10:10 pf_prometheus.log
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:10 prom_cpu_idle_avg.json
+-rw-rw-r--   1 porvir5g porvir5g  64K jan 22 10:09 prom_cpu_raw.json
+-rw-rw-r--   1 porvir5g porvir5g  15K jan 22 10:10 prom_disk_avail.json
+-rw-rw-r--   1 porvir5g porvir5g  714 jan 22 10:10 prom_mem_avail.json
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:10 prom_net_tx_rate.json
+-rw-rw-r--   1 porvir5g porvir5g   28 jan 22 10:09 prom_ready.txt
+-rw-rw-r--   1 porvir5g porvir5g  253 jan 22 10:12 prom_values_summary.txt
+-rw-rw-r--   1 porvir5g porvir5g  852 jan 22 10:09 response.json
+-rw-rw-r--   1 porvir5g porvir5g  208 jan 22 10:09 response_parsed.txt
+-rw-rw-r--   1 porvir5g porvir5g 1,1K jan 22 10:09 response_pretty.json
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:11 response_resource_fields.txt
+-rw-rw-r--   1 porvir5g porvir5g  133 jan 22 10:09 submit.json

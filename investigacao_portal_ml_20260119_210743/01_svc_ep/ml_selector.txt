@@ -1,0 +1,1 @@
+ML_SELECTOR="app":"trisla-ml-nsmf","app.kubernetes.io/instance":"trisla","app.kubernetes.io/name":"trisla"

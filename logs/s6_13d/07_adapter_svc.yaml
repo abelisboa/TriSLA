@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: trisla
+    meta.helm.sh/release-namespace: trisla
+  creationTimestamp: "2025-12-19T17:28:59Z"
+  labels:
+    app.kubernetes.io/component: nasp-adapter
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/version: 3.7.10
+  name: trisla-nasp-adapter
+  namespace: trisla
+  resourceVersion: "858270171"
+  uid: aa4c984d-5ce5-4718-b9ee-3b3c607ea895
+spec:
+  clusterIP: 10.233.6.35
+  clusterIPs:
+  - 10.233.6.35
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 8085
+    protocol: TCP
+    targetPort: http
+  selector:
+    app: trisla-nasp-adapter
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/name: trisla
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

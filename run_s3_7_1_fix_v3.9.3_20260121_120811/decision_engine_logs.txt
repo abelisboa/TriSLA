@@ -1,0 +1,369 @@
+⚠️ Blockchain DESABILITADO — usando stub BCClient
+   [STUB] BCClient inicializado em modo offline
+ℹ️ Decision Engine: Kafka desabilitado. Endpoint /evaluate usa clientes HTTP diretos.
+2026-01-21 15:21:16,580 - src.main - INFO - ============================================================
+2026-01-21 15:21:16,580 - src.main - INFO - ============================================================
+2026-01-21 15:21:16,580 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+2026-01-21 15:21:16,580 - src.main - INFO - ============================================================
+2026-01-21 15:21:16,580 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+🔄 Starting gRPC server (fallback method)...
+2026-01-21 15:21:16,580 - src.main - INFO - ============================================================
+🔄 Starting gRPC server (fallback method)...
+2026-01-21 15:21:16,581 - grpc_server - INFO - ============================================================
+2026-01-21 15:21:16,581 - grpc_server - INFO - ============================================================
+2026-01-21 15:21:16,581 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-21 15:21:16,581 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-21 15:21:16,587 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-21 15:21:16,587 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-21 15:21:16,589 - grpc_server - INFO - ✅ gRPC server started on port 50051
+2026-01-21 15:21:16,589 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-21 15:21:19,583 - src.main - INFO - Thread started: alive=True
+2026-01-21 15:21:19,583 - src.main - INFO - Thread started: alive=True
+2026-01-21 15:21:19,584 - src.main - INFO - ✅ gRPC server started (fallback)
+2026-01-21 15:21:19,584 - src.main - INFO - ✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+2026-01-21 15:21:19,625 - src.main - INFO - ============================================================
+2026-01-21 15:21:19,625 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2026-01-21 15:21:19,625 - src.main - INFO - ============================================================
+2026-01-21 15:21:19,625 - src.main - INFO - ============================================================
+2026-01-21 15:21:19,625 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2026-01-21 15:21:19,625 - src.main - INFO - ============================================================
+============================================================
+🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+============================================================
+2026-01-21 15:21:19,626 - grpc_server - INFO - ============================================================
+2026-01-21 15:21:19,626 - grpc_server - INFO - ============================================================
+2026-01-21 15:21:19,626 - grpc_server - INFO - 🔧 Creating gRPC server...
+2026-01-21 15:21:19,626 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-21 15:21:19,627 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-21 15:21:19,627 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-21 15:21:19,628 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-21 15:21:19,628 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-21 15:21:21,626 - src.main - INFO - ✅ gRPC server thread started successfully
+2026-01-21 15:21:21,626 - src.main - INFO -    Thread name: gRPC-Server
+2026-01-21 15:21:21,626 - src.main - INFO - ✅ gRPC server thread started successfully
+2026-01-21 15:21:21,626 - src.main - INFO -    Thread name: gRPC-Server
+2026-01-21 15:21:21,627 - src.main - INFO -    Thread alive: True
+2026-01-21 15:21:21,627 - src.main - INFO -    Thread alive: True
+✅ gRPC server thread started successfully
+   Thread name: gRPC-Server
+   Thread alive: True
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8082 (Press CTRL+C to quit)
+INFO:     10.233.102.160:43186 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.165:34684 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45226 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55240 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45228 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55246 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37672 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:54952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58368 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:48054 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37680 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58370 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39730 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39744 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57302 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39758 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:59226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57306 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:44694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40658 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40656 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51834 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40662 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51850 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43024 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43040 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:55344 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:43328 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:54722 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43054 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:43332 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52560 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52568 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49556 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52576 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:55836 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49564 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:40524 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38514 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38512 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46444 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38538 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46460 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48946 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48944 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:43566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59104 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:55536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48966 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59118 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37954 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37962 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36918 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37976 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:55086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36928 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:34736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43134 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43132 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52306 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43146 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52312 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42248 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42232 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:39140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52982 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:33698 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42258 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52986 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55474 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55490 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39830 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55500 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:35148 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39846 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:34786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46070 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46072 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45036 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46084 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45042 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39130 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39138 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:53206 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42104 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:47786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39144 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42120 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50024 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50022 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51792 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50036 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:37194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51796 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:39078 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35836 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35846 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50716 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35852 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50726 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57274 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57276 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:36730 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50384 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:45504 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57294 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50388 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54908 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54902 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51162 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54912 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:58376 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51170 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:34320 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39274 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39286 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53872 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39292 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53874 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51478 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51490 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:53422 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46386 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:57712 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51492 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46400 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35940 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35938 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45374 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35954 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:52226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45376 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:53146 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:32778 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:32776 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48430 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:32798 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48440 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50890 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50888 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:51316 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51974 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:35614 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50908 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51988 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51678 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51680 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45664 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51682 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:42582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45670 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:48808 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56562 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56546 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50492 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56578 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50508 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41810 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41826 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:55188 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46420 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:53390 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41838 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46434 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37698 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37700 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49260 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37716 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:39392 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49264 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:39250 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46158 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46156 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55904 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46164 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55912 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45440 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45438 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:37996 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44108 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:57414 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45462 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44110 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45040 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45052 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55986 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45068 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:55724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:56000 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:50096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54830 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54834 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45140 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54836 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45148 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47864 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47852 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:59442 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37270 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:55392 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47870 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37284 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55216 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55206 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54074 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55218 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:38224 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54086 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:60184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34758 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34756 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51602 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34766 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51614 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42934 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42932 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:59662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54924 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:39142 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42962 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54926 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34346 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34356 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38602 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34372 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:44994 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38608 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:45682 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33636 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33638 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53948 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33650 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53960 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60824 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60832 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:39706 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37708 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:57948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60836 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37722 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51574 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51588 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59142 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51594 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:45772 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59152 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:35642 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57346 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57352 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40338 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57364 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40340 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39208 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39210 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:47738 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35400 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:56548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39220 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35416 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60448 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60460 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48768 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60470 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:48644 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48784 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.165:40440 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52188 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52186 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45000 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52204 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45014 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38686 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38692 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:49770 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.164:38772 - "POST /evaluate HTTP/1.1" 422 Unprocessable Entity
+2026-01-21 15:28:40,832 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2026-01-21 15:28:40,832 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2026-01-21 15:28:40,834 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2026-01-21 15:28:40,834 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2026-01-21 15:28:40,835 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+2026-01-21 15:28:40,835 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+INFO:     10.233.75.28:45318 - "POST /api/v1/decide HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45324 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.164:38778 - "POST /evaluate HTTP/1.1" 422 Unprocessable Entity
+2026-01-21 15:28:42,578 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2026-01-21 15:28:42,578 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2026-01-21 15:28:42,579 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2026-01-21 15:28:42,579 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2026-01-21 15:28:42,579 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+2026-01-21 15:28:42,579 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+INFO:     10.233.75.28:45340 - "POST /api/v1/decide HTTP/1.1" 200 OK
+INFO:     10.233.102.164:38782 - "POST /evaluate HTTP/1.1" 422 Unprocessable Entity
+2026-01-21 15:28:42,742 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2026-01-21 15:28:42,742 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2026-01-21 15:28:42,743 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2026-01-21 15:28:42,743 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+2026-01-21 15:28:42,743 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2026-01-21 15:28:42,743 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+INFO:     10.233.75.28:45348 - "POST /api/v1/decide HTTP/1.1" 200 OK
+INFO:     10.233.102.165:57378 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38706 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45356 - "GET /health HTTP/1.1" 200 OK

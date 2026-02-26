@@ -1,0 +1,6 @@
+[FASE 3] PORTAL SLAs
+Total SLAs JSON em 01_slas: 3
+OK: sla_embb.json decision_id=dec-c2493303-b884-4222-8f4a-e12947a47047 action=RENEG
+OK: sla_mmtc.json decision_id=dec-6f4d8494-b0ba-407d-a4d2-31e2bc19d660 action=RENEG
+OK: sla_urllc.json decision_id=dec-a49096cf-d521-4ab1-82e3-0312d54fb557 action=RENEG
+Decision IDs extraídos do Portal: 3

@@ -1,0 +1,2 @@
+NAME             ENDPOINTS             AGE
+trisla-ml-nsmf   10.233.102.138:8081   23m

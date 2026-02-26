@@ -1,0 +1,79 @@
+=== SPRINT S3.5.14_NASP_DEPLOY - RESUMO DE EXECUÇÃO ===
+Data: sex 19 dez 2025 11:32:18 -03
+Commit: 221abd6017248196f3234b397c7be3fd2347231e
+
+=== FASE 0 - CONEXÃO ===
+✅ SSH node006: OK
+✅ Diretório base: /home/porvir5g/gtp5g/trisla
+
+=== FASE 1 - SINCRONIZAÇÃO ===
+✅ HEAD: 58d6d64c1d7ce218a2a63a870e00d02bc0be3acf
+✅ Commit: fix(s3.5.14): govern besu image publication for NASP compatibility
+✅ Working tree limpa
+
+=== FASE 2 - LIMPEZA ===
+✅ Namespace limpo e removido
+
+=== FASE 3 - HELM SANITY CHECK ===
+⚠️ Helm lint: ERROR (chart metadata missing dependencies: trisla-besu)
+✅ Template renderizado: 1077 linhas
+
+Verificações no render:
+✅ Nenhuma ocorrência de latest
+❌ genesis-file presente (evidência: --genesis-file=/opt/besu/genesis.json)
+✅ Nenhuma ocorrência de miner-enabled
+✅ Nenhum exec: em probes do Besu
+✅ httpGet presente nos probes
+✅ Imagem correta: ghcr.io/abelisboa/trisla-besu:v3.7.16
+
+=== FASE 4 - DEPLOY ===
+✅ Helm upgrade --install executado
+✅ STATUS: deployed
+✅ REVISION: 2
+
+=== FASE 5 - RECURSOS ===
+✅ Pods, Services e Endpoints verificados
+
+Estado observado:
+- BC-NSSMF: Running (1/1)
+- Besu (trisla-besu): Running (0/1) - 5 restarts (evidência)
+- Besu (trisla-trisla-besu): ImagePullBackOff (evidência)
+- Outros serviços: Running
+
+=== FASE 6 - RPC BESU ===
+✅ RPC funcionando:
+  - web3_clientVersion: besu/v23.10.1/linux-x86_64/openjdk-java-17
+  - eth_blockNumber: 0x0
+✅ Pod: trisla-besu-7764464ddc-n96wf
+
+=== FASE 7 - HEALTH BC-NSSMF ===
+✅ status: healthy
+✅ module: bc-nssmf
+✅ enabled: true
+✅ rpc_connected: true
+
+=== FASE 8 - EVIDÊNCIAS ===
+✅ Logs do Besu: logs/s3.5.14_nasp/besu.log
+✅ Logs do BC-NSSMF: logs/s3.5.14_nasp/bc-nssmf.log
+✅ Pods: logs/s3.5.14_nasp/pods.txt
+✅ Services: logs/s3.5.14_nasp/services.txt
+✅ Eventos: logs/s3.5.14_nasp/events.txt
+✅ Deploy log: logs/s3.5.14_nasp/deploy.log
+
+=== CONCLUSÃO ===
+✅ Besu está Running (com restarts - evidência)
+✅ RPC responde corretamente
+✅ BC-NSSMF está healthy (rpc_connected=true)
+⚠️ Pod do Besu com 5 restarts (evidência experimental)
+⚠️ Pod trisla-trisla-besu em ImagePullBackOff (evidência)
+✅ Evidências completas coletadas
+✅ Nenhuma correção manual no NASP
+
+=== EVIDÊNCIAS EXPERIMENTAIS ===
+1. Helm lint com erro de dependências
+2. genesis-file presente no render (não deveria estar)
+3. Pod do Besu com 5 restarts (ainda não estável)
+4. Pod trisla-trisla-besu em ImagePullBackOff (imagem duplicada/legada)
+5. RPC funcionando apesar dos restarts
+
+❗ Nenhuma decisão tomada - apenas evidências coletadas

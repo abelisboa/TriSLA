@@ -1,0 +1,3 @@
+cpu_rate_ok= False
+net_rate_ok= False
+GATE= FAIL

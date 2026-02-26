@@ -1,0 +1,1 @@
+KAFKA_POD=kafka-c948b8d64-jgmz5

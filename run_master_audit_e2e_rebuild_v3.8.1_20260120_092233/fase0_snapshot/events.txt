@@ -1,0 +1,71 @@
+LAST SEEN   TYPE      REASON                            OBJECT                                        MESSAGE
+36m         Warning   Unhealthy                         pod/trisla-bc-nssmf-6bf4ffb4b5-ffvkg          Readiness probe failed: Get "http://10.233.102.153:8083/health": dial tcp 10.233.102.153:8083: connect: connection refused
+26m         Normal    AddedInterface                    pod/trisla-besu-5d69b55674-smgnv              Add eth0 [10.233.75.17/32] from k8s-pod-network
+26m         Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-6bf4ffb4b5-ffvkg          Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+25m         Normal    Started                           pod/trisla-besu-5d69b55674-smgnv              Started container besu
+24m         Normal    Created                           pod/trisla-besu-5d69b55674-smgnv              Created container besu
+24m         Normal    Pulled                            pod/trisla-besu-5d69b55674-smgnv              Container image "ghcr.io/abelisboa/trisla-besu:v3.7.16" already present on machine
+23m         Normal    ExternalProvisioning              persistentvolumeclaim/trisla-besu-data        Waiting for a volume to be created either by the external provisioner 'cluster.local/nfs-storage-nfs-subdir-external-provisioner' or manually by the system administrator. If volume creation is delayed, please verify that the provisioner is running and correctly registered.
+23m         Normal    Provisioning                      persistentvolumeclaim/trisla-besu-data        External provisioner is provisioning volume for claim "trisla/trisla-besu-data"
+23m         Normal    SuccessfulCreate                  replicaset/trisla-besu-5d69b55674             Created pod: trisla-besu-5d69b55674-smgnv
+23m         Normal    Scheduled                         pod/trisla-bc-nssmf-856859f696-dwpzw          Successfully assigned trisla/trisla-bc-nssmf-856859f696-dwpzw to node1
+23m         Warning   FailedScheduling                  pod/trisla-besu-5d69b55674-smgnv              0/2 nodes are available: pod has unbound immediate PersistentVolumeClaims. preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling.
+23m         Normal    ProvisioningSucceeded             persistentvolumeclaim/trisla-besu-data        Successfully provisioned volume pvc-289a6c75-bbb3-40c8-b688-4bbf40e81660
+23m         Normal    ScalingReplicaSet                 deployment/trisla-besu                        Scaled up replica set trisla-besu-5d69b55674 to 1
+23m         Normal    SuccessfulDelete                  replicaset/trisla-bc-nssmf-6bf4ffb4b5         Deleted pod: trisla-bc-nssmf-6bf4ffb4b5-ffvkg
+23m         Normal    ScalingReplicaSet                 deployment/trisla-bc-nssmf                    Scaled up replica set trisla-bc-nssmf-856859f696 to 1 from 0
+23m         Normal    SuccessfulCreate                  replicaset/trisla-bc-nssmf-856859f696         Created pod: trisla-bc-nssmf-856859f696-dwpzw
+23m         Normal    ScalingReplicaSet                 deployment/trisla-bc-nssmf                    Scaled down replica set trisla-bc-nssmf-6bf4ffb4b5 to 0 from 1
+23m         Normal    AddedInterface                    pod/trisla-bc-nssmf-856859f696-dwpzw          Add eth0 [10.233.102.168/32] from k8s-pod-network
+23m         Normal    Pulled                            pod/trisla-bc-nssmf-856859f696-dwpzw          Successfully pulled image "ghcr.io/abelisboa/trisla-besu:v3.7.29" in 516ms (516ms including waiting). Image size: 338571986 bytes.
+23m         Normal    Scheduled                         pod/trisla-besu-5d69b55674-smgnv              Successfully assigned trisla/trisla-besu-5d69b55674-smgnv to node2
+23m         Normal    Started                           pod/trisla-bc-nssmf-856859f696-dwpzw          Started container bc-nssmf
+23m         Normal    Created                           pod/trisla-bc-nssmf-856859f696-dwpzw          Created container bc-nssmf
+22m         Normal    Killing                           pod/trisla-bc-nssmf-856859f696-dwpzw          Container bc-nssmf failed liveness probe, will be restarted
+22m         Warning   Unhealthy                         pod/trisla-bc-nssmf-856859f696-dwpzw          Readiness probe failed: Get "http://10.233.102.168:8083/health": dial tcp 10.233.102.168:8083: connect: connection refused
+22m         Normal    Pulling                           pod/trisla-bc-nssmf-856859f696-dwpzw          Pulling image "ghcr.io/abelisboa/trisla-besu:v3.7.29"
+22m         Normal    Pulled                            pod/trisla-bc-nssmf-856859f696-dwpzw          Successfully pulled image "ghcr.io/abelisboa/trisla-besu:v3.7.29" in 513ms (513ms including waiting). Image size: 338571986 bytes.
+18m         Warning   Unhealthy                         pod/trisla-bc-nssmf-856859f696-dwpzw          Liveness probe failed: Get "http://10.233.102.168:8083/health": dial tcp 10.233.102.168:8083: connect: connection refused
+11m         Warning   Unhealthy                         pod/trisla-nasp-adapter-664894c59c-tv6m8      Readiness probe failed: Get "http://10.233.102.146:8085/health": dial tcp 10.233.102.146:8085: connect: connection refused
+11m         Warning   BackOff                           pod/trisla-besu-5d69b55674-smgnv              Back-off restarting failed container besu in pod trisla-besu-5d69b55674-smgnv_trisla(925ebb10-0f2c-435b-a7b5-b4ad9015a16a)
+10m         Normal    Pulled                            pod/trisla-besu-5d9454c8f8-gf8c7              Container image "ghcr.io/abelisboa/trisla-besu:v3.7.16" already present on machine
+10m         Normal    Created                           pod/trisla-besu-5d9454c8f8-gf8c7              Created container besu
+10m         Normal    AddedInterface                    pod/trisla-besu-5d9454c8f8-gf8c7              Add eth0 [10.233.75.24/32] from k8s-pod-network
+10m         Normal    Started                           pod/trisla-besu-5d9454c8f8-gf8c7              Started container besu
+7m33s       Normal    ScalingReplicaSet                 deployment/trisla-besu                        Scaled up replica set trisla-besu-5d9454c8f8 to 1
+7m33s       Normal    SuccessfulCreate                  replicaset/trisla-besu-5d9454c8f8             Created pod: trisla-besu-5d9454c8f8-gf8c7
+7m33s       Normal    Scheduled                         pod/trisla-besu-5d9454c8f8-gf8c7              Successfully assigned trisla/trisla-besu-5d9454c8f8-gf8c7 to node2
+7m13s       Normal    SuccessfulDelete                  replicaset/trisla-besu-5d69b55674             Deleted pod: trisla-besu-5d69b55674-smgnv
+7m13s       Normal    ScalingReplicaSet                 deployment/trisla-besu                        Scaled down replica set trisla-besu-5d69b55674 to 0 from 1
+4m31s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-nasp-adapter-5688bf5f8f-x4fm2      Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+3m56s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-sla-agent-layer-6d944c889c-ntwqc   Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+3m41s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-856859f696-dwpzw          Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+3m29s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-ui-dashboard-85755bf748-t9zfs      Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+88s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-nasp-adapter-664894c59c-tv6m8      Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+80s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-ml-nsmf-599749957-hnbn5            Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+44s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-sem-csmf-9f56dcb9b-q72ck           Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+44s         Normal    Scheduled                         pod/trisla-ml-nsmf-599749957-pf9bq            Successfully assigned trisla/trisla-ml-nsmf-599749957-pf9bq to node1
+44s         Normal    SuccessfulCreate                  replicaset/trisla-ml-nsmf-599749957           Created pod: trisla-ml-nsmf-599749957-pf9bq
+43s         Normal    AddedInterface                    pod/trisla-ml-nsmf-599749957-pf9bq            Add eth0 [10.233.102.156/32] from k8s-pod-network
+43s         Normal    Pulling                           pod/trisla-ml-nsmf-599749957-pf9bq            Pulling image "ghcr.io/abelisboa/trisla-ml-nsmf:v3.8.1"
+42s         Normal    Created                           pod/trisla-ml-nsmf-599749957-pf9bq            Created container trisla-ml-nsmf
+42s         Normal    Pulled                            pod/trisla-ml-nsmf-599749957-pf9bq            Successfully pulled image "ghcr.io/abelisboa/trisla-ml-nsmf:v3.8.1" in 519ms (519ms including waiting). Image size: 373077607 bytes.
+42s         Normal    Started                           pod/trisla-ml-nsmf-599749957-pf9bq            Started container trisla-ml-nsmf
+37s         Normal    Scheduled                         pod/trisla-ml-nsmf-79f5c96dcd-tztxp           Successfully assigned trisla/trisla-ml-nsmf-79f5c96dcd-tztxp to node1
+37s         Normal    ScalingReplicaSet                 deployment/trisla-ml-nsmf                     Scaled up replica set trisla-ml-nsmf-79f5c96dcd to 1
+37s         Normal    SuccessfulCreate                  replicaset/trisla-ml-nsmf-79f5c96dcd          Created pod: trisla-ml-nsmf-79f5c96dcd-tztxp
+36s         Normal    Started                           pod/trisla-ml-nsmf-79f5c96dcd-tztxp           Started container ml-nsmf
+36s         Normal    Created                           pod/trisla-ml-nsmf-79f5c96dcd-tztxp           Created container ml-nsmf
+36s         Normal    AddedInterface                    pod/trisla-ml-nsmf-79f5c96dcd-tztxp           Add eth0 [10.233.102.158/32] from k8s-pod-network
+36s         Normal    Pulled                            pod/trisla-ml-nsmf-79f5c96dcd-tztxp           Container image "ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.29" already present on machine
+35s         Normal    Created                           pod/trisla-ml-nsmf-599749957-pf9bq            Created container ml-nsmf
+35s         Normal    Started                           pod/trisla-ml-nsmf-599749957-pf9bq            Started container ml-nsmf
+35s         Normal    Pulled                            pod/trisla-ml-nsmf-599749957-pf9bq            Container image "ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.29" already present on machine
+23s         Warning   BackOff                           pod/trisla-ml-nsmf-599749957-pf9bq            Back-off restarting failed container ml-nsmf in pod trisla-ml-nsmf-599749957-pf9bq_trisla(c197732e-4642-461c-92d8-40e8927ff68c)
+23s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-ml-nsmf-599749957-pf9bq            Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+22s         Normal    SuccessfulDelete                  replicaset/trisla-ml-nsmf-599749957           Deleted pod: trisla-ml-nsmf-599749957-pf9bq
+22s         Normal    Killing                           pod/trisla-ml-nsmf-599749957-pf9bq            Stopping container trisla-ml-nsmf
+22s         Normal    ScalingReplicaSet                 deployment/trisla-ml-nsmf                     Scaled down replica set trisla-ml-nsmf-599749957 to 0 from 1
+22s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-ml-nsmf-79f5c96dcd-tztxp           Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+17s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-687c6c95f7-bqq4z   Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+12s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-7c8ff9c4fc-kwmqd          Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.

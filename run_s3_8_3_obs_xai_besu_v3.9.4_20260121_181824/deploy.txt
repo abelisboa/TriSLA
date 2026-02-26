@@ -1,0 +1,11 @@
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+kafka                    1/1     1            1           7d20h
+trisla-bc-nssmf          1/1     1            1           42h
+trisla-decision-engine   1/1     1            1           32h
+trisla-ml-nsmf           1/1     1            1           20h
+trisla-nasp-adapter      1/1     1            1           33d
+trisla-portal-backend    1/1     1            1           32d
+trisla-portal-frontend   1/1     1            1           32d
+trisla-sem-csmf          1/1     1            1           29d
+trisla-sla-agent-layer   1/1     1            1           33d
+trisla-ui-dashboard      1/1     1            1           33d

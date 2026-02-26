@@ -1,0 +1,5 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+Trying to pull ghcr.io/abelisboa/trisla-sem-csmf:v3.9.4...
+Getting image source signatures
+Copying blob sha256:27e874b8f8e649517c9fee9e14014289579ab7bf757f689bfcaf1c541f56e948
+Copying blob sha256:255a62dc20fa1b1a17c520af81a4ac95b6880dfacbd42ed16e8971add8f1a547

@@ -1,0 +1,2 @@
+grep: /app/src/__pycache__/main.cpython-310.pyc: binary file matches
+/app/src/main.py:                    logger.info(f"✅ Decisão publicada no Kafka I-04/I-05: decision_id={decision_result.decision_id}")

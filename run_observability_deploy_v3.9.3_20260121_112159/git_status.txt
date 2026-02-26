@@ -1,0 +1,74 @@
+No ramo main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (utilize "git add <arquivo>..." para atualizar o que será submetido)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   apps/decision-engine/src/engine.py
+	modified:   apps/decision-engine/src/kafka_producer.py
+	modified:   apps/decision-engine/src/main.py
+	modified:   apps/ml-nsmf/src/main.py
+	modified:   apps/ml-nsmf/src/predictor.py
+	modified:   helm/trisla/values-nasp.yaml
+	modified:   trisla-portal/backend/src/services/slas.py
+
+Arquivos não monitorados:
+  (utilize "git add <arquivo>..." para incluir o que será submetido)
+	PROMPT_GERACAO_CAPITULO_RESULTADOS_DISSERTACAO_TRISLA_vFINAL
+	capitulo_resultados_v3.8.1/
+	docs/ARTICLE_IEEE_TNSM_SBRC.md
+	docs/CAPITULO_DISCUSSAO_LIMITES.md
+	docs/CAPITULO_RESULTADOS.md
+	docs/MAPA_CONTRIBUICOES_CIENTIFICAS.md
+	docs/evidence/
+	docs/experimentos/
+	docs/pre_experimentos/
+	docs/technical/AUDITORIA_ML_NSMF_FASE1.md
+	docs/technical/AUDITORIA_ML_NSMF_FASE1_RESUMO.md
+	docs/technical/CORRECAO_FASE2_RESUMO.md
+	docs/technical/OBSERVABILITY_EVIDENCES.md
+	docs/technical/PROMPT_ARTIGO_RESUMIDO_IEEE_TNSM_SBRC
+	docs/technical/PROMPT_C1.1_EXECUCAO_CONTROLADA.md
+	"docs/technical/PROMPT_C1.2_R1\342\200\224Execu\303\247\303\243o"
+	"docs/technical/PROMPT_C1.3_R1_Execu\303\247\303\243o_Controlada"
+	docs/technical/PROMPT_C2.1_R1
+	docs/technical/PROMPT_C2.2_R1
+	docs/technical/PROMPT_C2.3_R1
+	"docs/technical/PROMPT_C4_DOCS_ANALISE_PADRAO_ATUALIZA\303\207\303\203O"
+	docs/technical/PROMPT_C4_Stress_Test
+	docs/technical/PROMPT_C5_E3_CONTRACT_DEPLOY
+	docs/technical/PROMPT_C5_E3_CONTRACT_EXEC
+	docs/technical/PROMPT_C5_E3_TRIGGER_DECISION
+	"docs/technical/PROMPT_C5_E3\342\200\224Contratual_Blockchain"
+	docs/technical/PROMPT_C5_NASP_MANUAL
+	"docs/technical/PROMPT_C5_NASP_MANUAL_Implanta\303\247\303\243o_Manual_de_NSI_NSSI"
+	docs/technical/PROMPT_CAPITULO_DISCUSSAO_LIMITES
+	docs/technical/PROMPT_CAPITULO_RESULTADOS_TRISLA
+	docs/technical/PROMPT_MAPA_CONTRIBUICOES_CIENTIFICAS
+	docs/technical/PROMPT_RESULTADOS_TRISLA
+	docs/technical/S6_0_PORTAL_DEPLOY_EVIDENCE.md
+	docs/technical/S6_11_NASP_RESULTS.md
+	docs/technical/S6_13B_NASP_DEPLOY_V3_7_27_RESULTS.md
+	docs/technical/S6_13C_OBTAIN_ACCEPT_AND_VALIDATE_BLOCKCHAIN_RESULTS.md
+	docs/technical/S6_13D_FIX_NASP_ADAPTER_AND_BLOCKCHAIN_E2E.md
+	docs/technical/S6_16_NASP_RESULTS.md
+	docs/technical/S6_17_RESULTS_PRELIMINARES_REAIS.md
+	docs/technical/S6_AUDIT_NASP_RESULTS.md
+	docs/technical/S6_BESU_FIX_RESULTS.md
+	docs/technical/S6_EXPERIMENTAL_EVIDENCES.md
+	docs/technical/S6_FIX_NASP_BLOCKCHAIN_PIPELINE.md
+	docs/technical/S6_FIX_SEMCSMF_AND_VALIDATE_BLOCKCHAIN_RESULTS.md
+	docs/technical/S6_RESULTS_EVIDENCE.md
+	docs/technical/TRISLA_AUDIT_S6_BLOCKCHAIN_PIPELINE.md
+	docs/technical/TRISLA_AUDIT_S6_BLOCKCHAIN_PIPELINE_V2.md
+	e2e_controlada_v3.8.1_20260119_214520/
+	extract_results_v3.8.1.py
+	fix_e2e_v3.8.1_20260119_191851/
+	fix_e2e_v3.8.1_20260119_192003/
+	helm/trisla/besu/
+	scripts/executar_trisla_validacao_contrato.sh
+	trisla_avaliacao_final_v3_20260117_110557/
+	trisla_avaliacao_final_v4_20260117_120644/
+	trisla_evidencias_finais/
+
+nenhuma modificação adicionada à submissão (utilize "git add" e/ou "git commit -a")

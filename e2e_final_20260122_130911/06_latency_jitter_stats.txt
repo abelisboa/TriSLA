@@ -1,0 +1,3 @@
+count 6
+min 156 max 191 mean 176.33333333333334 stdev 10.9188929027728
+jitter_mean_absdiff_ms 18

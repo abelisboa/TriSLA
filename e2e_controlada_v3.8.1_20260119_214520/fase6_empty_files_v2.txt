@@ -1,0 +1,3 @@
+/home/porvir5g/gtp5g/trisla/e2e_controlada_v3.8.1_20260119_214520/fase3_portal_e2e/decision_ids_v2.txt
+/home/porvir5g/gtp5g/trisla/e2e_controlada_v3.8.1_20260119_214520/fase3_portal_e2e/decision_ids_fixed.txt
+/home/porvir5g/gtp5g/trisla/e2e_controlada_v3.8.1_20260119_214520/fase4_kafka_trace/i04_dump.txt

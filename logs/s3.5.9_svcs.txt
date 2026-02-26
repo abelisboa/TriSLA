@@ -1,0 +1,10 @@
+NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                       AGE
+trisla-bc-nssmf          ClusterIP   10.233.28.21    <none>        8083/TCP                      11m
+trisla-besu              ClusterIP   10.233.53.208   <none>        8545/TCP,8546/TCP,30303/TCP   11m
+trisla-decision-engine   ClusterIP   10.233.52.237   <none>        8082/TCP                      11m
+trisla-ml-nsmf           ClusterIP   10.233.38.244   <none>        8081/TCP                      11m
+trisla-nasp-adapter      ClusterIP   10.233.18.23    <none>        8085/TCP                      11m
+trisla-sem-csmf          ClusterIP   10.233.48.83    <none>        8080/TCP                      11m
+trisla-sla-agent-layer   ClusterIP   10.233.6.226    <none>        8084/TCP                      11m
+trisla-trisla-besu       ClusterIP   10.233.33.158   <none>        8545/TCP,8546/TCP,30303/TCP   11m
+trisla-ui-dashboard      ClusterIP   10.233.11.27    <none>        80/TCP                        11m

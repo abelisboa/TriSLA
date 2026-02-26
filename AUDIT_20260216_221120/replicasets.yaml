@@ -1,0 +1,3749 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-17T00:49:00Z"
+    generation: 1
+    labels:
+      app: kafka
+      app.kubernetes.io/name: kafka
+      app.kubernetes.io/part-of: trisla
+      pod-template-hash: 76696c9d87
+    name: kafka-76696c9d87
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: kafka
+      uid: c45b19d2-08f8-480e-b103-008c17ab85e5
+    resourceVersion: "872868173"
+    uid: 67e90e2f-a9d1-4f7a-be62-3a50db091356
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: kafka
+        pod-template-hash: 76696c9d87
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: kafka
+          app.kubernetes.io/name: kafka
+          app.kubernetes.io/part-of: trisla
+          pod-template-hash: 76696c9d87
+      spec:
+        containers:
+        - env:
+          - name: KAFKA_NODE_ID
+            value: "1"
+          - name: KAFKA_PROCESS_ROLES
+            value: broker,controller
+          - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+            value: 1@localhost:9093
+          - name: KAFKA_LISTENERS
+            value: PLAINTEXT://:9092,CONTROLLER://:9093
+          - name: KAFKA_ADVERTISED_LISTENERS
+            value: PLAINTEXT://kafka.trisla.svc.cluster.local:9092
+          - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+            value: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+          - name: KAFKA_CONTROLLER_LISTENER_NAMES
+            value: CONTROLLER
+          - name: KAFKA_LOG_DIRS
+            value: /tmp/kraft-combined-logs
+          image: ghcr.io/abelisboa/trisla-kafka@sha256:3f7b939115cd4872e9cee9369d80bd69712fde55f9902f46d793f64848dedc75
+          imagePullPolicy: IfNotPresent
+          name: kafka
+          ports:
+          - containerPort: 9092
+            name: kafka
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+    creationTimestamp: "2026-01-30T18:30:44Z"
+    generation: 1
+    labels:
+      app: trisla-analytics-adapter
+      pod-template-hash: 645476854b
+    name: trisla-analytics-adapter-645476854b
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-analytics-adapter
+      uid: 59054670-3b71-402b-ba98-123c407dba70
+    resourceVersion: "868612269"
+    uid: 18549add-7eff-4aff-94a5-1017be2b4e7f
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-analytics-adapter
+        pod-template-hash: 645476854b
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-analytics-adapter
+          pod-template-hash: 645476854b
+      spec:
+        containers:
+        - args:
+          - |
+            pip install --no-cache-dir fastapi==0.111.0 uvicorn[standard]==0.30.0 prometheus_client==0.20.0 requests==2.32.3
+            cd /app && uvicorn main:app --host 0.0.0.0 --port 8080
+          command:
+          - /bin/sh
+          - -c
+          env:
+          - name: PROMETHEUS_URL
+            value: http://monitoring-kube-prometheus-prometheus.monitoring:9090
+          - name: CORE5G_NAMESPACE
+            value: ns-1274485
+          - name: RAN_NAMESPACE
+            value: ns-1274485
+          - name: RAN_POD
+            value: rantester-0
+          - name: PYTHONUNBUFFERED
+            value: "1"
+          image: python:3.11-slim
+          imagePullPolicy: IfNotPresent
+          name: adapter
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /app
+            name: code
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: trisla-analytics-adapter-code
+          name: code
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T21:18:35Z"
+    generation: 2
+    labels:
+      app: trisla-bc-nssmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 5d9dd49549
+    name: trisla-bc-nssmf-5d9dd49549
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-bc-nssmf
+      uid: ab2b178c-fe45-4c01-99c4-7979365bf5ce
+    resourceVersion: "872760463"
+    uid: 75fedd19-94ca-4f24-a543-31cfe6a416b0
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-bc-nssmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 5d9dd49549
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-bc-nssmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 5d9dd49549
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: TRISLA_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BESU_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BC_ENABLED
+            value: "true"
+          - name: TRISLA_CHAIN_ID
+            value: "1337"
+          - name: BC_ENABLED
+            value: "true"
+          - name: BC_TX_RECEIPT_TIMEOUT
+            value: "120"
+          image: ghcr.io/abelisboa/trisla-bc-LNssmf:v3.11.2
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: bc-nssmf
+          ports:
+          - containerPort: 8083
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 1
+    labels:
+      app: trisla-bc-nssmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7b769f5d4d
+    name: trisla-bc-nssmf-7b769f5d4d
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-bc-nssmf
+      uid: ab2b178c-fe45-4c01-99c4-7979365bf5ce
+    resourceVersion: "872802834"
+    uid: 384b5a95-ee68-470e-8786-924b291b49bf
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-bc-nssmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 7b769f5d4d
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-bc-nssmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 7b769f5d4d
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: TRISLA_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BESU_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BC_ENABLED
+            value: "true"
+          - name: TRISLA_CHAIN_ID
+            value: "1337"
+          - name: BC_ENABLED
+            value: "true"
+          - name: BC_TX_RECEIPT_TIMEOUT
+            value: "120"
+          image: ghcr.io/abelisboa/trisla-bc-nssmf@sha256:b0db5eef2128baddee2c1c3ea72fb5fec421afb1d87407e5f4a6aadd75f9f95a
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: bc-nssmf
+          ports:
+          - containerPort: 8083
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-bc-nssmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 859d9db9d9
+    name: trisla-bc-nssmf-859d9db9d9
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-bc-nssmf
+      uid: ab2b178c-fe45-4c01-99c4-7979365bf5ce
+    resourceVersion: "872802851"
+    uid: 17cbe8cc-973c-4f04-b364-a303108e5021
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-bc-nssmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 859d9db9d9
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-bc-nssmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 859d9db9d9
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: TRISLA_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BESU_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BC_ENABLED
+            value: "true"
+          - name: TRISLA_CHAIN_ID
+            value: "1337"
+          - name: BC_ENABLED
+            value: "true"
+          - name: BC_TX_RECEIPT_TIMEOUT
+            value: "120"
+          image: ghcr.io/abelisboa/trisla-bc-nssmf:v3.11.2
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: bc-nssmf
+          ports:
+          - containerPort: 8083
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "0"
+      deployment.kubernetes.io/max-replicas: "0"
+      deployment.kubernetes.io/revision: "9"
+      deployment.kubernetes.io/revision-history: 4,7
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-03T00:26:19Z"
+    generation: 9
+    labels:
+      app: besu
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      component: blockchain
+      pod-template-hash: 5b7df9fbf7
+    name: trisla-besu-5b7df9fbf7
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-besu
+      uid: c9a9bbc6-b0f7-4a00-a685-d77be89ac32e
+    resourceVersion: "872814894"
+    uid: f74d7041-5546-4fdb-a701-2050531e29bd
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: besu
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        component: blockchain
+        pod-template-hash: 5b7df9fbf7
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: besu
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          component: blockchain
+          pod-template-hash: 5b7df9fbf7
+      spec:
+        containers:
+        - args:
+          - --genesis-file=/data/genesis.json
+          - --data-path=/opt/besu/data
+          - --rpc-http-enabled=true
+          - --rpc-http-host=0.0.0.0
+          - --rpc-http-port=8545
+          - --rpc-http-api=ETH,NET,WEB3,ADMIN,MINER
+          - --host-allowlist=*
+          - --rpc-http-cors-origins=*
+          - --min-gas-price=0
+          command:
+          - /opt/besu/bin/besu
+          env:
+          - name: BESU_DATA_PATH
+            value: /opt/besu/data
+          image: ghcr.io/abelisboa/trisla-besu:v3.11.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 5
+          name: besu
+          ports:
+          - containerPort: 8545
+            name: rpc-http
+            protocol: TCP
+          - containerPort: 8546
+            name: rpc-ws
+            protocol: TCP
+          - containerPort: 30303
+            name: p2p
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/besu/data
+            name: besu-data
+          - mountPath: /data
+            name: genesis
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - cp /secrets/key /opt/besu/data/key && chmod 600 /opt/besu/data/key
+          image: ghcr.io/abelisboa/trisla-besu:v3.11.0
+          imagePullPolicy: IfNotPresent
+          name: copy-validator-key
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/besu/data
+            name: besu-data
+          - mountPath: /secrets
+            name: validator-key
+            readOnly: true
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: besu-data
+          persistentVolumeClaim:
+            claimName: trisla-besu-data
+        - configMap:
+            defaultMode: 420
+            name: trisla-besu-genesis
+          name: genesis
+        - name: validator-key
+          secret:
+            defaultMode: 420
+            secretName: trisla-besu-validator-key
+  status:
+    observedGeneration: 9
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "8"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T18:01:57Z"
+    generation: 2
+    labels:
+      app: besu
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      component: blockchain
+      pod-template-hash: 69ccc8fdc9
+    name: trisla-besu-69ccc8fdc9
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-besu
+      uid: c9a9bbc6-b0f7-4a00-a685-d77be89ac32e
+    resourceVersion: "872320114"
+    uid: 21ce6a6d-5a87-4b3a-ad3b-e56fff3341a0
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: besu
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        component: blockchain
+        pod-template-hash: 69ccc8fdc9
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: besu
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          component: blockchain
+          pod-template-hash: 69ccc8fdc9
+      spec:
+        containers:
+        - args:
+          - --genesis-file=/data/genesis.json
+          - --data-path=/opt/besu/data
+          - --rpc-http-enabled=true
+          - --rpc-http-host=0.0.0.0
+          - --rpc-http-port=8545
+          - --rpc-http-api=ETH,NET,WEB3,ADMIN,MINER
+          - --host-allowlist=*
+          - --rpc-http-cors-origins=*
+          - --min-gas-price=0
+          command:
+          - /opt/besu/bin/besu
+          env:
+          - name: BESU_DATA_PATH
+            value: /opt/besu/data
+          image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-besu:v3.11.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 5
+          name: besu
+          ports:
+          - containerPort: 8545
+            name: rpc-http
+            protocol: TCP
+          - containerPort: 8546
+            name: rpc-ws
+            protocol: TCP
+          - containerPort: 30303
+            name: p2p
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/besu/data
+            name: besu-data
+          - mountPath: /data
+            name: genesis
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - cp /secrets/key /opt/besu/data/key && chmod 600 /opt/besu/data/key
+          image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-besu:v3.11.0
+          imagePullPolicy: IfNotPresent
+          name: copy-validator-key
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/besu/data
+            name: besu-data
+          - mountPath: /secrets
+            name: validator-key
+            readOnly: true
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: besu-data
+          persistentVolumeClaim:
+            claimName: trisla-besu-data
+        - configMap:
+            defaultMode: 420
+            name: trisla-besu-genesis
+          name: genesis
+        - name: validator-key
+          secret:
+            defaultMode: 420
+            secretName: trisla-besu-validator-key
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "10"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 3
+    labels:
+      app: besu
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      component: blockchain
+      pod-template-hash: 756cf5ff69
+    name: trisla-besu-756cf5ff69
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-besu
+      uid: c9a9bbc6-b0f7-4a00-a685-d77be89ac32e
+    resourceVersion: "872815023"
+    uid: 122f4bce-556f-43c9-9d51-ff58a7517e6f
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: besu
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        component: blockchain
+        pod-template-hash: 756cf5ff69
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: besu
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          component: blockchain
+          pod-template-hash: 756cf5ff69
+      spec:
+        containers:
+        - args:
+          - --genesis-file=/data/genesis.json
+          - --data-path=/opt/besu/data
+          - --rpc-http-enabled=true
+          - --rpc-http-host=0.0.0.0
+          - --rpc-http-port=8545
+          - --rpc-http-api=ETH,NET,WEB3,ADMIN,MINER
+          - --host-allowlist=*
+          - --rpc-http-cors-origins=*
+          - --min-gas-price=0
+          command:
+          - /opt/besu/bin/besu
+          env:
+          - name: BESU_DATA_PATH
+            value: /opt/besu/data
+          image: ghcr.io/abelisboa/trisla-besu@sha256:ab84d26d678417b615c0833b4a34e9fe2778cec392a7e23596fa1607cf362efc
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 5
+          name: besu
+          ports:
+          - containerPort: 8545
+            name: rpc-http
+            protocol: TCP
+          - containerPort: 8546
+            name: rpc-ws
+            protocol: TCP
+          - containerPort: 30303
+            name: p2p
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/besu/data
+            name: besu-data
+          - mountPath: /data
+            name: genesis
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - sh
+          - -c
+          - cp /secrets/key /opt/besu/data/key && chmod 600 /opt/besu/data/key
+          image: ghcr.io/abelisboa/trisla-besu@sha256:ab84d26d678417b615c0833b4a34e9fe2778cec392a7e23596fa1607cf362efc
+          imagePullPolicy: IfNotPresent
+          name: copy-validator-key
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/besu/data
+            name: besu-data
+          - mountPath: /secrets
+            name: validator-key
+            readOnly: true
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: besu-data
+          persistentVolumeClaim:
+            claimName: trisla-besu-data
+        - configMap:
+            defaultMode: 420
+            name: trisla-besu-genesis
+          name: genesis
+        - name: validator-key
+          secret:
+            defaultMode: 420
+            secretName: trisla-besu-validator-key
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 2
+    labels:
+      app: trisla-decision-engine
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 65b6bd47b9
+    name: trisla-decision-engine-65b6bd47b9
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-decision-engine
+      uid: 9c729c31-641e-4d04-8e96-d27219ac1724
+    resourceVersion: "872808846"
+    uid: 01614bfb-dbc2-4ca7-9761-9e620fb26a2a
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-decision-engine
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 65b6bd47b9
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-decision-engine
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 65b6bd47b9
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: LOG_LEVEL
+            value: DEBUG
+          - name: ML_NSMF_HTTP_URL
+            value: http://trisla-ml-nsmf:8081
+          - name: SLA_AGENT_URL
+            value: http://trisla-sla-agent-layer:8084
+          image: ghcr.io/abelisboa/trisla-decision-engine@sha256:f285df0baeed9c3a687bbf6ba995f73e1a363ae28907e64b76707592b204fa5a
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: decision-engine
+          ports:
+          - containerPort: 8082
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T21:18:35Z"
+    generation: 2
+    labels:
+      app: trisla-decision-engine
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 6674f6f76
+    name: trisla-decision-engine-6674f6f76
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-decision-engine
+      uid: 9c729c31-641e-4d04-8e96-d27219ac1724
+    resourceVersion: "872760473"
+    uid: 7ce65554-f5e7-47ac-9100-efd7c8ce58e8
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-decision-engine
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 6674f6f76
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-decision-engine
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 6674f6f76
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: LOG_LEVEL
+            value: DEBUG
+          - name: ML_NSMF_HTTP_URL
+            value: http://trisla-ml-nsmf:8081
+          - name: SLA_AGENT_URL
+            value: http://trisla-sla-agent-layer:8084
+          image: ghcr.io/abelisboa/trisla-decision-LEngine:v3.11.2
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: decision-engine
+          ports:
+          - containerPort: 8082
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "4"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T19:02:56Z"
+    generation: 4
+    labels:
+      app: trisla-decision-engine
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 74648556c6
+    name: trisla-decision-engine-74648556c6
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-decision-engine
+      uid: 9c729c31-641e-4d04-8e96-d27219ac1724
+    resourceVersion: "872814264"
+    uid: 60659ca9-6d91-4b4c-a10f-1f5e5d7c1172
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-decision-engine
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 74648556c6
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-decision-engine
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 74648556c6
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: LOG_LEVEL
+            value: DEBUG
+          - name: ML_NSMF_HTTP_URL
+            value: http://trisla-ml-nsmf:8081
+          - name: SLA_AGENT_URL
+            value: http://trisla-sla-agent-layer:8084
+          image: ghcr.io/abelisboa/trisla-decision-engine@sha256:805286bcf9552727fd57df4bf31759278d05ad29d1272c95ee45991340621d41
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: decision-engine
+          ports:
+          - containerPort: 8082
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    fullyLabeledReplicas: 1
+    observedGeneration: 4
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "0"
+      deployment.kubernetes.io/max-replicas: "0"
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-decision-engine
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7f96f89d74
+    name: trisla-decision-engine-7f96f89d74
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-decision-engine
+      uid: 9c729c31-641e-4d04-8e96-d27219ac1724
+    resourceVersion: "872814199"
+    uid: 732cbe98-bbdf-42d3-b558-0c22b821202d
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-decision-engine
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 7f96f89d74
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-decision-engine
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 7f96f89d74
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: LOG_LEVEL
+            value: DEBUG
+          - name: ML_NSMF_HTTP_URL
+            value: http://trisla-ml-nsmf:8081
+          - name: SLA_AGENT_URL
+            value: http://trisla-sla-agent-layer:8084
+          image: ghcr.io/abelisboa/trisla-decision-engine:v3.11.2
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: decision-engine
+          ports:
+          - containerPort: 8082
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+    creationTimestamp: "2026-01-22T14:56:51Z"
+    generation: 1
+    labels:
+      app: trisla-iperf3-server
+      pod-template-hash: 76f599c648
+    name: trisla-iperf3-server-76f599c648
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-iperf3-server
+      uid: 33545bb6-22c2-40ec-98d9-0cba4ab09d6e
+    resourceVersion: "866614465"
+    uid: 92ebf2cb-04c8-4467-a3df-483e48c5fe49
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-iperf3-server
+        pod-template-hash: 76f599c648
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-22T11:56:51-03:00"
+        creationTimestamp: null
+        labels:
+          app: trisla-iperf3-server
+          pod-template-hash: 76f599c648
+      spec:
+        containers:
+        - args:
+          - -s
+          image: networkstatic/iperf3
+          imagePullPolicy: Always
+          name: iperf3
+          ports:
+          - containerPort: 5201
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 1
+    labels:
+      app: trisla-ml-nsmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 58bfd9f
+    name: trisla-ml-nsmf-58bfd9f
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-ml-nsmf
+      uid: 65cfc3b0-e117-4e6d-bcde-8a1a1d14d5e4
+    resourceVersion: "872802979"
+    uid: 1d7170ca-49f7-4c64-9507-108d3ee47e70
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-ml-nsmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 58bfd9f
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ml-nsmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 58bfd9f
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-ml-nsmf@sha256:605af0875ceb09cec0955ab6a7b47c0a4d12e0784a77afacb8cafe7c8119e71a
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ml-nsmf
+          ports:
+          - containerPort: 8081
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T21:18:35Z"
+    generation: 2
+    labels:
+      app: trisla-ml-nsmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 6cbcddc9b9
+    name: trisla-ml-nsmf-6cbcddc9b9
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-ml-nsmf
+      uid: 65cfc3b0-e117-4e6d-bcde-8a1a1d14d5e4
+    resourceVersion: "872760579"
+    uid: 345b1333-2804-47a3-9963-0a3cb4f493ba
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-ml-nsmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 6cbcddc9b9
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ml-nsmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 6cbcddc9b9
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-ml-LNsmf:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ml-nsmf
+          ports:
+          - containerPort: 8081
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-ml-nsmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7d54f59ddf
+    name: trisla-ml-nsmf-7d54f59ddf
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-ml-nsmf
+      uid: 65cfc3b0-e117-4e6d-bcde-8a1a1d14d5e4
+    resourceVersion: "872802989"
+    uid: 33ce2e59-0552-4215-9194-8b6b37585901
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-ml-nsmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 7d54f59ddf
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ml-nsmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 7d54f59ddf
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-ml-nsmf:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ml-nsmf
+          ports:
+          - containerPort: 8081
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "77"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-15T19:10:33Z"
+    generation: 2
+    labels:
+      app: trisla-nasp-adapter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 5ff9db5875
+    name: trisla-nasp-adapter-5ff9db5875
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-nasp-adapter
+      uid: 931b57f5-801f-4a1a-94cd-a01213b7ff78
+    resourceVersion: "872760468"
+    uid: 08f84f79-8cac-4efd-803e-f4a0c8c2f79b
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-nasp-adapter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 5ff9db5875
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-nasp-adapter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 5ff9db5875
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: SEM_CSMF_URL
+            value: http://trisla-sem-csmf.trisla.svc.cluster.local:8080
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: GATE_3GPP_CORE_NAMESPACE
+            value: ns-1274485
+          - name: GATE_3GPP_UERANSIM_NAMESPACE
+            value: ueransim
+          - name: CAPACITY_ACCOUNTING_ENABLED
+            value: "true"
+          - name: RESERVATION_TTL_SECONDS
+            value: "300"
+          - name: RECONCILE_INTERVAL_SECONDS
+            value: "60"
+          - name: CAPACITY_SAFETY_FACTOR
+            value: "0.1"
+          - name: COST_EMBB_CORE
+            value: "1"
+          - name: COST_EMBB_RAN
+            value: "1"
+          - name: COST_EMBB_TRANSPORT
+            value: "1"
+          - name: COST_URLLC_CORE
+            value: "1"
+          - name: COST_URLLC_RAN
+            value: "1"
+          - name: COST_URLLC_TRANSPORT
+            value: "1"
+          - name: COST_MMTC_CORE
+            value: "1"
+          - name: COST_MMTC_RAN
+            value: "1"
+          - name: COST_MMTC_TRANSPORT
+            value: "1"
+          - name: PROMETHEUS_URL
+            value: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+          image: ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.28
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: nasp-adapter
+          ports:
+          - containerPort: 8085
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: trisla-nasp-adapter
+        serviceAccountName: trisla-nasp-adapter
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "79"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 1
+    labels:
+      app: trisla-nasp-adapter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 6fd75985cb
+    name: trisla-nasp-adapter-6fd75985cb
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-nasp-adapter
+      uid: 931b57f5-801f-4a1a-94cd-a01213b7ff78
+    resourceVersion: "872802854"
+    uid: b6d61ed1-cb9d-4917-87bf-02d21c404190
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-nasp-adapter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 6fd75985cb
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-nasp-adapter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 6fd75985cb
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: SEM_CSMF_URL
+            value: http://trisla-sem-csmf.trisla.svc.cluster.local:8080
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: GATE_3GPP_CORE_NAMESPACE
+            value: ns-1274485
+          - name: GATE_3GPP_UERANSIM_NAMESPACE
+            value: ueransim
+          - name: CAPACITY_ACCOUNTING_ENABLED
+            value: "true"
+          - name: RESERVATION_TTL_SECONDS
+            value: "300"
+          - name: RECONCILE_INTERVAL_SECONDS
+            value: "60"
+          - name: CAPACITY_SAFETY_FACTOR
+            value: "0.1"
+          - name: COST_EMBB_CORE
+            value: "1"
+          - name: COST_EMBB_RAN
+            value: "1"
+          - name: COST_EMBB_TRANSPORT
+            value: "1"
+          - name: COST_URLLC_CORE
+            value: "1"
+          - name: COST_URLLC_RAN
+            value: "1"
+          - name: COST_URLLC_TRANSPORT
+            value: "1"
+          - name: COST_MMTC_CORE
+            value: "1"
+          - name: COST_MMTC_RAN
+            value: "1"
+          - name: COST_MMTC_TRANSPORT
+            value: "1"
+          - name: PROMETHEUS_URL
+            value: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+          image: ghcr.io/abelisboa/trisla-nasp-adapter@sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: nasp-adapter
+          ports:
+          - containerPort: 8085
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: trisla-nasp-adapter
+        serviceAccountName: trisla-nasp-adapter
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "78"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-nasp-adapter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7d658c96b9
+    name: trisla-nasp-adapter-7d658c96b9
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-nasp-adapter
+      uid: 931b57f5-801f-4a1a-94cd-a01213b7ff78
+    resourceVersion: "872802893"
+    uid: 0c351c8c-fa56-4216-923b-f2d7d747c288
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-nasp-adapter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 7d658c96b9
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-nasp-adapter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 7d658c96b9
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: SEM_CSMF_URL
+            value: http://trisla-sem-csmf.trisla.svc.cluster.local:8080
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: GATE_3GPP_CORE_NAMESPACE
+            value: ns-1274485
+          - name: GATE_3GPP_UERANSIM_NAMESPACE
+            value: ueransim
+          - name: CAPACITY_ACCOUNTING_ENABLED
+            value: "true"
+          - name: RESERVATION_TTL_SECONDS
+            value: "300"
+          - name: RECONCILE_INTERVAL_SECONDS
+            value: "60"
+          - name: CAPACITY_SAFETY_FACTOR
+            value: "0.1"
+          - name: COST_EMBB_CORE
+            value: "1"
+          - name: COST_EMBB_RAN
+            value: "1"
+          - name: COST_EMBB_TRANSPORT
+            value: "1"
+          - name: COST_URLLC_CORE
+            value: "1"
+          - name: COST_URLLC_RAN
+            value: "1"
+          - name: COST_URLLC_TRANSPORT
+            value: "1"
+          - name: COST_MMTC_CORE
+            value: "1"
+          - name: COST_MMTC_RAN
+            value: "1"
+          - name: COST_MMTC_TRANSPORT
+            value: "1"
+          - name: PROMETHEUS_URL
+            value: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+          image: ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.22
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: nasp-adapter
+          ports:
+          - containerPort: 8085
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: trisla-nasp-adapter
+        serviceAccountName: trisla-nasp-adapter
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "76"
+      deployment.kubernetes.io/revision-history: "74"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T14:52:08Z"
+    generation: 4
+    labels:
+      app: trisla-nasp-adapter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: b5cbf69c6
+    name: trisla-nasp-adapter-b5cbf69c6
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-nasp-adapter
+      uid: 931b57f5-801f-4a1a-94cd-a01213b7ff78
+    resourceVersion: "872564096"
+    uid: d8609cac-ad14-4b0b-a035-f6347df0a601
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-nasp-adapter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: b5cbf69c6
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-02-11T20:19:04-03:00"
+        creationTimestamp: null
+        labels:
+          app: trisla-nasp-adapter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: b5cbf69c6
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: SEM_CSMF_URL
+            value: http://trisla-sem-csmf.trisla.svc.cluster.local:8080
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: GATE_3GPP_ENABLED
+            value: "false"
+          - name: GATE_3GPP_CORE_NAMESPACE
+            value: ns-1274485
+          - name: GATE_3GPP_UERANSIM_NAMESPACE
+            value: ueransim
+          - name: CAPACITY_ACCOUNTING_ENABLED
+            value: "true"
+          - name: RESERVATION_TTL_SECONDS
+            value: "300"
+          - name: RECONCILE_INTERVAL_SECONDS
+            value: "60"
+          - name: CAPACITY_SAFETY_FACTOR
+            value: "0.1"
+          - name: COST_EMBB_CORE
+            value: "1"
+          - name: COST_EMBB_RAN
+            value: "1"
+          - name: COST_EMBB_TRANSPORT
+            value: "1"
+          - name: COST_URLLC_CORE
+            value: "1"
+          - name: COST_URLLC_RAN
+            value: "1"
+          - name: COST_URLLC_TRANSPORT
+            value: "1"
+          - name: COST_MMTC_CORE
+            value: "1"
+          - name: COST_MMTC_RAN
+            value: "1"
+          - name: COST_MMTC_TRANSPORT
+            value: "1"
+          - name: PROMETHEUS_URL
+            value: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+          image: ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.28
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: nasp-adapter
+          ports:
+          - containerPort: 8085
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: trisla-nasp-adapter
+        serviceAccountName: trisla-nasp-adapter
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 4
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "47"
+      meta.helm.sh/release-name: trisla-portal
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-03T21:11:45Z"
+    generation: 1
+    labels:
+      app: trisla-portal-backend
+      component: backend
+      pod-template-hash: 788f88dd98
+    name: trisla-portal-backend-788f88dd98
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-portal-backend
+      uid: cbd621d0-c763-4b5b-a66d-63ec175208b5
+    resourceVersion: "872760522"
+    uid: 1f666ca3-9a1b-457b-94c2-ac0e9bd743fb
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-portal-backend
+        pod-template-hash: 788f88dd98
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-02-02T08:43:18-03:00"
+        creationTimestamp: null
+        labels:
+          app: trisla-portal-backend
+          component: backend
+          pod-template-hash: 788f88dd98
+      spec:
+        containers:
+        - env:
+          - name: SEM_CSMF_URL
+            value: http://trisla-sem-csmf:8080
+          - name: ML_NSMF_URL
+            value: http://trisla-ml-nsmf:8081
+          - name: DECISION_ENGINE_URL
+            value: http://trisla-decision-engine:8082
+          - name: BC_NSSMF_URL
+            value: http://trisla-bc-nssmf:8083
+          - name: SLA_AGENT_URL
+            value: http://trisla-sla-agent-layer:8084
+          - name: OTEL_SDK_DISABLED
+            value: "true"
+          - name: HTTP_TIMEOUT
+            value: "30"
+          - name: BC_TIMEOUT
+            value: "60"
+          image: ghcr.io/abelisboa/trisla-portal-backend:v3.11.0-xai-status
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8001
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: backend
+          ports:
+          - containerPort: 8001
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /nasp/diagnostics
+              port: 8001
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "19"
+      meta.helm.sh/release-name: trisla-portal
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-03T00:26:22Z"
+    generation: 1
+    labels:
+      app: trisla-portal-frontend
+      component: frontend
+      pod-template-hash: 57f546cd77
+    name: trisla-portal-frontend-57f546cd77
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-portal-frontend
+      uid: 1a1331a3-3e76-4d15-b119-cae24a1ae299
+    resourceVersion: "869424520"
+    uid: 11a50bda-3922-46c0-8a04-dd39eb1d6ace
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-portal-frontend
+        pod-template-hash: 57f546cd77
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-31T14:49:11-03:00"
+        creationTimestamp: null
+        labels:
+          app: trisla-portal-frontend
+          component: frontend
+          pod-template-hash: 57f546cd77
+      spec:
+        containers:
+        - env:
+          - name: BACKEND_URL
+            value: http://trisla-portal-backend:8001/api/v1
+          - name: PORT
+            value: "80"
+          image: ghcr.io/abelisboa/trisla-portal-frontend:v3.11.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: frontend
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-sem-csmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 59db8cdc88
+    name: trisla-sem-csmf-59db8cdc88
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-sem-csmf
+      uid: c41ba896-ebb8-4103-9667-25e83a6fca17
+    resourceVersion: "872802866"
+    uid: dc13fc37-07a6-4440-849e-a901ac8b3d85
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-sem-csmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 59db8cdc88
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sem-csmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 59db8cdc88
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-sem-csmf:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sem-csmf
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T21:18:35Z"
+    generation: 2
+    labels:
+      app: trisla-sem-csmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7c9d877788
+    name: trisla-sem-csmf-7c9d877788
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-sem-csmf
+      uid: c41ba896-ebb8-4103-9667-25e83a6fca17
+    resourceVersion: "872760540"
+    uid: f1ef9c18-ad63-4fc3-b195-4645f4569a4b
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-sem-csmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 7c9d877788
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sem-csmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 7c9d877788
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-sem-LCsmf:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sem-csmf
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 1
+    labels:
+      app: trisla-sem-csmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 94f667fbc
+    name: trisla-sem-csmf-94f667fbc
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-sem-csmf
+      uid: c41ba896-ebb8-4103-9667-25e83a6fca17
+    resourceVersion: "872802842"
+    uid: 254c5d40-b379-40c0-9343-ab2896eef2a5
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-sem-csmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 94f667fbc
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sem-csmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 94f667fbc
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-sem-csmf@sha256:84b73a5b8df53fb4901041d96559878bd2248517277557496cb2b7b3effeb375
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sem-csmf
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-sla-agent-layer
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 59d6696bbc
+    name: trisla-sla-agent-layer-59d6696bbc
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-sla-agent-layer
+      uid: 434e5544-d17c-4a47-b225-774d4528258d
+    resourceVersion: "872802895"
+    uid: c38251fc-ba96-4fc5-831e-bfe4f4a0e418
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-sla-agent-layer
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 59d6696bbc
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sla-agent-layer
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 59d6696bbc
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: NASP_ADAPTER_URL
+            value: http://trisla-nasp-adapter:8085
+          - name: BC_NSSMF_URL
+            value: http://trisla-bc-nssmf:8083
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka.trisla.svc.cluster.local:9092
+          image: ghcr.io/abelisboa/trisla-sla-agent-layer:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sla-agent-layer
+          ports:
+          - containerPort: 8084
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 1
+    labels:
+      app: trisla-sla-agent-layer
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7b8b845c7
+    name: trisla-sla-agent-layer-7b8b845c7
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-sla-agent-layer
+      uid: 434e5544-d17c-4a47-b225-774d4528258d
+    resourceVersion: "872802868"
+    uid: c2d92cfc-4a21-4cfa-a168-15387c8104c0
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-sla-agent-layer
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 7b8b845c7
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sla-agent-layer
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 7b8b845c7
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: NASP_ADAPTER_URL
+            value: http://trisla-nasp-adapter:8085
+          - name: BC_NSSMF_URL
+            value: http://trisla-bc-nssmf:8083
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka.trisla.svc.cluster.local:9092
+          image: ghcr.io/abelisboa/trisla-sla-agent-layer@sha256:824b641b7ff17ba52bd93d9c0aeb6f1a4a073575ff86719bd14f67f6a80becce
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sla-agent-layer
+          ports:
+          - containerPort: 8084
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T21:18:35Z"
+    generation: 2
+    labels:
+      app: trisla-sla-agent-layer
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7c5767c6bc
+    name: trisla-sla-agent-layer-7c5767c6bc
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-sla-agent-layer
+      uid: 434e5544-d17c-4a47-b225-774d4528258d
+    resourceVersion: "872760365"
+    uid: b9cf71b5-c921-4c77-86ce-7d5748cc3bbe
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-sla-agent-layer
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 7c5767c6bc
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sla-agent-layer
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 7c5767c6bc
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: NASP_ADAPTER_URL
+            value: http://trisla-nasp-adapter:8085
+          - name: BC_NSSMF_URL
+            value: http://trisla-bc-nssmf:8083
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka.trisla.svc.cluster.local:9092
+          image: ghcr.io/abelisboa/trisla-sla-LAgent-LLayer:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sla-agent-layer
+          ports:
+          - containerPort: 8084
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 1
+    labels:
+      app: trisla-traffic-exporter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: traffic-exporter
+      pod-template-hash: 67649ffd79
+    name: trisla-traffic-exporter-67649ffd79
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-traffic-exporter
+      uid: 00b55427-22ff-4a00-911f-4ecd2f60aba5
+    resourceVersion: "872802793"
+    uid: 33e1f527-ad05-497d-b98f-579cf4cae132
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-traffic-exporter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: traffic-exporter
+        pod-template-hash: 67649ffd79
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-traffic-exporter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: traffic-exporter
+          pod-template-hash: 67649ffd79
+      spec:
+        containers:
+        - image: ghcr.io/abelisboa/trisla-traffic-exporter@sha256:a39455f913ea4f7355426b48613cc0479c7e549d099bdba520fd4fb563564f48
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: exporter
+          ports:
+          - containerPort: 9105
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-traffic-exporter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: traffic-exporter
+      pod-template-hash: 864d664d95
+    name: trisla-traffic-exporter-864d664d95
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-traffic-exporter
+      uid: 00b55427-22ff-4a00-911f-4ecd2f60aba5
+    resourceVersion: "872802803"
+    uid: d5598e3b-38f9-4018-ac6d-7ab9a0d1d7ec
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-traffic-exporter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: traffic-exporter
+        pod-template-hash: 864d664d95
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-traffic-exporter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: traffic-exporter
+          pod-template-hash: 864d664d95
+      spec:
+        containers:
+        - image: ghcr.io/abelisboa/trisla-traffic-exporter:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: exporter
+          ports:
+          - containerPort: 9105
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T21:18:35Z"
+    generation: 2
+    labels:
+      app: trisla-traffic-exporter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: traffic-exporter
+      pod-template-hash: 9df4b784c
+    name: trisla-traffic-exporter-9df4b784c
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-traffic-exporter
+      uid: 00b55427-22ff-4a00-911f-4ecd2f60aba5
+    resourceVersion: "872760318"
+    uid: 7a0062e3-7c70-4e12-a098-101ff0be5f46
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-traffic-exporter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: traffic-exporter
+        pod-template-hash: 9df4b784c
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-traffic-exporter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: traffic-exporter
+          pod-template-hash: 9df4b784c
+      spec:
+        containers:
+        - image: ghcr.io/abelisboa/trisla-traffic-LExporter:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: exporter
+          ports:
+          - containerPort: 9105
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generation: 1
+    labels:
+      app: trisla-ui-dashboard
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 5cc774c4b7
+    name: trisla-ui-dashboard-5cc774c4b7
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-ui-dashboard
+      uid: 7f812b32-4361-42bf-8542-1921eafa9cf1
+    resourceVersion: "872802900"
+    uid: a408a61f-5d13-4f17-b4d6-c90844e12331
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: trisla-ui-dashboard
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 5cc774c4b7
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ui-dashboard
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 5cc774c4b7
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          image: ghcr.io/abelisboa/trisla-ui-dashboard@sha256:16e23f4de91582e56bfe4704c0139a3154c34c4a44780f17f3082b6195dbe6fb
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ui-dashboard
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-16T14:20:31Z"
+    generation: 2
+    labels:
+      app: trisla-ui-dashboard
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 6754f4869d
+    name: trisla-ui-dashboard-6754f4869d
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-ui-dashboard
+      uid: 7f812b32-4361-42bf-8542-1921eafa9cf1
+    resourceVersion: "872802912"
+    uid: c4ef9fa0-28ab-4835-8856-278bbe904813
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-ui-dashboard
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 6754f4869d
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ui-dashboard
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 6754f4869d
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          image: ghcr.io/abelisboa/trisla-ui-dashboard:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ui-dashboard
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-02-14T21:18:35Z"
+    generation: 2
+    labels:
+      app: trisla-ui-dashboard
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 77f77b54f6
+    name: trisla-ui-dashboard-77f77b54f6
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: trisla-ui-dashboard
+      uid: 7f812b32-4361-42bf-8542-1921eafa9cf1
+    resourceVersion: "872760381"
+    uid: 8564bd03-8f87-4269-852b-d5c74649d8f3
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: trisla-ui-dashboard
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        pod-template-hash: 77f77b54f6
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ui-dashboard
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          pod-template-hash: 77f77b54f6
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          image: ghcr.io/abelisboa/trisla-ui-LDashboard:v3.11.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ui-dashboard
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+kind: List
+metadata:
+  resourceVersion: ""

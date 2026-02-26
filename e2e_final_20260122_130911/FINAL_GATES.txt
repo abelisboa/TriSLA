@@ -1,0 +1,5 @@
+G1 rate(cpu,net)= GATE= FAIL
+G2 ACCEPT= FAIL
+G3 Kafka= FAIL
+G4 BC= FAIL
+G5 SLA-Agent= FAIL

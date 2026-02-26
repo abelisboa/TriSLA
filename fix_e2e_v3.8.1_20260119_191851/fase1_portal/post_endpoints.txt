@@ -1,0 +1,2 @@
+/api/v1/sla/interpret
+/api/v1/sla/submit

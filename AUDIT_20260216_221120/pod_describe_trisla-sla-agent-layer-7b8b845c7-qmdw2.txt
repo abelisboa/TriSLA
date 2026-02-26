@@ -1,0 +1,75 @@
+Name:             trisla-sla-agent-layer-7b8b845c7-qmdw2
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node1/192.168.10.16
+Start Time:       Mon, 16 Feb 2026 15:28:36 -0300
+Labels:           app=trisla-sla-agent-layer
+                  app.kubernetes.io/instance=trisla
+                  app.kubernetes.io/name=trisla
+                  pod-template-hash=7b8b845c7
+Annotations:      cni.projectcalico.org/containerID: 0f5a28d66d6aaef88955a071751c294e927deced8e25e4e9a259be026589b42e
+                  cni.projectcalico.org/podIP: 10.233.102.153/32
+                  cni.projectcalico.org/podIPs: 10.233.102.153/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.102.153"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Running
+IP:               10.233.102.153
+IPs:
+  IP:           10.233.102.153
+Controlled By:  ReplicaSet/trisla-sla-agent-layer-7b8b845c7
+Containers:
+  sla-agent-layer:
+    Container ID:   containerd://df43c286155eb4519fe9af3fe0f621fea0749c314290b994d5a16307b88383d8
+    Image:          ghcr.io/abelisboa/trisla-sla-agent-layer@sha256:824b641b7ff17ba52bd93d9c0aeb6f1a4a073575ff86719bd14f67f6a80becce
+    Image ID:       ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-sla-agent-layer@sha256:824b641b7ff17ba52bd93d9c0aeb6f1a4a073575ff86719bd14f67f6a80becce
+    Port:           8084/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 16 Feb 2026 15:28:38 -0300
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     2
+      memory:  2Gi
+    Requests:
+      cpu:      500m
+      memory:   512Mi
+    Liveness:   http-get http://:http/health delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:http/health delay=10s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      TRISLA_NODE_INTERFACE:  my5g
+      TRISLA_NODE_IP:         192.168.10.16
+      OTLP_ENDPOINT:          http://trisla-otel-collector:4317
+      NASP_ADAPTER_URL:       http://trisla-nasp-adapter:8085
+      BC_NSSMF_URL:           http://trisla-bc-nssmf:8083
+      KAFKA_ENABLED:          true
+      KAFKA_BROKERS:          kafka.trisla.svc.cluster.local:9092
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-nqmh7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-nqmh7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              kubernetes.io/hostname=node1
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

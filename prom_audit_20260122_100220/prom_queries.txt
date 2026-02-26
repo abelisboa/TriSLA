@@ -1,0 +1,8 @@
+QUERY cpu
+192
+QUERY net
+480
+QUERY disk
+34
+QUERY mem
+2

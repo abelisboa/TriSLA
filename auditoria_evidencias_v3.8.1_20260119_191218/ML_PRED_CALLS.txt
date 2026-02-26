@@ -1,0 +1,2 @@
+607:INFO:     10.233.75.45:54676 - "POST /api/v1/predict HTTP/1.1" 200 OK
+635:INFO:     10.233.75.45:52676 - "POST /api/v1/predict HTTP/1.1" 200 OK

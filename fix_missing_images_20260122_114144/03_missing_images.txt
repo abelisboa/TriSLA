@@ -1,0 +1,7 @@
+[MISSING] ghcr.io/abelisboa/trisla-bc-nssmf:v3.9.4
+[MISSING] ghcr.io/abelisboa/trisla-decision-engine:v3.9.4
+[MISSING] ghcr.io/abelisboa/trisla-ml-nsmf:v3.9.4
+[MISSING] ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.4
+[MISSING] ghcr.io/abelisboa/trisla-sem-csmf:v3.9.4
+[MISSING] ghcr.io/abelisboa/trisla-sla-agent-layer:v3.9.4
+[MISSING] ghcr.io/abelisboa/trisla-ui-dashboard:v3.9.4

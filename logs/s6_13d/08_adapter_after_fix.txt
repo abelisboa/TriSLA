@@ -1,0 +1,300 @@
+INFO:     192.168.10.16:37088 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37096 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37104 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:35778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:34192 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53526 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53528 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53530 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43764 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43768 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:47766 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:53702 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43770 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37796 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37798 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37812 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:60104 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:56006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36102 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36086 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36110 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33740 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33756 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:54048 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:35714 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33772 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36224 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36226 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36248 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:49482 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:57362 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44522 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44520 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44538 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37524 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37536 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:57992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:34030 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37540 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45650 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45666 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45674 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:50730 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:58900 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36726 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36730 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36736 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35138 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35126 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:37284 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:33088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35142 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42370 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42380 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42394 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:60988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:37492 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53082 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53080 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53094 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49660 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49662 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:54022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:45296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49674 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40358 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40364 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40376 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:46378 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:50096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43468 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43472 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43484 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36224 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36230 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:59958 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:54912 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36234 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58244 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58258 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58266 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:48562 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:54144 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36322 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36328 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36340 - "GET /health HTTP/1.1" 200 OK
+2025-12-21 16:58:51,965 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=0792ca51-32cb-404c-81ce-0fcb696d4f94, nest_id=nest-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:51,965 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=0792ca51-32cb-404c-81ce-0fcb696d4f94, nest_id=nest-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:51,965 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:51,965 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:51,966 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+2025-12-21 16:58:51,966 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+2025-12-21 16:58:52,039 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 16:58:52,039 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 16:58:52,041 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 16:58:52,041 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 16:58:52,041 - src.main - INFO - ✅ Decisão obtida: REJ (confidence=0.85)
+2025-12-21 16:58:52,041 - src.main - INFO - ✅ Decisão obtida: REJ (confidence=0.85)
+2025-12-21 16:58:52,041 - src.main - INFO - 💾 Decisão persistida: dec-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:52,041 - src.main - INFO - 💾 Decisão persistida: dec-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:52,042 - src.main - INFO - ❌ Encaminhando REJECT para Portal Backend: decision_id=dec-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:52,042 - src.main - INFO - ❌ Encaminhando REJECT para Portal Backend: decision_id=dec-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:52,042 - portal_backend_client - INFO - Notificando Portal Backend sobre REJECT: decision_id=dec-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:52,042 - portal_backend_client - INFO - Notificando Portal Backend sobre REJECT: decision_id=dec-0792ca51-32cb-404c-81ce-0fcb696d4f94
+2025-12-21 16:58:52,044 - portal_backend_client - WARNING - ⚠️ Portal Backend não disponível para notificação: All connection attempts failed
+2025-12-21 16:58:52,044 - portal_backend_client - WARNING - ⚠️ Portal Backend não disponível para notificação: All connection attempts failed
+INFO:     10.233.102.158:45180 - "POST /evaluate HTTP/1.1" 200 OK
+2025-12-21 16:58:52,110 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 16:58:52,110 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 16:58:52,110 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 16:58:52,110 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 16:58:52,110 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+2025-12-21 16:58:52,110 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+INFO:     10.233.75.22:52452 - "POST /api/v1/decide HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36462 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36464 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:42734 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:59068 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36480 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58146 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58138 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58152 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:38248 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:60414 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50516 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50502 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50526 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41992 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41996 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:52294 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:40756 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42000 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43390 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43398 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43412 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:57544 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:41244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34724 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34722 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34740 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43876 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43874 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:55336 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:40548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43892 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48354 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48366 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48382 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:58390 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:59360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52234 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52236 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52252 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37876 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37878 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:47484 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:59454 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37888 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43478 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43482 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43488 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:54144 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:58376 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33634 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33642 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33652 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38914 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38920 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:37008 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:58920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38924 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44114 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44128 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44136 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:46062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:56030 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46886 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46898 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46900 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50990 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50992 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:54922 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:54566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51006 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59092 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59100 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59114 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:54140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:34978 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46290 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46296 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46310 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57464 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57474 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:48396 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:38798 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57482 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38410 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38404 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38424 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:33884 - "GET /metrics HTTP/1.1" 200 OK
+2025-12-21 17:02:16,572 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=591cf37a-2eb5-4fd9-b2de-f0f939c10ac5, nest_id=nest-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,572 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=591cf37a-2eb5-4fd9-b2de-f0f939c10ac5, nest_id=nest-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,586 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,586 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,587 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+2025-12-21 17:02:16,587 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+INFO:     10.233.102.141:52596 - "GET /metrics HTTP/1.1" 200 OK
+2025-12-21 17:02:16,671 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 17:02:16,671 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 17:02:16,673 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 17:02:16,673 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 17:02:16,674 - src.main - INFO - ✅ Decisão obtida: RENEG (confidence=0.85)
+2025-12-21 17:02:16,674 - src.main - INFO - ✅ Decisão obtida: RENEG (confidence=0.85)
+2025-12-21 17:02:16,675 - src.main - INFO - 💾 Decisão persistida: dec-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,675 - src.main - INFO - 🔄 Encaminhando RENEGOTIATE para BC-NSMF: decision_id=dec-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,675 - src.main - WARNING - ⚠️ Falha ao registrar RENEGOTIATE no BC-NSMF para decision_id=dec-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,675 - src.main - INFO - 💾 Decisão persistida: dec-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,675 - src.main - INFO - 🔄 Encaminhando RENEGOTIATE para BC-NSMF: decision_id=dec-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+2025-12-21 17:02:16,675 - src.main - WARNING - ⚠️ Falha ao registrar RENEGOTIATE no BC-NSMF para decision_id=dec-591cf37a-2eb5-4fd9-b2de-f0f939c10ac5
+INFO:     10.233.102.158:35038 - "POST /evaluate HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48546 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48544 - "GET /health HTTP/1.1" 200 OK
+2025-12-21 17:02:16,770 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 17:02:16,770 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 17:02:16,771 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 17:02:16,771 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 17:02:16,771 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+2025-12-21 17:02:16,771 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+INFO:     10.233.75.22:59346 - "POST /api/v1/decide HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48562 - "GET /health HTTP/1.1" 200 OK
+2025-12-21 17:02:21,982 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=184d1edd-006b-45b9-9221-3d0e3bc5896e, nest_id=nest-184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:21,982 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=184d1edd-006b-45b9-9221-3d0e3bc5896e, nest_id=nest-184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:21,982 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:21,982 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:21,983 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+2025-12-21 17:02:21,983 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+2025-12-21 17:02:22,014 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 17:02:22,014 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 17:02:22,015 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 17:02:22,015 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 17:02:22,016 - src.main - INFO - ✅ Decisão obtida: AC (confidence=0.85)
+2025-12-21 17:02:22,016 - src.main - INFO - ✅ Decisão obtida: AC (confidence=0.85)
+2025-12-21 17:02:22,016 - src.main - INFO - 💾 Decisão persistida: dec-184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:22,016 - src.main - INFO - 💾 Decisão persistida: dec-184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:22,016 - src.main - INFO - 🚀 Encaminhando ACCEPT para NASP Adapter: decision_id=dec-184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:22,016 - src.main - INFO - 🚀 Encaminhando ACCEPT para NASP Adapter: decision_id=dec-184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:22,017 - nasp_adapter_client - INFO - 🔷 [NSI] Instanciando NSI: nsi-184d1edd-643a79 (serviceProfile=eMBB)
+2025-12-21 17:02:22,017 - nasp_adapter_client - INFO - 🔷 [NSI] Instanciando NSI: nsi-184d1edd-643a79 (serviceProfile=eMBB)
+2025-12-21 17:02:22,022 - httpx - INFO - HTTP Request: POST http://trisla-nasp-adapter:8085/api/v1/nsi/instantiate "HTTP/1.1 404 Not Found"
+2025-12-21 17:02:22,022 - httpx - INFO - HTTP Request: POST http://trisla-nasp-adapter:8085/api/v1/nsi/instantiate "HTTP/1.1 404 Not Found"
+2025-12-21 17:02:22,023 - nasp_adapter_client - ERROR - ❌ Erro HTTP ao chamar NASP Adapter: Client error '404 Not Found' for url 'http://trisla-nasp-adapter:8085/api/v1/nsi/instantiate'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2025-12-21 17:02:22,023 - nasp_adapter_client - ERROR - ❌ Erro HTTP ao chamar NASP Adapter: Client error '404 Not Found' for url 'http://trisla-nasp-adapter:8085/api/v1/nsi/instantiate'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2025-12-21 17:02:22,037 - src.main - WARNING - ⚠️ Falha ao criar slice no NASP para decision_id=dec-184d1edd-006b-45b9-9221-3d0e3bc5896e
+2025-12-21 17:02:22,037 - src.main - WARNING - ⚠️ Falha ao criar slice no NASP para decision_id=dec-184d1edd-006b-45b9-9221-3d0e3bc5896e
+INFO:     10.233.102.158:56186 - "POST /evaluate HTTP/1.1" 200 OK
+2025-12-21 17:02:22,112 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 17:02:22,112 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 17:02:22,112 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 17:02:22,112 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 17:02:22,112 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+2025-12-21 17:02:22,112 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+INFO:     10.233.75.22:56436 - "POST /api/v1/decide HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54516 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54514 - "GET /health HTTP/1.1" 200 OK
+2025-12-21 17:02:26,973 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=f0e829bc-b5ff-41f1-b625-d6fd51407c1b, nest_id=nest-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,973 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=f0e829bc-b5ff-41f1-b625-d6fd51407c1b, nest_id=nest-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,973 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,973 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,974 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+2025-12-21 17:02:26,974 - ml_client - INFO - Chamando ML-NSMF em http://trisla-ml-nsmf:8081/api/v1/predict
+2025-12-21 17:02:26,998 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 17:02:26,998 - httpx - INFO - HTTP Request: POST http://trisla-ml-nsmf:8081/api/v1/predict "HTTP/1.1 200 OK"
+2025-12-21 17:02:26,998 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 17:02:26,998 - ml_client - WARNING - ⚠️ ML-NSMF usando modo fallback - modelo não disponível
+2025-12-21 17:02:26,999 - src.main - INFO - ✅ Decisão obtida: RENEG (confidence=0.85)
+2025-12-21 17:02:26,999 - src.main - INFO - ✅ Decisão obtida: RENEG (confidence=0.85)
+2025-12-21 17:02:26,999 - src.main - INFO - 💾 Decisão persistida: dec-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,999 - src.main - INFO - 💾 Decisão persistida: dec-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,999 - src.main - INFO - 🔄 Encaminhando RENEGOTIATE para BC-NSMF: decision_id=dec-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,999 - src.main - INFO - 🔄 Encaminhando RENEGOTIATE para BC-NSMF: decision_id=dec-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,999 - src.main - WARNING - ⚠️ Falha ao registrar RENEGOTIATE no BC-NSMF para decision_id=dec-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+2025-12-21 17:02:26,999 - src.main - WARNING - ⚠️ Falha ao registrar RENEGOTIATE no BC-NSMF para decision_id=dec-f0e829bc-b5ff-41f1-b625-d6fd51407c1b
+INFO:     10.233.102.158:45926 - "POST /evaluate HTTP/1.1" 200 OK
+2025-12-21 17:02:27,097 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 17:02:27,097 - src.main - WARNING - ⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.
+2025-12-21 17:02:27,097 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 17:02:27,097 - src.main - WARNING - ⚠️ Decision producer não inicializado. Endpoint /api/v1/decide está DEPRECATED.
+2025-12-21 17:02:27,097 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+2025-12-21 17:02:27,097 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+INFO:     10.233.75.22:56438 - "POST /api/v1/decide HTTP/1.1" 200 OK
+INFO:     10.233.102.159:58870 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.141:50952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54530 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49834 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49840 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49844 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.159:52378 - "GET /metrics HTTP/1.1" 200 OK

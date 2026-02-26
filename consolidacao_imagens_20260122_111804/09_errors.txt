@@ -1,0 +1,8 @@
+kafkatools-1769049575                     0/1     ImagePullBackOff   0          11h
+trisla-bc-nssmf-7d5bb578-xfhdg            0/1     ImagePullBackOff   0          5m31s
+trisla-ml-nsmf-56bf69594d-7nnzz           0/1     ImagePullBackOff   0          5m31s
+trisla-nasp-adapter-74ddb9dbbc-dvqgn      0/1     ImagePullBackOff   0          75m
+trisla-sem-csmf-565dbbfc89-sh789          0/1     ImagePullBackOff   0          29m
+trisla-sem-csmf-7c4d5765ff-zprtm          0/1     ImagePullBackOff   0          5m31s
+trisla-sla-agent-layer-59cf579dcb-c2f5m   0/1     ImagePullBackOff   0          75m
+trisla-ui-dashboard-fcbfdd76f-srt67       0/1     ImagePullBackOff   0          75m

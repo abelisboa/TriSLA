@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  creationTimestamp: "2026-01-14T00:14:57Z"
+  name: kafka
+  namespace: trisla
+  resourceVersion: "864472782"
+  uid: f43bf13c-0ff0-4cd4-87c4-f30384de20ad
+subsets:
+- addresses:
+  - ip: 10.233.75.59
+    nodeName: node2
+    targetRef:
+      kind: Pod
+      name: kafka-c948b8d64-jgmz5
+      namespace: trisla
+      uid: b9528447-90a0-4b73-ab34-703ca38b0b7c
+  ports:
+  - name: kafka
+    port: 9092
+    protocol: TCP

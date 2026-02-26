@@ -1,0 +1,152 @@
+Name:             kafka-c948b8d64-jgmz5
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node2/192.168.10.15
+Start Time:       Tue, 13 Jan 2026 21:34:47 -0300
+Labels:           app=kafka
+                  pod-template-hash=c948b8d64
+Annotations:      cni.projectcalico.org/containerID: ee79b1227c8f82edff8b815114e4822d9ba1e599586add1e1571ca1382bcca7e
+                  cni.projectcalico.org/podIP: 10.233.75.59/32
+                  cni.projectcalico.org/podIPs: 10.233.75.59/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.75.59"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+                  kubectl.kubernetes.io/restartedAt: 2026-01-13T21:37:35-03:00
+Status:           Running
+IP:               10.233.75.59
+IPs:
+  IP:           10.233.75.59
+Controlled By:  ReplicaSet/kafka-c948b8d64
+Containers:
+  kafka:
+    Container ID:  containerd://ed5a7c307ab36c5ba130b82da3441c95c12d7db4602cab09392e03409b92e6a9
+    Image:         apache/kafka:latest
+    Image ID:      docker.io/apache/kafka@sha256:3f7b939115cd4872e9cee9369d80bd69712fde55f9902f46d793f64848dedc75
+    Port:          9092/TCP (kafka)
+    Host Port:     0/TCP (kafka)
+    Command:
+      /bin/sh
+      -c
+      CLUSTER_ID=00d42c2a-1bf1-4ef3-8112-325210229bb0
+      cd /opt/kafka
+      if [ ! -f /var/lib/kafka/data/.formatted ]; then
+        /opt/kafka/bin/kafka-storage.sh format -t 00d42c2a-1bf1-4ef3-8112-325210229bb0 -c /config/server.properties --ignore-formatted
+        touch /var/lib/kafka/data/.formatted
+      fi
+      /opt/kafka/bin/kafka-server-start.sh /config/server.properties
+      
+    State:          Running
+      Started:      Tue, 13 Jan 2026 21:34:49 -0300
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /config from config (rw)
+      /var/lib/kafka/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-g9wj2 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      kafka-server-config
+    Optional:  false
+  data:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+  kube-api-access-g9wj2:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason          Age   From               Message
+  ----    ------          ----  ----               -------
+  Normal  AddedInterface  21m   multus             Add eth0 [10.233.75.59/32] from k8s-pod-network
+  Normal  Pulling         21m   kubelet            Pulling image "apache/kafka:latest"
+  Normal  Pulled          20m   kubelet            Successfully pulled image "apache/kafka:latest" in 1.093s (1.093s including waiting). Image size: 426732585 bytes.
+  Normal  Created         20m   kubelet            Created container kafka
+  Normal  Started         20m   kubelet            Started container kafka
+  Normal  Scheduled       18m   default-scheduler  Successfully assigned trisla/kafka-c948b8d64-jgmz5 to node2
+
+
+Name:             registry-sanity
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node1/192.168.10.16
+Start Time:       Tue, 23 Dec 2025 05:30:26 -0300
+Labels:           run=registry-sanity
+Annotations:      cni.projectcalico.org/containerID: dc95e11c925d106e78517b6a5d6668bdc575eecc6715a7bd2a0a4d644e9c7647
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.102.189"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Succeeded
+IP:               10.233.102.189
+IPs:
+  IP:  10.233.102.189
+Containers:
+  registry-sanity:
+    Container ID:  containerd://87c784f0986fe15a43b2d68f3e57ef44badf9fa7f5e80eefabfbf59c6af01faf
+    Image:         192.168.10.16:5000/library/alpine:latest
+    Image ID:      192.168.10.16:5000/library/alpine@sha256:0464c44011486f1f7f99d3792d048663ce27d85f9cc8f3218fc8f96f070405af
+    Port:          <none>
+    Host Port:     <none>
+    Args:
+      sleep
+      60
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Tue, 23 Dec 2025 05:30:27 -0300
+      Finished:     Tue, 23 Dec 2025 05:31:27 -0300
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jnzxn (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-jnzxn:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: trisla
+    meta.helm.sh/release-namespace: trisla
+  creationTimestamp: "2026-01-20T11:58:46Z"
+  labels:
+    app: besu
+    app.kubernetes.io/component: trisla
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/version: v3.7.29
+    component: blockchain
+  name: trisla-besu
+  namespace: trisla
+  resourceVersion: "866074527"
+  uid: 337e6583-76e0-48d9-a8c9-6afbbd642ba3
+spec:
+  clusterIP: 10.233.9.111
+  clusterIPs:
+  - 10.233.9.111
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: rpc
+    port: 8545
+    protocol: TCP
+    targetPort: 8545
+  - name: rpc-ws
+    port: 8546
+    protocol: TCP
+    targetPort: 8546
+  - name: p2p
+    port: 30303
+    protocol: TCP
+    targetPort: 30303
+  selector:
+    app: besu
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/name: trisla
+    component: blockchain
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

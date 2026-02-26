@@ -1,0 +1,7 @@
+../freeze_e2e_v3.8.1_20260120_154640/cluster/pods_describe.txt:40:      {"intent_id": "intent-e2e-final", "intent": {"tenant_id": "tenant-001", "service_type": "eMBB", "sla_requirements": {"latency": 20, "throughput": 100}}, "nest": null, "context": {"cpu": 2, "memory": 2048, "bandwidth": 100}}
+../freeze_e2e_v3.8.1_20260120_154640/cluster/pods_describe.txt:119:      {"intent_id": "intent-e2e-004", "intent": {"tenant_id": "tenant-001", "service_type": "eMBB", "sla_requirements": {"latency": 20, "throughput": 100}}, "nest": null, "context": {"cpu": 2, "memory": 2048, "bandwidth": 100}}
+../freeze_e2e_v3.8.1_20260120_154640/decision-engine/logs_last_30min.txt:74:2026-01-20 18:24:36,119 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=intent-final-kafka, nest_id=None
+../freeze_e2e_v3.8.1_20260120_154640/decision-engine/logs_last_30min.txt:75:2026-01-20 18:24:36,119 - src.main - INFO - 📥 SLA recebido para avaliação: intent_id=intent-final-kafka, nest_id=None
+../freeze_e2e_v3.8.1_20260120_154640/decision-engine/logs_last_30min.txt:76:2026-01-20 18:24:36,119 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=intent-final-kafka
+../freeze_e2e_v3.8.1_20260120_154640/decision-engine/logs_last_30min.txt:77:2026-01-20 18:24:36,119 - src.main - INFO - 🔍 Chamando ML-NSMF para intent_id=intent-final-kafka
+grep: ../freeze_functional_e2e_v3.8.1_20260120_161033/e2e/intent_trace.txt: o arquivo de entrada também é o de saída

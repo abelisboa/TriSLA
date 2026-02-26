@@ -1,0 +1,9 @@
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/empty_files.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/consume_trisla-i05-actions.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/decision_engine_kafka_evidence.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/consume_trisla-ml-predictions.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/decision_engine_last10m_signals.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/consume_trisla-i05-sla-agents.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/consume_trisla-i04-decisions.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/consume_trisla-decision-events.txt
+/home/porvir5g/gtp5g/trisla/run_s3_13c_kafka_20260121_210722/consume_trisla-ml-xai.txt

@@ -1,0 +1,44 @@
+{
+  "health_checks": {
+    "SEM-CSMF": true,
+    "ML-NSMF": false,
+    "Decision Engine": false,
+    "BC-NSSMF": false,
+    "SLA-Agent Layer": false,
+    "NASP Adapter": false
+  },
+  "endpoints": {
+    "SEM-CSMF": {
+      "status": "healthy",
+      "module": "sem-csmf"
+    },
+    "ML-NSMF": null,
+    "Decision Engine": null,
+    "BC-NSSMF": null,
+    "SLA-Agent Layer": null,
+    "NASP Adapter": null
+  },
+  "interfaces": {
+    "I-01": false,
+    "I-02": false,
+    "I-03": false
+  },
+  "monitoring": {
+    "otlp_collector": {
+      "grpc": false,
+      "http": false,
+      "config_exists": true
+    },
+    "prometheus": {
+      "running": false,
+      "config_exists": true,
+      "slo_rules_exists": true
+    },
+    "traces": {
+      "otlp_available": false
+    }
+  },
+  "slo_reports": {
+    "generator_exists": true
+  }
+}

@@ -1,0 +1,13 @@
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS        IMAGES                                            SELECTOR
+kafka                     1/1     1            1           8d      kafka             apache/kafka:latest                               app=kafka
+trisla-bc-nssmf           1/1     1            1           2d13h   bc-nssmf          ghcr.io/abelisboa/trisla-bc-nssmf:v3.9.4          app=trisla-bc-nssmf,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla
+trisla-decision-engine    1/1     1            1           2d3h    decision-engine   ghcr.io/abelisboa/trisla-decision-engine:v3.9.4   app=trisla-decision-engine,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla
+trisla-iperf3-server      1/1     1            1           17h     iperf3            networkstatic/iperf3                              app=trisla-iperf3-server
+trisla-ml-nsmf            1/1     1            1           38h     ml-nsmf           ghcr.io/abelisboa/trisla-ml-nsmf:v3.9.4           app=trisla-ml-nsmf,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla
+trisla-nasp-adapter       1/1     1            1           33d     nasp-adapter      ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.4      app=trisla-nasp-adapter,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla
+trisla-portal-backend     1/1     1            1           32d     backend           ghcr.io/abelisboa/trisla-portal-backend:v3.8.1    app=trisla-portal-backend
+trisla-portal-frontend    1/1     1            1           32d     frontend          ghcr.io/abelisboa/trisla-portal-frontend:v3.8.1   app=trisla-portal-frontend
+trisla-sem-csmf           1/1     1            1           124m    sem-csmf          ghcr.io/abelisboa/trisla-sem-csmf:v3.9.4          app=trisla-sem-csmf,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla
+trisla-sla-agent-layer    1/1     1            1           33d     sla-agent-layer   ghcr.io/abelisboa/trisla-sla-agent-layer:v3.9.4   app=trisla-sla-agent-layer,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla
+trisla-traffic-exporter   1/1     1            1           17h     exporter          ghcr.io/abelisboa/trisla-traffic-exporter:v3      app=trisla-traffic-exporter
+trisla-ui-dashboard       1/1     1            1           33d     ui-dashboard      ghcr.io/abelisboa/trisla-ui-dashboard:v3.9.4      app=trisla-ui-dashboard,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla

@@ -1,0 +1,1 @@
+error: Internal error occurred: Internal error occurred: error executing command in container: failed to exec in container: failed to start exec "53ca4b9724e588b84481da88de22deb26b741d35e6baa3b468878cb01c12c240": OCI runtime exec failed: exec failed: unable to start container process: exec: "kafka-console-consumer.sh": executable file not found in $PATH: unknown

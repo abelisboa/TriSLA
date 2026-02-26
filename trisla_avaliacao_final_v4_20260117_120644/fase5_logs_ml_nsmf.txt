@@ -1,0 +1,101 @@
+Erro ao carregar modelo: No module named 'numpy._core'
+Erro ao carregar scaler: No module named 'numpy._core'
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8081 (Press CTRL+C to quit)
+INFO:     192.168.10.16:51724 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51726 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60334 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60348 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51082 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51092 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51098 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48680 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48698 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48696 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43698 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43718 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43702 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41188 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41196 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41194 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42936 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42946 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42952 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39554 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39564 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39558 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41656 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41664 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41678 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60038 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60046 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60052 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57796 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57808 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57820 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52876 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52892 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52900 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49968 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49978 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49982 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56334 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56348 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56350 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60698 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60714 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60728 - "GET /health HTTP/1.1" 200 OK
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de perda de pacotes do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de latência do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de carga do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de disponibilidade do Prometheus
+⚠️ Nenhuma métrica real coletada do Prometheus - usando métricas fornecidas
+Modelo não disponível - usando predição simulada
+INFO:     10.233.102.164:46014 - "POST /api/v1/predict HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44282 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44300 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44298 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47750 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47758 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47766 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55528 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55530 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55540 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51480 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51494 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51498 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60262 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60268 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60280 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52534 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52550 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52566 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43002 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43010 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43022 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49788 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49804 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49806 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37258 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37260 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37264 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44460 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44466 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44464 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57192 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57196 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57198 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42998 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43000 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43008 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54802 - "GET /health HTTP/1.1" 200 OK

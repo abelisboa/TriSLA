@@ -1,0 +1,2 @@
+FROM ghcr.io/abelisboa/trisla-decision-engine:v3.7.29
+COPY overlay/app/src/ /app/src/

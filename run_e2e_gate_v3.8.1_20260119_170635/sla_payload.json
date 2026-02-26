@@ -1,0 +1,12 @@
+{
+  "tenant_id": "tenant-e2e",
+  "service_type": "URLLC",
+  "intent": "cirurgia remota",
+  "template_id": "template:URLLC",
+  "form_values": {
+    "latency_ms": 5,
+    "availability": 99.999,
+    "reliability": 99.99,
+    "bandwidth_mbps": 50
+  }
+}

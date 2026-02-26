@@ -1,0 +1,15 @@
+NAME                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                       AGE
+kafka                            ClusterIP   10.233.43.214   <none>        9092/TCP                      39m
+trisla-bc-nssmf                  ClusterIP   10.233.39.215   <none>        8083/TCP                      25d
+trisla-bc-nssmf-metrics          ClusterIP   10.233.30.108   <none>        8083/TCP                      24d
+trisla-besu                      ClusterIP   10.233.11.101   <none>        8545/TCP,8546/TCP,30303/TCP   21d
+trisla-decision-engine           ClusterIP   10.233.26.201   <none>        8082/TCP                      25d
+trisla-decision-engine-metrics   ClusterIP   10.233.32.162   <none>        8082/TCP                      24d
+trisla-ml-nsmf                   ClusterIP   10.233.28.209   <none>        8081/TCP                      25d
+trisla-nasp-adapter              ClusterIP   10.233.6.35     <none>        8085/TCP                      25d
+trisla-portal-backend            NodePort    10.233.46.159   <none>        8001:32002/TCP                24d
+trisla-portal-frontend           NodePort    10.233.19.22    <none>        80:32001/TCP                  24d
+trisla-sem-csmf                  ClusterIP   10.233.13.160   <none>        8080/TCP                      25d
+trisla-sla-agent-layer           ClusterIP   10.233.4.83     <none>        8084/TCP                      25d
+trisla-sla-agent-metrics         ClusterIP   10.233.25.234   <none>        8084/TCP                      24d
+trisla-ui-dashboard              ClusterIP   10.233.4.125    <none>        80/TCP                        25d

@@ -1,0 +1,2 @@
+NAME             ENDPOINTS   AGE
+trisla-ml-nsmf   <none>      23m

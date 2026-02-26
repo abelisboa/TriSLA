@@ -1,0 +1,2 @@
+viability_model.pkl: ✅ PRESENTE
+scaler.pkl: ✅ PRESENTE

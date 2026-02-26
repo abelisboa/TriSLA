@@ -1,0 +1,21 @@
+No ramo main
+Seu ramo está à frente de 'origin/main' por 2 submissões.
+  (use "git push" to publish your local commits)
+
+Arquivos não monitorados:
+  (utilize "git add <arquivo>..." para incluir o que será submetido)
+	PROMPT_07_TRISLA_FIX_GATES_AND_RERUN_100PCT_v3.9.4
+	compliance_diag_20260122_100930/
+	consolidacao_imagens_20260122_111747/
+	consolidacao_imagens_20260122_111804/
+	prom_audit_20260122_095322/
+	prom_audit_20260122_095852/
+	prom_audit_20260122_100008/
+	prom_audit_20260122_100039/
+	prom_audit_20260122_100220/
+	prom_fix_20260122_101654/
+	prom_labels_20260122_102625/
+	prom_warmup_20260122_103446/
+	sem_audit_20260122_105906/
+
+nada adicionado ao envio mas arquivos não registrados estão presentes (use "git add" to registrar)

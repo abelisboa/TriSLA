@@ -1,0 +1,9 @@
+NAME                                      READY   STATUS             RESTARTS   AGE     IP               NODE    NOMINATED NODE   READINESS GATES
+trisla-bc-nssmf-866ddbf476-7kqj8          1/1     Running            0          6m14s   10.233.102.130   node1   <none>           <none>
+trisla-besu-5548f6498d-scbxq              1/1     Running            0          6m14s   10.233.75.8      node2   <none>           <none>
+trisla-decision-engine-7d466f9f69-mvq6d   1/1     Running            0          6m14s   10.233.102.179   node1   <none>           <none>
+trisla-ml-nsmf-779d6cc88b-bxnc8           1/1     Running            0          6m14s   10.233.102.186   node1   <none>           <none>
+trisla-nasp-adapter-74cd854849-29qtk      1/1     Running            0          6m14s   10.233.102.182   node1   <none>           <none>
+trisla-sla-agent-layer-6b65566595-9s4k8   1/1     Running            0          6m14s   10.233.102.170   node1   <none>           <none>
+trisla-trisla-besu-979b7df9d-6bhjv        0/1     ImagePullBackOff   0          6m14s   10.233.75.32     node2   <none>           <none>
+trisla-ui-dashboard-dfb9ff9cc-csdd6       1/1     Running            0          6m14s   10.233.102.165   node1   <none>           <none>

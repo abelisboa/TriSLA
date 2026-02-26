@@ -1,0 +1,12 @@
+LAST SEEN   TYPE      REASON                            OBJECT                                        MESSAGE
+9m49s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-6bf4ffb4b5-ffvkg          Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+9m47s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-nasp-adapter-664894c59c-tv6m8      Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+4m49s       Warning   Unhealthy                         pod/trisla-nasp-adapter-664894c59c-tv6m8      Readiness probe failed: Get "http://10.233.102.146:8085/health": dial tcp 10.233.102.146:8085: connect: connection refused
+4m45s       Warning   Unhealthy                         pod/trisla-bc-nssmf-6bf4ffb4b5-ffvkg          Readiness probe failed: Get "http://10.233.102.153:8083/health": dial tcp 10.233.102.153:8083: connect: connection refused
+4m39s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-ml-nsmf-599749957-hnbn5            Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+3m58s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-687c6c95f7-bqq4z   Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+3m32s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-sem-csmf-9f56dcb9b-q72ck           Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+2m57s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-sla-agent-layer-6d944c889c-ntwqc   Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+2m45s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-7c8ff9c4fc-kwmqd          Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+2m14s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-nasp-adapter-5688bf5f8f-x4fm2      Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+102s        Warning   FailedToRetrieveImagePullSecret   pod/trisla-ui-dashboard-85755bf748-t9zfs      Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.

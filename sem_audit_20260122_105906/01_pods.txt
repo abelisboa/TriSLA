@@ -1,0 +1,2 @@
+NAME                               READY   STATUS             RESTARTS   AGE    IP               NODE    NOMINATED NODE   READINESS GATES
+trisla-sem-csmf-565dbbfc89-xwxgx   0/1     ImagePullBackOff   0          5m4s   10.233.102.183   node1   <none>           <none>

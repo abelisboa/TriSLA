@@ -1,0 +1,8 @@
+{
+  "template_id": "template:eMBB",
+  "form_values": {
+    "latency": 20,
+    "reliability": 0.99,
+    "throughput": 500
+  }
+}

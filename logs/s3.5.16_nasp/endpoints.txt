@@ -1,0 +1,10 @@
+NAME                     ENDPOINTS                                             AGE
+trisla-bc-nssmf          10.233.102.130:8083                                   6m16s
+trisla-besu              10.233.75.8:30303,10.233.75.8:8546,10.233.75.8:8545   6m16s
+trisla-decision-engine   10.233.102.179:8082                                   6m16s
+trisla-ml-nsmf           10.233.102.186:8081                                   6m16s
+trisla-nasp-adapter      10.233.102.182:8085                                   6m16s
+trisla-sem-csmf          <none>                                                6m16s
+trisla-sla-agent-layer   10.233.102.170:8084                                   6m16s
+trisla-trisla-besu                                                             6m16s
+trisla-ui-dashboard      10.233.102.165:80                                     6m16s

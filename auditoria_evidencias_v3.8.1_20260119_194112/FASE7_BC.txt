@@ -1,0 +1,3 @@
+[FASE 7] Blockchain (BC-NSSMF / Besu)
+Arquivos blockchain: 1
+Indícios blockchain (linhas): 0

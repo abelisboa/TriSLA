@@ -1,0 +1,17 @@
+No backend:
+
+Executar nasp_health.quick_check() nos primeiros 2 segundos de boot.
+
+Logar:
+
+“SEM-CSMF OK”
+
+“ML-NSMF OK”
+
+“Decision Engine OK”
+
+“BC-NSSMF OK / Degraded”
+
+Expor resultado em:
+
+GET /startup-status

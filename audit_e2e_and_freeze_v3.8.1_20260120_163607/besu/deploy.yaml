@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    meta.helm.sh/release-name: trisla
+    meta.helm.sh/release-namespace: trisla
+  creationTimestamp: "2026-01-20T11:58:46Z"
+  generation: 3
+  labels:
+    app: besu
+    app.kubernetes.io/component: besu
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/version: v3.7.29
+    component: blockchain
+  name: trisla-besu
+  namespace: trisla
+  resourceVersion: "866080661"
+  uid: dea128ec-25ba-471f-8b59-545727c46cc1
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: besu
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      component: blockchain
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: besu
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        component: blockchain
+    spec:
+      containers:
+      - args:
+        - --data-path=/opt/besu/data
+        - --network=dev
+        - --network-id=20211201
+        - --rpc-http-enabled
+        - --rpc-http-port=8545
+        - --rpc-http-api=ETH,NET,WEB3
+        command:
+        - /opt/besu/bin/besu
+        env:
+        - name: BESU_DATA_PATH
+          value: /opt/besu/data
+        image: ghcr.io/abelisboa/trisla-besu:v3.7.16
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          successThreshold: 1
+          tcpSocket:
+            port: 8545
+          timeoutSeconds: 5
+        name: besu
+        ports:
+        - containerPort: 8545
+          name: rpc-http
+          protocol: TCP
+        - containerPort: 8546
+          name: rpc-ws
+          protocol: TCP
+        - containerPort: 30303
+          name: p2p
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 6
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8545
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: "4"
+            memory: 8Gi
+          requests:
+            cpu: "1"
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/besu/data
+          name: besu-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: besu-data
+        persistentVolumeClaim:
+          claimName: trisla-besu-data
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2026-01-20T12:15:20Z"
+    lastUpdateTime: "2026-01-20T12:15:20Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2026-01-20T12:15:00Z"
+    lastUpdateTime: "2026-01-20T12:15:21Z"
+    message: ReplicaSet "trisla-besu-5d9454c8f8" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 3
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

@@ -1,0 +1,2 @@
+NAME              ENDPOINTS             AGE
+trisla-sem-csmf   10.233.102.141:8080   33d

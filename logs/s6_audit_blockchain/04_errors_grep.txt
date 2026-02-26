@@ -1,0 +1,21 @@
+logs/s6_audit_blockchain/04_decision_logs_tail300.txt:INFO:     192.168.10.16:58404 - "GET /health HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_decision_logs_tail300.txt:INFO:     192.168.10.16:45034 - "GET /health HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_ml_nsmf_logs_tail300.txt:    "start_time": "2025-12-21T10:12:59.500807Z",
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:55030 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:55032 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:40496 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:40414 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:40426 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:45002 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:45004 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:40450 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:40456 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:40410 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:50092 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:50066 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:50064 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_portal_logs_tail300.txt:INFO:     192.168.10.15:55404 - "GET / HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_sem_csmf_logs_tail300.txt:INFO:     192.168.10.16:50354 - "GET /health HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_sem_csmf_logs_tail300.txt:INFO:     192.168.10.16:50356 - "GET /health HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_sem_csmf_logs_tail300.txt:INFO:     192.168.10.16:50372 - "GET /health HTTP/1.1" 200 OK
+logs/s6_audit_blockchain/04_sem_csmf_logs_tail300.txt:INFO:     192.168.10.16:33500 - "GET /health HTTP/1.1" 200 OK

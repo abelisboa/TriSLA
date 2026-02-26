@@ -1,0 +1,69 @@
+=== AVALIAÇÃO EXPERIMENTAL REAL DO TRISLA (FASE S6.2) ===
+Data de Execução: sáb 20 dez 2025 18:47:32 -03
+Ambiente: NASP (node006)
+Namespace: trisla
+
+=== FASE 0: BASELINE DO SISTEMA ===
+✅ Sistema verificado
+✅ Todos os pods principais em Running
+✅ Logs de baseline salvos em logs/s6/baseline.txt
+
+=== FASE 1: IDENTIFICAÇÃO DO ENDPOINT ===
+✅ Endpoint identificado: POST /api/v1/sla/submit
+✅ Portal Backend acessível via ClusterIP
+⚠️ Port-forward não necessário (acesso via ClusterIP)
+
+=== FASE 2: CRIAÇÃO DE SLAs ===
+❌ FALHA: SEM-CSMF offline
+- Tentativas de criação de SLA (URLLC, eMBB, mMTC) falharam
+- Erro: "SEM-CSMF offline: All connection attempts failed"
+- Causa: Pod SEM-CSMF não está rodando (apenas serviço existe)
+- Evidências salvas em: logs/s6/sla_*.json
+
+=== FASE 3: VALIDAÇÃO DO FLUXO INTERNO ===
+⚠️ Não executável devido à falha na Fase 2
+✅ Logs coletados de:
+  - Decision Engine: logs/s6/decision_engine_recent.log
+  - SLA-Agent Layer: logs/s6/sla_agent_recent.log
+
+=== FASE 4: VALIDAÇÃO NSI/NSSI ===
+⚠️ Não executável devido à falha na Fase 2
+✅ Logs coletados: logs/s6/nsi_nssi.log
+
+=== FASE 5: VALIDAÇÃO DE CONTRATOS ===
+⚠️ Não executável devido à falha na Fase 2
+✅ Logs coletados: logs/s6/bc_nssmf_recent.log
+
+=== FASE 6: STRESS TEST ===
+⚠️ Executado mas falhou (10 tentativas)
+✅ Resultados salvos em: logs/s6/stress_slAs.json
+- Todas as tentativas retornaram erro SEM-CSMF offline
+
+=== FASE 7: MÉTRICAS PROMETHEUS ===
+⚠️ Queries documentadas mas não executadas (requer port-forward)
+✅ Instruções salvas em: logs/s6/metrics_prometheus.txt
+
+=== FASE 8: GRAFANA ===
+⚠️ Screenshots não capturados (requer acesso manual)
+✅ Instruções salvas em: docs/evidence/s6/README.txt
+
+=== FASE 9: CONSOLIDAÇÃO ===
+✅ Em progresso...
+
+=== PROBLEMAS IDENTIFICADOS ===
+1. CRÍTICO: SEM-CSMF pod não está rodando
+   - Serviço existe mas deployment/pod ausente
+   - Bloqueia todo o fluxo de criação de SLA
+
+=== EVIDÊNCIAS COLETADAS ===
+- Baseline do sistema
+- Tentativas de criação de SLA (com erros)
+- Logs de todos os componentes principais
+- Resultados do stress test
+- Documentação de métricas e Grafana
+
+=== PRÓXIMOS PASSOS RECOMENDADOS ===
+1. Investigar e corrigir ausência do pod SEM-CSMF
+2. Após correção, re-executar Fases 2-5
+3. Coletar métricas do Prometheus via port-forward
+4. Capturar screenshots do Grafana manualmente

@@ -1,0 +1,51 @@
+{
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": {
+        "annotations": {
+            "meta.helm.sh/release-name": "trisla",
+            "meta.helm.sh/release-namespace": "trisla"
+        },
+        "creationTimestamp": "2025-12-19T17:28:59Z",
+        "labels": {
+            "app.kubernetes.io/component": "ml-nsmf",
+            "app.kubernetes.io/instance": "trisla",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "trisla",
+            "app.kubernetes.io/version": "v3.7.29"
+        },
+        "name": "trisla-ml-nsmf",
+        "namespace": "trisla",
+        "resourceVersion": "866080638",
+        "uid": "91a20b30-8162-49d5-8efa-5817eefbe5e4"
+    },
+    "spec": {
+        "clusterIP": "10.233.28.209",
+        "clusterIPs": [
+            "10.233.28.209"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+            "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+            {
+                "name": "http",
+                "port": 8081,
+                "protocol": "TCP",
+                "targetPort": 8081
+            }
+        ],
+        "selector": {
+            "app": "trisla-ml-nsmf",
+            "app.kubernetes.io/instance": "trisla",
+            "app.kubernetes.io/name": "trisla"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+    },
+    "status": {
+        "loadBalancer": {}
+    }
+}

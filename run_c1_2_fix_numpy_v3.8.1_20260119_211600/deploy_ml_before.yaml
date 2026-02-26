@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "45"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"ml-nsmf","app.kubernetes.io/instance":"trisla","app.kubernetes.io/name":"trisla","app.kubernetes.io/version":"v3.7.29"},"name":"trisla-ml-nsmf","namespace":"trisla"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"trisla-ml-nsmf","app.kubernetes.io/instance":"trisla","app.kubernetes.io/name":"trisla"}},"template":{"metadata":{"labels":{"app":"trisla-ml-nsmf","app.kubernetes.io/instance":"trisla","app.kubernetes.io/name":"trisla"}},"spec":{"containers":[{"env":[{"name":"TRISLA_NODE_INTERFACE","value":"my5g"},{"name":"TRISLA_NODE_IP","value":"192.168.10.16"},{"name":"OTLP_ENDPOINT","value":"http://trisla-otel-collector:4317"}],"image":"ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.29","livenessProbe":{"httpGet":{"path":"/health","port":"http"},"initialDelaySeconds":30,"periodSeconds":10},"name":"ml-nsmf","ports":[{"containerPort":8081,"name":"http"}],"readinessProbe":{"httpGet":{"path":"/health","port":"http"},"initialDelaySeconds":10,"periodSeconds":5},"resources":{"limits":{"cpu":"4000m","memory":"4Gi"},"requests":{"cpu":"1000m","memory":"1Gi"}}}],"imagePullSecrets":[{"name":"ghcr-secret"}],"nodeSelector":{"kubernetes.io/hostname":"node1"}}}}}
+    meta.helm.sh/release-name: trisla
+    meta.helm.sh/release-namespace: trisla
+  creationTimestamp: "2025-12-19T17:28:59Z"
+  generation: 46
+  labels:
+    app.kubernetes.io/component: ml-nsmf
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/version: v3.7.29
+  name: trisla-ml-nsmf
+  namespace: trisla
+  resourceVersion: "865950841"
+  uid: e3c81ccc-682f-4f5b-8e20-c8400be9466a
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: trisla-ml-nsmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-01-19T20:56:17-03:00"
+      creationTimestamp: null
+      labels:
+        app: trisla-ml-nsmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    spec:
+      containers:
+      - image: ghcr.io/abelisboa/trisla-ml-nsmf:v3.8.1
+        imagePullPolicy: Always
+        name: trisla-ml-nsmf
+        ports:
+        - containerPort: 8081
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: ghcr-secret
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - |
+          set -e
+          echo "[ml-warmup] waiting /health..."
+          for i in $(seq 1 60); do
+            curl -fsS http://trisla-ml-nsmf.trisla.svc.cluster.local:8081/health && break || true
+            sleep 1
+          done
+          echo "[ml-warmup] posting minimal /api/v1/predict..."
+          PAYLOAD={latency: 10, throughput: 100, reliability: 0.99}
+          for i in $(seq 1 60); do
+            curl -fsS -X POST http://trisla-ml-nsmf.trisla.svc.cluster.local:8081/api/v1/predict \
+              -H "Content-Type: application/json" -d "$PAYLOAD" && break || true
+            sleep 1
+          done
+          echo "[ml-warmup] done."
+        image: curlimages/curl:8.5.0
+        imagePullPolicy: IfNotPresent
+        name: ml-warmup
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2026-01-19T23:26:28Z"
+    lastUpdateTime: "2026-01-19T23:26:28Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2026-01-20T00:06:54Z"
+    lastUpdateTime: "2026-01-20T00:06:54Z"
+    message: ReplicaSet "trisla-ml-nsmf-79d76d45cf" has timed out progressing.
+    reason: ProgressDeadlineExceeded
+    status: "False"
+    type: Progressing
+  observedGeneration: 46
+  readyReplicas: 1
+  replicas: 2
+  unavailableReplicas: 1
+  updatedReplicas: 1

@@ -1,0 +1,23 @@
+NAME                                        READY   STATUS             RESTARTS      AGE
+curltest-decision-final                     0/1     Completed          0             10d
+curltest-decision4                          0/1     Completed          0             10d
+http-diag                                   0/1     Completed          0             16d
+kafka-79475d445f-jb442                      1/1     Running            1 (33h ago)   33h
+kafkatools-1769049575                       0/1     ImagePullBackOff   0             8d
+ml-curl-20260119                            0/1     Error              0             10d
+registry-sanity                             0/1     Completed          0             38d
+registry-sanity-verify                      0/1     Completed          0             38d
+trisla-analytics-adapter-645476854b-4jtkw   1/1     Running            0             5h8m
+trisla-bc-nssmf-fcbf77895-zw9q6             1/1     Running            0             106m
+trisla-besu-6dd6f4c55-kj9ls                 1/1     Running            0             66m
+trisla-decision-engine-f976f766c-5l8qd      1/1     Running            0             47h
+trisla-iperf3-client-8gx9k                  1/1     Running            0             9d
+trisla-iperf3-server-76f599c648-58hbh       1/1     Running            0             8d
+trisla-ml-nsmf-7b7f8477dc-zqd5x             1/1     Running            0             4h16m
+trisla-nasp-adapter-68f54f99d5-vwjl4        1/1     Running            0             47h
+trisla-portal-backend-7d46f4587c-4mp2k      1/1     Running            0             47h
+trisla-portal-frontend-7c7f45948f-tz5bw     1/1     Running            0             47h
+trisla-sem-csmf-64889b9447-lwvgw            1/1     Running            0             47h
+trisla-sla-agent-layer-5b5d55df4-bgzpw      1/1     Running            0             47h
+trisla-traffic-exporter-586499c89c-ng9xf    1/1     Running            0             8d
+trisla-ui-dashboard-7988b8b6d9-qlpzc        1/1     Running            0             47h

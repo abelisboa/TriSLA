@@ -1,0 +1,81 @@
+=== SPRINT S3.5.13_NASP_DEPLOY - RESUMO DE EXECUÇÃO ===
+Data: sex 19 dez 2025 10:12:28 -03
+Commit: 221abd6017248196f3234b397c7be3fd2347231e
+
+=== FASE 0 - CONEXÃO ===
+✅ SSH node006: OK
+✅ Diretório base: /home/porvir5g/gtp5g/trisla
+✅ Contexto salvo em logs/s3.5.13_nasp/context.txt
+
+=== FASE 1 - SINCRONIZAÇÃO ===
+✅ HEAD: 5c9e500366c70c24cfae05c1c4812c2233cbccf4
+✅ Commit: freeze(s3.5.13): eliminate helm divergences, finalize Besu + BC-NSSMF convergence
+✅ SHA salvo em logs/s3.5.13_nasp/git_head.txt
+
+=== FASE 2 - ARTEFATO CONGELADO ===
+⚠️ SHA256 divergente (evidência):
+  - Calculado: 0e7ed4bb94254db5c34bc92bcefd8c4dd47817d6111d73c623bbb5ff9ea785da
+  - Esperado: FD7D8202056E00C2530C85200BB7C697C52343B72800B17AD6E6D11592B1D795
+
+=== FASE 3 - HELM ===
+⚠️ Helm lint: ERROR (chart metadata missing dependencies: trisla-besu)
+✅ Helm version: v3.16.3
+✅ Template renderizado: 1077 linhas
+✅ Render salvo em logs/s3.5.13_nasp/render.yaml
+
+=== FASE 4-5 - AMBIENTE ===
+✅ Namespace limpo e recriado
+⚠️ GHCR secret não encontrado (evidência registrada)
+
+=== FASE 6 - DEPLOY ===
+✅ Helm upgrade --install executado
+✅ Deploy concluído (STATUS: deployed, REVISION: 2)
+⚠️ Pod do Besu em ImagePullBackOff
+
+=== FASE 7 - RECURSOS ===
+✅ Pods salvos em logs/s3.5.13_nasp/pods.txt
+✅ Services salvos em logs/s3.5.13_nasp/services.txt
+✅ Endpoints salvos em logs/s3.5.13_nasp/endpoints.txt
+
+Estado observado:
+- BC-NSSMF: Running
+- Decision Engine: Running
+- ML-NSMF: Running
+- NASP Adapter: Running
+- SLA Agent Layer: Running
+- UI Dashboard: Running
+- Besu (trisla-trisla-besu): ImagePullBackOff
+
+=== FASE 8 - RPC BESU ===
+⚠️ RPC não disponível (evidência):
+  - Pod do Besu em ImagePullBackOff
+  - Service trisla-trisla-besu existe mas sem endpoints funcionais
+  - Testes de conexão falharam (port-forward e curl interno)
+
+=== FASE 9 - HEALTH BC-NSSMF ===
+✅ status: healthy
+✅ module: bc-nssmf
+✅ enabled: true
+✅ rpc_connected: true
+
+=== FASE 10 - EVIDÊNCIAS ===
+✅ Logs do Besu: logs/s3.5.13_nasp/besu.log
+✅ Logs do BC-NSSMF: logs/s3.5.13_nasp/bc-nssmf.log
+✅ Eventos: logs/s3.5.13_nasp/events.txt
+✅ Deploy log: logs/s3.5.13_nasp/deploy.log
+
+=== CONCLUSÃO ===
+✅ Deploy executado
+⚠️ RPC testado (não disponível - evidência)
+✅ Health coletado (BC-NSSMF healthy)
+✅ Evidências salvas
+
+=== EVIDÊNCIAS EXPERIMENTAIS ===
+1. SHA256 do artefato divergente
+2. Helm lint com erro de dependências
+3. Pod do Besu em ImagePullBackOff (imagem não disponível/pull falhou)
+4. RPC do Besu não acessível (pod não está rodando)
+5. BC-NSSMF healthy mas sem conexão RPC funcional ao Besu
+6. GHCR secret não encontrado (pode afetar pull de imagens)
+
+❗ Nenhuma decisão tomada - apenas evidências coletadas

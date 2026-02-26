@@ -1,0 +1,71 @@
+=== RESUMO EXECUÇÃO PROMPT S3.7 ESTABILIZAÇÃO OBSERVABILIDADE ===
+
+Data: qua 21 jan 2026 11:56:50 -03
+Versão Alvo: v3.9.3
+Namespace: trisla
+
+=== FASE 0 - CHECKPOINT DE SEGURANÇA ===
+✅ PASS: Pelo menos 1 pod Running para cada serviço necessário:
+  - portal-backend: ✅ Running
+  - decision-engine: ✅ Running (v3.7.29)
+  - ml-nsmf: ✅ Running (v3.9.2)
+  - kafka: ✅ Running
+
+=== FASE 1 - IDENTIFICAÇÃO CrashLoopBackOff ===
+❌ PROBLEMAS ENCONTRADOS:
+  1. trisla-decision-engine-575dc8866b-4pln4 (v3.9.3)
+     - SyntaxError: name 'decision_producer' is used prior to global declaration
+     - Arquivo: /app/src/main.py:545
+  2. trisla-ml-nsmf-f496b7d77-68v7l (v3.9.3)
+     - SyntaxError: unterminated string literal
+     - Arquivo: /app/src/predictor.py:75
+
+AÇÃO TOMADA: ReplicaSets quebrados escalados para 0.
+Pods funcionais de versões anteriores mantidos em execução.
+
+=== FASE 2 - CORREÇÕES ===
+⚠️ Não aplicável: Erros são de sintaxe em imagens Docker v3.9.3.
+Correções requerem rebuild das imagens.
+
+=== FASE 3 - REDEPLOY ===
+⚠️ Não executado: Imagens v3.9.3 têm erros de sintaxe.
+Sistema funcional com pods de versões anteriores.
+
+=== FASE 4 - VALIDAÇÃO /predict ===
+✅ Endpoint /predict funcional
+⚠️ GATE 4A: Estrutura diferente do esperado
+  - Campos encontrados: prediction.confidence, prediction.model_used
+  - Faltando: timestamp_utc (root), probability (root)
+  - Resposta tem estrutura aninhada diferente
+
+=== FASE 5 - VALIDAÇÃO XAI ===
+✅ Endpoint /explain funcional
+⚠️ GATE 5: explanation_available=false
+  - Razão: Modelo não utilizado (métricas insuficientes)
+  - Comportamento esperado quando não há métricas reais
+
+=== FASE 6 - VALIDAÇÃO LATÊNCIA E2E ===
+⚠️ GATE 6: Não há requisições SLA recentes nos logs
+  - Logs coletados mas sem evidências de t_submit, t_decision, decision_id
+  - Requer execução de SLAs reais para validação
+
+=== FASE 7 - CHECK FINAL ===
+✅ Checksums gerados: 19 arquivos
+
+=== RESULTADO FINAL ===
+⚠️ STATUS PARCIAL:
+  - Pods principais funcionais (usando versões anteriores)
+  - Imagens v3.9.3 têm erros de sintaxe que impedem execução
+  - Observabilidade parcialmente implementada
+  - Endpoints ML funcionais mas com estrutura diferente do esperado
+  - XAI não disponível sem métricas reais (comportamento esperado)
+
+=== RECOMENDAÇÕES ===
+1. Corrigir erros de sintaxe nas imagens v3.9.3:
+   - decision-engine: Corrigir uso de decision_producer antes de global
+   - ml-nsmf: Corrigir string literal não terminada em predictor.py:75
+2. Rebuild e redeploy das imagens corrigidas
+3. Validar estrutura de resposta /predict conforme GATE 4A
+4. Executar SLAs reais para validar latência E2E
+
+WORKDIR: 

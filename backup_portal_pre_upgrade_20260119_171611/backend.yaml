@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "22"
+    meta.helm.sh/release-name: trisla
+    meta.helm.sh/release-namespace: trisla
+  creationTimestamp: "2025-12-20T17:09:55Z"
+  generation: 23
+  labels:
+    app: trisla-portal-backend
+    app.kubernetes.io/managed-by: Helm
+    component: backend
+  name: trisla-portal-backend
+  namespace: trisla
+  resourceVersion: "864500506"
+  uid: cbd621d0-c763-4b5b-a66d-63ec175208b5
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: trisla-portal-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-01-14T00:15:08-03:00"
+      creationTimestamp: null
+      labels:
+        app: trisla-portal-backend
+        component: backend
+    spec:
+      containers:
+      - env:
+        - name: SEM_CSMF_URL
+          value: http://trisla-sem-csmf:8080
+        - name: ML_NSMF_URL
+          value: http://trisla-ml-nsmf:8081
+        - name: DECISION_ENGINE_URL
+          value: http://trisla-decision-engine:8082
+        - name: BC_NSSMF_URL
+          value: http://trisla-bc-nssmf:8083
+        - name: SLA_AGENT_URL
+          value: http://trisla-sla-agent-layer:8084
+        - name: OTEL_SDK_DISABLED
+          value: "true"
+        - name: PORT
+          value: "8001"
+        image: ghcr.io/abelisboa/trisla-portal-backend:v3.7.35
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8001
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: backend
+        ports:
+        - containerPort: 8001
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8001
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-12-26T20:11:09Z"
+    lastUpdateTime: "2025-12-26T20:11:09Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2026-01-14T01:55:10Z"
+    lastUpdateTime: "2026-01-14T03:15:28Z"
+    message: ReplicaSet "trisla-portal-backend-69568dbdb7" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 23
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

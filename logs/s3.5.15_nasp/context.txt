@@ -1,0 +1,9 @@
+=== CONTEXTO ===
+sex 19 dez 2025 12:44:24 -03
+/home/porvir5g/gtp5g/trisla
+porvir5g
+
+=== HELM VERSION ===
+version.BuildInfo{Version:"v3.16.3", GitCommit:"cfd07493f46efc9debd9cc1b02a0961186df7fdf", GitTreeState:"clean", GoVersion:"go1.22.7"}
+
+=== KUBECTL VERSION ===

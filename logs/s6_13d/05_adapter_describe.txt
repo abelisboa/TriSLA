@@ -1,0 +1,50 @@
+Name:                   trisla-nasp-adapter
+Namespace:              trisla
+CreationTimestamp:      Fri, 19 Dec 2025 14:28:59 -0300
+Labels:                 app.kubernetes.io/component=nasp-adapter
+                        app.kubernetes.io/instance=trisla
+                        app.kubernetes.io/managed-by=Helm
+                        app.kubernetes.io/name=trisla
+                        app.kubernetes.io/version=3.7.10
+Annotations:            deployment.kubernetes.io/revision: 1
+                        meta.helm.sh/release-name: trisla
+                        meta.helm.sh/release-namespace: trisla
+Selector:               app=trisla-nasp-adapter,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:           app=trisla-nasp-adapter
+                    app.kubernetes.io/instance=trisla
+                    app.kubernetes.io/name=trisla
+  Service Account:  trisla-nasp-adapter
+  Containers:
+   nasp-adapter:
+    Image:      ghcr.io/abelisboa/trisla-nasp-adapter:nasp-a2
+    Port:       8085/TCP (http)
+    Host Port:  0/TCP (http)
+    Limits:
+      cpu:     2
+      memory:  2Gi
+    Requests:
+      cpu:      500m
+      memory:   512Mi
+    Liveness:   http-get http://:http/health delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:http/health delay=10s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      TRISLA_NODE_INTERFACE:  my5g
+      TRISLA_NODE_IP:         192.168.10.16
+      OTLP_ENDPOINT:          http://trisla-otel-collector:4317
+    Mounts:                   <none>
+  Volumes:                    <none>
+  Node-Selectors:             kubernetes.io/hostname=node1
+  Tolerations:                <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   trisla-nasp-adapter-74cd854849 (1/1 replicas created)
+Events:          <none>

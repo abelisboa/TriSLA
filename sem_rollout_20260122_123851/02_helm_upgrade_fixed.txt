@@ -1,0 +1,7 @@
+Release "trisla" has been upgraded. Happy Helming!
+NAME: trisla
+LAST DEPLOYED: Thu Jan 22 12:39:24 2026
+NAMESPACE: trisla
+STATUS: deployed
+REVISION: 124
+TEST SUITE: None

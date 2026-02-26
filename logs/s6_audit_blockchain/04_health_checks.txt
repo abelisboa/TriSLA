@@ -1,0 +1,8 @@
+Decision Engine Health:
+{"status":"healthy","module":"decision-engine","kafka":"offline","rule_engine":"ready","decision_service":"ready","grpc_thread":"alive"}
+HTTP=200
+
+ML-NSMF Health:
+{"status":"healthy","module":"ml-nsmf","kafka":"offline","predictor":"ready"}
+HTTP=200
+pod "curl-audit-health" deleted from trisla namespace

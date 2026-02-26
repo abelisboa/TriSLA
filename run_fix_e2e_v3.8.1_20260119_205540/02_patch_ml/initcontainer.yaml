@@ -1,0 +1,21 @@
+- name: ml-warmup
+  image: curlimages/curl:8.5.0
+  imagePullPolicy: IfNotPresent
+  command:
+    - sh
+    - -c
+    - |
+      set -e
+      echo "[ml-warmup] waiting /health..."
+      for i in $(seq 1 60); do
+        curl -fsS http://trisla-ml-nsmf.trisla.svc.cluster.local:8081/health && break || true
+        sleep 1
+      done
+      echo "[ml-warmup] posting minimal /api/v1/predict..."
+      PAYLOAD={latency: 10, throughput: 100, reliability: 0.99}
+      for i in $(seq 1 60); do
+        curl -fsS -X POST http://trisla-ml-nsmf.trisla.svc.cluster.local:8081/api/v1/predict \
+          -H "Content-Type: application/json" -d "$PAYLOAD" && break || true
+        sleep 1
+      done
+      echo "[ml-warmup] done."

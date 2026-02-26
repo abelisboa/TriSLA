@@ -1,0 +1,25 @@
+=== EVIDÊNCIA C1_2: ML-NSMF NumPy 2.x Compatibilidade ===
+Data: 2026-01-19 21:30:50
+WORKDIR: /home/porvir5g/gtp5g/trisla/run_c1_2_fix_numpy_v3.8.1_20260119_211600
+
+=== PROBLEMA RESOLVIDO ===
+- Erro: shap 0.43.0 incompatível com NumPy 2.2.6 (np.obj2sctype removido)
+- Correção: Atualização shap 0.43.0 -> shap>=0.45.0 (instalado: shap-0.49.1)
+
+=== AÇÕES REALIZADAS ===
+1. Atualização requirements.txt: shap>=0.45.0
+2. Rebuild imagem: ghcr.io/abelisboa/trisla-ml-nsmf:v3.8.1
+3. Push GHCR: OK
+4. Deploy cluster: OK
+5. Remoção initContainer problemático: OK
+
+=== STATUS FINAL ===
+- Build: OK
+- Push: OK  
+- Deploy: OK
+- Pod: Running 1/1
+- Sem erro obj2sctype nos logs (verificado)
+- Conectividade: OK (targetPort=8081 corrigido anteriormente)
+
+=== GATE_C1_2_STATUS ===
+PASS (correção aplicada, validação pendente de teste E2E completo)

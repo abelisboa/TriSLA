@@ -1,0 +1,84 @@
+⚠️ Blockchain DESABILITADO — usando stub BCClient
+   [STUB] BCClient inicializado em modo offline
+2026-01-22 13:18:56,985 - src.main - INFO - ============================================================
+2026-01-22 13:18:56,985 - src.main - INFO - ============================================================
+2026-01-22 13:18:56,985 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:18:56,985 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:18:56,985 - src.main - INFO - ============================================================
+🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:18:56,985 - src.main - INFO - ============================================================
+🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:18:56,986 - kafka.producer.transaction_manager - INFO - ProducerId set to 39 with epoch 0
+2026-01-22 13:18:56,986 - kafka.producer.transaction_manager - INFO - ProducerId set to 39 with epoch 0
+2026-01-22 13:18:56,986 - grpc_server - INFO - ============================================================
+2026-01-22 13:18:56,986 - grpc_server - INFO - 🔧 Creating gRPC server...
+2026-01-22 13:18:56,986 - grpc_server - INFO - ============================================================
+🔧 Creating gRPC server...
+2026-01-22 13:18:56,986 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-22 13:18:57,070 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-22 13:18:57,070 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-22 13:18:57,097 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-22 13:18:57,097 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-22 13:18:59,988 - src.main - INFO - Thread started: alive=True
+2026-01-22 13:18:59,988 - src.main - INFO - Thread started: alive=True
+2026-01-22 13:18:59,989 - src.main - INFO - ✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+2026-01-22 13:18:59,989 - src.main - INFO - ✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+2026-01-22 13:18:59,997 - src.main - INFO - ============================================================
+2026-01-22 13:18:59,997 - src.main - INFO - ============================================================
+2026-01-22 13:18:59,997 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2026-01-22 13:18:59,997 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2026-01-22 13:18:59,997 - src.main - INFO - ============================================================
+2026-01-22 13:18:59,997 - src.main - INFO - ============================================================
+============================================================
+🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+============================================================
+2026-01-22 13:18:59,998 - grpc_server - INFO - ============================================================
+2026-01-22 13:18:59,998 - grpc_server - INFO - ============================================================
+2026-01-22 13:18:59,998 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-22 13:18:59,998 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-22 13:18:59,999 - grpc_server - INFO - 🔌 Binding to port 50051...
+2026-01-22 13:18:59,999 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-22 13:19:00,000 - grpc_server - INFO - ✅ gRPC server started on port 50051
+2026-01-22 13:19:00,000 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-22 13:19:01,999 - src.main - INFO - ✅ gRPC server thread started successfully
+2026-01-22 13:19:02,000 - src.main - INFO -    Thread name: gRPC-Server
+2026-01-22 13:19:01,999 - src.main - INFO - ✅ gRPC server thread started successfully
+2026-01-22 13:19:02,000 - src.main - INFO -    Thread name: gRPC-Server
+2026-01-22 13:19:02,000 - src.main - INFO -    Thread alive: True
+2026-01-22 13:19:02,000 - src.main - INFO -    Thread alive: True
+✅ gRPC server thread started successfully
+   Thread name: gRPC-Server
+   Thread alive: True
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8082 (Press CTRL+C to quit)
+INFO:     10.233.102.165:42024 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55398 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:56840 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:43234 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55404 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:43250 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48602 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37652 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.164:56478 - "POST /evaluate HTTP/1.1" 404 Not Found
+2026-01-22 13:19:21,958 - kafka.conn - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=1 host=kafka:9092 <connecting> [IPv4 ('10.233.43.214', 9092)]>: connecting to kafka:9092 [('10.233.43.214', 9092) IPv4]
+2026-01-22 13:19:21,958 - kafka.conn - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=1 host=kafka:9092 <connecting> [IPv4 ('10.233.43.214', 9092)]>: connecting to kafka:9092 [('10.233.43.214', 9092) IPv4]
+2026-01-22 13:19:21,959 - kafka.conn - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=1 host=kafka:9092 <connected> [IPv4 ('10.233.43.214', 9092)]>: Connection complete.
+2026-01-22 13:19:21,959 - kafka.conn - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=1 host=kafka:9092 <connected> [IPv4 ('10.233.43.214', 9092)]>: Connection complete.
+2026-01-22 13:19:21,959 - kafka.conn - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=bootstrap-0 host=kafka:9092 <connected> [IPv4 ('10.233.43.214', 9092)]>: Closing connection. 
+2026-01-22 13:19:21,959 - kafka.conn - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=bootstrap-0 host=kafka:9092 <connected> [IPv4 ('10.233.43.214', 9092)]>: Closing connection. 
+INFO:     10.233.75.28:37656 - "POST /api/v1/decide HTTP/1.1" 200 OK

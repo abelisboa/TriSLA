@@ -1,0 +1,5 @@
+### DEBUG
+KAFKA_POD=kafka-c948b8d64-jgmz5
+DATE=2026-01-20T13:51:24-03:00
+CMD=/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list
+---- STDERR ----

@@ -1,0 +1,17 @@
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"kafka","namespace":"trisla"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"kafka"}},"template":{"metadata":{"labels":{"app":"kafka"}},"spec":{"containers":[{"command":["/bin/sh","-c","CLUSTER_ID=00d42c2a-1bf1-4ef3-8112-325210229bb0\ncd /opt/kafka\nif [ ! -f /var/lib/kafka/data/.formatted ]; then\n  /opt/kafka/bin/kafka-storage.sh format -t 00d42c2a-1bf1-4ef3-8112-325210229bb0 -c /config/server.properties --ignore-formatted\n  touch /var/lib/kafka/data/.formatted\nfi\n/opt/kafka/bin/kafka-server-start.sh /config/server.properties\n"],"image":"apache/kafka:latest","name":"kafka","ports":[{"containerPort":9092,"name":"kafka"}],"volumeMounts":[{"mountPath":"/config","name":"config"},{"mountPath":"/var/lib/kafka/data","name":"data"}]}],"volumes":[{"configMap":{"name":"kafka-server-config"},"name":"config"},{"emptyDir":{},"name":"data"}]}}}}
+    name: kafka
+        app: kafka
+          app: kafka
+            cd /opt/kafka
+            if [ ! -f /var/lib/kafka/data/.formatted ]; then
+              /opt/kafka/bin/kafka-storage.sh format -t 00d42c2a-1bf1-4ef3-8112-325210229bb0 -c /config/server.properties --ignore-formatted
+              touch /var/lib/kafka/data/.formatted
+            /opt/kafka/bin/kafka-server-start.sh /config/server.properties
+          image: apache/kafka:latest
+          name: kafka
+            name: kafka
+          - mountPath: /var/lib/kafka/data
+            name: kafka-server-config
+      message: ReplicaSet "kafka-c948b8d64" has successfully progressed.
+          - name: KAFKA_BROKERS
+            value: kafka:9092

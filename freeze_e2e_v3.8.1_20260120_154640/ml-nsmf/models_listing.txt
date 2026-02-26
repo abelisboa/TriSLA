@@ -1,0 +1,8 @@
+total 6.8M
+-rw-rw-r-- 1 root root   72 Dec  2 15:25 Untitled.ipynb
+-rw-rw-r-- 1 root root   72 Dec  2 15:25 Untitled1.ipynb
+-rw-rw-r-- 1 root root   72 Dec  2 15:25 Untitled2.ipynb
+-rw-rw-r-- 1 root root   72 Dec  2 15:25 Untitled3.ipynb
+-rw-rw-r-- 1 root root 1.7K Dec  2 15:25 model_metadata.json
+-rw-rw-r-- 1 root root 1.1K Dec  2 15:25 scaler.pkl
+-rw-rw-r-- 1 root root 6.8M Dec  2 15:25 viability_model.pkl

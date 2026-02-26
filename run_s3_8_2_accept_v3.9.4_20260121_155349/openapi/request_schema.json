@@ -1,0 +1,4 @@
+=== requestBody.schema ===
+{
+  "$ref": "#/components/schemas/SLASubmitRequest"
+}

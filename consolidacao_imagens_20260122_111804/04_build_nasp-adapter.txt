@@ -1,0 +1,52 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+STEP 1/12: FROM python:3.10-slim
+STEP 2/12: WORKDIR /app
+--> Using cache 526f5880c69bf9bcdc03be083430a02a67b81365e9160e49b8b9be1de37bc9be
+--> 526f5880c69b
+STEP 3/12: RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
+--> Using cache 82cfa16b1d791b8c91d0d473ea4d346a544e4b2d0c6d98d929997b0d2d365126
+--> 82cfa16b1d79
+STEP 4/12: COPY requirements.txt .
+--> Using cache 55017c96e2a368811b5163b6fb515f0262e883cdf80063492593d9b42f37b5df
+--> 55017c96e2a3
+STEP 5/12: RUN pip install --no-cache-dir -r requirements.txt
+--> Using cache 1d8a0d0fd318c7cad3eb29ac969f06c8eca5099d0bcb238577da2f58a6759cfc
+--> 1d8a0d0fd318
+STEP 6/12: COPY src/ ./src/
+--> Using cache aedeca686874f048531285f68c2c1ecb8cc6b96ae93e081230cdbadf77b5ef93
+--> aedeca686874
+STEP 7/12: COPY crds/ ./crds/
+--> Using cache ad9e6a96672bdb288478e2313320f4662e8b004ebde32a10a21e0675f4381d44
+--> ad9e6a96672b
+STEP 8/12: ENV PYTHONPATH=/app
+--> Using cache 51f12c51e24e90a7f61ed8c97553da43595132324fa1366831eefd6dc8c56472
+--> 51f12c51e24e
+STEP 9/12: ENV PORT=8085
+--> Using cache 836fde653a1b9c392cbed36bebb27e1bfbc56b64ede0303ef0df3a98a95eb69f
+--> 836fde653a1b
+STEP 10/12: HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD python -c "import requests; requests.get('http://localhost:8085/health')"
+--> Using cache 4ec95ce88ae9af87bf8c9ec4fd79e2851be81cf68f31f64d0d87398b2fdf3a8f
+--> 4ec95ce88ae9
+STEP 11/12: EXPOSE 8085
+--> Using cache c5ddc91c62d66eec8fb6b3cf833063d2c5ee03df2fa25163112708c24da0eb13
+--> c5ddc91c62d6
+STEP 12/12: CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8085", "--workers", "1"]
+--> Using cache 3116209a784797bba110d683ed938279049073971b96d354de18c85900fe2e4d
+COMMIT ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.4
+--> 3116209a7847
+Successfully tagged ghcr.io/abelisboa/trisla-nasp-adapter:v3.9.4
+Successfully tagged ghcr.io/abelisboa/trisla-nasp-adapter:v3.8.1
+3116209a784797bba110d683ed938279049073971b96d354de18c85900fe2e4d
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+Getting image source signatures
+Copying blob sha256:f938897570ff16afbcf1fd0ed731d7626b177641762fbfc9e99302b6ae1109a7
+Copying blob sha256:77a2b55fbe8b9984ce0af3ffc0b0ab62507668e63306ec161a585e587a3eb164
+Copying blob sha256:0edec569e853d7214683658ad35aa9a0a3b533c1eeb04daa04e0a8aa995dca1e
+Copying blob sha256:dc27ff3b74317086d239c785a48c28c436862fa970a529e53ac5b67a8f4b8408
+Copying blob sha256:557139ca12a043f1b904ffd4d12e7329a61268ffdc59b41568c66e1c206a95f8
+Copying blob sha256:17bbb46fa426e94886aa1e2ad42c2b0890656e0556b95fe846890417afcc8598
+Copying blob sha256:1f0f699e4a803be6b46cf73c7b70efa3d5d6a5adc8949d01e7336f5b44bcb635
+Copying blob sha256:3081d7fc27d677ec5af006bc6a22bb7f4ac1ede9785a0f679564547571fd4bb5
+Copying blob sha256:8814f6d98e286ddc4297c15d4b87c6c0bad86b50a63af1c8e4a4d98401e54e9f
+Copying config sha256:3116209a784797bba110d683ed938279049073971b96d354de18c85900fe2e4d
+Writing manifest to image destination

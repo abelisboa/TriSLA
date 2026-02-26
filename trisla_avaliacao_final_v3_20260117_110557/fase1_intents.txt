@@ -1,0 +1,24 @@
+Resposta SEM-CSMF:
+{
+  "intent_id": "f6a56d0b-e56b-4b85-b1c1-1f58bf918738",
+  "status": "accepted",
+  "nest_id": "nest-f6a56d0b-e56b-4b85-b1c1-1f58bf918738",
+  "message": "Intent processed and NEST generated. Decision Engine: Erro HTTP ao comunicar com Decision Engine: 500 Server Error: Internal Server Error for url: http://trisla-decision-engine.trisla.svc.cluster.local:8082/evaluate"
+}
+---
+Resposta SEM-CSMF:
+{
+  "intent_id": "14e9596c-7132-4715-87ce-6a584facdef7",
+  "status": "accepted",
+  "nest_id": "nest-14e9596c-7132-4715-87ce-6a584facdef7",
+  "message": "Intent processed and NEST generated. Decision Engine: Erro HTTP ao comunicar com Decision Engine: 500 Server Error: Internal Server Error for url: http://trisla-decision-engine.trisla.svc.cluster.local:8082/evaluate"
+}
+---
+Resposta SEM-CSMF:
+{
+  "intent_id": "51776808-74ed-46bc-bda0-fdfd1fa88eac",
+  "status": "accepted",
+  "nest_id": "nest-51776808-74ed-46bc-bda0-fdfd1fa88eac",
+  "message": "Intent processed and NEST generated. Decision Engine: Erro HTTP ao comunicar com Decision Engine: 500 Server Error: Internal Server Error for url: http://trisla-decision-engine.trisla.svc.cluster.local:8082/evaluate"
+}
+---

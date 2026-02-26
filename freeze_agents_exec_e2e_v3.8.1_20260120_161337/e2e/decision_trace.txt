@@ -1,0 +1,1 @@
+grep: ./e2e/decision_trace.txt: o arquivo de entrada também é o de saída

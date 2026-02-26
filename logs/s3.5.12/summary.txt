@@ -1,0 +1,9 @@
+=== RESUMO FINAL S3.5.12 ===
+Commit: 31b969e
+SHA256 Artefatos: DIVERGE (evidência negativa registrada)
+Besu: Running ✅
+RPC Besu: Funcionando ✅ (web3_clientVersion, eth_blockNumber)
+BC-NSSMF: Running ✅ (v3.7.18)
+BC-NSSMF Health: healthy, rpc_connected=true ✅
+Contrato: Deploy executado com sucesso ✅
+SLA: Endpoints existem mas schema diferente do esperado (evidência)

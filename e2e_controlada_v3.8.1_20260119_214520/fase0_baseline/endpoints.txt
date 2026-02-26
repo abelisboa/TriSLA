@@ -1,0 +1,15 @@
+NAME                             ENDPOINTS                                                AGE
+kafka                            10.233.75.59:9092                                        6d
+trisla-bc-nssmf                  10.233.102.155:8083                                      31d
+trisla-bc-nssmf-metrics          10.233.102.155:8083                                      30d
+trisla-besu                      10.233.75.56:30303,10.233.75.56:8546,10.233.75.56:8545   27d
+trisla-decision-engine           10.233.102.158:8082                                      31d
+trisla-decision-engine-metrics   10.233.102.158:8082                                      30d
+trisla-ml-nsmf                   <none>                                                   72m
+trisla-nasp-adapter              10.233.102.190:8085                                      31d
+trisla-portal-backend            10.233.75.28:8001                                        30d
+trisla-portal-frontend           10.233.75.12:80                                          30d
+trisla-sem-csmf                  10.233.102.150:8080                                      31d
+trisla-sla-agent-layer           10.233.102.145:8084                                      31d
+trisla-sla-agent-metrics         10.233.102.145:8084                                      30d
+trisla-ui-dashboard              10.233.102.149:80                                        31d

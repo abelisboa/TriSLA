@@ -1,0 +1,8 @@
+/app/src/kafka_producer_retry.py:    from kafka import KafkaProducer
+/app/src/kafka_producer_retry.py:    KafkaProducer = None
+/app/src/kafka_producer_retry.py:        self.producer: Optional[KafkaProducer] = None
+/app/src/kafka_producer_retry.py:            self.producer = KafkaProducer(
+/app/src/kafka_producer.py:    from kafka import KafkaProducer
+/app/src/kafka_producer.py:    KafkaProducer = None
+/app/src/kafka_producer.py:        self.producer: Optional[KafkaProducer] = None
+/app/src/kafka_producer.py:            self.producer = KafkaProducer(

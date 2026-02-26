@@ -1,0 +1,11 @@
+total 44K
+drwxrwxr-x   2 porvir5g porvir5g 4,0K jan 22 10:53 .
+drwxrwxrwx 192 porvir5g porvir5g  20K jan 22 10:34 ..
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:53 after_rate_cpu.json
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:35 before_count.txt
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:51 before_rate_cpu.json
+-rw-rw-r--   1 porvir5g porvir5g  676 jan 22 10:53 CHECKSUMS.sha256
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:53 ls.txt
+-rw-rw-r--   1 porvir5g porvir5g  133 jan 22 10:53 sla_submit.json
+-rw-rw-r--   1 porvir5g porvir5g  145 jan 22 10:53 submit_response.json
+-rw-rw-r--   1 porvir5g porvir5g  322 jan 22 10:47 warmup_nohup.log

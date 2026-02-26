@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  creationTimestamp: "2025-12-20T17:09:55Z"
+  labels:
+    app: trisla-portal-backend
+    app.kubernetes.io/managed-by: Helm
+    component: backend
+  name: trisla-portal-backend
+  namespace: trisla
+  resourceVersion: "865949583"
+  uid: ff9afdcb-e332-42fb-b9dc-fea2146ec104
+subsets:
+- addresses:
+  - ip: 10.233.75.28
+    nodeName: node2
+    targetRef:
+      kind: Pod
+      name: trisla-portal-backend-7498b598f7-hm7gw
+      namespace: trisla
+      uid: da0abd0e-6ff8-45cf-b083-b5cb114c5688
+  ports:
+  - name: http
+    port: 8001
+    protocol: TCP

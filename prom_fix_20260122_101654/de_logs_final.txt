@@ -1,0 +1,81 @@
+⚠️ Blockchain DESABILITADO — usando stub BCClient
+   [STUB] BCClient inicializado em modo offline
+2026-01-22 13:19:49,813 - src.main - INFO - ============================================================
+2026-01-22 13:19:49,813 - src.main - INFO - ============================================================
+2026-01-22 13:19:49,814 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:19:49,814 - src.main - INFO - 🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:19:49,814 - src.main - INFO - ============================================================
+2026-01-22 13:19:49,814 - src.main - INFO - ============================================================
+🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:19:49,814 - kafka.producer.transaction_manager - INFO - ProducerId set to 40 with epoch 0
+2026-01-22 13:19:49,814 - kafka.producer.transaction_manager - INFO - ProducerId set to 40 with epoch 0
+🔄 Starting gRPC server (fallback method)...
+2026-01-22 13:19:49,815 - grpc_server - INFO - ============================================================
+2026-01-22 13:19:49,815 - grpc_server - INFO - ============================================================
+2026-01-22 13:19:49,815 - grpc_server - INFO - 🔧 Creating gRPC server...
+2026-01-22 13:19:49,815 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-22 13:19:49,866 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-22 13:19:49,866 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-22 13:19:49,868 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-22 13:19:49,868 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-22 13:19:52,817 - src.main - INFO - Thread started: alive=True
+2026-01-22 13:19:52,817 - src.main - INFO - Thread started: alive=True
+2026-01-22 13:19:52,818 - src.main - INFO - ✅ gRPC server started (fallback)
+2026-01-22 13:19:52,818 - src.main - INFO - ✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+✅ gRPC server started (fallback)
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+2026-01-22 13:19:52,827 - src.main - INFO - ============================================================
+2026-01-22 13:19:52,827 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2026-01-22 13:19:52,827 - src.main - INFO - ============================================================
+============================================================
+2026-01-22 13:19:52,827 - src.main - INFO - ============================================================
+2026-01-22 13:19:52,827 - src.main - INFO - 🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+2026-01-22 13:19:52,827 - src.main - INFO - ============================================================
+🚀 LIFESPAN STARTUP - Starting gRPC server thread...
+============================================================
+2026-01-22 13:19:52,828 - grpc_server - INFO - ============================================================
+2026-01-22 13:19:52,828 - grpc_server - INFO - ============================================================
+2026-01-22 13:19:52,828 - grpc_server - INFO - 🔧 Creating gRPC server...
+2026-01-22 13:19:52,828 - grpc_server - INFO - 🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+🔧 Creating gRPC server...
+2026-01-22 13:19:52,829 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-22 13:19:52,829 - grpc_server - INFO - 🔌 Binding to port 50051...
+🔌 Binding to port 50051...
+2026-01-22 13:19:52,830 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-22 13:19:52,830 - grpc_server - INFO - ✅ gRPC server started on port 50051
+✅ gRPC server started on port 50051
+2026-01-22 13:19:54,829 - src.main - INFO - ✅ gRPC server thread started successfully
+2026-01-22 13:19:54,830 - src.main - INFO -    Thread name: gRPC-Server
+2026-01-22 13:19:54,830 - src.main - INFO -    Thread alive: True
+✅ gRPC server thread started successfully
+   Thread name: gRPC-Server
+   Thread alive: True
+2026-01-22 13:19:54,829 - src.main - INFO - ✅ gRPC server thread started successfully
+2026-01-22 13:19:54,830 - src.main - INFO -    Thread name: gRPC-Server
+2026-01-22 13:19:54,830 - src.main - INFO -    Thread alive: True
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8082 (Press CTRL+C to quit)
+INFO:     192.168.10.16:59174 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:58500 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.165:43612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34650 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41386 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36002 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41402 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36012 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38252 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.160:43364 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.102.165:33920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40940 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38262 - "GET /health HTTP/1.1" 200 OK

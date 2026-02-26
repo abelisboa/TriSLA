@@ -1,0 +1,1 @@
+[INFO] WORKDIR=/home/porvir5g/gtp5g/trisla/investigacao_portal_ml_20260119_210743

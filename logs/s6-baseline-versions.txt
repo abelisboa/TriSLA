@@ -1,0 +1,7 @@
+test-curl2	curlimages/curl	Succeeded
+trisla-bc-nssmf-84995f7445-t2jd2	ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.18	Running
+trisla-decision-engine-bf4cb8b7f-fmj4w	ghcr.io/abelisboa/trisla-decision-engine:v3.7.20	Running
+trisla-ml-nsmf-779d6cc88b-qn46j	ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.14	Running
+trisla-nasp-adapter-74cd854849-4tmwv	ghcr.io/abelisboa/trisla-nasp-adapter:nasp-a2	Running
+trisla-sla-agent-layer-7955cb7c-27rpk	ghcr.io/abelisboa/trisla-sla-agent-layer:v3.7.20	Running
+trisla-ui-dashboard-dfb9ff9cc-jk4xb	ghcr.io/abelisboa/trisla-ui-dashboard:nasp-a2	Running

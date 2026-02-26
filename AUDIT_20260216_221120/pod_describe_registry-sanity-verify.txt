@@ -1,0 +1,63 @@
+Name:             registry-sanity-verify
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node2/192.168.10.15
+Start Time:       Tue, 23 Dec 2025 06:25:59 -0300
+Labels:           <none>
+Annotations:      cni.projectcalico.org/containerID: 2cb3d9145b9b32b83c374542cd67509cd4893fe13946c07b6282748143b2ee25
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.75.15"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Succeeded
+IP:               10.233.75.15
+IPs:
+  IP:  10.233.75.15
+Containers:
+  sanity:
+    Container ID:  containerd://597af111b9d11fe8b1ed9e43cdb39769ee85a122b02afbccad6659155ffc189c
+    Image:         192.168.10.16:5000/library/alpine:latest
+    Image ID:      192.168.10.16:5000/library/alpine@sha256:0464c44011486f1f7f99d3792d048663ce27d85f9cc8f3218fc8f96f070405af
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo 'PHASE_08A_VERIFICATION_OK' && sleep 10
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Tue, 23 Dec 2025 06:26:00 -0300
+      Finished:     Tue, 23 Dec 2025 06:26:10 -0300
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-xfs4x (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-xfs4x:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

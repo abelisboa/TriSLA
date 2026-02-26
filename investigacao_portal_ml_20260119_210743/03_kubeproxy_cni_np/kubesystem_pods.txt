@@ -1,0 +1,21 @@
+NAME                                                          READY   STATUS    RESTARTS         AGE    IP               NODE    NOMINATED NODE   READINESS GATES
+calico-kube-controllers-55d498b656-4n9xr                      1/1     Running   0                27d    10.233.102.173   node1   <none>           <none>
+calico-node-nd85f                                             1/1     Running   1 (82d ago)      90d    192.168.10.16    node1   <none>           <none>
+calico-node-pfpwv                                             1/1     Running   1 (88d ago)      90d    192.168.10.15    node2   <none>           <none>
+coredns-5bf8c985bd-s5hmz                                      1/1     Running   0                27d    10.233.75.58     node2   <none>           <none>
+coredns-5bf8c985bd-tcr4h                                      1/1     Running   0                27d    10.233.102.137   node1   <none>           <none>
+dns-autoscaler-5cb4578f5f-dr8dz                               1/1     Running   0                27d    10.233.102.139   node1   <none>           <none>
+kube-apiserver-node1                                          1/1     Running   3 (27d ago)      82d    192.168.10.16    node1   <none>           <none>
+kube-apiserver-node2                                          1/1     Running   8488 (27d ago)   447d   192.168.10.15    node2   <none>           <none>
+kube-controller-manager-node1                                 1/1     Running   10 (27d ago)     82d    192.168.10.16    node1   <none>           <none>
+kube-controller-manager-node2                                 1/1     Running   4266 (82d ago)   447d   192.168.10.15    node2   <none>           <none>
+kube-multus-ds-5d7s4                                          1/1     Running   1 (82d ago)      89d    192.168.10.16    node1   <none>           <none>
+kube-multus-ds-cpgbm                                          1/1     Running   1 (88d ago)      89d    192.168.10.15    node2   <none>           <none>
+kube-proxy-phpdk                                              1/1     Running   0                81d    192.168.10.15    node2   <none>           <none>
+kube-proxy-z29kf                                              1/1     Running   43 (81d ago)     81d    192.168.10.16    node1   <none>           <none>
+kube-scheduler-node1                                          1/1     Running   10 (27d ago)     82d    192.168.10.16    node1   <none>           <none>
+kube-scheduler-node2                                          1/1     Running   4334 (82d ago)   447d   192.168.10.15    node2   <none>           <none>
+metrics-server-587b667b55-ltjvd                               1/1     Running   1 (27d ago)      27d    10.233.102.187   node1   <none>           <none>
+nfs-storage-nfs-subdir-external-provisioner-9f8d6d557-jrjzt   1/1     Running   1 (27d ago)      27d    10.233.102.180   node1   <none>           <none>
+node-local-dns-9vq4t                                          1/1     Running   3 (41d ago)      41d    192.168.10.15    node2   <none>           <none>
+node-local-dns-pfsr4                                          1/1     Running   3 (41d ago)      41d    192.168.10.16    node1   <none>           <none>

@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"monitoring.coreos.com/v1","kind":"ServiceMonitor","metadata":{"annotations":{},"name":"trisla-traffic-exporter","namespace":"monitoring"},"spec":{"endpoints":[{"interval":"5s","path":"/metrics","port":"http"}],"namespaceSelector":{"matchNames":["trisla"]},"selector":{"matchLabels":{"app":"trisla-traffic-exporter"}}}}
+  creationTimestamp: "2026-01-21T22:43:45Z"
+  generation: 1
+  name: trisla-traffic-exporter
+  namespace: monitoring
+  resourceVersion: "866443128"
+  uid: d83548d2-1783-4d0b-9964-4042198b7833
+spec:
+  endpoints:
+  - interval: 5s
+    path: /metrics
+    port: http
+  namespaceSelector:
+    matchNames:
+    - trisla
+  selector:
+    matchLabels:
+      app: trisla-traffic-exporter

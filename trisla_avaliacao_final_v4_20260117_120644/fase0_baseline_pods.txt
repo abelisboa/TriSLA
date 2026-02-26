@@ -1,0 +1,17 @@
+NAME                                      READY   STATUS             RESTARTS           AGE     IP               NODE    NOMINATED NODE   READINESS GATES
+http-diag                                 0/1     Completed          0                  3d2h    10.233.75.23     node2   <none>           <none>
+kafka-c948b8d64-jgmz5                     1/1     Running            0                  3d14h   10.233.75.59     node2   <none>           <none>
+registry-sanity                           0/1     Completed          0                  25d     10.233.102.189   node1   <none>           <none>
+registry-sanity-verify                    0/1     Completed          0                  25d     10.233.75.15     node2   <none>           <none>
+trisla-bc-nssmf-7b5c6fd7b7-zc4zl          1/1     Running            0                  21d     10.233.102.138   node1   <none>           <none>
+trisla-bc-nssmf-7d99b476b7-r75jl          0/1     ImagePullBackOff   0                  3d16h   10.233.102.155   node1   <none>           <none>
+trisla-besu-6448cb6bc6-mxb84              1/1     Running            0                  24d     10.233.75.56     node2   <none>           <none>
+trisla-decision-engine-7984f6f486-jgn96   1/1     Running            0                  3d1h    10.233.102.145   node1   <none>           <none>
+trisla-ml-nsmf-648666b86-7ghmv            1/1     Running            0                  3d5h    10.233.102.149   node1   <none>           <none>
+trisla-nasp-adapter-5688bf5f8f-x4fm2      1/1     Running            0                  5d19h   10.233.102.190   node1   <none>           <none>
+trisla-nasp-adapter-664894c59c-cvzgb      0/1     Running            1339 (5m49s ago)   3d15h   10.233.102.168   node1   <none>           <none>
+trisla-portal-backend-69568dbdb7-5z8k9    1/1     Running            0                  3d11h   10.233.75.39     node2   <none>           <none>
+trisla-portal-frontend-6dd98dc868-2nx7k   1/1     Running            0                  25d     10.233.102.141   node1   <none>           <none>
+trisla-sem-csmf-685985d44-6v9hk           1/1     Running            0                  3d11h   10.233.102.161   node1   <none>           <none>
+trisla-sla-agent-layer-6d944c889c-p5ccc   1/1     Running            0                  3d15h   10.233.102.146   node1   <none>           <none>
+trisla-ui-dashboard-85755bf748-5nr85      1/1     Running            0                  3d15h   10.233.102.164   node1   <none>           <none>

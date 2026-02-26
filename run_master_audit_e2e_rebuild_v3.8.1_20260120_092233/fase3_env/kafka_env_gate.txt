@@ -1,0 +1,6 @@
+FAIL
+SEM-CSMF: KAFKA_ENABLED/USE_KAFKA != true (valor='')
+ML-NSMF: KAFKA_ENABLED/USE_KAFKA != true (valor='false')
+Decision Engine: KAFKA_ENABLED/USE_KAFKA != true (valor='false')
+SEM-CSMF: brokers inválidos (valor='')
+ML-NSMF: brokers inválidos (valor='')

@@ -1,0 +1,6 @@
+2026-01-20 18:24:36,190 - src.main - INFO - 🚀 Encaminhando ACCEPT para NASP Adapter: decision_id=dec-intent-final-kafka
+2026-01-20 18:24:36,190 - src.main - INFO - 🚀 Encaminhando ACCEPT para NASP Adapter: decision_id=dec-intent-final-kafka
+2026-01-20 18:24:36,200 - src.main - WARNING - ⚠️ Falha ao criar slice no NASP para decision_id=dec-intent-final-kafka
+2026-01-20 18:24:36,200 - src.main - WARNING - ⚠️ Falha ao criar slice no NASP para decision_id=dec-intent-final-kafka
+2026-01-20 18:24:36,314 - src.main - INFO - ✅ Decisão publicada no Kafka I-04/I-05: decision_id=dec-intent-final-kafka
+2026-01-20 18:24:36,314 - src.main - INFO - ✅ Decisão publicada no Kafka I-04/I-05: decision_id=dec-intent-final-kafka

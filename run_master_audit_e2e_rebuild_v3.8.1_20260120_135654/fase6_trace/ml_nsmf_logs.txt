@@ -1,0 +1,345 @@
+INFO:     10.233.75.28:59074 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52610 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52612 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59086 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33534 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39838 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33536 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33550 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39854 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47314 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54336 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47328 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47316 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54340 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35558 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52644 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35582 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35572 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52656 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50990 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57650 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:50998 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51006 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57666 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33398 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57224 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33408 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33406 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57232 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60136 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46090 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60138 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60144 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46094 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35514 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34264 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35524 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35530 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34268 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41958 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37124 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41962 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41964 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37126 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38422 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57880 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38430 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38434 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57896 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44132 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53014 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44142 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44154 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53024 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41160 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36782 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41162 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41164 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36796 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56088 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51914 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56090 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56096 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51918 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34884 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40162 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34898 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34908 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40174 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35966 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53746 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35982 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35984 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53758 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36084 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39182 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36098 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36102 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39196 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34260 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41506 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34276 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34286 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41512 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36242 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46386 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36252 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36250 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46388 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43846 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38408 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43850 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43858 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38418 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37078 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51426 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37082 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37088 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51442 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44382 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45098 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44400 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44392 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45106 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39610 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50640 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39622 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39638 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50650 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41058 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48324 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41074 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41090 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48326 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48540 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39534 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48554 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48566 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39542 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57536 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53050 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57546 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57552 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53062 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52392 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50452 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52398 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52408 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50464 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49414 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:56760 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49428 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49426 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:56762 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49704 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59390 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49708 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49714 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59400 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57082 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50578 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57104 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57092 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50594 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39596 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46214 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39610 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39612 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46218 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48774 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41208 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48786 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48796 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41222 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35236 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49306 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35238 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35250 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49316 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38664 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49246 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38676 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38674 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49262 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41190 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52338 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41208 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:41194 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52344 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37506 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53314 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37510 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37524 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53324 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46248 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55332 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46258 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:46260 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55334 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49416 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35952 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49428 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49438 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35954 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42446 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:47528 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42448 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42450 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:47532 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36996 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41790 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37000 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37002 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41800 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53554 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41554 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53556 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53558 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41564 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55102 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58702 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55104 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55120 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58718 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44320 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50608 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44326 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44324 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:50622 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37418 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36402 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37432 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37434 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:36404 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45246 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44734 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45258 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45260 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44748 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59564 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:56472 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59572 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59570 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:56480 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35194 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42936 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35208 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35222 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42946 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55822 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34178 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55838 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55852 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34180 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59070 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49076 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59078 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59088 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49082 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39208 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41126 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39214 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39222 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41130 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33746 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41372 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33752 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33758 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41378 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43822 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37272 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43832 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43848 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:37278 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43794 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:33232 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43798 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43808 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:33236 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49484 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41754 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49494 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49506 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41760 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45152 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58384 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45156 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45162 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58386 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51132 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38170 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51136 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51148 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38184 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48984 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42680 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48998 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:48994 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42686 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35350 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46754 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35364 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35362 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46756 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35248 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55098 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35256 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35270 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55110 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44026 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52536 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44042 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44044 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52544 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60944 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:33858 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60956 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60958 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:33868 - "GET /health HTTP/1.1" 200 OK
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de latência do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de perda de pacotes do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de disponibilidade do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de carga do Prometheus
+⚠️ Nenhuma métrica real coletada do Prometheus - usando métricas fornecidas
+Modelo não disponível - usando predição simulada
+INFO:     10.233.75.28:33878 - "POST /api/v1/predict HTTP/1.1" 200 OK
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de latência do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de disponibilidade do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de perda de pacotes do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de carga do Prometheus
+⚠️ Nenhuma métrica real coletada do Prometheus - usando métricas fornecidas
+Modelo não disponível - usando predição simulada
+INFO:     10.233.75.28:33882 - "POST /api/v1/predict HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54184 - "GET /health HTTP/1.1" 200 OK
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de perda de pacotes do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de latência do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de disponibilidade do Prometheus
+❌ Erro HTTP ao consultar Prometheus: [Errno -2] Name or service not known
+Não foi possível coletar métricas de carga do Prometheus
+⚠️ Nenhuma métrica real coletada do Prometheus - usando métricas fornecidas
+Modelo não disponível - usando predição simulada
+INFO:     10.233.75.28:33884 - "POST /api/v1/predict HTTP/1.1" 200 OK

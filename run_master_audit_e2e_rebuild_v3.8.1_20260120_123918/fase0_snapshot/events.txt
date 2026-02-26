@@ -1,0 +1,97 @@
+LAST SEEN   TYPE      REASON                            OBJECT                                         MESSAGE
+58m         Normal    AddedInterface                    pod/curltest                                   Add eth0 [10.233.75.51/32] from k8s-pod-network
+58m         Normal    Pulling                           pod/curltest                                   Pulling image "curlimages/curl"
+58m         Normal    Pulled                            pod/curltest                                   Successfully pulled image "curlimages/curl" in 1.425s (1.425s including waiting). Image size: 10767170 bytes.
+58m         Normal    Created                           pod/curltest                                   Created container curltest
+58m         Normal    Started                           pod/curltest                                   Started container curltest
+57m         Normal    Pulling                           pod/curltest2                                  Pulling image "curlimages/curl"
+57m         Normal    AddedInterface                    pod/curltest2                                  Add eth0 [10.233.75.43/32] from k8s-pod-network
+57m         Normal    Started                           pod/curltest2                                  Started container curltest2
+57m         Normal    Created                           pod/curltest2                                  Created container curltest2
+57m         Normal    Pulled                            pod/curltest2                                  Successfully pulled image "curlimages/curl" in 1.557s (1.557s including waiting). Image size: 10767170 bytes.
+57m         Normal    AddedInterface                    pod/curltest3                                  Add eth0 [10.233.75.39/32] from k8s-pod-network
+57m         Normal    Pulling                           pod/curltest3                                  Pulling image "curlimages/curl"
+57m         Normal    Started                           pod/curltest3                                  Started container curltest3
+57m         Normal    Pulled                            pod/curltest3                                  Successfully pulled image "curlimages/curl" in 1.129s (1.129s including waiting). Image size: 10767170 bytes.
+57m         Normal    Created                           pod/curltest3                                  Created container curltest3
+56m         Normal    Scheduled                         pod/curltest                                   Successfully assigned trisla/curltest to node2
+56m         Warning   Unhealthy                         pod/trisla-ml-nsmf-7cbfc5f696-9hrs9            Readiness probe failed: Get "http://10.233.102.156:8081/health": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+54m         Normal    Scheduled                         pod/curltest2                                  Successfully assigned trisla/curltest2 to node2
+54m         Normal    Scheduled                         pod/curltest3                                  Successfully assigned trisla/curltest3 to node2
+53m         Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-8469cdd5cc-ng94f    Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+53m         Normal    Scheduled                         pod/trisla-decision-engine-88b87b89b-5v6kl     Successfully assigned trisla/trisla-decision-engine-88b87b89b-5v6kl to node1
+53m         Normal    AddedInterface                    pod/trisla-decision-engine-88b87b89b-5v6kl     Add eth0 [10.233.102.183/32] from k8s-pod-network
+53m         Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled up replica set trisla-decision-engine-88b87b89b to 1 from 0
+53m         Normal    Pulled                            pod/trisla-decision-engine-88b87b89b-5v6kl     Container image "ghcr.io/abelisboa/trisla-decision-engine:v3.7.29" already present on machine
+53m         Normal    SuccessfulCreate                  replicaset/trisla-decision-engine-88b87b89b    Created pod: trisla-decision-engine-88b87b89b-5v6kl
+53m         Normal    Created                           pod/trisla-decision-engine-88b87b89b-5v6kl     Created container decision-engine
+53m         Normal    Started                           pod/trisla-decision-engine-88b87b89b-5v6kl     Started container decision-engine
+53m         Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled down replica set trisla-decision-engine-8469cdd5cc to 0 from 1
+53m         Normal    SuccessfulDelete                  replicaset/trisla-decision-engine-8469cdd5cc   Deleted pod: trisla-decision-engine-8469cdd5cc-ng94f
+12m         Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-88b87b89b-5v6kl     Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+11m         Warning   Unhealthy                         pod/trisla-bc-nssmf-68bbbd4cb8-jg4j5           Readiness probe failed: Get "http://10.233.102.150:8083/health": dial tcp 10.233.102.150:8083: connect: connection refused
+9m25s       Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled up replica set trisla-decision-engine-f67bcc9df to 1
+9m25s       Normal    SuccessfulCreate                  replicaset/trisla-decision-engine-f67bcc9df    Created pod: trisla-decision-engine-f67bcc9df-24vj5
+9m25s       Normal    Scheduled                         pod/trisla-decision-engine-f67bcc9df-24vj5     Successfully assigned trisla/trisla-decision-engine-f67bcc9df-24vj5 to node1
+9m24s       Normal    Created                           pod/trisla-decision-engine-f67bcc9df-24vj5     Created container decision-engine
+9m24s       Normal    Started                           pod/trisla-decision-engine-f67bcc9df-24vj5     Started container decision-engine
+9m24s       Normal    Pulled                            pod/trisla-decision-engine-f67bcc9df-24vj5     Container image "ghcr.io/abelisboa/trisla-decision-engine:v3.7.29" already present on machine
+9m24s       Normal    AddedInterface                    pod/trisla-decision-engine-f67bcc9df-24vj5     Add eth0 [10.233.102.168/32] from k8s-pod-network
+9m10s       Normal    SuccessfulDelete                  replicaset/trisla-decision-engine-88b87b89b    Deleted pod: trisla-decision-engine-88b87b89b-5v6kl
+9m10s       Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled down replica set trisla-decision-engine-88b87b89b to 0 from 1
+9m10s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-f67bcc9df-24vj5     Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m51s       Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled up replica set trisla-decision-engine-756b4dbffc to 1
+8m51s       Normal    AddedInterface                    pod/trisla-decision-engine-756b4dbffc-hvj7h    Add eth0 [10.233.102.146/32] from k8s-pod-network
+8m51s       Normal    SuccessfulCreate                  replicaset/trisla-decision-engine-756b4dbffc   Created pod: trisla-decision-engine-756b4dbffc-hvj7h
+8m51s       Normal    Scheduled                         pod/trisla-decision-engine-756b4dbffc-hvj7h    Successfully assigned trisla/trisla-decision-engine-756b4dbffc-hvj7h to node1
+8m51s       Normal    Started                           pod/trisla-decision-engine-756b4dbffc-hvj7h    Started container decision-engine
+8m51s       Normal    Created                           pod/trisla-decision-engine-756b4dbffc-hvj7h    Created container decision-engine
+8m51s       Normal    Pulled                            pod/trisla-decision-engine-756b4dbffc-hvj7h    Container image "ghcr.io/abelisboa/trisla-decision-engine:v3.7.29" already present on machine
+8m41s       Normal    Killing                           pod/trisla-decision-engine-f67bcc9df-24vj5     Stopping container decision-engine
+8m41s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-756b4dbffc-hvj7h    Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m41s       Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled down replica set trisla-decision-engine-f67bcc9df to 0 from 1
+8m41s       Normal    SuccessfulDelete                  replicaset/trisla-decision-engine-f67bcc9df    Deleted pod: trisla-decision-engine-f67bcc9df-24vj5
+8m23s       Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled up replica set trisla-decision-engine-5f6fb65c8f to 1
+8m23s       Normal    Scheduled                         pod/trisla-decision-engine-5f6fb65c8f-bz7wt    Successfully assigned trisla/trisla-decision-engine-5f6fb65c8f-bz7wt to node1
+8m23s       Normal    SuccessfulCreate                  replicaset/trisla-decision-engine-5f6fb65c8f   Created pod: trisla-decision-engine-5f6fb65c8f-bz7wt
+8m22s       Normal    AddedInterface                    pod/trisla-decision-engine-5f6fb65c8f-bz7wt    Add eth0 [10.233.102.153/32] from k8s-pod-network
+8m22s       Normal    Pulled                            pod/trisla-decision-engine-5f6fb65c8f-bz7wt    Container image "ghcr.io/abelisboa/trisla-decision-engine:v3.7.29" already present on machine
+8m22s       Normal    Created                           pod/trisla-decision-engine-5f6fb65c8f-bz7wt    Created container decision-engine
+8m22s       Normal    Started                           pod/trisla-decision-engine-5f6fb65c8f-bz7wt    Started container decision-engine
+8m21s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-ml-nsmf-7cbfc5f696-9hrs9            Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m12s       Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled down replica set trisla-decision-engine-756b4dbffc to 0 from 1
+8m12s       Normal    Killing                           pod/trisla-decision-engine-756b4dbffc-hvj7h    Stopping container decision-engine
+8m12s       Normal    SuccessfulDelete                  replicaset/trisla-decision-engine-756b4dbffc   Deleted pod: trisla-decision-engine-756b4dbffc-hvj7h
+5m5s        Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled up replica set trisla-decision-engine-68f48c4db to 1
+5m5s        Normal    Scheduled                         pod/trisla-decision-engine-f984f448c-8j8kl     Successfully assigned trisla/trisla-decision-engine-f984f448c-8j8kl to node1
+5m5s        Normal    Scheduled                         pod/trisla-decision-engine-68f48c4db-dznpx     Successfully assigned trisla/trisla-decision-engine-68f48c4db-dznpx to node1
+5m5s        Normal    SuccessfulCreate                  replicaset/trisla-ml-nsmf-77b664ff             Created pod: trisla-ml-nsmf-77b664ff-sl52j
+5m5s        Normal    SuccessfulCreate                  replicaset/trisla-decision-engine-f984f448c    Created pod: trisla-decision-engine-f984f448c-8j8kl
+5m5s        Normal    Scheduled                         pod/trisla-ml-nsmf-77b664ff-sl52j              Successfully assigned trisla/trisla-ml-nsmf-77b664ff-sl52j to node1
+5m5s        Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled up replica set trisla-decision-engine-f984f448c to 1 from 0
+5m5s        Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled down replica set trisla-decision-engine-68f48c4db to 0 from 1
+5m5s        Normal    SuccessfulCreate                  replicaset/trisla-decision-engine-68f48c4db    Created pod: trisla-decision-engine-68f48c4db-dznpx
+5m5s        Normal    ScalingReplicaSet                 deployment/trisla-ml-nsmf                      Scaled up replica set trisla-ml-nsmf-77b664ff to 1 from 0
+5m5s        Normal    SuccessfulDelete                  replicaset/trisla-decision-engine-68f48c4db    Deleted pod: trisla-decision-engine-68f48c4db-dznpx
+5m4s        Normal    AddedInterface                    pod/trisla-decision-engine-f984f448c-8j8kl     Add eth0 [10.233.102.189/32] from k8s-pod-network
+5m4s        Normal    AddedInterface                    pod/trisla-ml-nsmf-77b664ff-sl52j              Add eth0 [10.233.102.145/32] from k8s-pod-network
+5m4s        Normal    Pulled                            pod/trisla-ml-nsmf-77b664ff-sl52j              Container image "ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.29" already present on machine
+5m4s        Normal    Created                           pod/trisla-ml-nsmf-77b664ff-sl52j              Created container ml-nsmf
+5m4s        Normal    Started                           pod/trisla-ml-nsmf-77b664ff-sl52j              Started container ml-nsmf
+4m54s       Normal    SuccessfulDelete                  replicaset/trisla-ml-nsmf-7cbfc5f696           Deleted pod: trisla-ml-nsmf-7cbfc5f696-9hrs9
+4m54s       Normal    ScalingReplicaSet                 deployment/trisla-ml-nsmf                      Scaled down replica set trisla-ml-nsmf-7cbfc5f696 to 0 from 1
+4m23s       Normal    Pulling                           pod/trisla-decision-engine-f984f448c-8j8kl     Pulling image "ghcr.io/abelisboa/trisla-decision-engine:v3.8.1-fix"
+4m22s       Warning   Failed                            pod/trisla-decision-engine-f984f448c-8j8kl     Failed to pull image "ghcr.io/abelisboa/trisla-decision-engine:v3.8.1-fix": rpc error: code = NotFound desc = failed to pull and unpack image "ghcr.io/abelisboa/trisla-decision-engine:v3.8.1-fix": failed to resolve reference "ghcr.io/abelisboa/trisla-decision-engine:v3.8.1-fix": ghcr.io/abelisboa/trisla-decision-engine:v3.8.1-fix: not found
+4m22s       Warning   Failed                            pod/trisla-decision-engine-f984f448c-8j8kl     Error: ErrImagePull
+4m10s       Warning   Failed                            pod/trisla-decision-engine-f984f448c-8j8kl     Error: ImagePullBackOff
+4m10s       Normal    BackOff                           pod/trisla-decision-engine-f984f448c-8j8kl     Back-off pulling image "ghcr.io/abelisboa/trisla-decision-engine:v3.8.1-fix"
+3m55s       Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-f984f448c-8j8kl     Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+82s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-ml-nsmf-77b664ff-sl52j              Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+78s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-7c8ff9c4fc-kwmqd           Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+69s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-nasp-adapter-7c8bb45994-hfc76       Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+65s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-68bbbd4cb8-jg4j5           Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+50s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-nasp-adapter-5688bf5f8f-x4fm2       Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+42s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-5f6fb65c8f-bz7wt    Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+29s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-sla-agent-layer-b8c7b6fdc-x6fbb     Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+15s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-sem-csmf-95dfc79f4-zpscg            Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+15s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-ui-dashboard-85755bf748-t9zfs       Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.

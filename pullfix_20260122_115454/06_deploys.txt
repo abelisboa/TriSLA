@@ -1,0 +1,12 @@
+deployment.apps/kafka
+deployment.apps/trisla-bc-nssmf
+deployment.apps/trisla-decision-engine
+deployment.apps/trisla-iperf3-server
+deployment.apps/trisla-ml-nsmf
+deployment.apps/trisla-nasp-adapter
+deployment.apps/trisla-portal-backend
+deployment.apps/trisla-portal-frontend
+deployment.apps/trisla-sem-csmf
+deployment.apps/trisla-sla-agent-layer
+deployment.apps/trisla-traffic-exporter
+deployment.apps/trisla-ui-dashboard

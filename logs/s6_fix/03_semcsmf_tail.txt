@@ -1,0 +1,1 @@
+Error from server (BadRequest): container "sem-csmf" in pod "trisla-sem-csmf-5c556ccf9d-kblj8" is waiting to start: trying and failing to pull image

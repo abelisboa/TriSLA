@@ -1,0 +1,219 @@
+2026-01-19 20:44:42,082 - src.main - INFO - ℹ️  TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN - Telemetry disabled in local environment
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+2026-01-19 20:44:42,094 - src.main - INFO - 🚀 TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN Backend starting...
+2026-01-19 20:44:42,094 - src.main - INFO - 🔍 Executando diagnóstico inicial de conectividade NASP...
+2026-01-19 20:44:42,190 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:42,192 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:42,193 - src.main - INFO - ✅ SEM-CSMF acessível (latência: 98.83ms)
+2026-01-19 20:44:42,194 - src.main - INFO - ✅ BC-NSSMF acessível (latência: 77.79ms)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+2026-01-19 20:44:52,220 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:52,221 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:52,223 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:52,278 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:52,279 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:52,281 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:49956 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:44:57,212 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:57,213 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:57,214 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:57,215 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:57,216 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:44:57,217 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:34748 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:45:02,208 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:02,209 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:02,210 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:02,211 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:02,213 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:02,214 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:34760 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:45:07,209 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:07,210 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:07,211 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:07,212 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:07,213 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:07,214 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:44116 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:45:12,210 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:12,211 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:12,212 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:12,213 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:12,214 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:12,217 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:44124 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:58268 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:45:17,211 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:17,212 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:17,213 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:17,214 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:17,215 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:17,216 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:58274 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:45:22,209 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:22,210 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:22,211 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:22,212 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:22,212 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:22,213 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:58282 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:60674 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:45:27,208 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:27,210 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:27,211 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:27,212 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:27,213 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:27,214 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:60670 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:45:32,211 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:32,212 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:32,212 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:32,213 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:32,214 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:32,215 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:60676 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:35872 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:45:37,214 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:37,215 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:37,216 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:37,216 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:37,217 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:37,218 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:35884 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:45:42,225 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:42,226 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:42,227 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:42,228 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:42,228 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:42,230 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:35890 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:43760 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:45:47,211 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:47,212 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:47,213 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:47,214 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:47,215 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:47,216 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:43768 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:45:52,205 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:52,206 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:52,207 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:52,208 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:52,208 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:52,209 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:43782 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:46776 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:45:57,211 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:57,213 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:57,214 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:57,215 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:57,216 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:45:57,217 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:46764 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:46:02,210 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:02,211 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:02,212 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:02,213 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:02,215 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:02,216 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:46778 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:43596 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:46:07,215 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:07,216 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:07,217 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:07,218 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:07,219 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:07,220 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:43612 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:46:12,207 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:12,208 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:12,209 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:12,210 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:12,210 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:12,211 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:43614 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:54902 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:46:17,212 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:17,214 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:17,215 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:17,216 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:17,217 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:17,218 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:54888 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:46:22,209 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:22,211 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:22,214 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:22,215 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:22,216 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:22,216 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:54912 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:50326 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:46:27,216 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:27,217 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:27,218 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:27,218 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:27,219 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:27,220 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:50340 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:46:32,210 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:32,211 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:32,212 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:32,213 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:32,214 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:32,215 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:50356 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:43590 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:46:37,211 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:37,213 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:37,213 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:37,215 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:37,215 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:37,217 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:43588 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:46:42,214 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:42,216 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:42,216 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:42,217 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:42,218 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:42,219 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:43592 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:39124 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:46:47,210 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:47,211 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:47,212 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:47,213 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:47,213 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:47,214 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:39138 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:46:52,212 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:52,215 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:52,217 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:52,219 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:52,220 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:52,220 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:39146 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:54476 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:46:57,208 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:57,209 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:57,210 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:57,211 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:57,212 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:46:57,213 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:54484 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+2026-01-19 20:47:02,209 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:02,210 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:02,211 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:02,212 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:02,213 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:02,213 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:54490 - "GET /nasp/diagnostics HTTP/1.1" 200 OK
+INFO:     192.168.10.15:55406 - "GET /health HTTP/1.1" 200 OK
+2026-01-19 20:47:07,213 - httpx - INFO - HTTP Request: GET http://trisla-ml-nsmf:8081/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:07,214 - httpx - INFO - HTTP Request: GET http://trisla-decision-engine:8082/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:07,214 - httpx - INFO - HTTP Request: GET http://trisla-sla-agent-layer:8084/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:07,215 - httpx - INFO - HTTP Request: GET http://trisla-bc-nssmf:8083/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:07,216 - httpx - INFO - HTTP Request: GET http://trisla-sem-csmf:8080/health "HTTP/1.1 200 OK"
+2026-01-19 20:47:07,217 - src.services.nasp_health - INFO - ✅ Todos os módulos NASP estão acessíveis
+INFO:     192.168.10.15:55410 - "GET /nasp/diagnostics HTTP/1.1" 200 OK

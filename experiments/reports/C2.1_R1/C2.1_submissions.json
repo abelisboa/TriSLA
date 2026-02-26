@@ -1,0 +1,181 @@
+{
+  "timestamp": "2025-12-26T17:09:19.583972+00:00",
+  "submissions": [
+    {
+      "correlation_id": "C2_URLLC_3-1-a3ceb36d",
+      "submission_timestamp": "2025-12-26T17:09:08.586589+00:00",
+      "payload": {
+        "template_id": "template:URLLC",
+        "form_values": {
+          "service_type": "URLLC",
+          "latency_ms": 5.0,
+          "throughput_mbps": 50.0,
+          "reliability": 0.99999,
+          "jitter_ms": 1.0
+        },
+        "tenant_id": "experiment-C2_URLLC_3"
+      },
+      "success": true,
+      "error": null,
+      "response": {
+        "intent_id": "6433f442-c743-4558-82e5-4466d9ef0cee",
+        "service_type": "URLLC",
+        "sla_requirements": {
+          "service_type": "URLLC",
+          "latency_ms": 5.0,
+          "throughput_mbps": 50.0,
+          "reliability": 0.99999,
+          "jitter_ms": 1.0
+        },
+        "ml_prediction": {
+          "risk_score": 0.7229157072553514,
+          "risk_level": "high",
+          "viability_score": null,
+          "confidence": 0.85,
+          "timestamp": "2025-12-26T17:09:09.274366+00:00",
+          "model_used": false,
+          "metrics_used": {
+            "real_metrics_count": 0,
+            "real_metrics": [],
+            "time_range_minutes": 10
+          }
+        },
+        "decision": "RENEG",
+        "justification": "Rule rule-002 matched: sla_compliance < 0.9",
+        "reason": "Rule rule-002 matched: sla_compliance < 0.9",
+        "blockchain_tx_hash": null,
+        "tx_hash": null,
+        "sla_hash": null,
+        "timestamp": "2025-12-26T17:09:09.309152+00:00",
+        "status": "RENEGOTIATION_REQUIRED",
+        "sla_id": "dec-6433f442-c743-4558-82e5-4466d9ef0cee",
+        "nest_id": "nest-6433f442-c743-4558-82e5-4466d9ef0cee",
+        "sem_csmf_status": "OK",
+        "ml_nsmf_status": "OK",
+        "bc_status": "SKIPPED",
+        "sla_agent_status": "SKIPPED",
+        "block_number": null
+      },
+      "submission_time_ms": 728.2304763793945
+    },
+    {
+      "correlation_id": "C2_URLLC_3-2-53fb5fe9",
+      "submission_timestamp": "2025-12-26T17:09:14.315413+00:00",
+      "payload": {
+        "template_id": "template:URLLC",
+        "form_values": {
+          "service_type": "URLLC",
+          "latency_ms": 5.0,
+          "throughput_mbps": 50.0,
+          "reliability": 0.99999,
+          "jitter_ms": 1.0
+        },
+        "tenant_id": "experiment-C2_URLLC_3"
+      },
+      "success": true,
+      "error": null,
+      "response": {
+        "intent_id": "7ab5e18a-9eba-4323-a6d3-a89e805c9aa3",
+        "service_type": "URLLC",
+        "sla_requirements": {
+          "service_type": "URLLC",
+          "latency_ms": 5.0,
+          "throughput_mbps": 50.0,
+          "reliability": 0.99999,
+          "jitter_ms": 1.0
+        },
+        "ml_prediction": {
+          "risk_score": 0.818261395172683,
+          "risk_level": "high",
+          "viability_score": null,
+          "confidence": 0.85,
+          "timestamp": "2025-12-26T17:09:14.414861+00:00",
+          "model_used": false,
+          "metrics_used": {
+            "real_metrics_count": 0,
+            "real_metrics": [],
+            "time_range_minutes": 10
+          }
+        },
+        "decision": "RENEG",
+        "justification": "Rule rule-002 matched: sla_compliance < 0.9",
+        "reason": "Rule rule-002 matched: sla_compliance < 0.9",
+        "blockchain_tx_hash": null,
+        "tx_hash": null,
+        "sla_hash": null,
+        "timestamp": "2025-12-26T17:09:14.441746+00:00",
+        "status": "RENEGOTIATION_REQUIRED",
+        "sla_id": "dec-7ab5e18a-9eba-4323-a6d3-a89e805c9aa3",
+        "nest_id": "nest-7ab5e18a-9eba-4323-a6d3-a89e805c9aa3",
+        "sem_csmf_status": "OK",
+        "ml_nsmf_status": "OK",
+        "bc_status": "SKIPPED",
+        "sla_agent_status": "SKIPPED",
+        "block_number": null
+      },
+      "submission_time_ms": 130.01036643981934
+    },
+    {
+      "correlation_id": "C2_URLLC_3-3-961c81a6",
+      "submission_timestamp": "2025-12-26T17:09:19.445856+00:00",
+      "payload": {
+        "template_id": "template:URLLC",
+        "form_values": {
+          "service_type": "URLLC",
+          "latency_ms": 5.0,
+          "throughput_mbps": 50.0,
+          "reliability": 0.99999,
+          "jitter_ms": 1.0
+        },
+        "tenant_id": "experiment-C2_URLLC_3"
+      },
+      "success": true,
+      "error": null,
+      "response": {
+        "intent_id": "7825f1ac-2c16-4d12-8543-0102524e1425",
+        "service_type": "URLLC",
+        "sla_requirements": {
+          "service_type": "URLLC",
+          "latency_ms": 5.0,
+          "throughput_mbps": 50.0,
+          "reliability": 0.99999,
+          "jitter_ms": 1.0
+        },
+        "ml_prediction": {
+          "risk_score": 0.6171755741571842,
+          "risk_level": "medium",
+          "viability_score": null,
+          "confidence": 0.85,
+          "timestamp": "2025-12-26T17:09:19.560978+00:00",
+          "model_used": false,
+          "metrics_used": {
+            "real_metrics_count": 0,
+            "real_metrics": [],
+            "time_range_minutes": 10
+          }
+        },
+        "decision": "RENEG",
+        "justification": "Rule rule-002 matched: sla_compliance < 0.9",
+        "reason": "Rule rule-002 matched: sla_compliance < 0.9",
+        "blockchain_tx_hash": null,
+        "tx_hash": null,
+        "sla_hash": null,
+        "timestamp": "2025-12-26T17:09:19.580068+00:00",
+        "status": "RENEGOTIATION_REQUIRED",
+        "sla_id": "dec-7825f1ac-2c16-4d12-8543-0102524e1425",
+        "nest_id": "nest-7825f1ac-2c16-4d12-8543-0102524e1425",
+        "sem_csmf_status": "OK",
+        "ml_nsmf_status": "OK",
+        "bc_status": "SKIPPED",
+        "sla_agent_status": "SKIPPED",
+        "block_number": null
+      },
+      "submission_time_ms": 137.59398460388184
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "successful": 3,
+    "failed": 0
+  }
+}

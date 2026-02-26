@@ -1,0 +1,273 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+STEP 1/14: FROM python:3.10-slim
+STEP 2/14: WORKDIR /app
+--> Using cache 526f5880c69bf9bcdc03be083430a02a67b81365e9160e49b8b9be1de37bc9be
+--> 526f5880c69b
+STEP 3/14: RUN apt-get update && apt-get install -y     gcc     && rm -rf /var/lib/apt/lists/*
+--> Using cache c9feb9b601e3fae39e59a5633d09358a685081119b57477feef090e871f1809c
+--> c9feb9b601e3
+STEP 4/14: COPY requirements.txt .
+--> 279f2518a341
+STEP 5/14: RUN pip install --no-cache-dir -r requirements.txt
+Collecting fastapi==0.104.1
+  Downloading fastapi-0.104.1-py3-none-any.whl (92 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 92.9/92.9 kB 6.0 MB/s eta 0:00:00
+Collecting uvicorn[standard]==0.24.0
+  Downloading uvicorn-0.24.0-py3-none-any.whl (59 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 59.6/59.6 kB 35.5 MB/s eta 0:00:00
+Collecting pydantic==2.5.0
+  Downloading pydantic-2.5.0-py3-none-any.whl (407 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 407.5/407.5 kB 15.0 MB/s eta 0:00:00
+Collecting numpy==1.23.5
+  Downloading numpy-1.23.5-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.1/17.1 MB 19.2 MB/s eta 0:00:00
+Collecting pandas==1.5.3
+  Downloading pandas-1.5.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.1/12.1 MB 19.1 MB/s eta 0:00:00
+Collecting scikit-learn==1.2.2
+  Downloading scikit_learn-1.2.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (9.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.6/9.6 MB 18.2 MB/s eta 0:00:00
+Collecting joblib==1.2.0
+  Downloading joblib-1.2.0-py3-none-any.whl (297 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 298.0/298.0 kB 20.9 MB/s eta 0:00:00
+Collecting shap==0.45.0
+  Downloading shap-0.45.0-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (538 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 538.2/538.2 kB 19.9 MB/s eta 0:00:00
+Collecting lime==0.2.0.1
+  Downloading lime-0.2.0.1.tar.gz (275 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 275.7/275.7 kB 24.1 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting kafka-python==2.0.2
+  Downloading kafka_python-2.0.2-py2.py3-none-any.whl (246 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 246.5/246.5 kB 24.1 MB/s eta 0:00:00
+Collecting requests==2.31.0
+  Downloading requests-2.31.0-py3-none-any.whl (62 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.6/62.6 kB 30.0 MB/s eta 0:00:00
+Collecting prometheus_client>=0.20.0
+  Downloading prometheus_client-0.24.1-py3-none-any.whl (64 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 64.1/64.1 kB 177.6 MB/s eta 0:00:00
+Collecting opentelemetry-api>=1.24.0
+  Downloading opentelemetry_api-1.39.1-py3-none-any.whl (66 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 66.4/66.4 kB 150.5 MB/s eta 0:00:00
+Collecting opentelemetry-sdk>=1.24.0
+  Downloading opentelemetry_sdk-1.39.1-py3-none-any.whl (132 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 132.6/132.6 kB 46.4 MB/s eta 0:00:00
+Collecting opentelemetry-exporter-otlp-proto-grpc>=1.24.0
+  Downloading opentelemetry_exporter_otlp_proto_grpc-1.39.1-py3-none-any.whl (19 kB)
+Collecting opentelemetry-instrumentation-fastapi>=0.44b0
+  Downloading opentelemetry_instrumentation_fastapi-0.60b1-py3-none-any.whl (13 kB)
+Collecting opentelemetry-instrumentation-requests>=0.44b0
+  Downloading opentelemetry_instrumentation_requests-0.60b1-py3-none-any.whl (13 kB)
+Collecting opentelemetry-propagator-b3>=1.24.0
+  Downloading opentelemetry_propagator_b3-1.39.1-py3-none-any.whl (8.9 kB)
+Collecting httpx>=0.25.0
+  Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.5/73.5 kB 48.6 MB/s eta 0:00:00
+Collecting python-dateutil==2.8.2
+  Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 29.2 MB/s eta 0:00:00
+Collecting typing-extensions>=4.8.0
+  Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 44.6/44.6 kB 144.9 MB/s eta 0:00:00
+Collecting anyio<4.0.0,>=3.7.1
+  Downloading anyio-3.7.1-py3-none-any.whl (80 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.9/80.9 kB 37.3 MB/s eta 0:00:00
+Collecting starlette<0.28.0,>=0.27.0
+  Downloading starlette-0.27.0-py3-none-any.whl (66 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 67.0/67.0 kB 141.4 MB/s eta 0:00:00
+Collecting click>=7.0
+  Downloading click-8.3.1-py3-none-any.whl (108 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 108.3/108.3 kB 31.2 MB/s eta 0:00:00
+Collecting h11>=0.8
+  Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Collecting websockets>=10.4
+  Downloading websockets-16.0-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (183 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 183.8/183.8 kB 17.1 MB/s eta 0:00:00
+Collecting uvloop!=0.15.0,!=0.15.1,>=0.14.0
+  Downloading uvloop-0.22.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.7/3.7 MB 17.0 MB/s eta 0:00:00
+Collecting httptools>=0.5.0
+  Downloading httptools-0.7.1-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (440 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 440.9/440.9 kB 15.1 MB/s eta 0:00:00
+Collecting python-dotenv>=0.13
+  Downloading python_dotenv-1.2.1-py3-none-any.whl (21 kB)
+Collecting watchfiles>=0.13
+  Downloading watchfiles-1.1.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (455 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 455.6/455.6 kB 15.4 MB/s eta 0:00:00
+Collecting pyyaml>=5.1
+  Downloading pyyaml-6.0.3-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (770 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 770.3/770.3 kB 14.2 MB/s eta 0:00:00
+Collecting pydantic-core==2.14.1
+  Downloading pydantic_core-2.14.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 15.9 MB/s eta 0:00:00
+Collecting annotated-types>=0.4.0
+  Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Collecting pytz>=2020.1
+  Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 509.2/509.2 kB 15.7 MB/s eta 0:00:00
+Collecting threadpoolctl>=2.0.0
+  Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Collecting scipy>=1.3.2
+  Downloading scipy-1.15.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (37.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 37.7/37.7 MB 20.5 MB/s eta 0:00:00
+Collecting numba
+  Downloading numba-0.63.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (3.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.7/3.7 MB 20.5 MB/s eta 0:00:00
+Collecting cloudpickle
+  Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Collecting packaging>20.9
+  Downloading packaging-26.0-py3-none-any.whl (74 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 74.4/74.4 kB 66.0 MB/s eta 0:00:00
+Collecting tqdm>=4.27.0
+  Downloading tqdm-4.67.1-py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.5/78.5 kB 38.6 MB/s eta 0:00:00
+Collecting slicer==0.0.7
+  Downloading slicer-0.0.7-py3-none-any.whl (14 kB)
+Collecting matplotlib
+  Downloading matplotlib-3.10.8-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (8.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.7/8.7 MB 20.9 MB/s eta 0:00:00
+Collecting scikit-image>=0.12
+  Downloading scikit_image-0.25.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (14.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.8/14.8 MB 20.6 MB/s eta 0:00:00
+Collecting charset-normalizer<4,>=2
+  Downloading charset_normalizer-3.4.4-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (153 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 153.6/153.6 kB 34.1 MB/s eta 0:00:00
+Collecting urllib3<3,>=1.21.1
+  Downloading urllib3-2.6.3-py3-none-any.whl (131 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 131.6/131.6 kB 27.0 MB/s eta 0:00:00
+Collecting idna<4,>=2.5
+  Downloading idna-3.11-py3-none-any.whl (71 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 71.0/71.0 kB 80.8 MB/s eta 0:00:00
+Collecting certifi>=2017.4.17
+  Downloading certifi-2026.1.4-py3-none-any.whl (152 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 152.9/152.9 kB 24.8 MB/s eta 0:00:00
+Collecting six>=1.5
+  Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Collecting importlib-metadata<8.8.0,>=6.0
+  Downloading importlib_metadata-8.7.1-py3-none-any.whl (27 kB)
+Collecting opentelemetry-semantic-conventions==0.60b1
+  Downloading opentelemetry_semantic_conventions-0.60b1-py3-none-any.whl (219 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 220.0/220.0 kB 25.0 MB/s eta 0:00:00
+Collecting opentelemetry-proto==1.39.1
+  Downloading opentelemetry_proto-1.39.1-py3-none-any.whl (72 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 72.5/72.5 kB 41.2 MB/s eta 0:00:00
+Collecting grpcio<2.0.0,>=1.63.2
+  Downloading grpcio-1.76.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (6.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 21.3 MB/s eta 0:00:00
+Collecting opentelemetry-exporter-otlp-proto-common==1.39.1
+  Downloading opentelemetry_exporter_otlp_proto_common-1.39.1-py3-none-any.whl (18 kB)
+Collecting googleapis-common-protos~=1.57
+  Downloading googleapis_common_protos-1.72.0-py3-none-any.whl (297 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 297.5/297.5 kB 19.9 MB/s eta 0:00:00
+Collecting protobuf<7.0,>=5.0
+  Downloading protobuf-6.33.4-cp39-abi3-manylinux2014_x86_64.whl (323 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 323.3/323.3 kB 20.6 MB/s eta 0:00:00
+Collecting opentelemetry-util-http==0.60b1
+  Downloading opentelemetry_util_http-0.60b1-py3-none-any.whl (8.9 kB)
+Collecting opentelemetry-instrumentation==0.60b1
+  Downloading opentelemetry_instrumentation-0.60b1-py3-none-any.whl (33 kB)
+Collecting opentelemetry-instrumentation-asgi==0.60b1
+  Downloading opentelemetry_instrumentation_asgi-0.60b1-py3-none-any.whl (16 kB)
+Collecting wrapt<2.0.0,>=1.0.0
+  Downloading wrapt-1.17.3-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (81 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 82.0/82.0 kB 807.1 kB/s eta 0:00:00
+Collecting asgiref~=3.0
+  Downloading asgiref-3.11.0-py3-none-any.whl (24 kB)
+Collecting httpcore==1.*
+  Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.8/78.8 kB 28.8 MB/s eta 0:00:00
+Collecting sniffio>=1.1
+  Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+Collecting exceptiongroup
+  Downloading exceptiongroup-1.3.1-py3-none-any.whl (16 kB)
+Collecting zipp>=3.20
+  Downloading zipp-3.23.0-py3-none-any.whl (10 kB)
+Collecting pillow>=10.1
+  Downloading pillow-12.1.0-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.0/7.0 MB 15.9 MB/s eta 0:00:00
+Collecting lazy-loader>=0.4
+  Downloading lazy_loader-0.4-py3-none-any.whl (12 kB)
+Collecting tifffile>=2022.8.12
+  Downloading tifffile-2025.5.10-py3-none-any.whl (226 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 226.5/226.5 kB 18.1 MB/s eta 0:00:00
+Collecting networkx>=3.0
+  Downloading networkx-3.4.2-py3-none-any.whl (1.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 16.9 MB/s eta 0:00:00
+Collecting imageio!=2.35.0,>=2.33
+  Downloading imageio-2.37.2-py3-none-any.whl (317 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 317.6/317.6 kB 16.4 MB/s eta 0:00:00
+Collecting scikit-image>=0.12
+  Downloading scikit_image-0.25.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (14.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.8/14.8 MB 20.0 MB/s eta 0:00:00
+  Downloading scikit_image-0.25.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (14.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.8/14.8 MB 20.8 MB/s eta 0:00:00
+  Downloading scikit_image-0.24.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (14.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.9/14.9 MB 12.2 MB/s eta 0:00:00
+Collecting cycler>=0.10
+  Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Collecting kiwisolver>=1.3.1
+  Downloading kiwisolver-1.4.9-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (1.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 9.5 MB/s eta 0:00:00
+Collecting fonttools>=4.22.0
+  Downloading fonttools-4.61.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.9/4.9 MB 11.2 MB/s eta 0:00:00
+Collecting contourpy>=1.0.1
+  Downloading contourpy-1.3.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (325 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 325.0/325.0 kB 12.4 MB/s eta 0:00:00
+Collecting pyparsing>=3
+  Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 122.8/122.8 kB 17.3 MB/s eta 0:00:00
+Collecting llvmlite<0.47,>=0.46.0dev0
+  Downloading llvmlite-0.46.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (56.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.3/56.3 MB 15.7 MB/s eta 0:00:00
+Building wheels for collected packages: lime
+  Building wheel for lime (setup.py): started
+  Building wheel for lime (setup.py): finished with status 'done'
+  Created wheel for lime: filename=lime-0.2.0.1-py3-none-any.whl size=283914 sha256=389c49de426a8d7561f10f7d3857caf2dffa4f838d0c7f7567f30f9a3272117b
+  Stored in directory: /tmp/pip-ephem-wheel-cache-cda1uvkj/wheels/fd/a2/af/9ac0a1a85a27f314a06b39e1f492bee1547d52549a4606ed89
+Successfully built lime
+Installing collected packages: pytz, kafka-python, zipp, wrapt, websockets, uvloop, urllib3, typing-extensions, tqdm, threadpoolctl, sniffio, slicer, six, pyyaml, python-dotenv, pyparsing, protobuf, prometheus_client, pillow, packaging, opentelemetry-util-http, numpy, networkx, llvmlite, kiwisolver, joblib, idna, httptools, h11, fonttools, cycler, cloudpickle, click, charset-normalizer, certifi, annotated-types, uvicorn, tifffile, scipy, requests, python-dateutil, pydantic-core, opentelemetry-proto, numba, lazy-loader, importlib-metadata, imageio, httpcore, grpcio, googleapis-common-protos, exceptiongroup, contourpy, asgiref, scikit-learn, scikit-image, pydantic, pandas, opentelemetry-exporter-otlp-proto-common, opentelemetry-api, matplotlib, anyio, watchfiles, starlette, shap, opentelemetry-semantic-conventions, opentelemetry-propagator-b3, lime, httpx, opentelemetry-sdk, opentelemetry-instrumentation, fastapi, opentelemetry-instrumentation-requests, opentelemetry-instrumentation-asgi, opentelemetry-exporter-otlp-proto-grpc, opentelemetry-instrumentation-fastapi
+Successfully installed annotated-types-0.7.0 anyio-3.7.1 asgiref-3.11.0 certifi-2026.1.4 charset-normalizer-3.4.4 click-8.3.1 cloudpickle-3.1.2 contourpy-1.3.2 cycler-0.12.1 exceptiongroup-1.3.1 fastapi-0.104.1 fonttools-4.61.1 googleapis-common-protos-1.72.0 grpcio-1.76.0 h11-0.16.0 httpcore-1.0.9 httptools-0.7.1 httpx-0.28.1 idna-3.11 imageio-2.37.2 importlib-metadata-8.7.1 joblib-1.2.0 kafka-python-2.0.2 kiwisolver-1.4.9 lazy-loader-0.4 lime-0.2.0.1 llvmlite-0.46.0 matplotlib-3.10.8 networkx-3.4.2 numba-0.63.1 numpy-1.23.5 opentelemetry-api-1.39.1 opentelemetry-exporter-otlp-proto-common-1.39.1 opentelemetry-exporter-otlp-proto-grpc-1.39.1 opentelemetry-instrumentation-0.60b1 opentelemetry-instrumentation-asgi-0.60b1 opentelemetry-instrumentation-fastapi-0.60b1 opentelemetry-instrumentation-requests-0.60b1 opentelemetry-propagator-b3-1.39.1 opentelemetry-proto-1.39.1 opentelemetry-sdk-1.39.1 opentelemetry-semantic-conventions-0.60b1 opentelemetry-util-http-0.60b1 packaging-26.0 pandas-1.5.3 pillow-12.1.0 prometheus_client-0.24.1 protobuf-6.33.4 pydantic-2.5.0 pydantic-core-2.14.1 pyparsing-3.3.2 python-dateutil-2.8.2 python-dotenv-1.2.1 pytz-2025.2 pyyaml-6.0.3 requests-2.31.0 scikit-image-0.24.0 scikit-learn-1.2.2 scipy-1.15.3 shap-0.45.0 six-1.17.0 slicer-0.0.7 sniffio-1.3.1 starlette-0.27.0 threadpoolctl-3.6.0 tifffile-2025.5.10 tqdm-4.67.1 typing-extensions-4.15.0 urllib3-2.6.3 uvicorn-0.24.0 uvloop-0.22.1 watchfiles-1.1.1 websockets-16.0 wrapt-1.17.3 zipp-3.23.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+[notice] A new release of pip is available: 23.0.1 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+--> 63896ea2eb49
+STEP 6/14: COPY src/ ./src/
+--> 3d99f754109e
+STEP 7/14: COPY models/ ./models/
+--> 103984b2f74b
+STEP 8/14: ENV PYTHONPATH=/app
+--> 6a65a7ec4598
+STEP 9/14: ENV PORT=8081
+--> 414dcd44f473
+STEP 10/14: ENV KAFKA_ENABLED=false
+--> 3740fa627e3b
+STEP 11/14: ENV KAFKA_BROKERS=""
+--> 2b3857721878
+STEP 12/14: HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD python -c "import requests; requests.get('http://localhost:8081/health')"
+time="2026-01-22T11:23:07-03:00" level=warning msg="HEALTHCHECK is not supported for OCI image format and will be ignored. Must use `docker` format"
+--> e6eeda282c31
+STEP 13/14: EXPOSE 8081
+time="2026-01-22T11:23:07-03:00" level=warning msg="HEALTHCHECK is not supported for OCI image format and will be ignored. Must use `docker` format"
+--> 26ce53259e65
+STEP 14/14: CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8081"]
+COMMIT ghcr.io/abelisboa/trisla-ml-nsmf:v3.9.4
+time="2026-01-22T11:23:08-03:00" level=warning msg="HEALTHCHECK is not supported for OCI image format and will be ignored. Must use `docker` format"
+--> 08a1aebe1592
+Successfully tagged ghcr.io/abelisboa/trisla-ml-nsmf:v3.9.4
+08a1aebe15922b0c4fe354ca4eca2a3c59dd32fd36a69499a7660aa7187c1101
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+Getting image source signatures
+Copying blob sha256:557139ca12a043f1b904ffd4d12e7329a61268ffdc59b41568c66e1c206a95f8
+Copying blob sha256:52549725fa56e7dfc57e07bc7a9b946eeba2613def23a0f7dddfb3ddcacaaac8
+Copying blob sha256:dc27ff3b74317086d239c785a48c28c436862fa970a529e53ac5b67a8f4b8408
+Copying blob sha256:72943a3f27df0137047d5f4aa9b4524b10c48c111d54712b0df8bde3b669a604
+Copying blob sha256:77a2b55fbe8b9984ce0af3ffc0b0ab62507668e63306ec161a585e587a3eb164
+Copying blob sha256:17bbb46fa426e94886aa1e2ad42c2b0890656e0556b95fe846890417afcc8598
+Copying blob sha256:42ab75c7b4fafa221de771a76ea0194a373bbf7ecc5a984be213d5d8a85b75cb
+Copying blob sha256:563b082c9e6d7579bc223a204d90eb25978339450ec5a6578d6c903b5ecee488
+Copying blob sha256:654185f9ae3117808e4ad0797dc5adf128f9514cb2447cadb206338f891a9d6b
+Copying config sha256:08a1aebe15922b0c4fe354ca4eca2a3c59dd32fd36a69499a7660aa7187c1101
+Writing manifest to image destination

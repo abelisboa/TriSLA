@@ -1,0 +1,22 @@
+EVIDÊNCIA FASE 0: git status não está vazio
+?? TriSLA/
+?? helm/trisla/Chart.lock
+?? helm/trisla/charts/
+EVIDÊNCIA FASE 4: Template render falha devido a erro em deployment-sem-csmf.yaml
+Erro: nil pointer evaluating .Values.semCsmf.env.DECISION_ENGINE_URL
+Ação: Prosseguindo com deploy mesmo assim (semCsmf está desabilitado)
+EVIDÊNCIA: Verificação direta dos templates
+deployment-besu.yaml ainda contém exec probes (não httpGet)
+EVIDÊNCIA CRÍTICA FASE 5: Deploy falhou devido a erro no template
+Erro: template deployment-sem-csmf.yaml:39:22 - nil pointer evaluating .Values.semCsmf.env.DECISION_ENGINE_URL
+Problema: Template tenta acessar valores mesmo com semCsmf.enabled=false
+Ação: Não é permitido corrigir no NASP conforme regra do prompt
+EVIDÊNCIA CRÍTICA FASE 6: Besu em CrashLoopBackOff devido a flags obsoletas
+Erro: --miner-enabled=true e --miner-coinbase ainda presentes no deployment
+BC-NSSMF: Verificando se está rodando...
+EVIDÊNCIA FASE 7: Besu não está funcionando (CrashLoopBackOff)
+Não é possível validar RPC do Besu
+=== RESUMO FINAL ===
+BC-NSSMF: Running, rpc_connected=true, health=healthy
+Besu: CrashLoopBackOff (flags obsoletas --miner-enabled)
+API endpoints: /api/v1/contract/deploy e /api/v1/sla/* retornam Not Found

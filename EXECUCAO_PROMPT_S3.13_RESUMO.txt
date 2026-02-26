@@ -1,0 +1,37 @@
+═══════════════════════════════════════════════════════════════════
+EXECUÇÃO PROMPT S3.13 - CORREÇÃO FINAL E2E XAI KAFKA DECISION ENGINE
+═══════════════════════════════════════════════════════════════════
+Data: qua 21 jan 2026 20:35:25 -03
+Node: node006
+Diretório: /home/porvir5g/gtp5g/trisla
+
+═══════════════════════════════════════════════════════════════════
+FASE 0 — CHECKPOINT DE SEGURANÇA
+═══════════════════════════════════════════════════════════════════
+✅ Status: CONCLUÍDO
+✅ Pods principais Running:
+   - trisla-ml-nsmf: Running
+   - trisla-decision-engine: Running
+   - trisla-portal-backend: Running
+   - trisla-bc-nssmf: Running
+   - trisla-besu: Running
+   - kafka: Running
+   - trisla-traffic-exporter: Running
+
+═══════════════════════════════════════════════════════════════════
+FASE 1 — CORREÇÃO DO XAI (ENDPOINT CORRETO)
+═══════════════════════════════════════════════════════════════════
+✅ 1.1 Endpoints descobertos:
+   - /api/v1/explain (POST) - Endpoint XAI
+   - /api/v1/predict (POST) - Predição
+   - /health (GET)
+   - /metrics (GET)
+
+⚠️  1.2 XAI Test:
+   - Endpoint descoberto: POST /api/v1/explain (não GET com path param)
+   - Teste com intent_id falhou: {detail:Not Found}
+   - CORREÇÃO NECESSÁRIA: Endpoint requer POST com payload JSON
+   - Payload esperado conforme OpenAPI:
+     {
+       version: v3.9.0,
+       slice_type: URLLC

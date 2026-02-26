@@ -1,0 +1,18 @@
+total 300K
+drwxrwxr-x   2 porvir5g porvir5g 4,0K jan 22 10:27 .
+drwxrwxrwx 191 porvir5g porvir5g  20K jan 22 10:26 ..
+-rw-rw-r--   1 porvir5g porvir5g 1,5K jan 22 10:27 CHECKSUMS.sha256
+-rw-rw-r--   1 porvir5g porvir5g   59 jan 22 10:26 cpu_instance_job.txt
+-rw-rw-r--   1 porvir5g porvir5g  13K jan 22 10:26 cpu_labels_sample.txt
+-rw-rw-r--   1 porvir5g porvir5g  286 jan 22 10:26 de_env_prom.txt
+-rw-rw-r--   1 porvir5g porvir5g  22K jan 22 10:26 de_logs_20m.txt
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:26 de_prom_queries_seen.txt
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:27 ls.txt
+-rw-rw-r--   1 porvir5g porvir5g  13K jan 22 10:26 net_labels_sample.txt
+-rw-rw-r--   1 porvir5g porvir5g   28 jan 22 10:26 prom_ready.txt
+-rw-rw-r--   1 porvir5g porvir5g  107 jan 22 10:26 q_cpu_count.json
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:26 q_cpu_idle_avg_5m.json
+-rw-rw-r--   1 porvir5g porvir5g  131 jan 22 10:26 q_cpu_idle_count.json
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 10:26 q_cpu_idle_rate_by_instance.json
+-rw-rw-r--   1 porvir5g porvir5g  56K jan 22 10:26 series_cpu.json
+-rw-rw-r--   1 porvir5g porvir5g 134K jan 22 10:26 series_net.json

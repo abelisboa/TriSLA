@@ -1,0 +1,1 @@
+auths_keys= ['ghcr.io']

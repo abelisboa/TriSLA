@@ -1,0 +1,40 @@
+{
+  "intent_id": "d248be57-7bb2-4264-b118-cfe4db07615e",
+  "service_type": "mMTC",
+  "sla_requirements": {
+    "service_type": "mMTC",
+    "devices": "50",
+    "latency": "200",
+    "throughput": "2",
+    "reliability": "90"
+  },
+  "ml_prediction": {
+    "risk_score": 0.5,
+    "risk_level": "medium",
+    "confidence": 0.8,
+    "model_used": true,
+    "metrics_used": {
+      "real_metrics_count": 2,
+      "real_metrics": [
+        "availability",
+        "cpu_utilization"
+      ],
+      "time_range_minutes": 10
+    }
+  },
+  "decision": "RENEG",
+  "justification": "Rule rule-002 matched: sla_compliance < 0.9",
+  "reason": "Rule rule-002 matched: sla_compliance < 0.9",
+  "blockchain_tx_hash": null,
+  "tx_hash": null,
+  "sla_hash": null,
+  "timestamp": "2026-01-21T22:08:26.907649+00:00",
+  "status": "RENEGOTIATION_REQUIRED",
+  "sla_id": "dec-d248be57-7bb2-4264-b118-cfe4db07615e",
+  "nest_id": "nest-d248be57-7bb2-4264-b118-cfe4db07615e",
+  "sem_csmf_status": "OK",
+  "ml_nsmf_status": "OK",
+  "bc_status": "SKIPPED",
+  "sla_agent_status": "SKIPPED",
+  "block_number": null
+}

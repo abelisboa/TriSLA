@@ -1,0 +1,54 @@
+Name:                   trisla-portal-backend
+Namespace:              trisla
+CreationTimestamp:      Sat, 20 Dec 2025 14:09:55 -0300
+Labels:                 app=trisla-portal-backend
+                        app.kubernetes.io/managed-by=Helm
+                        component=backend
+Annotations:            deployment.kubernetes.io/revision: 23
+                        meta.helm.sh/release-name: trisla-portal
+                        meta.helm.sh/release-namespace: trisla
+Selector:               app=trisla-portal-backend
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:       app=trisla-portal-backend
+                component=backend
+  Annotations:  kubectl.kubernetes.io/restartedAt: 2026-01-14T00:15:08-03:00
+  Containers:
+   backend:
+    Image:      ghcr.io/abelisboa/trisla-portal-backend:v3.8.1
+    Port:       8001/TCP (http)
+    Host Port:  0/TCP (http)
+    Limits:
+      cpu:     500m
+      memory:  512Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Liveness:   http-get http://:8001/health delay=30s timeout=5s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:8001/nasp/diagnostics delay=10s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      SEM_CSMF_URL:         http://trisla-sem-csmf:8080
+      ML_NSMF_URL:          http://trisla-ml-nsmf:8081
+      DECISION_ENGINE_URL:  http://trisla-decision-engine:8082
+      BC_NSSMF_URL:         http://trisla-bc-nssmf:8083
+      SLA_AGENT_URL:        http://trisla-sla-agent-layer:8084
+      OTEL_SDK_DISABLED:    true
+    Mounts:                 <none>
+  Volumes:                  <none>
+  Node-Selectors:           <none>
+  Tolerations:              <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  trisla-portal-backend-b76457455 (0/0 replicas created), trisla-portal-backend-6fcf4dc664 (0/0 replicas created), trisla-portal-backend-95d68fc74 (0/0 replicas created), trisla-portal-backend-854b94d5d7 (0/0 replicas created), trisla-portal-backend-cccbb9d4 (0/0 replicas created), trisla-portal-backend-57694d4564 (0/0 replicas created), trisla-portal-backend-66b7f7f5f5 (0/0 replicas created), trisla-portal-backend-fcd586bb7 (0/0 replicas created), trisla-portal-backend-5b458d4cc7 (0/0 replicas created), trisla-portal-backend-69568dbdb7 (0/0 replicas created)
+NewReplicaSet:   trisla-portal-backend-dc5d96655 (1/1 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  33m    deployment-controller  Scaled up replica set trisla-portal-backend-dc5d96655 to 1
+  Normal  ScalingReplicaSet  2m18s  deployment-controller  Scaled down replica set trisla-portal-backend-69568dbdb7 to 0 from 1

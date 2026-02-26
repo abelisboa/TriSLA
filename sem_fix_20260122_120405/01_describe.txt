@@ -1,0 +1,83 @@
+Name:             trisla-sem-csmf-79f754c49b-c8g4f
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node1/192.168.10.16
+Start Time:       Thu, 22 Jan 2026 11:56:55 -0300
+Labels:           app=trisla-sem-csmf
+                  app.kubernetes.io/instance=trisla
+                  app.kubernetes.io/name=trisla
+                  pod-template-hash=79f754c49b
+Annotations:      cni.projectcalico.org/containerID: 714f2a94c5cd7648c962eb2b21170897b9ad9f38b3c4e96dd9c5dbb3bd7f9d5b
+                  cni.projectcalico.org/podIP: 10.233.102.156/32
+                  cni.projectcalico.org/podIPs: 10.233.102.156/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.102.156"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+                  kubectl.kubernetes.io/restartedAt: 2026-01-22T11:56:51-03:00
+Status:           Running
+IP:               10.233.102.156
+IPs:
+  IP:           10.233.102.156
+Controlled By:  ReplicaSet/trisla-sem-csmf-79f754c49b
+Containers:
+  sem-csmf:
+    Container ID:   containerd://44572f51a4a36b0a6ef0ef079bdd36b6c520c07e8f834451d510d7fa27a43c43
+    Image:          ghcr.io/abelisboa/trisla-sem-csmf:v3.7.11
+    Image ID:       ghcr.io/abelisboa/trisla-sem-csmf@sha256:5045096a64cc9eb2fabe43a03cad66980d2342e8c1453b3195551e0ecd4800e3
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Thu, 22 Jan 2026 11:59:59 -0300
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     2
+      memory:  2Gi
+    Requests:
+      cpu:      500m
+      memory:   512Mi
+    Liveness:   http-get http://:http/health delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:http/health delay=10s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      TRISLA_NODE_INTERFACE:  my5g
+      TRISLA_NODE_IP:         192.168.10.16
+      OTLP_ENDPOINT:          http://trisla-otel-collector:4317
+      KAFKA_ENABLED:          true
+      KAFKA_BROKERS:          kafka:9092
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-q6dwn (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-q6dwn:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              kubernetes.io/hostname=node1
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason            Age    From               Message
+  ----     ------            ----   ----               -------
+  Warning  FailedScheduling  7m20s  default-scheduler  0/2 nodes are available: 1 Insufficient cpu, 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/2 nodes are available: 1 No preemption victims found for incoming pod, 1 Preemption is not helpful for scheduling.
+  Normal   Scheduled         7m18s  default-scheduler  Successfully assigned trisla/trisla-sem-csmf-79f754c49b-c8g4f to node1
+  Normal   AddedInterface    7m17s  multus             Add eth0 [10.233.102.156/32] from k8s-pod-network
+  Normal   Pulling           7m17s  kubelet            Pulling image "ghcr.io/abelisboa/trisla-sem-csmf:v3.7.11"
+  Normal   Pulled            4m14s  kubelet            Successfully pulled image "ghcr.io/abelisboa/trisla-sem-csmf:v3.7.11" in 53.151s (3m2.864s including waiting). Image size: 280948521 bytes.
+  Normal   Created           4m14s  kubelet            Created container sem-csmf
+  Normal   Started           4m14s  kubelet            Started container sem-csmf

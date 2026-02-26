@@ -1,0 +1,393 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-01-14T00:14:57Z"
+    name: kafka
+    namespace: trisla
+    resourceVersion: "864472782"
+    uid: f43bf13c-0ff0-4cd4-87c4-f30384de20ad
+  subsets:
+  - addresses:
+    - ip: 10.233.75.59
+      nodeName: node2
+      targetRef:
+        kind: Pod
+        name: kafka-c948b8d64-jgmz5
+        namespace: trisla
+        uid: b9528447-90a0-4b73-ab34-703ca38b0b7c
+    ports:
+    - name: kafka
+      port: 9092
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    labels:
+      app.kubernetes.io/component: bc-nssmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-bc-nssmf
+    namespace: trisla
+    resourceVersion: "866074615"
+    uid: 9c9cb05e-e7d1-478e-a311-bc159c90320e
+  subsets:
+  - addresses:
+    - ip: 10.233.102.178
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-bc-nssmf-7c8ff9c4fc-kwmqd
+        namespace: trisla
+        uid: b491b817-29b1-4c8a-b984-41df2858ba04
+    notReadyAddresses:
+    - ip: 10.233.102.168
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-bc-nssmf-856859f696-dwpzw
+        namespace: trisla
+        uid: 84f39ef0-c6b9-4a2e-b2da-75fdaa68fde0
+    ports:
+    - name: http
+      port: 8083
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-20T15:44:06Z"
+    labels:
+      app: trisla-bc-nssmf
+    name: trisla-bc-nssmf-metrics
+    namespace: trisla
+    resourceVersion: "866074618"
+    uid: e7b53ed5-f26f-489e-872e-c840020ccb66
+  subsets:
+  - addresses:
+    - ip: 10.233.102.178
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-bc-nssmf-7c8ff9c4fc-kwmqd
+        namespace: trisla
+        uid: b491b817-29b1-4c8a-b984-41df2858ba04
+    notReadyAddresses:
+    - ip: 10.233.102.168
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-bc-nssmf-856859f696-dwpzw
+        namespace: trisla
+        uid: 84f39ef0-c6b9-4a2e-b2da-75fdaa68fde0
+    ports:
+    - name: metrics
+      port: 8083
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-01-20T11:58:46Z"
+    labels:
+      app: besu
+      app.kubernetes.io/component: trisla
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+      component: blockchain
+    name: trisla-besu
+    namespace: trisla
+    resourceVersion: "866077568"
+    uid: f3cfb894-d9b4-4406-84c8-47521cd06d98
+  subsets:
+  - addresses:
+    - ip: 10.233.75.24
+      nodeName: node2
+      targetRef:
+        kind: Pod
+        name: trisla-besu-5d9454c8f8-gf8c7
+        namespace: trisla
+        uid: b9defbb9-e9ce-4f97-a584-490a0242152a
+    ports:
+    - name: p2p
+      port: 30303
+      protocol: TCP
+    - name: rpc-ws
+      port: 8546
+      protocol: TCP
+    - name: rpc
+      port: 8545
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    labels:
+      app.kubernetes.io/component: decision-engine
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-decision-engine
+    namespace: trisla
+    resourceVersion: "866080271"
+    uid: 015d8d81-5665-47d0-8f53-cb73ef728b59
+  subsets:
+  - addresses:
+    - ip: 10.233.102.158
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-decision-engine-799b6c44f4-dw97g
+        namespace: trisla
+        uid: 2bdbbfb8-d7e3-4ce2-9275-20c5d024bce8
+    ports:
+    - name: http
+      port: 8082
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-20T15:44:06Z"
+    labels:
+      app: trisla-decision-engine
+    name: trisla-decision-engine-metrics
+    namespace: trisla
+    resourceVersion: "866080268"
+    uid: 0b283595-0ae9-4f26-b8aa-46ac7deb80a6
+  subsets:
+  - addresses:
+    - ip: 10.233.102.158
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-decision-engine-799b6c44f4-dw97g
+        namespace: trisla
+        uid: 2bdbbfb8-d7e3-4ce2-9275-20c5d024bce8
+    ports:
+    - name: metrics
+      port: 8082
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2026-01-19T23:33:13Z"
+    labels:
+      app.kubernetes.io/component: ml-nsmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-ml-nsmf
+    namespace: trisla
+    resourceVersion: "866080089"
+    uid: 34e5c205-7101-4b12-a4f4-2f129367e269
+  subsets:
+  - addresses:
+    - ip: 10.233.102.153
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-ml-nsmf-d587bc8c9-j4sq2
+        namespace: trisla
+        uid: ff69bb04-a939-4e7a-b8a6-875228bb281f
+    ports:
+    - name: http
+      port: 8081
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    labels:
+      app.kubernetes.io/component: nasp-adapter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-nasp-adapter
+    namespace: trisla
+    resourceVersion: "865815567"
+    uid: 0b958ab2-1bb9-48d3-a4de-fe63f1928d7e
+  subsets:
+  - addresses:
+    - ip: 10.233.102.190
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-nasp-adapter-5688bf5f8f-x4fm2
+        namespace: trisla
+        uid: c7fb35d5-ade2-4304-b71c-c0c2188778b5
+    notReadyAddresses:
+    - ip: 10.233.102.146
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-nasp-adapter-664894c59c-tv6m8
+        namespace: trisla
+        uid: dabc8c7c-18f2-48cc-a860-31a785448a8b
+    ports:
+    - name: http
+      port: 8085
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-20T17:09:55Z"
+    labels:
+      app: trisla-portal-backend
+      app.kubernetes.io/managed-by: Helm
+      component: backend
+    name: trisla-portal-backend
+    namespace: trisla
+    resourceVersion: "865949583"
+    uid: ff9afdcb-e332-42fb-b9dc-fea2146ec104
+  subsets:
+  - addresses:
+    - ip: 10.233.75.28
+      nodeName: node2
+      targetRef:
+        kind: Pod
+        name: trisla-portal-backend-7498b598f7-hm7gw
+        namespace: trisla
+        uid: da0abd0e-6ff8-45cf-b083-b5cb114c5688
+    ports:
+    - name: http
+      port: 8001
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-20T17:09:55Z"
+    labels:
+      app: trisla-portal-frontend
+      app.kubernetes.io/managed-by: Helm
+      component: frontend
+    name: trisla-portal-frontend
+    namespace: trisla
+    resourceVersion: "865921504"
+    uid: 1f4d32b3-62c0-4057-8e24-72b8e2321f2e
+  subsets:
+  - addresses:
+    - ip: 10.233.75.12
+      nodeName: node2
+      targetRef:
+        kind: Pod
+        name: trisla-portal-frontend-7dffd67779-mql7r
+        namespace: trisla
+        uid: 47a49c90-7896-443c-ba78-9d105b096953
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    labels:
+      app.kubernetes.io/component: sem-csmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-sem-csmf
+    namespace: trisla
+    resourceVersion: "866080105"
+    uid: e32b11ef-7b4f-4989-b3f9-66f8eacfe01c
+  subsets:
+  - addresses:
+    - ip: 10.233.102.189
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-sem-csmf-668c8fc697-htnmw
+        namespace: trisla
+        uid: 3a17107b-c14a-47d0-a774-6fdeb0e7edac
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    labels:
+      app.kubernetes.io/component: sla-agent-layer
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-sla-agent-layer
+    namespace: trisla
+    resourceVersion: "865815749"
+    uid: 461773af-c7ef-44ce-b0ff-dd1159474bd2
+  subsets:
+  - addresses:
+    - ip: 10.233.102.145
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-sla-agent-layer-6d944c889c-ntwqc
+        namespace: trisla
+        uid: 29872cd1-d5f0-4c0e-b08b-1487db21394a
+    ports:
+    - name: http
+      port: 8084
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-20T15:44:06Z"
+    labels:
+      app: trisla-sla-agent-layer
+    name: trisla-sla-agent-metrics
+    namespace: trisla
+    resourceVersion: "865815746"
+    uid: 31aa72ed-e8a9-4658-b732-5c5f4dcc97ee
+  subsets:
+  - addresses:
+    - ip: 10.233.102.145
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-sla-agent-layer-6d944c889c-ntwqc
+        namespace: trisla
+        uid: 29872cd1-d5f0-4c0e-b08b-1487db21394a
+    ports:
+    - name: metrics
+      port: 8084
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    labels:
+      app.kubernetes.io/component: ui-dashboard
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-ui-dashboard
+    namespace: trisla
+    resourceVersion: "865815645"
+    uid: 211ef1ab-0a40-4fef-b83f-b3c43c411b44
+  subsets:
+  - addresses:
+    - ip: 10.233.102.149
+      nodeName: node1
+      targetRef:
+        kind: Pod
+        name: trisla-ui-dashboard-85755bf748-t9zfs
+        namespace: trisla
+        uid: d3e8c399-83ab-4213-9610-ed6fad6a9d99
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""

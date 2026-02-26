@@ -1,0 +1,19 @@
+commit ec22089f334c9883e9332bb293720bc7c944bea6
+Author: Abel Lisboa <abelisboa@gmail.com>
+Date:   Fri Dec 19 14:17:36 2025 -0300
+
+    fix(s3.5.17): eliminate duplicated Besu deployment (helm governance final)
+    
+    - Remove trisla-besu subchart configuration from values.yaml
+    - Ensure only one Besu deployment can be rendered (deployment-besu.yaml)
+    - Verify no Helm dependencies related to Besu
+    - Generate immutable render artifact with SHA256 hash
+    
+    Validations:
+    - helm lint passes
+    - Render contains 1 and only 1 Besu Deployment
+    - No reference to trisla-trisla-besu
+    - No phantom Helm dependencies
+    - Render SHA256: BDAEFC0D3996A36C39A6153BB14D9B5FEDCD79AC2E7184F37BE2702F61F0F6BB
+    
+    Result: NASP will never create trisla-trisla-besu again

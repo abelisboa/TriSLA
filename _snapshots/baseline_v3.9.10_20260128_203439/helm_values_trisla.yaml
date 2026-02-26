@@ -1,0 +1,9 @@
+USER-SUPPLIED VALUES:
+ml-nsmf:
+  image:
+    repository: ghcr.io/abelisboa/trisla-ml-nsmf
+    tag: v3.9.10
+slaAgentLayer:
+  env:
+    KAFKA_BROKERS: kafka.trisla.svc.cluster.local:9092
+    KAFKA_ENABLED: true

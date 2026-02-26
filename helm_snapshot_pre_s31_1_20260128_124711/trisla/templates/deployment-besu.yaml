@@ -1,0 +1,100 @@
+{{- if .Values.besu.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trisla.name" . }}-besu
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app: besu
+    component: blockchain
+    app.kubernetes.io/component: besu
+spec:
+  replicas: {{ .Values.besu.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "trisla.selectorLabels" . | nindent 6 }}
+      app: besu
+      component: blockchain
+  template:
+    metadata:
+      labels:
+        {{- include "trisla.selectorLabels" . | nindent 8 }}
+        app: besu
+        component: blockchain
+      annotations: {}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: besu
+        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.besu.image) }}
+        imagePullPolicy: {{ .Values.besu.image.pullPolicy }}
+        ports:
+        - name: rpc-http
+          containerPort: 8545
+          protocol: TCP
+        - name: rpc-ws
+          containerPort: 8546
+          protocol: TCP
+        - name: p2p
+          containerPort: 30303
+          protocol: TCP
+        command:
+        - /opt/besu/bin/besu
+        args:
+        - --data-path=/opt/besu/data
+        - --network=dev
+        - --network-id=20211201
+        - --rpc-http-enabled
+        - --rpc-http-port=8545
+        - --rpc-http-api=ETH,NET,WEB3
+        env:
+        - name: BESU_DATA_PATH
+          value: "/opt/besu/data"
+        volumeMounts:
+        - name: besu-data
+          mountPath: /opt/besu/data
+        {{- if .Values.besu.nodeSelector }}
+        nodeSelector:
+          {{- toYaml .Values.besu.nodeSelector | nindent 10 }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.besu.resources | nindent 10 }}
+        livenessProbe:
+          tcpSocket:
+            port: 8545
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 6
+        readinessProbe:
+          tcpSocket:
+            port: 8545
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 6
+      volumes:
+      - name: besu-data
+        {{- if .Values.besu.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "trisla.name" . }}-besu-data
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+      {{- with .Values.besu.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.besu.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.besu.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

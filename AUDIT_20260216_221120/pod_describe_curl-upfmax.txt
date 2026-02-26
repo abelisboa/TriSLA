@@ -1,0 +1,63 @@
+Name:             curl-upfmax
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node2/192.168.10.15
+Start Time:       Wed, 11 Feb 2026 17:50:35 -0300
+Labels:           run=curl-upfmax
+Annotations:      cni.projectcalico.org/containerID: 8d3c35891f3a33ee39ecdb97f1a4e046126c7c9d5c45db436f89dadaa88baba8
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.75.11"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Succeeded
+IP:               10.233.75.11
+IPs:
+  IP:  10.233.75.11
+Containers:
+  curl-upfmax:
+    Container ID:  containerd://c9f99a5de44da359e21634c83c8426466b08f03e28ed4155be35594bb4f9aec9
+    Image:         curlimages/curl:latest
+    Image ID:      docker.io/curlimages/curl@sha256:d94d07ba9e7d6de898b6d96c1a072f6f8266c687af78a74f380087a0addf5d17
+    Port:          <none>
+    Host Port:     <none>
+    Args:
+      curl
+      -s
+      http://trisla-nasp-adapter.trisla.svc.cluster.local:8085/api/v1/3gpp/gate
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Wed, 11 Feb 2026 17:50:37 -0300
+      Finished:     Wed, 11 Feb 2026 17:50:37 -0300
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-6brz6 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-6brz6:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

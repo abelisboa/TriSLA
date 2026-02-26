@@ -1,0 +1,24 @@
+NAME                  	NAMESPACE       	REVISION	UPDATED                                	STATUS  	CHART                                 	APP VERSION
+amf                   	ns-1274485      	1       	2024-12-03 14:53:01.405149126 -0300 -03	deployed	free5gc-1.1.2                         	v3.1.1     
+ausf                  	ns-1274485      	1       	2024-12-03 14:53:05.490217358 -0300 -03	deployed	free5gc-ausf-0.2.2                    	v3.1.1     
+grafana               	grafana         	9       	2024-12-07 18:38:01.44531557 -0300 -03 	deployed	grafana-8.6.4                         	11.3.1     
+kongstorage           	nonrtric        	1       	2025-05-13 11:42:46.742348192 -0300 -03	deployed	kongstorage-1.0.0                     	2.0.0      
+mariadb-operator      	mariadb-operator	1       	2025-05-13 11:40:03.66999166 -0300 -03 	deployed	mariadb-operator-0.38.1               	0.38.1     
+mariadb-operator-crds 	mariadb-operator	1       	2025-05-13 11:40:00.932612682 -0300 -03	deployed	mariadb-operator-crds-0.38.1          	0.0.0      
+mongodb               	ns-1274485      	1       	2024-12-03 14:53:13.455595851 -0300 -03	deployed	free5gc-1.1.2                         	v3.1.1     
+monitoring            	monitoring      	1       	2025-10-28 19:06:17.790216826 -0300 -03	failed  	kube-prometheus-stack-79.0.0          	v0.86.1    
+nfs-storage           	kube-system     	1       	2025-11-22 15:46:11.647350015 -0300 -03	deployed	nfs-subdir-external-provisioner-4.0.18	4.0.2      
+nrf                   	ns-1274485      	1       	2024-12-03 14:53:00.234781431 -0300 -03	deployed	free5gc-nrf-0.2.2                     	v3.1.1     
+nssf                  	ns-1274485      	1       	2024-12-03 14:53:02.532144152 -0300 -03	deployed	free5gc-nssf-0.2.2                    	v3.1.1     
+oran-nonrtric         	nonrtric        	1       	2025-05-13 11:40:15.806904276 -0300 -03	failed  	nonrtric-1.0.0                        	test       
+pcf                   	ns-1274485      	1       	2024-12-03 14:53:06.406434897 -0300 -03	deployed	free5gc-pcf-0.2.2                     	v3.1.1     
+prometheus            	monitoring      	1       	2025-10-29 14:09:17.308277089 -0300 -03	deployed	kube-prometheus-stack-79.0.0          	v0.86.1    
+r3-dev-nonrtric       	nonrtric        	1       	2025-05-13 11:42:52.07152296 -0300 -03 	deployed	nonrtric-2.0.0                        	           
+ran-rantester         	ran-test        	1       	2024-11-19 11:47:23.145180011 -0300 -03	deployed	grafana-8.6.0                         	11.3.0     
+rantester             	ns-1274485      	1       	2024-12-03 14:53:15.399841071 -0300 -03	deployed	rantester-0.1.0                       	           
+smf                   	ns-1274485      	1       	2024-12-03 14:53:07.406276264 -0300 -03	deployed	free5gc-1.1.2                         	v3.1.1     
+strimzi-kafka-operator	strimzi-system  	1       	2025-05-13 11:25:20.138145673 -0300 -03	deployed	strimzi-kafka-operator-0.44.0         	0.44.0     
+udm                   	ns-1274485      	1       	2024-12-03 14:53:08.434940421 -0300 -03	deployed	free5gc-udm-0.2.2                     	v3.1.1     
+udr                   	ns-1274485      	1       	2024-12-03 14:53:03.634915369 -0300 -03	deployed	free5gc-udr-0.2.2                     	v3.1.1     
+upf                   	ns-1274485      	1       	2024-12-03 14:53:10.256063955 -0300 -03	deployed	free5gc-1.1.2                         	v3.1.1     
+webui                 	ns-1274485      	1       	2024-12-03 14:53:04.653825193 -0300 -03	deployed	free5gc-webui-0.1.2                   	v3.1.1     

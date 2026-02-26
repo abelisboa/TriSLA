@@ -1,0 +1,111 @@
+Name:             trisla-trisla-besu-979b7df9d-br55t
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node2/192.168.10.15
+Start Time:       Fri, 19 Dec 2025 12:43:30 -0300
+Labels:           app.kubernetes.io/instance=trisla
+                  app.kubernetes.io/name=trisla-besu
+                  pod-template-hash=979b7df9d
+Annotations:      cni.projectcalico.org/containerID: 027f1dbec25627f0329a2435e6303484be40d51d91e5e6870b3dbdb81886ad4e
+                  cni.projectcalico.org/podIP: 10.233.75.57/32
+                  cni.projectcalico.org/podIPs: 10.233.75.57/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.75.57"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Pending
+IP:               10.233.75.57
+IPs:
+  IP:           10.233.75.57
+Controlled By:  ReplicaSet/trisla-trisla-besu-979b7df9d
+Containers:
+  trisla-besu:
+    Container ID:  
+    Image:         ghcr.io/abelisboa/trisla-besu:23.10.1
+    Image ID:      
+    Ports:         8545/TCP (rpc), 8546/TCP (ws), 30303/TCP (p2p)
+    Host Ports:    0/TCP (rpc), 0/TCP (ws), 0/TCP (p2p)
+    Command:
+      besu
+    Args:
+      --data-path=/opt/besu/data
+      --genesis-file=/opt/besu/genesis.json
+      --network-id=1337
+      --rpc-http-enabled=true
+      --rpc-http-host=0.0.0.0
+      --rpc-http-port=8545
+      --rpc-http-api=ETH,NET,WEB3,ADMIN,DEBUG
+      --rpc-http-cors-origins=*
+      --host-allowlist=*
+      --rpc-ws-enabled=true
+      --rpc-ws-host=0.0.0.0
+      --rpc-ws-port=8546
+      --sync-mode=FULL
+      --logging=INFO
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  1Gi
+    Requests:
+      cpu:     100m
+      memory:  256Mi
+    Liveness:  exec [/bin/sh -c curl -f -X POST http://localhost:8545 \
+  -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+  | grep -q "result"
+] delay=60s timeout=10s period=30s #success=1 #failure=3
+    Readiness:  exec [/bin/sh -c curl -f -X POST http://localhost:8545 \
+  -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+  | grep -q "result"
+] delay=30s timeout=5s period=10s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /opt/besu/data from data (rw)
+      /opt/besu/genesis.json from genesis (ro,path="genesis.json")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-cz45x (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  trisla-trisla-besu-data
+    ReadOnly:   false
+  genesis:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      trisla-trisla-besu-genesis
+    Optional:  false
+  kube-api-access-cz45x:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason          Age                   From               Message
+  ----     ------          ----                  ----               -------
+  Normal   AddedInterface  17m                   multus             Add eth0 [10.233.75.57/32] from k8s-pod-network
+  Normal   Pulling         15m (x4 over 17m)     kubelet            Pulling image "ghcr.io/abelisboa/trisla-besu:23.10.1"
+  Warning  Failed          15m (x4 over 17m)     kubelet            Failed to pull image "ghcr.io/abelisboa/trisla-besu:23.10.1": rpc error: code = NotFound desc = failed to pull and unpack image "ghcr.io/abelisboa/trisla-besu:23.10.1": failed to resolve reference "ghcr.io/abelisboa/trisla-besu:23.10.1": ghcr.io/abelisboa/trisla-besu:23.10.1: not found
+  Warning  Failed          15m (x4 over 17m)     kubelet            Error: ErrImagePull
+  Warning  Failed          15m (x6 over 17m)     kubelet            Error: ImagePullBackOff
+  Normal   Scheduled       14m                   default-scheduler  Successfully assigned trisla/trisla-trisla-besu-979b7df9d-br55t to node2
+  Normal   BackOff         7m15s (x42 over 17m)  kubelet            Back-off pulling image "ghcr.io/abelisboa/trisla-besu:23.10.1"

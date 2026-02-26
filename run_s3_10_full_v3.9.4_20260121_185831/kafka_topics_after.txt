@@ -1,0 +1,6 @@
+trisla-decision-events
+trisla-i04-decisions
+trisla-i05-actions
+trisla-i05-sla-agents
+trisla-ml-predictions
+trisla-ml-xai

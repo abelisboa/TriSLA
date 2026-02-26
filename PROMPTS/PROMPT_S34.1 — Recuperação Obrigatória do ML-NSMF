@@ -1,0 +1,206 @@
+Inferência Real com Modelo + XAI Completo (v3.9.10)
+Objetivo Técnico (INEGOCIÁVEL)
+
+Restaurar o comportamento original e funcional do ML-NSMF, garantindo que:
+
+O modelo treinado é carregado obrigatoriamente em runtime
+
+A inferência usa features reais coletadas do Prometheus
+
+sla_compliance varia de forma contínua (ex.: 0.72, 0.88, 0.94…)
+
+XAI completo é produzido, com:
+
+features usadas
+
+valores normalizados
+
+contribuição por feature
+
+contexto por domínio (RAN / Transport / Core)
+
+Nenhuma regressão no fluxo TriSLA end-to-end
+
+Este prompt não cria lógica nova.
+Ele restaura exatamente o que já funcionava.
+
+Regras Absolutas (DevOps + Arquitetura)
+
+✅ Versão única global: v3.9.10
+
+✅ Todas as imagens publicadas com a mesma versão
+
+✅ Deploy único via Helm
+
+❌ Proibido fallback silencioso
+
+❌ Proibido risk_score fixo ou default
+
+❌ Proibido “modo simplificado” sem modelo
+
+❌ Proibido XAI vazio ({}) ou parcial
+
+⚠️ Se o modelo não carregar → o serviço deve falhar explicitamente
+(Não existe operação válida do ML-NSMF sem modelo.)
+
+Fluxo Arquitetural OBRIGATÓRIO (ordem rígida)
+
+Portal / Backend
+
+SEM-NSMF (interpretação semântica)
+
+Decision Engine
+
+ML-NSMF
+
+coleta métricas reais
+
+carrega modelo treinado
+
+executa inferência
+
+gera XAI completo
+
+Decision Engine (consome score + XAI)
+
+Kafka
+
+SLA-Agent
+
+NASP Adapter
+
+BC-NSSMF (Besu)
+
+Se qualquer etapa for pulada → erro arquitetural.
+
+FASE 1 — Gate Crítico: Modelo Obrigatório
+1.1 Verificação explícita de carregamento do modelo
+
+No startup do ML-NSMF, os logs DEVEM conter:
+
+[ML] Loading trained model from /models/...
+[ML] Model loaded successfully
+[ML] Scaler loaded successfully
+
+1.2 Regra de falha dura (obrigatória)
+
+No código do predictor.py:
+
+Se modelo ou scaler não existirem:
+
+lançar exceção
+
+abortar inferência
+
+logar erro claro
+
+❌ É proibido retornar 0.5, None, ou valor default.
+
+FASE 2 — Inferência REAL (sem simulação)
+2.1 Features obrigatórias (vindas do Prometheus)
+
+O ML-NSMF DEVE usar, no mínimo:
+
+latência
+
+disponibilidade
+
+perda
+
+carga (CPU / memória)
+
+Somente métricas existentes no Prometheus real do NASP.
+
+2.2 Pipeline obrigatório
+metrics → feature_vector
+feature_vector → scaler.transform()
+scaled_features → model.predict_proba() ou predict()
+
+
+Resultado mínimo esperado:
+
+{
+  "risk_score": 0.87,
+  "confidence": 0.91
+}
+
+
+⚠️ risk_score não pode ser constante entre SLAs diferentes.
+
+FASE 3 — XAI COMPLETO (obrigatório)
+3.1 Conteúdo mínimo do XAI
+
+O ML-NSMF DEVE gerar um JSON XAI contendo:
+
+{
+  "model": "ML-NSMF",
+  "method": "feature_attribution",
+  "features": {
+    "latency_ms": {
+      "value": 7.3,
+      "normalized": 0.21,
+      "contribution": -0.12
+    },
+    "availability": {
+      "value": 0.999,
+      "normalized": 0.95,
+      "contribution": +0.31
+    }
+  },
+  "domains": {
+    "RAN": {...},
+    "Transport": {...},
+    "Core": {...}
+  }
+}
+
+3.2 Proibições explícitas
+
+❌ explanation = {}
+
+❌ real_metrics_count = 0
+
+❌ XAI genérico (“model confidence is high”)
+
+Se XAI estiver vazio → o gate falha.
+
+FASE 4 — Integração com Decision Engine (sem regressão)
+
+O Decision Engine não muda regras, apenas:
+
+consome risk_score
+
+consome confidence
+
+anexa XAI completo ao snapshot S30
+
+Exemplo esperado no snapshot:
+
+{
+  "sla_compliance": 0.87,
+  "ml_decision": "ACCEPT",
+  "xai": { ... completo ... }
+}
+
+FASE 5 — Validação End-to-End Obrigatória
+5.1 Teste controlado
+
+Submeter 3 SLAs distintos
+
+Confirmar:
+
+risk_score diferente
+
+sla_compliance diferente
+
+XAI preenchido
+
+5.2 Gate Final (todos obrigatórios)
+
+✔ Modelo carregado
+✔ Métricas reais usadas
+✔ Inferência variável
+✔ XAI completo
+✔ Kafka recebeu eventos
+✔ SLA-Agent não ficou SKIPPED
+✔ Nenhuma regressão nos outros módulos

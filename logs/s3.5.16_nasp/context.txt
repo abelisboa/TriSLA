@@ -1,0 +1,5 @@
+=== CONTEXTO ===
+sex 19 dez 2025 13:19:03 -03
+/home/porvir5g/gtp5g/trisla
+4dd2d067483229ae4c6e8c48c9ccdd174f62f9d8
+4dd2d06 fix(s3.5.15): remove genesis remnants, dedupe Besu, switch probes to tcpSocket, clean helm deps

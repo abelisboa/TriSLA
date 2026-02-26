@@ -1,0 +1,6 @@
+apiVersion: v2
+name: trisla-besu
+description: Hyperledger Besu node for TriSLA BC-NSSMF module
+type: application
+version: 1.0.0
+appVersion: "23.10.1"

@@ -1,0 +1,70 @@
+# PROMPT_SMDCE_V2_CAPACITY_ACCOUNTING — Ledger de reservas (CRD)
+# Operações: reserve(PENDING), activate(ACTIVE), release(RELEASED), expire(EXPIRED), orphan(ORPHANED)
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: trislareservations.trisla.io
+  labels:
+    app: trisla
+    component: nasp-adapter
+spec:
+  group: trisla.io
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required: ["spec"]
+          properties:
+            spec:
+              type: object
+              required: ["reservationId", "status"]
+              properties:
+                reservationId:
+                  type: string
+                  description: Unique reservation ID (UUID or nsi-scoped)
+                intentId:
+                  type: string
+                  description: Intent/SLA ID that triggered the reservation
+                nsiId:
+                  type: string
+                  description: NSI ID after activation (empty when PENDING)
+                sliceType:
+                  type: string
+                  enum: ["eMBB", "URLLC", "mMTC"]
+                  description: Slice type for cost accounting
+                status:
+                  type: string
+                  enum: ["PENDING", "ACTIVE", "RELEASED", "EXPIRED", "ORPHANED"]
+                  description: Reservation lifecycle state
+                resourcesReserved:
+                  type: object
+                  description: Cost model output (e.g. units per domain)
+                createdAt:
+                  type: string
+                  format: date-time
+                expiresAt:
+                  type: string
+                  format: date-time
+                  description: TTL expiry for PENDING (optional)
+                reason:
+                  type: string
+                  description: Reason for release/expire/orphan
+            status:
+              type: object
+              properties:
+                phase:
+                  type: string
+                  description: Alias for spec.status for compatibility
+                message:
+                  type: string
+  scope: Namespaced
+  names:
+    plural: trislareservations
+    singular: trislareservation
+    kind: TriSLAReservation
+    shortNames:
+      - tres
+      - reservations

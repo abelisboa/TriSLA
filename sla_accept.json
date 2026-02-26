@@ -1,0 +1,11 @@
+{
+  "template_id": "template:embb",
+  "form_values": {
+    "latency_max_ms": 50,
+    "throughput_min_mbps": 1,
+    "packet_loss_max": 1,
+    "availability": 99.9
+  },
+  "service_type": "eMBB",
+  "intent": "high_bandwidth_low_latency"
+}

@@ -1,0 +1,10 @@
+[FASE 1] ESTRUTURA ESPERADA
+OK: 01_slas
+OK: 02_kafka
+OK: 03_ml_predictions
+OK: 04_decisions
+OK: 05_blockchain
+OK: 06_pods_status
+OK: 07_metrics
+OK: 08_logs
+Diretórios faltantes: 0

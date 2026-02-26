@@ -1,0 +1,2 @@
+W0122 11:29:46.504443  307334 warnings.go:70] spec.template.spec.containers[0].env[4]: hides previous definition of "BC_ENABLED", which may be dropped when using apply
+Error: UPGRADE FAILED: context deadline exceeded

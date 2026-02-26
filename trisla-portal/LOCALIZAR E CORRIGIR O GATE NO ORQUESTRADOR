@@ -1,0 +1,163 @@
+Onde executar (obrigatório)
+
+✅ MÁQUINA LOCAL (Windows/WSL), no repositório que você usa para build:
+
+cd /mnt/c/Users/USER/Documents/TriSLA-clean
+
+
+Não executar no NASP. Aqui é apenas correção de código-fonte.
+
+Objetivo (imutável, conforme dissertação)
+
+Implementar o gate antes de qualquer chamada ao BC-NSSMF:
+
+ACCEPT → chama BC-NSSMF e registra contrato
+
+RENEG → NÃO chama BC-NSSMF, retorna RENEGOTIATION_REQUIRED
+
+REJECT → NÃO chama BC-NSSMF, retorna REJECTED
+
+⚠️ RENEG não pode ser normalizado para REJECT
+⚠️ BC-NSSMF nunca pode ser acionado em RENEG/REJECT
+
+Fase 1 — Encontrar o ponto real onde BC-NSSMF é chamado (e não “onde deveria”)
+
+Execute esta varredura (use rg, se não tiver instale ripgrep no WSL):
+
+# 1) localizar o endpoint do router (referência)
+rg -n "api/v1/sla/submit|/sla/submit|def submit|router.*submit" trisla-portal/backend
+
+# 2) localizar o serviço que orquestra o fluxo NASP/BC
+rg -n "NASPService|submit_template_to_nasp|submit.*nasp|class .*Service" trisla-portal/backend
+
+# 3) localizar qualquer chamada ao BC-NSSMF por URL/rota conhecida
+rg -n "bc-nssmf|register-sla|update-status|eth_sendRawTransaction|/api/v1/register-sla|:8083" trisla-portal/backend
+
+# 4) localizar qualquer chamada HTTP genérica que possa estar encapsulando BC
+rg -n "requests\.post|httpx\.AsyncClient|aiohttp|grpc|call_bc|blockchain" trisla-portal/backend
+
+# 5) localizar onde a decisão do Decision Engine é consumida/normalizada
+rg -n "Decision Engine|/api/v1/decide|decision|action|RENEG|REJECT|ACCEPT" trisla-portal/backend
+
+
+✅ Critério de sucesso desta fase: você precisa achar o arquivo onde existe algo como:
+
+call_bc_nssmf(...)
+
+register_sla(...)
+
+requests.post("http://...bc-nssmf...")
+
+ou qualquer “proxy” que acione BC após receber a decisão.
+
+Fase 2 — Corrigir o gate no ponto certo (serviço/orquestrador)
+
+Quando encontrar o método orquestrador (exemplos de nomes):
+
+submit_template_to_nasp()
+
+process_sla_submission()
+
+handle_sla()
+
+nasp.submit(...)
+
+Implemente o gate exatamente assim, sem else genérico:
+
+Pseudocódigo obrigatório (implemente no seu método real)
+decision = decision_engine_response.get("action") or decision_engine_response.get("decision")
+
+if decision == "ACCEPT":
+    bc_resp = call_bc_nssmf(...)
+    return build_success_response(..., bc_resp=bc_resp)
+
+elif decision == "RENEG":
+    # NÃO chamar BC-NSSMF
+    return build_response(
+        status="RENEGOTIATION_REQUIRED",
+        bc_status="SKIPPED",
+        blockchain_tx_hash=None,
+        block_number=None,
+        reason=decision_engine_response.get("reasoning") or decision_engine_response.get("justification"),
+    )
+
+elif decision == "REJECT":
+    # NÃO chamar BC-NSSMF
+    return build_response(
+        status="REJECTED",
+        bc_status="SKIPPED",
+        blockchain_tx_hash=None,
+        block_number=None,
+        reason=decision_engine_response.get("reasoning") or decision_engine_response.get("justification"),
+    )
+
+else:
+    # decisão inválida → erro de integração (não é “REJECT”)
+    raise HTTPException(status_code=502, detail=f"Decision Engine retornou ação inválida: {decision}")
+
+Regras de integridade (obrigatórias)
+
+A chamada ao BC-NSSMF deve estar fisicamente dentro do bloco if decision == "ACCEPT":
+
+Qualquer try/except que envolva BC deve estar dentro desse bloco, para não acionar BC por engano
+
+RENEG e REJECT devem retornar bc_status="SKIPPED" e campos blockchain nulos
+
+Fase 3 — Corrigir a normalização “RENEG → REJECT” (se existir)
+
+Procure algo como:
+
+if action != "ACCEPT": decision = "REJECT"
+
+if action not in ["ACCEPT", "REJECT"] ...
+
+else: REJECT
+
+E substitua por validação explícita para os três casos.
+
+Comando para achar padrões típicos:
+
+rg -n "not in \[\"ACCEPT\"|!= \"ACCEPT\"|else:\s*\"REJECT\"|\"RENEG\".*\"REJECT\"" trisla-portal/backend
+
+Fase 4 — Evidência mínima local (obrigatória)
+
+Adicione logs curtos e objetivos no ponto do gate (no serviço/orquestrador), por exemplo:
+
+“Decision Engine action=RENEG → skipping BC-NSSMF”
+
+“Decision Engine action=REJECT → skipping BC-NSSMF”
+
+“Decision Engine action=ACCEPT → calling BC-NSSMF”
+
+Isso é essencial para auditoria e para o Capítulo 6 (rastreabilidade).
+
+Fase 5 — Verificação local sem simulação
+
+Sem rodar o cluster, faça uma verificação de consistência estática:
+
+# garante que não existe BC sendo chamado fora do bloco ACCEPT (ajuste o path conforme seu arquivo)
+rg -n "call_bc_nssmf|register_sla|/api/v1/register-sla|bc-nssmf" trisla-portal/backend
+
+
+✅ Critério de sucesso: após sua alteração, toda referência que realiza chamada efetiva ao BC deve estar no ramo ACCEPT.
+
+Saída obrigatória ao final (copiar e colar)
+
+Nome do arquivo onde estava a chamada ao BC-NSSMF (ex.: trisla-portal/backend/src/services/nasp.py)
+
+Trecho do gate implementado (somente o if/elif/elif/else)
+
+Resultado do comando:
+
+rg -n "call_bc_nssmf|register_sla|/api/v1/register-sla|bc-nssmf" trisla-portal/backend
+
+
+mostrando que não existe chamada em RENEG/REJECT.
+
+Observação importante (para evitar erro conceitual)
+
+O que você corrigiu no router define o que o usuário vê.
+O que falta aqui corrige o que o sistema faz (isto é: impedir registro indevido no blockchain).
+Na dissertação, o requisito é sobre ação real, não apenas “formato de resposta”.
+
+Se você me colar o resultado do rg (somente as linhas encontradas) para bc-nssmf|register-sla|call_bc_nssmf|submit_template_to_nasp|NASPService, eu consigo apontar com precisão cirúrgica onde colocar o gate no seu código real — sem pedir capítulo, sem inventar e sem alterar nada além do estritamente necessário.

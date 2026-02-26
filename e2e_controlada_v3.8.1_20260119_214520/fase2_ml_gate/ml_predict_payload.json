@@ -1,0 +1,9 @@
+{
+  "service_type": "URLLC",
+  "latency": 10,
+  "throughput": 100,
+  "reliability": 0.999,
+  "jitter": 1,
+  "packet_loss": 0.0001,
+  "availability": 0.9999
+}

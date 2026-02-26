@@ -1,0 +1,12 @@
+test-curl2	curlimages/curl
+test-metrics-ml	curlimages/curl:latest
+trisla-bc-nssmf-84995f7445-t2jd2	ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.18
+trisla-decision-engine-5f4f54fdb4-9zqlj	ghcr.io/abelisboa/trisla-decision-engine:v3.7.23
+trisla-ml-nsmf-697c8576b5-hkqg7	ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.24
+trisla-ml-nsmf-779d6cc88b-qn46j	ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.14
+trisla-nasp-adapter-74cd854849-4tmwv	ghcr.io/abelisboa/trisla-nasp-adapter:nasp-a2
+trisla-portal-backend-565fcc7f45-kqd8b	ghcr.io/abelisboa/trisla-portal-backend:v3.7.21
+trisla-portal-frontend-6dd98dc868-7vfqf	ghcr.io/abelisboa/trisla-portal-frontend:v3.7.21
+trisla-sem-csmf-848588fdd6-ggmpl	ghcr.io/abelisboa/trisla-sem-csmf:v3.7.22
+trisla-sla-agent-layer-657c8c875b-pkspv	ghcr.io/abelisboa/trisla-sla-agent-layer:v3.7.20
+trisla-ui-dashboard-dfb9ff9cc-jk4xb	ghcr.io/abelisboa/trisla-ui-dashboard:nasp-a2

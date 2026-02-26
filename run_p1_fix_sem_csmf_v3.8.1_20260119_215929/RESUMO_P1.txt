@@ -1,0 +1,20 @@
+=== RESUMO P1: FIX SEM-CSMF v3.8.1 ===
+Data: 2026-01-19 22:00:58
+WORKDIR: /home/porvir5g/gtp5g/trisla/run_p1_fix_sem_csmf_v3.8.1_20260119_215929
+
+=== CORREÇÃO APLICADA ===
+1. Função _stringify_numeric_values adicionada ao código
+2. Build e push da imagem: ghcr.io/abelisboa/trisla-sem-csmf:v3.8.1
+3. Deploy realizado
+
+=== RESULTADO ===
+- Erro anterior (string_type) foi resolvido
+- Novo erro identificado: "Invalid type NoneType for attribute decision.id"
+- SEM-CSMF ainda retorna erro 422 ao comunicar com Decision Engine
+
+=== STATUS ===
+P1: PARCIAL (erro de tipos numéricos resolvido, mas novo erro de NoneType)
+
+=== PRÓXIMO PASSO ===
+Corrigir campo "decision.id" que está sendo enviado como None
+quando deveria ter um valor válido (string, int, etc.)

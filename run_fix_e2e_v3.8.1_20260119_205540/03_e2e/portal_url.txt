@@ -1,0 +1,1 @@
+http://trisla-portal-backend.trisla.svc.cluster.local:8001

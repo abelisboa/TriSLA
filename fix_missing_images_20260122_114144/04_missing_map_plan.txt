@@ -1,0 +1,7 @@
+trisla-bc-nssmf
+trisla-decision-engine
+trisla-ml-nsmf
+trisla-nasp-adapter
+trisla-sem-csmf
+trisla-sla-agent-layer
+trisla-ui-dashboard

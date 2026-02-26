@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trisla.name" . }}-bc-nssmf
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (merge . (dict "component" "bc-nssmf")) | nindent 4 }}
+spec:
+  replicas: {{ .Values.bcNssmf.replicas }}
+  selector:
+    matchLabels:
+      {{- include "trisla.selectorLabels" (merge . (dict "component" "bc-nssmf")) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "trisla.selectorLabels" (merge . (dict "component" "bc-nssmf")) | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      containers:
+      - name: bc-nssmf
+        image: {{ include "trisla.image" (merge .Values.bcNssmf.image (dict "Values" .Values)) }}
+        ports:
+        - containerPort: {{ .Values.bcNssmf.service.port }}
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: {{ .Values.network.interface | quote }}
+        - name: TRISLA_NODE_IP
+          value: {{ .Values.network.nodeIP | quote }}
+        - name: OTLP_ENDPOINT
+          value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          {{- toYaml .Values.bcNssmf.resources | nindent 10 }}
+
+

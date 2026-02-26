@@ -1,0 +1,69 @@
+# Template Experimental - Cenário C1_eMBB_20
+# 20 SLAs simultâneos do tipo eMBB
+
+scenario_id: "C1_eMBB_20"
+description: "Cenário de carga incremental com 20 SLAs simultâneos do tipo eMBB (Enhanced Mobile Broadband)"
+
+environment:
+  platform: "NASP"
+  namespace: "trisla-experiments"
+  version: "v3.7.0"
+  cluster: "production"
+
+sla_profile:
+  type: "eMBB"
+  qos_requirements:
+    latency: "50ms"
+    throughput: "100Mbps"
+    reliability: 0.99
+    jitter: "10ms"
+  slice_characteristics:
+    priority: "normal"
+    duration: "indefinite"
+
+execution:
+  quantity: 20
+  mode: "sequential"  # Submete um por vez, aguardando conclusão
+  interval_seconds: 2  # Intervalo ainda menor para carga alta
+  timeout_seconds: 300  # Timeout máximo por SLA
+  retry_on_failure: false  # Não fazer retry automático
+
+metrics_expected:
+  decision_time:
+    unit: "milliseconds"
+    expected_range: [100, 15000]
+  end_to_end_time:
+    unit: "milliseconds"
+    expected_range: [200, 20000]
+  acceptance_rate:
+    unit: "percentage"
+    expected_range: [0, 100]
+
+data_collection:
+  prometheus:
+    enabled: true
+    metrics:
+      - "trisla_decision_engine_decisions_total"
+      - "trisla_decision_engine_decision_duration_seconds"
+      - "trisla_ml_nsmf_predictions_total"
+      - "trisla_sem_csmf_intents_processed_total"
+    time_range_minutes: 60
+  logs:
+    enabled: true
+    components:
+      - "decision-engine"
+      - "ml-nsmf"
+      - "sem-csmf"
+      - "bc-nssmf"
+    preserve_timestamps: true
+
+stop_conditions:
+  max_execution_time_minutes: 60
+  max_failures: 5  # Parar se mais de 5 SLAs falharem
+  system_unavailable: true  # Parar se sistema ficar indisponível
+
+metadata:
+  created: "2025-01-27"
+  purpose: "Avaliar comportamento do sistema com carga alta (20 SLAs)"
+  expected_outcome: "Sistema pode apresentar degradação de performance, mas deve processar todos os SLAs"
+

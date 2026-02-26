@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  creationTimestamp: "2026-01-19T23:33:13Z"
+  labels:
+    app.kubernetes.io/component: ml-nsmf
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/version: v3.7.29
+  name: trisla-ml-nsmf
+  namespace: trisla
+  resourceVersion: "865973424"
+  uid: 34e5c205-7101-4b12-a4f4-2f129367e269
+subsets:
+- notReadyAddresses:
+  - ip: 10.233.102.189
+    nodeName: node1
+    targetRef:
+      kind: Pod
+      name: trisla-ml-nsmf-599749957-hnbn5
+      namespace: trisla
+      uid: 6a8580cb-2c6e-4cb1-b549-95ae3850efc8
+  ports:
+  - name: http
+    port: 8081
+    protocol: TCP

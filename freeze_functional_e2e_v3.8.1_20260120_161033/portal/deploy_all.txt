@@ -1,0 +1,2 @@
+trisla-portal-backend    1/1     1            1           31d
+trisla-portal-frontend   1/1     1            1           31d

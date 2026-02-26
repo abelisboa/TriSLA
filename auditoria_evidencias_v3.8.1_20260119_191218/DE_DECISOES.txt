@@ -1,0 +1,4 @@
+755:2026-01-19 21:43:23,192 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+756:2026-01-19 21:43:23,192 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+781:2026-01-19 21:43:52,897 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG
+782:2026-01-19 21:43:52,897 - src.main - INFO - Decisão gerada (sem encaminhamento): RENEG

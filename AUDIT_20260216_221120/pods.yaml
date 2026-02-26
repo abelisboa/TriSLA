@@ -1,0 +1,3911 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: d7feea3e949063ee1d8974842f4e3dc4111ae2d02f0fcbb5e87aa2d920c6bace
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.17"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"besu-genesis-gen","namespace":"trisla"},"spec":{"containers":[{"command":["/bin/sh","-c","mkdir -p /out/networkFiles\nbesu operator generate-blockchain-config --config-file=/config/qbftConfigFile.json --to=/out/networkFiles --private-key-file-name=key\nls -la /out/networkFiles\nsleep 60\n"],"image":"hyperledger/besu:latest","name":"besu","volumeMounts":[{"mountPath":"/config","name":"config","readOnly":true},{"mountPath":"/out","name":"out"}]}],"restartPolicy":"Never","volumes":[{"configMap":{"name":"besu-qbft-config"},"name":"config"},{"emptyDir":{},"name":"out"}]}}
+    creationTimestamp: "2026-01-31T19:27:13Z"
+    name: besu-genesis-gen
+    namespace: trisla
+    resourceVersion: "868876115"
+    uid: 75e9e3dd-f5d8-41dc-a38f-ecc627ccf204
+  spec:
+    containers:
+    - command:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /out/networkFiles
+        besu operator generate-blockchain-config --config-file=/config/qbftConfigFile.json --to=/out/networkFiles --private-key-file-name=key
+        ls -la /out/networkFiles
+        sleep 60
+      image: hyperledger/besu:latest
+      imagePullPolicy: Always
+      name: besu
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /config
+        name: config
+        readOnly: true
+      - mountPath: /out
+        name: out
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gvbnl
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - configMap:
+        defaultMode: 420
+        name: besu-qbft-config
+      name: config
+    - emptyDir: {}
+      name: out
+    - name: kube-api-access-gvbnl
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:28:20Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:27:14Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:28:19Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:28:19Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:27:13Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://d8c41f1e89043412059b30bb36e850205958c809b1f77449412740ce651e8bdc
+      image: docker.io/hyperledger/besu:latest
+      imageID: docker.io/hyperledger/besu@sha256:4ef9e934bb321d916ff245981fd65100dc41446b26b2bed47a2b7d09139a3cbe
+      lastState: {}
+      name: besu
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://d8c41f1e89043412059b30bb36e850205958c809b1f77449412740ce651e8bdc
+          exitCode: 0
+          finishedAt: "2026-01-31T19:28:18Z"
+          reason: Completed
+          startedAt: "2026-01-31T19:27:16Z"
+      volumeMounts:
+      - mountPath: /config
+        name: config
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /out
+        name: out
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gvbnl
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.17
+    podIPs:
+    - ip: 10.233.75.17
+    qosClass: BestEffort
+    startTime: "2026-01-31T19:27:14Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 231c7ee47b41ea9dc9f80473f0543dadf24b0c74eca8afb7f09c182cc23bae01
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.13"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-01-31T18:07:22Z"
+    labels:
+      run: besu-rpc-test
+    name: besu-rpc-test
+    namespace: trisla
+    resourceVersion: "868872502"
+    uid: 74d3187c-828d-41b4-b1b8-482c2fcbd7ee
+  spec:
+    containers:
+    - command:
+      - sleep
+      - "3600"
+      image: curlimages/curl:8.5.0
+      imagePullPolicy: IfNotPresent
+      name: besu-rpc-test
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-9hqpr
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-9hqpr
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:07:26Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T18:07:23Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:07:24Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T19:07:24Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T18:07:22Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://0d47aaef55d1f39a088505121226457275edc1a06b60b4c863ddb24bbd703114
+      image: docker.io/curlimages/curl:8.5.0
+      imageID: docker.io/curlimages/curl@sha256:08e466006f0860e54fc299378de998935333e0e130a15f6f98482e9f8dab3058
+      lastState: {}
+      name: besu-rpc-test
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://0d47aaef55d1f39a088505121226457275edc1a06b60b4c863ddb24bbd703114
+          exitCode: 0
+          finishedAt: "2026-01-31T19:07:24Z"
+          reason: Completed
+          startedAt: "2026-01-31T18:07:24Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-9hqpr
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.13
+    podIPs:
+    - ip: 10.233.75.13
+    qosClass: BestEffort
+    startTime: "2026-01-31T18:07:23Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 98c4243e1e5c9245c8432a12c8e79fd2503d8f25141778f7df28ebeecb412512
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.3"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-01-31T00:52:30Z"
+    labels:
+      run: curl-chk
+    name: curl-chk
+    namespace: trisla
+    resourceVersion: "868683219"
+    uid: 9899abbc-718d-41d5-a2cf-77ef842b8d4b
+  spec:
+    containers:
+    - args:
+      - sleep
+      - "300"
+      image: curlimages/curl
+      imagePullPolicy: Always
+      name: curl-chk
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-cxl9h
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-cxl9h
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T00:57:35Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T00:52:31Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T00:57:34Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T00:57:34Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-31T00:52:30Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://b20e6b5b8cdc175a27cc33b6d35ddd351a85a764fef5d279c7244421fcbe9549
+      image: docker.io/curlimages/curl:latest
+      imageID: docker.io/curlimages/curl@sha256:d94d07ba9e7d6de898b6d96c1a072f6f8266c687af78a74f380087a0addf5d17
+      lastState: {}
+      name: curl-chk
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://b20e6b5b8cdc175a27cc33b6d35ddd351a85a764fef5d279c7244421fcbe9549
+          exitCode: 0
+          finishedAt: "2026-01-31T00:57:33Z"
+          reason: Completed
+          startedAt: "2026-01-31T00:52:33Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-cxl9h
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.3
+    podIPs:
+    - ip: 10.233.75.3
+    qosClass: BestEffort
+    startTime: "2026-01-31T00:52:31Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 8d3c35891f3a33ee39ecdb97f1a4e046126c7c9d5c45db436f89dadaa88baba8
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.11"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-11T20:50:33Z"
+    labels:
+      run: curl-upfmax
+    name: curl-upfmax
+    namespace: trisla
+    resourceVersion: "871592377"
+    uid: a38e5db0-3966-4eed-a195-75e3bd7fd968
+  spec:
+    containers:
+    - args:
+      - curl
+      - -s
+      - http://trisla-nasp-adapter.trisla.svc.cluster.local:8085/api/v1/3gpp/gate
+      image: curlimages/curl:latest
+      imagePullPolicy: Always
+      name: curl-upfmax
+      resources: {}
+      stdin: true
+      stdinOnce: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6brz6
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-6brz6
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-11T20:50:39Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-11T20:50:35Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-11T20:50:35Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-11T20:50:35Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-11T20:50:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://c9f99a5de44da359e21634c83c8426466b08f03e28ed4155be35594bb4f9aec9
+      image: docker.io/curlimages/curl:latest
+      imageID: docker.io/curlimages/curl@sha256:d94d07ba9e7d6de898b6d96c1a072f6f8266c687af78a74f380087a0addf5d17
+      lastState: {}
+      name: curl-upfmax
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://c9f99a5de44da359e21634c83c8426466b08f03e28ed4155be35594bb4f9aec9
+          exitCode: 0
+          finishedAt: "2026-02-11T20:50:37Z"
+          reason: Completed
+          startedAt: "2026-02-11T20:50:37Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6brz6
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.11
+    podIPs:
+    - ip: 10.233.75.11
+    qosClass: BestEffort
+    startTime: "2026-02-11T20:50:35Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 6c21b79755285ee3324b64ddfc3c5ad5f03eb22f154a4a24b82703ac8eb08d07
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.35"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-01-20T17:50:17Z"
+    labels:
+      run: curltest-decision-final
+    name: curltest-decision-final
+    namespace: trisla
+    resourceVersion: "866138238"
+    uid: 0c9cc09c-519e-4af8-8764-e7d8db750079
+  spec:
+    containers:
+    - args:
+      - curl
+      - -s
+      - -X
+      - POST
+      - http://trisla-decision-engine:8082/evaluate
+      - -H
+      - 'Content-Type: application/json'
+      - -d
+      - '{"intent_id": "intent-e2e-final", "intent": {"tenant_id": "tenant-001", "service_type":
+        "eMBB", "sla_requirements": {"latency": 20, "throughput": 100}}, "nest": null,
+        "context": {"cpu": 2, "memory": 2048, "bandwidth": 100}}'
+      image: curlimages/curl
+      imagePullPolicy: Always
+      name: curltest-decision-final
+      resources: {}
+      stdin: true
+      stdinOnce: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-249v8
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-249v8
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:47:36Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:47:28Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:47:35Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:47:35Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:50:17Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://b0c39d09989e3c8f842a46a4dd01e91adaeb5a41f82fdb45862b7a78d6c2ae9d
+      image: docker.io/curlimages/curl:latest
+      imageID: docker.io/curlimages/curl@sha256:d94d07ba9e7d6de898b6d96c1a072f6f8266c687af78a74f380087a0addf5d17
+      lastState: {}
+      name: curltest-decision-final
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://b0c39d09989e3c8f842a46a4dd01e91adaeb5a41f82fdb45862b7a78d6c2ae9d
+          exitCode: 0
+          finishedAt: "2026-01-20T17:47:34Z"
+          reason: Completed
+          startedAt: "2026-01-20T17:47:31Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-249v8
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.35
+    podIPs:
+    - ip: 10.233.75.35
+    qosClass: BestEffort
+    startTime: "2026-01-20T17:47:28Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 9ef48ffa64748ee6da3899328af05c6442f0066dbf7ae4ce81cfec13f51099f4
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.5"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-01-20T17:47:59Z"
+    labels:
+      run: curltest-decision4
+    name: curltest-decision4
+    namespace: trisla
+    resourceVersion: "866137548"
+    uid: 9a077f6f-6ffc-4bab-b6b5-c1bb721709cf
+  spec:
+    containers:
+    - args:
+      - curl
+      - -s
+      - -X
+      - POST
+      - http://trisla-decision-engine:8082/evaluate
+      - -H
+      - 'Content-Type: application/json'
+      - -d
+      - '{"intent_id": "intent-e2e-004", "intent": {"tenant_id": "tenant-001", "service_type":
+        "eMBB", "sla_requirements": {"latency": 20, "throughput": 100}}, "nest": null,
+        "context": {"cpu": 2, "memory": 2048, "bandwidth": 100}}'
+      image: curlimages/curl
+      imagePullPolicy: Always
+      name: curltest-decision4
+      resources: {}
+      stdin: true
+      stdinOnce: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-h6bn5
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-h6bn5
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:45:15Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:45:10Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:45:13Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:45:13Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-20T17:47:59Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://03c0fd08252ff782c954629cb6fb81e1973da5dd56e786dd38b777810e426287
+      image: docker.io/curlimages/curl:latest
+      imageID: docker.io/curlimages/curl@sha256:d94d07ba9e7d6de898b6d96c1a072f6f8266c687af78a74f380087a0addf5d17
+      lastState: {}
+      name: curltest-decision4
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://03c0fd08252ff782c954629cb6fb81e1973da5dd56e786dd38b777810e426287
+          exitCode: 0
+          finishedAt: "2026-01-20T17:45:12Z"
+          reason: Completed
+          startedAt: "2026-01-20T17:45:12Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-h6bn5
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.5
+    podIPs:
+    - ip: 10.233.75.5
+    qosClass: BestEffort
+    startTime: "2026-01-20T17:45:10Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 5ef3ec65a61dd46f1c44f86198ee73216f31e6801ba90e59d28a998c06d2260f
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.23"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"http-diag","namespace":"trisla"},"spec":{"containers":[{"command":["sh","-lc","sleep 3600"],"image":"curlimages/curl:8.6.0","name":"http-diag"}],"restartPolicy":"Never"}}
+    creationTimestamp: "2026-01-14T12:47:01Z"
+    name: http-diag
+    namespace: trisla
+    resourceVersion: "864609255"
+    uid: 604568ba-e5ab-4400-b57a-80c049dcb7c7
+  spec:
+    containers:
+    - command:
+      - sh
+      - -lc
+      - sleep 3600
+      image: curlimages/curl:8.6.0
+      imagePullPolicy: IfNotPresent
+      name: http-diag
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jqmdq
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-jqmdq
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-14T13:44:20Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-14T12:44:13Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-14T13:44:18Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-14T13:44:18Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-14T12:47:01Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://355c5b01faa88eefcae054d493bb12b962a196933da859879b1b5b897b4f083c
+      image: docker.io/curlimages/curl:8.6.0
+      imageID: docker.io/curlimages/curl@sha256:c3b8bee303c6c6beed656cfc921218c529d65aa61114eb9e27c62047a1271b9b
+      lastState: {}
+      name: http-diag
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://355c5b01faa88eefcae054d493bb12b962a196933da859879b1b5b897b4f083c
+          exitCode: 0
+          finishedAt: "2026-01-14T13:44:17Z"
+          reason: Completed
+          startedAt: "2026-01-14T12:44:17Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jqmdq
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.23
+    podIPs:
+    - ip: 10.233.75.23
+    qosClass: BestEffort
+    startTime: "2026-01-14T12:44:13Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: c9e59393d4deac75129647d890b5cd000b0fb008d4e44b591711c5ff5eb3534c
+      cni.projectcalico.org/podIP: 10.233.75.47/32
+      cni.projectcalico.org/podIPs: 10.233.75.47/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.47"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-17T00:49:00Z"
+    generateName: kafka-76696c9d87-
+    labels:
+      app: kafka
+      app.kubernetes.io/name: kafka
+      app.kubernetes.io/part-of: trisla
+      pod-template-hash: 76696c9d87
+    name: kafka-76696c9d87-vhgvg
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kafka-76696c9d87
+      uid: 67e90e2f-a9d1-4f7a-be62-3a50db091356
+    resourceVersion: "872871861"
+    uid: cb66b7fc-f41f-428b-ba3c-d6a03d5bfb03
+  spec:
+    containers:
+    - env:
+      - name: KAFKA_NODE_ID
+        value: "1"
+      - name: KAFKA_PROCESS_ROLES
+        value: broker,controller
+      - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+        value: 1@localhost:9093
+      - name: KAFKA_LISTENERS
+        value: PLAINTEXT://:9092,CONTROLLER://:9093
+      - name: KAFKA_ADVERTISED_LISTENERS
+        value: PLAINTEXT://kafka.trisla.svc.cluster.local:9092
+      - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+        value: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - name: KAFKA_CONTROLLER_LISTENER_NAMES
+        value: CONTROLLER
+      - name: KAFKA_LOG_DIRS
+        value: /tmp/kraft-combined-logs
+      image: ghcr.io/abelisboa/trisla-kafka@sha256:3f7b939115cd4872e9cee9369d80bd69712fde55f9902f46d793f64848dedc75
+      imagePullPolicy: IfNotPresent
+      name: kafka
+      ports:
+      - containerPort: 9092
+        name: kafka
+        protocol: TCP
+      resources:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+        requests:
+          cpu: 200m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jls7w
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-jls7w
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-17T00:49:04Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-17T00:49:03Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-17T00:49:03Z"
+      message: 'containers with unready status: [kafka]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-17T00:49:03Z"
+      message: 'containers with unready status: [kafka]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-17T00:49:00Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - image: ghcr.io/abelisboa/trisla-kafka@sha256:3f7b939115cd4872e9cee9369d80bd69712fde55f9902f46d793f64848dedc75
+      imageID: ""
+      lastState: {}
+      name: kafka
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        waiting:
+          message: Back-off pulling image "ghcr.io/abelisboa/trisla-kafka@sha256:3f7b939115cd4872e9cee9369d80bd69712fde55f9902f46d793f64848dedc75"
+          reason: ImagePullBackOff
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jls7w
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Pending
+    podIP: 10.233.75.47
+    podIPs:
+    - ip: 10.233.75.47
+    qosClass: Burstable
+    startTime: "2026-02-17T00:49:03Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: dc95e11c925d106e78517b6a5d6668bdc575eecc6715a7bd2a0a4d644e9c7647
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.189"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2025-12-23T08:30:26Z"
+    labels:
+      run: registry-sanity
+    name: registry-sanity
+    namespace: trisla
+    resourceVersion: "859183234"
+    uid: 7bb7e7c0-a207-4e3f-9911-40b62ecb924c
+  spec:
+    containers:
+    - args:
+      - sleep
+      - "60"
+      image: 192.168.10.16:5000/library/alpine:latest
+      imagePullPolicy: Always
+      name: registry-sanity
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jnzxn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-jnzxn
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T08:31:29Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T08:30:26Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T08:31:27Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T08:31:27Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T08:30:26Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://87c784f0986fe15a43b2d68f3e57ef44badf9fa7f5e80eefabfbf59c6af01faf
+      image: 192.168.10.16:5000/library/alpine:latest
+      imageID: 192.168.10.16:5000/library/alpine@sha256:0464c44011486f1f7f99d3792d048663ce27d85f9cc8f3218fc8f96f070405af
+      lastState: {}
+      name: registry-sanity
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://87c784f0986fe15a43b2d68f3e57ef44badf9fa7f5e80eefabfbf59c6af01faf
+          exitCode: 0
+          finishedAt: "2025-12-23T08:31:27Z"
+          reason: Completed
+          startedAt: "2025-12-23T08:30:27Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jnzxn
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Succeeded
+    podIP: 10.233.102.189
+    podIPs:
+    - ip: 10.233.102.189
+    qosClass: BestEffort
+    startTime: "2025-12-23T08:30:26Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 2cb3d9145b9b32b83c374542cd67509cd4893fe13946c07b6282748143b2ee25
+      cni.projectcalico.org/podIP: ""
+      cni.projectcalico.org/podIPs: ""
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.15"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"registry-sanity-verify","namespace":"trisla"},"spec":{"containers":[{"command":["sh","-c","echo 'PHASE_08A_VERIFICATION_OK' \u0026\u0026 sleep 10"],"image":"192.168.10.16:5000/library/alpine:latest","name":"sanity"}],"restartPolicy":"Never"}}
+    creationTimestamp: "2025-12-23T09:28:49Z"
+    name: registry-sanity-verify
+    namespace: trisla
+    resourceVersion: "859192987"
+    uid: 456ee7a1-7d47-4fb7-8a22-31ae7b2f4f4c
+  spec:
+    containers:
+    - command:
+      - sh
+      - -c
+      - echo 'PHASE_08A_VERIFICATION_OK' && sleep 10
+      image: 192.168.10.16:5000/library/alpine:latest
+      imagePullPolicy: Always
+      name: sanity
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-xfs4x
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-xfs4x
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T09:26:12Z"
+      status: "False"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T09:25:59Z"
+      reason: PodCompleted
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T09:26:10Z"
+      reason: PodCompleted
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T09:26:10Z"
+      reason: PodCompleted
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2025-12-23T09:28:49Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://597af111b9d11fe8b1ed9e43cdb39769ee85a122b02afbccad6659155ffc189c
+      image: 192.168.10.16:5000/library/alpine:latest
+      imageID: 192.168.10.16:5000/library/alpine@sha256:0464c44011486f1f7f99d3792d048663ce27d85f9cc8f3218fc8f96f070405af
+      lastState: {}
+      name: sanity
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://597af111b9d11fe8b1ed9e43cdb39769ee85a122b02afbccad6659155ffc189c
+          exitCode: 0
+          finishedAt: "2025-12-23T09:26:10Z"
+          reason: Completed
+          startedAt: "2025-12-23T09:26:00Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-xfs4x
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Succeeded
+    podIP: 10.233.75.15
+    podIPs:
+    - ip: 10.233.75.15
+    qosClass: BestEffort
+    startTime: "2025-12-23T09:25:59Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 44642a77e4fb0100bc791c258623bf0760cbd87da4f0119169d231a81ecf1740
+      cni.projectcalico.org/podIP: 10.233.75.16/32
+      cni.projectcalico.org/podIPs: 10.233.75.16/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.16"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-01-30T18:30:44Z"
+    generateName: trisla-analytics-adapter-645476854b-
+    labels:
+      app: trisla-analytics-adapter
+      pod-template-hash: 645476854b
+    name: trisla-analytics-adapter-645476854b-4jtkw
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-analytics-adapter-645476854b
+      uid: 18549add-7eff-4aff-94a5-1017be2b4e7f
+    resourceVersion: "868612266"
+    uid: 5ccd75e7-6ccf-4349-9620-acb31fbdeee9
+  spec:
+    containers:
+    - args:
+      - |
+        pip install --no-cache-dir fastapi==0.111.0 uvicorn[standard]==0.30.0 prometheus_client==0.20.0 requests==2.32.3
+        cd /app && uvicorn main:app --host 0.0.0.0 --port 8080
+      command:
+      - /bin/sh
+      - -c
+      env:
+      - name: PROMETHEUS_URL
+        value: http://monitoring-kube-prometheus-prometheus.monitoring:9090
+      - name: CORE5G_NAMESPACE
+        value: ns-1274485
+      - name: RAN_NAMESPACE
+        value: ns-1274485
+      - name: RAN_POD
+        value: rantester-0
+      - name: PYTHONUNBUFFERED
+        value: "1"
+      image: python:3.11-slim
+      imagePullPolicy: IfNotPresent
+      name: adapter
+      ports:
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /app
+        name: code
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-t5ww7
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - configMap:
+        defaultMode: 420
+        name: trisla-analytics-adapter-code
+      name: code
+    - name: kube-api-access-t5ww7
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-30T18:30:46Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-30T18:30:45Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-30T18:30:46Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-30T18:30:46Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-30T18:30:44Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://36d24d80088035527957a12823a481f6feebb15d788cc310ceeb9d3ca30dbceb
+      image: docker.io/library/python:3.11-slim
+      imageID: docker.io/library/python@sha256:9e1912aab0a30bbd9488eb79063f68f42a68ab0946cbe98fecf197fe5b085506
+      lastState: {}
+      name: adapter
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-01-30T18:30:46Z"
+      volumeMounts:
+      - mountPath: /app
+        name: code
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-t5ww7
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Running
+    podIP: 10.233.75.16
+    podIPs:
+    - ip: 10.233.75.16
+    qosClass: Burstable
+    startTime: "2026-01-30T18:30:45Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 86d84268790d1b212ff44805f79748f83bdde3d417cb4a477e413a3f4f9abc37
+      cni.projectcalico.org/podIP: 10.233.102.142/32
+      cni.projectcalico.org/podIPs: 10.233.102.142/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.142"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generateName: trisla-bc-nssmf-7b769f5d4d-
+    labels:
+      app: trisla-bc-nssmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7b769f5d4d
+    name: trisla-bc-nssmf-7b769f5d4d-jv5bb
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-bc-nssmf-7b769f5d4d
+      uid: 384b5a95-ee68-470e-8786-924b291b49bf
+    resourceVersion: "872802829"
+    uid: ee4ed8ca-fcf2-4589-bd66-8476a649bca8
+  spec:
+    containers:
+    - env:
+      - name: TRISLA_NODE_INTERFACE
+        value: my5g
+      - name: TRISLA_NODE_IP
+        value: 192.168.10.16
+      - name: OTLP_ENDPOINT
+        value: http://trisla-otel-collector:4317
+      - name: TRISLA_RPC_URL
+        value: http://trisla-besu.trisla.svc.cluster.local:8545
+      - name: BESU_RPC_URL
+        value: http://trisla-besu.trisla.svc.cluster.local:8545
+      - name: BC_ENABLED
+        value: "true"
+      - name: TRISLA_CHAIN_ID
+        value: "1337"
+      - name: BC_ENABLED
+        value: "true"
+      - name: BC_TX_RECEIPT_TIMEOUT
+        value: "120"
+      image: ghcr.io/abelisboa/trisla-bc-nssmf@sha256:b0db5eef2128baddee2c1c3ea72fb5fec421afb1d87407e5f4a6aadd75f9f95a
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: bc-nssmf
+      ports:
+      - containerPort: 8083
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-s49x8
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node1
+    nodeSelector:
+      kubernetes.io/hostname: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-s49x8
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:40Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://43a2fb6897b0516fc4e289e9c8bf6cf23f2c1a920428ca1ad57df81601d25c27
+      image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-bc-nssmf:v3.11.2
+      imageID: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-bc-nssmf@sha256:b0db5eef2128baddee2c1c3ea72fb5fec421afb1d87407e5f4a6aadd75f9f95a
+      lastState: {}
+      name: bc-nssmf
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T18:28:39Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-s49x8
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Running
+    podIP: 10.233.102.142
+    podIPs:
+    - ip: 10.233.102.142
+    qosClass: Burstable
+    startTime: "2026-02-16T18:28:36Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 58bae9d87dd98c6728ffb457986c9e2fb279eeb9c3d27e6fe7be07f5529c1805
+      cni.projectcalico.org/podIP: 10.233.75.41/32
+      cni.projectcalico.org/podIPs: 10.233.75.41/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.41"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T19:36:27Z"
+    generateName: trisla-besu-756cf5ff69-
+    labels:
+      app: besu
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      component: blockchain
+      pod-template-hash: 756cf5ff69
+    name: trisla-besu-756cf5ff69-tbffm
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-besu-756cf5ff69
+      uid: 122f4bce-556f-43c9-9d51-ff58a7517e6f
+    resourceVersion: "872815020"
+    uid: 25a5c8ea-786d-41f6-8299-01c22f4228f3
+  spec:
+    containers:
+    - args:
+      - --genesis-file=/data/genesis.json
+      - --data-path=/opt/besu/data
+      - --rpc-http-enabled=true
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-port=8545
+      - --rpc-http-api=ETH,NET,WEB3,ADMIN,MINER
+      - --host-allowlist=*
+      - --rpc-http-cors-origins=*
+      - --min-gas-price=0
+      command:
+      - /opt/besu/bin/besu
+      env:
+      - name: BESU_DATA_PATH
+        value: /opt/besu/data
+      image: ghcr.io/abelisboa/trisla-besu@sha256:ab84d26d678417b615c0833b4a34e9fe2778cec392a7e23596fa1607cf362efc
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 6
+        initialDelaySeconds: 30
+        periodSeconds: 20
+        successThreshold: 1
+        tcpSocket:
+          port: 8545
+        timeoutSeconds: 5
+      name: besu
+      ports:
+      - containerPort: 8545
+        name: rpc-http
+        protocol: TCP
+      - containerPort: 8546
+        name: rpc-ws
+        protocol: TCP
+      - containerPort: 30303
+        name: p2p
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 6
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        tcpSocket:
+          port: 8545
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: "4"
+          memory: 8Gi
+        requests:
+          cpu: "1"
+          memory: 2Gi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /opt/besu/data
+        name: besu-data
+      - mountPath: /data
+        name: genesis
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-c6hpr
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - sh
+      - -c
+      - cp /secrets/key /opt/besu/data/key && chmod 600 /opt/besu/data/key
+      image: ghcr.io/abelisboa/trisla-besu@sha256:ab84d26d678417b615c0833b4a34e9fe2778cec392a7e23596fa1607cf362efc
+      imagePullPolicy: IfNotPresent
+      name: copy-validator-key
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /opt/besu/data
+        name: besu-data
+      - mountPath: /secrets
+        name: validator-key
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-c6hpr
+        readOnly: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: besu-data
+      persistentVolumeClaim:
+        claimName: trisla-besu-data
+    - configMap:
+        defaultMode: 420
+        name: trisla-besu-genesis
+      name: genesis
+    - name: validator-key
+      secret:
+        defaultMode: 420
+        secretName: trisla-besu-validator-key
+    - name: kube-api-access-c6hpr
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:36:31Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:36:31Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:36:50Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:36:50Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:36:27Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://6a200fc94a66189d55f36c5343b6dcd18ba02643356ccdc70210324fe873ee43
+      image: docker.io/hyperledger/besu:23.10.1
+      imageID: docker.io/hyperledger/besu@sha256:3fc09eb10360d28970ba27fca7cbfa2091985e921b1ccf49f9974e1501c5347d
+      lastState: {}
+      name: besu
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T19:36:31Z"
+      volumeMounts:
+      - mountPath: /opt/besu/data
+        name: besu-data
+      - mountPath: /data
+        name: genesis
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-c6hpr
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    initContainerStatuses:
+    - containerID: containerd://8d9a47076c477e615d531ee97943ff4aad207dd918c20bafdada1d7599137600
+      image: docker.io/hyperledger/besu:23.10.1
+      imageID: docker.io/hyperledger/besu@sha256:3fc09eb10360d28970ba27fca7cbfa2091985e921b1ccf49f9974e1501c5347d
+      lastState: {}
+      name: copy-validator-key
+      ready: true
+      restartCount: 0
+      started: false
+      state:
+        terminated:
+          containerID: containerd://8d9a47076c477e615d531ee97943ff4aad207dd918c20bafdada1d7599137600
+          exitCode: 0
+          finishedAt: "2026-02-16T19:36:31Z"
+          reason: Completed
+          startedAt: "2026-02-16T19:36:31Z"
+      volumeMounts:
+      - mountPath: /opt/besu/data
+        name: besu-data
+      - mountPath: /secrets
+        name: validator-key
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-c6hpr
+        readOnly: true
+        recursiveReadOnly: Disabled
+    phase: Running
+    podIP: 10.233.75.41
+    podIPs:
+    - ip: 10.233.75.41
+    qosClass: Burstable
+    startTime: "2026-02-16T19:36:30Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: dca3bc53acfe01675918fa7c5152bf93c4dc7e486fe3402dfa6fa42b81544cf6
+      cni.projectcalico.org/podIP: 10.233.102.155/32
+      cni.projectcalico.org/podIPs: 10.233.102.155/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.155"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T19:32:59Z"
+    generateName: trisla-decision-engine-74648556c6-
+    labels:
+      app: trisla-decision-engine
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 74648556c6
+    name: trisla-decision-engine-74648556c6-xngzt
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-decision-engine-74648556c6
+      uid: 60659ca9-6d91-4b4c-a10f-1f5e5d7c1172
+    resourceVersion: "872871205"
+    uid: ae9fbd39-0c4b-4f0b-865f-5aeac9b4e61d
+  spec:
+    containers:
+    - env:
+      - name: TRISLA_NODE_INTERFACE
+        value: my5g
+      - name: TRISLA_NODE_IP
+        value: 192.168.10.16
+      - name: OTLP_ENDPOINT
+        value: http://trisla-otel-collector:4317
+      - name: GATE_3GPP_ENABLED
+        value: "false"
+      - name: LOG_LEVEL
+        value: DEBUG
+      - name: ML_NSMF_HTTP_URL
+        value: http://trisla-ml-nsmf:8081
+      - name: SLA_AGENT_URL
+        value: http://trisla-sla-agent-layer:8084
+      image: ghcr.io/abelisboa/trisla-decision-engine@sha256:805286bcf9552727fd57df4bf31759278d05ad29d1272c95ee45991340621d41
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: decision-engine
+      ports:
+      - containerPort: 8082
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-npqvx
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node1
+    nodeSelector:
+      kubernetes.io/hostname: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-npqvx
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:33:00Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:32:59Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:32:59Z"
+      message: 'containers with unready status: [decision-engine]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:32:59Z"
+      message: 'containers with unready status: [decision-engine]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T19:32:59Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - image: ghcr.io/abelisboa/trisla-decision-engine@sha256:805286bcf9552727fd57df4bf31759278d05ad29d1272c95ee45991340621d41
+      imageID: ""
+      lastState: {}
+      name: decision-engine
+      ready: false
+      restartCount: 0
+      started: false
+      state:
+        waiting:
+          message: Back-off pulling image "ghcr.io/abelisboa/trisla-decision-engine@sha256:805286bcf9552727fd57df4bf31759278d05ad29d1272c95ee45991340621d41"
+          reason: ImagePullBackOff
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-npqvx
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Pending
+    podIP: 10.233.102.155
+    podIPs:
+    - ip: 10.233.102.155
+    qosClass: Burstable
+    startTime: "2026-02-16T19:32:59Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: b2043d90b0e9a701a4c5f41a232ac873fc56c45f020cf7e696cccdad3efca9e8
+      cni.projectcalico.org/podIP: 10.233.75.32/32
+      cni.projectcalico.org/podIPs: 10.233.75.32/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.32"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-01-21T22:34:28Z"
+    finalizers:
+    - batch.kubernetes.io/job-tracking
+    generateName: trisla-iperf3-client-
+    labels:
+      batch.kubernetes.io/controller-uid: 07a92b73-7054-4d6f-9bce-1abde1da40ac
+      batch.kubernetes.io/job-name: trisla-iperf3-client
+      controller-uid: 07a92b73-7054-4d6f-9bce-1abde1da40ac
+      job-name: trisla-iperf3-client
+    name: trisla-iperf3-client-8gx9k
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: batch/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Job
+      name: trisla-iperf3-client
+      uid: 07a92b73-7054-4d6f-9bce-1abde1da40ac
+    resourceVersion: "866440705"
+    uid: 4c4be8ce-0100-461b-ac96-5f5cf81fad98
+  spec:
+    containers:
+    - command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          iperf3 -c trisla-iperf3 -t 10 -J > /tmp/iperf.json
+          sleep 2
+        done
+      image: networkstatic/iperf3
+      imagePullPolicy: Always
+      name: iperf3-client
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2vsm5
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: OnFailure
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-2vsm5
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-21T22:31:42Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-21T22:31:39Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-21T22:31:42Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-21T22:31:42Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-21T22:34:28Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://8fcea7dfc6e63b5af9c0c053ccc6e97b0ab33ac37abf1406917868e952adb9d0
+      image: docker.io/networkstatic/iperf3:latest
+      imageID: docker.io/networkstatic/iperf3@sha256:07dcca91c0e47d82d83d91de8c3d46b840eef4180499456b4fa8d6dadb46b6c8
+      lastState: {}
+      name: iperf3-client
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-01-21T22:31:41Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2vsm5
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Running
+    podIP: 10.233.75.32
+    podIPs:
+    - ip: 10.233.75.32
+    qosClass: BestEffort
+    startTime: "2026-01-21T22:31:39Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 7de10b30561b144acc7c07b7f9683d7e6cf42e43fd7a0f532cf36637b80256a4
+      cni.projectcalico.org/podIP: 10.233.75.39/32
+      cni.projectcalico.org/podIPs: 10.233.75.39/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.39"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      kubectl.kubernetes.io/restartedAt: "2026-01-22T11:56:51-03:00"
+    creationTimestamp: "2026-01-22T14:56:51Z"
+    generateName: trisla-iperf3-server-76f599c648-
+    labels:
+      app: trisla-iperf3-server
+      pod-template-hash: 76f599c648
+    name: trisla-iperf3-server-76f599c648-58hbh
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-iperf3-server-76f599c648
+      uid: 92ebf2cb-04c8-4467-a3df-483e48c5fe49
+    resourceVersion: "866614462"
+    uid: 5384304c-4d7b-465f-a9ad-cce8ac3565d5
+  spec:
+    containers:
+    - args:
+      - -s
+      image: networkstatic/iperf3
+      imagePullPolicy: Always
+      name: iperf3
+      ports:
+      - containerPort: 5201
+        protocol: TCP
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w9bf
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-6w9bf
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-22T14:54:40Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-22T14:54:04Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-22T14:54:40Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-22T14:54:40Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-22T14:56:52Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://f5daeb70d656100e2d620171e2b427b0425e3a4b922ea5df8e16bdfc52b89687
+      image: docker.io/networkstatic/iperf3:latest
+      imageID: docker.io/networkstatic/iperf3@sha256:07dcca91c0e47d82d83d91de8c3d46b840eef4180499456b4fa8d6dadb46b6c8
+      lastState: {}
+      name: iperf3
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-01-22T14:54:39Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-6w9bf
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Running
+    podIP: 10.233.75.39
+    podIPs:
+    - ip: 10.233.75.39
+    qosClass: BestEffort
+    startTime: "2026-01-22T14:54:04Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: aac56911dc571debd8d049eb1888e9d73942e81e0201fd5e21626a2119a039ed
+      cni.projectcalico.org/podIP: 10.233.102.190/32
+      cni.projectcalico.org/podIPs: 10.233.102.190/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.190"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generateName: trisla-ml-nsmf-58bfd9f-
+    labels:
+      app: trisla-ml-nsmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 58bfd9f
+    name: trisla-ml-nsmf-58bfd9f-zr7dh
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-ml-nsmf-58bfd9f
+      uid: 1d7170ca-49f7-4c64-9507-108d3ee47e70
+    resourceVersion: "872802976"
+    uid: cec8c37b-c0c3-44c0-abc6-b9ac935f542a
+  spec:
+    containers:
+    - env:
+      - name: TRISLA_NODE_INTERFACE
+        value: my5g
+      - name: TRISLA_NODE_IP
+        value: 192.168.10.16
+      - name: OTLP_ENDPOINT
+        value: http://trisla-otel-collector:4317
+      - name: KAFKA_ENABLED
+        value: "true"
+      - name: KAFKA_BROKERS
+        value: kafka:9092
+      image: ghcr.io/abelisboa/trisla-ml-nsmf@sha256:605af0875ceb09cec0955ab6a7b47c0a4d12e0784a77afacb8cafe7c8119e71a
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: ml-nsmf
+      ports:
+      - containerPort: 8081
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: 4Gi
+        requests:
+          cpu: "1"
+          memory: 1Gi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-c57k5
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node1
+    nodeSelector:
+      kubernetes.io/hostname: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-c57k5
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:39Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:56Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:56Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://ba467409dd1905eea999e416e1d159422b8a94592e4ffc68598bbb3a25f0f777
+      image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-ml-nsmf:v3.11.2
+      imageID: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-ml-nsmf@sha256:605af0875ceb09cec0955ab6a7b47c0a4d12e0784a77afacb8cafe7c8119e71a
+      lastState: {}
+      name: ml-nsmf
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T18:28:38Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-c57k5
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Running
+    podIP: 10.233.102.190
+    podIPs:
+    - ip: 10.233.102.190
+    qosClass: Burstable
+    startTime: "2026-02-16T18:28:36Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 2f25b9463e7fc0ec07b451a699a885d05448fb83f35cf4c9844ba484e25ff248
+      cni.projectcalico.org/podIP: 10.233.102.183/32
+      cni.projectcalico.org/podIPs: 10.233.102.183/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.183"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generateName: trisla-nasp-adapter-6fd75985cb-
+    labels:
+      app: trisla-nasp-adapter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 6fd75985cb
+    name: trisla-nasp-adapter-6fd75985cb-lslq2
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-nasp-adapter-6fd75985cb
+      uid: b6d61ed1-cb9d-4917-87bf-02d21c404190
+    resourceVersion: "872802848"
+    uid: 0ccc674f-6f87-4f42-afbb-4080267798df
+  spec:
+    automountServiceAccountToken: true
+    containers:
+    - env:
+      - name: TRISLA_NODE_INTERFACE
+        value: my5g
+      - name: TRISLA_NODE_IP
+        value: 192.168.10.16
+      - name: SEM_CSMF_URL
+        value: http://trisla-sem-csmf.trisla.svc.cluster.local:8080
+      - name: OTLP_ENDPOINT
+        value: http://trisla-otel-collector:4317
+      - name: GATE_3GPP_ENABLED
+        value: "false"
+      - name: GATE_3GPP_CORE_NAMESPACE
+        value: ns-1274485
+      - name: GATE_3GPP_UERANSIM_NAMESPACE
+        value: ueransim
+      - name: CAPACITY_ACCOUNTING_ENABLED
+        value: "true"
+      - name: RESERVATION_TTL_SECONDS
+        value: "300"
+      - name: RECONCILE_INTERVAL_SECONDS
+        value: "60"
+      - name: CAPACITY_SAFETY_FACTOR
+        value: "0.1"
+      - name: COST_EMBB_CORE
+        value: "1"
+      - name: COST_EMBB_RAN
+        value: "1"
+      - name: COST_EMBB_TRANSPORT
+        value: "1"
+      - name: COST_URLLC_CORE
+        value: "1"
+      - name: COST_URLLC_RAN
+        value: "1"
+      - name: COST_URLLC_TRANSPORT
+        value: "1"
+      - name: COST_MMTC_CORE
+        value: "1"
+      - name: COST_MMTC_RAN
+        value: "1"
+      - name: COST_MMTC_TRANSPORT
+        value: "1"
+      - name: PROMETHEUS_URL
+        value: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+      image: ghcr.io/abelisboa/trisla-nasp-adapter@sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: nasp-adapter
+      ports:
+      - containerPort: 8085
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-mqjt7
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node1
+    nodeSelector:
+      kubernetes.io/hostname: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: trisla-nasp-adapter
+    serviceAccountName: trisla-nasp-adapter
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-mqjt7
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:39Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://894b95209d8567ee919fdf407830f9055a6856a3b8bd42d1ae85d4c2a02549ed
+      image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-nasp-adapter:v3.9.28
+      imageID: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-nasp-adapter@sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529
+      lastState: {}
+      name: nasp-adapter
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T18:28:39Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-mqjt7
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Running
+    podIP: 10.233.102.183
+    podIPs:
+    - ip: 10.233.102.183
+    qosClass: Burstable
+    startTime: "2026-02-16T18:28:36Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 2ae455aac4af70bc51bc4dcab6607ad51df85f5bb05023106b1353902ac5b328
+      cni.projectcalico.org/podIP: 10.233.75.54/32
+      cni.projectcalico.org/podIPs: 10.233.75.54/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.54"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      kubectl.kubernetes.io/restartedAt: "2026-02-02T08:43:18-03:00"
+    creationTimestamp: "2026-02-03T21:11:46Z"
+    generateName: trisla-portal-backend-788f88dd98-
+    labels:
+      app: trisla-portal-backend
+      component: backend
+      pod-template-hash: 788f88dd98
+    name: trisla-portal-backend-788f88dd98-lft2j
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-portal-backend-788f88dd98
+      uid: 1f666ca3-9a1b-457b-94c2-ac0e9bd743fb
+    resourceVersion: "872760519"
+    uid: bcea4b1c-e491-4aed-851c-6ae9d3d429e4
+  spec:
+    containers:
+    - env:
+      - name: SEM_CSMF_URL
+        value: http://trisla-sem-csmf:8080
+      - name: ML_NSMF_URL
+        value: http://trisla-ml-nsmf:8081
+      - name: DECISION_ENGINE_URL
+        value: http://trisla-decision-engine:8082
+      - name: BC_NSSMF_URL
+        value: http://trisla-bc-nssmf:8083
+      - name: SLA_AGENT_URL
+        value: http://trisla-sla-agent-layer:8084
+      - name: OTEL_SDK_DISABLED
+        value: "true"
+      - name: HTTP_TIMEOUT
+        value: "30"
+      - name: BC_TIMEOUT
+        value: "60"
+      image: ghcr.io/abelisboa/trisla-portal-backend:v3.11.0-xai-status
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8001
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: backend
+      ports:
+      - containerPort: 8001
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /nasp/diagnostics
+          port: 8001
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-dtqwr
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-dtqwr
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T21:11:50Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T21:11:47Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T14:20:58Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T14:20:58Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T21:11:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://7da83fc7cd2c6045bdbe61267b51143162e46624c262d9f9e1b2346c5f323f6b
+      image: ghcr.io/abelisboa/trisla-portal-backend:v3.11.0-xai-status
+      imageID: ghcr.io/abelisboa/trisla-portal-backend@sha256:293dc1c6e2fea60900f1008a67cf0cfd8252213707215687853be68dc2559128
+      lastState: {}
+      name: backend
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-03T21:11:50Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-dtqwr
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Running
+    podIP: 10.233.75.54
+    podIPs:
+    - ip: 10.233.75.54
+    qosClass: Burstable
+    startTime: "2026-02-03T21:11:47Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 9a36e689ebf51cf5377f3bf4a6ab6ce2568d3d47dabf324d9e89af419e49f6d4
+      cni.projectcalico.org/podIP: 10.233.75.12/32
+      cni.projectcalico.org/podIPs: 10.233.75.12/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.12"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+      kubectl.kubernetes.io/restartedAt: "2026-01-31T14:49:11-03:00"
+    creationTimestamp: "2026-02-03T00:26:22Z"
+    generateName: trisla-portal-frontend-57f546cd77-
+    labels:
+      app: trisla-portal-frontend
+      component: frontend
+      pod-template-hash: 57f546cd77
+    name: trisla-portal-frontend-57f546cd77-pkrhj
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-portal-frontend-57f546cd77
+      uid: 11a50bda-3922-46c0-8a04-dd39eb1d6ace
+    resourceVersion: "869424518"
+    uid: 844aabe6-7717-4ea3-a6c0-3540d0965d16
+  spec:
+    containers:
+    - env:
+      - name: BACKEND_URL
+        value: http://trisla-portal-backend:8001/api/v1
+      - name: PORT
+        value: "80"
+      image: ghcr.io/abelisboa/trisla-portal-frontend:v3.11.0
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 80
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: frontend
+      ports:
+      - containerPort: 80
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 80
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 3
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 128Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-9t2cm
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-9t2cm
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T00:26:26Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T00:26:23Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T00:26:39Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T00:26:39Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-03T00:26:22Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://1724db39f9ededa34be03bd1bd9131b12cf8e03a61cebf5843028633ee7bd8d7
+      image: ghcr.io/abelisboa/trisla-portal-frontend:v3.10.2-portalfix-21-20260202_2108
+      imageID: ghcr.io/abelisboa/trisla-portal-frontend@sha256:1e136b59605cc354155d4fb07f9578ed183556af9b7e418e61cfe61510d245df
+      lastState: {}
+      name: frontend
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-03T00:26:25Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-9t2cm
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Running
+    podIP: 10.233.75.12
+    podIPs:
+    - ip: 10.233.75.12
+    qosClass: Burstable
+    startTime: "2026-02-03T00:26:23Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 96dbd2cb7a273c260c9f50e933179be684c215cd05af4621b0a65eca51479010
+      cni.projectcalico.org/podIP: 10.233.102.141/32
+      cni.projectcalico.org/podIPs: 10.233.102.141/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.141"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generateName: trisla-sem-csmf-94f667fbc-
+    labels:
+      app: trisla-sem-csmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 94f667fbc
+    name: trisla-sem-csmf-94f667fbc-ft4ns
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-sem-csmf-94f667fbc
+      uid: 254c5d40-b379-40c0-9343-ab2896eef2a5
+    resourceVersion: "872802836"
+    uid: 3961096c-e80c-4a90-a2a8-9b8b16089fab
+  spec:
+    containers:
+    - env:
+      - name: TRISLA_NODE_INTERFACE
+        value: my5g
+      - name: TRISLA_NODE_IP
+        value: 192.168.10.16
+      - name: OTLP_ENDPOINT
+        value: http://trisla-otel-collector:4317
+      - name: KAFKA_ENABLED
+        value: "true"
+      - name: KAFKA_BROKERS
+        value: kafka:9092
+      image: ghcr.io/abelisboa/trisla-sem-csmf@sha256:84b73a5b8df53fb4901041d96559878bd2248517277557496cb2b7b3effeb375
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: sem-csmf
+      ports:
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jqg78
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node1
+    nodeSelector:
+      kubernetes.io/hostname: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-jqg78
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:39Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://deaa4961761b3bae3ea71c5f12492f2dd329aae3a3ad0609f7675aa71ae70d94
+      image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-sem-csmf:v3.11.2
+      imageID: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-sem-csmf@sha256:84b73a5b8df53fb4901041d96559878bd2248517277557496cb2b7b3effeb375
+      lastState: {}
+      name: sem-csmf
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T18:28:38Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jqg78
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Running
+    podIP: 10.233.102.141
+    podIPs:
+    - ip: 10.233.102.141
+    qosClass: Burstable
+    startTime: "2026-02-16T18:28:36Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 0f5a28d66d6aaef88955a071751c294e927deced8e25e4e9a259be026589b42e
+      cni.projectcalico.org/podIP: 10.233.102.153/32
+      cni.projectcalico.org/podIPs: 10.233.102.153/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.153"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generateName: trisla-sla-agent-layer-7b8b845c7-
+    labels:
+      app: trisla-sla-agent-layer
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 7b8b845c7
+    name: trisla-sla-agent-layer-7b8b845c7-qmdw2
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-sla-agent-layer-7b8b845c7
+      uid: c2d92cfc-4a21-4cfa-a168-15387c8104c0
+    resourceVersion: "872802865"
+    uid: 1055f626-19b2-4184-9fe4-148f4f646246
+  spec:
+    containers:
+    - env:
+      - name: TRISLA_NODE_INTERFACE
+        value: my5g
+      - name: TRISLA_NODE_IP
+        value: 192.168.10.16
+      - name: OTLP_ENDPOINT
+        value: http://trisla-otel-collector:4317
+      - name: NASP_ADAPTER_URL
+        value: http://trisla-nasp-adapter:8085
+      - name: BC_NSSMF_URL
+        value: http://trisla-bc-nssmf:8083
+      - name: KAFKA_ENABLED
+        value: "true"
+      - name: KAFKA_BROKERS
+        value: kafka.trisla.svc.cluster.local:9092
+      image: ghcr.io/abelisboa/trisla-sla-agent-layer@sha256:824b641b7ff17ba52bd93d9c0aeb6f1a4a073575ff86719bd14f67f6a80becce
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: sla-agent-layer
+      ports:
+      - containerPort: 8084
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-nqmh7
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node1
+    nodeSelector:
+      kubernetes.io/hostname: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-nqmh7
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:39Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://df43c286155eb4519fe9af3fe0f621fea0749c314290b994d5a16307b88383d8
+      image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-sla-agent-layer:v3.11.2
+      imageID: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-sla-agent-layer@sha256:824b641b7ff17ba52bd93d9c0aeb6f1a4a073575ff86719bd14f67f6a80becce
+      lastState: {}
+      name: sla-agent-layer
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T18:28:38Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-nqmh7
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Running
+    podIP: 10.233.102.153
+    podIPs:
+    - ip: 10.233.102.153
+    qosClass: Burstable
+    startTime: "2026-02-16T18:28:36Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 52f87f6fcffbac7b02fa6ad05a799f6fff829319f13b44787c343f6ea245cc7a
+      cni.projectcalico.org/podIP: 10.233.75.50/32
+      cni.projectcalico.org/podIPs: 10.233.75.50/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.75.50"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generateName: trisla-traffic-exporter-67649ffd79-
+    labels:
+      app: trisla-traffic-exporter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: traffic-exporter
+      pod-template-hash: 67649ffd79
+    name: trisla-traffic-exporter-67649ffd79-wkv4p
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-traffic-exporter-67649ffd79
+      uid: 33e1f527-ad05-497d-b98f-579cf4cae132
+    resourceVersion: "872802790"
+    uid: 2911890b-269e-441c-b58b-b0afa52c296f
+  spec:
+    containers:
+    - image: ghcr.io/abelisboa/trisla-traffic-exporter@sha256:a39455f913ea4f7355426b48613cc0479c7e549d099bdba520fd4fb563564f48
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: metrics
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: exporter
+      ports:
+      - containerPort: 9105
+        name: metrics
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: metrics
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2qjln
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node2
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-2qjln
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:40Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:39Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:49Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:49Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://f15b29ebcd679038b611105ecca3aefae07e53a6a0889726792854c36634f91e
+      image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-traffic-exporter:v3.11.2
+      imageID: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-traffic-exporter@sha256:a39455f913ea4f7355426b48613cc0479c7e549d099bdba520fd4fb563564f48
+      lastState: {}
+      name: exporter
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T18:28:40Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-2qjln
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.15
+    hostIPs:
+    - ip: 192.168.10.15
+    phase: Running
+    podIP: 10.233.75.50
+    podIPs:
+    - ip: 10.233.75.50
+    qosClass: Burstable
+    startTime: "2026-02-16T18:28:39Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      cni.projectcalico.org/containerID: 8382d46c67e8a17dba3e270eb8a73fca69130cb938228e2235d29e293eb23d3f
+      cni.projectcalico.org/podIP: 10.233.102.161/32
+      cni.projectcalico.org/podIPs: 10.233.102.161/32
+      k8s.v1.cni.cncf.io/network-status: |-
+        [{
+            "name": "k8s-pod-network",
+            "ips": [
+                "10.233.102.161"
+            ],
+            "default": true,
+            "dns": {}
+        }]
+    creationTimestamp: "2026-02-16T18:28:36Z"
+    generateName: trisla-ui-dashboard-5cc774c4b7-
+    labels:
+      app: trisla-ui-dashboard
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+      pod-template-hash: 5cc774c4b7
+    name: trisla-ui-dashboard-5cc774c4b7-4gw6z
+    namespace: trisla
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: trisla-ui-dashboard-5cc774c4b7
+      uid: a408a61f-5d13-4f17-b4d6-c90844e12331
+    resourceVersion: "872802896"
+    uid: 555e3be9-044e-49db-861c-4119a79d20f7
+  spec:
+    containers:
+    - env:
+      - name: TRISLA_NODE_INTERFACE
+        value: my5g
+      - name: TRISLA_NODE_IP
+        value: 192.168.10.16
+      - name: OTLP_ENDPOINT
+        value: http://trisla-otel-collector:4317
+      image: ghcr.io/abelisboa/trisla-ui-dashboard@sha256:16e23f4de91582e56bfe4704c0139a3154c34c4a44780f17f3082b6195dbe6fb
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: ui-dashboard
+      ports:
+      - containerPort: 80
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-qffsr
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: ghcr-secret
+    nodeName: node1
+    nodeSelector:
+      kubernetes.io/hostname: node1
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-qffsr
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:39Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:51Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-02-16T18:28:36Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://840231cb36c6023cf8cfea9ffe816182da4d582c8050c10a8f7091e447d31f05
+      image: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-ui-dashboard:v3.11.2
+      imageID: ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-ui-dashboard@sha256:16e23f4de91582e56bfe4704c0139a3154c34c4a44780f17f3082b6195dbe6fb
+      lastState: {}
+      name: ui-dashboard
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-02-16T18:28:38Z"
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-qffsr
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.10.16
+    hostIPs:
+    - ip: 192.168.10.16
+    phase: Running
+    podIP: 10.233.102.161
+    podIPs:
+    - ip: 10.233.102.161
+    qosClass: Burstable
+    startTime: "2026-02-16T18:28:36Z"
+kind: List
+metadata:
+  resourceVersion: ""

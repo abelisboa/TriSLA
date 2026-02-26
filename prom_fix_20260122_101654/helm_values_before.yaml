@@ -1,0 +1,237 @@
+COMPUTED VALUES:
+bcNssmf:
+  annotations:
+    trisla-mode: degraded
+  enabled: true
+  env:
+    BC_ENABLED: "true"
+  image:
+    pullPolicy: Always
+    repository: trisla-besu
+    tag: v3.9.1
+  replicas: 2
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    healthcheck:
+      enabled: false
+    port: 8083
+    type: ClusterIP
+besu:
+  affinity: {}
+  enabled: true
+  image:
+    pullPolicy: IfNotPresent
+    repository: trisla-besu
+    tag: v3.9.4
+  nodeSelector: {}
+  persistence:
+    accessModes:
+    - ReadWriteOnce
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  service:
+    p2pPort: 30303
+    port: 8545
+    type: ClusterIP
+    wsPort: 8546
+  tolerations: []
+decisionEngine:
+  enabled: true
+  env:
+    KAFKA_BROKERS: kafka:9092
+    KAFKA_ENABLED: true
+    PORT: "8082"
+    SLA_AGENT_URL: http://trisla-sla-agent-layer:8084
+  image:
+    pullPolicy: IfNotPresent
+    repository: trisla-decision-engine
+    tag: v3.9.4
+  replicas: 2
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 8082
+    type: ClusterIP
+global:
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+  - name: ghcr-secret
+  imageRegistry: ghcr.io/abelisboa
+  namespace: trisla
+  version: v3.7.29
+grafana:
+  adminPassword: admin
+  enabled: true
+  image:
+    repository: grafana/grafana
+    tag: 10.2.3
+kafka:
+  enabled: true
+  image:
+    repository: apache/kafka
+    tag: 3.6.1
+  replicas: 3
+mlNsmf:
+  enabled: true
+  env:
+    KAFKA_BROKERS: ""
+    KAFKA_ENABLED: "false"
+  image:
+    pullPolicy: IfNotPresent
+    repository: trisla-ml-nsmf
+    tag: v3.9.3
+  replicas: 2
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+  service:
+    port: 8081
+    type: ClusterIP
+naspAdapter:
+  enabled: true
+  env:
+    NASP_EXECUTION_MODE: crd
+    NASP_PROXY_ENABLED: "false"
+  image:
+    pullPolicy: IfNotPresent
+    repository: trisla-nasp-adapter
+    tag: v3.9.1
+  replicas: 2
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 8085
+    type: ClusterIP
+network:
+  gateway: 192.168.10.1
+  interface: my5g
+  nodeIP: 192.168.10.16
+otelCollector:
+  enabled: true
+  image:
+    repository: otel/opentelemetry-collector
+    tag: 0.92.0
+  service:
+    ports:
+      grpc: 4317
+      http: 4318
+    type: ClusterIP
+portal:
+  backend:
+    image:
+      tag: v3.9.3
+portalBackend:
+  enabled: true
+  image:
+    repository: trisla-portal-backend
+    tag: v3.9.1
+portalFrontend:
+  enabled: true
+  image:
+    repository: trisla-portal-frontend
+    tag: v3.9.1
+production:
+  enabled: true
+  executeRealActions: true
+  simulationMode: false
+  useRealServices: true
+prometheus:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: v2.49.1
+semCsmf:
+  annotations:
+    trisla-mode: degraded
+  enabled: true
+  env:
+    DECISION_ENGINE_URL: ""
+  image:
+    pullPolicy: IfNotPresent
+    repository: trisla-sem-csmf
+    tag: v3.9.1
+  replicas: 2
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 8080
+    type: ClusterIP
+slaAgentLayer:
+  enabled: true
+  env:
+    BC_NSSMF_URL: http://trisla-bc-nssmf:8090
+    NASP_ADAPTER_URL: http://trisla-nasp-adapter:8085
+  image:
+    pullPolicy: IfNotPresent
+    repository: trisla-sla-agent-layer
+    tag: v3.9.1
+  replicas: 3
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    port: 8084
+    type: ClusterIP
+uiDashboard:
+  enabled: true
+  image:
+    pullPolicy: IfNotPresent
+    repository: trisla-ui-dashboard
+    tag: v3.9.1
+  ingress:
+    className: nginx
+    enabled: true
+    hosts:
+    - host: trisla.local
+      paths:
+      - path: /
+        pathType: Prefix
+  replicas: 2
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  service:
+    port: 80
+    type: ClusterIP

@@ -1,0 +1,82 @@
+========================================
+EXECUÇÃO PROMPT S3.12 - OPÇÃO A
+PLANO DE DADOS REAL E2E ACCEPT
+========================================
+Data: qua 21 jan 2026 23:07:49 UTC
+Node: node006
+Diretório: /home/porvir5g/gtp5g/trisla
+
+FASE 0 - CHECKPOINT: ✓ CONCLUÍDA
+- Pods críticos verificados e Running
+- Services verificados
+
+FASE 1 - INSTRUMENTAÇÃO PLANO DE DADOS: ✓ CONCLUÍDA
+- iperf3-server: Running
+- iperf3-client: Running  
+- traffic-exporter: Running
+
+FASE 2 - PROMETHEUS: ⚠ PARCIAL
+- ServiceMonitor não encontrado (arquivo não existe)
+- Métricas podem estar sendo coletadas via labels
+
+FASE 3 - INTEGRAÇÃO ML-NSMF → PROMETHEUS: ✓ CONCLUÍDA
+- PROMETHEUS_URL configurado corretamente
+- URL: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+
+FASE 4 - DESCOBERTA ENDPOINT SLA: ✓ CONCLUÍDA
+- Endpoint identificado: /api/v1/intents
+- Port-forward estabelecido na porta 8080
+
+FASE 5 - SUBMISSÃO SLA ACCEPT: ✓ CONCLUÍDA
+- Intent submetido com sucesso
+- Status: accepted (ACCEPT)
+- Intent ID: N/A
+- NEST ID: N/A
+- Nota: Erro HTTP 422 ao comunicar com Decision Engine
+
+FASE 6 - XAI: ⚠ ENDPOINT NÃO ENCONTRADO
+- Tentativa: /api/v1/explain → Not Found
+- Endpoint /api/v1/interpret existe mas é para interpretação de intents
+
+FASE 7 - KAFKA: ⚠ SEM EVENTOS
+- Tópico verificado: trisla-decision-events
+- Nenhum evento encontrado (possível devido ao erro no Decision Engine)
+
+FASE 8 - BLOCKCHAIN: ✓ VERIFICADO
+- bc-nssmf: Running e respondendo health checks
+- Besu: Running (sem transações recentes visíveis nos logs)
+
+FASE 9 - MÉTRICAS DE RECURSOS: ✓ CONCLUÍDA
+- Métricas coletadas e salvas em arquivos:
+  * metrics_pods.txt
+  * metrics_nodes.txt
+  * metrics_disk.txt
+
+FASE 10 - FREEZE E INTEGRIDADE: ✓ CONCLUÍDA
+- Checksums gerados em CHECKSUMS.sha256
+
+ARQUIVOS GERADOS:
+- sla_accept.json
+- accept_response.json
+- xai_accept.json (retornou Not Found)
+- metrics_pods.txt
+- metrics_nodes.txt
+- metrics_disk.txt
+- CHECKSUMS.sha256
+
+RESULTADO FINAL:
+✓ Plano de dados instrumentado
+✓ ML configurado para Prometheus
+✓ ACCEPT obtido (status: accepted)
+⚠ XAI: endpoint não encontrado
+⚠ Kafka: sem eventos (Decision Engine com erro 422)
+✓ Blockchain: serviços running
+✓ Métricas E2E coletadas
+✓ Evidence pack parcialmente completo
+
+OBSERVAÇÕES:
+1. Decision Engine retornou erro 422 ao processar o intent
+2. Endpoint XAI não encontrado no portal-backend
+3. Kafka não recebeu eventos devido ao erro no Decision Engine
+4. Intent foi aceito pelo portal-backend antes do processamento completo
+

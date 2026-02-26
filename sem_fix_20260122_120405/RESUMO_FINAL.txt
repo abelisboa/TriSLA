@@ -1,0 +1,29 @@
+WORKDIR: sem_fix_20260122_120405
+Data: qui 22 jan 2026 12:05:18 -03
+
+=== STATUS ATUAL ===
+Pod SEM-CSMF: Running (1/1)
+Imagem em uso: v3.7.11
+Deployment configurado: v3.7.11
+Pods em CrashLoopBackOff: 0
+
+=== DIAGNÓSTICO ===
+O pod que estava em CrashLoopBackOff foi substituído após o rollout restart.
+O novo pod está usando v3.7.11 e está funcionando corretamente.
+Logs mostram apenas um warning sobre owlready2_optimized (não crítico).
+Health checks respondendo com 200 OK.
+
+=== ARQUIVOS GERADOS ===
+  - 01_deploy_image.txt
+  - 01_describe.txt
+  - 01_helm_values.txt
+  - 01_logs_current.txt
+  - 01_logs_previous.txt
+  - 01_pods_crashloop.txt
+  - 01_pods_images.txt
+  - 01_pods.txt
+  - 02_error_signals.txt
+  - 03_image_inspect.json
+  - 03_image_runtime.txt
+  - 03_pull_v394.txt
+  - RESUMO_FINAL.txt

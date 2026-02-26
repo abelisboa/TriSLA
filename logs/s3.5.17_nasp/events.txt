@@ -1,0 +1,65 @@
+LAST SEEN   TYPE      REASON                            OBJECT                                         MESSAGE
+3m2s        Normal    AddedInterface                    pod/curl-health                                Add eth0 [10.233.75.44/32] from k8s-pod-network
+3m2s        Normal    Pulled                            pod/curl-health                                Container image "curlimages/curl:8.5.0" already present on machine
+3m2s        Normal    Created                           pod/curl-health                                Created container curl-health
+3m1s        Normal    Started                           pod/curl-health                                Started container curl-health
+13s         Normal    Scheduled                         pod/curl-health                                Successfully assigned trisla/curl-health to node2
+8m45s       Normal    Scheduled                         pod/trisla-bc-nssmf-866ddbf476-nvss9           Successfully assigned trisla/trisla-bc-nssmf-866ddbf476-nvss9 to node1
+19s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-bc-nssmf-866ddbf476-nvss9           Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m45s       Normal    AddedInterface                    pod/trisla-bc-nssmf-866ddbf476-nvss9           Add eth0 [10.233.102.177/32] from k8s-pod-network
+8m45s       Normal    Pulling                           pod/trisla-bc-nssmf-866ddbf476-nvss9           Pulling image "ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.18"
+8m44s       Normal    Pulled                            pod/trisla-bc-nssmf-866ddbf476-nvss9           Successfully pulled image "ghcr.io/abelisboa/trisla-bc-nssmf:v3.7.18" in 519ms (519ms including waiting). Image size: 175350530 bytes.
+8m44s       Normal    Created                           pod/trisla-bc-nssmf-866ddbf476-nvss9           Created container bc-nssmf
+8m44s       Normal    Started                           pod/trisla-bc-nssmf-866ddbf476-nvss9           Started container bc-nssmf
+8m45s       Normal    SuccessfulCreate                  replicaset/trisla-bc-nssmf-866ddbf476          Created pod: trisla-bc-nssmf-866ddbf476-nvss9
+8m45s       Normal    ScalingReplicaSet                 deployment/trisla-bc-nssmf                     Scaled up replica set trisla-bc-nssmf-866ddbf476 to 1
+11m         Normal    AddedInterface                    pod/trisla-besu-5548f6498d-xnrxm               Add eth0 [10.233.75.24/32] from k8s-pod-network
+11m         Normal    Pulled                            pod/trisla-besu-5548f6498d-xnrxm               Container image "ghcr.io/abelisboa/trisla-besu:v3.7.16" already present on machine
+11m         Normal    Created                           pod/trisla-besu-5548f6498d-xnrxm               Created container besu
+11m         Normal    Started                           pod/trisla-besu-5548f6498d-xnrxm               Started container besu
+8m45s       Normal    Scheduled                         pod/trisla-besu-5548f6498d-xnrxm               Successfully assigned trisla/trisla-besu-5548f6498d-xnrxm to node2
+8m45s       Normal    SuccessfulCreate                  replicaset/trisla-besu-5548f6498d              Created pod: trisla-besu-5548f6498d-xnrxm
+11m         Normal    Provisioning                      persistentvolumeclaim/trisla-besu-data         External provisioner is provisioning volume for claim "trisla/trisla-besu-data"
+11m         Normal    ProvisioningSucceeded             persistentvolumeclaim/trisla-besu-data         Successfully provisioned volume pvc-1c70f64e-4778-45fe-aadd-330a1044add0
+8m45s       Normal    ExternalProvisioning              persistentvolumeclaim/trisla-besu-data         Waiting for a volume to be created either by the external provisioner 'cluster.local/nfs-storage-nfs-subdir-external-provisioner' or manually by the system administrator. If volume creation is delayed, please verify that the provisioner is running and correctly registered.
+8m45s       Normal    ScalingReplicaSet                 deployment/trisla-besu                         Scaled up replica set trisla-besu-5548f6498d to 1
+8m45s       Normal    Scheduled                         pod/trisla-decision-engine-7d466f9f69-cb7zt    Successfully assigned trisla/trisla-decision-engine-7d466f9f69-cb7zt to node1
+31s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-decision-engine-7d466f9f69-cb7zt    Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m45s       Normal    AddedInterface                    pod/trisla-decision-engine-7d466f9f69-cb7zt    Add eth0 [10.233.102.166/32] from k8s-pod-network
+8m44s       Normal    Pulled                            pod/trisla-decision-engine-7d466f9f69-cb7zt    Container image "ghcr.io/abelisboa/trisla-decision-engine:nasp-a2" already present on machine
+8m44s       Normal    Created                           pod/trisla-decision-engine-7d466f9f69-cb7zt    Created container decision-engine
+8m44s       Normal    Started                           pod/trisla-decision-engine-7d466f9f69-cb7zt    Started container decision-engine
+8m45s       Normal    SuccessfulCreate                  replicaset/trisla-decision-engine-7d466f9f69   Created pod: trisla-decision-engine-7d466f9f69-cb7zt
+8m45s       Normal    ScalingReplicaSet                 deployment/trisla-decision-engine              Scaled up replica set trisla-decision-engine-7d466f9f69 to 1
+8m45s       Normal    Scheduled                         pod/trisla-ml-nsmf-779d6cc88b-qn46j            Successfully assigned trisla/trisla-ml-nsmf-779d6cc88b-qn46j to node1
+52s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-ml-nsmf-779d6cc88b-qn46j            Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m45s       Normal    AddedInterface                    pod/trisla-ml-nsmf-779d6cc88b-qn46j            Add eth0 [10.233.102.185/32] from k8s-pod-network
+8m45s       Normal    Pulled                            pod/trisla-ml-nsmf-779d6cc88b-qn46j            Container image "ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.14" already present on machine
+8m45s       Normal    Created                           pod/trisla-ml-nsmf-779d6cc88b-qn46j            Created container ml-nsmf
+8m45s       Normal    Started                           pod/trisla-ml-nsmf-779d6cc88b-qn46j            Started container ml-nsmf
+8m45s       Normal    SuccessfulCreate                  replicaset/trisla-ml-nsmf-779d6cc88b           Created pod: trisla-ml-nsmf-779d6cc88b-qn46j
+8m45s       Normal    ScalingReplicaSet                 deployment/trisla-ml-nsmf                      Scaled up replica set trisla-ml-nsmf-779d6cc88b to 1
+8m45s       Normal    Scheduled                         pod/trisla-nasp-adapter-74cd854849-4tmwv       Successfully assigned trisla/trisla-nasp-adapter-74cd854849-4tmwv to node1
+31s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-nasp-adapter-74cd854849-4tmwv       Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m44s       Normal    AddedInterface                    pod/trisla-nasp-adapter-74cd854849-4tmwv       Add eth0 [10.233.102.152/32] from k8s-pod-network
+8m44s       Normal    Pulled                            pod/trisla-nasp-adapter-74cd854849-4tmwv       Container image "ghcr.io/abelisboa/trisla-nasp-adapter:nasp-a2" already present on machine
+8m44s       Normal    Created                           pod/trisla-nasp-adapter-74cd854849-4tmwv       Created container nasp-adapter
+8m44s       Normal    Started                           pod/trisla-nasp-adapter-74cd854849-4tmwv       Started container nasp-adapter
+8m45s       Normal    SuccessfulCreate                  replicaset/trisla-nasp-adapter-74cd854849      Created pod: trisla-nasp-adapter-74cd854849-4tmwv
+8m45s       Normal    ScalingReplicaSet                 deployment/trisla-nasp-adapter                 Scaled up replica set trisla-nasp-adapter-74cd854849 to 1
+8m45s       Normal    Scheduled                         pod/trisla-sla-agent-layer-6b65566595-b45hh    Successfully assigned trisla/trisla-sla-agent-layer-6b65566595-b45hh to node1
+24s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-sla-agent-layer-6b65566595-b45hh    Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m44s       Normal    AddedInterface                    pod/trisla-sla-agent-layer-6b65566595-b45hh    Add eth0 [10.233.102.137/32] from k8s-pod-network
+8m44s       Normal    Pulled                            pod/trisla-sla-agent-layer-6b65566595-b45hh    Container image "ghcr.io/abelisboa/trisla-sla-agent-layer:nasp-a2" already present on machine
+8m44s       Normal    Created                           pod/trisla-sla-agent-layer-6b65566595-b45hh    Created container sla-agent-layer
+8m44s       Normal    Started                           pod/trisla-sla-agent-layer-6b65566595-b45hh    Started container sla-agent-layer
+8m45s       Normal    SuccessfulCreate                  replicaset/trisla-sla-agent-layer-6b65566595   Created pod: trisla-sla-agent-layer-6b65566595-b45hh
+8m45s       Normal    ScalingReplicaSet                 deployment/trisla-sla-agent-layer              Scaled up replica set trisla-sla-agent-layer-6b65566595 to 1
+8m45s       Normal    Scheduled                         pod/trisla-ui-dashboard-dfb9ff9cc-jk4xb        Successfully assigned trisla/trisla-ui-dashboard-dfb9ff9cc-jk4xb to node1
+57s         Warning   FailedToRetrieveImagePullSecret   pod/trisla-ui-dashboard-dfb9ff9cc-jk4xb        Unable to retrieve some image pull secrets (ghcr-secret); attempting to pull the image may not succeed.
+8m44s       Normal    AddedInterface                    pod/trisla-ui-dashboard-dfb9ff9cc-jk4xb        Add eth0 [10.233.102.129/32] from k8s-pod-network
+8m44s       Normal    Pulled                            pod/trisla-ui-dashboard-dfb9ff9cc-jk4xb        Container image "ghcr.io/abelisboa/trisla-ui-dashboard:nasp-a2" already present on machine
+8m44s       Normal    Created                           pod/trisla-ui-dashboard-dfb9ff9cc-jk4xb        Created container ui-dashboard
+8m44s       Normal    Started                           pod/trisla-ui-dashboard-dfb9ff9cc-jk4xb        Started container ui-dashboard
+8m45s       Normal    SuccessfulCreate                  replicaset/trisla-ui-dashboard-dfb9ff9cc       Created pod: trisla-ui-dashboard-dfb9ff9cc-jk4xb
+8m45s       Normal    ScalingReplicaSet                 deployment/trisla-ui-dashboard                 Scaled up replica set trisla-ui-dashboard-dfb9ff9cc to 1

@@ -1,0 +1,1 @@
+✓ GATE 2 PASSOU: Health retornou 200

@@ -1,0 +1,13 @@
+/app/src/decision_maker.py:36:            rules_result = await self.rule_engine.evaluate(context)
+/app/src/main.py:144:    decision_producer = None  # ⚠️ FASE C1: Não usar DummyProducer - endpoint /evaluate não depende de Kafka
+/app/src/main.py:145:    print("ℹ️ Decision Engine: Kafka desabilitado. Endpoint /evaluate usa clientes HTTP diretos.")
+/app/src/main.py:316:    ⚠️ Este endpoint está DEPRECATED. Use /evaluate para fluxo real.
+/app/src/main.py:321:    logger.warning("⚠️ Endpoint /api/v1/decide está DEPRECATED. Use /evaluate para fluxo real.")
+/app/src/main.py:398:@app.post("/evaluate", response_model=DecisionResult)
+/app/src/main.py:399:async def evaluate_sla(sla_input: SLAEvaluateInput):
+/app/src/main.py:425:    with tracer.start_as_current_span("evaluate_sla") as span:
+/app/src/models.py:150:    Entrada para o endpoint /evaluate
+/app/src/rule_engine.py:57:    async def evaluate(self, context: Dict[str, Any]) -> Dict[str, Any]:
+/app/src/rule_engine.py:59:        with tracer.start_as_current_span("evaluate_rules") as span:
+/app/src/rule_engine.py:63:                if self._evaluate_condition(rule["condition"], context):
+/app/src/rule_engine.py:85:    def _evaluate_condition(self, condition: str, context: Dict[str, Any]) -> bool:

@@ -1,0 +1,15 @@
+NAME                                      CPU(cores)   MEMORY(bytes)   
+kafka-c948b8d64-jgmz5                     103m         5017Mi          
+trisla-bc-nssmf-7c8ff9c4fc-kwmqd          3m           120Mi           
+trisla-besu-59f9fcf4c-7gdd7               2m           255Mi           
+trisla-decision-engine-6957dc56fb-jsxxs   5m           61Mi            
+trisla-iperf3-client-8gx9k                865m         4Mi             
+trisla-iperf3-server-5fff5c9ff-fg775      711m         3Mi             
+trisla-ml-nsmf-6bc9fdf647-rjlp5           5m           175Mi           
+trisla-nasp-adapter-5688bf5f8f-x4fm2      0m           0Mi             
+trisla-portal-backend-7498b598f7-hm7gw    19m          61Mi            
+trisla-portal-frontend-7dffd67779-mql7r   1m           51Mi            
+trisla-sem-csmf-95dfc79f4-zpscg           4m           160Mi           
+trisla-sla-agent-layer-b8c7b6fdc-x6fbb    3m           48Mi            
+trisla-traffic-exporter-dd58cb5bf-6szpr   1m           23Mi            
+trisla-ui-dashboard-85755bf748-t9zfs      1m           10Mi            

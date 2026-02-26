@@ -1,0 +1,319 @@
+# ============================================
+# TriSLA Helm Chart - Values
+# ============================================
+
+global:
+  imageRegistry: ghcr.io/abelisboa
+  imagePullSecrets:
+    - name: ghcr-secret
+  namespace: trisla
+
+# Network Configuration (from auto-config)
+network:
+  interface: "my5g"
+  nodeIP: "192.168.10.16"
+  gateway: "192.168.10.1"
+
+# SEM-CSMF
+semCsmf:
+  enabled: true  # Habilitado para correção infra - Base idempotente
+  image:
+    repository: trisla-sem-csmf
+    tag: v3.11.2
+    pullPolicy: IfNotPresent
+  annotations:
+    trisla-mode: degraded
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    DECISION_ENGINE_URL: ""  # Sprint S3.4 - Valor padrão obrigatório
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# ML-NSMF
+mlNsmf:
+  enabled: true  # Habilitado para correção infra - Base idempotente
+  image:
+    repository: trisla-ml-nsmf
+    tag: v3.11.2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8081
+  env:
+    KAFKA_ENABLED: "false"
+    KAFKA_BROKERS: ""
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+  replicas: 2
+
+# Decision Engine
+decisionEngine:
+  env:
+    LOG_LEVEL: "DEBUG"
+  enabled: true  # Habilitado para correção infra - Base idempotente
+  image:
+    repository: trisla-decision-engine
+    tag: v3.11.2
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+  # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0): quando true, ACCEPT só após Gate PASS
+  gate3gpp:
+    enabled: false
+  # MDCE v1 (PROMPT_SMDCE_V1): env adicionais (ex.: MDCE_FORCE_FAIL=true para sanity)
+  # mdceForceFail: false  # usar decisionEngine.env.MDCE_FORCE_FAIL=true para teste
+
+# BC-NSSMF
+bcNssmf:
+  enabled: true  # Habilitado para correção infra - Base idempotente
+  image:
+    repository: trisla-bc-nssmf
+    tag: v3.11.2
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8083
+    # Desabilitar healthcheck RPC em modo degraded
+    healthcheck:
+      enabled: false
+  annotations:
+    trisla-mode: degraded
+  env:
+    BC_ENABLED: "true"  # Sprint S3.4 - Valor padrão obrigatório
+    BC_TX_RECEIPT_TIMEOUT: "120"  # S55: receipt wait (s) for slow block time
+    # Variáveis de ambiente serão injetadas automaticamente se BESU estiver habilitado
+    # TRISLA_RPC_URL e BESU_RPC_URL serão configuradas no template deployment-bc-nssmf.yaml
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+# BESU - Hyperledger Besu Blockchain Client (versioned)
+# BESU - Hyperledger Besu Blockchain Client (versioned)
+besu:
+  enabled: true   # S56.1/S56.2 - QBFT single-node; chave SSOT via Secret + initContainer
+
+  qbft:
+    enabled: true
+    useGenesisFile: true
+
+  validatorKeySecret: "trisla-besu-validator-key"  # S56.2 - Secret com key do validador; initContainer copia para /opt/besu/data/key
+
+  image:
+    repository: trisla-besu
+    tag: v3.11.0
+    pullPolicy: IfNotPresent
+
+  replicaCount: 1
+
+  service:
+    type: ClusterIP
+    port: 8545
+    wsPort: 8546
+    p2pPort: 30303
+
+  # Genesis via QBFT config (S56)
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""  # Usar storage class padrão do cluster
+
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+
+  nodeSelector: {}
+
+  affinity: {}
+
+  tolerations: []
+
+# SLA-Agent Layer
+slaAgentLayer:
+  env:
+    KAFKA_ENABLED: true
+    KAFKA_BROKERS: kafka.trisla.svc.cluster.local:9092
+  enabled: true  # Habilitado para correção infra - Base idempotente
+  image:
+    repository: trisla-sla-agent-layer
+    tag: v3.11.2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8084
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 3
+
+# NASP Adapter
+naspAdapter:
+  enabled: true  # Habilitado para correção infra - Base idempotente
+  image:
+    repository: trisla-nasp-adapter
+    tag: v3.9.22
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8085
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+  # Gate 3GPP Real (PROMPT_S3GPP_GATE_v1.0); upfMaxSessions para FAIL controlado (PROMPT_SHELM_EXPOSE_UPFMAX_v1.0)
+  gate3gpp:
+    enabled: false
+    coreNamespace: "ns-1274485"
+    ueransimNamespace: "ueransim"
+    upfMaxSessions: 1000000
+  # MDCE v2 Capacity Accounting (PROMPT_SMDCE_V2_CAPACITY_ACCOUNTING) — ledger, rollback, reconciler
+  capacityAccounting:
+    enabled: true
+    reservationTtlSeconds: 300
+    reconcileIntervalSeconds: 60
+    capacitySafetyFactor: "0.1"
+    # Cost model calibrado (PROMPT_SMDCE_V2_COST_TUNING): quando métricas multidomain disponíveis, COST_* ≈ Δ * fator (eMBB 1.2, URLLC 1.5, mMTC 0.5). Sem métricas: defaults 1.
+    costEmbbCore: 1
+    costEmbbRan: 1
+    costEmbbTransport: 1
+    costUrllcCore: 1
+    costUrllcRan: 1
+    costUrllcTransport: 1
+    costMmtcCore: 1
+    costMmtcRan: 1
+    costMmtcTransport: 1
+  # Telemetria real (PROMPT_STELEMETRY_REAL_ACTIVATION): CPU%, Mem%, UE via Prometheus
+  prometheusUrl: "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+
+# UI Dashboard
+uiDashboard:
+  enabled: true  # Habilitado para correção infra - Base idempotente
+  image:
+    repository: trisla-ui-dashboard
+    tag: v3.11.2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: trisla.local
+        paths:
+          - path: /
+            pathType: Prefix
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  replicas: 2
+
+# Traffic Exporter (PROMPT_S52; PROMPT_SNASP_07 — SLA-aware labels v3.10.8)
+trafficExporter:
+  enabled: true
+  image:
+    repository: trisla-traffic-exporter
+    tag: v3.11.2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9105
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  replicas: 1
+
+# Kafka
+kafka:
+  enabled: true
+  image:
+    repository: apache/kafka
+    tag: 3.6.1
+  replicas: 3
+
+# OpenTelemetry Collector
+otelCollector:
+  enabled: true
+  image:
+    repository: otel/opentelemetry-collector
+    tag: 0.92.0
+  service:
+    type: ClusterIP
+    ports:
+      grpc: 4317
+      http: 4318
+
+# Prometheus
+prometheus:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: v2.49.1
+
+# Grafana
+grafana:
+  enabled: true
+  image:
+    repository: grafana/grafana
+    tag: 10.2.3
+  adminPassword: admin  # ⚠️ ALTERAR EM PRODUÇÃO
+
+# Production Settings
+production:
+  enabled: true
+  simulationMode: false
+  useRealServices: true
+  executeRealActions: true
+
+# BESU Subchart Configuration (removed - using main chart besu.enabled)
+# trisla-besu:
+#   enabled: false
+

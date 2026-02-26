@@ -1,0 +1,15 @@
+WORKDIR: pullfix_20260122_115454
+Data: qui 22 jan 2026 11:58:50 -03
+
+=== FASES CONCLUÍDAS ===
+✓ FASE 1: Pods em erro identificados (403 Forbidden)
+✓ FASE 2: Secret auditado (tipo OK, mas token expirado)
+✓ FASE 3: imagePullSecrets verificado nos deployments
+✓ FASE 4: Secret recriado a partir do podman auth.json
+✓ FASE 5: Helm render verificado (9 ocorrências de ghcr-secret)
+✓ FASE 6: Rollout executado (deployments reiniciados)
+✓ FASE 7: Evidence pack gerado
+
+Pods com ImagePullBackOff antes: 8
+Pods com ImagePullBackOff depois: 1 (kafkatools - não TriSLA)
+Pods TriSLA com erro: 1 (sem-csmf em CrashLoopBackOff - não é mais pull error)

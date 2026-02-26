@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:
+    endpoints.kubernetes.io/last-change-trigger-time: "2026-01-20T15:34:14Z"
+  creationTimestamp: "2025-12-19T17:28:59Z"
+  labels:
+    app.kubernetes.io/component: decision-engine
+    app.kubernetes.io/instance: trisla
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: trisla
+    app.kubernetes.io/version: v3.7.29
+  name: trisla-decision-engine
+  namespace: trisla
+  resourceVersion: "866113610"
+  uid: 015d8d81-5665-47d0-8f53-cb73ef728b59
+subsets:
+- addresses:
+  - ip: 10.233.102.153
+    nodeName: node1
+    targetRef:
+      kind: Pod
+      name: trisla-decision-engine-5f6fb65c8f-bz7wt
+      namespace: trisla
+      uid: b6639ffd-1264-495d-829e-cec29c9f753d
+  notReadyAddresses:
+  - ip: 10.233.102.189
+    nodeName: node1
+    targetRef:
+      kind: Pod
+      name: trisla-decision-engine-f984f448c-8j8kl
+      namespace: trisla
+      uid: e0413d6e-dd76-4998-b9b0-12992ed77f6d
+  ports:
+  - name: http
+    port: 8082
+    protocol: TCP

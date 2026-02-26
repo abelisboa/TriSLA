@@ -1,0 +1,44 @@
+=== CHECKS PROIBIDOS ===
+OK: sem latest
+26:  name: trisla-besu-genesis
+28:  genesis.json: |
+62:  name: trisla-trisla-besu-genesis
+71:  genesis.json: |
+499:          - "--genesis-file=/opt/besu/genesis.json"
+526:          mountPath: /opt/besu/genesis.json
+527:          subPath: genesis.json
+570:          name: trisla-trisla-besu-genesis
+FAIL: genesis encontrado
+OK: sem miner flags
+530:          exec:
+535:              curl -f -X POST http://localhost:8545 \
+544:          exec:
+549:              curl -f -X POST http://localhost:8545 \
+FAIL: exec/curl encontrado
+
+=== CHECKS DO BESU (probes tcpSocket) ===
+714:          tcpSocket:
+721:          tcpSocket:
+
+=== CHECK DUPLICIDADE BESU ===
+8
+26:  name: trisla-besu-genesis
+62:  name: trisla-trisla-besu-genesis
+65:    app.kubernetes.io/name: trisla-besu
+125:  name: trisla-trisla-besu-data
+128:    app.kubernetes.io/name: trisla-besu
+144:  name: trisla-besu-data
+245:  name: trisla-trisla-besu
+248:    app.kubernetes.io/name: trisla-besu
+269:    app.kubernetes.io/name: trisla-besu
+299:  name: trisla-besu
+471:  name: trisla-trisla-besu
+474:    app.kubernetes.io/name: trisla-besu
+483:      app.kubernetes.io/name: trisla-besu
+488:        app.kubernetes.io/name: trisla-besu
+492:      - name: trisla-besu
+570:          name: trisla-trisla-besu-genesis
+651:  name: trisla-besu
+679:      - name: besu
+704:        - name: besu-data
+728:      - name: besu-data

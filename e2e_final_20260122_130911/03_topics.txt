@@ -1,0 +1,2 @@
+pod "kafkatools" deleted from trisla namespace
+error: timed out waiting for the condition

@@ -1,0 +1,2 @@
+NAME  	NAMESPACE	REVISION	UPDATED                               	STATUS  	CHART        	APP VERSION
+trisla	trisla   	2       	2025-12-19 14:36:19.64163212 -0300 -03	deployed	trisla-3.7.10	3.7.10     

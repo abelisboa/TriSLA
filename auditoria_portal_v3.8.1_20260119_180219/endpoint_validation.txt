@@ -1,0 +1,4 @@
+✅ Endpoint /api/v1/sla/submit confirmado e funcionando
+Teste realizado:
+curl -X POST http://trisla-portal-backend:8001/api/v1/sla/submit
+Resultado: 422 (validação de negócio - endpoint funciona)

@@ -1,0 +1,17 @@
+=== FIX SEM-CSMF: Remover campo decision do payload ===
+Data: 2026-01-19 22:24:25
+WORKDIR: /home/porvir5g/gtp5g/trisla/run_fix_sem_decision_v3.8.2_20260119_222401
+
+=== CORREÇÃO APLICADA ===
+1. Patch aplicado: remoção de campo "decision" antes de requests.post
+2. Build e push: ghcr.io/abelisboa/trisla-sem-csmf:v3.8.2
+3. Deploy realizado
+
+=== STATUS ===
+- Build: OK
+- Push: OK
+- Deploy: OK
+- Pod: Running 1/1
+
+=== VALIDAÇÃO ===
+Verificar logs do SEM-CSMF para confirmar ausência de erro 422/NoneType.

@@ -1,0 +1,61 @@
+Name:             trisla-iperf3-server-76f599c648-58hbh
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node2/192.168.10.15
+Start Time:       Thu, 22 Jan 2026 11:54:04 -0300
+Labels:           app=trisla-iperf3-server
+                  pod-template-hash=76f599c648
+Annotations:      cni.projectcalico.org/containerID: 7de10b30561b144acc7c07b7f9683d7e6cf42e43fd7a0f532cf36637b80256a4
+                  cni.projectcalico.org/podIP: 10.233.75.39/32
+                  cni.projectcalico.org/podIPs: 10.233.75.39/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.75.39"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+                  kubectl.kubernetes.io/restartedAt: 2026-01-22T11:56:51-03:00
+Status:           Running
+IP:               10.233.75.39
+IPs:
+  IP:           10.233.75.39
+Controlled By:  ReplicaSet/trisla-iperf3-server-76f599c648
+Containers:
+  iperf3:
+    Container ID:  containerd://f5daeb70d656100e2d620171e2b427b0425e3a4b922ea5df8e16bdfc52b89687
+    Image:         networkstatic/iperf3
+    Image ID:      docker.io/networkstatic/iperf3@sha256:07dcca91c0e47d82d83d91de8c3d46b840eef4180499456b4fa8d6dadb46b6c8
+    Port:          5201/TCP
+    Host Port:     0/TCP
+    Args:
+      -s
+    State:          Running
+      Started:      Thu, 22 Jan 2026 11:54:39 -0300
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-6w9bf (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-6w9bf:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

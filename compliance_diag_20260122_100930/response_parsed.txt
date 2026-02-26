@@ -1,0 +1,6 @@
+intent_id = ca23701d-2845-46b4-9c44-1b2d290b032b
+decision = RENEG
+sla_compliance = None
+rule_id = None
+justification = Rule rule-002 matched: sla_compliance < 0.9
+timestamp = 2026-01-22T13:09:30.915680+00:00

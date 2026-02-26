@@ -1,0 +1,24 @@
+sáb 20 dez 2025 18:43:31 -03
+NAME                                      READY   STATUS      RESTARTS   AGE
+test-curl2                                0/1     Completed   0          5h27m
+trisla-bc-nssmf-84995f7445-t2jd2          1/1     Running     0          26h
+trisla-decision-engine-bf4cb8b7f-fmj4w    1/1     Running     0          5h29m
+trisla-ml-nsmf-779d6cc88b-qn46j           1/1     Running     0          28h
+trisla-nasp-adapter-74cd854849-4tmwv      1/1     Running     0          28h
+trisla-portal-backend-565fcc7f45-kqd8b    1/1     Running     0          8m44s
+trisla-portal-frontend-6dd98dc868-7vfqf   1/1     Running     0          8m44s
+trisla-sla-agent-layer-7955cb7c-27rpk     1/1     Running     0          5h29m
+trisla-ui-dashboard-dfb9ff9cc-jk4xb       1/1     Running     0          28h
+NAME                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+trisla-bc-nssmf                  ClusterIP   10.233.39.215   <none>        8083/TCP         28h
+trisla-bc-nssmf-metrics          ClusterIP   10.233.30.108   <none>        8083/TCP         5h59m
+trisla-decision-engine           ClusterIP   10.233.26.201   <none>        8082/TCP         28h
+trisla-decision-engine-metrics   ClusterIP   10.233.32.162   <none>        8082/TCP         5h59m
+trisla-ml-nsmf                   ClusterIP   10.233.28.209   <none>        8081/TCP         28h
+trisla-nasp-adapter              ClusterIP   10.233.6.35     <none>        8085/TCP         28h
+trisla-portal-backend            NodePort    10.233.46.159   <none>        8001:32002/TCP   4h33m
+trisla-portal-frontend           NodePort    10.233.19.22    <none>        80:32001/TCP     4h33m
+trisla-sem-csmf                  ClusterIP   10.233.13.160   <none>        8080/TCP         28h
+trisla-sla-agent-layer           ClusterIP   10.233.4.83     <none>        8084/TCP         28h
+trisla-sla-agent-metrics         ClusterIP   10.233.25.234   <none>        8084/TCP         5h59m
+trisla-ui-dashboard              ClusterIP   10.233.4.125    <none>        80/TCP           28h

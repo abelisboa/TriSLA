@@ -1,0 +1,28 @@
+{
+  "teste": "gate-final-001",
+  "timestamp": "2026-01-19T12:28:40.080940+00:00",
+  "endpoint": "/evaluate",
+  "status": "HTTP 200 OK",
+  "resposta": {
+    "decision_id": "dec-gate-final-001",
+    "intent_id": "gate-final-001",
+    "action": "RENEG",
+    "ml_risk_score": 0.5005357752797864,
+    "ml_risk_level": "medium",
+    "confidence": 0.85,
+    "reasoning": "SLA eMBB requer renegociação. ML prevê risco MÉDIO (score: 0.50). Recomenda-se ajustar SLOs ou recursos. Dominios: RAN, Transporte. Risk level medium devido principalmente à latência",
+    "timestamp": "2026-01-19T12:28:40.080940+00:00",
+    "slos": [
+      {"name": "latency", "value": 20.0, "threshold": 20.0, "unit": "ms"},
+      {"name": "reliability", "value": 0.99, "threshold": 0.99, "unit": "ratio"},
+      {"name": "throughput", "value": 100.0, "threshold": 100.0, "unit": "Mbps"}
+    ],
+    "domains": ["RAN", "Transporte"]
+  },
+  "logs_confirmam": {
+    "sla_recebido": true,
+    "chamada_ml_nsmf": true,
+    "decisao_persistida": true,
+    "encaminhamento_bc_nssmf": true
+  }
+}

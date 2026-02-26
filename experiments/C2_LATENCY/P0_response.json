@@ -1,0 +1,46 @@
+{
+  "correlation_id": "C2_LATENCY_P0-51360544",
+  "start_ts_ms": 1766781379632,
+  "end_ts_ms": 1766781379859,
+  "latency_ms": 227,
+  "http_code": 200,
+  "response": {
+    "intent_id": "a61700a2-5951-4ad6-8539-3368114aac01",
+    "service_type": "URLLC",
+    "sla_requirements": {
+      "service_type": "URLLC",
+      "latency_ms": 5.0,
+      "throughput_mbps": 10.0,
+      "reliability": 0.99999,
+      "jitter_ms": 1.0
+    },
+    "ml_prediction": {
+      "risk_score": 0.28822824502285815,
+      "risk_level": "low",
+      "viability_score": null,
+      "confidence": 0.85,
+      "timestamp": "2025-12-26T20:36:19.804265+00:00",
+      "model_used": false,
+      "metrics_used": {
+        "real_metrics_count": 0,
+        "real_metrics": [],
+        "time_range_minutes": 10
+      }
+    },
+    "decision": "RENEG",
+    "justification": "Rule rule-002 matched: sla_compliance < 0.9",
+    "reason": "Rule rule-002 matched: sla_compliance < 0.9",
+    "blockchain_tx_hash": null,
+    "tx_hash": null,
+    "sla_hash": null,
+    "timestamp": "2025-12-26T20:36:19.851528+00:00",
+    "status": "RENEGOTIATION_REQUIRED",
+    "sla_id": "dec-a61700a2-5951-4ad6-8539-3368114aac01",
+    "nest_id": "nest-a61700a2-5951-4ad6-8539-3368114aac01",
+    "sem_csmf_status": "OK",
+    "ml_nsmf_status": "OK",
+    "bc_status": "SKIPPED",
+    "sla_agent_status": "SKIPPED",
+    "block_number": null
+  }
+}

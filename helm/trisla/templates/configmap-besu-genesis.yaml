@@ -1,0 +1,13 @@
+{{- if and .Values.besu.enabled .Values.besu.qbft.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trisla.name" . }}-besu-genesis
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app: besu
+data:
+  genesis.json: |
+{{ .Files.Get "besu/genesis-qbft.json" | indent 4 }}
+{{- end }}

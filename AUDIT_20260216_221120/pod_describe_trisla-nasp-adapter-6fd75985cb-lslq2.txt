@@ -1,0 +1,89 @@
+Name:             trisla-nasp-adapter-6fd75985cb-lslq2
+Namespace:        trisla
+Priority:         0
+Service Account:  trisla-nasp-adapter
+Node:             node1/192.168.10.16
+Start Time:       Mon, 16 Feb 2026 15:28:36 -0300
+Labels:           app=trisla-nasp-adapter
+                  app.kubernetes.io/instance=trisla
+                  app.kubernetes.io/name=trisla
+                  pod-template-hash=6fd75985cb
+Annotations:      cni.projectcalico.org/containerID: 2f25b9463e7fc0ec07b451a699a885d05448fb83f35cf4c9844ba484e25ff248
+                  cni.projectcalico.org/podIP: 10.233.102.183/32
+                  cni.projectcalico.org/podIPs: 10.233.102.183/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.102.183"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Running
+IP:               10.233.102.183
+IPs:
+  IP:           10.233.102.183
+Controlled By:  ReplicaSet/trisla-nasp-adapter-6fd75985cb
+Containers:
+  nasp-adapter:
+    Container ID:   containerd://894b95209d8567ee919fdf407830f9055a6856a3b8bd42d1ae85d4c2a02549ed
+    Image:          ghcr.io/abelisboa/trisla-nasp-adapter@sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529
+    Image ID:       ghcr.io/abelisboa/mirror-ghcr-io-abelisboa-trisla-nasp-adapter@sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529
+    Port:           8085/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 16 Feb 2026 15:28:39 -0300
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     2
+      memory:  2Gi
+    Requests:
+      cpu:      500m
+      memory:   512Mi
+    Liveness:   http-get http://:http/health delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:http/health delay=10s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      TRISLA_NODE_INTERFACE:         my5g
+      TRISLA_NODE_IP:                192.168.10.16
+      SEM_CSMF_URL:                  http://trisla-sem-csmf.trisla.svc.cluster.local:8080
+      OTLP_ENDPOINT:                 http://trisla-otel-collector:4317
+      GATE_3GPP_ENABLED:             false
+      GATE_3GPP_CORE_NAMESPACE:      ns-1274485
+      GATE_3GPP_UERANSIM_NAMESPACE:  ueransim
+      CAPACITY_ACCOUNTING_ENABLED:   true
+      RESERVATION_TTL_SECONDS:       300
+      RECONCILE_INTERVAL_SECONDS:    60
+      CAPACITY_SAFETY_FACTOR:        0.1
+      COST_EMBB_CORE:                1
+      COST_EMBB_RAN:                 1
+      COST_EMBB_TRANSPORT:           1
+      COST_URLLC_CORE:               1
+      COST_URLLC_RAN:                1
+      COST_URLLC_TRANSPORT:          1
+      COST_MMTC_CORE:                1
+      COST_MMTC_RAN:                 1
+      COST_MMTC_TRANSPORT:           1
+      PROMETHEUS_URL:                http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-mqjt7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-mqjt7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              kubernetes.io/hostname=node1
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

@@ -1,0 +1,2 @@
+trisla-ml-nsmf-545ff48fb7-tmh58           1/1     Terminating        0                23m     10.233.102.138   node1   <none>           <none>
+trisla-ml-nsmf-689fc96f59-mzj7c           1/1     Running            0                11s     10.233.102.156   node1   <none>           <none>

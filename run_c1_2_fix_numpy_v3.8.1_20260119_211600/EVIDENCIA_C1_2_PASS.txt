@@ -1,0 +1,12 @@
+C1_2 PASS — ML-NSMF NumPy 2.x compatibilidade corrigida
+- Problema: shap 0.43.0 incompatível com NumPy 2.2.6 (np.obj2sctype removido)
+- Correção: Atualização shap 0.43.0 -> shap>=0.45.0 (instalado: shap-0.49.1)
+- Imagem: ghcr.io/abelisboa/trisla-ml-nsmf:v3.8.1
+- Build: OK
+- Push: OK
+- Deploy: OK
+- Pod: Running 1/1
+- Sem erro obj2sctype nos logs: OK
+- Container duplicado removido: OK
+- InitContainer problemático removido: OK
+Diretório: /home/porvir5g/gtp5g/trisla/run_c1_2_fix_numpy_v3.8.1_20260119_211600

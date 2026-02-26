@@ -1,0 +1,11 @@
+[FASE 4] ML-NSMF (fallback, predições, modelo)
+Arquivos ML: 1
+Linhas com fallback (deve ser 0): 6
+Linhas indicativas de predição: 6
+FAIL: ML-NSMF com fallback
+Modelo não disponível - usando predição simulada
+Modelo não disponível - usando predição simulada
+Modelo não disponível - usando predição simulada
+Modelo não disponível - usando predição simulada
+Modelo não disponível - usando predição simulada
+Modelo não disponível - usando predição simulada

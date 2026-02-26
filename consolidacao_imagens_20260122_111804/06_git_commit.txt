@@ -1,0 +1,2 @@
+[main 0bfb8cf] chore(images): consolidar TODAS as imagens TriSLA em v3.9.4 (anti-regressao total)
+ 2 files changed, 14 insertions(+), 14 deletions(-)

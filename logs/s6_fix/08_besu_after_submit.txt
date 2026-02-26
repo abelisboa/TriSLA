@@ -1,0 +1,68 @@
+Found 2 pods, using pod/trisla-besu-6db76bff8c-gjhnw
+Setting logging level to INFO
+2025-12-21 14:14:52.443+00:00 | main | INFO  | Besu | Starting Besu
+2025-12-21 14:14:52.997+00:00 | main | WARN  | Besu | --graphql-http-host has been ignored because --graphql-http-enabled was not defined on the command line.
+2025-12-21 14:14:53.131+00:00 | main | INFO  | Besu | 
+####################################################################################################
+#                                                                                                  #
+# Besu version 23.10.1                                                                             #
+#                                                                                                  #
+# Configuration:                                                                                   #
+# Network: Custom genesis file specified                                                           #
+# Network Id: 1337                                                                                 #
+# Data storage: Forest                                                                             #
+# Sync mode: Snap                                                                                  #
+# RPC HTTP APIs: ETH,NET,WEB3,ADMIN,DEBUG                                                          #
+# RPC HTTP port: 8545                                                                              #
+# Using LAYERED transaction pool implementation                                                    #
+#                                                                                                  #
+# Host:                                                                                            #
+# Java: openjdk-java-17                                                                            #
+# Maximum heap size: 0.50 GB                                                                       #
+# OS: linux-x86_64                                                                                 #
+# glibc: 2.35                                                                                      #
+# jemalloc: 5.2.1-0-gea6b3e973b477b8061e0076bb257dbd7f3faa756                                      #
+# Total memory: 15.55 GB                                                                           #
+# CPU cores: 12                                                                                    #
+#                                                                                                  #
+# Plugins:                                                                                         #
+# TOTAL = 0 of 0 plugins successfully loaded                                                       #
+# from /opt/besu/plugins                                                                           #
+#                                                                                                  #
+####################################################################################################
+2025-12-21 14:14:53.131+00:00 | main | INFO  | Besu | Connecting to 0 static nodes.
+2025-12-21 14:14:53.132+00:00 | main | INFO  | Besu | Security Module: localfile
+2025-12-21 14:14:53.208+00:00 | main | INFO  | Besu | Using the native implementation of alt bn128
+2025-12-21 14:14:53.250+00:00 | main | INFO  | Besu | Using the native implementation of modexp
+2025-12-21 14:14:53.250+00:00 | main | INFO  | Besu | Using the native implementation of the signature algorithm
+2025-12-21 14:14:53.253+00:00 | main | INFO  | Besu | Using the native implementation of the blake2bf algorithm
+2025-12-21 14:14:53.418+00:00 | main | INFO  | KeyPairUtil | Loaded public key 0xdf840ca6c2cd1506a9cb745b8e60d31632373b04c22f63c8abd1221669192a86e191782bf13f69bad74d60ea07964aaf83ff5f136eb6bba7a320c1496bd6bf4f from /opt/besu/data/key
+2025-12-21 14:14:53.582+00:00 | main | INFO  | ProtocolScheduleBuilder | Protocol schedule created with milestones: [London:0]
+2025-12-21 14:14:53.645+00:00 | main | INFO  | DatabaseMetadata | Lookup database metadata file in data directory: /opt/besu/data
+2025-12-21 14:14:53.716+00:00 | main | INFO  | RocksDBKeyValueStorageFactory | Existing database detected at /opt/besu/data. Version 1. Compacting database...
+2025-12-21 14:14:54.301+00:00 | main | INFO  | TransactionPoolFactory | Transaction pool disabled while initial sync in progress
+2025-12-21 14:14:54.317+00:00 | main | INFO  | BesuControllerBuilder | TTD difficulty is not present, creating initial sync phase for PoW
+2025-12-21 14:14:54.403+00:00 | main | INFO  | RunnerBuilder | Detecting NAT service.
+2025-12-21 14:14:54.591+00:00 | main | INFO  | Runner | Starting external services ... 
+2025-12-21 14:14:54.592+00:00 | main | INFO  | JsonRpcHttpService | Starting JSON-RPC service on 0.0.0.0:8545
+2025-12-21 14:14:54.715+00:00 | vert.x-eventloop-thread-1 | INFO  | JsonRpcHttpService | JSON-RPC service started and listening on 0.0.0.0:8545
+2025-12-21 14:14:54.719+00:00 | main | INFO  | WebSocketService | Starting Websocket service on 0.0.0.0:8546
+2025-12-21 14:14:54.723+00:00 | vert.x-eventloop-thread-1 | INFO  | WebSocketService | Websocket service started and listening on 0.0.0.0:8546
+2025-12-21 14:14:54.727+00:00 | main | INFO  | AutoTransactionLogBloomCachingService | Starting auto transaction log bloom caching service.
+2025-12-21 14:14:54.728+00:00 | main | INFO  | LogBloomCacheMetadata | Lookup cache metadata file in data directory: /opt/besu/data/caches
+2025-12-21 14:14:54.735+00:00 | main | INFO  | Runner | Starting Ethereum main loop ... 
+2025-12-21 14:14:54.735+00:00 | main | INFO  | KubernetesNatManager | Starting kubernetes NAT manager.
+2025-12-21 14:14:55.258+00:00 | main | WARN  | NatService | Nat manager failed to configure itself automatically due to the following reason : org.hyperledger.besu.nat.core.exception.NatInitializationException: . NONE mode will be used as a fallback (set --Xnat-method-fallback-enabled=false to disable)
+2025-12-21 14:14:55.258+00:00 | main | INFO  | NetworkRunner | Starting Network.
+2025-12-21 14:14:55.272+00:00 | nioEventLoopGroup-2-1 | INFO  | RlpxAgent | P2P RLPx agent started and listening on /[0:0:0:0:0:0:0:0]:30303.
+2025-12-21 14:14:55.272+00:00 | main | INFO  | PeerDiscoveryAgent | Starting peer discovery agent on host=0.0.0.0, port=30303
+2025-12-21 14:14:55.288+00:00 | vert.x-eventloop-thread-1 | INFO  | VertxPeerDiscoveryAgent | Started peer discovery agent successfully, on effective host=0:0:0:0:0:0:0:0%0 and port=30303
+2025-12-21 14:14:55.293+00:00 | vert.x-eventloop-thread-1 | INFO  | PeerDiscoveryAgent | P2P peer discovery agent started and listening on /[0:0:0:0:0:0:0:0%0]:30303
+2025-12-21 14:14:55.327+00:00 | vert.x-eventloop-thread-1 | INFO  | PeerDiscoveryAgent | Writing node record to disk. NodeRecord{seq=9, publicKey=0x03df840ca6c2cd1506a9cb745b8e60d31632373b04c22f63c8abd1221669192a86, udpAddress=Optional[/127.0.0.1:30303], tcpAddress=Optional[/127.0.0.1:30303], asBase64=-Je4QEpFVp_NpLLl4IQUriXuZp5OIaLAnHmvbO2dZ1mn-MBKR7hOo82O0_lhlcjLrVGyG4OEtVW1oIcEZL7HRw-XV_0Jg2V0aMfGhFzJuGaAgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQPfhAymws0VBqnLdFuOYNMWMjc7BMIvY8ir0SIWaRkqhoN0Y3CCdl-DdWRwgnZf, nodeId=0x5427b299abf5b209039ab3ded641c190034191bf0cfda101810b01c42557a48e, customFields={tcp=30303, udp=30303, ip=0x7f000001, eth=[[0x5cc9b866, 0x]], id=V4, secp256k1=0x03df840ca6c2cd1506a9cb745b8e60d31632373b04c22f63c8abd1221669192a86}}
+2025-12-21 14:14:55.349+00:00 | main | INFO  | DefaultP2PNetwork | Enode URL enode://df840ca6c2cd1506a9cb745b8e60d31632373b04c22f63c8abd1221669192a86e191782bf13f69bad74d60ea07964aaf83ff5f136eb6bba7a320c1496bd6bf4f@127.0.0.1:30303
+2025-12-21 14:14:55.350+00:00 | main | INFO  | DefaultP2PNetwork | Node address 0xd641c190034191bf0cfda101810b01c42557a48e
+2025-12-21 14:14:55.388+00:00 | main | INFO  | NetworkRunner | Supported capabilities: [eth/63, eth/64, eth/65, eth/66, eth/67, eth/68], [snap/1]
+2025-12-21 14:14:55.388+00:00 | main | INFO  | DefaultSynchronizer | Starting synchronizer.
+2025-12-21 14:14:55.389+00:00 | main | INFO  | FastSyncDownloader | Starting sync
+2025-12-21 14:14:55.394+00:00 | main | INFO  | Runner | Ethereum main loop is up.
+2025-12-21 14:15:00.398+00:00 | EthScheduler-Timer-0 | INFO  | WaitForPeersTask | Waiting for 5 total peers to connect. 0 peers currently connected.

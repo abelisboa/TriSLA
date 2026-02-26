@@ -1,0 +1,1 @@
+ghcr.io/abelisboa/trisla-ml-nsmf:v3.9.3

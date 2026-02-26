@@ -1,0 +1,2 @@
+NAME                    TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+trisla-portal-backend   NodePort   10.233.46.159   <none>        8001:32002/TCP   30d

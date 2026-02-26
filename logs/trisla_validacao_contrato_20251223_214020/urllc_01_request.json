@@ -1,0 +1,1 @@
+{"template_id":"template:URLLC","intent":"URLLC_controlado_validacao_contrato_01","tenant_id":"default","form_values":{"service_type":"URLLC","latency_max_ms":15,"reliability_target":99.9,"jitter_max_ms":5}}

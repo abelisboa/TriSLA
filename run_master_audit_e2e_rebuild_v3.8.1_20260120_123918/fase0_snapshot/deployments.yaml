@@ -1,0 +1,1264 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "4"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"kafka","namespace":"trisla"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"kafka"}},"template":{"metadata":{"labels":{"app":"kafka"}},"spec":{"containers":[{"command":["/bin/sh","-c","CLUSTER_ID=00d42c2a-1bf1-4ef3-8112-325210229bb0\ncd /opt/kafka\nif [ ! -f /var/lib/kafka/data/.formatted ]; then\n  /opt/kafka/bin/kafka-storage.sh format -t 00d42c2a-1bf1-4ef3-8112-325210229bb0 -c /config/server.properties --ignore-formatted\n  touch /var/lib/kafka/data/.formatted\nfi\n/opt/kafka/bin/kafka-server-start.sh /config/server.properties\n"],"image":"apache/kafka:latest","name":"kafka","ports":[{"containerPort":9092,"name":"kafka"}],"volumeMounts":[{"mountPath":"/config","name":"config"},{"mountPath":"/var/lib/kafka/data","name":"data"}]}],"volumes":[{"configMap":{"name":"kafka-server-config"},"name":"config"},{"emptyDir":{},"name":"data"}]}}}}
+    creationTimestamp: "2026-01-14T00:24:42Z"
+    generation: 4
+    name: kafka
+    namespace: trisla
+    resourceVersion: "864472786"
+    uid: 5002a9d3-5904-411f-a850-0f54f47d5b93
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: kafka
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-13T21:37:35-03:00"
+        creationTimestamp: null
+        labels:
+          app: kafka
+      spec:
+        containers:
+        - command:
+          - /bin/sh
+          - -c
+          - |
+            CLUSTER_ID=00d42c2a-1bf1-4ef3-8112-325210229bb0
+            cd /opt/kafka
+            if [ ! -f /var/lib/kafka/data/.formatted ]; then
+              /opt/kafka/bin/kafka-storage.sh format -t 00d42c2a-1bf1-4ef3-8112-325210229bb0 -c /config/server.properties --ignore-formatted
+              touch /var/lib/kafka/data/.formatted
+            fi
+            /opt/kafka/bin/kafka-server-start.sh /config/server.properties
+          image: apache/kafka:latest
+          imagePullPolicy: Always
+          name: kafka
+          ports:
+          - containerPort: 9092
+            name: kafka
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /config
+            name: config
+          - mountPath: /var/lib/kafka/data
+            name: data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: kafka-server-config
+          name: config
+        - emptyDir: {}
+          name: data
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-14T00:37:27Z"
+      lastUpdateTime: "2026-01-14T00:37:27Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-14T00:24:42Z"
+      lastUpdateTime: "2026-01-14T00:37:38Z"
+      message: ReplicaSet "kafka-c948b8d64" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 4
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "41"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-01-20T02:22:01Z"
+    generation: 4
+    labels:
+      app.kubernetes.io/component: bc-nssmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-bc-nssmf
+    namespace: trisla
+    resourceVersion: "866082812"
+    uid: 35b05949-60a2-4ee3-bbc5-2b5d442d4fa9
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-bc-nssmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-bc-nssmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: TRISLA_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BESU_RPC_URL
+            value: http://trisla-besu.trisla.svc.cluster.local:8545
+          - name: BC_ENABLED
+            value: "true"
+          - name: TRISLA_CHAIN_ID
+            value: "1337"
+          - name: BC_ENABLED
+            value: "true"
+          image: ghcr.io/abelisboa/trisla-besu:v3.7.29
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: bc-nssmf
+          ports:
+          - containerPort: 8083
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-20T02:22:01Z"
+      lastUpdateTime: "2026-01-20T02:22:01Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-20T12:38:03Z"
+      lastUpdateTime: "2026-01-20T12:38:03Z"
+      message: ReplicaSet "trisla-bc-nssmf-68bbbd4cb8" has timed out progressing.
+      reason: ProgressDeadlineExceeded
+      status: "False"
+      type: Progressing
+    observedGeneration: 4
+    readyReplicas: 1
+    replicas: 2
+    unavailableReplicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-01-20T11:58:46Z"
+    generation: 3
+    labels:
+      app: besu
+      app.kubernetes.io/component: besu
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+      component: blockchain
+    name: trisla-besu
+    namespace: trisla
+    resourceVersion: "866080661"
+    uid: dea128ec-25ba-471f-8b59-545727c46cc1
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: besu
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+        component: blockchain
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: besu
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+          component: blockchain
+      spec:
+        containers:
+        - args:
+          - --data-path=/opt/besu/data
+          - --network=dev
+          - --network-id=20211201
+          - --rpc-http-enabled
+          - --rpc-http-port=8545
+          - --rpc-http-api=ETH,NET,WEB3
+          command:
+          - /opt/besu/bin/besu
+          env:
+          - name: BESU_DATA_PATH
+            value: /opt/besu/data
+          image: ghcr.io/abelisboa/trisla-besu:v3.7.16
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 5
+          name: besu
+          ports:
+          - containerPort: 8545
+            name: rpc-http
+            protocol: TCP
+          - containerPort: 8546
+            name: rpc-ws
+            protocol: TCP
+          - containerPort: 30303
+            name: p2p
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8545
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/besu/data
+            name: besu-data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: besu-data
+          persistentVolumeClaim:
+            claimName: trisla-besu-data
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-20T12:15:20Z"
+      lastUpdateTime: "2026-01-20T12:15:20Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-20T12:15:00Z"
+      lastUpdateTime: "2026-01-20T12:15:21Z"
+      message: ReplicaSet "trisla-besu-5d9454c8f8" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "15"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2026-01-20T12:27:39Z"
+    generation: 15
+    labels:
+      app.kubernetes.io/component: decision-engine
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-decision-engine
+    namespace: trisla
+    resourceVersion: "866113577"
+    uid: e6fb892a-6884-4940-ad16-a64634c72fff
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-decision-engine
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-20T12:30:56-03:00"
+        creationTimestamp: null
+        labels:
+          app: trisla-decision-engine
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: ML_NSMF_HTTP_URL
+            value: http://trisla-ml-nsmf:8081
+          - name: SLA_AGENT_URL
+            value: http://trisla-sla-agent-layer:8084
+          image: ghcr.io/abelisboa/trisla-decision-engine:v3.8.1-fix
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: decision-engine
+          ports:
+          - containerPort: 8082
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-20T12:27:49Z"
+      lastUpdateTime: "2026-01-20T12:27:49Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-20T12:27:39Z"
+      lastUpdateTime: "2026-01-20T15:34:14Z"
+      message: ReplicaSet "trisla-decision-engine-f984f448c" is progressing.
+      reason: ReplicaSetUpdated
+      status: "True"
+      type: Progressing
+    observedGeneration: 15
+    readyReplicas: 1
+    replicas: 2
+    unavailableReplicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "59"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    generation: 60
+    labels:
+      app.kubernetes.io/component: ml-nsmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-ml-nsmf
+    namespace: trisla
+    resourceVersion: "866113664"
+    uid: e3c81ccc-682f-4f5b-8e20-c8400be9466a
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-ml-nsmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ml-nsmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-ml-nsmf:v3.7.29
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ml-nsmf
+          ports:
+          - containerPort: 8081
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-20T12:22:11Z"
+      lastUpdateTime: "2026-01-20T12:22:11Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-20T00:18:09Z"
+      lastUpdateTime: "2026-01-20T15:34:25Z"
+      message: ReplicaSet "trisla-ml-nsmf-77b664ff" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 60
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "19"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    generation: 20
+    labels:
+      app.kubernetes.io/component: nasp-adapter
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-nasp-adapter
+    namespace: trisla
+    resourceVersion: "866082817"
+    uid: 931b57f5-801f-4a1a-94cd-a01213b7ff78
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-nasp-adapter
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-nasp-adapter
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          image: ghcr.io/abelisboa/trisla-nasp-adapter:v3.7.29
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: nasp-adapter
+          ports:
+          - containerPort: 8085
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: trisla-nasp-adapter
+        serviceAccountName: trisla-nasp-adapter
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-23T02:27:37Z"
+      lastUpdateTime: "2025-12-23T02:27:37Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-20T12:38:04Z"
+      lastUpdateTime: "2026-01-20T12:38:04Z"
+      message: ReplicaSet "trisla-nasp-adapter-7c8bb45994" has timed out progressing.
+      reason: ProgressDeadlineExceeded
+      status: "False"
+      type: Progressing
+    observedGeneration: 20
+    readyReplicas: 1
+    replicas: 2
+    unavailableReplicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "28"
+      meta.helm.sh/release-name: trisla-portal
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2025-12-20T17:09:55Z"
+    generation: 29
+    labels:
+      app: trisla-portal-backend
+      app.kubernetes.io/managed-by: Helm
+      component: backend
+    name: trisla-portal-backend
+    namespace: trisla
+    resourceVersion: "865949589"
+    uid: cbd621d0-c763-4b5b-a66d-63ec175208b5
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-portal-backend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-19T20:59:36-03:00"
+        creationTimestamp: null
+        labels:
+          app: trisla-portal-backend
+          component: backend
+      spec:
+        containers:
+        - env:
+          - name: SEM_CSMF_URL
+            value: http://trisla-sem-csmf:8080
+          - name: ML_NSMF_URL
+            value: http://trisla-ml-nsmf:8081
+          - name: DECISION_ENGINE_URL
+            value: http://trisla-decision-engine:8082
+          - name: BC_NSSMF_URL
+            value: http://trisla-bc-nssmf:8083
+          - name: SLA_AGENT_URL
+            value: http://trisla-sla-agent-layer:8084
+          - name: OTEL_SDK_DISABLED
+            value: "true"
+          image: ghcr.io/abelisboa/trisla-portal-backend:v3.8.1
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8001
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: backend
+          ports:
+          - containerPort: 8001
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /nasp/diagnostics
+              port: 8001
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-26T20:11:09Z"
+      lastUpdateTime: "2025-12-26T20:11:09Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-19T20:47:40Z"
+      lastUpdateTime: "2026-01-19T23:59:52Z"
+      message: ReplicaSet "trisla-portal-backend-7498b598f7" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 29
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "6"
+      meta.helm.sh/release-name: trisla-portal
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2025-12-20T17:09:55Z"
+    generation: 7
+    labels:
+      app: trisla-portal-frontend
+      app.kubernetes.io/managed-by: Helm
+      component: frontend
+    name: trisla-portal-frontend
+    namespace: trisla
+    resourceVersion: "865921506"
+    uid: 1a1331a3-3e76-4d15-b119-cae24a1ae299
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-portal-frontend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-19T18:19:13-03:00"
+        creationTimestamp: null
+        labels:
+          app: trisla-portal-frontend
+          component: frontend
+      spec:
+        containers:
+        - env:
+          - name: BACKEND_URL
+            value: http://trisla-portal-backend:8001/api/v1
+          - name: PORT
+            value: "80"
+          image: ghcr.io/abelisboa/trisla-portal-frontend:v3.8.1
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: frontend
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-23T02:59:25Z"
+      lastUpdateTime: "2025-12-23T02:59:25Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-19T21:19:13Z"
+      lastUpdateTime: "2026-01-19T21:25:49Z"
+      message: ReplicaSet "trisla-portal-frontend-7dffd67779" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 7
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "13"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2025-12-23T17:49:59Z"
+    generation: 14
+    labels:
+      app.kubernetes.io/component: sem-csmf
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-sem-csmf
+    namespace: trisla
+    resourceVersion: "866080990"
+    uid: 7ab949cc-330d-44f2-8e81-a3c103bb910a
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-sem-csmf
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sem-csmf
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: KAFKA_ENABLED
+            value: "true"
+          - name: KAFKA_BROKERS
+            value: kafka:9092
+          image: ghcr.io/abelisboa/trisla-sem-csmf:v3.7.29
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sem-csmf
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-23T17:50:10Z"
+      lastUpdateTime: "2025-12-23T17:50:10Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-23T17:49:59Z"
+      lastUpdateTime: "2026-01-20T12:28:17Z"
+      message: ReplicaSet "trisla-sem-csmf-95dfc79f4" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 14
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "27"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    generation: 28
+    labels:
+      app.kubernetes.io/component: sla-agent-layer
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-sla-agent-layer
+    namespace: trisla
+    resourceVersion: "866081011"
+    uid: 28c20c71-6f6d-4020-a5a5-05ec0089876c
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-sla-agent-layer
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-sla-agent-layer
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          - name: NASP_ADAPTER_URL
+            value: http://trisla-nasp-adapter:8085
+          - name: BC_NSSMF_URL
+            value: http://trisla-otel-collector:4317
+          image: ghcr.io/abelisboa/trisla-sla-agent-layer:v3.7.29
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sla-agent-layer
+          ports:
+          - containerPort: 8084
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-23T02:27:37Z"
+      lastUpdateTime: "2025-12-23T02:27:37Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-22T12:09:00Z"
+      lastUpdateTime: "2026-01-20T12:28:17Z"
+      message: ReplicaSet "trisla-sla-agent-layer-b8c7b6fdc" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 28
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "12"
+      meta.helm.sh/release-name: trisla
+      meta.helm.sh/release-namespace: trisla
+    creationTimestamp: "2025-12-19T17:28:59Z"
+    generation: 14
+    labels:
+      app.kubernetes.io/component: ui-dashboard
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: trisla
+      app.kubernetes.io/version: v3.7.29
+    name: trisla-ui-dashboard
+    namespace: trisla
+    resourceVersion: "866080804"
+    uid: 95547c4e-5307-4779-ac2c-f5f1a657d6fb
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: trisla-ui-dashboard
+        app.kubernetes.io/instance: trisla
+        app.kubernetes.io/name: trisla
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: trisla-ui-dashboard
+          app.kubernetes.io/instance: trisla
+          app.kubernetes.io/name: trisla
+      spec:
+        containers:
+        - env:
+          - name: TRISLA_NODE_INTERFACE
+            value: my5g
+          - name: TRISLA_NODE_IP
+            value: 192.168.10.16
+          - name: OTLP_ENDPOINT
+            value: http://trisla-otel-collector:4317
+          image: ghcr.io/abelisboa/trisla-ui-dashboard:v3.7.29
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ui-dashboard
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        imagePullSecrets:
+        - name: ghcr-secret
+        nodeSelector:
+          kubernetes.io/hostname: node1
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-12-23T02:27:32Z"
+      lastUpdateTime: "2025-12-23T02:27:32Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-12-22T12:09:00Z"
+      lastUpdateTime: "2026-01-19T12:26:04Z"
+      message: ReplicaSet "trisla-ui-dashboard-85755bf748" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 14
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+kind: List
+metadata:
+  resourceVersion: ""

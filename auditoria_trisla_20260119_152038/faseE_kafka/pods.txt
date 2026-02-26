@@ -1,0 +1,1 @@
+kafka-c948b8d64-jgmz5                     1/1     Running             0                5d17h

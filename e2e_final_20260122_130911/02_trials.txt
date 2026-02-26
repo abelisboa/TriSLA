@@ -1,0 +1,8 @@
+1 decision=RENEG intent=b804ce45-0be9-4f7f-985c-e2adbcd59644 latency_ms=790 justification=Rule rule-002 matched: sla_compliance < 0.9
+2 decision=RENEG intent=50aba6b3-353d-4e58-871c-8fd257f4a3aa latency_ms=197 justification=Rule rule-002 matched: sla_compliance < 0.9
+3 decision=RENEG intent=d759d23c-9da3-4341-bb9b-b036569cc9e6 latency_ms=185 justification=Rule rule-002 matched: sla_compliance < 0.9
+4 decision=RENEG intent=a2ee9dc7-14c1-450c-a7b6-a24cdb2685ca latency_ms=185 justification=Rule rule-002 matched: sla_compliance < 0.9
+5 decision=RENEG intent=3a0661fe-8761-4ab5-9139-2a36fce5990b latency_ms=177 justification=Rule rule-002 matched: sla_compliance < 0.9
+6 decision=RENEG intent=ba14ee45-3081-4418-9482-1c03e9111867 latency_ms=161 justification=Rule rule-002 matched: sla_compliance < 0.9
+7 decision=RENEG intent=684f780d-95af-4906-92e6-2348b51ff4a3 latency_ms=183 justification=Rule rule-002 matched: sla_compliance < 0.9
+8 decision=RENEG intent=a9a0f4f1-5964-44c3-9033-e2a2c69e4e92 latency_ms=185 justification=Rule rule-002 matched: sla_compliance < 0.9

@@ -1,0 +1,4 @@
+[FASE 2] AUDITORIA JSON
+Total JSON: 3
+JSON válidos: 3
+JSON inválidos: 0

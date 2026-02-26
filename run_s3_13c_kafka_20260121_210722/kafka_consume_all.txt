@@ -1,0 +1,12 @@
+=== CONSUME trisla-decision-events ===
+
+=== CONSUME trisla-i04-decisions ===
+
+=== CONSUME trisla-i05-actions ===
+
+=== CONSUME trisla-i05-sla-agents ===
+
+=== CONSUME trisla-ml-predictions ===
+
+=== CONSUME trisla-ml-xai ===
+

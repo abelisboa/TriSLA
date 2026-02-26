@@ -1,0 +1,58 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+STEP 1/14: FROM python:3.10-slim
+STEP 2/14: WORKDIR /app
+--> Using cache 526f5880c69bf9bcdc03be083430a02a67b81365e9160e49b8b9be1de37bc9be
+--> 526f5880c69b
+STEP 3/14: RUN apt-get update && apt-get install -y     gcc     g++     make     && rm -rf /var/lib/apt/lists/*
+--> Using cache 2a69f883a050deea88ab91018c057100f19f0d0888131f67afecabb2019572cf
+--> 2a69f883a050
+STEP 4/14: COPY requirements.txt .
+--> Using cache c5f25234034703fab6c33e6ce728a898e0c85739c868a7b3531e0aa512a3d8d6
+--> c5f252340347
+STEP 5/14: RUN pip install --no-cache-dir -r requirements.txt
+--> Using cache f202febc8f937d32acd9b04c855248a06f0092f95f30d4e29a5d92710638e334
+--> f202febc8f93
+STEP 6/14: COPY src/ ./src/
+--> Using cache 416d5f75199337c1e79df7e3dd6d7255dfb66241b92ccb6a59e9140b2b41378d
+--> 416d5f751993
+STEP 7/14: COPY src/contracts/ /app/src/contracts/
+--> Using cache aec0ca4e5fc9669853e2f31868b69ca5aaa5c6085286e36d1a93ec0755853a13
+--> aec0ca4e5fc9
+STEP 8/14: ENV PYTHONPATH=/app
+--> Using cache f3aa329fd0242f82185bd06f9bd9a9ef0d736fe42c1e1e134aa19ecab9edaa8e
+--> f3aa329fd024
+STEP 9/14: ENV PORT=8083
+--> Using cache 1e8d779adae22163021dcff89923be1e5710485fdba3f8f4d9ac1a560b96442c
+--> 1e8d779adae2
+STEP 10/14: ENV KAFKA_ENABLED=false
+--> Using cache a8284f95a15ee5dcd8979d3de359b9ff76dda8ec450c6b6efb774f62d0eab6db
+--> a8284f95a15e
+STEP 11/14: ENV KAFKA_BROKERS=""
+--> Using cache 05d930dda2f1ba5cc763796f0a4ac4b372a45e22326bd55e0f9dc5d943568528
+--> 05d930dda2f1
+STEP 12/14: HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD python -c "import requests; requests.get('http://localhost:8083/health')"
+--> Using cache 8ce27117e02486ec338c85a46bdc2b6e6e7f2b7e48471f1ed10369b191548af8
+--> 8ce27117e024
+STEP 13/14: EXPOSE 8083
+--> Using cache ab728cf655302280ae82cbd8cd8269aab382fc12802193dc424cdf55f66ce9ea
+--> ab728cf65530
+STEP 14/14: CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8083"]
+--> Using cache c3e4eaec8ab002c5c54d2cbb5e14726e9a022ac39b01a35dcd515bd448fd9199
+COMMIT ghcr.io/abelisboa/trisla-bc-nssmf:v3.9.4
+--> c3e4eaec8ab0
+Successfully tagged ghcr.io/abelisboa/trisla-bc-nssmf:v3.9.4
+Successfully tagged ghcr.io/abelisboa/trisla-bc-nssmf:v3.8.1
+c3e4eaec8ab002c5c54d2cbb5e14726e9a022ac39b01a35dcd515bd448fd9199
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+Getting image source signatures
+Copying blob sha256:19cd6c40e03588da46b1bbfd437c5075a8bd87f1028c41981ba258a128c70411
+Copying blob sha256:dc27ff3b74317086d239c785a48c28c436862fa970a529e53ac5b67a8f4b8408
+Copying blob sha256:77a2b55fbe8b9984ce0af3ffc0b0ab62507668e63306ec161a585e587a3eb164
+Copying blob sha256:557139ca12a043f1b904ffd4d12e7329a61268ffdc59b41568c66e1c206a95f8
+Copying blob sha256:17bbb46fa426e94886aa1e2ad42c2b0890656e0556b95fe846890417afcc8598
+Copying blob sha256:0315622e75eaab8a3587ce6eb4e3e82c05e365bed25a614bb01d906c497f8085
+Copying blob sha256:e016106c7941dbec1b0743f1ee9d8b4c2f8bb5f0bdd9a987044e0b6a3675007b
+Copying blob sha256:aebb4d1d31e3a2ce30c80c1857e477360a37dd8224f2c02ea03dad7f5eb49046
+Copying blob sha256:9b6e6d89f77ee43a3b35ae9136d2dec16eb769b6c5e7891a389a7d7302c2176a
+Copying config sha256:c3e4eaec8ab002c5c54d2cbb5e14726e9a022ac39b01a35dcd515bd448fd9199
+Writing manifest to image destination

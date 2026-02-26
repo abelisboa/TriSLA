@@ -1,0 +1,3 @@
+EVIDÊNCIA FASE 4:
+1. deployment-besu.yaml ainda contém exec probes com curl (não httpGet)
+2. Template render falha devido a erro em deployment-sem-csmf.yaml

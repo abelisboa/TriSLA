@@ -1,0 +1,7 @@
+=== RESUMO FINAL S3.5.10 ===
+Commit: 57d9f44
+SHA256 Artefatos: NÃO COINCIDE
+Besu: Running ✅
+RPC Besu: Funcionando ✅
+BC-NSSMF: ImagePullBackOff (v3.7.17 não encontrada) ❌
+Endpoints BC-NSSMF: Não testados (pod não está Running)

@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: trisla-sem-csmf-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app.kubernetes.io/managed-by: Helm
+spec:
+  namespaceSelector:
+    matchNames:
+      - trisla
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: trisla
+      app.kubernetes.io/name: trisla
+
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scheme: http
+      scrapeTimeout: 10s
+      honorLabels: true

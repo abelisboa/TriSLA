@@ -1,0 +1,78 @@
+Name:             trisla-decision-engine-74648556c6-xngzt
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node1/192.168.10.16
+Start Time:       Mon, 16 Feb 2026 16:32:59 -0300
+Labels:           app=trisla-decision-engine
+                  app.kubernetes.io/instance=trisla
+                  app.kubernetes.io/name=trisla
+                  pod-template-hash=74648556c6
+Annotations:      cni.projectcalico.org/containerID: dca3bc53acfe01675918fa7c5152bf93c4dc7e486fe3402dfa6fa42b81544cf6
+                  cni.projectcalico.org/podIP: 10.233.102.155/32
+                  cni.projectcalico.org/podIPs: 10.233.102.155/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.102.155"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Pending
+IP:               10.233.102.155
+IPs:
+  IP:           10.233.102.155
+Controlled By:  ReplicaSet/trisla-decision-engine-74648556c6
+Containers:
+  decision-engine:
+    Container ID:   
+    Image:          ghcr.io/abelisboa/trisla-decision-engine@sha256:805286bcf9552727fd57df4bf31759278d05ad29d1272c95ee45991340621d41
+    Image ID:       
+    Port:           8082/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     2
+      memory:  2Gi
+    Requests:
+      cpu:      500m
+      memory:   512Mi
+    Liveness:   http-get http://:http/health delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:http/health delay=10s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      TRISLA_NODE_INTERFACE:  my5g
+      TRISLA_NODE_IP:         192.168.10.16
+      OTLP_ENDPOINT:          http://trisla-otel-collector:4317
+      GATE_3GPP_ENABLED:      false
+      LOG_LEVEL:              DEBUG
+      ML_NSMF_HTTP_URL:       http://trisla-ml-nsmf:8081
+      SLA_AGENT_URL:          http://trisla-sla-agent-layer:8084
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-npqvx (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-npqvx:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              kubernetes.io/hostname=node1
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason   Age                       From     Message
+  ----    ------   ----                      ----     -------
+  Normal  BackOff  3m19s (x1473 over 5h38m)  kubelet  Back-off pulling image "ghcr.io/abelisboa/trisla-decision-engine@sha256:805286bcf9552727fd57df4bf31759278d05ad29d1272c95ee45991340621d41"

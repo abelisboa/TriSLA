@@ -1,0 +1,214 @@
+Você é responsável por executar todo o processo experimental do Capítulo 6, incluindo:
+
+Validação do Portal
+
+Diagnóstico dos módulos NASP
+
+Execução do Battery Test
+
+Execução do Stress Test
+
+Coleta de métricas
+
+Cálculo de SLOs e KPIs
+
+Geração de gráficos (PNG – formato acadêmico)
+
+Geração de tabelas (Markdown para LaTeX)
+
+Geração de texto acadêmico (Seções 6.1–6.4)
+
+Geração da análise final
+
+Checklist conclusivo
+
+⚠️ Nunca avance para a próxima fase sem validar o ambiente primeiro.
+⚠️ Nunca execute stress test se o BC-NSSMF estiver degraded.
+
+░▒▓ FASE 0 – Validação do Ambiente (Obrigatória) ▓▒░
+0.1 Validar se o backend do Portal está rodando:
+GET http://localhost:8001/health
+
+
+Se não estiver:
+
+→ instruir o usuário a executar:
+
+cd backend
+bash start_backend.sh
+
+
+e parar imediatamente.
+
+0.2 Validar port-forwards do NASP
+
+Para cada módulo, verificar:
+
+Módulo	Porta	Endpoint
+SEM-CSMF	8080	/health
+ML-NSMF	8081	/health
+Decision Engine	8082	/health
+BC-NSSMF	8083	/health
+SLA-Agent	8084	/health
+
+Se qualquer porta falhar:
+
+→ instruir o usuário a corrigir no node1:
+
+kubectl port-forward -n trisla svc/trisla-<modulo> <porta>:<porta>
+
+0.3 Validar BC-NSSMF
+curl -s http://localhost:8083/health
+
+
+Se status != healthy, parar imediatamente e avisar que o stress test não pode ser executado.
+
+░▒▓ FASE 1 – Battery Test (20, 50, 100, 135 requisições) ▓▒░
+
+Executar:
+
+cd backend
+python tools/stress_sla_submit.py 20
+python tools/stress_sla_submit.py 50
+python tools/stress_sla_submit.py 100
+python tools/stress_sla_submit.py 135
+
+
+Salvar resultados intermediários.
+
+░▒▓ FASE 2 – Execução do Orquestrador Completo ▓▒░
+
+Executar:
+
+python tools/stress_test_orchestrator.py
+
+
+O orquestrador deve gerar:
+
+SLOs completos
+
+KPIs 3GPP + O-RAN
+
+Figuras PNG (matplotlib)
+
+Tabelas Markdown
+
+JSON consolidado
+
+Análise crítica dos módulos
+
+░▒▓ FASE 3 – Validação dos SLOs obrigatórios ▓▒░
+
+Validar se o orquestrador gerou:
+
+SLOs necessários:
+
+Latência E2E
+
+Latência SEM-CSMF
+
+Latência ML-NSMF
+
+Latência Decision Engine
+
+Latência BC-NSSMF
+
+Sucesso no registro de SLA
+
+Probabilidade de violação
+
+Throughput da pipeline
+
+░▒▓ FASE 4 – Validação dos KPIs 5G/O-RAN ▓▒░
+
+Conferir:
+
+E2E Slice Setup Latency
+
+SLA Compliance Metrics
+
+Closed-Loop Latency
+
+Observability Loop Time
+
+AI Stability
+
+Blockchain Execution Time
+
+░▒▓ FASE 5 – Geração dos Gráficos ▓▒░
+
+Validar criação de:
+
+Distribuição de latência (histograma)
+
+Boxplot por módulo
+
+Comparação (20×50×100×135)
+
+Radar de SLOs
+
+Heatmap de falhas
+
+Pipeline timeline
+
+Se qualquer figura faltar → regenerar automaticamente.
+
+░▒▓ FASE 6 – Geração do Texto Acadêmico Completo (Capítulo 6) ▓▒░
+
+Gerar automaticamente:
+
+6.1 – Integração entre teoria, arquitetura e experimento
+
+Conectar Cap. 2 → Cap. 3 → Cap. 4 → Cap. 5 → experimentos.
+
+6.2 – Análise crítica dos resultados
+
+Gargalos
+
+Comportamento sob carga
+
+Estabilidade do pipeline
+
+Impacto dos módulos
+
+6.3 – Relação com o SLOrion (SBRC 2025)
+
+Comparar evolução conceitual e experimental.
+
+6.4 – Perspectivas 6G
+
+Edge intelligence
+
+Semantic-native networks
+
+Federated agents
+
+Blockchain low-latency
+
+Texto deve seguir padrão UNISINOS / Português formal.
+
+░▒▓ FASE 7 – Geração do Checklist Final ▓▒░
+
+Confirmar:
+
+[OK] STRESS_TEST_REPORT.md
+
+[OK] stress_test_report.json
+
+[OK] 5+ figuras PNG
+
+[OK] Tabelas Markdown
+
+[OK] Texto das seções 6.1–6.4
+
+[OK] KPIs e SLOs válidos
+
+░▒▓ FASE 8 – Finalização ▓▒░
+
+Gerar:
+
+Resumo executivo
+
+Conclusão do Capítulo 6
+
+Sugestões para o capítulo 7 (caso exista)

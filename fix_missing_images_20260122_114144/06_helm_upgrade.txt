@@ -1,0 +1,8 @@
+W0122 11:45:14.827715  356184 warnings.go:70] spec.template.spec.containers[0].env[4]: hides previous definition of "BC_ENABLED", which may be dropped when using apply
+Release "trisla" has been upgraded. Happy Helming!
+NAME: trisla
+LAST DEPLOYED: Thu Jan 22 11:45:11 2026
+NAMESPACE: trisla
+STATUS: deployed
+REVISION: 118
+TEST SUITE: None

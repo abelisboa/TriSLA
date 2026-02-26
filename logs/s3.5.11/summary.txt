@@ -1,0 +1,9 @@
+=== RESUMO FINAL S3.5.11 ===
+Commit: 57d9f44
+SHA256 Artefatos: NÃO COINCIDE (evidência registrada)
+Besu: Running ✅
+RPC Besu: Funcionando ✅ (web3_clientVersion, eth_blockNumber)
+BC-NSSMF: Running ✅
+BC-NSSMF Health: healthy, rpc_connected=true ✅
+Contrato: Endpoint existe mas requer body (evidência de schema)
+SLA: Endpoints existem mas schema diferente do esperado (evidência)

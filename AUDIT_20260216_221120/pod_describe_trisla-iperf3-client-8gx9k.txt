@@ -1,0 +1,68 @@
+Name:             trisla-iperf3-client-8gx9k
+Namespace:        trisla
+Priority:         0
+Service Account:  default
+Node:             node2/192.168.10.15
+Start Time:       Wed, 21 Jan 2026 19:31:39 -0300
+Labels:           batch.kubernetes.io/controller-uid=07a92b73-7054-4d6f-9bce-1abde1da40ac
+                  batch.kubernetes.io/job-name=trisla-iperf3-client
+                  controller-uid=07a92b73-7054-4d6f-9bce-1abde1da40ac
+                  job-name=trisla-iperf3-client
+Annotations:      cni.projectcalico.org/containerID: b2043d90b0e9a701a4c5f41a232ac873fc56c45f020cf7e696cccdad3efca9e8
+                  cni.projectcalico.org/podIP: 10.233.75.32/32
+                  cni.projectcalico.org/podIPs: 10.233.75.32/32
+                  k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "k8s-pod-network",
+                        "ips": [
+                            "10.233.75.32"
+                        ],
+                        "default": true,
+                        "dns": {}
+                    }]
+Status:           Running
+IP:               10.233.75.32
+IPs:
+  IP:           10.233.75.32
+Controlled By:  Job/trisla-iperf3-client
+Containers:
+  iperf3-client:
+    Container ID:  containerd://8fcea7dfc6e63b5af9c0c053ccc6e97b0ab33ac37abf1406917868e952adb9d0
+    Image:         networkstatic/iperf3
+    Image ID:      docker.io/networkstatic/iperf3@sha256:07dcca91c0e47d82d83d91de8c3d46b840eef4180499456b4fa8d6dadb46b6c8
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /bin/sh
+      -c
+      while true; do
+        iperf3 -c trisla-iperf3 -t 10 -J > /tmp/iperf.json
+        sleep 2
+      done
+      
+    State:          Running
+      Started:      Wed, 21 Jan 2026 19:31:41 -0300
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2vsm5 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-2vsm5:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:                      <none>

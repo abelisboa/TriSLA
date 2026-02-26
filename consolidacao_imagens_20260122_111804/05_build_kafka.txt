@@ -1,0 +1,12 @@
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+STEP 1/3: FROM bitnami/kafka:3.6.0
+Resolving "bitnami/kafka" using unqualified-search registries (/etc/containers/registries.conf)
+Trying to pull docker.io/bitnami/kafka:3.6.0...
+Trying to pull quay.io/bitnami/kafka:3.6.0...
+Trying to pull registry.fedoraproject.org/bitnami/kafka:3.6.0...
+Error: creating build container: 3 errors occurred while pulling:
+ * initializing source docker://bitnami/kafka:3.6.0: reading manifest 3.6.0 in docker.io/bitnami/kafka: manifest unknown
+ * initializing source docker://quay.io/bitnami/kafka:3.6.0: reading manifest 3.6.0 in quay.io/bitnami/kafka: unauthorized: access to the requested resource is not authorized
+ * initializing source docker://registry.fedoraproject.org/bitnami/kafka:3.6.0: reading manifest 3.6.0 in registry.fedoraproject.org/bitnami/kafka: manifest unknown
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+Error: ghcr.io/abelisboa/trisla-kafka:v3.9.4: image not known

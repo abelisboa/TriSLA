@@ -1,0 +1,64 @@
+Name:                   trisla-besu
+Namespace:              trisla
+CreationTimestamp:      Tue, 20 Jan 2026 08:58:46 -0300
+Labels:                 app=besu
+                        app.kubernetes.io/component=besu
+                        app.kubernetes.io/instance=trisla
+                        app.kubernetes.io/managed-by=Helm
+                        app.kubernetes.io/name=trisla
+                        app.kubernetes.io/version=v3.7.29
+                        component=blockchain
+Annotations:            deployment.kubernetes.io/revision: 2
+                        meta.helm.sh/release-name: trisla
+                        meta.helm.sh/release-namespace: trisla
+Selector:               app=besu,app.kubernetes.io/instance=trisla,app.kubernetes.io/name=trisla,component=blockchain
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=besu
+           app.kubernetes.io/instance=trisla
+           app.kubernetes.io/name=trisla
+           component=blockchain
+  Containers:
+   besu:
+    Image:       ghcr.io/abelisboa/trisla-besu:v3.7.16
+    Ports:       8545/TCP (rpc-http), 8546/TCP (rpc-ws), 30303/TCP (p2p)
+    Host Ports:  0/TCP (rpc-http), 0/TCP (rpc-ws), 0/TCP (p2p)
+    Command:
+      /opt/besu/bin/besu
+    Args:
+      --data-path=/opt/besu/data
+      --network=dev
+      --network-id=20211201
+      --rpc-http-enabled
+      --rpc-http-port=8545
+      --rpc-http-api=ETH,NET,WEB3
+    Limits:
+      cpu:     4
+      memory:  8Gi
+    Requests:
+      cpu:      1
+      memory:   2Gi
+    Liveness:   tcp-socket :8545 delay=30s timeout=5s period=20s #success=1 #failure=6
+    Readiness:  tcp-socket :8545 delay=10s timeout=3s period=10s #success=1 #failure=6
+    Environment:
+      BESU_DATA_PATH:  /opt/besu/data
+    Mounts:
+      /opt/besu/data from besu-data (rw)
+  Volumes:
+   besu-data:
+    Type:          PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:     trisla-besu-data
+    ReadOnly:      false
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  trisla-besu-5d69b55674 (0/0 replicas created)
+NewReplicaSet:   trisla-besu-5d9454c8f8 (1/1 replicas created)
+Events:          <none>

@@ -1,0 +1,90 @@
+# PROMPT_SNASP_12A — UERANSIM UE para Free5GC (ns-1274485)
+# Subscriber padrão Free5GC: imsi-208930000000001, key/op (free5gc-ue.yaml)
+# Slice URLLC: SST 1, SD 010203 (02_slice_definition.yaml)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ueransim-ue-config
+  namespace: ueransim
+data:
+  ue.yaml: |
+    supi: 'imsi-208930000000001'
+    mcc: '208'
+    mnc: '93'
+    protectionScheme: 0
+    key: '8baf473f2f8fd09487cccbd7097c6862'
+    op: '8e27b6af0e692e750f32667a3b14605d'
+    opType: 'OPC'
+    amf: '8000'
+    tunNetmask: '255.255.255.0'
+    gnbSearchList:
+      - ueransim-gnb.ueransim.svc.cluster.local
+    uacAic:
+      mps: false
+      mcs: false
+    uacAcc:
+      normalClass: 0
+      class11: false
+      class12: false
+      class13: false
+      class14: false
+      class15: false
+    sessions:
+      - type: 'IPv4'
+        apn: 'internet'
+        slice:
+          sst: 0x01
+          sd: 0x010203
+    configured-nssai:
+      - sst: 0x01
+        sd: 0x010203
+    default-nssai:
+      - sst: 1
+        sd: 1
+    integrity:
+      IA1: true
+      IA2: true
+      IA3: true
+    ciphering:
+      EA1: true
+      EA2: true
+      EA3: true
+    integrityMaxRate:
+      uplink: 'full'
+      downlink: 'full'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ueransim-ue
+  namespace: ueransim
+  labels:
+    app: ueransim-ue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ueransim-ue
+  template:
+    metadata:
+      labels:
+        app: ueransim-ue
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: ue
+          image: ghcr.io/abelisboa/ueransim:latest
+          command: ["nr-ue", "-c", "/etc/ueransim/ue.yaml"]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/ueransim
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+      volumes:
+        - name: config
+          configMap:
+            name: ueransim-ue-config

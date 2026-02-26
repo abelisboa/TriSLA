@@ -1,0 +1,25 @@
+total 132K
+drwxrwxr-x   2 porvir5g porvir5g 4,0K jan 22 12:26 .
+drwxrwxrwx 201 porvir5g porvir5g  20K jan 22 12:10 ..
+-rw-rw-r--   1 porvir5g porvir5g 3,3K jan 22 12:10 01_deploy_before.yaml
+-rw-rw-r--   1 porvir5g porvir5g  23K jan 22 12:10 01_helm_manifest_before.yaml
+-rw-rw-r--   1 porvir5g porvir5g 3,6K jan 22 12:10 01_helm_values_before.yaml
+-rw-rw-r--   1 porvir5g porvir5g   60 jan 22 12:10 01_image_before.txt
+-rw-rw-r--   1 porvir5g porvir5g  247 jan 22 12:10 01_pods_before.txt
+-rw-rw-r--   1 porvir5g porvir5g    8 jan 22 12:10 01_version_before.txt
+-rw-rw-r--   1 porvir5g porvir5g  170 jan 22 12:20 02_helm_upgrade_fixed.txt
+-rw-rw-r--   1 porvir5g porvir5g  338 jan 22 12:10 02_helm_upgrade.txt
+-rw-rw-r--   1 porvir5g porvir5g  936 jan 22 12:21 03_crashloop_events.txt
+-rw-rw-r--   1 porvir5g porvir5g 2,7K jan 22 12:21 03_crashloop_logs.txt
+-rw-rw-r--   1 porvir5g porvir5g   36 jan 22 12:15 03_gate2.txt
+-rw-rw-r--   1 porvir5g porvir5g   42 jan 22 12:21 03_image_after.txt
+-rw-rw-r--   1 porvir5g porvir5g  399 jan 22 12:21 03_pods_after_fix.txt
+-rw-rw-r--   1 porvir5g porvir5g  399 jan 22 12:15 03_pods_after.txt
+-rw-rw-r--   1 porvir5g porvir5g  393 jan 22 12:20 03_pods_final.txt
+-rw-rw-r--   1 porvir5g porvir5g  169 jan 22 12:20 03_rollout.txt
+-rw-rw-r--   1 porvir5g porvir5g   39 jan 22 12:21 05_helm_rollback.txt
+-rw-rw-r--   1 porvir5g porvir5g  399 jan 22 12:26 05_pods_after_rollback.txt
+-rw-rw-r--   1 porvir5g porvir5g   78 jan 22 12:21 05_rollback.txt
+-rw-rw-r--   1 porvir5g porvir5g  102 jan 22 12:21 05_rollout_after_rollback.txt
+-rw-rw-r--   1 porvir5g porvir5g 2,3K jan 22 12:26 CHECKSUMS.sha256
+-rw-rw-r--   1 porvir5g porvir5g    0 jan 22 12:26 ls.txt

@@ -1,0 +1,201 @@
+Found 2 pods, using pod/trisla-ml-nsmf-689fc96f59-mzj7c
+    await super().__call__(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.10/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 810, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 184, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/usr/local/lib/python3.10/site-packages/opentelemetry/instrumentation/fastapi/__init__.py", line 307, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/usr/local/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/usr/local/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.10/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+  File "/usr/local/lib/python3.10/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/app/src/main.py", line 121, in predict_risk
+    explanation = await predictor.explain(prediction, normalized)
+  File "/app/src/predictor.py", line 249, in explain
+    import shap
+  File "/usr/local/lib/python3.10/site-packages/shap/__init__.py", line 41, in <module>
+    from . import plots
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/__init__.py", line 6, in <module>
+    from ._bar import bar
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/_bar.py", line 8, in <module>
+    from . import colors
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/colors/__init__.py", line 1, in <module>
+    from ._colors import (
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/colors/_colors.py", line 24, in <module>
+    blue_rgb = lch2rgb(blue_lch)
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/colors/_colors.py", line 14, in lch2rgb
+    return lab2rgb(lch2lab([[x]]))[0][0]
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/colors/_colorconv.py", line 372, in lch2lab
+    lch = _prepare_lab_array(lch)
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/colors/_colorconv.py", line 387, in _prepare_lab_array
+    return img_as_float(arr, force_copy=True)
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/colors/_colorconv.py", line 993, in img_as_float
+    return convert(image, np.floating, force_copy)
+  File "/usr/local/lib/python3.10/site-packages/shap/plots/colors/_colorconv.py", line 819, in convert
+    if np.issubdtype(dtype_in, np.obj2sctype(dtype)):
+  File "/usr/local/lib/python3.10/site-packages/numpy/__init__.py", line 400, in __getattr__
+    raise AttributeError(
+AttributeError: `np.obj2sctype` was removed in the NumPy 2.0 release. Use `np.dtype(obj).type` instead.
+INFO:     10.233.75.28:34912 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34918 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45802 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51370 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51372 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:58210 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39008 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:39010 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34242 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:60640 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:60656 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:38254 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57842 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.183:50176 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:57858 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:55400 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:33036 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:33044 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34866 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44424 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44428 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59498 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40322 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40324 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:45714 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45160 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:45174 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:39046 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55910 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:55926 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:59002 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42612 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:42622 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43532 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:43602 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:43612 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52904 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38042 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38050 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34744 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54120 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:54128 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:34410 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:60436 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:60452 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:42850 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34376 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34388 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51218 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34078 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34092 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33808 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38180 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38196 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43672 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51600 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51604 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:36184 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48764 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48774 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40744 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38976 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38992 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35032 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38474 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:38490 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57910 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51420 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:51434 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44836 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:56624 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:56630 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44240 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44532 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44548 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60468 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41840 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41856 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37476 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35874 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35876 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:37178 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59644 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59650 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:52560 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52658 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52666 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57330 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53464 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53478 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40202 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44516 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44528 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60954 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52502 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:52504 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:54994 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48484 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:48486 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:51468 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49028 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:49038 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:49542 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44856 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.102.183:43120 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44872 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:44740 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46682 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:46688 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:40994 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58188 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58192 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:35304 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40440 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:40448 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57816 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58702 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58710 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47698 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41918 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:41924 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:47708 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34326 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:34334 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:33440 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35020 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:35036 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:43728 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59804 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:59810 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:56932 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53514 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:53528 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:53810 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44806 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:44814 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:57802 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58548 - "GET /health HTTP/1.1" 200 OK
+INFO:     10.233.75.28:58552 - "GET /health HTTP/1.1" 200 OK
+INFO:     192.168.10.16:60846 - "GET /health HTTP/1.1" 200 OK

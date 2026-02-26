@@ -1,0 +1,116 @@
+# ==========================================================
+# TRI-SLA — REPOSITÓRIO PÚBLICO LIMPO (CODE ONLY)
+# ==========================================================
+
+# ==========================================================
+# 🔒 ARTEFATOS OPERACIONAIS LOCAIS (NUNCA PUBLICAR)
+# ==========================================================
+
+# Evidências experimentais
+evidencias_*/
+evidencias*/
+*_evidencias/
+academico/
+artigos/
+
+# Patches e imagens locais
+_ml_patch/
+_de_patch/
+*_patch/
+*.tar
+*.tar.gz
+*.tar.xz
+*.img
+*.iso
+
+# Build digests locais
+digest.txt
+
+# Runner local
+actions-runner/
+
+# Third party pesado
+third_party/
+
+# Dumps
+*.sql
+*.dump
+*.backup
+
+# ==========================================================
+# 🐳 CONTAINERS / BUILD CACHE
+# ==========================================================
+
+dist/
+build/
+*.log
+*.out
+*.cache
+*.pid
+
+# Docker / Podman
+*.oci
+*.manifest
+
+# ==========================================================
+# 🌐 FRONTEND / NODE
+# ==========================================================
+
+node_modules/
+.next/
+out/
+coverage/
+
+# Webpack cache
+*.pack
+.cache/
+.next/cache/
+
+# ==========================================================
+# 🐍 PYTHON
+# ==========================================================
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+
+# ==========================================================
+# 🔐 SEGURANÇA
+# ==========================================================
+
+*.pem
+*.key
+*.crt
+credentials.json
+secrets.yaml
+*.kubeconfig
+
+# ==========================================================
+# 🧠 IDE / SISTEMA
+# ==========================================================
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ==========================================================
+# 🚫 EXCLUSÕES GLOBAIS (GARANTIA EXTRA)
+# ==========================================================
+
+# Nunca subir arquivos acima de 50MB
+*.zip
+*.7z
+*.rar
+# Virtual environments (ANY)
+venv/
+venv_*/
+.venv/
+*/venv/
+*/venv_*/
