@@ -12,7 +12,7 @@ semCsmf:
   image:
     repository: trisla-sem-csmf
     tag: ''
-    digest: ""
+    digest: "sha256:84b73a5b8df53fb4901041d96559878bd2248517277557496cb2b7b3effeb375"
     pullPolicy: IfNotPresent
   annotations:
     trisla-mode: degraded
@@ -35,7 +35,7 @@ mlNsmf:
   image:
     repository: trisla-ml-nsmf
     tag: ''
-    digest: ""
+    digest: "sha256:b0922b2199830a766a6fd999213583973bc8209862f39a949de2d18010017187"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -59,7 +59,7 @@ decisionEngine:
   image:
     repository: ghcr.io/abelisboa/trisla-decision-engine
     tag: ''
-    digest: ""
+    digest: "sha256:5695c700be9b83bd11bdf846a5762f1f9ba3dde143c73f3cec2b55472bb4caa6"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -80,7 +80,7 @@ bcNssmf:
   image:
     repository: trisla-bc-nssmf
     tag: ''
-    digest: ""
+    digest: "sha256:b0db5eef2128baddee2c1c3ea72fb5fec421afb1d87407e5f4a6aadd75f9f95a"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -110,7 +110,7 @@ besu:
   image:
     repository: trisla-besu
     tag: ''
-    digest: ""
+    digest: "sha256:ab84d26d678417b615c0833b4a34e9fe2778cec392a7e23596fa1607cf362efc"
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:
@@ -137,7 +137,7 @@ slaAgentLayer:
   image:
     repository: trisla-sla-agent-layer
     tag: ''
-    digest: ""
+    digest: "sha256:824b641b7ff17ba52bd93d9c0aeb6f1a4a073575ff86719bd14f67f6a80becce"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -159,7 +159,7 @@ naspAdapter:
   image:
     repository: trisla-nasp-adapter
     tag: ''
-    digest: ""
+    digest: "sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -198,7 +198,7 @@ uiDashboard:
   image:
     repository: trisla-ui-dashboard
     tag: ''
-    digest: ""
+    digest: "sha256:16e23f4de91582e56bfe4704c0139a3154c34c4a44780f17f3082b6195dbe6fb"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -218,7 +218,7 @@ trafficExporter:
   image:
     repository: trisla-traffic-exporter
     tag: ''
-    digest: ""
+    digest: "sha256:a39455f913ea4f7355426b48613cc0479c7e549d099bdba520fd4fb563564f48"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -229,11 +229,10 @@ kafka:
   enabled: true
   image:
     repository: ghcr.io/abelisboa/trisla-kafka
-    tag: v3.11.2
-    digest: ""
+    tag: ''
+    digest: "sha256:8291bed273105a3fc88df5f89096abf6a654dc92b0937245dcef85011f3fc5e6"
     pullPolicy: IfNotPresent
   replicas: 1
-
 
 otelCollector:
   enabled: true
