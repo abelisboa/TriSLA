@@ -1,0 +1,27 @@
+NAME                                        READY   STATUS      RESTARTS   AGE     IP               NODE    NOMINATED NODE   READINESS GATES
+besu-genesis-gen                            0/1     Completed   0          30d     10.233.75.17     node2   <none>           <none>
+besu-rpc-test                               0/1     Completed   0          30d     10.233.75.13     node2   <none>           <none>
+curl-chk                                    0/1     Completed   0          30d     10.233.75.3      node2   <none>           <none>
+curl-upfmax                                 0/1     Completed   0          19d     10.233.75.11     node2   <none>           <none>
+curltest-decision-final                     0/1     Completed   0          41d     10.233.75.35     node2   <none>           <none>
+curltest-decision4                          0/1     Completed   0          41d     10.233.75.5      node2   <none>           <none>
+http-diag                                   0/1     Completed   0          47d     10.233.75.23     node2   <none>           <none>
+kafka-6bd4bcdc7b-rdgsm                      1/1     Running     0          3m5s    10.233.75.10     node2   <none>           <none>
+registry-sanity                             0/1     Completed   0          69d     10.233.102.189   node1   <none>           <none>
+registry-sanity-verify                      0/1     Completed   0          69d     10.233.75.15     node2   <none>           <none>
+trisla-analytics-adapter-67f96fbd57-mjbvm   1/1     Running     0          5d8h    10.233.75.35     node2   <none>           <none>
+trisla-bc-nssmf-5869874965-tn9br            1/1     Running     0          3m5s    10.233.102.156   node1   <none>           <none>
+trisla-besu-756cf5ff69-vjmbg                1/1     Running     0          3d7h    10.233.75.31     node2   <none>           <none>
+trisla-decision-engine-5c8bb4f6b9-5v44w     1/1     Running     0          3m5s    10.233.102.155   node1   <none>           <none>
+trisla-iperf3-client-8gx9k                  1/1     Running     0          40d     10.233.75.32     node2   <none>           <none>
+trisla-iperf3-server-76f599c648-58hbh       1/1     Running     0          39d     10.233.75.39     node2   <none>           <none>
+trisla-ml-nsmf-8bfc6ffd9-6mb4c              1/1     Running     0          3m5s    10.233.102.165   node1   <none>           <none>
+trisla-nasp-adapter-5888d96494-jpv4t        1/1     Running     0          3m4s    10.233.102.189   node1   <none>           <none>
+trisla-otel-collector-859cc8466f-jcqff      1/1     Running     0          5d21h   10.233.75.4      node2   <none>           <none>
+trisla-portal-backend-788f88dd98-lft2j      1/1     Running     0          27d     10.233.75.54     node2   <none>           <none>
+trisla-portal-frontend-57f546cd77-pkrhj     1/1     Running     0          27d     10.233.75.12     node2   <none>           <none>
+trisla-sem-csmf-75c8b79bf8-gxvlp            1/1     Running     0          3m4s    10.233.102.164   node1   <none>           <none>
+trisla-sla-agent-layer-6d9549d44-r5srm      1/1     Running     0          3m3s    10.233.102.158   node1   <none>           <none>
+trisla-tempo-bcf9bb868-b4xjl                1/1     Running     0          5d21h   10.233.75.28     node2   <none>           <none>
+trisla-traffic-exporter-6cff6c76d5-ps7hn    1/1     Running     0          3m3s    10.233.75.11     node2   <none>           <none>
+trisla-ui-dashboard-6688576bfb-hssxj        1/1     Running     0          3m3s    10.233.102.150   node1   <none>           <none>

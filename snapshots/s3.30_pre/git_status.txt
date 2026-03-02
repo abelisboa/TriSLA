@@ -1,0 +1,35 @@
+No ramo main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (utilize "git add <arquivo>..." para atualizar o que será submetido)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   apps/decision-engine/src/config.py
+	modified:   apps/decision-engine/src/engine.py
+
+Arquivos não monitorados:
+  (utilize "git add <arquivo>..." para incluir o que será submetido)
+	PROMPT_07_TRISLA_FIX_GATES_AND_RERUN_100PCT_v3.9.4
+	apps/decision-engine/src/resource_evaluator.py
+	compliance_diag_20260122_100930/
+	consolidacao_imagens_20260122_111747/
+	consolidacao_imagens_20260122_111804/
+	e2e_final_20260122_130315/
+	e2e_final_20260122_130358/
+	e2e_final_20260122_130911/
+	fix_missing_images_20260122_114144/
+	prom_audit_20260122_095322/
+	prom_audit_20260122_095852/
+	prom_audit_20260122_100008/
+	prom_audit_20260122_100039/
+	prom_audit_20260122_100220/
+	prom_fix_20260122_101654/
+	prom_labels_20260122_102625/
+	prom_warmup_20260122_103446/
+	pullfix_20260122_115454/
+	sem_audit_20260122_105906/
+	sem_converge_20260122_121004/
+	sem_fix_20260122_120405/
+	sem_rollout_20260122_123851/
+
+nenhuma modificação adicionada à submissão (utilize "git add" e/ou "git commit -a")
