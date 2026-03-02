@@ -1,15 +1,16 @@
 #################################################
 # TRI-SLA PUBLIC REPOSITORY POLICY
-# Only apps/, docs/, helm/ allowed
+# Only apps/, docs/, helm/, snapshots/ allowed
 #################################################
 
-# Ignore everything
+# Ignore everything by default
 *
 
-# Allow only:
+# Allow only core project directories
 !apps/
 !docs/
 !helm/
+!snapshots/
 !README.md
 !.gitignore
 
@@ -17,6 +18,7 @@
 !apps/**
 !docs/**
 !helm/**
+!snapshots/**
 
 #################################################
 # Explicitly forbidden content
@@ -51,8 +53,14 @@ venv_*/
 __pycache__/
 *.pyc
 
+# Backup / temp artifacts
+*.bak
+*.backup*
+*.swp
+
 # OS
 .DS_Store
 Thumbs.db
+
 # Block portal entirely
 trisla-portal/
