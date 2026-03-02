@@ -30,13 +30,8 @@ PROMPT_*.md
 # Run artifacts
 run_*/
 sem_*/
-snapshot_*/
-snapshots/
-trisla_avaliacao_*/
-trisla_evidencias_*/
 
 # Test results
-tests/results/
 *.jsonl
 
 # Logs
