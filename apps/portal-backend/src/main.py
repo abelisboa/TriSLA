@@ -1,0 +1,150 @@
+from fastapi import FastAPI
+from fastapi.responses import Response
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import logging
+
+from src.config import settings
+from src.routers import sla, modules, prometheus
+from src.services.nasp import check_all_nasp_modules, check_sem_csmf, check_bc_nssmf
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+# Telemetry disabled in local environment
+logger.info("ℹ️ TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN - Telemetry disabled in local environment")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("🚀 TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN Backend starting...")
+    logger.info("🔍 Executando diagnóstico inicial de conectividade NASP...")
+
+    try:
+        sem_status = check_sem_csmf()
+        bc_status = check_bc_nssmf()
+
+        if isinstance(sem_status, Exception) or not sem_status.get("reachable", False):
+            logger.warning(
+                f"⚠️ SEM-CSMF não acessível no startup: "
+                f"{sem_status.get('detail', 'erro desconhecido') if not isinstance(sem_status, Exception) else str(sem_status)}"
+            )
+        else:
+            logger.info(
+                f"✅ SEM-CSMF acessível (latência: {sem_status.get('latency_ms', 0):.2f}ms)"
+            )
+
+        if isinstance(bc_status, Exception) or not bc_status.get("reachable", False):
+            logger.warning(
+                f"⚠️ BC-NSSMF não acessível no startup: "
+                f"{bc_status.get('detail', 'erro desconhecido') if not isinstance(bc_status, Exception) else str(bc_status)}"
+            )
+        else:
+            logger.info(
+                f"✅ BC-NSSMF acessível (latência: {bc_status.get('latency_ms', 0):.2f}ms)"
+            )
+
+    except Exception as e:
+        logger.warning(f"⚠️ Erro ao executar diagnóstico inicial: {str(e)}")
+
+    yield
+
+    logger.info("🛑 TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN Backend shutting down...")
+
+
+app = FastAPI(
+    title="TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
+    description="API para gerenciamento de SLA em redes 5G/O-RAN",
+    version="1.0.2",
+    lifespan=lifespan,
+)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Routers principais
+app.include_router(sla.router, prefix="/api/v1/sla", tags=["SLA"])
+app.include_router(modules.router, prefix="/api/v1/modules", tags=["Modules"])
+app.include_router(prometheus.router, prefix="/api/v1/prometheus", tags=["Prometheus"])
+
+
+@app.get("/")
+async def root():
+    return {
+        "name": "TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
+        "version": "1.0.2",
+        "status": "running"
+    }
+
+
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "version": "1.0.2",
+        "nasp_reachable": None,
+        "nasp_details_url": "/nasp/diagnostics"
+    }
+
+
+@app.get("/api/v1/health", tags=["health"])
+async def health_v1():
+    return await health_check()
+
+
+@app.get("/api/v1/health/global", tags=["health"])
+async def health_global():
+    try:
+        diagnostics = check_all_nasp_modules()
+
+        reachable = [
+            diagnostics["sem_csmf"].get("reachable"),
+            diagnostics["ml_nsmf"].get("reachable"),
+            diagnostics["decision"].get("reachable"),
+            diagnostics["bc_nssmf"].get("reachable"),
+            diagnostics["sla_agent"].get("reachable"),
+        ]
+
+        status = "healthy" if all(r is True for r in reachable) else "unhealthy"
+
+    except Exception as e:
+        logger.warning(f"health/global: {e}")
+        status = "unhealthy"
+
+    return {
+        "status": status,
+        "timestamp": None
+    }
+
+
+@app.get("/nasp/diagnostics")
+async def nasp_diagnostics():
+    diagnostics = check_all_nasp_modules()
+    return diagnostics
+
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "src.main:app",
+        host=settings.api_host,
+        port=settings.api_port,
+        reload=settings.api_reload,
+    )

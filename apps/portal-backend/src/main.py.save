@@ -1,0 +1,148 @@
+ %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Telemetry disabled in local environment
+logger.info("ℹ️  TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN - Telemetry disabled in local environment")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    logger.info("🚀 TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN Backend starting...")
+
+    # Diagnóstico inicial leve: testar pelo menos SEM-CSMF e BC-NSSMF
+    logger.info("🔍 Executando diagnóstico inicial de conectividade NASP...")
+    try:
+        sem_status, bc_status = await asyncio.gather(
+            check_sem_csmf(),
+            check_bc_nssmf(),
+            return_exceptions=True
+        )
+
+        if isinstance(sem_status, Exception) or not sem_status.get("reachable", False):
+            logger.warning(
+                f"⚠️ SEM-CSMF não acessível no startup: "
+                f"{sem_status.get('detail', 'erro desconhecido') if not isinstance(sem_status, Exception) else str(sem_status)}"
+            )
+        else:
+            logger.info(f"✅ SEM-CSMF acessível (latência: {sem_status.get('latency_ms', 0):.2f}ms)")
+
+        if isinstance(bc_status, Exception) or not bc_status.get("reachable", False):
+            logger.warning(
+                f"⚠️ BC-NSSMF não acessível no startup: "
+                f"{bc_status.get('detail', 'erro desconhecido') if not isinstance(bc_status, Exception) else str(bc_status)}"
+            )
+        else:
+            logger.info(f"✅ BC-NSSMF acessível (latência: {bc_status.get('latency_ms', 0):.2f}ms)")
+    except Exception as e:
+        logger.warning(f"⚠️ Erro ao executar diagnóstico inicial: {str(e)}")
+
+    yield
+
+    # Shutdown
+    logger.info("🛑 TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN Backend shutting down...")
+
+
+app = FastAPI(
+    title="TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
+    description="API para gerenciamento de SLA em redes 5G/O-RAN",
+    version="1.0.1",
+    lifespan=lifespan,
+)
+
+# CORS - Permitir todas as origens
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Routers principais
+app.include_router(sla.router, prefix="/api/v1/sla", tags=["SLA"])
+app.include_router(modules.router, prefix="/api/v1/modules", tags=["Modules"])
+app.include_router(prometheus.router, prefix="/api/v1/prometheus", tags=["Prometheus"])
+
+
+@app.get("/")
+async def root():
+    return {
+        "name": "TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
+        "version": "1.0.1",
+        "status": "running"
+    }
+
+
+@app.get("/health")
+async def health_check():
+    """
+    Health check básico do Portal.
+    Para diagnóstico detalhado do NASP, usar /nasp/diagnostics.
+    """
+    return {
+        "status": "healthy",
+        "version": "1.0.1",
+        "nasp_reachable": None,
+        "nasp_details_url": "/nasp/diagnostics"
+    }
+
+
+@app.get("/api/v1/health", tags=["health"])
+async def health_v1():
+    """
+    Alias para /health - retrocompatibilidade com frontend
+    """
+    return await health_check()
+
+
+@app.get("/api/v1/health/global", tags=["health"])
+async def health_global():
+    """
+    Saúde global do Portal sem dependência de Prometheus.
+    """
+    try:
+        diagnostics = await check_all_nasp_modules()
+        reachable = [
+            diagnostics["sem_csmf"].get("reachable"),
+            diagnostics["ml_nsmf"].get("reachable"),
+            diagnostics["decision"].get("reachable"),
+            diagnostics["bc_nssmf"].get("reachable"),
+            diagnostics["sla_agent"].get("reachable"),
+        ]
+        status = "healthy" if all(r is True for r in reachable) else "unhealthy"
+    except Exception as e:
+        logger.warning(f"health/global: {e}")
+        status = "unhealthy"
+
+    return {
+        "status": status,
+        "timestamp": None
+    }
+
+
+@app.get("/nasp/diagnostics", response_model=NASPDiagnosticsResponse)
+async def nasp_diagnostics():
+    """
+    Retorna o estado de conectividade entre o Portal e todos os módulos NASP.
+    """
+    diagnostics = await check_all_nasp_modules()
+
+    return NASPDiagnosticsResponse(
+        sem_csmf=NASPModuleStatus(**diagnostics["sem_csmf"]),
+        ml_nsmf=NASPModuleStatus(**diagnostics["ml_nsmf"]),
+        decision=NASPModuleStatus(**diagnostics["decision"]),
+        bc_nssmf=NASPModuleStatus(**diagnostics["bc_nssmf"]),
+        sla_agent=NASPModuleStatus(**diagnostics["sla_agent"])
+    )
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "src.main:app",
+        host=settings.api_host,
+        port=settings.api_port,
+        reload=settings.api_reload,
+    )

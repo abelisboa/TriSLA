@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import GrafanaPanel from './components/Observability/GrafanaPanel';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box } from '@mui/material';
@@ -36,6 +37,7 @@ function App() {
             <Route path="/sla-dashboard" element={<SLAListPanel />} />
             <Route path="/administration" element={<Administration />} />
             <Route path="/slices" element={<SlicesState />} />
+            <Route path="/observability" element={<GrafanaPanel />} />
           </Routes>
         </Layout>
       </Router>

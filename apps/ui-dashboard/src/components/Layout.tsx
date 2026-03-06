@@ -33,6 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
 
   const menuItems = [
+    { text: 'Observability', icon: <AssessmentIcon />, path: '/observability' },
     { text: 'Tenant Portal', icon: <PeopleIcon />, path: '/tenant' },
     { text: 'SLA Dashboard', icon: <AssessmentIcon />, path: '/sla-dashboard' },
     { text: 'Monitoramento', icon: <MonitorHeartIcon />, path: '/monitoring' },

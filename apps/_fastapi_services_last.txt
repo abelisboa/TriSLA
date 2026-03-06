@@ -2,6 +2,7 @@ bc-nssmf
 decision-engine
 ml-nsmf
 nasp-adapter
+portal-backend
 sem-csmf
 sla-agent-layer
 traffic-exporter
