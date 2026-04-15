@@ -10,9 +10,9 @@ Its role is probabilistic inference and calibration, not final policy action.
 
 ## 2. Role in TriSLA Pipeline
 
-\[
+$$
 Input_{semantic+telemetry} \rightarrow \text{ML-NSMF} \rightarrow Output_{risk}
-\]
+$$
 
 Pipeline effect:
 
@@ -24,11 +24,11 @@ Pipeline effect:
 
 Define the feature vector:
 
-\[
+$$
 x = \left[ x_1, \ldots, x_n \right]
-\]
+$$
 
-Where \(x\) includes runtime metrics and derived attributes (latency,
+Where $x$ includes runtime metrics and derived attributes (latency,
 throughput, reliability, jitter, packet loss, CPU/MEM utilization, slice
 encoding, and ratios).
 
@@ -40,18 +40,18 @@ Primary endpoint (`apps/ml-nsmf/src/main.py`):
 
 Prediction output:
 
-\[
+$$
 y_{ml} = \left( R_{ML}, L_{risk}, V, C, \Pi, \Xi \right)
-\]
+$$
 
 Where:
 
-- \(R_{ML}\): risk score used by Decision Engine
-- \(L_{risk}\): categorical risk level
-- \(V\): viability score
-- \(C\): confidence-related fields
-- \(\Pi\): class probabilities / predicted decision class (if classifier active)
-- \(\Xi\): explainability metadata (`slice_domain_xai`, feature factors)
+- $R_{ML}$: risk score used by Decision Engine
+- $L_{risk}$: categorical risk level
+- $V$: viability score
+- $C$: confidence-related fields
+- $\Pi$: class probabilities / predicted decision class (if classifier active)
+- $\Xi$: explainability metadata (`slice_domain_xai`, feature factors)
 
 ## 5. Runtime Behavior (Detailed)
 
@@ -83,48 +83,48 @@ Key output fields and semantic impact:
 
 Regression risk:
 
-\[
+$$
 R_{reg}=1-\text{viability\_score}
-\]
+$$
 
 Classifier risk composition:
 
-\[
+$$
 R_{cls}=\min\left(1,\ 0.5\cdot P(RENEGOTIATE)+1.0\cdot P(REJECT)\right)
-\]
+$$
 
 Effective ML risk:
 
-\[
+$$
 R_{ML}=
 \begin{cases}
 R_{cls}, & \text{if classifier is active}\\
 R_{reg}, & \text{otherwise}
 \end{cases}
-\]
+$$
 
 Normalization abstraction:
 
-\[
+$$
 x_i^{norm}=\frac{x_i-x_i^{min}}{x_i^{max}-x_i^{min}}
-\]
+$$
 
 Domain stress composition:
 
-\[
+$$
 domain\_stress(x)=\sum_i w_i x_i^{norm}
-\]
+$$
 
 Slice-adjusted risk:
 
-\[
+$$
 R_{adj} = \left( 1 - \alpha_s \right) R_{ML} + \alpha_s \cdot domain\_stress\left( x \right)
-\]
+$$
 
 Interpretation:
 
-- \(R_{ML}\) is model-native uncertainty about SLA feasibility.
-- \(R_{adj}\) contextualizes model output to slice/domain operating pressure.
+- $R_{ML}$ is model-native uncertainty about SLA feasibility.
+- $R_{adj}$ contextualizes model output to slice/domain operating pressure.
 - This risk directly conditions admission boundaries in Decision Engine.
 
 ## 8. Integration with Decision Engine
@@ -144,17 +144,17 @@ logic, including PRB-aware hard gating.
 - Missing telemetry can reduce confidence or trigger fallback behavior.
 - ML-NSMF does not enforce policy; it supplies probabilistic evidence.
 
-## 10. Relation to Global Model \(\Phi\)
+## 10. Relation to Global Model $\Phi$
 
 In:
 
-\[
+$$
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
-\]
+$$
 
 Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
 
-ML-NSMF implements the predictive kernel \(f(x)\) that maps normalized features
+ML-NSMF implements the predictive kernel $f(x)$ that maps normalized features
 to risk evidence consumed by the policy-decision stage.
 
 ## 11. Design Rationale
@@ -194,7 +194,7 @@ Processing:
   computes model outputs for risk estimation.
 - The model computes `R_{reg}=1-viability_score` and, when enabled, classifier
   probabilities to derive `R_{cls}`.
-- Effective risk \(R_{ML}\) is selected and calibrated into \(R_{adj}\).
+- Effective risk $R_{ML}$ is selected and calibrated into $R_{adj}$.
 
 Output:
 

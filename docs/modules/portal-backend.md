@@ -8,9 +8,9 @@ responses grounded in runtime evidence.
 
 ## 2. Role in TriSLA Pipeline
 
-\[
+$$
 Input_{tenant\ request} \rightarrow \text{Portal Backend} \rightarrow Output_{unified\ lifecycle\ response}
-\]
+$$
 
 Pipeline role:
 
@@ -22,9 +22,9 @@ Pipeline role:
 
 Gateway input:
 
-\[
+$$
 u_{pb} = \left( template\_id, form\_values, tenant\_id, context \right)
-\]
+$$
 
 Core endpoints:
 
@@ -36,18 +36,18 @@ Core endpoints:
 
 Unified output:
 
-\[
+$$
 y_{pb} = \left( d, o, b, s, \lambda, \mu \right)
-\]
+$$
 
 Where:
 
-- \(d\): decision outcome
-- \(o\): orchestration status
-- \(b\): blockchain status
-- \(s\): SLA-Agent status
-- \(\lambda\): lifecycle state machine output
-- \(\mu\): telemetry and module-latency metadata
+- $d$: decision outcome
+- $o$: orchestration status
+- $b$: blockchain status
+- $s$: SLA-Agent status
+- $\lambda$: lifecycle state machine output
+- $\mu$: telemetry and module-latency metadata
 
 ## 5. Runtime Behavior (Detailed)
 
@@ -87,25 +87,25 @@ Semantically critical fields:
 
 Gateway composition:
 
-\[
+$$
 G(u_{pb})=\left(Decision,\ Orchestration,\ Blockchain,\ SLO,\ Lifecycle\right)
-\]
+$$
 
 Branch semantics:
 
-\[
+$$
 Decision=ACCEPT \Rightarrow Orchestrate\_NSI \Rightarrow Register\_Blockchain \Rightarrow Ingest\_SLA\_Agent
-\]
+$$
 
-\[
+$$
 Decision\in\{RENEGOTIATE,REJECT\} \Rightarrow Orchestration=SKIPPED
-\]
+$$
 
 Optional response completeness abstraction:
 
-\[
+$$
 Q_{resp}=h(module\_status,\ telemetry\_complete,\ lifecycle\_state)
-\]
+$$
 
 Interpretation:
 
@@ -129,13 +129,13 @@ API flow:
 - Some endpoints forward raw backend payloads (e.g., Prometheus routers).
 - Lifecycle semantics rely on consistent branch-status propagation.
 
-## 10. Relation to Global Model \(\Phi\)
+## 10. Relation to Global Model $\Phi$
 
 In:
 
-\[
+$$
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
-\]
+$$
 
 Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
 

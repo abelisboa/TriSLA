@@ -10,9 +10,9 @@ It is the module that materializes the acceptance/rejection boundary.
 
 ## 2. Role in TriSLA Pipeline
 
-\[
+$$
 Input_{semantic+risk+telemetry} \rightarrow \text{Decision Engine} \rightarrow Output_{decision}
-\]
+$$
 
 Pipeline role:
 
@@ -24,16 +24,16 @@ Pipeline role:
 
 Decision input tuple:
 
-\[
+$$
 u_{de} = \left( \eta_{sem}, y_{ml}, \tau_{ops}, \pi \right)
-\]
+$$
 
 Where:
 
-- \(\eta_{sem}\): semantic context (`intent`, `nest`, `slice_type`).
-- \(y_{ml}\): ML risk outputs (`risk_score`, confidence, class metadata).
-- \(\tau_{ops}\): telemetry snapshot, notably PRB and domain stress factors.
-- \(\pi\): policy configuration flags and thresholds.
+- $\eta_{sem}$: semantic context (`intent`, `nest`, `slice_type`).
+- $y_{ml}$: ML risk outputs (`risk_score`, confidence, class metadata).
+- $\tau_{ops}$: telemetry snapshot, notably PRB and domain stress factors.
+- $\pi$: policy configuration flags and thresholds.
 
 Primary endpoint (`apps/decision-engine/src/main.py`):
 
@@ -43,16 +43,16 @@ Primary endpoint (`apps/decision-engine/src/main.py`):
 
 Decision output:
 
-\[
+$$
 y_{de} = \left( a, r, c, m \right)
-\]
+$$
 
 Where:
 
-- \(a \in \{AC, RENEG, REJ\}\): final action
-- \(r\): textual/structured reasoning
-- \(c\): confidence and threshold decision metadata
-- \(m\): propagated decision context (`ml_risk_score`, thresholds, PRB factors)
+- $a \in \{AC, RENEG, REJ\}$: final action
+- $r$: textual/structured reasoning
+- $c$: confidence and threshold decision metadata
+- $m$: propagated decision context (`ml_risk_score`, thresholds, PRB factors)
 
 This output controls NASP orchestration gating and downstream lifecycle flow.
 
@@ -91,42 +91,42 @@ Semantically critical fields:
 
 Slice-dependent thresholds:
 
-\[
+$$
 (T_{acc},T_{reneg})=
 \begin{cases}
 (0.48,0.72), & URLLC\\
 (0.56,0.78), & eMBB\\
 (0.54,0.76), & mMTC
 \end{cases}
-\]
+$$
 
 PRB normalization:
 
-\[
+$$
 PRB_{norm}=\operatorname{clip}(PRB/100,0,1)
-\]
+$$
 
 Final risk:
 
-\[
+$$
 R_{final}=\min(1,\ R_{adj}+\alpha_{prb}\cdot PRB_{norm})
-\]
+$$
 
 Primary decision function:
 
-\[
+$$
 Decision=
 \begin{cases}
 ACCEPT,& R_{final}<T_{acc}\\
 RENEGOTIATE,& T_{acc}\le R_{final}<T_{reneg}\\
 REJECT,& R_{final}\ge T_{reneg}
 \end{cases}
-\]
+$$
 
 Hard policy gates:
 
-- \(PRB \ge 95 \Rightarrow REJECT\)
-- \(85 \le PRB < 95 \Rightarrow RENEGOTIATE\)
+- $PRB \ge 95 \Rightarrow REJECT$
+- $85 \le PRB < 95 \Rightarrow RENEGOTIATE$
 
 Interpretation:
 
@@ -147,17 +147,17 @@ This module is itself the decision nexus. Integration semantics:
 - Policy flags alter runtime branch behavior and must be controlled in studies.
 - Decision Engine does not instantiate NSI directly; it authorizes that path.
 
-## 10. Relation to Global Model \(\Phi\)
+## 10. Relation to Global Model $\Phi$
 
 Within:
 
-\[
+$$
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
-\]
+$$
 
 Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
 
-Decision Engine realizes the \(Decision\) projection by combining semantic
+Decision Engine realizes the $Decision$ projection by combining semantic
 operands, normalized risk, and policy constraints into final admission action.
 
 ## 11. Design Rationale
@@ -192,7 +192,7 @@ statistical optimization.
 Input:
 
 - slice type: `eMBB`
-- thresholds: \(T_{acc}=0.56,\ T_{reneg}=0.78\)
+- thresholds: $T_{acc}=0.56,\ T_{reneg}=0.78$
 - PRB: `88%` (inside hard renegotiate band)
 - ML output: risk in decision interval
 
@@ -200,7 +200,7 @@ Processing:
 
 - The module receives semantic interpretation context and ML risk estimation
   outputs for the SLA request.
-- It computes \(R_{final}\) from \(R_{adj}\) and PRB shaping, then evaluates the
+- It computes $R_{final}$ from $R_{adj}$ and PRB shaping, then evaluates the
   threshold decision.
 - PRB policy gating is applied on top of the threshold decision.
 

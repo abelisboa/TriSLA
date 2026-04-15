@@ -10,9 +10,9 @@ Its objective is post-decision operational validation and coordination.
 
 ## 2. Role in TriSLA Pipeline
 
-\[
+$$
 Input_{pipeline+telemetry} \rightarrow \text{SLA-Agent Layer} \rightarrow Output_{slo+lifecycle}
-\]
+$$
 
 Pipeline role:
 
@@ -24,16 +24,16 @@ Pipeline role:
 
 Evaluation input:
 
-\[
+$$
 u_{sla} = \left( E, \mathcal{D}, \Lambda, \rho \right)
-\]
+$$
 
 Where:
 
-- \(E\): pipeline event payload (decision, orchestration, blockchain context).
-- \(\mathcal{D}\): domain metric observations.
-- \(\Lambda\): configured SLO target set.
-- \(\rho\): risk margin parameter from evaluator rules.
+- $E$: pipeline event payload (decision, orchestration, blockchain context).
+- $\mathcal{D}$: domain metric observations.
+- $\Lambda$: configured SLO target set.
+- $\rho$: risk margin parameter from evaluator rules.
 
 Primary endpoints (`apps/sla-agent-layer/src/main.py`):
 
@@ -45,15 +45,15 @@ Primary endpoints (`apps/sla-agent-layer/src/main.py`):
 
 Compliance output:
 
-\[
+$$
 y_{sla} = \left( \sigma, \Gamma, \ell \right)
-\]
+$$
 
 Where:
 
-- \(\sigma\): overall status in \(\{OK,RISK,VIOLATED\}\)
-- \(\Gamma\): per-domain and per-metric compliance records
-- \(\ell\): lifecycle and explanation metadata
+- $\sigma$: overall status in $\{OK,RISK,VIOLATED\}$
+- $\Gamma$: per-domain and per-metric compliance records
+- $\ell$: lifecycle and explanation metadata
 
 This output feeds global SLA status and lifecycle closure.
 
@@ -86,32 +86,32 @@ Important fields:
 
 Per-metric evaluator:
 
-\[
+$$
 SLO_{status}=g(m,t,\rho,op)
-\]
+$$
 
-For \(op = \le\):
+For $op = \le$:
 
-- \(OK\) if \(m \le t\)
-- \(RISK\) if \(t < m \le t/\rho\)
-- \(VIOLATED\) if \(m > t/\rho\)
+- $OK$ if $m \le t$
+- $RISK$ if $t < m \le t/\rho$
+- $VIOLATED$ if $m > t/\rho$
 
-For \(op = \ge\):
+For $op = \ge$:
 
-- \(OK\) if \(m \ge t\)
-- \(RISK\) if \(t\rho \le m < t\)
-- \(VIOLATED\) if \(m < t\rho\)
+- $OK$ if $m \ge t$
+- $RISK$ if $t\rho \le m < t$
+- $VIOLATED$ if $m < t\rho$
 
 Global aggregation:
 
-\[
+$$
 Overall=
 \begin{cases}
 VIOLATED, & \exists\ violation\\
 RISK, & \exists\ risk\ \land\ \nexists\ violation\\
 OK, & \text{otherwise}
 \end{cases}
-\]
+$$
 
 Interpretation:
 
@@ -133,17 +133,17 @@ operational consequences:
 - SLO semantics are operator-dependent and configuration-sensitive.
 - The module evaluates and coordinates; it does not issue admission decisions.
 
-## 10. Relation to Global Model \(\Phi\)
+## 10. Relation to Global Model $\Phi$
 
 In:
 
-\[
+$$
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
-\]
+$$
 
 Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
 
-SLA-Agent Layer realizes the \(SLO\) component by mapping runtime telemetry and
+SLA-Agent Layer realizes the $SLO$ component by mapping runtime telemetry and
 pipeline context into formal compliance and lifecycle evidence.
 
 ## 11. Design Rationale
@@ -199,7 +199,7 @@ an accepted SLA remains operationally compliant over time.
 Critical variables:
 
 - metric-to-target deviations
-- risk-margin parameter \(\rho\)
+- risk-margin parameter $\rho$
 
 Its outputs influence renegotiation and lifecycle governance in subsequent cycles.
 

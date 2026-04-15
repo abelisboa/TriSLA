@@ -10,9 +10,9 @@ It is the execution boundary between control-plane logic and runtime substrate.
 
 ## 2. Role in TriSLA Pipeline
 
-\[
+$$
 Input_{decision} \rightarrow \text{NASP Adapter} \rightarrow Output_{nsi+telemetry}
-\]
+$$
 
 Pipeline role:
 
@@ -24,16 +24,16 @@ Pipeline role:
 
 Actuation input:
 
-\[
+$$
 u_{nasp} = \left( a, \nu, g, c \right)
-\]
+$$
 
 Where:
 
-- \(a\): decision action from Decision Engine.
-- \(\nu\): NSI payload (`nsiId`, `serviceProfile`, `tenantId`, `nssai`, `sla`).
-- \(g\): 3GPP gate state.
-- \(c\): capacity accounting state.
+- $a$: decision action from Decision Engine.
+- $\nu$: NSI payload (`nsiId`, `serviceProfile`, `tenantId`, `nssai`, `sla`).
+- $g$: 3GPP gate state.
+- $c$: capacity accounting state.
 
 Primary endpoints (`apps/nasp-adapter/src/main.py`):
 
@@ -45,15 +45,15 @@ Primary endpoints (`apps/nasp-adapter/src/main.py`):
 
 Execution output:
 
-\[
+$$
 y_{nasp} = \left( o, \mu, \kappa \right)
-\]
+$$
 
 Where:
 
-- \(o\): orchestration result (`success`, `failed`, `skipped`)
-- \(\mu\): multidomain metrics payload
-- \(\kappa\): structured reason/error metadata
+- $o$: orchestration result (`success`, `failed`, `skipped`)
+- $\mu$: multidomain metrics payload
+- $\kappa$: structured reason/error metadata
 
 This output determines whether blockchain registration and lifecycle progression
 are executed or skipped.
@@ -89,21 +89,21 @@ Semantically central fields:
 
 Orchestration feasibility:
 
-\[
+$$
 NSI=\operatorname{instantiate} \iff (a=ACCEPT)\land(Gate3GPP=PASS)\land(Capacity=PASS)
-\]
+$$
 
 Telemetry projection:
 
-\[
+$$
 \mu = \mathcal{M}(core,ran,transport,timestamp,reasons)
-\]
+$$
 
 Optional pressure normalization:
 
-\[
+$$
 z_i^{norm}=\frac{z_i-z_i^{min}}{z_i^{max}-z_i^{min}}
-\]
+$$
 
 Interpretation:
 
@@ -128,17 +128,17 @@ Thus, NASP Adapter is the first physical consequence of Decision Engine output.
 - Gate and capacity features are configuration-dependent.
 - NSI naming/CRD compatibility constraints are enforced at runtime.
 
-## 10. Relation to Global Model \(\Phi\)
+## 10. Relation to Global Model $\Phi$
 
 In:
 
-\[
+$$
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
-\]
+$$
 
 Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
 
-NASP Adapter realizes the \(NSI\) component and contributes telemetry feedback
+NASP Adapter realizes the $NSI$ component and contributes telemetry feedback
 that conditions later compliance and lifecycle state.
 
 ## 11. Design Rationale

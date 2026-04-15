@@ -9,9 +9,9 @@ Its responsibility is auditability and state integrity, not admission control.
 
 ## 2. Role in TriSLA Pipeline
 
-\[
+$$
 Input_{orchestration/lifecycle\ event} \rightarrow \text{BC-NSSMF} \rightarrow Output_{on\text{-}chain\ state}
-\]
+$$
 
 Pipeline role:
 
@@ -23,16 +23,16 @@ Pipeline role:
 
 Blockchain input:
 
-\[
+$$
 u_{bc} = \left( id, \omega, \varsigma, e \right)
-\]
+$$
 
 Where:
 
-- \(id\): SLA identity tuple.
-- \(\omega\): SLO/value payload to persist.
-- \(\varsigma\): requested state transition.
-- \(e\): event type (`register`, `update`, or contract execution request).
+- $id$: SLA identity tuple.
+- $\omega$: SLO/value payload to persist.
+- $\varsigma$: requested state transition.
+- $e$: event type (`register`, `update`, or contract execution request).
 
 Primary endpoints (`apps/bc-nssmf/src/main.py`):
 
@@ -44,15 +44,15 @@ Primary endpoints (`apps/bc-nssmf/src/main.py`):
 
 Commit output:
 
-\[
+$$
 y_{bc} = \left( state, tx, b \right)
-\]
+$$
 
 Where:
 
-- \(state\): persisted SLA state.
-- \(tx\): transaction identifier (`tx_hash`).
-- \(b\): block metadata (e.g., block number when available).
+- $state$: persisted SLA state.
+- $tx$: transaction identifier (`tx_hash`).
+- $b$: block metadata (e.g., block number when available).
 
 This output becomes immutable evidence for lifecycle traceability.
 
@@ -90,25 +90,25 @@ Operational status mapping:
 
 State space:
 
-\[
+$$
 SLA_{state}\in\{CREATED,ACTIVE,VIOLATED,RENEGOTIATED,CLOSED\}
-\]
+$$
 
 Transition operator:
 
-\[
+$$
 SLA_{state}(t+1)=B(SLA_{state}(t),e_t)
-\]
+$$
 
 Commit evidence relation:
 
-\[
+$$
 \operatorname{commit}(e_t)\Rightarrow(tx\_hash,block,\ SLA_{state}(t+1))
-\]
+$$
 
 Interpretation:
 
-- \(B\) formalizes the contract-level transition function.
+- $B$ formalizes the contract-level transition function.
 - The module ensures lifecycle transitions are auditable and tamper-evident.
 
 ## 8. Integration with Decision Engine
@@ -125,17 +125,17 @@ BC-NSSMF is indirectly controlled by Decision Engine through orchestration flow:
 - State semantics are constrained by contract status model.
 - Write latency is blockchain-dependent and external to control logic.
 
-## 10. Relation to Global Model \(\Phi\)
+## 10. Relation to Global Model $\Phi$
 
 In:
 
-\[
+$$
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
-\]
+$$
 
 Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
 
-BC-NSSMF realizes the \(State\) projection by persisting lifecycle transitions
+BC-NSSMF realizes the $State$ projection by persisting lifecycle transitions
 as verifiable on-chain state.
 
 ## 11. Design Rationale

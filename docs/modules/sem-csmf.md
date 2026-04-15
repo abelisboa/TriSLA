@@ -13,9 +13,9 @@ contract preparation for risk and policy evaluation stages.
 
 Pipeline position:
 
-\[
+$$
 Input_{tenant} \rightarrow \text{SEM-CSMF} \rightarrow Output_{semantic}
-\]
+$$
 
 Runtime sequence contribution:
 
@@ -28,15 +28,15 @@ Runtime sequence contribution:
 
 Let the semantic input be:
 
-\[
+$$
 u_{sem} = \left( T, \tau, \Theta_0 \right)
-\]
+$$
 
 Where:
 
-- \(T\): tenant intent text or structured intent payload.
-- \(\tau\): tenant identity/context (`tenant_id`).
-- \(\Theta_0\): optional SLA requirements provided at request time.
+- $T$: tenant intent text or structured intent payload.
+- $\tau$: tenant identity/context (`tenant_id`).
+- $\Theta_0$: optional SLA requirements provided at request time.
 
 Primary ingress endpoints (SSOT from `apps/sem-csmf/src/main.py`):
 
@@ -48,17 +48,17 @@ Primary ingress endpoints (SSOT from `apps/sem-csmf/src/main.py`):
 
 Semantic output:
 
-\[
+$$
 y_{sem} = \left( \iota, n, s, \Theta, \eta \right)
-\]
+$$
 
 Where:
 
-- \(\iota\): `intent_id`
-- \(n\): `nest_id`
-- \(s \in \{URLLC, eMBB, mMTC\}\): inferred slice class
-- \(\Theta\): normalized SLA requirement set
-- \(\eta\): semantic metadata (parsing, reasoning, and timing context)
+- $\iota$: `intent_id`
+- $n$: `nest_id`
+- $s \in \{URLLC, eMBB, mMTC\}$: inferred slice class
+- $\Theta$: normalized SLA requirement set
+- $\eta$: semantic metadata (parsing, reasoning, and timing context)
 
 This output is propagated to decision/risk processing and lifecycle tracking.
 
@@ -122,29 +122,29 @@ Observed runtime sequence:
 
 Semantic transformation:
 
-\[
+$$
 I: (T,\tau,\Theta_0) \mapsto (\iota,n,s,\Theta,\eta)
-\]
+$$
 
 Slice inference abstraction:
 
-\[
+$$
 \hat{s} = \arg\max_{s \in S} \operatorname{match}(T,\Theta_0,s)
-\]
+$$
 
 Normalized requirement projection:
 
-\[
+$$
 \Theta = \mathcal{N}_{sem}(\Theta_0, T, \hat{s})
-\]
+$$
 
 Interpretation:
 
-- \(I\) maps human intent into deterministic machine semantics.
-- \(\hat{s}\) selects the operational slice profile for downstream risk policy.
-- \(\Theta\) harmonizes request semantics with runtime-compatible fields.
+- $I$ maps human intent into deterministic machine semantics.
+- $\hat{s}$ selects the operational slice profile for downstream risk policy.
+- $\Theta$ harmonizes request semantics with runtime-compatible fields.
 - Ontology-assisted reasoning can participate in this transformation, but it is
-  not a mandatory execution dependency for \(I(T)\to(s,\theta,\eta)\).
+  not a mandatory execution dependency for $I(T)\to(s,\theta,\eta)$.
 
 ## 8. Integration with Decision Engine
 
@@ -161,17 +161,17 @@ used by ML-NSMF and Decision Engine:
 - Fallback defaults preserve liveness but may reduce semantic specificity.
 - SEM-CSMF does not execute orchestration or policy enforcement directly.
 
-## 10. Relation to Global Model \(\Phi\)
+## 10. Relation to Global Model $\Phi$
 
 Within:
 
-\[
+$$
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
-\]
+$$
 
 Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
 
-SEM-CSMF is the front-end realization of \(T \mapsto (\Theta,s,\eta)\), i.e., it
+SEM-CSMF is the front-end realization of $T \mapsto (\Theta,s,\eta)$, i.e., it
 produces semantic operands consumed by risk, policy, and orchestration layers.
 
 ## 11. Design Rationale
