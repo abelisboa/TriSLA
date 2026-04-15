@@ -1,0 +1,317 @@
+"""
+SEM-CSMF - Semantic-enhanced Communication Service Management Function
+TriSLA v3.10.0
+Aplicação principal FastAPI com Observabilidade Prometheus + OTEL
+"""
+
+# ============================================================
+# TRISLA OBSERVABILITY (PROMETHEUS + OTEL)
+# ============================================================
+
+import os
+import sys
+import logging
+import uuid
+import uvicorn
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from starlette.requests import Request
+from starlette.responses import Response
+from prometheus_client import (
+    Counter,
+    Histogram,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+)
+
+# --- Prometheus HTTP Metrics ---
+TRISLA_HTTP_REQUESTS_TOTAL = Counter(
+    "trisla_http_requests_total",
+    "Total de requisições HTTP por serviço e rota",
+    ["service", "method", "path", "status"],
+)
+
+TRISLA_HTTP_REQUEST_DURATION_SECONDS = Histogram(
+    "trisla_http_request_duration_seconds",
+    "Duração de requisições HTTP em segundos por serviço e rota",
+    ["service", "method", "path"],
+)
+
+# --- OTEL Setup ---
+def _trisla_setup_otel(service_name: str):
+    try:
+        from opentelemetry import trace
+        from opentelemetry.sdk.resources import Resource
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+        endpoint = os.getenv(
+            "OTEL_EXPORTER_OTLP_ENDPOINT",
+            "http://trisla-otel-collector.trisla.svc.cluster.local:4317"
+        )
+        insecure = os.getenv("OTEL_EXPORTER_OTLP_INSECURE", "true").lower() == "true"
+
+        resource = Resource.create({"service.name": service_name})
+        provider = TracerProvider(resource=resource)
+        exporter = OTLPSpanExporter(endpoint=endpoint, insecure=insecure)
+        provider.add_span_processor(BatchSpanProcessor(exporter))
+        trace.set_tracer_provider(provider)
+
+        return FastAPIInstrumentor
+
+    except Exception:
+        return None
+
+
+def _trisla_attach_observability(app: FastAPI, service_name: str):
+
+    @app.middleware("http")
+    async def _prom_middleware(request: Request, call_next):
+        method = request.method
+        path = request.url.path
+
+        with TRISLA_HTTP_REQUEST_DURATION_SECONDS.labels(
+            service=service_name,
+            method=method,
+            path=path,
+        ).time():
+            response = await call_next(request)
+
+        TRISLA_HTTP_REQUESTS_TOTAL.labels(
+            service=service_name,
+            method=method,
+            path=path,
+            status=str(response.status_code),
+        ).inc()
+
+        return response
+
+    @app.get("/metrics")
+    async def _metrics():
+        return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+    instr = _trisla_setup_otel(service_name)
+    if instr:
+        try:
+            instr.instrument_app(app)
+        except Exception:
+            pass
+
+
+# ============================================================
+# IMPORTS INTERNOS DO PROJETO
+# ============================================================
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from observability import metrics
+
+from intent_processor import IntentProcessor
+from nest_generator_db import NESTGeneratorDB
+from models.intent import (
+    Intent,
+    IntentRequest,
+    IntentResponse,
+    SliceType,
+    SLARequirements,
+)
+from models.nest import NEST
+from models.db_models import IntentModel
+from database import get_db, init_db
+from repository import IntentRepository
+from decision_engine_client import DecisionEngineHTTPClient
+from auth import get_current_user_optional
+from services.semantic_generator import generate_default_sla
+from security import RateLimitMiddleware, SecurityHeadersMiddleware
+
+from opentelemetry import trace
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+
+# ============================================================
+# APP INICIALIZAÇÃO CORRETA
+# ============================================================
+
+app = FastAPI(
+    title="TriSLA SEM-CSMF",
+    description="Semantic-enhanced Communication Service Management Function",
+    version="3.10.0",
+)
+
+_trisla_attach_observability(
+    app,
+    os.getenv("TRISLA_SERVICE_NAME", "sem-csmf"),
+)
+
+# ============================================================
+# MIDDLEWARE
+# ============================================================
+
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimitMiddleware)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ============================================================
+# INICIALIZAÇÃO
+# ============================================================
+
+init_db()
+logger = logging.getLogger(__name__)
+tracer = trace.get_tracer(__name__)
+
+intent_processor = IntentProcessor()
+decision_engine_client = DecisionEngineHTTPClient()
+
+# ============================================================
+# ENDPOINTS
+# ============================================================
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy", "module": "sem-csmf"}
+
+
+@app.post("/api/v1/interpret")
+async def interpret_intent(
+    request: dict,
+    db: Session = Depends(get_db),
+    current_user: str = get_current_user_optional()
+):
+    from models.intent import Intent, SliceType, SLARequirements
+    import uuid
+
+    intent_text = request.get("intent")
+    if not intent_text or not intent_text.strip():
+        raise HTTPException(status_code=400, detail="Campo 'intent' é obrigatório")
+
+    tenant_id = request.get("tenant_id", "default")
+
+    with tracer.start_as_current_span("interpret_intent") as span:
+        span.set_attribute("intent.text", intent_text[:100])
+
+        try:
+            nlp_result = None
+            if intent_processor.nlp_parser:
+                try:
+                    nlp_result = intent_processor.nlp_parser.parse_intent_text(intent_text)
+                except Exception as e:
+                    logger.warning(f"NLP parser error: {e}")
+
+            inferred_service_type = SliceType.EMBB
+            if nlp_result and nlp_result.get("slice_type"):
+                try:
+                    inferred_service_type = SliceType[nlp_result["slice_type"].upper()]
+                except (KeyError, AttributeError):
+                    intent_upper = intent_text.upper()
+                    if "URLLC" in intent_upper:
+                        inferred_service_type = SliceType.URLLC
+                    elif "MMTC" in intent_upper:
+                        inferred_service_type = SliceType.MMTC
+
+            sla_req_dict = {"throughput": "100Mbps", "reliability": 0.99}
+            sla_requirements = SLARequirements(**sla_req_dict)
+
+            intent_id = str(uuid.uuid4())
+            intent = Intent(
+                intent_id=intent_id,
+                tenant_id=tenant_id,
+                service_type=inferred_service_type,
+                sla_requirements=sla_requirements
+            )
+
+            validated_intent = await intent_processor.validate_semantic(intent, intent_text)
+            gst = await intent_processor.generate_gst(validated_intent)
+            nest_generator = NESTGeneratorDB(db)
+            nest = await nest_generator.generate_nest(gst)
+
+            return {
+                "intent_id": intent_id,
+                "nest_id": nest.nest_id,
+                "service_type": validated_intent.service_type.value,
+                "status": "accepted"
+            }
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/v1/intents", response_model=IntentResponse)
+async def create_intent(
+    request: IntentRequest,
+    db: Session = Depends(get_db),
+    current_user: str = get_current_user_optional()
+):
+
+    try:
+        if request.service_type == "eMBB":
+            service_type_enum = SliceType.EMBB
+        elif request.service_type == "URLLC":
+            service_type_enum = SliceType.URLLC
+        elif request.service_type == "mMTC":
+            service_type_enum = SliceType.MMTC
+        else:
+            raise HTTPException(status_code=400, detail="service_type inválido")
+
+        intent_id = str(uuid.uuid4())
+        tenant_id = request.tenant_id or "default"
+
+        if request.sla_requirements is None:
+            sla_req_dict = generate_default_sla(request.service_type)
+        else:
+            sla_req_dict = request.sla_requirements
+
+        sla_requirements = SLARequirements(**sla_req_dict)
+
+        intent = Intent(
+            intent_id=intent_id,
+            tenant_id=tenant_id,
+            service_type=service_type_enum,
+            sla_requirements=sla_requirements,
+            intent_text=request.intent,
+            metadata={}
+        )
+
+        validated_intent = await intent_processor.validate_semantic(intent, intent_text=intent.intent_text)
+        gst = await intent_processor.generate_gst(validated_intent)
+
+        nest_generator = NESTGeneratorDB(db)
+        nest = await nest_generator.generate_nest(gst)
+
+        metadata = await intent_processor.generate_metadata(intent, nest)
+
+        decision_response = await decision_engine_client.send_nest_metadata(
+            intent_id=intent.intent_id,
+            nest_id=nest.nest_id,
+            tenant_id=intent.tenant_id,
+            service_type=intent.service_type.value,
+            sla_requirements=intent.sla_requirements.model_dump(),
+            nest_status=nest.status.value,
+            metadata=metadata
+        )
+
+        return IntentResponse(
+            intent_id=intent.intent_id,
+            status="accepted",
+            nest_id=nest.nest_id,
+            decision=decision_response.get("decision"),
+            message=f"Intent processed and NEST generated. Decision Engine: {decision_response.get('message', 'N/A')}"
+        )
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8080)

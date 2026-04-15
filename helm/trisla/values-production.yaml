@@ -1,0 +1,102 @@
+# ============================================
+# Values for REAL PRODUCTION
+# Rebuilt from the existing canonical values file: helm/trisla/values.yaml
+# ============================================
+
+global:
+  imageRegistry: ghcr.io/abelisboa
+  namespace: trisla
+
+network:
+  interface: my5g
+  nodeIP: REPLACE_ME
+  gateway: REPLACE_ME
+
+# REAL PRODUCTION settings
+production:
+  enabled: true
+  simulationMode: false  # ⚠️ DO NOT use simulation
+  useRealServices: true  # ⚠️ Use REAL services
+  executeRealActions: true  # ⚠️ Execute REAL actions
+
+# NASP configuration (rebuilt from existing values in values-nasp.yaml)
+naspAdapter:
+  env:
+    NASP_EXECUTION_MODE: "crd"
+    NASP_PROXY_ENABLED: "false"
+
+# Increased resources for production
+semCsmf:
+  replicas: 3
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+
+mlNsmf:
+  replicas: 3
+  resources:
+    requests:
+      cpu: 2000m
+      memory: 2Gi
+    limits:
+      cpu: 8000m
+      memory: 8Gi
+
+decisionEngine:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+
+bcNssmf:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+
+slaAgentLayer:
+  replicas: 3
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+
+naspAdapter:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+
+# Active monitoring
+monitoring:
+  enabled: true
+  alerting:
+    enabled: true
+
+# Node IPs
+nodes:
+  node1:
+    ip: "REPLACE_ME"
+    interface: "my5g"
+  node2:
+    ip: "REPLACE_ME"
+    interface: "my5g"

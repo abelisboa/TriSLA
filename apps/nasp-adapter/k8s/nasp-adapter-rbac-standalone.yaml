@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trisla-nasp-adapter
+  namespace: trisla
+  labels:
+    app: trisla
+    component: nasp-adapter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: trisla-nasp-adapter
+  labels:
+    app: trisla
+    component: nasp-adapter
+rules:
+  # CRDs - NetworkSliceInstances e NetworkSliceSubnetInstances
+  # FASE C3-C2.2: Permissões completas para ciclo de vida NSI/NSSI
+  - apiGroups:
+      - trisla.io
+    resources:
+      - networksliceinstances
+      - networksliceinstances/status
+      - networkslicesubnetinstances
+      - networkslicesubnetinstances/status
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  # Namespaces (cluster-scoped)
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+  # ResourceQuotas e LimitRanges
+  - apiGroups:
+      - ""
+    resources:
+      - resourcequotas
+      - limitranges
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+  # NetworkPolicies
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: trisla-nasp-adapter
+  labels:
+    app: trisla
+    component: nasp-adapter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: trisla-nasp-adapter
+subjects:
+  - kind: ServiceAccount
+    name: trisla-nasp-adapter
+    namespace: trisla
+

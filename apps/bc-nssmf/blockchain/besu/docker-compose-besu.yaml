@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  besu-dev:
+    image: hyperledger/besu:latest
+    container_name: besu-dev
+    command:
+      - "--network=dev"
+      - "--rpc-http-enabled=true"
+      - "--rpc-http-port=8545"
+      - "--rpc-http-host=0.0.0.0"
+      - "--rpc-http-api=ETH,NET,WEB3"
+      - "--rpc-http-cors-origins=*"
+      - "--rpc-http-hosts=*"
+      - "--host-allowlist=*"
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./data:/opt/besu/data

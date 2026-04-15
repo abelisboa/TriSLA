@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trisla.name" . }}-config
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (dict "Values" .Values "Release" .Release "Chart" .Chart "component" "config") | nindent 4 }}
+data:
+  network.interface: {{ .Values.network.interface | quote }}
+  network.nodeIP: {{ .Values.network.nodeIP | quote }}
+  network.gateway: {{ .Values.network.gateway | quote }}
+  production.enabled: {{ .Values.production.enabled | quote }}
+  production.simulationMode: {{ .Values.production.simulationMode | quote }}
+  production.useRealServices: {{ .Values.production.useRealServices | quote }}
+  production.executeRealActions: {{ .Values.production.executeRealActions | quote }}
+

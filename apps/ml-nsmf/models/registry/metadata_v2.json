@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "created_at": "2026-03-23T21:30:34.235092+00:00",
+  "decision": "promoted",
+  "reason": "All quality gates passed",
+  "best_model": "gradient_boosting",
+  "dataset_rows": 110,
+  "feature_columns": [
+    "latency",
+    "throughput",
+    "reliability",
+    "jitter",
+    "packet_loss",
+    "cpu_utilization",
+    "memory_utilization",
+    "network_bandwidth_available",
+    "active_slices_count",
+    "slice_type_encoded",
+    "latency_throughput_ratio",
+    "reliability_packet_loss_ratio",
+    "jitter_latency_ratio"
+  ],
+  "metrics": {
+    "random_forest": {
+      "train": {
+        "mae": 0.016551987744643323,
+        "rmse": 0.02409638327603739,
+        "r2": 0.9826577322666525
+      },
+      "test": {
+        "mae": 0.030094062431650758,
+        "rmse": 0.04951923914800779,
+        "r2": 0.9583609493549898
+      }
+    },
+    "gradient_boosting": {
+      "train": {
+        "mae": 0.006890270862484132,
+        "rmse": 0.0101776534345786,
+        "r2": 0.9969061626472935
+      },
+      "test": {
+        "mae": 0.029406518012134317,
+        "rmse": 0.04793924096966047,
+        "r2": 0.9609756929821675
+      }
+    }
+  },
+  "class_distribution": {
+    "ACCEPT": 15,
+    "RENEGOTIATE": 29,
+    "REJECT": 66
+  },
+  "class_ratio": {
+    "ACCEPT": 0.13636363636363635,
+    "RENEGOTIATE": 0.2636363636363636,
+    "REJECT": 0.6
+  },
+  "gates": {
+    "r2_gt_0_9": true,
+    "accept_present": true,
+    "renegotiate_present": true,
+    "reject_present": true,
+    "accept_ratio_ge_0_05": true,
+    "renegotiate_ratio_ge_0_05": true,
+    "reject_ratio_ge_0_05": true
+  }
+}

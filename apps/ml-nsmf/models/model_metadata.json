@@ -1,0 +1,151 @@
+{
+  "model_type": "random_forest_classifier_multiclass",
+  "calibration": "sigmoid",
+  "feature_columns": [
+    "latency",
+    "throughput",
+    "reliability",
+    "jitter",
+    "packet_loss",
+    "cpu_utilization",
+    "memory_utilization",
+    "network_bandwidth_available",
+    "active_slices_count",
+    "slice_type_encoded",
+    "latency_throughput_ratio",
+    "reliability_packet_loss_ratio",
+    "jitter_latency_ratio",
+    "domain_pressure_score",
+    "transport_instability_score",
+    "core_pressure_score",
+    "throughput_efficiency_score",
+    "sla_stringency_score",
+    "slice_domain_fit_score"
+  ],
+  "risk_formula": "v7_calibrated",
+  "training_origin": {
+    "dataset": "/home/porvir5g/gtp5g/trisla/artifacts/ml_training_dataset_v6_controlled.csv",
+    "real_and_bootstrap_mixed": true,
+    "bootstrap_for_training_only": true
+  },
+  "class_shares": {
+    "ACCEPT": 0.3333333333333333,
+    "RENEGOTIATE": 0.3333333333333333,
+    "REJECT": 0.3333333333333333
+  },
+  "class_counts": {
+    "ACCEPT": 200,
+    "RENEGOTIATE": 200,
+    "REJECT": 200
+  },
+  "offline_metrics": {
+    "macro_f1": 0.920162968389016,
+    "balanced_accuracy": 0.9199999999999999,
+    "recall_reject": 0.94,
+    "risk_nunique": 125,
+    "risk_std": 0.3610893279014446,
+    "mean_risk_by_class": {
+      "ACCEPT": 0.0926877432477943,
+      "RENEGOTIATE": 0.5075810259057423,
+      "REJECT": 0.9121559320397858
+    },
+    "classification_report": {
+      "ACCEPT": {
+        "precision": 0.9574468085106383,
+        "recall": 0.9,
+        "f1-score": 0.9278350515463918,
+        "support": 50.0
+      },
+      "REJECT": {
+        "precision": 0.9215686274509803,
+        "recall": 0.94,
+        "f1-score": 0.9306930693069307,
+        "support": 50.0
+      },
+      "RENEGOTIATE": {
+        "precision": 0.8846153846153846,
+        "recall": 0.92,
+        "f1-score": 0.9019607843137255,
+        "support": 50.0
+      },
+      "accuracy": 0.92,
+      "macro avg": {
+        "precision": 0.9212102735256678,
+        "recall": 0.9199999999999999,
+        "f1-score": 0.920162968389016,
+        "support": 150.0
+      },
+      "weighted avg": {
+        "precision": 0.9212102735256679,
+        "recall": 0.92,
+        "f1-score": 0.9201629683890159,
+        "support": 150.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        45,
+        1,
+        4
+      ],
+      [
+        1,
+        47,
+        2
+      ],
+      [
+        1,
+        3,
+        46
+      ]
+    ],
+    "slice_checks": {
+      "URLLC": {
+        "samples": 51,
+        "risk_nunique": 47,
+        "risk_std": 0.3807188868766039,
+        "decision_classes_present": [
+          "ACCEPT",
+          "REJECT",
+          "RENEGOTIATE"
+        ],
+        "non_collapsed": true
+      },
+      "eMBB": {
+        "samples": 71,
+        "risk_nunique": 55,
+        "risk_std": 0.36804635886185033,
+        "decision_classes_present": [
+          "ACCEPT",
+          "REJECT",
+          "RENEGOTIATE"
+        ],
+        "non_collapsed": true
+      },
+      "mMTC": {
+        "samples": 28,
+        "risk_nunique": 27,
+        "risk_std": 0.24167360853354344,
+        "decision_classes_present": [
+          "ACCEPT",
+          "REJECT",
+          "RENEGOTIATE"
+        ],
+        "non_collapsed": true
+      }
+    }
+  },
+  "gates": {
+    "macro_f1_ge_065": true,
+    "balanced_accuracy_ge_065": true,
+    "recall_reject_ge_050": true,
+    "risk_monotonic_low_medium_high": true,
+    "mean_accept_lt_reneg_lt_reject": true,
+    "risk_nunique_gt_10": true,
+    "risk_std_gt_0": true,
+    "slice_stability_ok": true
+  },
+  "scientific_status": "ML_VALIDATED_FOR_PAPER",
+  "ml_status": "ML_VALIDATED_FOR_PAPER",
+  "trained_at_utc": "2026-03-25T18:42:48.682563+00:00"
+}

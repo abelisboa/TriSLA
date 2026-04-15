@@ -1,0 +1,17 @@
+# API-2 — Evidência funcional (2026-03-17)
+
+## Digest deployado
+sha256:4cd7aa90df8fcc278d7d5154189f9d3781afdce62adb43444073d093b9bc1af8
+
+## Critério atendido
+Pod imageID == REMOTE_DIGEST (idêntico).
+
+## Páginas a capturar (FASE 10)
+- **Home:** Backend Health (status, version, nasp_reachable, nasp_details_url) + Prometheus Summary (Prometheus Up, CPU, Memory) com dados reais.
+- **Monitoring:** Prometheus (up, cpu, memory), Backend (status, version), Modules (lista do GET /api/v1/modules/) com dados reais.
+
+## Como validar
+Via túnel oficial (localhost:8080) ou NodePort (192.168.10.16:32561):
+1. Abrir /
+2. Abrir /monitoring
+3. Confirmar que não aparece "Fonte indisponível" para health/summary quando o backend está up; valores exibidos são do payload real (up, cpu, memory com fallback N/A se ausente).

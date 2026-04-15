@@ -1,0 +1,6 @@
+{
+  "status": "healthy",
+  "version": "1.0.2",
+  "nasp_reachable": null,
+  "nasp_details_url": "/api/v1/nasp/diagnostics"
+}

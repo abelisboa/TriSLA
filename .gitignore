@@ -1,0 +1,74 @@
+#################################################
+# TRI-SLA PUBLIC REPOSITORY POLICY
+# Only apps/, docs/, helm/, snapshots/ allowed
+#################################################
+
+# Ignore everything by default
+*
+
+# Allow only core project directories
+!apps/
+!docs/
+!helm/
+!snapshots/
+!README.md
+!.gitignore
+
+# Allow contents inside allowed dirs
+!apps/**
+!docs/**
+!helm/**
+!snapshots/**
+
+#################################################
+# Explicitly forbidden content
+#################################################
+
+# Prompts
+prompts/
+PROMPTS/
+PROMPT_*.md
+
+# Run artifacts
+run_*/
+sem_*/
+
+# Test results
+*.jsonl
+
+# Logs
+*.log
+*_logs.txt
+logs/
+
+# Frontend build artifacts (Next.js)
+apps/**/.next/
+apps/**/.turbo/
+apps/**/out/
+apps/**/dist/
+apps/**/build/
+apps/**/node_modules/
+
+# Helm packaged releases
+*.tgz
+
+# Virtual environments
+venv/
+venv_*/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Backup / temp artifacts
+*.bak
+*.backup*
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Block portal entirely
+trisla-portal/

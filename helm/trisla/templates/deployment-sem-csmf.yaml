@@ -1,0 +1,58 @@
+{{- if .Values.semCsmf.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trisla.name" . }}-sem-csmf
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" (dict "Values" .Values "Release" .Release "Chart" .Chart "component" "sem-csmf") | nindent 4 }}
+spec:
+  replicas: {{ .Values.semCsmf.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: trisla-sem-csmf
+      app.kubernetes.io/name: {{ include "trisla.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: trisla-sem-csmf
+        app.kubernetes.io/name: {{ include "trisla.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      nodeSelector:
+        kubernetes.io/hostname: node1
+      containers:
+      - name: sem-csmf
+        image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.semCsmf.image) }}
+        ports:
+        - containerPort: {{ .Values.semCsmf.service.port }}
+          name: http
+        env:
+        - name: TRISLA_NODE_INTERFACE
+          value: {{ .Values.network.interface | quote }}
+        - name: TRISLA_NODE_IP
+          value: {{ .Values.network.nodeIP | quote }}
+        - name: OTLP_ENDPOINT
+          value: "http://{{ include "trisla.name" . }}-otel-collector:4317"
+        - name: KAFKA_ENABLED
+          value: "true"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          {{- toYaml .Values.semCsmf.resources | nindent 10 }}
+{{- end }}

@@ -1,0 +1,264 @@
+global:
+  imageRegistry: ghcr.io/abelisboa
+  namespace: trisla
+  controlPlaneIP: "CHANGEME"
+
+network:
+  interface: my5g
+  nodeIP: REPLACE_ME
+  gateway: REPLACE_ME
+
+semCsmf:
+  enabled: true
+  image:
+    repository: trisla-sem-csmf
+    tag: ''
+    digest: "sha256:84b73a5b8df53fb4901041d96559878bd2248517277557496cb2b7b3effeb375"
+    pullPolicy: IfNotPresent
+  annotations:
+    trisla-mode: degraded
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    DECISION_ENGINE_URL: ''
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+mlNsmf:
+  enabled: true
+  image:
+    repository: trisla-ml-nsmf
+    tag: ''
+    digest: "sha256:b0922b2199830a766a6fd999213583973bc8209862f39a949de2d18010017187"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8081
+  env:
+    KAFKA_ENABLED: 'false'
+    KAFKA_BROKERS: ''
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+    limits:
+      cpu: 4000m
+      memory: 4Gi
+  replicas: 2
+
+decisionEngine:
+  env:
+    LOG_LEVEL: DEBUG
+  enabled: true
+  image:
+    repository: ghcr.io/abelisboa/trisla-decision-engine
+    tag: ''
+    digest: "sha256:5695c700be9b83bd11bdf846a5762f1f9ba3dde143c73f3cec2b55472bb4caa6"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+  gate3gpp:
+    enabled: false
+
+bcNssmf:
+  enabled: true
+  image:
+    repository: trisla-bc-nssmf
+    tag: ''
+    digest: "sha256:b0db5eef2128baddee2c1c3ea72fb5fec421afb1d87407e5f4a6aadd75f9f95a"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8083
+    healthcheck:
+      enabled: false
+  annotations:
+    trisla-mode: degraded
+  env:
+    BC_ENABLED: 'true'
+    BC_TX_RECEIPT_TIMEOUT: '120'
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+
+besu:
+  enabled: true
+  qbft:
+    enabled: true
+    useGenesisFile: true
+  validatorKeySecret: trisla-besu-validator-key
+  image:
+    repository: trisla-besu
+    tag: ''
+    digest: "sha256:ab84d26d678417b615c0833b4a34e9fe2778cec392a7e23596fa1607cf362efc"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8545
+    wsPort: 8546
+    p2pPort: 30303
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ''
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+
+slaAgentLayer:
+  enabled: true
+  image:
+    repository: trisla-sla-agent-layer
+    tag: ''
+    digest: "sha256:824b641b7ff17ba52bd93d9c0aeb6f1a4a073575ff86719bd14f67f6a80becce"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8084
+  env:
+    KAFKA_ENABLED: true
+    KAFKA_BROKERS: kafka.trisla.svc.cluster.local:9092
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 3
+
+naspAdapter:
+  enabled: true
+  image:
+    repository: trisla-nasp-adapter
+    tag: ''
+    digest: "sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8085
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  replicas: 2
+  gate3gpp:
+    enabled: true
+    coreNamespace: ns-1274485
+    ueransimNamespace: ueransim
+    upfMaxSessions: 1000000
+  capacityAccounting:
+    enabled: true
+    reservationTtlSeconds: 300
+    reconcileIntervalSeconds: 60
+    capacitySafetyFactor: '0.1'
+    costEmbbCore: 1
+    costEmbbRan: 1
+    costEmbbTransport: 1
+    costUrllcCore: 1
+    costUrllcRan: 1
+    costUrllcTransport: 1
+    costMmtcCore: 1
+    costMmtcRan: 1
+    costMmtcTransport: 1
+  prometheusUrl: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+
+uiDashboard:
+  enabled: true
+  image:
+    repository: trisla-ui-dashboard
+    tag: ''
+    digest: "sha256:16e23f4de91582e56bfe4704c0139a3154c34c4a44780f17f3082b6195dbe6fb"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: trisla.local
+        paths:
+          - path: /
+            pathType: Prefix
+  replicas: 2
+
+trafficExporter:
+  enabled: true
+  image:
+    repository: trisla-traffic-exporter
+    tag: ''
+    digest: "sha256:a39455f913ea4f7355426b48613cc0479c7e549d099bdba520fd4fb563564f48"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9105
+  replicas: 1
+
+kafka:
+  enabled: true
+  image:
+    repository: ghcr.io/abelisboa/trisla-kafka
+    tag: ''
+    digest: "sha256:8291bed273105a3fc88df5f89096abf6a654dc92b0937245dcef85011f3fc5e6"
+    pullPolicy: IfNotPresent
+  replicas: 1
+
+otelCollector:
+  enabled: true
+  image:
+    repository: otel/opentelemetry-collector
+    tag: 0.92.0
+
+prometheus:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: v2.49.1
+
+grafana:
+  enabled: true
+  # ⚠️ Set this value before deployment
+  image:
+    repository: grafana/grafana
+    tag: 10.2.3
+  adminPassword: "CHANGE_ME"
+
+production:
+  enabled: true
+  simulationMode: false
+  useRealServices: true
+  executeRealActions: true
+
+imagePullSecrets: []

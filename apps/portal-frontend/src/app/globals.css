@@ -1,0 +1,343 @@
+/* TriSLA Portal — layout científico executivo (obrigatório para .next/static/css) */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body.trisla-body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1a1a1a;
+  background-color: #f1f5f9;
+}
+
+.trisla-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ——— Sidebar fixa esquerda ~260px ——— */
+.trisla-sidebar {
+  width: 260px;
+  min-width: 260px;
+  flex-shrink: 0;
+  background-color: #0f172a;
+  color: #e2e8f0;
+  padding: 0;
+  border-right: 1px solid #1e293b;
+}
+
+.trisla-sidebar-header {
+  padding: 1rem 1.25rem 1rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.trisla-logo {
+  display: block;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #f8fafc;
+}
+
+.trisla-logo-subtitle {
+  display: block;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+.trisla-sidebar-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0.75rem 0;
+}
+
+.trisla-sidebar-section {
+  padding: 0.25rem 0 0.5rem;
+}
+
+.trisla-sidebar-section-title {
+  padding: 0.25rem 1.25rem 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.trisla-sidebar-nav li {
+  margin: 0;
+}
+
+.trisla-nav-link {
+  display: block;
+  padding: 0.5rem 1.25rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  font-size: 0.9375rem;
+}
+
+.trisla-nav-link:hover {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.trisla-nav-link.active {
+  background-color: #1e3a5f;
+  color: #93c5fd;
+  border-left: 3px solid #3b82f6;
+  padding-left: calc(1.25rem - 3px);
+}
+
+.trisla-sidebar-divider {
+  height: 1px;
+  margin: 0.4rem 1.25rem 0.6rem;
+  background: linear-gradient(
+    to right,
+    rgba(148, 163, 184, 0.5),
+    rgba(30, 64, 175, 0.7),
+    rgba(148, 163, 184, 0.5)
+  );
+  opacity: 0.7;
+  border-radius: 999px;
+}
+
+/* ——— Topbar superior ~64px ——— */
+.trisla-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.trisla-topbar {
+  min-height: 64px;
+  height: 64px;
+  padding: 0 1.5rem;
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.trisla-topbar-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.trisla-topbar-title span:first-child {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #0f172a;
+}
+
+.trisla-topbar-subtitle {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.trisla-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.trisla-topbar-env {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background-color: #e0f2fe;
+  color: #0c4a6e;
+  font-weight: 500;
+}
+
+.trisla-topbar-badge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.trisla-topbar-badge-nasp {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: #eff6ff;
+}
+
+.trisla-topbar-runtime {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  color: #64748b;
+}
+
+/* ——— Área central: grid de cards ——— */
+.trisla-page-container {
+  flex: 1;
+  padding: 1.5rem;
+  overflow: auto;
+}
+
+.trisla-page-container h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.trisla-page-container > p {
+  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  color: #475569;
+  max-width: 56rem;
+}
+
+/* Grid de cards (Home, Monitoring, Metrics) */
+.trisla-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.trisla-status-card {
+  margin: 0;
+  padding: 1.25rem;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.trisla-status-card h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.trisla-status-row {
+  display: flex;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.trisla-status-row:last-child {
+  border-bottom: none;
+}
+
+.trisla-status-row dt {
+  margin: 0;
+  min-width: 140px;
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.trisla-status-row dd {
+  margin: 0;
+  flex: 1;
+  font-size: 0.875rem;
+}
+
+/* Formulários (PNL, Template) */
+.trisla-form {
+  max-width: 32rem;
+  margin-bottom: 1.5rem;
+}
+
+.trisla-form-row {
+  margin-bottom: 1rem;
+}
+
+.trisla-form-row label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.trisla-form-row input,
+.trisla-form-row textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.trisla-form-row textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.trisla-form-row input:focus,
+.trisla-form-row textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+button[type="submit"] {
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+button[type="submit"]:hover {
+  background-color: #1d4ed8;
+}
+
+.trisla-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.trisla-cta-button {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.trisla-cta-button:hover {
+  background-color: #1d4ed8;
+}
+
+pre {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 0.8125rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow-x: auto;
+}
