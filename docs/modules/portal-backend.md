@@ -23,7 +23,7 @@ Pipeline role:
 Gateway input:
 
 \[
-u_{pb}=(template\_id,form\_values,tenant\_id,context)
+u_{pb} = \left( template\_id, form\_values, tenant\_id, context \right)
 \]
 
 Core endpoints:
@@ -37,7 +37,7 @@ Core endpoints:
 Unified output:
 
 \[
-y_{pb}=(d,o,b,s,\lambda,\mu)
+y_{pb} = \left( d, o, b, s, \lambda, \mu \right)
 \]
 
 Where:
@@ -137,6 +137,8 @@ In:
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
+
 Portal Backend provides the orchestrating wrapper that exposes this mapping to
 external clients and materializes branch-wise lifecycle observability.
 
@@ -161,29 +163,30 @@ This design improves operational diagnostics and reproducibility of experiments.
 
 ## 13. Example Walkthrough
 
-Input (submission contract):
+Input:
 
 - `template_id`
 - `form_values` including SLA-related values
 - `tenant_id`
 
-Step 1:
+Processing:
 
-- Backend validates request and forwards semantic processing.
+- The backend validates the SLA request and forwards semantic interpretation to
+  SEM-CSMF.
+- It receives risk estimation and decision process outputs, then evaluates
+  branch semantics for orchestration and lifecycle progression.
+- If `ACCEPT`, it triggers NASP execution and subsequent BC-NSSMF and SLA-Agent
+  stages under the configured branch conditions.
 
-Step 2:
+Output:
 
-- Receives decision package and evaluates execution branch.
+- The module returns a unified response with decision, orchestration status,
+  lifecycle state, and module-level observability evidence.
 
-Step 3:
+Impact:
 
-- If `ACCEPT`, triggers NSI orchestration and subsequent blockchain/SLA-Agent
-  steps.
-
-Step 4:
-
-- Returns unified response containing `decision`, `orchestration_status`,
-  lifecycle fields, and module-level evidence.
+- Portal Backend preserves end-to-end contract coherence, ensuring the SLA
+  request receives a traceable and reproducible runtime outcome.
 
 ## 14. Impact on SLA Decision
 

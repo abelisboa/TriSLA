@@ -19,8 +19,21 @@ production:
   useRealServices: true  # ⚠️ Use REAL services
   executeRealActions: true  # ⚠️ Execute REAL actions
 
-# NASP configuration (rebuilt from existing values in values-nasp.yaml)
+# NASP configuration (sanitized for public release)
 naspAdapter:
+  naspEndpoints:
+    # Replace service names/namespaces/ports for your environment
+    ran: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_PORT>"
+    ran_metrics: "http://<RAN_SERVICE>.<RAN_NAMESPACE>.svc.cluster.local:<RAN_METRICS_PORT>"
+    core_upf: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_PORT>"
+    core_upf_metrics: "http://<UPF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<UPF_METRICS_PORT>"
+    core_amf: "http://<AMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<AMF_PORT>"
+    core_smf: "http://<SMF_SERVICE>.<CORE_NAMESPACE>.svc.cluster.local:<SMF_PORT>"
+    transport: "http://<TRANSPORT_SERVICE>.<TRANSPORT_NAMESPACE>.svc.cluster.local:<TRANSPORT_PORT>"
+    main: "http://<MAIN_SERVICE>.<MAIN_NAMESPACE>.svc.cluster.local:<MAIN_PORT>"
+  authentication:
+    enabled: true
+    type: "oauth2"
   env:
     NASP_EXECUTION_MODE: "crd"
     NASP_PROXY_ENABLED: "false"

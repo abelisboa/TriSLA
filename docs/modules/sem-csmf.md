@@ -29,7 +29,7 @@ Runtime sequence contribution:
 Let the semantic input be:
 
 \[
-u_{sem} = (T,\tau,\Theta_0)
+u_{sem} = \left( T, \tau, \Theta_0 \right)
 \]
 
 Where:
@@ -49,7 +49,7 @@ Primary ingress endpoints (SSOT from `apps/sem-csmf/src/main.py`):
 Semantic output:
 
 \[
-y_{sem} = (\iota, n, s, \Theta, \eta)
+y_{sem} = \left( \iota, n, s, \Theta, \eta \right)
 \]
 
 Where:
@@ -92,6 +92,32 @@ Relevant entities (`apps/sem-csmf/src/models/intent.py`,
 - `intent_id`, `nest_id`: traceability identifiers; origin is SEM-CSMF runtime;
   impact cross-module correlation.
 
+## 6.1 Ontology Model
+
+SEM-CSMF includes an explicit ontology layer (TTL + OWL artifacts) that models
+service intent, slice types, SLA/SLO/SLI concepts, network domains, and
+3GPP-aligned characteristics (e.g., QoS and slice profile concepts).
+
+From a structural perspective, the ontology is extensive and semantically rich,
+covering core concepts for slicing and SLA reasoning.
+
+Although the ontology model is structurally rich, its runtime usage within the
+SEM-CSMF pipeline is currently limited to a subset of concepts, primarily slice
+types and core SLA metrics.
+
+## 6.2 Ontology-Assisted Semantic Interpretation
+
+The runtime implementation follows a **hybrid semantic interpretation combining
+NLP, rule-based extraction, and ontology-assisted validation**.
+
+Observed runtime sequence:
+
+1. NLP/regex extracts candidate requirements and tentative slice hints.
+2. Ontology-assisted parser/reasoner performs complementary inference/validation
+   when ontology support is available.
+3. If ontology loading/reasoning fails, SEM-CSMF continues with heuristic and
+   rule-based fallback paths.
+
 ## 7. Mathematical Model
 
 Semantic transformation:
@@ -117,6 +143,8 @@ Interpretation:
 - \(I\) maps human intent into deterministic machine semantics.
 - \(\hat{s}\) selects the operational slice profile for downstream risk policy.
 - \(\Theta\) harmonizes request semantics with runtime-compatible fields.
+- Ontology-assisted reasoning can participate in this transformation, but it is
+  not a mandatory execution dependency for \(I(T)\to(s,\theta,\eta)\).
 
 ## 8. Integration with Decision Engine
 
@@ -141,6 +169,8 @@ Within:
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
+
 SEM-CSMF is the front-end realization of \(T \mapsto (\Theta,s,\eta)\), i.e., it
 produces semantic operands consumed by risk, policy, and orchestration layers.
 
@@ -155,6 +185,11 @@ Alternative considered in architecture discussions was embedding text parsing in
 ML or Decision Engine. The chosen decomposition improves maintainability and
 traceability, at the cost of one additional inter-module boundary.
 
+An additional design rationale is to avoid rigid ontology coupling. SEM-CSMF is
+kept operationally robust even when ontology dependencies (e.g., `owlready2`,
+ontology loading, or reasoning execution) are unavailable. This improves fault
+tolerance and reduces hard dependency risk in real deployments.
+
 ## 12. Evolution and Design Decisions
 
 The module evolved toward deterministic fallbacks to keep submission liveness
@@ -168,24 +203,29 @@ paths.
 
 ## 13. Example Walkthrough
 
-Input (runtime fields):
+Input:
 
 - intent text: "URLLC slice with strict latency"
 - tenant: `tenant-a`
 - optional SLA hints: latency/reliability fields
 
-Step 1 (SEM-CSMF):
+Processing:
 
-- Parses text and infers `slice_type=URLLC`.
-- Produces `intent_id`, `nest_id`, and normalized SLA requirement payload.
+- The module performs semantic interpretation of the SLA request using the
+  hybrid path (NLP/regex, rule logic, and ontology-assisted validation when
+  available).
+- The pipeline infers `slice_type=URLLC` and builds normalized SLA requirement
+  fields together with `intent_id` and `nest_id`.
 
-Step 2 (handoff):
+Output:
 
-- Output is forwarded to ML-NSMF/Decision Engine as semantic context.
+- Structured semantic context is forwarded to ML-NSMF and then to the decision
+  process as formal input.
 
-Result:
+Impact:
 
-- Semantic ambiguity is reduced before risk and policy stages.
+- The semantic interpretation stage reduces ambiguity in the SLA request before
+  risk estimation and policy evaluation.
 
 ## 14. Impact on SLA Decision
 
@@ -203,6 +243,43 @@ The critical propagated variable is `slice_type`.
 - Must preserve schema compatibility with downstream modules.
 - In degraded mode, deterministic defaults preserve service continuity but may
   reduce semantic granularity for complex intents.
+
+## 15.1 Fallback and Degraded Operation Mode
+
+SEM-CSMF explicitly supports degraded operation when ontology support is
+partially or fully unavailable, including:
+
+- `owlready2` not installed or not importable.
+- ontology file loading failure.
+- reasoning execution failure (e.g., Pellet/reasoning errors).
+
+In these conditions, the module continues through NLP/regex and rule-based
+heuristics, preserving pipeline liveness.
+
+The SEM-CSMF module is designed to operate even in the absence of ontology
+support, relying on heuristic and rule-based mechanisms.
+
+## 16. Ontology Usage Scope and Limitations
+
+Current ontology usage scope in runtime:
+
+- semantic validation of selected SLA/slice constraints;
+- complementary slice inference/consistency checks.
+
+Current ontology limitations in runtime usage:
+
+- not used as the single source of decision semantics;
+- not a mandatory runtime dependency for SEM-CSMF execution;
+- broad ontology vocabulary is only partially exercised in the active pipeline.
+
+## 17. Future Ontology Integration Enhancements
+
+Based on current runtime behavior, ontology integration may evolve toward:
+
+- broader runtime use of ontology concepts beyond core slice/SLA metrics;
+- deeper semantic inference in the semantic validation path;
+- gradual reduction of heuristic dominance where ontology-backed inference is
+  proven stable and cost-effective.
 
 ## A. Technical Narrative
 

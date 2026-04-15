@@ -25,7 +25,7 @@ Pipeline role:
 Evaluation input:
 
 \[
-u_{sla}=(E,\mathcal{D},\Lambda,\rho)
+u_{sla} = \left( E, \mathcal{D}, \Lambda, \rho \right)
 \]
 
 Where:
@@ -46,7 +46,7 @@ Primary endpoints (`apps/sla-agent-layer/src/main.py`):
 Compliance output:
 
 \[
-y_{sla}=(\sigma,\Gamma,\ell)
+y_{sla} = \left( \sigma, \Gamma, \ell \right)
 \]
 
 Where:
@@ -141,6 +141,8 @@ In:
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
+
 SLA-Agent Layer realizes the \(SLO\) component by mapping runtime telemetry and
 pipeline context into formal compliance and lifecycle evidence.
 
@@ -172,21 +174,22 @@ Input:
 - domain telemetry snapshots
 - configured SLO targets/operators
 
-Step 1:
+Processing:
 
-- Ingest event and bind trace context.
+- The module ingests the event, binds trace context, and evaluates metric-level
+  SLOs across RAN, Transport, and Core domains.
+- Per-domain compliance states are aggregated into a global SLA compliance
+  status.
 
-Step 2:
+Output:
 
-- Evaluate metric-level SLOs per domain.
+- The layer publishes lifecycle and compliance evidence for Portal Backend and
+  observability pipelines.
 
-Step 3:
+Impact:
 
-- Aggregate global status and compute compliance summary.
-
-Step 4:
-
-- Publish lifecycle/compliance evidence for Portal Backend and observability.
+- The output does not alter the original decision process, but it determines
+  whether the realized network slice remains compliant over time.
 
 ## 14. Impact on SLA Decision
 

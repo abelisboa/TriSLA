@@ -41,20 +41,20 @@ Operational sequence:
 Define the global input tuple:
 
 \[
-\mathcal{I}=(T,x,\Pi,\Upsilon)
+\mathcal{I} = \left( T, x, \Pi, \Upsilon \right)
 \]
 
 Where:
 
 - \(T\): tenant intent (text/structured request)
-- \(x=[x_1,\ldots,x_n]\): telemetry and SLA feature vector
+- \(x = \left[ x_1, \ldots, x_n \right]\): telemetry and SLA feature vector
 - \(\Pi\): policy/threshold configuration
 - \(\Upsilon\): runtime telemetry context across RAN/Core/Transport
 
 A canonical feature abstraction is:
 
 \[
-x=[PRB,CPU,MEM,Latency,Reliability,Features_{ML}]
+x = \left[ PRB, CPU, MEM, Latency, Reliability, Features_{ML} \right]
 \]
 
 ### 3.2 Normalization Layer
@@ -109,7 +109,7 @@ with slice-profile weighting (`URLLC`, `eMBB`, `mMTC`) implemented in
 Slice-adjusted risk:
 
 \[
-R_{adj}=(1-\alpha_s)R_{ML}+\alpha_s\cdot domain\_stress(x)
+R_{adj} = \left( 1 - \alpha_s \right) R_{ML} + \alpha_s \cdot domain\_stress\left( x \right)
 \]
 
 ### 3.5 Decision Risk and Thresholding
@@ -166,6 +166,12 @@ predictive and decision stages.
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical notation:
+
+\[
+\Phi(T, x, Policy, Telemetry) \rightarrow (Decision, NSI, SLO, State)
+\]
+
 Where:
 
 - `Decision`: policy-constrained admission action
@@ -175,13 +181,17 @@ Where:
 
 ## 4. Inter-Module Contract Semantics
 
-- SEM-CSMF -> ML/Decision: semantic identifiers, slice class, SLA requirement
-  normalization.
+- SEM-CSMF -> ML/Decision: hybrid semantic processing combining NLP, rule-based
+  extraction, and ontology-assisted reasoning, producing semantic identifiers,
+  slice class, and SLA requirement normalization.
 - ML-NSMF -> Decision: calibrated risk, confidence, class probabilities, domain
   explainability.
 - Decision -> NASP Adapter: execution eligibility and payload branch.
 - NASP -> BC-NSSMF: realized execution state for immutable registration/update.
 - Pipeline -> SLA-Agent Layer: event-level evidence for SLO/lifecycle evaluation.
+
+The ontology layer provides structured domain knowledge but is not a strict
+runtime dependency, allowing the system to operate under degraded conditions.
 
 ## 5. Runtime Branch Semantics
 
@@ -219,46 +229,34 @@ dissertation-grade and IEEE-style evaluation workflows.
 
 This scenario uses configured runtime boundaries already documented in SSOT.
 
-Input context:
+Input:
 
 - intent: eMBB-oriented tenant request
 - slice threshold pair: \(T_{acc}=0.56,\ T_{reneg}=0.78\)
 - PRB observed at decision time: \(88\%\) (policy hard-band interval \(85\le PRB<95\))
 
-Step 1 (Portal -> SEM-CSMF):
+Processing:
 
-- request is interpreted and mapped to semantic outputs
-  (`intent_id`, `nest_id`, `slice_type`, SLA requirements).
+- Portal Backend receives the SLA request and forwards semantic interpretation
+  to SEM-CSMF.
+- SEM-CSMF produces semantic context; ML-NSMF consumes telemetry features and
+  performs risk estimation (`R_{ML}` and `R_{adj}`) for the decision process.
+- Decision Engine computes \(R_{final}\), applies threshold logic, and enforces
+  PRB hard policy (\(88\%\Rightarrow RENEGOTIATE\)).
+- NASP Adapter branch execution is skipped because the final action is not
+  `ACCEPT`, while BC-NSSMF and SLA-Agent Layer follow lifecycle-conditioned
+  branch semantics.
 
-Step 2 (SEM-CSMF -> ML-NSMF):
+Output:
 
-- feature payload is assembled and normalized for predictive inference.
+- The pipeline returns a `RENEGOTIATE` decision with traceable lifecycle and
+  observability evidence across modules.
 
-Step 3 (ML-NSMF -> Decision Engine):
+Impact:
 
-- risk evidence is produced (`R_{ML}`, confidence, and XAI metadata).
-
-Step 4 (Decision Engine):
-
-- threshold action is computed from \(R_{final}\),
-- PRB hard policy band applies (\(88\%\Rightarrow RENEGOTIATE\) override band),
-- final action is emitted with reasoning metadata.
-
-Step 5 (NASP Adapter):
-
-- because action is not `ACCEPT`, orchestration side effects are skipped by branch semantics.
-
-Step 6 (BC-NSSMF):
-
-- blockchain registration follows branch/lifecycle policy (executed or skipped
-  according to orchestration path).
-
-Step 7 (SLA-Agent Layer):
-
-- pipeline event is ingested and lifecycle/compliance evidence is recorded.
-
-This walkthrough connects configured policy constants to observable pipeline
-behavior without introducing non-SSOT assumptions.
+- The walkthrough shows how semantic interpretation, risk estimation, and policy
+  constraints jointly control network slice admission behavior without
+  introducing non-SSOT assumptions.
 
 ## 8. Design Principles
 

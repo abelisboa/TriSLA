@@ -24,7 +24,7 @@ Pipeline role:
 Blockchain input:
 
 \[
-u_{bc}=(id,\omega,\varsigma,e)
+u_{bc} = \left( id, \omega, \varsigma, e \right)
 \]
 
 Where:
@@ -45,7 +45,7 @@ Primary endpoints (`apps/bc-nssmf/src/main.py`):
 Commit output:
 
 \[
-y_{bc}=(state,tx,b)
+y_{bc} = \left( state, tx, b \right)
 \]
 
 Where:
@@ -133,6 +133,8 @@ In:
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
+
 BC-NSSMF realizes the \(State\) projection by persisting lifecycle transitions
 as verifiable on-chain state.
 
@@ -164,21 +166,22 @@ Input:
 - `register-sla` payload with identity and SLO tuple set
 - subsequent `update-sla-status` event
 
-Step 1:
+Processing:
 
-- Validate and normalize registration payload.
+- The module validates and normalizes lifecycle payloads, then executes contract
+  transactions for registration and status updates.
+- State transitions are mapped into the contract representation and persisted on
+  chain.
 
-Step 2:
+Output:
 
-- Commit transaction and return `tx_hash`/block metadata.
+- The module returns `tx_hash`, block metadata, and persisted lifecycle state
+  that can be queried by `sla_id`.
 
-Step 3:
+Impact:
 
-- Apply status update event and persist new state transition.
-
-Step 4:
-
-- Retrieve `sla_id` to verify immutable lifecycle progression.
+- Decision and orchestration consequences become immutable evidence, enabling
+  verifiable SLA accountability across the end-to-end pipeline.
 
 ## 14. Impact on SLA Decision
 

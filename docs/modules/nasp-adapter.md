@@ -25,7 +25,7 @@ Pipeline role:
 Actuation input:
 
 \[
-u_{nasp}=(a, \nu, g, c)
+u_{nasp} = \left( a, \nu, g, c \right)
 \]
 
 Where:
@@ -46,7 +46,7 @@ Primary endpoints (`apps/nasp-adapter/src/main.py`):
 Execution output:
 
 \[
-y_{nasp}=(o,\mu,\kappa)
+y_{nasp} = \left( o, \mu, \kappa \right)
 \]
 
 Where:
@@ -136,6 +136,8 @@ In:
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
+
 NASP Adapter realizes the \(NSI\) component and contributes telemetry feedback
 that conditions later compliance and lifecycle state.
 
@@ -161,28 +163,28 @@ lifecycle correctness under partial failures.
 
 ## 13. Example Walkthrough
 
-Input (configured/runtime-compatible values):
+Input:
 
 - Decision action: `AC`
 - PRB context available from multidomain telemetry
 - NSI payload: `nsiId`, `serviceProfile`, `tenantId`, `nssai`, `sla`
 
-Step 1:
+Processing:
 
-- Adapter validates and sanitizes orchestration payload.
+- The module validates and sanitizes the network slice payload, then evaluates
+  3GPP gate and capacity-accounting constraints.
+- The orchestration branch is resolved by execution feasibility rather than by
+  semantic intent alone.
 
-Step 2:
+Output:
 
-- Evaluates 3GPP gate status.
+- If all constraints pass, NSI instantiation is executed; otherwise, the module
+  returns a blocked orchestration state with explicit reason metadata.
 
-Step 3:
+Impact:
 
-- Evaluates capacity accounting status.
-
-Step 4:
-
-- If both checks pass, executes NSI instantiation; otherwise returns blocked
-  orchestration state with reasons.
+- NASP Adapter determines whether an accepted SLA request becomes an active
+  network slice in runtime infrastructure.
 
 ## 14. Impact on SLA Decision
 

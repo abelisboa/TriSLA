@@ -25,7 +25,7 @@ Pipeline role:
 Decision input tuple:
 
 \[
-u_{de}=(\eta_{sem},y_{ml},\tau_{ops},\pi)
+u_{de} = \left( \eta_{sem}, y_{ml}, \tau_{ops}, \pi \right)
 \]
 
 Where:
@@ -44,7 +44,7 @@ Primary endpoint (`apps/decision-engine/src/main.py`):
 Decision output:
 
 \[
-y_{de}=(a,r,c,m)
+y_{de} = \left( a, r, c, m \right)
 \]
 
 Where:
@@ -155,6 +155,8 @@ Within:
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
+
 Decision Engine realizes the \(Decision\) projection by combining semantic
 operands, normalized risk, and policy constraints into final admission action.
 
@@ -187,33 +189,30 @@ statistical optimization.
 
 ## 13. Example Walkthrough
 
-Input (configured/runtime-compatible values):
+Input:
 
 - slice type: `eMBB`
 - thresholds: \(T_{acc}=0.56,\ T_{reneg}=0.78\)
 - PRB: `88%` (inside hard renegotiate band)
 - ML output: risk in decision interval
 
-Step 1:
+Processing:
 
-- Receives semantic package (`intent_id`, `slice_type`, context).
+- The module receives semantic interpretation context and ML risk estimation
+  outputs for the SLA request.
+- It computes \(R_{final}\) from \(R_{adj}\) and PRB shaping, then evaluates the
+  threshold decision.
+- PRB policy gating is applied on top of the threshold decision.
 
-Step 2:
+Output:
 
-- Ingests ML payload (`risk_score`, confidence, class metadata).
+- The decision process emits `RENEG` with explicit reasoning and confidence
+  metadata, including policy-path evidence.
 
-Step 3:
+Impact:
 
-- Computes \(R_{final}\) with PRB shaping.
-
-Step 4:
-
-- Threshold decision is computed.
-
-Step 5:
-
-- Hard PRB gate applies and final action becomes `RENEG`, with explicit
-  reasoning metadata.
+- The emitted decision controls downstream orchestration behavior, determining
+  whether the network slice execution path is triggered or skipped.
 
 ## 14. Impact on SLA Decision
 

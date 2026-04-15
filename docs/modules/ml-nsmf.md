@@ -25,7 +25,7 @@ Pipeline effect:
 Define the feature vector:
 
 \[
-x=[x_1,\ldots,x_n]
+x = \left[ x_1, \ldots, x_n \right]
 \]
 
 Where \(x\) includes runtime metrics and derived attributes (latency,
@@ -41,7 +41,7 @@ Primary endpoint (`apps/ml-nsmf/src/main.py`):
 Prediction output:
 
 \[
-y_{ml}=(R_{ML},L_{risk},V,C,\Pi,\Xi)
+y_{ml} = \left( R_{ML}, L_{risk}, V, C, \Pi, \Xi \right)
 \]
 
 Where:
@@ -118,7 +118,7 @@ domain\_stress(x)=\sum_i w_i x_i^{norm}
 Slice-adjusted risk:
 
 \[
-R_{adj}=(1-\alpha_s)R_{ML}+\alpha_s\cdot domain\_stress(x)
+R_{adj} = \left( 1 - \alpha_s \right) R_{ML} + \alpha_s \cdot domain\_stress\left( x \right)
 \]
 
 Interpretation:
@@ -152,6 +152,8 @@ In:
 \Phi(T,x,Policy,Telemetry)\rightarrow(Decision,NSI,SLO,State)
 \]
 
+Canonical global function: Φ(T, x, Policy, Telemetry) → (Decision, NSI, SLO, State).
+
 ML-NSMF implements the predictive kernel \(f(x)\) that maps normalized features
 to risk evidence consumed by the policy-decision stage.
 
@@ -179,30 +181,31 @@ These decisions reflect a reliability-first strategy for production-like runs.
 
 ## 13. Example Walkthrough
 
-Input (feature payload fields):
+Input:
 
 - latency: operational latency metric
 - reliability: operational reliability metric
 - PRB-related pressure through telemetry-derived features
 - slice type: `eMBB`
 
-Step 1:
+Processing:
 
-- Features are normalized via scaler/runtime normalizers.
+- The module performs feature normalization using runtime scaler logic and
+  computes model outputs for risk estimation.
+- The model computes `R_{reg}=1-viability_score` and, when enabled, classifier
+  probabilities to derive `R_{cls}`.
+- Effective risk \(R_{ML}\) is selected and calibrated into \(R_{adj}\).
 
-Step 2:
+Output:
 
-- Model computes `R_reg=1-viability_score`.
-- If classifier is active, computes class probabilities and `R_cls`.
+- The module returns risk estimation outputs (`R_{ML}`, `R_{adj}`), confidence,
+  and domain explainability metadata for the decision process.
 
-Step 3:
+Impact:
 
-- Effective risk \(R_{ML}\) is selected and adjusted into `R_adj`.
-
-Step 4:
-
-- ML payload exports `risk_score`, confidence, and domain XAI factors to
-  Decision Engine.
+- The risk estimation output directly conditions threshold evaluation in Decision
+  Engine and influences `ACCEPT`, `RENEGOTIATE`, or `REJECT` behavior under
+  operational stress.
 
 ## 14. Impact on SLA Decision
 

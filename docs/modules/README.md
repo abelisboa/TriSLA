@@ -12,6 +12,16 @@ This folder documents runtime behavior from `apps/*/src` for all core services.
 - [BC-NSSMF](./bc-nssmf.md)
 - [Portal Backend](./portal-backend.md)
 
+## Auxiliary modules
+
+- [Portal Frontend](./portal-frontend.md)
+- [UI Dashboard](./ui-dashboard.md)
+- [Kafka](./kafka.md)
+- [Besu](./besu.md)
+- [Network Exporter](./network-exporter.md)
+- [Blockchain Exporter](./blockchain-exporter.md)
+- [PRB Exporter](./prb-exporter.md)
+
 ## Canonical runtime pipeline
 
 `SEM-CSMF -> ML-NSMF -> Decision Engine -> NASP Adapter -> BC-NSSMF -> SLA-Agent Layer`
