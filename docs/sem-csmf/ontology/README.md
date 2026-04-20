@@ -1,55 +1,40 @@
-# TriSLA Ontology Documentation
+# TriSLA Ontology — Semantic Foundation
 
-This directory contains the complete documentation of the **TriSLA Ontology**.
+## Overview
 
-## 📚 Available Documents
+The ontology defines the semantic model used by SEM-CSMF to interpret and validate SLA intents.
 
-### [Ontology Implementation Complete Guide](ONTOLOGY_IMPLEMENTATION_GUIDE.md)
+It formalizes how intent, constraints, slice semantics, and domain context are represented before admission scoring.
 
-A complete guide that includes:
+## Role
 
-- ✅ **Ontology Overview**
-- ✅ **Complete Structure** (classes, properties, individuals)
-- ✅ **Detailed Class Hierarchy**
-- ✅ **Conceptual Diagrams** (ASCII text)
-- ✅ **Protégé Usage Guide** (step by step)
-- ✅ **Integration with SEM-CSMF** (code examples)
-- ✅ **SPARQL Queries** (practical examples)
-- ✅ **Validation and Reasoning** (how to validate)
-- ✅ **Usage Examples** (Python code)
-- ✅ **Maintenance and Extension** (how to add classes/properties)
+- Map intent -> slice type
+- Validate constraints
+- Enable reasoning
 
-## 📁 Related Files
+## Model
 
-- **Ontology:** `apps/sem-csmf/src/ontology/trisla.ttl`
-- **Loader:** `apps/sem-csmf/src/ontology/loader.py`
-- **Reasoner:** `apps/sem-csmf/src/ontology/reasoner.py`
-- **Parser:** `apps/sem-csmf/src/ontology/parser.py`
-- **Matcher:** `apps/sem-csmf/src/ontology/matcher.py`
+`SLA_semantic = f(Intent, Constraints, SliceType)`
 
-## 📚 Related Documentation
+Extended analytical form used in this documentation set:
 
-- **[SEM-CSMF Complete Guide](../SEM_CSMF_COMPLETE_GUIDE.md)** — Complete guide of the SEM-CSMF module
-- **[SEM-CSMF README](../README.md)** — Index of SEM-CSMF documentation
+`SLA_semantic = f(Intent, Constraints, SliceType, DomainContext, OntologyRules)`
 
-## 🎯 Quick Start
+## Domains
 
-1. **Read the guide:** [`ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ONTOLOGY_IMPLEMENTATION_GUIDE.md)
-2. **Open in Protégé:** `File` → `Open` → `apps/sem-csmf/src/ontology/trisla.ttl`
-3. **Validate ontology:** `Reasoner` → `Check consistency`
-4. **Export diagrams:** `Window` → `Views` → `Class hierarchy (graph)`
+- RAN
+- Transport
+- Core
 
-## 📊 Diagrams
+## Integration
 
-Diagrams should be exported directly from Protégé:
+Used before decision-making.
 
-1. **Class Hierarchy:** `Window` → `Views` → `Class hierarchy (graph)`
-2. **Property Relationships:** `Window` → `Views` → `Property hierarchy (graph)`
-3. **OntoGraf:** `Window` → `Views` → `OntoGraf`
+The semantic output from ontology validation is consumed by NEST generation and dispatched to the Decision Engine and ML-NSMF.
 
-**Note:** Conceptual diagrams are described using ASCII text in the complete guide.
+## Consolidated References
 
----
-
-**Last updated:** 2025-01-27
+- `semantic_model_reference.md` - complete classes, properties, prototyping and reasoning guide
+- `../pipeline/processing_pipeline.md` - pipeline-level semantic lifecycle
+- `../interfaces/interfaces.md` - interface contracts for semantic outputs
 

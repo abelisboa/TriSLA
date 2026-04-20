@@ -1,214 +1,79 @@
-# SEM-CSMF Documentation
+# SEM-CSMF — Semantic Interpretation Layer of TriSLA
 
-**Semantic-Enhanced Communication Service Management Function**
+## 1. Overview
 
-**Version:** 3.7.1  
-**Phase:** S (SEM-CSMF)  
-**Status:** Stabilized
+The SEM-CSMF (Semantic-Enhanced Communication Service Management Function) is responsible for transforming high-level SLA intents into structured, machine-interpretable representations within the TriSLA architecture.
 
-This directory contains all documentation for the SEM-CSMF module of TriSLA.
+It acts as the semantic entry point of the system, bridging user-level intent and multi-domain SLA evaluation.
 
----
-
-## 📚 Available Documentation
-
-### [SEM-CSMF Complete Guide](SEM_CSMF_COMPLETE_GUIDE.md)
-
-Complete guide that includes:
-
-- ✅ **Overview** of the module  
-- ✅ **Architecture** details  
-- ✅ **Processing Pipeline** (Intent → NEST)  
-- ✅ **OWL Ontology** (integration and usage)  
-- ✅ **NLP** (natural language processing)  
-- ✅ **NEST Generation** (Network Slice Template)  
-- ✅ **Interfaces** (I-01 gRPC, I-02 Kafka)  
-- ✅ **Persistence** (PostgreSQL)  
-- ✅ **Usage Examples** (Python code)  
-- ✅ **Troubleshooting** (solutions for common issues)  
-
-### [Ontology Documentation](ontology/)
-
-The OWL ontology documentation is organized as a subfolder of SEM-CSMF:
-
-- **[Ontology Implementation Guide](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)** — Complete guide to the OWL ontology, including classes, properties, and Protégé diagrams  
-- **[Ontology README](ontology/README.md)** — Index of the ontology documentation  
+In scientific terms, the module operationalizes intent formalization by combining ontology-grounded validation, natural language interpretation, and deterministic template construction. This design supports reproducibility and formal analysis in research workflows and paper-grade experiments.
 
 ---
 
-## 📁 Module Structure
+## 2. Role in TriSLA
 
-apps/sem-csmf/
-├── src/
-│ ├── main.py # FastAPI application
-│ ├── intent_processor.py # Intent processing
-│ ├── nest_generator.py # NEST generation
-│ ├── ontology/ # OWL ontology
-│ │ ├── trisla.ttl # Main ontology
-│ │ ├── loader.py # Ontology loader
-│ │ ├── reasoner.py # Reasoning engine
-│ │ ├── parser.py # Intent parser
-│ │ └── matcher.py # Semantic matcher
-│ ├── nlp/ # Natural language processing
-│ │ └── parser.py # NLP parser
-│ ├── grpc_server.py # gRPC server (I-01)
-│ ├── grpc_client.py # gRPC client
-│ └── models/ # Pydantic models
-│ ├── intent.py
-│ └── nest.py
-├── tests/
-├── Dockerfile
-├── requirements.txt
-└── README.md
+Pipeline:
 
+Intent -> NLP -> Ontology -> Semantic Validation -> NEST -> Decision Engine
+
+The SEM-CSMF does not perform final SLA admission decisions. Instead, it produces semantically validated artifacts that can be consumed by downstream decision and prediction components under consistent assumptions.
 
 ---
 
-## 🎯 Main Capabilities
+## 3. Responsibilities
 
-### 1. Intent Processing
-
-- Receives high-level intents (natural language or structured)
-- Performs semantic validation using an OWL ontology
-- Processes intents with NLP to extract information
-- Generates NESTs (Network Slice Templates)
-
-### 2. OWL Ontology
-
-- Complete ontology in Turtle format (`.ttl`)
-- Classes, properties, and individuals
-- Semantic reasoning using Pellet
-- SLA requirement validation
-
-### 3. NLP (Natural Language Processing)
-
-- Slice type extraction (eMBB, URLLC, mMTC)
-- SLA requirement extraction
-- Natural language processing
-- Fallback to structured processing when needed
-
-### 4. NEST Generation
-
-- GST-to-NEST conversion
-- Ontology-based validation
-- Persistence in PostgreSQL
-- Dispatch to the Decision Engine (I-01)
+- Interpret natural language intents
+- Validate SLA requirements using ontology
+- Generate Network Slice Templates (NEST)
+- Provide structured input for decision-making
+- Preserve traceability metadata for observability and audit
+- Enforce semantic consistency with 3GPP/GSMA-aligned concepts
 
 ---
 
-## 🔗 Interfaces
+## 4. Documentation Structure
 
-### Interface I-01 (gRPC)
-
-**Type:** gRPC  
-**Direction:** SEM-CSMF → Decision Engine  
-**Payload:** NEST + Metadata  
-
-**Documentation:** See the [Complete Guide](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-01-grpc)
-
-### Interface I-02 (Kafka)
-
-**Type:** Kafka  
-**Direction:** SEM-CSMF → ML-NSMF  
-**Topic:** `sem-csmf-nests`  
-**Payload:** Complete NEST  
-
-**Documentation:** See the [Complete Guide](SEM_CSMF_COMPLETE_GUIDE.md#interface-i-02-kafka)
+- `architecture/` -> system structure, components, runtime model
+- `ontology/` -> semantic model, classes, properties, reasoning process
+- `pipeline/` -> processing flow and lifecycle
+- `interfaces/` -> integration contracts (gRPC, Kafka)
+- `examples/` -> runnable usage patterns and troubleshooting
 
 ---
 
-## 📖 Quick Guides
+## 5. Relation to SLA Decision
 
-### Quick Start
+The SEM-CSMF does not decide SLA acceptance.
 
-1. **Read the Complete Guide:** [`SEM_CSMF_COMPLETE_GUIDE.md`](SEM_CSMF_COMPLETE_GUIDE.md)  
-2. **Understand the Ontology:** [`ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md`](ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md)  
-3. **Review Examples:** See the examples section in the complete guide  
+It prepares the structured input:
 
-### Ontology Usage
+`S = f(RAN, Transport, Core)`
 
-1. **Open in Protégé:** `apps/sem-csmf/src/ontology/trisla.ttl`  
-2. **Validate Consistency:** `Reasoner` → `Check consistency`  
-3. **Export Diagrams:** `Window` → `Views` → `Class hierarchy (graph)`  
+which is later evaluated by the Decision Engine.
 
-### Intent Processing
+From a modeling perspective, SEM-CSMF materializes semantic constraints and intent semantics as computable structures, reducing ambiguity and improving inter-module consistency before numerical scoring and policy enforcement.
 
-```python
-from intent_processor import IntentProcessor
-from models.intent import Intent, SliceType, SLARequirements
+---
 
-processor = IntentProcessor()
+## 6. Scientific Model and Formalization
 
-intent = Intent(
-    intent_id="intent-001",
-    service_type=SliceType.URLLC,
-    sla_requirements=SLARequirements(latency="10ms", reliability=0.99999)
-)
+Core semantic model:
 
-validated = await processor.validate_semantic(intent)
+`SLA_semantic = f(Intent, Constraints, SliceType, OntologyContext)`
 
-🔧 Configuration
-Environment Variables
-# Database
-DATABASE_URL=postgresql://user:pass@localhost/trisla
+where:
 
-# gRPC
-DECISION_ENGINE_GRPC=decision-engine:50051
+- `Intent` captures user-level service goals
+- `Constraints` represent explicit SLA requirements (latency, throughput, reliability, jitter, packet loss)
+- `SliceType` maps intent to 5G slice behavior (eMBB, URLLC, mMTC)
+- `OntologyContext` provides formal semantic validation and inferencing
 
-# Kafka
-KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+This model ensures that downstream modules consume inputs that are not only syntactically valid, but also semantically coherent with the TriSLA domain model.
 
-# OpenTelemetry
-OTLP_ENDPOINT=http://otlp-collector:4317
+---
 
-Dependencies
+## 7. Summary
 
-See apps/sem-csmf/requirements.txt:
+SEM-CSMF enables SLA-aware decision-making by transforming unstructured intents into validated, semantically consistent representations.
 
-fastapi — Web framework
-
-owlready2 — OWL ontology
-
-spacy — NLP
-
-rdflib — RDF/OWL
-
-grpcio — gRPC
-
-kafka-python — Kafka
-
-sqlalchemy — ORM
-
-opentelemetry — Observability
-
-🧪 Tests
-Unit Tests
-pytest tests/unit/test_sem_csmf.py
-pytest tests/unit/test_ontology_parser.py
-pytest tests/unit/test_nlp_parser.py
-
-Integration Tests
-pytest tests/integration/test_interfaces.py
-pytest tests/integration/test_grpc_communication.py
-
-📚 References
-
-OWL Ontology: ontology/ONTOLOGY_IMPLEMENTATION_GUIDE.md
-
-ML-NSMF: ../ml-nsmf/ML_NSMF_COMPLETE_GUIDE.md
-
-Decision Engine: See Decision Engine documentation
-
-Module README: ../../apps/sem-csmf/README.md
-
-🎯 Next Steps
-
-Read the Complete Guide to understand the full workflow
-
-Explore the Ontology in Protégé
-
-Test Intent Processing
-
-Validate Integrations with other modules
-
-Last updated: 2025-01-27
+The consolidated documentation in this directory is organized to serve as a reproducible and academically robust reference for implementation, experimentation, and publication.
