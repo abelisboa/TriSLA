@@ -17,7 +17,7 @@ The ontology design is aligned with 3GPP TS 28.541 and GSMA NG.116/NG.127 concep
 
 ## 3. Core Class Hierarchy
 
-```text
+```
 owl:Thing
 ├── Intent
 │   └── UseCaseIntent

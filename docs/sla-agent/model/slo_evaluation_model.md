@@ -10,8 +10,13 @@ Evaluate whether an SLA remains compliant over time.
 
 Let:
 
-M = set of observed metrics  
-SLO = set of constraints  
+$$
+M = \{observed\ metrics\}
+$$
+
+$$
+SLO = \{constraints\}
+$$
 
 ---
 
@@ -21,9 +26,9 @@ For each metric m:
 
 **Formal Definition**
 
-```text
-compliance(m) = TRUE if m satisfies SLO threshold
-```
+$$
+compliance(m) = TRUE \text{ if } m \text{ satisfies SLO threshold}
+$$
 
 ---
 
@@ -31,9 +36,9 @@ compliance(m) = TRUE if m satisfies SLO threshold
 
 **Compliance Ratio**
 
-```text
-C = compliant_metrics / total_metrics
-```
+$$
+C = \frac{compliant\ metrics}{total\ metrics}
+$$
 
 ---
 
@@ -41,12 +46,14 @@ C = compliant_metrics / total_metrics
 
 **Decision Function**
 
-```text
+$$
 Decision =
-  OK         if C = 1
-  RISK       if 0.8 <= C < 1
-  VIOLATED   if C < 0.8
-```
+\begin{cases}
+OK & \text{if } C = 1 \\
+RISK & \text{if } 0.8 \leq C < 1 \\
+VIOLATED & \text{if } C < 0.8
+\end{cases}
+$$
 
 ---
 

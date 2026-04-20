@@ -23,9 +23,9 @@ The contract stores:
 
 **Formal Definition**
 
-```text
-SLA_onchain = f(Decision, score, metadata)
-```
+$$
+SLA_{onchain} = f(Decision, score, metadata)
+$$
 
 ---
 
@@ -35,9 +35,9 @@ Once stored:
 
 **Formal Definition**
 
-```text
-SLA(t) != SLA(t+1)
-```
+$$
+SLA(t) \neq SLA(t+1)
+$$
 
 (immutability constraint)
 

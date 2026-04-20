@@ -11,9 +11,9 @@ Predict:
 
 **Formal Definition**
 
-```text
-score = feasibility score in [0,1]
-```
+$$
+score \in [0,1]
+$$
 
 ---
 
@@ -21,11 +21,21 @@ score = feasibility score in [0,1]
 
 Let:
 
-R_ran = PRB utilization  
-R_transport = (latency, jitter)  
-R_core = (CPU, memory)
+$$
+R_{ran} = PRB_{utilization}
+$$
 
-SLA = (latency_req, throughput_req, reliability_req)
+$$
+R_{transport} = (latency, jitter)
+$$
+
+$$
+R_{core} = (cpu, memory)
+$$
+
+$$
+SLA = (latency_{req}, throughput_{req}, reliability_{req})
+$$
 
 ---
 
@@ -33,26 +43,19 @@ SLA = (latency_req, throughput_req, reliability_req)
 
 **Formal Definition**
 
-```text
-X = f(SLA, R_ran, R_transport, R_core)
-```
+$$
+X = f(SLA, R_{ran}, R_{transport}, R_{core})
+$$
 
 Example:
 
 **Feature Vector Example**
 
-```text
+$$
 X = [
-  latency,
-  throughput,
-  reliability,
-  jitter,
-  cpu_utilization,
-  memory_utilization,
-  bandwidth_available,
-  active_slices
+latency,\ throughput,\ reliability,\ jitter,\ cpu_{utilization},\ memory_{utilization},\ bandwidth_{available},\ active_{slices}
 ]
-```
+$$
 
 Typical engineered features include latency/throughput ratio, reliability-to-loss relations, and resource pressure terms.
 
@@ -64,9 +67,9 @@ The model approximates:
 
 **Formal Definition**
 
-```text
+$$
 score = ML(X)
-```
+$$
 
 where ML is a trained model (Random Forest or similar).
 
@@ -88,9 +91,9 @@ The score implicitly encodes:
 
 **Multi-Domain Risk Aggregation**
 
-```text
-R_total = alpha * R_ran + beta * R_transport + gamma * R_core
-```
+$$
+R_{total} = \alpha \cdot R_{ran} + \beta \cdot R_{transport} + \gamma \cdot R_{core}
+$$
 
 Where:
 
@@ -106,9 +109,9 @@ SHAP/LIME approximates:
 
 **Formal Definition**
 
-```text
-score = Sum(contribution(feature_i))
-```
+$$
+score = \sum contribution(feature_i)
+$$
 
 allowing interpretation of decision factors.
 
@@ -122,19 +125,20 @@ Operational threshold policy:
 
 **Decision Function**
 
-```text
+$$
 Decision =
-  ACCEPT        if score <= T_accept
-  RENEGOTIATE   if T_accept < score < T_reject
-  REJECT        if score >= T_reject
-```
+\begin{cases}
+ACCEPT & \text{if } score \leq T_{accept} \\
+RENEGOTIATE & \text{if } T_{accept} < score < T_{reject} \\
+REJECT & \text{if } score \geq T_{reject}
+\end{cases}
+$$
 
 Typical operating values:
 
-```text
-T_accept = 0.4
-T_reject = 0.7
-```
+$$
+T_{accept} = 0.4,\quad T_{reject} = 0.7
+$$
 
 This mapping aligns model output with orchestration semantics expected by Decision Engine.
 

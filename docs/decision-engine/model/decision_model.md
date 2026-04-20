@@ -14,11 +14,21 @@ Determine whether an SLA request should be accepted based on:
 
 Let:
 
-R_ran = PRB utilization  
-R_transport = latency + jitter  
-R_core = CPU + memory  
+$$
+R_{ran} = PRB_{utilization}
+$$
 
-score = ML-NSMF risk score in [0,1]
+$$
+R_{transport} = latency + jitter
+$$
+
+$$
+R_{core} = cpu + memory
+$$
+
+$$
+score \in [0,1]
+$$
 
 ---
 
@@ -28,13 +38,19 @@ The system implicitly evaluates:
 
 **Multi-Domain Risk Aggregation**
 
-```text
-R_total = alpha * R_ran + beta * R_transport + gamma * R_core
-```
+$$
+R_{total} = \alpha \cdot R_{ran} + \beta \cdot R_{transport} + \gamma \cdot R_{core}
+$$
 
 Where:
 
 alpha, beta, gamma are adaptive weights (not fixed).
+
+PRB-sensitive adjustment:
+
+$$
+R_{final} = \min \left(1,\ R_{adj} + \alpha_{prb} \cdot PRB_{norm} \right)
+$$
 
 ---
 
@@ -44,19 +60,20 @@ The final decision is defined as:
 
 **Decision Function**
 
-```text
+$$
 Decision =
-  ACCEPT        if score <= T_accept
-  RENEGOTIATE   if T_accept < score < T_reject
-  REJECT        if score >= T_reject
-```
+\begin{cases}
+ACCEPT & \text{if } score \leq T_{accept} \\
+RENEGOTIATE & \text{if } T_{accept} < score < T_{reject} \\
+REJECT & \text{if } score \geq T_{reject}
+\end{cases}
+$$
 
 Typical thresholds:
 
-```text
-T_accept = 0.4
-T_reject = 0.7
-```
+$$
+T_{accept} = 0.4,\quad T_{reject} = 0.7
+$$
 
 ---
 
@@ -95,8 +112,8 @@ The Decision Engine provides a deterministic mapping:
 
 **Formal Definition**
 
-```text
-Decision = f(SLA, R_ran, R_transport, R_core, score)
-```
+$$
+Decision = f(SLA, R_{ran}, R_{transport}, R_{core}, score)
+$$
 
 enabling SLA-aware operation in multi-domain 5G networks.

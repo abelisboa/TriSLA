@@ -47,9 +47,9 @@ The SLA-Agent does not define lifecycle states but evaluates:
 
 **Formal Definition**
 
-```text
-Decision in {OK, RISK, VIOLATED}
-```
+$$
+Decision \in \{OK,\ RISK,\ VIOLATED\}
+$$
 
 ---
 

@@ -25,7 +25,7 @@ This separation keeps decision policies in the Decision Engine while preserving 
 
 Source layout:
 
-```text
+```
 apps/sem-csmf/src/
 ├── main.py
 ├── intent_processor.py

@@ -6,9 +6,9 @@ User input U is transformed into structured SLA request S:
 
 **Formal Definition**
 
-```text
+$$
 SLA = f(U)
-```
+$$
 
 ---
 
@@ -16,9 +16,9 @@ SLA = f(U)
 
 The backend maps:
 
-```text
-SLA -> Intent -> Pipeline
-```
+$$
+SLA \rightarrow Intent \rightarrow Pipeline
+$$
 
 ---
 
@@ -26,15 +26,15 @@ SLA -> Intent -> Pipeline
 
 **Formal Definition**
 
-```text
+$$
 O = Decision + Metrics + XAI
-```
+$$
 
 ---
 
 ## 4. Loop
 
-```text
-U -> SLA -> Decision -> O -> Visualization
-```
+$$
+U \rightarrow SLA \rightarrow Decision \rightarrow O \rightarrow Visualization
+$$
 

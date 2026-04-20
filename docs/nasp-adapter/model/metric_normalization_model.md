@@ -10,7 +10,9 @@ Transform heterogeneous metrics from different domains into a unified normalized
 
 Let:
 
-M_ran, M_transport, M_core
+$$
+M = (M_{ran}, M_{transport}, M_{core})
+$$
 
 ---
 
@@ -20,9 +22,9 @@ Each metric m is transformed:
 
 **Normalization Function**
 
-```text
-m_norm = (m - min) / (max - min)
-```
+$$
+m_{norm} = \frac{m - m_{min}}{m_{max} - m_{min}}
+$$
 
 ---
 
@@ -30,14 +32,9 @@ m_norm = (m - min) / (max - min)
 
 **Formal Definition**
 
-```text
-X = [
-  m1_norm,
-  m2_norm,
-  ...,
-  mn_norm
-]
-```
+$$
+X = [m_{1,norm},\ m_{2,norm},\ \ldots,\ m_{n,norm}]
+$$
 
 ---
 

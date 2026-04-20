@@ -30,9 +30,9 @@ The engine determines:
 
 **Formal Definition**
 
-```text
-Decision in {ACCEPT, REJECT, RENEGOTIATE}
-```
+$$
+Decision \in \{ACCEPT,\ REJECT,\ RENEGOTIATE\}
+$$
 
 ---
 

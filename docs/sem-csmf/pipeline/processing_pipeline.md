@@ -44,9 +44,9 @@ Semantic projection:
 
 **Formal Definition**
 
-```text
+$$
 NEST = T(V(O(P(I))))
-```
+$$
 
 where:
 

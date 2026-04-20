@@ -49,9 +49,9 @@ It prepares the structured input:
 
 **Formal Definition**
 
-```text
-X = f(SLA, R_ran, R_transport, R_core)
-```
+$$
+X = f(SLA, R_{ran}, R_{transport}, R_{core})
+$$
 
 which is later evaluated by the Decision Engine.
 
@@ -65,9 +65,9 @@ Core semantic model:
 
 **Formal Definition**
 
-```text
-SLA_semantic = f(Intent, Constraints, SliceType, OntologyContext)
-```
+$$
+SLA_{semantic} = f(Intent, Constraints, SliceType, OntologyContext)
+$$
 
 where:
 
