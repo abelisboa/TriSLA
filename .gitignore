@@ -8,3 +8,5 @@ figures/
 *.log
 *.tar.gz
 .env
+docs/AUDIT_SLA_AWARE_MATHEMATICS.md
+docs/AUDIT_*.md
