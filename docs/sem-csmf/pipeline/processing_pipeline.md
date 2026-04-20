@@ -42,7 +42,11 @@ The pipeline formalizes how raw intent statements become semantically validated 
 
 Semantic projection:
 
-`NEST = T(V(O(P(I))))`
+**Formal Definition**
+
+```text
+NEST = T(V(O(P(I))))
+```
 
 where:
 

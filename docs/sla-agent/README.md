@@ -45,7 +45,11 @@ Each domain is managed by a dedicated agent.
 
 The SLA-Agent does not define lifecycle states but evaluates:
 
-Compliance ∈ {OK, RISK, VIOLATED}
+**Formal Definition**
+
+```text
+Decision in {OK, RISK, VIOLATED}
+```
 
 ---
 

@@ -33,7 +33,14 @@ The module ensures:
 
 Each SLA follows:
 
-REQUESTED -> APPROVED -> ACTIVE -> COMPLETED / VIOLATED
+**Lifecycle States**
+
+```text
+REQUESTED -> APPROVED -> ACTIVE -> COMPLETED
+REQUESTED -> REJECTED
+ACTIVE -> VIOLATED
+ACTIVE -> RENEGOTIATED
+```
 
 These states are stored on-chain.
 
@@ -55,7 +62,9 @@ The BC-NSSMF does not decide SLA acceptance.
 
 It enforces:
 
+```text
 Decision -> Contract -> Immutable Record
+```
 
 ---
 

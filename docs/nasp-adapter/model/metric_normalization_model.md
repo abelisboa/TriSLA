@@ -18,13 +18,26 @@ M_ran, M_transport, M_core
 
 Each metric m is transformed:
 
+**Normalization Function**
+
+```text
 m_norm = (m - min) / (max - min)
+```
 
 ---
 
 ## 4. Aggregated State
 
-S_normalized = {m1_norm, m2_norm, ..., mn_norm}
+**Formal Definition**
+
+```text
+X = [
+  m1_norm,
+  m2_norm,
+  ...,
+  mn_norm
+]
+```
 
 ---
 

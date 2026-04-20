@@ -18,7 +18,7 @@ R_ran = PRB utilization
 R_transport = latency + jitter  
 R_core = CPU + memory  
 
-S = ML-NSMF risk score ∈ [0,1]
+score = ML-NSMF risk score in [0,1]
 
 ---
 
@@ -26,11 +26,15 @@ S = ML-NSMF risk score ∈ [0,1]
 
 The system implicitly evaluates:
 
-R_total = α·R_ran + β·R_transport + γ·R_core
+**Multi-Domain Risk Aggregation**
+
+```text
+R_total = alpha * R_ran + beta * R_transport + gamma * R_core
+```
 
 Where:
 
-α, β, γ are adaptive weights (not fixed).
+alpha, beta, gamma are adaptive weights (not fixed).
 
 ---
 
@@ -38,21 +42,28 @@ Where:
 
 The final decision is defined as:
 
-ACCEPT if S ≤ T_accept  
-RENEGOTIATE if T_accept < S < T_reject  
-REJECT if S ≥ T_reject  
+**Decision Function**
+
+```text
+Decision =
+  ACCEPT        if score <= T_accept
+  RENEGOTIATE   if T_accept < score < T_reject
+  REJECT        if score >= T_reject
+```
 
 Typical thresholds:
 
-T_accept ≈ 0.4  
-T_reject ≈ 0.7  
+```text
+T_accept = 0.4
+T_reject = 0.7
+```
 
 ---
 
 ## 5. Interpretation
 
-- Low S → system can sustain SLA  
-- High S → high probability of SLA violation  
+- Low score -> system can sustain SLA  
+- High score -> high probability of SLA violation  
 
 ---
 
@@ -82,6 +93,10 @@ Thus enabling real-time admission control.
 
 The Decision Engine provides a deterministic mapping:
 
-(SLA requirements, network state, ML prediction) → Decision
+**Formal Definition**
+
+```text
+Decision = f(SLA, R_ran, R_transport, R_core, score)
+```
 
 enabling SLA-aware operation in multi-domain 5G networks.

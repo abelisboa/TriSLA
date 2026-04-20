@@ -16,12 +16,16 @@ struct SLA {
 
 Let:
 
-D = decision (ACCEPT / REJECT)
-S = feasibility score
+Decision = decision outcome (ACCEPT / REJECT / RENEGOTIATE)
+score = feasibility score
 
 The contract stores:
 
-SLA_onchain = f(D, S, metadata)
+**Formal Definition**
+
+```text
+SLA_onchain = f(Decision, score, metadata)
+```
 
 ---
 
@@ -29,7 +33,11 @@ SLA_onchain = f(D, S, metadata)
 
 Once stored:
 
+**Formal Definition**
+
+```text
 SLA(t) != SLA(t+1)
+```
 
 (immutability constraint)
 

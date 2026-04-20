@@ -9,7 +9,11 @@ Given:
 
 Predict:
 
-S = feasibility score in [0,1]
+**Formal Definition**
+
+```text
+score = feasibility score in [0,1]
+```
 
 ---
 
@@ -27,10 +31,17 @@ SLA = (latency_req, throughput_req, reliability_req)
 
 ## 3. Feature Vector
 
+**Formal Definition**
+
+```text
 X = f(SLA, R_ran, R_transport, R_core)
+```
 
 Example:
 
+**Feature Vector Example**
+
+```text
 X = [
   latency,
   throughput,
@@ -41,6 +52,7 @@ X = [
   bandwidth_available,
   active_slices
 ]
+```
 
 Typical engineered features include latency/throughput ratio, reliability-to-loss relations, and resource pressure terms.
 
@@ -50,7 +62,11 @@ Typical engineered features include latency/throughput ratio, reliability-to-los
 
 The model approximates:
 
-S = ML(X)
+**Formal Definition**
+
+```text
+score = ML(X)
+```
 
 where ML is a trained model (Random Forest or similar).
 
@@ -60,9 +76,9 @@ In implementation terms, preprocessing (scaling/normalization) and model inferen
 
 ## 5. Interpretation
 
-Higher S -> higher risk of SLA violation
+Higher score -> higher risk of SLA violation
 
-Lower S -> higher confidence that SLA can be satisfied under current conditions.
+Lower score -> higher confidence that SLA can be satisfied under current conditions.
 
 ---
 
@@ -70,7 +86,11 @@ Lower S -> higher confidence that SLA can be satisfied under current conditions.
 
 The score implicitly encodes:
 
-S approx alpha*R_ran + beta*R_transport + gamma*R_core
+**Multi-Domain Risk Aggregation**
+
+```text
+R_total = alpha * R_ran + beta * R_transport + gamma * R_core
+```
 
 Where:
 
@@ -84,7 +104,11 @@ This interpretation is conceptual; practical models may capture nonlinear intera
 
 SHAP/LIME approximates:
 
-S approx Sum(contribution(feature_i))
+**Formal Definition**
+
+```text
+score = Sum(contribution(feature_i))
+```
 
 allowing interpretation of decision factors.
 
@@ -96,9 +120,21 @@ Explainability outputs should be treated as local/approximate reasoning aids, no
 
 Operational threshold policy:
 
-- S <= 0.4: ACCEPT
-- 0.4 < S < 0.7: RENEGOTIATE
-- S >= 0.7: REJECT
+**Decision Function**
+
+```text
+Decision =
+  ACCEPT        if score <= T_accept
+  RENEGOTIATE   if T_accept < score < T_reject
+  REJECT        if score >= T_reject
+```
+
+Typical operating values:
+
+```text
+T_accept = 0.4
+T_reject = 0.7
+```
 
 This mapping aligns model output with orchestration semantics expected by Decision Engine.
 

@@ -47,7 +47,11 @@ The SEM-CSMF does not decide SLA acceptance.
 
 It prepares the structured input:
 
-`S = f(RAN, Transport, Core)`
+**Formal Definition**
+
+```text
+X = f(SLA, R_ran, R_transport, R_core)
+```
 
 which is later evaluated by the Decision Engine.
 
@@ -59,7 +63,11 @@ From a modeling perspective, SEM-CSMF materializes semantic constraints and inte
 
 Core semantic model:
 
-`SLA_semantic = f(Intent, Constraints, SliceType, OntologyContext)`
+**Formal Definition**
+
+```text
+SLA_semantic = f(Intent, Constraints, SliceType, OntologyContext)
+```
 
 where:
 

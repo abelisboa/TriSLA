@@ -26,7 +26,11 @@ It is intentionally positioned between semantic formalization and policy decisio
 
 The ML-NSMF computes a feasibility score:
 
-S in [0,1]
+**Formal Definition**
+
+```text
+score in [0,1]
+```
 
 representing the likelihood that an SLA can be fulfilled.
 
@@ -36,9 +40,19 @@ Lower scores indicate higher feasibility and lower violation risk; higher scores
 
 ## 4. Decision Interpretation
 
-- S <= 0.4 -> ACCEPT
-- 0.4 < S < 0.7 -> RENEGOTIATE
-- S >= 0.7 -> REJECT
+**Decision Function**
+
+```text
+Decision =
+  ACCEPT        if score <= T_accept
+  RENEGOTIATE   if T_accept < score < T_reject
+  REJECT        if score >= T_reject
+```
+
+```text
+T_accept = 0.4
+T_reject = 0.7
+```
 
 These thresholds are operational references used by TriSLA decisioning and can be calibrated based on campaign evidence and deployment policy.
 

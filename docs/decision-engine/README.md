@@ -28,7 +28,11 @@ Given:
 
 The engine determines:
 
-Decision ∈ {ACCEPT, REJECT, RENEGOTIATE}
+**Formal Definition**
+
+```text
+Decision in {ACCEPT, REJECT, RENEGOTIATE}
+```
 
 ---
 
@@ -39,7 +43,7 @@ The decision is based on:
 - RAN → PRB utilization
 - Transport → latency, jitter
 - Core → CPU, memory
-- ML-NSMF → risk score S ∈ [0,1]
+- ML-NSMF → risk score in [0,1]
 
 ---
 

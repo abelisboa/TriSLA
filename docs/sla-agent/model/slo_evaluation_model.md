@@ -19,21 +19,34 @@ SLO = set of constraints
 
 For each metric m:
 
+**Formal Definition**
+
+```text
 compliance(m) = TRUE if m satisfies SLO threshold
+```
 
 ---
 
 ## 4. Global Compliance
 
-C = (number of compliant metrics) / (total metrics)
+**Compliance Ratio**
+
+```text
+C = compliant_metrics / total_metrics
+```
 
 ---
 
 ## 5. State Definition
 
-OK if C = 1  
-RISK if 0.8 ≤ C < 1  
-VIOLATED if C < 0.8  
+**Decision Function**
+
+```text
+Decision =
+  OK         if C = 1
+  RISK       if 0.8 <= C < 1
+  VIOLATED   if C < 0.8
+```
 
 ---
 
