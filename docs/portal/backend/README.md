@@ -63,9 +63,8 @@ Configuration is provided through Helm values under  section in .
 
 ## Documentation
 
-- **[Complete Guide](PORTAL_BACKEND_COMPLETE_GUIDE.md)** — Comprehensive technical documentation
 - **[Architecture Overview](../../ARCHITECTURE.md)** — System-level architecture
-- **[Deployment Guide](../../DEPLOYMENT.md)** — Deployment procedures
+- **[Installation Guide](../../INSTALLATION.md)** — Canonical installation procedures
 
 ## Implementation Basis
 

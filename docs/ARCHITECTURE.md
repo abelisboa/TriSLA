@@ -1,89 +1,167 @@
-# TriSLA Architecture
+# TriSLA Architecture (SSOT)
 
-## Overview
+TriSLA implements a distributed, SLA-aware architecture for network slice admission control in 5G/O-RAN environments.
 
-TriSLA implements a distributed microservices architecture for SLA management in 5G networks. The system is designed for high availability, scalability, and trustworthiness through blockchain-based enforcement.
+---
 
-## Conceptual Architecture
+## 1. Architectural Overview
 
+TriSLA follows a modular pipeline architecture:
 
+SEM-CSMF → ML-NSMF → Decision Engine → NASP Adapter → BC-NSSMF → SLA-Agent
 
-## Component Flow
+---
 
-### 1. Service Exposure (SEM-CSMF)
-- Receives SLA requests from external clients
-- Validates and authenticates requests
-- Routes to ML-NSMF for prediction
+## 2. Design Principles
 
-### 2. Machine Learning (ML-NSMF)
-- Predicts optimal network slice configurations
-- Uses historical data and ML models
-- Provides recommendations to Decision Engine
+- SLA-aware decision making
+- Multi-domain observability (RAN, Transport, Core)
+- Explainability (XAI)
+- Reproducibility
+- Separation of concerns
 
-### 3. Decision Engine
-- Makes final SLA decisions based on:
-  - ML predictions
-  - Current network state
-  - Business policies
-- Publishes events to Kafka
+---
 
-### 4. Message Broker (Kafka)
-- Event streaming platform
-- Enables asynchronous communication
-- Ensures event ordering and durability
+## 3. Core Components
 
-### 5. Blockchain (BC-NSSMF)
-- Records SLA agreements immutably
-- Provides trust and auditability
-- Enables decentralized enforcement
+### SEM-CSMF
+- Semantic interpretation of SLA intents
+- Ontology-based reasoning
+- Generates structured SLA requirements
 
-### 6. SLA Agent Layer
-- Monitors SLA compliance
-- Triggers alerts on violations
-- Reports metrics to observability stack
+---
 
-## Deployment Architecture
+### ML-NSMF
+- Predicts SLA feasibility risk
+- Outputs risk_score and confidence
+- Supports XAI explanations
 
-TriSLA is deployed using Kubernetes with Helm charts:
+---
 
-- **Namespace**: 
-- **Image Registry**: 
-- **Version**:  (frozen)
+### Decision Engine
+- Final SLA admission decision
+- Combines:
+  - ML output
+  - real-time metrics
+  - policy constraints
 
-## Observability
+Outputs:
+- ACCEPT / REJECT / RENEGOTIATE
 
-The system includes comprehensive observability:
+---
 
-- **Prometheus**: Metrics collection
-- **Grafana**: Visualization and dashboards
-- **OpenTelemetry**: Distributed tracing
-- **Alertmanager**: Alert management
+### NASP Adapter
+- Integration layer with infrastructure
+- Provides normalized metrics
+- Abstracts RAN / Transport / Core
 
-## Network Integration
+---
 
-TriSLA integrates with 5G network infrastructure through:
+### BC-NSSMF
+- Blockchain-based SLA registration
+- Ensures immutability and auditability
+- Uses Hyperledger Besu
 
-- **NASP Adapter**: Network abstraction layer
-- **RAN Interface**: Radio Access Network communication
-- **Transport Interface**: Network transport layer
-- **Core Interface**: 5G Core network functions
+---
 
-## Data Flow
+### SLA-Agent Layer
+- Lifecycle orchestration
+- SLA compliance monitoring
+- Multi-domain action coordination
 
-1. **Request Flow**: Portal → SEM → ML → Decision → BC
-2. **Event Flow**: Decision → Kafka → BC → SLA Agent
-3. **Metrics Flow**: All components → Prometheus → Grafana
+---
 
-## Security
+## 4. Domain Model
 
-- JWT-based authentication
-- gRPC for inter-service communication
-- TLS for external interfaces
-- Role-based access control
+TriSLA operates over three domains:
 
-## References
+| Domain | Role |
+|------|------|
+| RAN | latency, jitter, PRB |
+| Transport | throughput, packet loss |
+| Core | CPU, memory, availability |
 
-For detailed deployment instructions, see:
-- [Installation Guide](INSTALLATION.md)
-- [Deployment Guide](DEPLOYMENT.md)
-- [Reproducibility Guide](REPRODUCIBILITY.md)
+---
+
+## 5. Data Flow
+
+### Request Flow
+
+Portal → SEM-CSMF → ML-NSMF → Decision Engine
+
+---
+
+### Execution Flow
+
+Decision Engine → BC-NSSMF → SLA-Agent → NASP Adapter
+
+---
+
+### Observability Flow
+
+All modules → Prometheus / OpenTelemetry
+
+---
+
+## 6. Communication Patterns
+
+| Type | Protocol | Usage |
+|------|--------|------|
+| Synchronous | REST | SLA submission |
+| Asynchronous | Kafka | events |
+| Blockchain | JSON-RPC | SLA registration |
+
+---
+
+## 7. Observability Integration
+
+TriSLA integrates:
+
+- Prometheus (metrics)
+- OpenTelemetry (traces)
+- Grafana (optional)
+
+See:
+→ observability/OBSERVABILITY.md
+
+---
+
+## 8. Deployment Model
+
+- Kubernetes-based
+- Helm-managed
+- Containerized services
+- GHCR images (digest-based)
+
+See:
+→ INSTALLATION.md
+
+---
+
+## 9. Reproducibility
+
+TriSLA supports:
+
+- deterministic deployment
+- traceable execution
+- experimental validation
+
+See:
+→ reproducibility/REPRODUCIBILITY.md
+
+---
+
+## 10. Scope and Boundaries
+
+TriSLA:
+
+✔ decides SLA admission  
+✔ integrates multi-domain metrics  
+✔ provides explainability  
+
+TriSLA does NOT:
+
+✖ simulate network  
+✖ replace orchestration platforms  
+✖ expose internal infrastructure details  
+

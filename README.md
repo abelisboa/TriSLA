@@ -1,90 +1,103 @@
-# TriSLA: SLA-Aware Architecture for 5G/O-RAN Networks with AI, XAI, and Blockchain
+# TriSLA: An SLA-Aware Architecture Based on AI, Ontology, and Smart Contracts for SLA Assurance in 5G/O-RAN Networks
 
-Initial Public Release (v1.0.0)
+TriSLA is an SLA (Service Level Agreement)-aware architecture that integrates AI (Artificial Intelligence), ontology-based reasoning, and smart contracts to support trustworthy SLA admission control and assurance in 5G/O-RAN environments.
 
-## Overview
+## 1. Quick Start
 
-TriSLA is an SLA-aware architecture for 5G/O-RAN networks that integrates Artificial Intelligence (AI), Explainable AI (XAI), and blockchain technologies to enable trustworthy, transparent, and automated SLA validation and enforcement.
+For installation and deployment steps, use:
 
-The architecture evaluates SLA feasibility before deployment by analyzing multi-domain resource availability across RAN, Transport, and Core, while supporting real-time orchestration and continuous observability.
+- `docs/INSTALLATION.md`
 
-## Scientific Positioning
+## 2. Overview
 
-### Research Problem
+TriSLA addresses the problem of evaluating SLA feasibility at request time under dynamic multi-domain conditions. The platform combines semantic interpretation, predictive intelligence, and policy-driven decisions to determine whether requested service guarantees can be admitted and maintained.
 
-SLA feasibility validation at request time remains difficult in 5G/O-RAN environments due to dynamic multi-domain resources, fragmented orchestration paths, and limited trust mechanisms for decision governance.
+TriSLA also incorporates XAI (Explainable Artificial Intelligence) outputs to make model-driven decisions interpretable for operators and researchers.
 
-### Why Existing Approaches Are Insufficient
+TriSLA works across network domains including RAN (Radio Access Network), Transport, and Core, and integrates with NASP (Network Automation and Service Platform) for infrastructure-facing actions.
 
-Common SLA pipelines are typically reactive, domain-isolated, or non-explainable. They often do not combine predictive AI, policy-governed control, explainability, and immutable auditing in one coherent lifecycle.
+## 3. Architecture
 
-### TriSLA Contribution
+Canonical pipeline:
 
-- **AI (`ML-NSMF`)** for predictive SLA feasibility estimation.
-- **XAI (`Decision Engine`)** for interpretable decision outputs.
-- **Blockchain (`BC-NSSMF`)** for immutable SLA governance evidence.
-- **Semantic reasoning (`SEM-CSMF`)** for intent-to-technical mapping.
-- **Real orchestration (`NASP Adapter`)** for multi-domain execution.
+`SEM-CSMF → ML-NSMF → Decision Engine → NASP Adapter → BC-NSSMF → SLA-Agent`
 
-## Architecture Overview
+Architecture reference:
 
-The reference architecture is documented in `docs/architecture/trisla_architecture.md`.
+- `docs/ARCHITECTURE.md`
 
-Core modules:
+## 4. Core Modules
 
-- `SEM-CSMF`
-- `ML-NSMF`
-- `Decision Engine`
-- `NASP Adapter`
-- `SLA-Agent Layer`
-- `BC-NSSMF`
-- `Portal Backend`
+| Module | Documentation |
+|--------|-------------|
+| SEM-CSMF | `docs/sem-csmf/` |
+| ML-NSMF | `docs/ml-nsmf/` |
+| Decision Engine | `docs/decision-engine/` |
+| NASP Adapter | `docs/nasp-adapter/` |
+| BC-NSSMF | `docs/bc-nssmf/` |
+| SLA-Agent | `docs/sla-agent/` |
+| Portal | `docs/portal/` |
 
-## End-to-End Flow
+## 5. Observability
 
-Canonical E2E flow:
+Observability uses Prometheus and OpenTelemetry (OTEL - OpenTelemetry) to expose runtime metrics and traces for pipeline validation, correlation tracking, and operational diagnostics.
 
-**Tenant → SEM-CSMF → ML-NSMF → Decision Engine → NASP Adapter → NASP → Core → SLA-Agent → BC-NSSMF**
+Observability reference:
 
-ASCII equivalent:
+- `docs/observability/OBSERVABILITY.md`
 
-`Tenant -> SEM-CSMF -> ML-NSMF -> Decision Engine -> NASP Adapter -> NASP -> Core -> SLA-Agent -> BC-NSSMF`
+## 6. Reproducibility
 
-Decision states are standardized as: `ACCEPT`, `REJECT`, `RENEGOTIATE`.
+Reproducibility guidance is documented in:
 
-## Modules
+- `docs/reproducibility/REPRODUCIBILITY.md`
 
-Detailed module documentation is available in:
+## 7. Deployment Model
 
-- `docs/modules/README.md`
-- `docs/modules/sem-csmf.md`
-- `docs/modules/ml-nsmf.md`
-- `docs/modules/decision-engine.md`
-- `docs/modules/nasp-adapter.md`
-- `docs/modules/sla-agent-layer.md`
-- `docs/modules/bc-nssmf.md`
-- `docs/modules/portal-backend.md`
+TriSLA uses Kubernetes (container orchestration platform) as the runtime environment and Helm (Kubernetes package manager) for release management and repeatable deployments.
 
-## NASP Integration
+Container images are consumed from GHCR using chart-managed image references.
 
-The NASP integration model (RAN, Transport, Core, telemetry, orchestration boundary) is documented in:
+## 8. Documentation Structure
 
-- `docs/infrastructure/nasp_integration.md`
+Module documentation follows a domain-first layout and standardized internal sections such as:
 
-## Reproducibility
+- `docs/<module>/architecture/`
+- `docs/<module>/interfaces/`
+- `docs/<module>/pipeline/`
 
-Reproducible setup and validation steps are documented in:
+This structure keeps conceptual design, contracts, and runtime flow documentation separated but consistent.
 
-- `docs/reproducibility/setup_guide.md`
+## 9. Design Principles
 
-## Documentation Structure
+- SLA-aware decision-making
+- Multi-domain intelligence
+- XAI (Explainable Artificial Intelligence)
+- Reproducibility
+- Separation of concerns
 
-- `docs/architecture/` — architecture and E2E system model.
-- `docs/modules/` — module-level technical behavior.
-- `docs/infrastructure/` — NASP integration and domain coupling.
-- `docs/reproducibility/` — setup, deploy, and validation guidance.
-- `docs/development/` — runbook references and governance boundaries.
+## 10. Scope
 
-## License
+### What TriSLA does
 
-Apache License 2.0.
+- Evaluates SLA admission feasibility using semantic, predictive, and policy inputs
+- Integrates multi-domain telemetry and infrastructure actions
+- Provides explainable decision support and auditable lifecycle evidence
+
+### What TriSLA does not do
+
+- Simulate the full network data plane
+- Replace external orchestration platforms
+- Expose private infrastructure internals in public documentation
+
+## 11. Author
+
+Abel Lisboa
+
+## 12. Status
+
+- [x] Canonical installation guide in place (`docs/INSTALLATION.md`)
+- [x] Canonical architecture guide in place (`docs/ARCHITECTURE.md`)
+- [x] Observability documentation consolidated (`docs/observability/OBSERVABILITY.md`)
+- [x] Reproducibility documentation consolidated (`docs/reproducibility/REPRODUCIBILITY.md`)
+- [x] Module documentation organized by domain
