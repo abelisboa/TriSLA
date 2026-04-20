@@ -1,60 +1,73 @@
-# ML-NSMF Documentation
+# ML-NSMF — Machine Learning-Based SLA Feasibility Prediction
 
-**Version:** 3.7.3  
-**Phase:** M (ML-NSMF)  
-**Status:** Stabilized  
+## 1. Overview
 
-This directory contains the complete documentation of the **ML-NSMF (Machine Learning Network Slice Management Function)** module.
+The ML-NSMF (Machine Learning Network Slice Management Function) is responsible for predicting the feasibility of SLA acceptance based on real-time multi-domain network conditions and SLA requirements.
 
----
+It operates as the predictive intelligence layer of the TriSLA architecture.
 
-## 📚 Available Documents
-
-### [ML-NSMF Complete Guide](ML_NSMF_COMPLETE_GUIDE.md)
-
-Comprehensive guide that includes:
-
-- ✅ **Module Overview**
-- ✅ **Detailed Architecture**
-- ✅ **Pipeline Operation**
-- ✅ **Model Training** (complete script)
-- ✅ **Prediction and XAI** (SHAP/LIME)
-- ✅ **Integration** with other modules
-- ✅ **Interface I-03** (Kafka)
-- ✅ **Observability** (metrics and traces)
-- ✅ **Usage Examples** (Python code)
-- ✅ **Troubleshooting** (solutions for common issues)
+The module is designed to complement semantic validation performed by SEM-CSMF, converting structured intent and runtime telemetry into a probabilistic feasibility estimate suitable for downstream orchestration decisions.
 
 ---
 
-## 📁 Related Files
+## 2. Role in TriSLA
 
-- **Predictor:** `apps/ml-nsmf/src/predictor.py`  
-- **Training:** `apps/ml-nsmf/training/train_model.py`  
-- **Model:** `apps/ml-nsmf/models/viability_model.pkl`  
-- **Scaler:** `apps/ml-nsmf/models/scaler.pkl`  
-- **Metadata:** `apps/ml-nsmf/models/model_metadata.json`  
-- **Dataset:** `apps/ml-nsmf/data/datasets/trisla_ml_dataset.csv`  
+Pipeline:
+
+SEM-CSMF -> NEST -> ML-NSMF -> Prediction -> Decision Engine
+
+The module evaluates whether an SLA request is sustainable given current network conditions.
+
+It is intentionally positioned between semantic formalization and policy decision, enabling data-driven risk assessment without replacing rule-based governance.
 
 ---
 
-## 🎯 Quick Start
+## 3. Core Function
 
-1. **Read the Guide:** [`ML_NSMF_COMPLETE_GUIDE.md`](ML_NSMF_COMPLETE_GUIDE.md)  
-2. **Train the Model:**  
-   ```bash
-   python apps/ml-nsmf/training/train_model.py
+The ML-NSMF computes a feasibility score:
 
-Run Predictions: See usage examples in the complete guide
+S in [0,1]
 
-🎓 Training
-Run Training
+representing the likelihood that an SLA can be fulfilled.
 
-cd apps/ml-nsmf
-python training/train_model.py
+Lower scores indicate higher feasibility and lower violation risk; higher scores indicate elevated violation probability under current observed conditions.
 
-Validate Model
+---
 
-python -c "from src.predictor import RiskPredictor; p = RiskPredictor(); print('Model loaded successfully!')"
+## 4. Decision Interpretation
 
-Last updated: 2025-01-27
+- S <= 0.4 -> ACCEPT
+- 0.4 < S < 0.7 -> RENEGOTIATE
+- S >= 0.7 -> REJECT
+
+These thresholds are operational references used by TriSLA decisioning and can be calibrated based on campaign evidence and deployment policy.
+
+---
+
+## 5. Documentation Structure
+
+- `architecture/` -> system structure
+- `model/` -> mathematical model
+- `pipeline/` -> execution flow
+- `interfaces/` -> Kafka integration
+- `examples/` -> usage examples
+
+---
+
+## 6. Coherence with SEM-CSMF and Decision Engine
+
+- Receives semantically validated NEST from SEM-CSMF (Kafka I-02)
+- Produces feasibility prediction and explainability payload
+- Publishes prediction to Decision Engine (Kafka I-03)
+
+This preserves separation of concerns:
+
+- SEM-CSMF: semantic consistency
+- ML-NSMF: predictive feasibility
+- Decision Engine: final SLA decision and policy enforcement
+
+---
+
+## 7. Summary
+
+ML-NSMF provides predictive intelligence and explainability, enabling SLA-aware decision-making under dynamic network conditions.
