@@ -96,3 +96,17 @@ SEM-CSMF → ML-NSMF → Decision Engine → BC-NSSMF → SLA-Agent
 ## 10. Installation Reference
 
 → ../INSTALLATION.md
+
+## Multi-Domain SLA Influence Model
+
+The global SLA risk can be decomposed as:
+
+$$
+R_{total} = \alpha \cdot R_{ran} + \beta \cdot R_{transport} + \gamma \cdot R_{core}
+$$
+
+This formulation reflects the empirical behavior observed in TriSLA:
+
+- URLLC → dominated by Transport (latency/jitter)  
+- eMBB → dominated by RAN (PRB)  
+- mMTC → dominated by Core (CPU/memory)  

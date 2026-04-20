@@ -74,3 +74,49 @@ It does NOT:
 ## 7. Summary
 
 The Decision Engine operationalizes SLA-aware decision-making by combining multi-domain observability and predictive intelligence into a single deterministic outcome.
+
+### Explicit Slice-Level Risk Functions
+
+The SLA-aware behavior can be explicitly modeled per slice type.
+
+#### URLLC
+
+$$
+R_{URLLC} = w_1 \cdot latency_{norm} + w_2 \cdot jitter_{norm} + w_3 \cdot PRB_{norm}
+$$
+
+Where latency and jitter dominate the decision.
+
+---
+
+#### eMBB
+
+$$
+R_{eMBB} = w_1 \cdot PRB_{norm} + w_2 \cdot bandwidth_{norm}
+$$
+
+Where RAN utilization is the primary constraint.
+
+---
+
+#### mMTC
+
+$$
+R_{mMTC} = w_1 \cdot memory_{norm} + w_2 \cdot cpu_{norm}
+$$
+
+Where core resource availability dominates.
+
+### Mathematical Pipeline Clarification
+
+$$
+X \rightarrow R_{adj} \rightarrow R_{final} \rightarrow Decision
+$$
+
+Where:
+
+- $R_{adj}$ is the ML-predicted risk  
+- $R_{final}$ includes RAN-aware adjustment  
+- Decision is derived strictly from $R_{final}$  
+
+Note: runtime variables such as `score` represent system outputs and are not part of the formal model.
