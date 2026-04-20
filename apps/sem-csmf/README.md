@@ -1,22 +1,22 @@
 # SEM-CSMF - Semantic-enhanced Communication Service Management Function
 
-Module responsible for receiving intents, semantically validating them, and generating NEST.
+Módulo responsável por receber intents, validar semanticamente e gerar NEST.
 
-## Structure
+## Estrutura
 
 ```
 apps/sem-csmf/
 ├── src/
-│   ├── main.py              # FastAPI application
-│   ├── grpc_server.py       # gRPC server (I-01)
-│   ├── intent_processor.py  # Intent processing
+│   ├── main.py              # Aplicação FastAPI
+│   ├── grpc_server.py       # Servidor gRPC (I-01)
+│   ├── intent_processor.py  # Processamento de intents
 │   ├── ontology/
-│   │   ├── parser.py        # Ontology parser
-│   │   └── matcher.py       # Semantic matching
-│   ├── nest_generator.py    # NEST generation
+│   │   ├── parser.py        # Parser de ontologias
+│   │   └── matcher.py       # Match semântico
+│   ├── nest_generator.py    # Geração de NEST
 │   └── models/
-│       ├── intent.py        # Intent models
-│       └── nest.py          # NEST models
+│       ├── intent.py        # Modelos de intent
+│       └── nest.py          # Modelos de NEST
 ├── tests/
 ├── Dockerfile
 ├── requirements.txt
@@ -25,15 +25,15 @@ apps/sem-csmf/
 
 ## Pipeline
 
-1. Intent → Ontology (semantic validation)
+1. Intent → Ontology (validação semântica)
 2. Ontology → GST (Generation Service Template)
 3. GST → NEST (Network Slice Template)
-4. NEST → Subset (module-specific subset)
-5. Metadata → I-01 → Decision Engine
+4. NEST → Subset (subconjunto para módulos)
+5. Metadados → I-01 → Decision Engine
 
 ## Interface I-01
 
 - **Protocolo**: gRPC
-- **Endpoint**: Intent intake
-- **Metadata**: Sent to Decision Engine
+- **Endpoint**: Recepção de intents
+- **Metadados**: Enviados para Decision Engine
 

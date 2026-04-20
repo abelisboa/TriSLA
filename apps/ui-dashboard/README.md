@@ -1,20 +1,20 @@
 # UI Dashboard - TriSLA
 
-Complete, modern, and responsive web interface for TriSLA.
+Interface web completa, moderna e responsiva para o TriSLA.
 
-## Structure
+## Estrutura
 
 ```
 apps/ui-dashboard/
 ├── src/
-│   ├── App.tsx              # Main component
+│   ├── App.tsx              # Componente principal
 │   ├── components/
-│   │   ├── TenantPortal/    # Tenant portal
-│   │   ├── Monitoring/      # Monitoring
-│   │   ├── Administration/  # Administration
-│   │   └── SlicesState/     # Slice state
+│   │   ├── TenantPortal/    # Portal do Tenant
+│   │   ├── Monitoring/      # Monitoramento
+│   │   ├── Administration/  # Administração
+│   │   └── SlicesState/     # Estado dos Slices
 │   ├── services/
-│   │   └── api.ts           # API client
+│   │   └── api.ts           # Cliente API
 │   ├── hooks/
 │   └── utils/
 ├── public/
@@ -23,35 +23,35 @@ apps/ui-dashboard/
 └── README.md
 ```
 
-## Features
+## Funcionalidades
 
 ### 1. Tenant Portal
-- SLA requests
+- Requisições de SLA
 - Múltiplos tipos de slices simultâneos (eMBB, URLLC, mMTC)
-- Request status
-- History
+- Status de requisições
+- Histórico
 
-### 2. Monitoring
-- Real-time SLO charts
+### 2. Monitoramento
+- Gráficos de SLOs em tempo real
 - Observabilidade completa
-- Performance metrics
+- Métricas de performance
 - Alertas
 
-### 3. Administration
-- Tenant/user management
-- Module configuration
+### 3. Administração
+- Gestão de tenants/usuários
+- Configuração de módulos
 - Políticas e regras
 
-### 4. Slices & State
-- Slice visualization
-- Module state
+### 4. Slices & Estado
+- Visualização de slices
+- Estado de módulos
 - Comportamento em tempo real
 - Health checks
 
-## Technologies
+## Tecnologias
 
 - React 18+ com TypeScript
 - Material-UI v5
 - WebSocket para tempo real
-- Chart.js / Recharts for charts
+- Chart.js / Recharts para gráficos
 

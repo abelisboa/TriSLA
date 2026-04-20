@@ -1,27 +1,15 @@
-# TriSLA Documentation (SSOT-Based)
+# TriSLA Documentation (Public)
 
-This documentation is reconstructed from executable runtime behavior in
-`apps/*/src` and is intended for scientific and engineering reproducibility.
+This documentation is intended for public scientific review and third-party deployment.
 
-## Documentation map
-
-1. Architecture and formal model: `architecture/trisla_architecture.md`
-2. Module-level runtime contracts: `modules/README.md`
-3. NASP infrastructure integration: `infrastructure/nasp_integration.md`
-4. Reproducibility setup and validation: `reproducibility/setup_guide.md`
-5. Runbook separation policy: `development/runbook_reference.md`
-
-## Canonical runtime pipeline
-
-`SEM-CSMF -> ML-NSMF -> Decision Engine -> NASP Adapter -> BC-NSSMF -> SLA-Agent Layer`
-
-## SSOT policy
-
-- Source of truth for behavior, endpoints, and schemas: `apps/*/src`
-- Documentation reflects implemented runtime contracts
-- Mathematical formalization is derived from system behavior (not speculative)
+## Start here
+1. **Architecture**: `ARCHITECTURE.md`
+2. **Installation**: `INSTALLATION.md`
+3. **Deployment**: `DEPLOYMENT.md`
+4. **Reproducibility**: `REPRODUCIBILITY.md`
+5. **Modules**: `modules/README.md`
+6. **Observability**: `observability/README.md`
+7. **Portal**: `portal/README.md`
 
 ## Scope
-
-This public tree excludes internal lab-only artifacts and private operational
-materials not required for open reproducibility.
+This folder intentionally excludes internal lab artifacts (sync folders, evidence packs, audit logs, and dissertation chapters).

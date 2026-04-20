@@ -7,6 +7,7 @@ Do not change query semantics here without E2E validation.
 
 from __future__ import annotations
 
+import os
 from typing import Dict
 
 # Telemetry snapshot (query_range) — keys match TELEMETRY_PROMQL_* suffixes.
@@ -16,14 +17,26 @@ PROMQL_SSOT: Dict[str, str] = {
     "TRANSPORT_RTT": (
         'max(probe_duration_seconds{job="probe/monitoring/trisla-transport-tcp-probe"}) * 1000'
     ),
+    # Range spread of probe RTT (seconds → ms). stddev_over_time often returned empty on short windows;
+    # max−min over 1m matches operational variability and populates transport.jitter in snapshots.
     "TRANSPORT_JITTER": (
-        'avg(stddev_over_time(probe_duration_seconds{job="probe/monitoring/trisla-transport-tcp-probe"}[1m]) * 1000)'
+        '(max_over_time(probe_duration_seconds{job="probe/monitoring/trisla-transport-tcp-probe"}[1m]) - '
+        'min_over_time(probe_duration_seconds{job="probe/monitoring/trisla-transport-tcp-probe"}[1m])) * 1000'
     ),
     # Core (PR-03): alvo documental = container_* escopado ao namespace Free5GC (ex.: ns-1274485
     # neste cluster; não confundir com nome literal "free5gc"). Só substituir estas strings
     # quando Prometheus expuser séries (validação instant query não vazia — PROMPT_38).
-    "CORE_CPU": "sum(rate(process_cpu_seconds_total[1m]))",
-    "CORE_MEMORY": "sum(process_resident_memory_bytes)",
+    # NOTE:
+    # Default process_* metrics are deprecated for production use.
+    # Core-scoped container metrics must be provided via TELEMETRY_PROMQL_CORE_*.
+    "CORE_CPU": os.getenv(
+        "TELEMETRY_PROMQL_CORE_CPU",
+        "sum(rate(process_cpu_seconds_total[1m]))",
+    ),
+    "CORE_MEMORY": os.getenv(
+        "TELEMETRY_PROMQL_CORE_MEMORY",
+        "sum(process_resident_memory_bytes)",
+    ),
 }
 
 # Referência para cutover futuro (não usado pelo collector enquanto vazio no Prometheus):

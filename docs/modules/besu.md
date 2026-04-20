@@ -1,23 +1,17 @@
 # Besu
 
-## Role of Blockchain
+## Overview
 
-Besu provides the blockchain runtime used by TriSLA for immutable SLA lifecycle
-evidence. It is the execution substrate for BC-NSSMF contract interactions.
+This module is part of the TriSLA v3.9.3 architecture.
 
-## SLA Lifecycle Persistence
+## Purpose
 
-SLA registration and status transition events are persisted via on-chain
-transactions, producing verifiable identifiers (e.g., transaction hash and block
-metadata where available).
+[Module-specific purpose - to be detailed]
 
-## Immutability
+## Configuration
 
-Once committed, lifecycle records become tamper-evident. This supports
-trustworthy audit trails across decision and orchestration branches.
+See module README for configuration details.
 
-## Auditability
+## Version
 
-Besu-backed persistence enables post-event verification of SLA state history,
-which is essential for governance, compliance review, and scientific traceability
-in end-to-end experiments.
+Part of TriSLA v3.9.3 (frozen scientific version).

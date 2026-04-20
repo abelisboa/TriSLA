@@ -18,7 +18,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/* ========================================================== */}}
-{{/* IMAGE HELPER — DIGEST ONLY (MANDATORY)                    */}}
+{{/* IMAGE HELPER — DIGEST ONLY (ABSOLUTO)                     */}}
 {{/* ========================================================== */}}
 
 {{- define "trisla.image" -}}
@@ -33,7 +33,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- $repo := default "" $img.repository -}}
 
 {{- if eq $repo "" -}}
-{{- fail "image repository is not defined" -}}
+{{- fail "repository da imagem não definido" -}}
 {{- end -}}
 
 {{- $firstPart := (splitList "/" $repo | first) -}}
@@ -47,7 +47,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- $digest := default "" $img.digest -}}
 
 {{- if eq $digest "" -}}
-{{- fail (printf "MANDATORY DIGEST for %s. TAG IS NOT ALLOWED." $repo) -}}
+{{- fail (printf "DIGEST OBRIGATÓRIO para %s. TAG NÃO É PERMITIDA." $repo) -}}
 {{- end -}}
 
 {{ printf "%s@%s" $repo $digest }}

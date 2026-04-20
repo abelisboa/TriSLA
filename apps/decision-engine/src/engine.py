@@ -37,6 +37,10 @@ ML_CAN_OVERRIDE_REJECT = os.getenv("ML_CAN_OVERRIDE_REJECT", "false").lower() ==
 ML_REFINEMENT_CONFIDENCE = float(os.getenv("ML_REFINEMENT_CONFIDENCE", "0.6"))
 HARD_PRB_REJECT_THRESHOLD = float(os.getenv("HARD_PRB_REJECT_THRESHOLD", "95"))
 HARD_PRB_RENEGOTIATE_THRESHOLD = float(os.getenv("HARD_PRB_RENEGOTIATE_THRESHOLD", "85"))
+HARD_PRB_REJECT = float(os.getenv("HARD_PRB_REJECT", str(HARD_PRB_REJECT_THRESHOLD)))
+HARD_PRB_RENEGOTIATE = float(os.getenv("HARD_PRB_RENEGOTIATE", str(HARD_PRB_RENEGOTIATE_THRESHOLD)))
+FINAL_SCORE_ACCEPT_THRESHOLD = float(os.getenv("FINAL_SCORE_ACCEPT_THRESHOLD", "0.70"))
+FINAL_SCORE_RENEGOTIATE_THRESHOLD = float(os.getenv("FINAL_SCORE_RENEGOTIATE_THRESHOLD", "0.45"))
 
 
 def decision_exposure_from_xai_bundle(xai_bundle: Optional[dict]) -> dict:
@@ -327,28 +331,237 @@ class DecisionEngine:
             core_cpu_input = _cr.get("cpu_utilization")
             core_memory_input = _cr.get("memory_utilization")
 
-        ml_risk_for_prb = float(slice_adjusted)
-        final_risk = ml_risk_for_prb
+        prb_utilization_real = None
         if ran_prb_raw is not None:
             try:
-                prb_norm = max(0.0, min(float(ran_prb_raw) / 100.0, 1.0))
-                final_risk = min(1.0, ml_risk_for_prb + PRB_RISK_ALPHA * prb_norm)
+                prb_utilization_real = float(ran_prb_raw)
             except (TypeError, ValueError):
-                final_risk = ml_risk_for_prb
+                prb_utilization_real = None
+
+        # =========================================
+        # NORMALIZAÇÃO DE PRB (FIX CRÍTICO)
+        # =========================================
+        prb_normalized = None
+        if prb_utilization_real is not None:
+            if prb_utilization_real > 1:
+                prb_normalized = prb_utilization_real / 100.0
+            else:
+                prb_normalized = prb_utilization_real
+            prb_normalized = max(0.0, min(prb_normalized, 1.0))
+
+        def _action_to_label(a: DecisionAction) -> str:
+            return {"AC": "ACCEPT", "RENEG": "RENEGOTIATE", "REJ": "REJECT"}[a.value]
+
+        rtt = None
+        if transport_latency_input is not None:
+            try:
+                rtt = float(transport_latency_input)
+            except (TypeError, ValueError):
+                rtt = None
+
+        jitter = None
+        if context and isinstance(context, dict):
+            _ts = context.get("telemetry_snapshot") or {}
+            _tr = _ts.get("transport") or {}
+            _jit = _tr.get("jitter_ms")
+            if _jit is None:
+                _jit = _tr.get("jitter")
+            try:
+                jitter = float(_jit) if _jit is not None else None
+            except (TypeError, ValueError):
+                jitter = None
+
+        cpu = None
+        if core_cpu_input is not None:
+            try:
+                cpu = float(core_cpu_input)
+            except (TypeError, ValueError):
+                cpu = None
+
+        memory = None
+        if core_memory_input is not None:
+            try:
+                memory = float(core_memory_input)
+            except (TypeError, ValueError):
+                memory = None
+
+        # Interpretar thresholds de PRB em escala resiliente:
+        # - se vierem como percentual (ex.: 20, 30), normaliza para 0.20, 0.30
+        # - se já vierem no intervalo [0, 1], mantém sem alteração
+        hard_prb_renegotiate = (
+            HARD_PRB_RENEGOTIATE / 100.0 if HARD_PRB_RENEGOTIATE > 1 else HARD_PRB_RENEGOTIATE
+        )
+        hard_prb_reject = (
+            HARD_PRB_REJECT / 100.0 if HARD_PRB_REJECT > 1 else HARD_PRB_REJECT
+        )
+
+        # ================================
+        # HARD CONSTRAINT — RAN (PRB)
+        # ================================
+        print(f"[DEBUG][PRB_RAW] value={prb_utilization_real}")
+        print(
+            f"[DEBUG][PRB_THRESHOLDS] renegotiate={hard_prb_renegotiate} "
+            f"reject={hard_prb_reject}"
+        )
+        if prb_normalized is not None:
+            print(f"[DEBUG][PRB_NORMALIZED] value={prb_normalized}")
+            if prb_normalized >= hard_prb_reject:
+                decision = DecisionAction.REJECT
+                decision_source = "PRB_HARD_REJECT_THRESHOLD"
+                final_score = 0.0
+                ran_score = max(0.0, 1.0 - prb_normalized)
+                transport_score = 1.0
+                core_score = 0.3
+                threshold_decision_str = _action_to_label(decision)
+                cls_str = ml_prediction.predicted_decision_class
+                cls_conf = (
+                    float(ml_prediction.classifier_confidence)
+                    if ml_prediction.classifier_confidence is not None
+                    else 0.0
+                )
+                final_risk = 1.0 - final_score
+                xai_bundle = {
+                    "raw_risk_score": raw_risk_score,
+                    "slice_adjusted_risk_score": slice_adjusted,
+                    "ran_prb_utilization_input": ran_prb_raw,
+                    "transport_latency_input": transport_latency_input,
+                    "transport_latency_ms_input": transport_latency_input,
+                    "core_cpu_input": core_cpu_input,
+                    "core_cpu_percent_input": core_cpu_input,
+                    "core_memory_input": core_memory_input,
+                    "ran_aware_final_risk": final_risk,
+                    "prb_risk_alpha": PRB_RISK_ALPHA,
+                    "predicted_decision_class": cls_str,
+                    "confidence_score": cls_conf,
+                    "threshold_decision": threshold_decision_str,
+                    "final_decision": _action_to_label(decision),
+                    "decision_divergence": False,
+                    "decision_mode": "hard_prb_gate",
+                    "thresholds_used": thresholds_used,
+                    "top_factors": ml_prediction.top_factors or [],
+                    "dominant_domain": "RAN",
+                    "decision_explanation": "Hard PRB reject threshold reached.",
+                    "decision_explanation_plain": "A decisão foi REJECT por limite rígido de PRB.",
+                    "final_decision_confidence": 1.0,
+                    "decision_source": decision_source,
+                    "policy_governed": POLICY_GOVERNED_MODE,
+                    "hard_prb_thresholds": {"reject": hard_prb_reject, "renegotiate": hard_prb_renegotiate},
+                    "decision_snapshot": {
+                        "ran_score": ran_score,
+                        "transport_score": transport_score,
+                        "core_score": core_score,
+                        "final_score": final_score,
+                    },
+                }
+                reasoning = "PRB_HARD_REJECT_THRESHOLD"
+                print(f"[DEBUG][FINAL_DECISION] prb={prb_normalized} decision={_action_to_label(decision)}")
+                return (decision, reasoning, slos, domains, xai_bundle)
+
+            if prb_normalized >= hard_prb_renegotiate:
+                decision = DecisionAction.RENEGOTIATE
+                decision_source = "PRB_HARD_RENEGOTIATE_THRESHOLD"
+                final_score = 0.3
+                ran_score = max(0.0, 1.0 - prb_normalized)
+                transport_score = 1.0
+                core_score = 0.3
+                threshold_decision_str = _action_to_label(decision)
+                cls_str = ml_prediction.predicted_decision_class
+                cls_conf = (
+                    float(ml_prediction.classifier_confidence)
+                    if ml_prediction.classifier_confidence is not None
+                    else 0.0
+                )
+                final_risk = 1.0 - final_score
+                xai_bundle = {
+                    "raw_risk_score": raw_risk_score,
+                    "slice_adjusted_risk_score": slice_adjusted,
+                    "ran_prb_utilization_input": ran_prb_raw,
+                    "transport_latency_input": transport_latency_input,
+                    "transport_latency_ms_input": transport_latency_input,
+                    "core_cpu_input": core_cpu_input,
+                    "core_cpu_percent_input": core_cpu_input,
+                    "core_memory_input": core_memory_input,
+                    "ran_aware_final_risk": final_risk,
+                    "prb_risk_alpha": PRB_RISK_ALPHA,
+                    "predicted_decision_class": cls_str,
+                    "confidence_score": cls_conf,
+                    "threshold_decision": threshold_decision_str,
+                    "final_decision": _action_to_label(decision),
+                    "decision_divergence": False,
+                    "decision_mode": "hard_prb_gate",
+                    "thresholds_used": thresholds_used,
+                    "top_factors": ml_prediction.top_factors or [],
+                    "dominant_domain": "RAN",
+                    "decision_explanation": "Hard PRB renegotiate threshold reached.",
+                    "decision_explanation_plain": "A decisão foi RENEGOTIATE por limite rígido de PRB.",
+                    "final_decision_confidence": 1.0,
+                    "decision_source": decision_source,
+                    "policy_governed": POLICY_GOVERNED_MODE,
+                    "hard_prb_thresholds": {"reject": hard_prb_reject, "renegotiate": hard_prb_renegotiate},
+                    "decision_snapshot": {
+                        "ran_score": ran_score,
+                        "transport_score": transport_score,
+                        "core_score": core_score,
+                        "final_score": final_score,
+                    },
+                }
+                reasoning = "PRB_HARD_RENEGOTIATE_THRESHOLD"
+                print(f"[DEBUG][FINAL_DECISION] prb={prb_normalized} decision={_action_to_label(decision)}")
+                return (decision, reasoning, slos, domains, xai_bundle)
+
+        # ================================
+        # DOMAIN SCORES
+        # ================================
+        ran_score = 1.0 - prb_normalized if prb_normalized is not None else 0.5
+
+        transport_score = 1.0
+        if rtt is not None:
+            transport_score -= min(rtt / 10.0, 1.0)
+
+        if jitter is not None:
+            transport_score -= min(jitter / 20.0, 0.5)
+
+        core_score = 1.0
+        if cpu is not None:
+            core_score -= min(cpu / 100.0, 1.0)
+
+        if memory is not None:
+            core_score -= min(memory / 100.0, 0.5)
+
+        # Core nunca pode dominar
+        core_score = min(core_score, 0.3)
+
+        # ================================
+        # COMPOSIÇÃO FINAL CONTROLADA
+        # ================================
+        ran_score = max(0.0, min(ran_score, 1.0))
+        transport_score = max(0.0, min(transport_score, 1.0))
+        core_score = max(0.0, min(core_score, 1.0))
+        final_score = (
+            0.7 * ran_score +
+            0.2 * transport_score +
+            0.1 * core_score
+        )
+        final_risk = 1.0 - final_score
 
         print(
-            f"[RAN AWARE] ml={ml_risk_for_prb:.4f} prb={ran_prb_raw} "
-            f"alpha={PRB_RISK_ALPHA} final={final_risk:.4f}"
+            f"[MULTI-DOMAIN SCORE] prb={ran_prb_raw} rtt={rtt} jitter={jitter} cpu={cpu} mem={memory} "
+            f"ran={ran_score:.4f} transport={transport_score:.4f} core={core_score:.4f} final={final_score:.4f}"
         )
         logger.info(
-            "[RAN AWARE] ml=%.4f prb=%s alpha=%s final=%.4f",
-            ml_risk_for_prb,
+            "[MULTI-DOMAIN SCORE] prb=%s rtt=%s jitter=%s cpu=%s mem=%s ran=%.4f transport=%.4f core=%.4f final=%.4f",
             ran_prb_raw,
-            PRB_RISK_ALPHA,
-            final_risk,
+            rtt,
+            jitter,
+            cpu,
+            memory,
+            ran_score,
+            transport_score,
+            core_score,
+            final_score,
         )
 
-        risk_for_decision = final_risk
+        risk_for_decision = 1.0 - final_score
 
         top_factors = ml_prediction.top_factors or []
         dom = ml_prediction.dominant_domain or "unknown"
@@ -362,9 +575,6 @@ class DecisionEngine:
                     out.append(str(item["factor"]))
             return ", ".join(out) if out else "indisponível"
 
-        def _action_to_label(a: DecisionAction) -> str:
-            return {"AC": "ACCEPT", "RENEG": "RENEGOTIATE", "REJ": "REJECT"}[a.value]
-
         def _label_to_action(label: str) -> DecisionAction:
             u = (label or "").strip().upper()
             if u == "ACCEPT":
@@ -375,9 +585,9 @@ class DecisionEngine:
                 return DecisionAction.REJECT
             return DecisionAction.RENEGOTIATE
 
-        if risk_for_decision < t_accept:
+        if final_score >= FINAL_SCORE_ACCEPT_THRESHOLD:
             threshold_action = DecisionAction.ACCEPT
-        elif risk_for_decision < t_reneg:
+        elif final_score >= FINAL_SCORE_RENEGOTIATE_THRESHOLD:
             threshold_action = DecisionAction.RENEGOTIATE
         else:
             threshold_action = DecisionAction.REJECT
@@ -393,7 +603,7 @@ class DecisionEngine:
         if os.getenv("DECISION_SCORE_MODE", "false").lower() == "true":
             from decision_score_mode import score_mode_decide
 
-            return score_mode_decide(
+            result = score_mode_decide(
                 intent=intent,
                 nest=nest,
                 ml_prediction=ml_prediction,
@@ -413,9 +623,11 @@ class DecisionEngine:
                 dom=dom,
                 cls_str=cls_str,
                 cls_conf=cls_conf,
-                hard_prb_reject=HARD_PRB_REJECT_THRESHOLD,
-                hard_prb_reneg=HARD_PRB_RENEGOTIATE_THRESHOLD,
+                hard_prb_reject=hard_prb_reject,
+                hard_prb_reneg=hard_prb_renegotiate,
             )
+            print("[DEBUG_DECISION_MODE]: decision_score_mode")
+            return result
 
         decision_source = "unknown"
         decision: DecisionAction
@@ -426,13 +638,12 @@ class DecisionEngine:
         if POLICY_GOVERNED_MODE:
             policy_decision: Optional[DecisionAction] = None
 
-            if ran_prb_raw is not None:
+            if prb_normalized is not None:
                 try:
-                    prb_value = float(ran_prb_raw)
-                    if prb_value >= HARD_PRB_REJECT_THRESHOLD:
+                    if prb_normalized >= hard_prb_reject:
                         policy_decision = DecisionAction.REJECT
                         decision_source = "policy_hard_reject"
-                    elif prb_value >= HARD_PRB_RENEGOTIATE_THRESHOLD:
+                    elif prb_normalized >= hard_prb_renegotiate:
                         policy_decision = DecisionAction.RENEGOTIATE
                         decision_source = "policy_hard_renegotiate"
                 except Exception:
@@ -588,6 +799,7 @@ class DecisionEngine:
             "core_memory_input": core_memory_input,
             "ran_aware_final_risk": final_risk,
             "prb_risk_alpha": PRB_RISK_ALPHA,
+            "final_score": final_score,
             "predicted_decision_class": cls_str,
             "confidence_score": cls_conf,
             "threshold_decision": threshold_decision_str,
@@ -603,8 +815,14 @@ class DecisionEngine:
             "decision_source": decision_source,
             "policy_governed": POLICY_GOVERNED_MODE,
             "hard_prb_thresholds": {
-                "reject": HARD_PRB_REJECT_THRESHOLD,
-                "renegotiate": HARD_PRB_RENEGOTIATE_THRESHOLD,
+                "reject": hard_prb_reject,
+                "renegotiate": hard_prb_renegotiate,
+            },
+            "decision_snapshot": {
+                "ran_score": ran_score,
+                "transport_score": transport_score,
+                "core_score": core_score,
+                "final_score": final_score,
             },
         }
 
@@ -619,6 +837,7 @@ class DecisionEngine:
             threshold_decision_str,
             final_label,
         )
+        print(f"[DEBUG][FINAL_DECISION] prb={prb_normalized} decision={final_label}")
         return (decision, reasoning, slos, domains, xai_bundle)
     
     async def _create_fallback_intent(self, intent_id: str, context: Optional[dict]) -> 'SLAIntent':

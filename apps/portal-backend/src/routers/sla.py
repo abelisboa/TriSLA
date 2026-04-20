@@ -342,11 +342,30 @@ async def submit_sla_template(request: SLASubmitRequest):
             ",".join(sorted(list(request.form_values.keys()))),
         )
         t_submit_iso = datetime.now(timezone.utc).isoformat()
+        execution_id = str(uuid.uuid4())
+        timestamp_pre_decision = datetime.now(timezone.utc).isoformat()
+
+        # Coleta telemetria antes da decisão para preservar causalidade PRB -> Decision Engine.
+        telemetry_before_decision, _tel_ms_pre = await collect_domain_metrics_async(
+            execution_id, timestamp_pre_decision
+        )
+        pre_ran = telemetry_before_decision.get("ran") if isinstance(telemetry_before_decision, dict) else {}
+        if not isinstance(pre_ran, dict):
+            pre_ran = {}
+        prb_value_pre = pre_ran.get("prb_utilization")
+        print("DEBUG_PRB_BEFORE_DECISION:", prb_value_pre)
+        logger.info("[DEBUG_PRB_BEFORE_DECISION] prb=%s", prb_value_pre)
 
         # Incluir type/slice_type se existir nos form_values
         if service_type_from_form:
             nest_template["type"] = service_type_from_form
             nest_template["slice_type"] = service_type_from_form
+        nest_template["metadata"] = {
+            "telemetry_snapshot": telemetry_before_decision,
+            "ran_prb_utilization_input": prb_value_pre,
+            "telemetry_collected_at": timestamp_pre_decision,
+            "execution_id": execution_id,
+        }
         
         # Enviar ao NASP com TODOS os módulos (sequência completa)
         result = await nasp_service.submit_template_to_nasp(
@@ -360,7 +379,6 @@ async def submit_sla_template(request: SLASubmitRequest):
             raise RuntimeError(f"Invalid decision returned: {decision_raw}")
         logger.info("[SLA SUBMIT] final_decision=%s", decision)
 
-        execution_id = str(uuid.uuid4())
         timestamp_decision = datetime.now(timezone.utc).isoformat()
         metadata_out = dict(result.get("metadata") or {})
         try:

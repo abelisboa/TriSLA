@@ -1,0 +1,163 @@
+(VALIDAÇÃO POR TIPO DE SLICE — URLLC / eMBB / mMTC)
+🎯 MISSÃO
+
+Gerar evidência experimental robusta de que o TriSLA:
+
+decide SLAs considerando os requisitos específicos de cada tipo de slice,
+e não apenas a disponibilidade de PRB na RAN
+🚨 REGRAS ABSOLUTAS
+
+❌ NÃO alterar código
+❌ NÃO alterar thresholds
+❌ NÃO rebuildar imagens
+❌ NÃO alterar arquitetura
+❌ NÃO usar simuladores adicionais
+
+✔ usar sistema já validado (V12)
+✔ usar apenas /api/v1/sla/submit
+✔ sleep 4s obrigatório
+✔ coletar telemetria completa
+
+📁 NOVA PASTA
+evidencias_resultados_trisla_baseline_v13/
+🧠 HIPÓTESES A VALIDAR
+H1 — URLLC
+maior sensibilidade a RTT e jitter
+H2 — eMBB
+maior dependência de PRB / throughput
+H3 — mMTC
+maior influência relativa do Core (CPU/memória ou carga agregada)
+⚙️ FASE 1 — DEFINIÇÃO DOS PERFIS DE SLICE
+URLLC
+latency: baixa (ex: 5–10 ms)
+reliability: alta
+throughput: moderado
+device_count: baixo
+eMBB
+throughput: alto
+latency: moderada
+reliability: média
+mMTC
+device_count: alto
+throughput: baixo
+latency: tolerante
+⚙️ FASE 2 — CAMPANHA CONTROLADA
+Execução
+
+Para cada slice:
+
+URLLC → 90 execuções
+eMBB → 90 execuções
+mMTC → 90 execuções
+
+Total:
+
+~270 execuções
+Distribuição por regime
+
+Para cada slice:
+
+LOW PRB
+MID PRB
+HIGH PRB
+IMPORTANTE
+
+Garantir:
+
+variação real de PRB, RTT, jitter e CPU
+📊 FASE 3 — DATASET
+
+Salvar:
+
+dataset/final_dataset_v6.csv
+dataset/final_dataset_by_slice.csv
+dataset/final_dataset_score_only_v6.csv
+Campos obrigatórios
+slice_type
+prb_utilization_real
+telemetry_transport_rtt_ms
+telemetry_transport_jitter_ms
+telemetry_core_cpu
+decision
+decision_score
+📈 FASE 4 — ANÁLISE POR SLICE (CRÍTICA)
+Para cada slice:
+
+Calcular:
+
+1. Correlações (MID PRB)
+corr(RTT, score)
+corr(jitter, score)
+corr(CPU, score)
+corr(PRB, decision_num)
+2. Feature dominance
+
+Gerar tabela:
+
+slice | domínio dominante
+📊 FASE 5 — FIGURAS IEEE (OBRIGATÓRIAS)
+🔴 URLLC
+Score vs RTT (URLLC)
+Score vs Jitter (URLLC)
+
+👉 Esperado:
+
+alta inclinação / sensibilidade
+🔵 eMBB
+PRB vs Decision (eMBB)
+Score vs PRB (eMBB)
+
+👉 Esperado:
+
+forte separação por PRB
+🟢 mMTC
+Score vs CPU (mMTC)
+Score vs Memory (mMTC)
+
+👉 Esperado:
+
+maior impacto relativo do Core
+🟡 COMPARATIVO
+Score vs RTT por slice (overlay)
+Score vs Jitter por slice
+Score vs CPU por slice
+🟣 RESUMO
+Heatmap: slice × domínio × correlação
+Feature importance por slice
+Boxplot de score por slice
+📄 FASE 6 — RELATÓRIO FINAL
+
+Gerar:
+
+report/SCIENTIFIC_REPORT_V6_SLICE_AWARE.md
+Deve conter
+✔ URLLC
+RTT/jitter dominam?
+impacto claro?
+✔ eMBB
+PRB domina?
+decisão depende da RAN?
+✔ mMTC
+Core aparece mais?
+comportamento distinto?
+📊 FASE 7 — CRITÉRIOS DE SUCESSO
+✔ URLLC
+|corr(RTT)| e |corr(jitter)| > outros slices
+✔ eMBB
+|corr(PRB, decision)| dominante
+✔ mMTC
+|corr(CPU)| maior que nos outros slices
+✔ GLOBAL
+comportamento diferente por slice_type
+🚫 CRITÉRIO DE FALHA
+slices indistinguíveis ❌
+mesma correlação para todos ❌
+sem diferenciação clara ❌
+🧠 RESULTADO ESPERADO
+
+Após V6:
+
+✔ evidência direta para 7.5.1 (URLLC)
+✔ evidência direta para 7.5.2 (eMBB)
+✔ evidência direta para 7.5.3 (mMTC)
+✔ validação completa SLA-aware

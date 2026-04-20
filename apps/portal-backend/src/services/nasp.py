@@ -142,16 +142,22 @@ class NASPService:
                 "form_values", nest_template.get("form_values")
             )
 
+        upstream_metadata = nest_template.get("metadata")
+        metadata_for_sem = upstream_metadata if isinstance(upstream_metadata, dict) else None
+
         t2 = time.perf_counter()
         async with httpx.AsyncClient(timeout=30.0) as client:
+            intent_payload = {
+                "service_type": service_type,
+                "intent": intent,
+                "tenant_id": tenant_id,
+                "sla_requirements": sla_requirements_forward,
+            }
+            if metadata_for_sem:
+                intent_payload["metadata"] = metadata_for_sem
             response = await client.post(
                 f"{self.sem_base}/api/v1/intents",
-                json={
-                    "service_type": service_type,
-                    "intent": intent,
-                    "tenant_id": tenant_id,
-                    "sla_requirements": sla_requirements_forward,
-                },
+                json=intent_payload,
             )
             response.raise_for_status()
             sem_result = response.json()

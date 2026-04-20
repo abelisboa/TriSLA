@@ -1,6 +1,6 @@
 apiVersion: v2
 name: trisla
-description: TriSLA - SLA-Aware Architecture for 5G/O-RAN
+description: TriSLA chart for SLA-aware 5G/O-RAN deployment (Initial Public Release v1.0.0)
 type: application
 version: 1.0.0
 appVersion: "1.0.0"
@@ -15,4 +15,4 @@ maintainers:
   - name: TriSLA Team
     email: abelisboa@gmail.com
 
-# Dependencies removed - Besu is now integrated directly in templates (Sprint S3.4)
+# Dependencies are intentionally managed in-chart for the public v1.0.0 release.

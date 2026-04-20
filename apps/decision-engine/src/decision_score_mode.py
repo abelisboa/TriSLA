@@ -183,8 +183,14 @@ def score_mode_decide(
 
     if ran_prb_raw is not None:
         try:
-            pv = float(ran_prb_raw)
-            if pv >= hard_prb_reject:
+            pv_raw = float(ran_prb_raw)
+            pv_norm = _clamp01(pv_raw / 100.0) if pv_raw > 1.0 else _clamp01(pv_raw)
+            reneg_th = _clamp01(hard_prb_reneg / 100.0) if hard_prb_reneg > 1.0 else _clamp01(hard_prb_reneg)
+            reject_th = _clamp01(hard_prb_reject / 100.0) if hard_prb_reject > 1.0 else _clamp01(hard_prb_reject)
+            print("DEBUG_PRB_RAW:", pv_raw)
+            print("DEBUG_PRB_NORMALIZED:", pv_norm)
+            print("DEBUG_THRESHOLDS:", reneg_th, reject_th)
+            if pv_norm >= reject_th:
                 decision = DecisionAction.REJECT
                 xai = _build_xai(
                     decision=decision,
@@ -209,14 +215,14 @@ def score_mode_decide(
                     policy_governed=True,
                     thresholds_used={},
                     slice_label=slice_label,
-                    hard_prb_thresholds={"reject": hard_prb_reject, "renegotiate": hard_prb_reneg},
+                    hard_prb_thresholds={"reject": reject_th, "renegotiate": reneg_th},
                 )
                 reasoning = (
-                    f"REJECT por política de PRB elevado (prb={pv:.1f} ≥ {hard_prb_reject}). "
+                    f"REJECT por política de PRB elevado (prb_norm={pv_norm:.3f} ≥ {reject_th:.3f}). "
                     f"Domínios: {', '.join(domains)}."
                 )
                 return decision, reasoning, slos, domains, xai
-            if pv >= hard_prb_reneg:
+            if pv_norm >= reneg_th:
                 decision = DecisionAction.RENEGOTIATE
                 xai = _build_xai(
                     decision=decision,
@@ -241,10 +247,10 @@ def score_mode_decide(
                     policy_governed=True,
                     thresholds_used={},
                     slice_label=slice_label,
-                    hard_prb_thresholds={"reject": hard_prb_reject, "renegotiate": hard_prb_reneg},
+                    hard_prb_thresholds={"reject": reject_th, "renegotiate": reneg_th},
                 )
                 reasoning = (
-                    f"RENEGOTIATE por política de PRB (prb={pv:.1f} ≥ {hard_prb_reneg}). "
+                    f"RENEGOTIATE por política de PRB (prb_norm={pv_norm:.3f} ≥ {reneg_th:.3f}). "
                     f"Domínios: {', '.join(domains)}."
                 )
                 return decision, reasoning, slos, domains, xai

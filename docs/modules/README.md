@@ -1,33 +1,19 @@
-# TriSLA Modules (SSOT Index)
+# TriSLA Modules Documentation
 
-This folder documents runtime behavior from `apps/*/src` for all core services.
+This folder contains public, module-level documentation for TriSLA.
 
 ## Core modules
+- **SEM-CSMF** — Semantic intent processing and NEST generation
+- **ML-NSMF** — Viability prediction and XAI artifacts
+- **Decision Engine** — Admission decision based on metrics + ML + policy
+- **SLA-Agent Layer** — Lifecycle tracking and operational actions (control-plane)
+- **BC-NSSMF** — Governance and on-chain registration (Hyperledger Besu)
+- **Portal Backend / Frontend** — SLA submission and monitoring UI/API
+- **NASP Adapter** — Metrics gateway and NASP integration
 
-- [SEM-CSMF](./sem-csmf.md)
-- [ML-NSMF](./ml-nsmf.md)
-- [Decision Engine](./decision-engine.md)
-- [NASP Adapter](./nasp-adapter.md)
-- [SLA-Agent Layer](./sla-agent-layer.md)
-- [BC-NSSMF](./bc-nssmf.md)
-- [Portal Backend](./portal-backend.md)
-
-## Auxiliary modules
-
-- [Portal Frontend](./portal-frontend.md)
-- [UI Dashboard](./ui-dashboard.md)
-- [Kafka](./kafka.md)
-- [Besu](./besu.md)
-- [Network Exporter](./network-exporter.md)
-- [Blockchain Exporter](./blockchain-exporter.md)
-- [PRB Exporter](./prb-exporter.md)
-
-## Canonical runtime pipeline
-
-`SEM-CSMF -> ML-NSMF -> Decision Engine -> NASP Adapter -> BC-NSSMF -> SLA-Agent Layer`
-
-## Documentation policy
-
-- Endpoint contracts are documented exactly as implemented.
-- Mathematical sections are derived from runtime behavior.
-- Configuration-dependent branches are explicitly described as runtime policy parameters.
+## Reading order
+1. Architecture: `docs/ARCHITECTURE.md`
+2. Installation: `docs/INSTALLATION.md`
+3. Deployment: `docs/DEPLOYMENT.md`
+4. Observability: `docs/observability/README.md`
+5. Modules (this folder)

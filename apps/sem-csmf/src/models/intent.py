@@ -79,6 +79,10 @@ class IntentRequest(BaseModel):
         None,
         description="ID do tenant"
     )
+    metadata: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Metadata opcional repassado ao Decision Engine (ex.: telemetry_snapshot)",
+    )
 
 
 class IntentResponse(BaseModel):

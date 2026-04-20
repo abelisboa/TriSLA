@@ -1,34 +1,34 @@
 # TriSLA Traffic Exporter
 
 **Versão:** v3.10.0  
-**Module:** Passive observability — traffic metrics and event export.
+**Módulo:** Observabilidade passiva — exportação de métricas e eventos de tráfego.
 
-## Formal Definition (SSOT)
+## Definição formal (SSOT)
 
-The **traffic-exporter** is a first-class module in the TriSLA architecture, defined as:
+O **traffic-exporter** é um módulo de primeira classe da arquitetura TriSLA, definido como:
 
-> **Passive observability module** responsible for exporting traffic metrics and flow events to Prometheus/Kafka, **without interfering with the decision plane**.
+> **Módulo de observabilidade passiva** responsável por exportar métricas de tráfego e eventos de fluxo para Prometheus/Kafka, **sem interferência no plano de decisão**.
 
-### Functional Scope (Mandatory)
+### Escopo funcional (obrigatório)
 
 - Expor endpoint `/metrics` (formato Prometheus) na porta 9105.
-- Optionally publish simple events to Kafka (if the cluster already provides Kafka).
-- Do not make decisions, do not alter SLAs, do not operate in the control plane, and do not replace existing modules.
+- Opcionalmente publicar eventos simples no Kafka (se o cluster já dispuser de Kafka).
+- Não tomar decisões, não alterar SLAs, não atuar no plano de controle e não substituir módulos existentes.
 
-### Prohibitions
+### Proibições
 
-- Perform SLA admission or rejection decisions.
-- Alter SLAs or system state.
-- Operate in the control plane (NASP, SEM-CSMF, Decision Engine, etc.).
-- Replace or duplicate functionality from other TriSLA modules.
+- Tomar decisões de admissão ou rejeição de SLAs.
+- Alterar SLAs ou estado do sistema.
+- Atuar no plano de controle (NASP, SEM-CSMF, Decision Engine, etc.).
+- Substituir ou duplicar funcionalidade de outros módulos TriSLA.
 
-## Usage
+## Uso
 
 - **Porta:** 9105 (HTTP).
 - **Endpoints:** `/metrics` (Prometheus), `/health` (opcional).
-- **Deployment:** via Helm (trisla chart), namespace `trisla`.
+- **Deploy:** via Helm (chart trisla), namespace `trisla`.
 
-## References
+## Referências
 
-- PROMPT_S52 — Official incorporation of traffic-exporter as a TriSLA module (v3.10.0).
+- PROMPT_S52 — Incorporação Oficial do traffic-exporter como Módulo TriSLA (v3.10.0).
 - PROMPT_S48 — Gate exige trisla-traffic-exporter:v3.10.0 para execução experimental.

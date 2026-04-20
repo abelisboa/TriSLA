@@ -1,12 +1,11 @@
 global:
   imageRegistry: ghcr.io/abelisboa
   namespace: trisla
-  controlPlaneIP: "CHANGEME"
 
 network:
   interface: my5g
-  nodeIP: REPLACE_ME
-  gateway: REPLACE_ME
+  nodeIP: 192.168.10.16
+  gateway: 192.168.10.1
 
 semCsmf:
   enabled: true
@@ -56,6 +55,9 @@ mlNsmf:
 decisionEngine:
   env:
     LOG_LEVEL: DEBUG
+    # V5 (PROMPT_V5): widen score path (PRB < renegotiate) and delay hard REJECT vs V11 defaults.
+    HARD_PRB_RENEGOTIATE: "0.25"
+    HARD_PRB_REJECT: "0.40"
   enabled: true
   image:
     repository: ghcr.io/abelisboa/trisla-decision-engine
@@ -249,11 +251,10 @@ prometheus:
 
 grafana:
   enabled: true
-  # ⚠️ Set this value before deployment
   image:
     repository: grafana/grafana
     tag: 10.2.3
-  adminPassword: "CHANGE_ME"
+  adminPassword: admin
 
 production:
   enabled: true

@@ -353,7 +353,7 @@ async def create_intent(
         service_type=service_type_enum,
         sla_requirements=sla_requirements,
         intent_text=request.intent,
-        metadata={}
+        metadata=dict(request.metadata or {})
     )
     
     with tracer.start_as_current_span("process_intent") as span:
@@ -379,6 +379,11 @@ async def create_intent(
             nest_generator = NESTGeneratorDB(db)
             nest = await nest_generator.generate_nest(gst)
             metadata = await intent_processor.generate_metadata(intent, nest)
+            upstream_metadata = request.metadata if isinstance(request.metadata, dict) else {}
+            if upstream_metadata:
+                merged_metadata = dict(upstream_metadata)
+                merged_metadata.update(metadata)
+                metadata = merged_metadata
             semantic_latency_ms = float((time.perf_counter() - t_sem0) * 1000.0)
             
             # 7. Enviar metadados via I-01 (HTTP) para Decision Engine

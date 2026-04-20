@@ -2,14 +2,15 @@
 
 Helm chart for full TriSLA deployment on Kubernetes.
 
-## NASP Installation
+Initial Public Release alignment: v1.0.0.
 
-The canonical values file for NASP deployment is `values-nasp.yaml`:
+## NASP Deployment
+
+The canonical values file for NASP deployment is `values-nasp.yaml`.
 
 ```bash
 cd ~/gtp5g/trisla
 
-# Deploy on NASP
 helm upgrade --install trisla ./helm/trisla \
   --namespace trisla \
   --create-namespace \
@@ -20,39 +21,40 @@ helm upgrade --install trisla ./helm/trisla \
 
 ## Canonical Values File
 
-**For NASP:** `helm/trisla/values-nasp.yaml`
+For NASP: `helm/trisla/values-nasp.yaml`
 
-This is the default file for production deployment in the NASP environment. It contains:
-- NASP network settings
-- Controller endpoints (RAN, Transport, Core)
-- Real production settings
-- Production-optimized resources
+This values file is used for real-environment deployment and includes:
+
+- NASP network settings;
+- domain controller endpoints (RAN, Transport, Core);
+- production-oriented runtime parameters.
 
 ## Important Values
 
 ### Network Configuration
-- `network.interface`: Primary network interface (e.g., "my5g")
-- `network.nodeIP`: Node1 IP (e.g., "REPLACE_ME")
-- `network.gateway`: Default gateway
+
+- `network.interface`: primary network interface (example: `my5g`)
+- `network.nodeIP`: node IP used for runtime integration
+- `network.gateway`: default gateway
 
 ### Production Settings
-- `production.enabled`: true
-- `production.simulationMode`: false (⚠️ DO NOT use simulation)
-- `production.useRealServices`: true (⚠️ Use REAL services)
-- `production.executeRealActions`: true (⚠️ Execute REAL actions)
+
+- `production.enabled`: `true`
+- `production.simulationMode`: `false` (real execution path)
+- `production.useRealServices`: `true`
+- `production.executeRealActions`: `true`
 
 ### NASP Endpoints
+
 - `naspAdapter.naspEndpoints.ran`: RAN controller endpoint
-- `naspAdapter.naspEndpoints.core_upf`: UPF endpoint (Core)
+- `naspAdapter.naspEndpoints.core_upf`: Core/UPF endpoint
 - `naspAdapter.naspEndpoints.transport`: Transport controller endpoint
 
 ## Validation
 
 ```bash
-# Chart lint
 helm lint ./helm/trisla
 
-# Template with values-nasp.yaml
 helm template trisla ./helm/trisla \
   -f ./helm/trisla/values-nasp.yaml \
   --debug
@@ -61,13 +63,8 @@ helm template trisla ./helm/trisla \
 ## Post-Deployment Verification
 
 ```bash
-# Check pods
 kubectl get pods -n trisla
-
-# Check services
 kubectl get svc -n trisla
-
-# Check Helm release status
 helm status trisla -n trisla
 ```
 

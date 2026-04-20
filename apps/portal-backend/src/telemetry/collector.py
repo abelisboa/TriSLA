@@ -90,6 +90,30 @@ def _mean_from_query_range_json(data: Any, query_hint: str = "") -> Optional[flo
     return sum(values) / len(values)
 
 
+def _all_values_from_query_range_json(data: Any) -> List[float]:
+    """Collect every sample value from a Prometheus query_range matrix response."""
+    if not isinstance(data, dict) or data.get("status") != "success":
+        return []
+    raw_result = safe_extract_result(data)
+    if not raw_result:
+        return []
+    out: List[float] = []
+    for series in raw_result:
+        if not isinstance(series, dict):
+            continue
+        raw_values = series.get("values")
+        if not isinstance(raw_values, list) or not raw_values:
+            continue
+        for pair in raw_values:
+            if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+                continue
+            try:
+                out.append(float(pair[1]))
+            except (TypeError, ValueError):
+                continue
+    return out
+
+
 async def _query_range_mean(
     client: httpx.AsyncClient,
     query: str,
@@ -110,6 +134,31 @@ async def _query_range_mean(
         return _mean_from_query_range_json(r.json(), query_hint=query)
     except Exception as exc:
         logger.warning("[TELEMETRY] prometheus query_range failed query=%s err=%s", query[:80], exc)
+        return None
+
+
+async def _query_range_spread_ms(
+    client: httpx.AsyncClient,
+    query: str,
+    start: float,
+    end: float,
+    step: str = "1s",
+) -> Optional[float]:
+    """
+    Spread (max−min) of probe_duration samples in the window, in milliseconds.
+    Used when aggregated jitter PromQL returns empty but raw probe series exists.
+    """
+    url = f"{_prom_base_url()}/api/v1/query_range"
+    params = {"query": query, "start": str(start), "end": str(end), "step": step}
+    try:
+        r = await client.get(url, params=params, timeout=httpx.Timeout(1.5))
+        r.raise_for_status()
+        vals = _all_values_from_query_range_json(r.json())
+        if not vals:
+            return None
+        return (max(vals) - min(vals)) * 1000.0
+    except Exception as exc:
+        logger.warning("[TELEMETRY] prometheus query_range spread failed query=%s err=%s", query[:80], exc)
         return None
 
 
@@ -172,8 +221,14 @@ async def collect_domain_metrics_async(
                 if res is not None:
                     snapshot[domain][field] = res
 
+            if snapshot["transport"]["jitter"] is None:
+                spread_q = 'probe_duration_seconds{job="probe/monitoring/trisla-transport-tcp-probe"}'
+                sp = await _query_range_spread_ms(client, spread_q, t_start, t_end, "1s")
+                if sp is not None:
+                    snapshot["transport"]["jitter"] = sp
+
     try:
-        await asyncio.wait_for(run_queries(), timeout=2.0)
+        await asyncio.wait_for(run_queries(), timeout=3.0)
     except asyncio.TimeoutError:
         logger.warning(
             "[TELEMETRY] execution_id=%s metrics_collected=false latency_ms=%.2f (timeout)",

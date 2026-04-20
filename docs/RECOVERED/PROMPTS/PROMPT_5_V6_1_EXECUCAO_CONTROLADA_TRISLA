@@ -1,0 +1,188 @@
+OBJETIVO REAL
+
+Resolver o problema observado:
+
+V6 não separou comportamento por slice
+
+👉 agora vamos forçar separação experimental controlada, sem alterar o sistema.
+
+⚠️ PRINCÍPIO FUNDAMENTAL (O ERRO DA V6)
+
+Na V6 você fez:
+
+slice_type varia
+condições ~iguais
+
+Resultado:
+
+PRB domina tudo
+✔ V6.1 corrige isso:
+condições variam por slice
+🧠 ESTRATÉGIA
+Slice	Domínio que vamos “ativar”
+URLLC	TRANSPORTE
+eMBB	RAN
+mMTC	CORE
+📁 PASTA
+mkdir -p evidencias_resultados_trisla_baseline_v13_1/{dataset,analysis,figures,report,logs}
+⚙️ FASE 0 — BASELINE
+kubectl -n trisla get deploy > evidencias_resultados_trisla_baseline_v13_1/analysis/deploy_snapshot.txt
+
+Teste:
+
+curl -X POST http://localhost:18001/api/v1/sla/submit ...
+
+Salvar:
+
+analysis/precheck_submit.json
+🔴 FASE 1 — BLOCO URLLC (TRANSPORTE)
+🎯 Meta
+
+Isolar impacto de RTT/jitter
+
+⚠️ CRÍTICO
+
+Você precisa variar RTT/jitter, não PRB
+
+Execução
+Grupo A (transporte bom)
+30 requests URLLC
+RTT baixo
+jitter baixo
+PRB médio (não mexer)
+Grupo B (transporte degradado)
+
+Aqui você precisa forçar pior condição:
+
+Exemplo:
+
+aumentar latência de probe (se possível)
+usar cenário mais carregado de transporte
+ou repetir em momentos diferentes (proxy real)
+30 requests URLLC
+RTT maior
+jitter maior
+PRB semelhante ao grupo A
+✔ Esperado
+score URLLC ↓ quando RTT/jitter ↑
+🔵 FASE 2 — BLOCO eMBB (RAN)
+🎯 Meta
+
+Isolar impacto de PRB
+
+Execução
+20 LOW PRB
+20 MID PRB
+20 HIGH PRB
+
+Slice fixo: eMBB
+
+✔ Esperado
+decisão separa claramente por PRB
+🟢 FASE 3 — BLOCO mMTC (CORE)
+🎯 Meta
+
+Aumentar influência relativa do Core
+
+⚠️ IMPORTANTE
+
+Aqui está o erro comum:
+
+se PRB entrar em hard gate → você perde análise
+Execução
+Grupo A (core leve)
+30 requests mMTC
+baixo uso CPU/mem
+PRB médio
+Grupo B (core pressionado)
+
+Sem alterar sistema, você pode:
+
+executar mais concorrência leve
+aumentar frequência de submits mMTC
+usar janela onde core esteja mais ocupado
+30 requests mMTC
+CPU/mem mais altos
+PRB ainda fora do hard gate
+✔ Esperado
+score mMTC muda com CPU/mem
+📊 FASE 4 — DATASET
+
+Salvar:
+
+dataset/final_dataset_v6_1.csv
+
+Com campo extra obrigatório:
+
+scenario_block
+
+Valores:
+
+URLLC_transport_good
+URLLC_transport_bad
+eMBB_low_prb
+eMBB_mid_prb
+eMBB_high_prb
+mMTC_core_light
+mMTC_core_heavy
+📈 FASE 5 — ANÁLISE (A PARTE MAIS IMPORTANTE)
+1. URLLC
+
+Comparar:
+
+mean(score) transporte bom vs ruim
+corr(RTT, score)
+corr(jitter, score)
+2. eMBB
+PRB vs decision
+PRB vs score
+3. mMTC
+corr(CPU, score)
+corr(memory, score)
+comparação entre grupos light/heavy
+🔥 ANÁLISE RELATIVA (OBRIGATÓRIA)
+URLLC é MAIS sensível a RTT que eMBB/mMTC?
+mMTC é MAIS sensível a CPU que URLLC/eMBB?
+📊 FASE 6 — FIGURAS
+
+Gerar obrigatoriamente:
+
+URLLC
+score vs RTT (good vs bad)
+score vs jitter
+eMBB
+PRB vs decision
+score vs PRB
+mMTC
+score vs CPU
+score vs memory
+COMPARATIVO
+overlay score vs RTT por slice
+overlay score vs CPU por slice
+heatmap slice × domínio
+📄 FASE 7 — RELATÓRIO
+
+Arquivo:
+
+report/SCIENTIFIC_REPORT_V6_1_SLICE_AWARE.md
+Deve responder claramente:
+1. URLLC
+transporte impacta mais que nos outros?
+2. eMBB
+PRB domina claramente?
+3. mMTC
+Core aparece mais que nos outros?
+🚫 CRITÉRIO DE FALHA
+slices continuam indistinguíveis
+PRB domina tudo novamente
+mMTC não responde ao Core
+URLLC não responde a transporte
+🧠 INTERPRETAÇÃO FINAL
+
+Se V6.1 funcionar:
+
+TriSLA é SLA-aware por slice
+
+Se NÃO funcionar:
+
+TriSLA é multi-domínio, mas não diferenciador por slice
