@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { SubmitResponse } from "../../lib/submitResponse";
+import { DashboardSection } from "../demo/DashboardSection";
+import { DashboardSectionNav } from "../demo/DashboardSectionNav";
 import { GovernancePanel } from "../submit-payload/GovernancePanel";
 import { OperationalExplanationPanel } from "../submit-payload/OperationalExplanationPanel";
 import { RawPayloadPanel } from "../submit-payload/RawPayloadPanel";
@@ -16,20 +18,37 @@ export function AdmissionDashboard({ response }: Props) {
       <header className="trisla-admission-dashboard-header">
         <h2 className="trisla-admission-dashboard-title">Admission Dashboard</h2>
         <p className="trisla-muted">
-          Executive view — all fields from live submit response (REAL_PAYLOAD_FREEZE contract).
+          Reviewer-ready executive view — decision, telemetry, explanation, governance, and runtime
+          from the live submit response.
         </p>
       </header>
 
+      <DashboardSectionNav />
+
       <div className="trisla-admission-top-grid">
-        <AdmissionOverviewPanel response={response} />
-        <ServiceProfilePanel response={response} />
+        <DashboardSection id="section-decision" level={1}>
+          <AdmissionOverviewPanel response={response} />
+        </DashboardSection>
+        <DashboardSection id="section-service-profile" level={2}>
+          <ServiceProfilePanel response={response} />
+        </DashboardSection>
       </div>
 
-      <TelemetrySnapshotPanel response={response} heading="3. Multidomain Telemetry" />
-      <OperationalExplanationPanel response={response} heading="4. Operational Explanation" />
-      <GovernancePanel response={response} heading="5. Governance" />
-      <RuntimeSupervisionSection response={response} heading="6. Runtime Supervision" />
-      <RawPayloadPanel response={response} heading="7. Raw Payload" />
+      <DashboardSection id="section-telemetry" level={3}>
+        <TelemetrySnapshotPanel response={response} heading="3. Multidomain Telemetry" />
+      </DashboardSection>
+      <DashboardSection id="section-operational" level={4}>
+        <OperationalExplanationPanel response={response} heading="4. Operational Explanation" />
+      </DashboardSection>
+      <DashboardSection id="section-governance" level={5}>
+        <GovernancePanel response={response} heading="5. Governance" />
+      </DashboardSection>
+      <DashboardSection id="section-runtime" level={6}>
+        <RuntimeSupervisionSection response={response} heading="6. Runtime Supervision" />
+      </DashboardSection>
+      <DashboardSection id="section-raw-payload" level={7}>
+        <RawPayloadPanel response={response} heading="7. Raw Payload" />
+      </DashboardSection>
 
       <section className="trisla-status-card" aria-label="Next steps">
         <h2>Next steps</h2>

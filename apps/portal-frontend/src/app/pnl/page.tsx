@@ -9,6 +9,7 @@ import {
   type InterpretResponse,
 } from "../../lib/pnlSubmit";
 import type { SubmitResponse } from "../../lib/submitResponse";
+import { DemoFlowSteps, PNL_DEMO_STEPS } from "../../components/demo/DemoFlowSteps";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 
 type FlowStatus = "idle" | "loading" | "ready" | "error";
@@ -92,12 +93,33 @@ export default function CreateSlaPnlPage() {
     }
   }
 
+  const activeStepId = submitResult
+    ? "admission"
+    : submitStatus === "loading" || submitPayload
+      ? "submit"
+      : interpretResult
+        ? "interpret"
+        : "pnl";
+
+  const demoSteps = PNL_DEMO_STEPS.map((step) => ({
+    ...step,
+    active: step.id === activeStepId,
+    complete:
+      (step.id === "pnl" && Boolean(intentText.trim())) ||
+      (step.id === "interpret" && Boolean(interpretResult)) ||
+      (step.id === "submit" && Boolean(submitResult)) ||
+      (["admission", "governance", "runtime"].includes(step.id) && Boolean(submitResult)),
+  }));
+
   return (
     <section>
       <h1>PNL</h1>
       <p className="trisla-subtitle">
-        Natural language semantic interpretation pipeline — interpret, preview, confirm, submit.
+        Natural language pipeline — Steps 1–3 on this page; admission through runtime appear after
+        submit.
       </p>
+
+      <DemoFlowSteps title="Demo flow — PNL path" steps={demoSteps} />
 
       <form onSubmit={handleInterpret} className="trisla-form">
         <div className="trisla-form-row">

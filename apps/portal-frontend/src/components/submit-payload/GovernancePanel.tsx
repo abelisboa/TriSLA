@@ -21,21 +21,24 @@ export function GovernancePanel({ response, heading = "5. Governance" }: Props) 
         Governance Evidence, Lifecycle Traceability, and Auditability Metadata — submit response only.
       </p>
 
-      <FieldList
-        fields={[
-          { label: "bc_status", value: response.bc_status },
-          { label: "tx_hash", value: txHash },
-          { label: "block_number", value: response.block_number },
-          { label: "blockchain_status", value: response.blockchain_status },
-          { label: "blockchain_tx_hash", value: response.blockchain_tx_hash },
-          { label: "metadata.governance_event", value: metadata?.governance_event },
-          { label: "metadata.governance_event_id", value: metadata?.governance_event_id },
-          {
-            label: "metadata.governance_registration_status",
-            value: metadata?.governance_registration_status,
-          },
-        ]}
-      />
+      <details className="trisla-details trisla-details-secondary">
+        <summary>Core governance fields (submit response)</summary>
+        <FieldList
+          fields={[
+            { label: "bc_status", value: response.bc_status },
+            { label: "tx_hash", value: txHash },
+            { label: "block_number", value: response.block_number },
+            { label: "blockchain_status", value: response.blockchain_status },
+            { label: "blockchain_tx_hash", value: response.blockchain_tx_hash },
+            { label: "metadata.governance_event", value: metadata?.governance_event },
+            { label: "metadata.governance_event_id", value: metadata?.governance_event_id },
+            {
+              label: "metadata.governance_registration_status",
+              value: metadata?.governance_registration_status,
+            },
+          ]}
+        />
+      </details>
 
       <GovernanceOverviewPanel response={response} />
       <LifecycleTimelinePanel response={response} />

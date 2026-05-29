@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { apiRequest, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
+import { DemoFlowSteps, TEMPLATE_DEMO_STEPS } from "../../components/demo/DemoFlowSteps";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 import type { SubmitResponse } from "../../lib/submitResponse";
 
@@ -86,10 +87,22 @@ export default function CreateSlaTemplatePage() {
     }
   }
 
+  const demoSteps = TEMPLATE_DEMO_STEPS.map((step) => ({
+    ...step,
+    active: step.id === (result ? "admission" : "submit"),
+    complete:
+      (step.id === "submit" && Boolean(result)) ||
+      (["governance", "runtime"].includes(step.id) && Boolean(result)),
+  }));
+
   return (
     <section>
       <h1>Template</h1>
-      <p className="trisla-subtitle">Structured SLA submission — official pipeline only. Campos conforme matriz.</p>
+      <p className="trisla-subtitle">
+        Structured SLA submission — Step 1 Submit, then review admission through runtime sections.
+      </p>
+
+      <DemoFlowSteps title="Demo flow — Template path" steps={demoSteps} />
 
       <section className="trisla-status-card" aria-label="Template Real Feed">
         <h2>Template Real Feed</h2>
