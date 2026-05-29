@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiRequest } from "../lib/api";
+import { apiRequest, apiRequestOptional, formatApiError } from "../lib/api";
 import { StatusCard } from "../components/common/StatusCard";
 import { DataState } from "../components/common/DataState";
 import {
@@ -92,19 +92,15 @@ export default function HomePage() {
       .catch((err: unknown) => {
         if (cancelled) return;
         setStatus("error");
-        setError(err instanceof Error ? err.message : "unknown error");
+        setError(formatApiError(err));
       });
 
-    apiRequest<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
-      .then((response) => {
+    apiRequestOptional<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
+      .then(({ data, error }) => {
         if (cancelled) return;
-        setSummary(response);
+        setSummary(data);
         setSummaryStatus("ready");
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setSummaryStatus("error");
-        setSummaryError(err instanceof Error ? err.message : "unknown error");
+        setSummaryError(error ? formatApiError(error) : undefined);
       });
 
     apiRequest<Record<string, unknown>>("NASP_DIAGNOSTICS")
@@ -116,7 +112,7 @@ export default function HomePage() {
       .catch((err: unknown) => {
         if (cancelled) return;
         setNaspStatus("error");
-        setNaspError(err instanceof Error ? err.message : "erro ao consultar fonte real");
+        setNaspError(formatApiError(err));
       });
 
     return () => {
@@ -259,10 +255,17 @@ export default function HomePage() {
         <DataState status={status} errorMessage={error}>
           <StatusCard title="Backend Health" items={healthItems} />
         </DataState>
-        <DataState status={summaryStatus} errorMessage={summaryError}>
+        <DataState status={summaryStatus} errorMessage={undefined}>
           <StatusCard
             title="Prometheus Summary"
-            items={summaryItems}
+            items={
+              summaryError
+                ? [
+                    { label: "Status", value: "optional — unavailable" },
+                    { label: "Detail", value: summaryError },
+                  ]
+                : summaryItems
+            }
           />
         </DataState>
         <StatusCard

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiRequest } from "../../lib/api";
+import { apiRequest, apiRequestOptional, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
 import { fallback, formatBytesToMB, formatValue, prometheusFirstValue } from "../../lib/format";
 
@@ -16,15 +16,7 @@ type PrometheusSummaryReal = {
 };
 
 function normalizeError(err: unknown): string {
-  if (err && typeof err === "object") {
-    if ("message" in err && typeof (err as { message?: unknown }).message === "string") {
-      return (err as { message: string }).message || "erro ao consultar fonte real";
-    }
-    if ("status" in err && typeof (err as { status?: unknown }).status === "number") {
-      return `HTTP ${(err as { status: number }).status} — erro ao consultar fonte real`;
-    }
-  }
-  return "erro ao consultar fonte real";
+  return formatApiError(err);
 }
 
 function MetricDl({ value }: { value: unknown }) {
@@ -82,16 +74,12 @@ export default function MetricsPage() {
     setTransportStatus("loading");
     setTransportError(undefined);
 
-    apiRequest<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
-      .then((response) => {
+    apiRequestOptional<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
+      .then(({ data, error }) => {
         if (cancelled) return;
-        setSummary(response);
+        setSummary(data);
         setSummaryStatus("ready");
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setSummaryStatus("error");
-        setSummaryError(normalizeError(err));
+        setSummaryError(error ? normalizeError(error) : undefined);
       });
 
     apiRequest<Record<string, unknown>>("TRANSPORT_METRICS")
@@ -124,22 +112,22 @@ export default function MetricsPage() {
       <div className="trisla-cards-grid">
         <section className="trisla-status-card">
           <h2>CPU Metrics</h2>
-          <DataState status={summaryStatus} errorMessage={summaryError}>
+          <DataState status={summaryStatus} errorMessage={undefined}>
             <dl>
               <div className="trisla-status-row">
                 <dt>CPU current value</dt>
-                <dd>{cpuDisplay}</dd>
+                <dd>{summaryError ? `optional unavailable — ${summaryError}` : cpuDisplay}</dd>
               </div>
             </dl>
           </DataState>
         </section>
         <section className="trisla-status-card">
           <h2>Memory Metrics</h2>
-          <DataState status={summaryStatus} errorMessage={summaryError}>
+          <DataState status={summaryStatus} errorMessage={undefined}>
             <dl>
               <div className="trisla-status-row">
                 <dt>Memory current value</dt>
-                <dd>{memoryDisplay}</dd>
+                <dd>{summaryError ? `optional unavailable — ${summaryError}` : memoryDisplay}</dd>
               </div>
             </dl>
           </DataState>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiRequest } from "../../lib/api";
+import { apiRequest, formatApiError } from "../../lib/api";
 import { StatusCard } from "../../components/common/StatusCard";
 import { formatValue } from "../../lib/format";
 
@@ -15,15 +15,7 @@ type HealthV1 = {
 type NaspDiagnostics = Record<string, unknown>;
 
 function normalizeError(err: unknown): string {
-  if (err && typeof err === "object") {
-    if ("message" in err && typeof (err as { message?: unknown }).message === "string") {
-      return (err as { message: string }).message || "erro ao consultar fonte real";
-    }
-    if ("status" in err && typeof (err as { status?: unknown }).status === "number") {
-      return `HTTP ${(err as { status: number }).status} — erro ao consultar fonte real`;
-    }
-  }
-  return "erro ao consultar fonte real";
+  return formatApiError(err);
 }
 
 export default function AdministrationPage() {
@@ -122,7 +114,10 @@ export default function AdministrationPage() {
 
   const apiSurfaceItems = [
     { label: "GLOBAL_HEALTH", value: "/api/v1/health/global" },
-    { label: "PROMETHEUS_SUMMARY", value: "/api/v1/prometheus/summary" },
+    { label: "NASP_DIAGNOSTICS", value: "/nasp/diagnostics" },
+    { label: "PROMETHEUS_SUMMARY", value: "/api/v1/prometheus/summary (optional)" },
+    { label: "SLA_SUBMIT", value: "/api/v1/sla/submit" },
+    { label: "SLA_INTERPRET", value: "/api/v1/sla/interpret" },
   ];
 
   return (

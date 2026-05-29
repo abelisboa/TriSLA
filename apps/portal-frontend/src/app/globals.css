@@ -306,6 +306,28 @@ button[type="submit"]:hover {
   background-color: #1d4ed8;
 }
 
+button.trisla-confirm-submit {
+  margin-top: 1rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #059669;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+button.trisla-confirm-submit:hover:not(:disabled) {
+  background-color: #047857;
+}
+
+button.trisla-confirm-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .trisla-cta-row {
   display: flex;
   flex-wrap: wrap;
@@ -340,4 +362,174 @@ pre {
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   overflow-x: auto;
+}
+
+.trisla-pre-wrap {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.trisla-pre-secondary {
+  margin-top: 0.75rem;
+  max-height: 28rem;
+  overflow: auto;
+}
+
+.trisla-details {
+  margin-top: 0.75rem;
+}
+
+.trisla-details summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #334155;
+}
+
+.trisla-telemetry-domain {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.trisla-telemetry-domain h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.trisla-admission-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.trisla-admission-dashboard-header {
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.trisla-admission-dashboard-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.trisla-admission-top-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.trisla-admission-section {
+  height: 100%;
+}
+
+.trisla-op-section {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.trisla-op-section:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.trisla-op-section h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.trisla-op-text {
+  margin: 0;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.trisla-op-scope-note {
+  margin: 1.25rem 0 0;
+  padding: 0.75rem;
+  font-size: 0.8125rem;
+  color: #64748b;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.trisla-reason-codes {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.trisla-reason-codes code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+.trisla-table-wrap {
+  overflow-x: auto;
+}
+
+.trisla-simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.trisla-simple-table th,
+.trisla-simple-table td {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.trisla-simple-table th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #475569;
+}
+
+.trisla-error {
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.trisla-runtime-supervision .trisla-runtime-subsection {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.trisla-runtime-supervision .trisla-runtime-subsection h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.trisla-runtime-supervision .trisla-runtime-subsection h4 {
+  margin: 0.75rem 0 0.5rem;
+  font-size: 0.9375rem;
+  color: #475569;
+}
+
+.trisla-governance-dashboard .trisla-governance-subsection {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.trisla-governance-dashboard .trisla-governance-subsection h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #334155;
 }

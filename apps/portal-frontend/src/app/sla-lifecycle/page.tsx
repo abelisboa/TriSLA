@@ -1,22 +1,14 @@
  "use client";
 
  import { useEffect, useState } from "react";
- import { apiRequest } from "../../lib/api";
+ import { apiRequest, formatApiError } from "../../lib/api";
  import { DataState } from "../../components/common/DataState";
  import { formatValue } from "../../lib/format";
 
  type Status = "idle" | "loading" | "ready" | "error";
 
  function normalizeError(err: unknown): string {
-   if (err && typeof err === "object") {
-     if ("message" in err && typeof (err as { message?: unknown }).message === "string") {
-       return (err as { message: string }).message || "erro ao consultar fonte real";
-     }
-     if ("status" in err && typeof (err as { status?: unknown }).status === "number") {
-       return `HTTP ${(err as { status: number }).status} — erro ao consultar fonte real`;
-     }
-   }
-   return "erro ao consultar fonte real";
+   return formatApiError(err);
  }
 
  function normalizeModuleProbe(moduleProbe: unknown): {

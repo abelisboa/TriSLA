@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiRequest } from "../../lib/api";
+import { apiRequest, apiRequestOptional, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
 import {
   fallback,
@@ -27,18 +27,7 @@ type PrometheusSummaryReal = {
 };
 
 function normalizeError(err: unknown): string {
-  if (err && typeof err === "object") {
-    if (
-      "message" in err &&
-      typeof (err as { message?: unknown }).message === "string"
-    ) {
-      return (err as { message: string }).message || "erro ao consultar fonte real";
-    }
-    if ("status" in err && typeof (err as { status?: unknown }).status === "number") {
-      return `HTTP ${(err as { status: number }).status} — erro ao consultar fonte real`;
-    }
-  }
-  return "erro ao consultar fonte real";
+  return formatApiError(err);
 }
 
 export default function MonitoringPage() {
@@ -74,16 +63,12 @@ export default function MonitoringPage() {
     setRanStatus("loading");
     setRanError(undefined);
 
-    apiRequest<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
-      .then((response) => {
+    apiRequestOptional<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
+      .then(({ data, error }) => {
         if (cancelled) return;
-        setSummary(response);
+        setSummary(data);
         setSummaryStatus("ready");
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setSummaryStatus("error");
-        setSummaryError(normalizeError(err));
+        setSummaryError(error ? normalizeError(error) : undefined);
       });
 
     apiRequest<Record<string, unknown>>("TRANSPORT_METRICS")
@@ -158,10 +143,12 @@ export default function MonitoringPage() {
       <h1>Monitoring</h1>
       <p className="trisla-subtitle">Multi-domain observability using real backend feed.</p>
       <div className="trisla-cards-grid">
-        <DataState status={summaryStatus} errorMessage={summaryError}>
-          <section className="trisla-status-card">
-            <h2>Prometheus Runtime</h2>
-            <dl>
+        <section className="trisla-status-card">
+          <h2>Prometheus Runtime</h2>
+          {summaryError ? (
+            <p className="trisla-muted">Optional — unavailable: {summaryError}</p>
+          ) : null}
+          <dl>
               <div className="trisla-status-row">
                 <dt>Prometheus Up</dt>
                 <dd>{prometheusUp}</dd>
@@ -176,7 +163,6 @@ export default function MonitoringPage() {
               </div>
             </dl>
           </section>
-        </DataState>
         <section className="trisla-status-card" aria-label="Core Domain">
           <h2>Core Domain</h2>
           <dl>

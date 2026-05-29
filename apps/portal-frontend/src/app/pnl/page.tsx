@@ -1,124 +1,56 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import Link from "next/link";
-import { apiRequest } from "../../lib/api";
+import { FormEvent, useMemo, useState } from "react";
+import { apiRequest, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
-import { formatValue } from "../../lib/format";
+import { InterpretPreviewPanel } from "../../components/pnl/InterpretPreviewPanel";
+import {
+  buildSubmitPayloadFromInterpret,
+  type InterpretResponse,
+} from "../../lib/pnlSubmit";
+import type { SubmitResponse } from "../../lib/submitResponse";
+import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 
-type InterpretResponse = {
-  intent_id?: string | null;
-  nest_id?: string | null;
-  service_type?: string | null;
-  slice_type?: string | null;
-  tenant_id?: string | null;
-  status?: string | null;
-  created_at?: string | null;
-  message?: string | null;
-  sla_requirements?: unknown;
-  technical_parameters?: unknown;
-  sla_id?: string | null;
-};
-
-type Status = "idle" | "loading" | "ready" | "error";
-
-function normalizeError(err: unknown): string {
-  if (err && typeof err === "object") {
-    if ("message" in err && typeof (err as { message?: unknown }).message === "string") {
-      return (err as { message: string }).message || "erro ao consultar fonte real";
-    }
-    if ("status" in err && typeof (err as { status?: unknown }).status === "number") {
-      return `HTTP ${(err as { status: number }).status} — erro ao consultar fonte real`;
-    }
-  }
-  return "erro ao consultar fonte real";
-}
-
-/** Render payload real como tabela/lista legível. */
-function StructuredPayload({ value }: { value: unknown }) {
-  if (value === null || value === undefined) {
-    return <span className="trisla-muted">unavailable</span>;
-  }
-  if (typeof value !== "object") {
-    return <span>{formatValue(value)}</span>;
-  }
-  if (Array.isArray(value)) {
-    if (value.length === 0) return <span className="trisla-muted">[]</span>;
-    const allPlain = value.every(
-      (v) => v === null || typeof v !== "object" || Array.isArray(v),
-    );
-    if (allPlain) {
-      return (
-        <details className="trisla-details">
-          <summary>Raw JSON ({value.length} items)</summary>
-          <pre className="trisla-pre-secondary">{JSON.stringify(value, null, 2)}</pre>
-        </details>
-      );
-    }
-    return (
-      <dl className="trisla-constraint-list">
-        {value.map((item, i) => (
-          <div key={i} className="trisla-status-row">
-            <dt>[{i}]</dt>
-            <dd>
-              {typeof item === "object" && item !== null && !Array.isArray(item) ? (
-                <StructuredPayload value={item} />
-              ) : (
-                formatValue(item)
-              )}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    );
-  }
-  const entries = Object.entries(value as Record<string, unknown>);
-  if (entries.length === 0) return <span className="trisla-muted">{"{}"}</span>;
-  return (
-    <dl className="trisla-constraint-list">
-      {entries.map(([k, v]) => (
-        <div key={k} className="trisla-status-row">
-          <dt>{k}</dt>
-          <dd>
-            {typeof v === "object" && v !== null ? (
-              <StructuredPayload value={v} />
-            ) : (
-              formatValue(v)
-            )}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-/** Recommended template ID from service_type (e.g. urllc-basic). */
-function recommendedTemplateId(serviceType: string | null | undefined): string {
-  if (!serviceType || !serviceType.trim()) return "—";
-  const s = serviceType.trim().toLowerCase();
-  if (s === "urllc") return "urllc-basic";
-  if (s === "embb") return "embb-basic";
-  if (s === "mmtc") return "mmtc-basic";
-  return `${s}-basic`;
-}
+type FlowStatus = "idle" | "loading" | "ready" | "error";
 
 export default function CreateSlaPnlPage() {
   const [intentText, setIntentText] = useState("");
   const [tenantId, setTenantId] = useState("");
-  const [result, setResult] = useState<InterpretResponse | null>(null);
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [templateId, setTemplateId] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  const [interpretResult, setInterpretResult] = useState<InterpretResponse | null>(null);
+  const [interpretStatus, setInterpretStatus] = useState<FlowStatus>("idle");
+  const [interpretError, setInterpretError] = useState<string | undefined>(undefined);
+
+  const [submitResult, setSubmitResult] = useState<SubmitResponse | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<FlowStatus>("idle");
+  const [submitError, setSubmitError] = useState<string | undefined>(undefined);
+
+  const submitPayload = useMemo(() => {
+    if (!interpretResult) return null;
+    return buildSubmitPayloadFromInterpret(interpretResult, templateId);
+  }, [interpretResult, templateId]);
+
+  async function handleInterpret(e: FormEvent) {
     e.preventDefault();
     if (!tenantId.trim()) {
-      setError("Tenant ID não pode ser vazio");
-      setStatus("error");
+      setInterpretError("Tenant ID não pode ser vazio");
+      setInterpretStatus("error");
       return;
     }
-    setStatus("loading");
-    setError(undefined);
-    setResult(null);
+    if (!intentText.trim()) {
+      setInterpretError("Natural Language Request não pode ser vazio");
+      setInterpretStatus("error");
+      return;
+    }
+
+    setInterpretStatus("loading");
+    setInterpretError(undefined);
+    setInterpretResult(null);
+    setSubmitResult(null);
+    setSubmitStatus("idle");
+    setSubmitError(undefined);
+    setTemplateId("");
 
     try {
       const response = await apiRequest<InterpretResponse>("SLA_INTERPRET", {
@@ -128,27 +60,54 @@ export default function CreateSlaPnlPage() {
           tenant_id: tenantId,
         },
       });
-      setResult(response);
-      setStatus("ready");
+      setInterpretResult(response);
+      setInterpretStatus("ready");
     } catch (err) {
-      setStatus("error");
-      setError(normalizeError(err));
+      setInterpretStatus("error");
+      setInterpretError(formatApiError(err));
+    }
+  }
+
+  async function handleConfirmSubmit() {
+    if (!interpretResult || !submitPayload) {
+      setSubmitError("Submit payload incomplete — confirm template_id and interpret fields.");
+      setSubmitStatus("error");
+      return;
+    }
+
+    setSubmitStatus("loading");
+    setSubmitError(undefined);
+    setSubmitResult(null);
+
+    try {
+      const response = await apiRequest<SubmitResponse>("SLA_SUBMIT", {
+        method: "POST",
+        body: submitPayload,
+      });
+      setSubmitResult(response);
+      setSubmitStatus("ready");
+    } catch (err) {
+      setSubmitStatus("error");
+      setSubmitError(formatApiError(err));
     }
   }
 
   return (
     <section>
       <h1>PNL</h1>
-      <p className="trisla-subtitle">Natural language semantic interpretation pipeline.</p>
+      <p className="trisla-subtitle">
+        Natural language semantic interpretation pipeline — interpret, preview, confirm, submit.
+      </p>
 
-      <form onSubmit={handleSubmit} className="trisla-form">
+      <form onSubmit={handleInterpret} className="trisla-form">
         <div className="trisla-form-row">
-          <label htmlFor="intent_text">Intent text (linguagem natural)</label>
+          <label htmlFor="intent_text">Natural Language Request</label>
           <textarea
             id="intent_text"
             value={intentText}
             onChange={(e) => setIntentText(e.target.value)}
             rows={4}
+            placeholder='e.g. "I need a remote surgery service"'
           />
         </div>
 
@@ -162,94 +121,58 @@ export default function CreateSlaPnlPage() {
           />
         </div>
 
-        <button type="submit" disabled={status === "loading"}>
-          Interpretar SLA
+        <button type="submit" disabled={interpretStatus === "loading"}>
+          Interpret SLA
         </button>
       </form>
 
-      <DataState status={status} errorMessage={error}>
-        {result && (
+      <DataState status={interpretStatus} errorMessage={interpretError}>
+        {interpretResult && (
           <>
-            {/* A. Semantic Interpretation — campos entregues por /interpret */}
-            <section className="trisla-status-card" aria-label="Semantic Interpretation">
-              <h2>A. Semantic Interpretation</h2>
-              <dl>
-                <div className="trisla-status-row">
-                  <dt>Intent</dt>
-                  <dd>{intentText || "—"}</dd>
-                </div>
-                <div className="trisla-status-row">
-                  <dt>Recommended template</dt>
-                  <dd>{recommendedTemplateId(result.service_type ?? result.slice_type)}</dd>
-                </div>
-                <div className="trisla-status-row">
-                  <dt>slice_type</dt>
-                  <dd>{formatValue(result.slice_type ?? result.service_type)}</dd>
-                </div>
-                <div className="trisla-status-row">
-                  <dt>technical_parameters</dt>
-                  <dd>
-                    {result.technical_parameters ? (
-                      <StructuredPayload value={result.technical_parameters} />
-                    ) : (
-                      <span className="trisla-muted">unavailable</span>
-                    )}
-                  </dd>
-                </div>
-                <div className="trisla-status-row">
-                  <dt>intent_id</dt>
-                  <dd>{formatValue(result.intent_id)}</dd>
-                </div>
-                <div className="trisla-status-row">
-                  <dt>nest_id</dt>
-                  <dd>{formatValue(result.nest_id)}</dd>
-                </div>
-              </dl>
-            </section>
+            <InterpretPreviewPanel interpret={interpretResult} inputText={intentText} />
 
-            {/* B. Semantic Mapping — explanation e classification do /interpret */}
-            <section className="trisla-status-card" aria-label="Semantic Mapping">
-              <h2>B. Semantic Mapping</h2>
-              <dl>
-                <div className="trisla-status-row">
-                  <dt>Semantic explanation</dt>
-                  <dd>{result.message ? formatValue(result.message) : "—"}</dd>
-                </div>
-                <div className="trisla-status-row">
-                  <dt>Semantic classification</dt>
-                  <dd>{formatValue(result.service_type ?? result.slice_type)}</dd>
-                </div>
-              </dl>
-            </section>
-
-            {/* C. Recommendation — texto científico */}
-            <section className="trisla-status-card" aria-label="Recommendation">
-              <h2>C. Recommendation</h2>
-              <p className="trisla-xai-message">
-                Complete admission decision, XAI evidence, domain viability and blockchain governance are available after SLA submission in Template Workflow.
+            <section className="trisla-status-card" aria-label="Submit confirmation">
+              <h2>Confirm and Submit</h2>
+              <p className="trisla-muted">
+                Submit requires template_id (not returned by interpret). Enter the template ID to
+                confirm, then submit mapped fields only.
               </p>
-            </section>
+              <div className="trisla-form-row">
+                <label htmlFor="template_id">template_id (user confirmation)</label>
+                <input
+                  id="template_id"
+                  type="text"
+                  value={templateId}
+                  onChange={(e) => setTemplateId(e.target.value)}
+                />
+              </div>
 
-            {/* D. CTA — Continue to Template Submission */}
-            <section className="trisla-status-card" aria-label="Next step">
-              <h2>D. Next step</h2>
-              <p className="trisla-muted">Submit the interpreted SLA in the Template workflow to obtain decision, reasoning, confidence, domains and blockchain evidence.</p>
-              <Link href="/template" className="trisla-cta-button">
-                Continue to Template Submission
-              </Link>
-            </section>
-
-            {/* SLA Requirements — payload real do /interpret */}
-            <section className="trisla-status-card" aria-label="SLA Requirements">
-              <h2>SLA Requirements</h2>
-              {result.sla_requirements ? (
-                <StructuredPayload value={result.sla_requirements} />
+              {submitPayload ? (
+                <details className="trisla-details" open>
+                  <summary>Submit payload preview</summary>
+                  <pre className="trisla-pre-secondary">
+                    {JSON.stringify(submitPayload, null, 2)}
+                  </pre>
+                </details>
               ) : (
-                <p className="trisla-muted">unavailable</p>
+                <p className="trisla-muted">Submit payload preview unavailable until template_id is set.</p>
               )}
+
+              <button
+                type="button"
+                className="trisla-confirm-submit"
+                disabled={submitStatus === "loading" || !submitPayload}
+                onClick={handleConfirmSubmit}
+              >
+                Confirm and Submit
+              </button>
             </section>
           </>
         )}
+      </DataState>
+
+      <DataState status={submitStatus} errorMessage={submitError}>
+        {submitResult && <SubmitResultPanels response={submitResult} />}
       </DataState>
     </section>
   );

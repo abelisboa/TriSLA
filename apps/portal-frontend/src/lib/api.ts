@@ -1,3 +1,14 @@
+import {
+  API_V1_PATHS,
+  BACKEND_ROOT_PATHS,
+  type ApiEndpointKey,
+} from './endpoints';
+import type {
+  RevalidateTelemetryRequest,
+  RevalidateTelemetryResponse,
+  SlaRuntimeStatusResponse,
+} from './runtimeSupervision';
+
 export type ApiError = {
   status: number;
   message: string;
@@ -5,16 +16,64 @@ export type ApiError = {
   bodyText?: string;
 };
 
-function apiBase() {
-  // Browser: use same-origin Next.js rewrites (/api/v1 -> backend service)
-  // Server (standalone): allow direct service URL override when needed
-  if (typeof window === 'undefined') {
-    return process.env.BACKEND_URL || 'http://trisla-portal-backend:8001/api/v1';
-  }
-  return '/api/v1';
+const DEFAULT_TIMEOUT_MS = 30_000;
+
+const BACKEND_ROOT_KEYS = new Set<string>(Object.keys(BACKEND_ROOT_PATHS));
+
+/** Optional fetch — non-critical endpoints (e.g. prometheus summary). */
+export const OPTIONAL_ENDPOINTS = new Set<ApiEndpointKey>(['PROMETHEUS_SUMMARY']);
+
+function trimSlash(s: string): string {
+  return s.replace(/\/$/, '');
 }
 
-async function readBodyTextSafe(res: Response) {
+/** Public backend root for browser direct access (NodePort / SSH tunnel). */
+export function publicBackendRoot(): string | null {
+  const v = process.env.NEXT_PUBLIC_TRISLA_API_BASE_URL?.trim();
+  return v ? trimSlash(v) : null;
+}
+
+/** Server-side backend root (K8s service or explicit override). */
+export function backendRootUrl(): string {
+  const candidates = [
+    process.env.TRISLA_API_BASE_URL,
+    process.env.BACKEND_URL,
+  ];
+  for (const raw of candidates) {
+    if (!raw?.trim()) continue;
+    const v = raw.trim();
+    if (v.startsWith('http')) {
+      return trimSlash(v.replace(/\/api\/v1\/?$/, ''));
+    }
+  }
+  return 'http://trisla-portal-backend:8001';
+}
+
+function resolveApiV1Path(path: string): string {
+  const rel = path.startsWith('/') ? path : `/${path}`;
+  const publicRoot = typeof window !== 'undefined' ? publicBackendRoot() : null;
+  if (publicRoot) return `${publicRoot}/api/v1${rel}`;
+  if (typeof window !== 'undefined') return `/api/v1${rel}`;
+  return `${backendRootUrl()}/api/v1${rel}`;
+}
+
+function resolveRequestUrl(key: ApiEndpointKey): string {
+  const publicRoot = typeof window !== 'undefined' ? publicBackendRoot() : null;
+
+  if (BACKEND_ROOT_KEYS.has(key)) {
+    const rel = BACKEND_ROOT_PATHS[key as keyof typeof BACKEND_ROOT_PATHS];
+    if (publicRoot) return `${publicRoot}${rel}`;
+    if (typeof window !== 'undefined') return rel;
+    return `${backendRootUrl()}${rel}`;
+  }
+
+  const rel = API_V1_PATHS[key as keyof typeof API_V1_PATHS];
+  if (publicRoot) return `${publicRoot}/api/v1${rel}`;
+  if (typeof window !== 'undefined') return `/api/v1${rel}`;
+  return `${backendRootUrl()}/api/v1${rel}`;
+}
+
+async function readBodyTextSafe(res: Response): Promise<string | undefined> {
   try {
     return await res.text();
   } catch {
@@ -22,98 +81,158 @@ async function readBodyTextSafe(res: Response) {
   }
 }
 
-export async function apiFetch<T>(
-  path: string,
-  init?: RequestInit
-): Promise<T> {
-  const url = `${apiBase()}${path.startsWith('/') ? '' : '/'}${path}`;
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      'content-type': 'application/json',
-      ...(init?.headers || {}),
-    },
-  });
-
-  if (!res.ok) {
-    const bodyText = await readBodyTextSafe(res);
-    const err: ApiError = {
-      status: res.status,
-      message: `HTTP ${res.status} ${res.statusText}`,
-      url,
-      bodyText,
-    };
-    throw err;
+function devLog(message: string, detail?: unknown): void {
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.debug(`[trisla-api] ${message}`, detail ?? '');
   }
-
-  return (await res.json()) as T;
 }
 
-/** Endpoint paths (no URLs changed). Used by apiRequest for compatibility. */
-const API_PATHS: Record<string, string> = {
-  GLOBAL_HEALTH: '/health/global',
-  PROMETHEUS_SUMMARY: '/prometheus/summary',
-  MODULES: '/modules/',
-  CORE_METRICS_REALTIME: '/core-metrics/realtime',
-  TRANSPORT_METRICS: '/modules/transport/metrics',
-  RAN_METRICS: '/modules/ran/metrics',
-  NASP_DIAGNOSTICS: '/nasp/diagnostics',
-  SLA_INTERPRET: '/sla/interpret',
-  SLA_SUBMIT: '/sla/submit',
-};
+export function isApiError(err: unknown): err is ApiError {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'status' in err &&
+    'url' in err &&
+    typeof (err as ApiError).status === 'number'
+  );
+}
 
-type RequestOptions = { method?: string; body?: unknown };
+export function formatApiError(err: unknown): string {
+  if (isApiError(err)) {
+    if (err.bodyText) {
+      try {
+        const parsed = JSON.parse(err.bodyText) as { detail?: unknown };
+        if (typeof parsed.detail === 'string') return parsed.detail;
+        if (parsed.detail != null) return JSON.stringify(parsed.detail);
+      } catch {
+        return `${err.message} — ${err.bodyText.slice(0, 240)}`;
+      }
+    }
+    return err.message;
+  }
+  if (err instanceof Error) return err.message;
+  return 'erro ao consultar fonte real';
+}
 
-/** Compatibility layer: same endpoints, no URL change. */
-export async function apiRequest<T = unknown>(
-  key: keyof typeof API_PATHS,
-  options: RequestOptions = {}
+export async function apiFetch<T>(
+  url: string,
+  init?: RequestInit,
+  timeoutMs = DEFAULT_TIMEOUT_MS,
 ): Promise<T> {
-  const path = API_PATHS[key as string];
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    devLog(`${init?.method ?? 'GET'} ${url}`);
+    const res = await fetch(url, {
+      ...init,
+      signal: controller.signal,
+      headers: {
+        'content-type': 'application/json',
+        ...(init?.headers || {}),
+      },
+    });
+
+    if (!res.ok) {
+      const bodyText = await readBodyTextSafe(res);
+      const err: ApiError = {
+        status: res.status,
+        message: `HTTP ${res.status} ${res.statusText}`,
+        url,
+        bodyText,
+      };
+      throw err;
+    }
+
+    return (await res.json()) as T;
+  } catch (e) {
+    if (e instanceof Error && e.name === 'AbortError') {
+      throw {
+        status: 408,
+        message: `Request timeout after ${timeoutMs}ms`,
+        url,
+      } satisfies ApiError;
+    }
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+type RequestOptions = { method?: string; body?: unknown; timeoutMs?: number };
+
+export async function apiRequest<T = unknown>(
+  key: ApiEndpointKey,
+  options: RequestOptions = {},
+): Promise<T> {
+  const url = resolveRequestUrl(key);
   const method = (options.method || 'GET').toUpperCase();
-  const init: RequestInit = {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (method !== 'GET' && options.body != null) {
+  const init: RequestInit = { method };
+  if (method !== 'GET' && method !== 'HEAD' && options.body != null) {
     init.body = JSON.stringify(options.body);
   }
-  return apiFetch<T>(path, init);
+  return apiFetch<T>(url, init, options.timeoutMs);
+}
+
+/** Non-throwing variant for optional backend features. */
+export async function apiRequestOptional<T = unknown>(
+  key: ApiEndpointKey,
+  options: RequestOptions = {},
+): Promise<{ data: T | null; error: ApiError | null }> {
+  try {
+    const data = await apiRequest<T>(key, options);
+    return { data, error: null };
+  } catch (e) {
+    const error: ApiError = isApiError(e)
+      ? e
+      : { status: 0, message: formatApiError(e), url: resolveRequestUrl(key) };
+    devLog(`optional fail ${key}`, error);
+    return { data: null, error };
+  }
 }
 
 export const portalApi = {
   getHealthGlobal() {
-    return apiFetch<any>('/health/global');
+    return apiRequest<Record<string, unknown>>('GLOBAL_HEALTH');
   },
-  getPrometheusSummary() {
-    return apiFetch<any>('/prometheus/summary');
+  getPrometheusSummaryOptional() {
+    return apiRequestOptional<Record<string, unknown>>('PROMETHEUS_SUMMARY');
   },
   getModules() {
-    return apiFetch<any>('/modules/');
-  },
-  getCoreMetricsRealtime() {
-    return apiFetch<any>('/core-metrics/realtime');
+    return apiRequest<unknown>('MODULES');
   },
   getTransportMetrics() {
-    return apiFetch<any>('/modules/transport/metrics');
+    return apiRequest<Record<string, unknown>>('TRANSPORT_METRICS');
   },
   getRanMetrics() {
-    return apiFetch<any>('/modules/ran/metrics');
+    return apiRequest<Record<string, unknown>>('RAN_METRICS');
   },
   getNaspDiagnostics() {
-    return apiFetch<any>('/nasp/diagnostics');
+    return apiRequest<Record<string, unknown>>('NASP_DIAGNOSTICS');
   },
-  interpretSla(payload: Record<string, any>) {
-    return apiFetch<any>('/sla/interpret', {
+  interpretSla(payload: Record<string, unknown>) {
+    return apiRequest<Record<string, unknown>>('SLA_INTERPRET', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: payload,
     });
   },
-  submitSla(payload: Record<string, any>) {
-    return apiFetch<any>('/sla/submit', {
+  submitSla(payload: Record<string, unknown>) {
+    return apiRequest<Record<string, unknown>>('SLA_SUBMIT', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: payload,
+    });
+  },
+  getSlaStatus(intentId: string) {
+    const encoded = encodeURIComponent(intentId);
+    return apiFetch<SlaRuntimeStatusResponse>(
+      resolveApiV1Path(`/sla/status/${encoded}`),
+    );
+  },
+  revalidateTelemetry(body: RevalidateTelemetryRequest) {
+    return apiRequest<RevalidateTelemetryResponse>('SLA_REVALIDATE', {
+      method: 'POST',
+      body,
     });
   },
 };
-
