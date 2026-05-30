@@ -1,82 +1,125 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiRequest, apiRequestOptional, formatApiError } from "../../lib/api";
 import {
-  formatDomainMetricsState,
+  buildCoreDomainCard,
+  buildRanDomainCard,
+  buildTransportDomainCard,
+  domainCardOnError,
+  domainCardWhileLoading,
+  type DomainCardModel,
+  type I1MetricsResponse,
+} from "../../lib/domainMonitoringCards";
+import {
   isV2FlatSummary,
   legacySummaryDisplayRows,
   type PrometheusSummaryPayload,
   v2SummaryDisplayRows,
 } from "../../lib/prometheusSummary";
 
-function normalizeError(err: unknown): string {
-  return formatApiError(err);
+type LoadStatus = "idle" | "loading" | "ready" | "error";
+
+function DomainCard({
+  title,
+  card,
+  ariaLabel,
+}: {
+  title: string;
+  card: DomainCardModel;
+  ariaLabel?: string;
+}) {
+  return (
+    <section className="trisla-status-card" aria-label={ariaLabel ?? title}>
+      <h2>{title}</h2>
+      <dl>
+        {card.rows.map((row) => (
+          <div key={row.label} className="trisla-status-row">
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
+          </div>
+        ))}
+        <div className="trisla-status-row">
+          <dt>Data availability</dt>
+          <dd>{card.dataAvailability}</dd>
+        </div>
+      </dl>
+    </section>
+  );
 }
 
 export default function MonitoringPage() {
   const [summary, setSummary] = useState<PrometheusSummaryPayload | null>(null);
-  const [summaryStatus, setSummaryStatus] = useState<
-    "idle" | "loading" | "ready" | "error"
-  >("idle");
-  const [summaryError, setSummaryError] = useState<string | undefined>(
-    undefined,
-  );
-  const [transport, setTransport] = useState<Record<string, unknown> | null>(
-    null,
-  );
-  const [transportStatus, setTransportStatus] = useState<
-    "idle" | "loading" | "ready" | "error"
-  >("idle");
-  const [transportError, setTransportError] = useState<string | undefined>(
-    undefined,
-  );
+  const [summaryStatus, setSummaryStatus] = useState<LoadStatus>("idle");
+  const [summaryError, setSummaryError] = useState<string | undefined>(undefined);
 
-  const [ran, setRan] = useState<Record<string, unknown> | null>(null);
-  const [ranStatus, setRanStatus] = useState<"idle" | "loading" | "ready" | "error">(
-    "idle",
-  );
+  const [ranI1, setRanI1] = useState<I1MetricsResponse | null>(null);
+  const [ranStatus, setRanStatus] = useState<LoadStatus>("idle");
   const [ranError, setRanError] = useState<string | undefined>(undefined);
+
+  const [tnI1, setTnI1] = useState<I1MetricsResponse | null>(null);
+  const [transportStatus, setTransportStatus] = useState<LoadStatus>("idle");
+  const [transportError, setTransportError] = useState<string | undefined>(undefined);
+
+  const [cnI1, setCnI1] = useState<I1MetricsResponse | null>(null);
+  const [coreStatus, setCoreStatus] = useState<LoadStatus>("idle");
+  const [coreError, setCoreError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
+
     setSummaryStatus("loading");
     setSummaryError(undefined);
-    setTransportStatus("loading");
-    setTransportError(undefined);
     setRanStatus("loading");
     setRanError(undefined);
+    setTransportStatus("loading");
+    setTransportError(undefined);
+    setCoreStatus("loading");
+    setCoreError(undefined);
 
-    apiRequestOptional<PrometheusSummaryPayload>("PROMETHEUS_SUMMARY")
-      .then(({ data, error }) => {
+    apiRequestOptional<PrometheusSummaryPayload>("PROMETHEUS_SUMMARY").then(
+      ({ data, error }) => {
         if (cancelled) return;
         setSummary(data);
         setSummaryStatus("ready");
-        setSummaryError(error ? normalizeError(error) : undefined);
-      });
+        setSummaryError(error ? formatApiError(error) : undefined);
+      },
+    );
 
-    apiRequest<Record<string, unknown>>("TRANSPORT_METRICS")
+    apiRequest<I1MetricsResponse>("RAN_I1_METRICS")
       .then((response) => {
         if (cancelled) return;
-        setTransport(response);
-        setTransportStatus("ready");
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setTransportStatus("error");
-        setTransportError(normalizeError(err));
-      });
-
-    apiRequest<Record<string, unknown>>("RAN_METRICS")
-      .then((response) => {
-        if (cancelled) return;
-        setRan(response);
+        setRanI1(response);
         setRanStatus("ready");
       })
       .catch((err: unknown) => {
         if (cancelled) return;
         setRanStatus("error");
-        setRanError(normalizeError(err));
+        setRanError(formatApiError(err));
+      });
+
+    apiRequest<I1MetricsResponse>("TN_I1_METRICS")
+      .then((response) => {
+        if (cancelled) return;
+        setTnI1(response);
+        setTransportStatus("ready");
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setTransportStatus("error");
+        setTransportError(formatApiError(err));
+      });
+
+    apiRequest<I1MetricsResponse>("CN_I1_METRICS")
+      .then((response) => {
+        if (cancelled) return;
+        setCnI1(response);
+        setCoreStatus("ready");
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setCoreStatus("error");
+        setCoreError(formatApiError(err));
       });
 
     return () => {
@@ -90,35 +133,26 @@ export default function MonitoringPage() {
       : legacySummaryDisplayRows(summary)
     : [];
 
-  const summaryCardTitle = summary && isV2FlatSummary(summary)
-    ? "Telemetry Summary (v2)"
-    : "Prometheus Runtime";
+  const summaryCardTitle =
+    summary && isV2FlatSummary(summary) ? "Telemetry Summary" : "Prometheus Runtime";
 
-  const transportStatusText =
-    transportStatus === "ready"
-      ? "ok"
-      : transportStatus === "error"
-        ? "erro ao consultar fonte real"
-        : transportStatus === "loading"
-          ? "Loading…"
-          : "Not available";
+  const ranCard = useMemo(() => {
+    if (ranStatus === "loading") return domainCardWhileLoading();
+    if (ranStatus === "error") return domainCardOnError(ranError);
+    return buildRanDomainCard(ranI1, summary);
+  }, [ranI1, ranStatus, ranError, summary]);
 
-  const transportEndpointState = formatDomainMetricsState(
-    transport,
-    transportStatus,
-    transportError,
-  );
+  const transportCard = useMemo(() => {
+    if (transportStatus === "loading") return domainCardWhileLoading();
+    if (transportStatus === "error") return domainCardOnError(transportError);
+    return buildTransportDomainCard(tnI1, summary);
+  }, [tnI1, transportStatus, transportError, summary]);
 
-  const ranStatusText =
-    ranStatus === "ready"
-      ? "ok"
-      : ranStatus === "error"
-        ? "erro ao consultar fonte real"
-        : ranStatus === "loading"
-          ? "Loading…"
-          : "Not available";
-
-  const ranEndpointState = formatDomainMetricsState(ran, ranStatus, ranError);
+  const coreCard = useMemo(() => {
+    if (coreStatus === "loading") return domainCardWhileLoading();
+    if (coreStatus === "error") return domainCardOnError(coreError);
+    return buildCoreDomainCard(cnI1, summary);
+  }, [cnI1, coreStatus, coreError, summary]);
 
   return (
     <section>
@@ -140,56 +174,14 @@ export default function MonitoringPage() {
                   <dd>{row.value}</dd>
                 </div>
               ))}
-              {summary?.metadata?.telemetry_version ? (
-                <div className="trisla-status-row">
-                  <dt>Telemetry version</dt>
-                  <dd>{summary.metadata.telemetry_version}</dd>
-                </div>
-              ) : null}
             </dl>
           ) : summaryStatus === "ready" ? (
             <p className="trisla-muted">Not available</p>
           ) : null}
         </section>
-        <section className="trisla-status-card" aria-label="Core Domain">
-          <h2>Core Domain</h2>
-          <dl>
-            <div className="trisla-status-row">
-              <dt>Status</dt>
-              <dd>Not available</dd>
-            </div>
-            <div className="trisla-status-row">
-              <dt>Service</dt>
-              <dd>Core domain metrics not configured on this platform</dd>
-            </div>
-          </dl>
-        </section>
-        <section className="trisla-status-card">
-          <h2>Transport Domain</h2>
-          <dl>
-            <div className="trisla-status-row">
-              <dt>Status</dt>
-              <dd>{transportStatusText}</dd>
-            </div>
-            <div className="trisla-status-row">
-              <dt>Endpoint state</dt>
-              <dd>{transportEndpointState}</dd>
-            </div>
-          </dl>
-        </section>
-        <section className="trisla-status-card">
-          <h2>RAN Domain</h2>
-          <dl>
-            <div className="trisla-status-row">
-              <dt>Status</dt>
-              <dd>{ranStatusText}</dd>
-            </div>
-            <div className="trisla-status-row">
-              <dt>Endpoint state</dt>
-              <dd>{ranEndpointState}</dd>
-            </div>
-          </dl>
-        </section>
+        <DomainCard title="Core Domain" card={coreCard} ariaLabel="Core Domain" />
+        <DomainCard title="Transport Domain" card={transportCard} />
+        <DomainCard title="RAN Domain" card={ranCard} />
       </div>
     </section>
   );
