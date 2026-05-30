@@ -6,15 +6,31 @@ type Props = {
   interpret: InterpretResponse;
   inputText: string;
   sessionTenantId?: string | null;
+  resolvedTemplateId?: string | null;
+  profileLabel?: string | null;
 };
 
-export function InterpretPreviewPanel({ interpret, inputText, sessionTenantId }: Props) {
+export function InterpretPreviewPanel({
+  interpret,
+  inputText,
+  sessionTenantId,
+  resolvedTemplateId,
+  profileLabel,
+}: Props) {
   const sla = interpret.sla_requirements;
   const tech = interpret.technical_parameters;
 
   return (
     <section className="trisla-status-card" aria-label="Interpret Preview">
       <h2>Interpret Preview</h2>
+      {profileLabel ? (
+        <dl>
+          <div className="trisla-status-row">
+            <dt>Selected SLA Profile</dt>
+            <dd>{profileLabel}</dd>
+          </div>
+        </dl>
+      ) : null}
       <FieldList
         fields={[
           { label: operatorFieldLabel("input_text (request)"), value: inputText },
@@ -26,7 +42,6 @@ export function InterpretPreviewPanel({ interpret, inputText, sessionTenantId }:
           { label: "Message", value: interpret.message },
           { label: operatorFieldLabel("sla_id"), value: interpret.sla_id },
           { label: operatorFieldLabel("created_at"), value: interpret.created_at },
-          { label: operatorFieldLabel("template_id"), value: interpret.template_id },
         ]}
       />
       <FieldList
@@ -42,6 +57,10 @@ export function InterpretPreviewPanel({ interpret, inputText, sessionTenantId }:
             {
               label: operatorFieldLabel("tenant_id"),
               value: interpret.tenant_id ?? sessionTenantId,
+            },
+            {
+              label: operatorFieldLabel("template_id"),
+              value: resolvedTemplateId ?? interpret.template_id,
             },
           ]}
         />

@@ -10,15 +10,18 @@ import {
 } from "../../lib/pnlSubmit";
 import type { SubmitResponse } from "../../lib/submitResponse";
 import { generateTrislaTenantId } from "../../lib/tenantAutogen";
+import {
+  resolveTemplateId,
+  slaProfileLabel,
+  UnknownSliceTypeError,
+} from "../../lib/templateAutogen";
 import { WorkflowSteps, PNL_WORKFLOW_STEPS } from "../../components/workflow/WorkflowSteps";
-import { TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 
 type FlowStatus = "idle" | "loading" | "ready" | "error";
 
 export default function CreateSlaPnlPage() {
   const [intentText, setIntentText] = useState("");
-  const [templateId, setTemplateId] = useState("");
   const sessionTenantIdRef = useRef<string | null>(null);
 
   const [interpretResult, setInterpretResult] = useState<InterpretResponse | null>(null);
@@ -29,10 +32,23 @@ export default function CreateSlaPnlPage() {
   const [submitStatus, setSubmitStatus] = useState<FlowStatus>("idle");
   const [submitError, setSubmitError] = useState<string | undefined>(undefined);
 
-  const submitPayload = useMemo(() => {
+  const sliceType = interpretResult?.slice_type ?? interpretResult?.service_type ?? null;
+
+  const resolvedTemplateId = useMemo(() => {
     if (!interpretResult) return null;
-    return buildSubmitPayloadFromInterpret(interpretResult, templateId);
-  }, [interpretResult, templateId]);
+    try {
+      return resolveTemplateId(sliceType);
+    } catch {
+      return null;
+    }
+  }, [interpretResult, sliceType]);
+
+  const profileLabel = useMemo(() => slaProfileLabel(sliceType), [sliceType]);
+
+  const submitPayload = useMemo(() => {
+    if (!interpretResult || !resolvedTemplateId) return null;
+    return buildSubmitPayloadFromInterpret(interpretResult, resolvedTemplateId);
+  }, [interpretResult, resolvedTemplateId]);
 
   async function handleInterpret(e: FormEvent) {
     e.preventDefault();
@@ -51,7 +67,6 @@ export default function CreateSlaPnlPage() {
     setSubmitResult(null);
     setSubmitStatus("idle");
     setSubmitError(undefined);
-    setTemplateId("");
 
     try {
       const response = await apiRequest<InterpretResponse>("SLA_INTERPRET", {
@@ -61,6 +76,16 @@ export default function CreateSlaPnlPage() {
           tenant_id: tenantId,
         },
       });
+      try {
+        resolveTemplateId(response.slice_type ?? response.service_type);
+      } catch (err) {
+        if (err instanceof UnknownSliceTypeError) {
+          setInterpretError(err.message);
+          setInterpretStatus("error");
+          return;
+        }
+        throw err;
+      }
       setInterpretResult(response);
       setInterpretStatus("ready");
     } catch (err) {
@@ -71,7 +96,7 @@ export default function CreateSlaPnlPage() {
 
   async function handleConfirmSubmit() {
     if (!interpretResult || !submitPayload) {
-      setSubmitError("Submission incomplete — confirm Template ID and interpret fields.");
+      setSubmitError("Submission incomplete — interpret result unavailable.");
       setSubmitStatus("error");
       return;
     }
@@ -115,7 +140,7 @@ export default function CreateSlaPnlPage() {
     <section>
       <h1>PNL</h1>
       <p className="trisla-subtitle">
-        Natural language SLA creation — interpret intent, confirm template, and submit for admission.
+        Natural language SLA creation — interpret intent and submit for admission.
       </p>
 
       <WorkflowSteps title="SLA workflow — natural language" steps={workflowSteps} />
@@ -144,34 +169,27 @@ export default function CreateSlaPnlPage() {
               interpret={interpretResult}
               inputText={intentText}
               sessionTenantId={sessionTenantIdRef.current}
+              resolvedTemplateId={resolvedTemplateId}
+              profileLabel={profileLabel}
             />
 
             <section className="trisla-status-card" aria-label="Submit confirmation">
-              <h2>Confirm and Submit</h2>
-              <p className="trisla-muted">
-                Template ID is required for submission and must be confirmed before submit.
-              </p>
-              <div className="trisla-form-row">
-                <label htmlFor="template_id">Template ID</label>
-                <input
-                  id="template_id"
-                  type="text"
-                  value={templateId}
-                  onChange={(e) => setTemplateId(e.target.value)}
-                />
-                <p className="trisla-field-help">{TEMPLATE_ID_HELP}</p>
-              </div>
+              <h2>Submit SLA</h2>
+              <dl>
+                <div className="trisla-status-row">
+                  <dt>Selected SLA Profile</dt>
+                  <dd>{profileLabel}</dd>
+                </div>
+              </dl>
 
               {submitPayload ? (
                 <details className="trisla-details">
-                  <summary>Technical details — submission payload</summary>
+                  <summary>Advanced details — submission payload</summary>
                   <pre className="trisla-pre-secondary">
                     {JSON.stringify(submitPayload, null, 2)}
                   </pre>
                 </details>
-              ) : (
-                <p className="trisla-muted">Submission preview available after Template ID is set.</p>
-              )}
+              ) : null}
 
               <button
                 type="button"
@@ -179,7 +197,7 @@ export default function CreateSlaPnlPage() {
                 disabled={submitStatus === "loading" || !submitPayload}
                 onClick={handleConfirmSubmit}
               >
-                Confirm and Submit
+                Submit SLA
               </button>
             </section>
           </>

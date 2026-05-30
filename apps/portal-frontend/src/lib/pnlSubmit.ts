@@ -54,7 +54,7 @@ export function buildFormValuesFromInterpret(
 }
 
 /**
- * Builds POST /api/v1/sla/submit body from interpret + user-confirmed template_id.
+ * Builds POST /api/v1/sla/submit body from interpret + resolved template_id.
  * template_id is required by submit API but not returned by interpret (REAL_PAYLOAD_FREEZE).
  */
 export function buildSubmitPayloadFromInterpret(
