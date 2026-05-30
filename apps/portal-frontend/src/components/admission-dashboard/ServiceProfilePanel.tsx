@@ -3,6 +3,7 @@ import {
   tenantIdFromResponse,
   type SubmitResponse,
 } from "../../lib/submitResponse";
+import { operatorFieldLabel } from "../../lib/operatorLabels";
 import { FieldList } from "../submit-payload/FieldList";
 
 type Props = { response: SubmitResponse };
@@ -15,12 +16,12 @@ export function ServiceProfilePanel({ response }: Props) {
       <h2>2. Service Profile</h2>
       <FieldList
         fields={[
-          { label: "tenant_id", value: tenantIdFromResponse(response) },
+          { label: operatorFieldLabel("tenant_id"), value: tenantIdFromResponse(response) },
           {
-            label: "slice_type",
+            label: operatorFieldLabel("slice_type"),
             value: sla?.slice_type ?? response.service_type,
           },
-          { label: "template_id", value: sla?.template_id },
+          { label: operatorFieldLabel("template_id"), value: sla?.template_id },
           { label: "latency", value: sla?.latency },
           { label: "throughput", value: sla?.throughput },
           { label: "reliability", value: sla?.reliability },

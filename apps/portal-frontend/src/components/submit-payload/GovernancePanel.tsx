@@ -1,4 +1,5 @@
 import { asMetadata, type SubmitResponse } from "../../lib/submitResponse";
+import { operatorFieldLabel } from "../../lib/operatorLabels";
 import { FieldList } from "./FieldList";
 import {
   AuditabilityMetadataPanel,
@@ -18,22 +19,22 @@ export function GovernancePanel({ response, heading = "5. Governance" }: Props) 
     <section className="trisla-status-card trisla-governance-dashboard" aria-label="Governance">
       <h2>{heading}</h2>
       <p className="trisla-muted">
-        Governance Evidence, Lifecycle Traceability, and Auditability Metadata — submit response only.
+        Governance registration, lifecycle traceability, and audit metadata from the SLA submission.
       </p>
 
       <details className="trisla-details trisla-details-secondary">
-        <summary>Core governance fields (submit response)</summary>
+        <summary>Core governance fields</summary>
         <FieldList
           fields={[
-            { label: "bc_status", value: response.bc_status },
-            { label: "tx_hash", value: txHash },
-            { label: "block_number", value: response.block_number },
-            { label: "blockchain_status", value: response.blockchain_status },
-            { label: "blockchain_tx_hash", value: response.blockchain_tx_hash },
-            { label: "metadata.governance_event", value: metadata?.governance_event },
-            { label: "metadata.governance_event_id", value: metadata?.governance_event_id },
+            { label: operatorFieldLabel("bc_status"), value: response.bc_status },
+            { label: operatorFieldLabel("tx_hash"), value: txHash },
+            { label: operatorFieldLabel("block_number"), value: response.block_number },
+            { label: operatorFieldLabel("blockchain_status"), value: response.blockchain_status },
+            { label: operatorFieldLabel("blockchain_tx_hash"), value: response.blockchain_tx_hash },
+            { label: operatorFieldLabel("metadata.governance_event"), value: metadata?.governance_event },
+            { label: operatorFieldLabel("metadata.governance_event_id"), value: metadata?.governance_event_id },
             {
-              label: "metadata.governance_registration_status",
+              label: operatorFieldLabel("metadata.governance_registration_status"),
               value: metadata?.governance_registration_status,
             },
           ]}

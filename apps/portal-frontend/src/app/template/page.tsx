@@ -3,7 +3,8 @@
 import { FormEvent, useState } from "react";
 import { apiRequest, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
-import { DemoFlowSteps, TEMPLATE_DEMO_STEPS } from "../../components/demo/DemoFlowSteps";
+import { WorkflowSteps, TEMPLATE_WORKFLOW_STEPS } from "../../components/workflow/WorkflowSteps";
+import { TENANT_ID_HELP, TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 import type { SubmitResponse } from "../../lib/submitResponse";
 
@@ -87,7 +88,7 @@ export default function CreateSlaTemplatePage() {
     }
   }
 
-  const demoSteps = TEMPLATE_DEMO_STEPS.map((step) => ({
+  const workflowSteps = TEMPLATE_WORKFLOW_STEPS.map((step) => ({
     ...step,
     active: step.id === (result ? "admission" : "submit"),
     complete:
@@ -99,24 +100,10 @@ export default function CreateSlaTemplatePage() {
     <section>
       <h1>Template</h1>
       <p className="trisla-subtitle">
-        Structured SLA submission — Step 1 Submit, then review admission through runtime sections.
+        Structured SLA submission — complete the form, then review admission through runtime sections.
       </p>
 
-      <DemoFlowSteps title="Demo flow — Template path" steps={demoSteps} />
-
-      <section className="trisla-status-card" aria-label="Template Real Feed">
-        <h2>Template Real Feed</h2>
-        <dl>
-          <div className="trisla-status-row">
-            <dt>Template source</dt>
-            <dd>No template list endpoint in current API</dd>
-          </div>
-          <div className="trisla-status-row">
-            <dt>Available templates</dt>
-            <dd>Template list not exposed by backend</dd>
-          </div>
-        </dl>
-      </section>
+      <WorkflowSteps title="SLA workflow — template" steps={workflowSteps} />
 
       <form onSubmit={handleSubmit} className="trisla-form">
         <div className="trisla-form-row">
@@ -127,6 +114,7 @@ export default function CreateSlaTemplatePage() {
             value={templateId}
             onChange={(e) => setTemplateId(e.target.value)}
           />
+          <p className="trisla-field-help">{TEMPLATE_ID_HELP}</p>
         </div>
         <div className="trisla-form-row">
           <label htmlFor="tenant_id">Tenant ID</label>
@@ -136,6 +124,7 @@ export default function CreateSlaTemplatePage() {
             value={tenantId}
             onChange={(e) => setTenantId(e.target.value)}
           />
+          <p className="trisla-field-help">{TENANT_ID_HELP}</p>
         </div>
         <div className="trisla-form-row">
           <label htmlFor="service_name">Service name</label>

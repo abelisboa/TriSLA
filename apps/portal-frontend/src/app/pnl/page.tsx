@@ -9,7 +9,8 @@ import {
   type InterpretResponse,
 } from "../../lib/pnlSubmit";
 import type { SubmitResponse } from "../../lib/submitResponse";
-import { DemoFlowSteps, PNL_DEMO_STEPS } from "../../components/demo/DemoFlowSteps";
+import { WorkflowSteps, PNL_WORKFLOW_STEPS } from "../../components/workflow/WorkflowSteps";
+import { TENANT_ID_HELP, TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 
 type FlowStatus = "idle" | "loading" | "ready" | "error";
@@ -71,7 +72,7 @@ export default function CreateSlaPnlPage() {
 
   async function handleConfirmSubmit() {
     if (!interpretResult || !submitPayload) {
-      setSubmitError("Submit payload incomplete — confirm template_id and interpret fields.");
+      setSubmitError("Submission incomplete — confirm Template ID and interpret fields.");
       setSubmitStatus("error");
       return;
     }
@@ -101,7 +102,7 @@ export default function CreateSlaPnlPage() {
         ? "interpret"
         : "pnl";
 
-  const demoSteps = PNL_DEMO_STEPS.map((step) => ({
+  const workflowSteps = PNL_WORKFLOW_STEPS.map((step) => ({
     ...step,
     active: step.id === activeStepId,
     complete:
@@ -115,11 +116,10 @@ export default function CreateSlaPnlPage() {
     <section>
       <h1>PNL</h1>
       <p className="trisla-subtitle">
-        Natural language pipeline — Steps 1–3 on this page; admission through runtime appear after
-        submit.
+        Natural language SLA creation — interpret intent, confirm template, and submit for admission.
       </p>
 
-      <DemoFlowSteps title="Demo flow — PNL path" steps={demoSteps} />
+      <WorkflowSteps title="SLA workflow — natural language" steps={workflowSteps} />
 
       <form onSubmit={handleInterpret} className="trisla-form">
         <div className="trisla-form-row">
@@ -129,7 +129,7 @@ export default function CreateSlaPnlPage() {
             value={intentText}
             onChange={(e) => setIntentText(e.target.value)}
             rows={4}
-            placeholder='e.g. "I need a remote surgery service"'
+            placeholder="Describe the required network service in natural language"
           />
         </div>
 
@@ -141,6 +141,7 @@ export default function CreateSlaPnlPage() {
             value={tenantId}
             onChange={(e) => setTenantId(e.target.value)}
           />
+          <p className="trisla-field-help">{TENANT_ID_HELP}</p>
         </div>
 
         <button type="submit" disabled={interpretStatus === "loading"}>
@@ -156,28 +157,28 @@ export default function CreateSlaPnlPage() {
             <section className="trisla-status-card" aria-label="Submit confirmation">
               <h2>Confirm and Submit</h2>
               <p className="trisla-muted">
-                Submit requires template_id (not returned by interpret). Enter the template ID to
-                confirm, then submit mapped fields only.
+                Template ID is required for submission and must be confirmed before submit.
               </p>
               <div className="trisla-form-row">
-                <label htmlFor="template_id">template_id (user confirmation)</label>
+                <label htmlFor="template_id">Template ID</label>
                 <input
                   id="template_id"
                   type="text"
                   value={templateId}
                   onChange={(e) => setTemplateId(e.target.value)}
                 />
+                <p className="trisla-field-help">{TEMPLATE_ID_HELP}</p>
               </div>
 
               {submitPayload ? (
-                <details className="trisla-details" open>
-                  <summary>Submit payload preview</summary>
+                <details className="trisla-details">
+                  <summary>Technical details — submission payload</summary>
                   <pre className="trisla-pre-secondary">
                     {JSON.stringify(submitPayload, null, 2)}
                   </pre>
                 </details>
               ) : (
-                <p className="trisla-muted">Submit payload preview unavailable until template_id is set.</p>
+                <p className="trisla-muted">Submission preview available after Template ID is set.</p>
               )}
 
               <button

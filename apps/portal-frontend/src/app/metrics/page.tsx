@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { apiRequest, apiRequestOptional, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
 import { fallback, formatBytesToMB, formatValue, prometheusFirstValue } from "../../lib/format";
+import { AWAITING_DATA } from "../../lib/operatorLabels";
 
 type DomainMetrics = unknown;
 
@@ -99,7 +100,7 @@ export default function MetricsPage() {
     };
   }, []);
 
-  const awaiting = "Awaiting validated runtime feed";
+  const awaiting = AWAITING_DATA;
   const cpuVal = prometheusFirstValue(summary?.cpu?.data?.result);
   const memoryVal = prometheusFirstValue(summary?.memory?.data?.result);
   const cpuDisplay = cpuVal !== null ? String(cpuVal) : awaiting;
@@ -108,7 +109,7 @@ export default function MetricsPage() {
   return (
     <section>
       <h1>Metrics</h1>
-      <p className="trisla-subtitle">Quantitative scientific metrics using only real backend feed.</p>
+      <p className="trisla-subtitle">Operational metrics from live platform monitoring feeds.</p>
       <div className="trisla-cards-grid">
         <section className="trisla-status-card">
           <h2>CPU Metrics</h2>
@@ -116,7 +117,7 @@ export default function MetricsPage() {
             <dl>
               <div className="trisla-status-row">
                 <dt>CPU current value</dt>
-                <dd>{summaryError ? `optional unavailable — ${summaryError}` : cpuDisplay}</dd>
+                <dd>{summaryError ? `Unavailable — ${summaryError}` : cpuDisplay}</dd>
               </div>
             </dl>
           </DataState>
@@ -127,7 +128,7 @@ export default function MetricsPage() {
             <dl>
               <div className="trisla-status-row">
                 <dt>Memory current value</dt>
-                <dd>{summaryError ? `optional unavailable — ${summaryError}` : memoryDisplay}</dd>
+                <dd>{summaryError ? `Unavailable — ${summaryError}` : memoryDisplay}</dd>
               </div>
             </dl>
           </DataState>
@@ -155,16 +156,16 @@ export default function MetricsPage() {
             </dl>
           </DataState>
         </section>
-        <section className="trisla-status-card" aria-label="SLA Evidence Feed">
-          <h2>SLA Evidence Feed</h2>
+        <section className="trisla-status-card" aria-label="SLA Monitoring Feed">
+          <h2>SLA Monitoring Feed</h2>
           <dl>
             <div className="trisla-status-row">
               <dt>Status</dt>
-              <dd>No SLA evidence feed endpoint in current API</dd>
+              <dd>Not available</dd>
             </div>
             <div className="trisla-status-row">
-              <dt>Observed source</dt>
-              <dd>SLA evidence feed not exposed by backend</dd>
+              <dt>Service</dt>
+              <dd>SLA monitoring feed not configured on this platform</dd>
             </div>
           </dl>
         </section>

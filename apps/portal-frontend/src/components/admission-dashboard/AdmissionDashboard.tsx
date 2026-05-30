@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { SubmitResponse } from "../../lib/submitResponse";
-import { DashboardSection } from "../demo/DashboardSection";
-import { DashboardSectionNav } from "../demo/DashboardSectionNav";
+import { DashboardSection } from "../workflow/DashboardSection";
+import { DashboardSectionNav } from "../workflow/DashboardSectionNav";
 import { GovernancePanel } from "../submit-payload/GovernancePanel";
 import { OperationalExplanationPanel } from "../submit-payload/OperationalExplanationPanel";
 import { RawPayloadPanel } from "../submit-payload/RawPayloadPanel";
@@ -18,8 +18,8 @@ export function AdmissionDashboard({ response }: Props) {
       <header className="trisla-admission-dashboard-header">
         <h2 className="trisla-admission-dashboard-title">Admission Dashboard</h2>
         <p className="trisla-muted">
-          Reviewer-ready executive view — decision, telemetry, explanation, governance, and runtime
-          from the live submit response.
+          Operational view — decision, telemetry, explanation, governance, and runtime supervision
+          from the live SLA submission.
         </p>
       </header>
 
@@ -47,7 +47,7 @@ export function AdmissionDashboard({ response }: Props) {
         <RuntimeSupervisionSection response={response} heading="6. Runtime Supervision" />
       </DashboardSection>
       <DashboardSection id="section-raw-payload" level={7}>
-        <RawPayloadPanel response={response} heading="7. Raw Payload" />
+        <RawPayloadPanel response={response} heading="7. Technical Details" />
       </DashboardSection>
 
       <section className="trisla-status-card" aria-label="Next steps">

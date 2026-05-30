@@ -10,6 +10,7 @@ import {
   prometheusFirstValue,
   formatBytesToMB,
 } from "../lib/format";
+import { AWAITING_DATA } from "../lib/operatorLabels";
 
 /** Payload real: GET /api/v1/health */
 type HealthV1 = {
@@ -171,21 +172,21 @@ export default function HomePage() {
   const bcProbe = normalizeModuleProbe(naspDiagnostics?.["bc_nssmf"] ?? null);
   const bcStatusText =
     naspStatus === "loading"
-      ? "Awaiting validated runtime feed"
+      ? AWAITING_DATA
       : naspStatus === "error"
         ? "erro ao consultar fonte real"
         : bcProbe.reachable === true
           ? "reachable"
           : bcProbe.reachable === false
             ? "unreachable"
-            : "Awaiting validated runtime feed";
+            : AWAITING_DATA;
 
   const bcEndpointState =
     naspStatus === "ready"
       ? formatValue({ status_code: bcProbe.status_code, detail: bcProbe.detail })
       : naspStatus === "error"
         ? formatValue(naspError ?? "erro ao consultar fonte real")
-        : "Awaiting validated runtime feed";
+        : AWAITING_DATA;
 
   const blockchainItemsControlled = [
     { label: "Status", value: bcStatusText },
@@ -199,14 +200,14 @@ export default function HomePage() {
     semCsmf && typeof semCsmf === "object" ? semCsmf["reachable"] : null;
   const semStatusText =
     naspStatus === "loading"
-      ? "Awaiting validated runtime feed"
+      ? AWAITING_DATA
       : naspStatus === "error"
         ? "erro ao consultar fonte real"
         : semReachable === true
           ? "reachable"
           : semReachable === false
             ? "unreachable"
-            : "Awaiting validated runtime feed";
+            : AWAITING_DATA;
 
   const semEndpointState =
     naspStatus === "ready" && semCsmf
@@ -216,7 +217,7 @@ export default function HomePage() {
         })
       : naspStatus === "error"
         ? formatValue(naspError ?? "erro ao consultar fonte real")
-        : "Awaiting validated runtime feed";
+        : AWAITING_DATA;
 
   const semanticEngineItemsControlled = [
     { label: "Status", value: semStatusText },
@@ -226,21 +227,21 @@ export default function HomePage() {
   const mlProbe = normalizeModuleProbe(naspDiagnostics?.["ml_nsmf"] ?? null);
   const mlStatusText =
     naspStatus === "loading"
-      ? "Awaiting validated runtime feed"
+      ? AWAITING_DATA
       : naspStatus === "error"
         ? "erro ao consultar fonte real"
         : mlProbe.reachable === true
           ? "reachable"
           : mlProbe.reachable === false
             ? "unreachable"
-            : "Awaiting validated runtime feed";
+            : AWAITING_DATA;
 
   const mlEndpointState =
     naspStatus === "ready"
       ? formatValue({ status_code: mlProbe.status_code, detail: mlProbe.detail })
       : naspStatus === "error"
         ? formatValue(naspError ?? "erro ao consultar fonte real")
-        : "Awaiting validated runtime feed";
+        : AWAITING_DATA;
 
   const mlEngineItemsControlled = [
     { label: "Status", value: mlStatusText },
@@ -250,7 +251,7 @@ export default function HomePage() {
   return (
     <section>
       <h1>Home</h1>
-      <p className="trisla-subtitle">Scientific executive backend overview.</p>
+      <p className="trisla-subtitle">Platform overview — backend health, NASP modules, and monitoring.</p>
       <div className="trisla-cards-grid">
         <DataState status={status} errorMessage={error}>
           <StatusCard title="Backend Health" items={healthItems} />
@@ -261,7 +262,7 @@ export default function HomePage() {
             items={
               summaryError
                 ? [
-                    { label: "Status", value: "optional — unavailable" },
+                    { label: "Status", value: "Unavailable" },
                     { label: "Detail", value: summaryError },
                   ]
                 : summaryItems

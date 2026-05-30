@@ -21,9 +21,9 @@ export function Topbar() {
   return (
     <header className="trisla-topbar">
       <div className="trisla-topbar-title">
-        <span>TriSLA Scientific Portal</span>
+        <span>TriSLA Portal</span>
         <span className="trisla-topbar-subtitle">
-          SLA-Centric Scientific Interface
+          SLA Management Platform
         </span>
       </div>
       <div className="trisla-topbar-right">

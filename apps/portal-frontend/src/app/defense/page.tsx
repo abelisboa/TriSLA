@@ -1,22 +1,23 @@
 export default function DefensePage() {
-  const noEndpoint = "No defense endpoint in current API";
-  const notExposed = "Defense panel not exposed by backend";
+  const unavailable = "Not available";
 
   return (
     <section>
       <h1>Defense</h1>
-      <p className="trisla-subtitle">No defense-specific API in current backend; structure reserved for future use.</p>
+      <p className="trisla-subtitle">
+        Platform defense and protection services — reserved for future operational release.
+      </p>
       <div className="trisla-cards-grid">
         <section className="trisla-status-card" aria-label="Admission Protection">
           <h2>Admission Protection</h2>
           <dl>
             <div className="trisla-status-row">
               <dt>Status</dt>
-              <dd>{noEndpoint}</dd>
+              <dd>{unavailable}</dd>
             </div>
             <div className="trisla-status-row">
-              <dt>Observed source</dt>
-              <dd>{notExposed}</dd>
+              <dt>Service</dt>
+              <dd>Planned platform capability</dd>
             </div>
           </dl>
         </section>
@@ -26,11 +27,11 @@ export default function DefensePage() {
           <dl>
             <div className="trisla-status-row">
               <dt>Status</dt>
-              <dd>{noEndpoint}</dd>
+              <dd>{unavailable}</dd>
             </div>
             <div className="trisla-status-row">
-              <dt>Observed source</dt>
-              <dd>{notExposed}</dd>
+              <dt>Service</dt>
+              <dd>Planned platform capability</dd>
             </div>
           </dl>
         </section>
@@ -40,11 +41,11 @@ export default function DefensePage() {
           <dl>
             <div className="trisla-status-row">
               <dt>Status</dt>
-              <dd>{noEndpoint}</dd>
+              <dd>{unavailable}</dd>
             </div>
             <div className="trisla-status-row">
-              <dt>Observed source</dt>
-              <dd>{notExposed}</dd>
+              <dt>Service</dt>
+              <dd>Planned platform capability</dd>
             </div>
           </dl>
         </section>
@@ -54,11 +55,11 @@ export default function DefensePage() {
           <dl>
             <div className="trisla-status-row">
               <dt>Status</dt>
-              <dd>{noEndpoint}</dd>
+              <dd>{unavailable}</dd>
             </div>
             <div className="trisla-status-row">
-              <dt>Observed source</dt>
-              <dd>{notExposed}</dd>
+              <dt>Service</dt>
+              <dd>Planned platform capability</dd>
             </div>
           </dl>
         </section>

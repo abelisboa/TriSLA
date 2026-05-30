@@ -128,7 +128,7 @@ export default function MonitoringPage() {
         <section className="trisla-status-card">
           <h2>{summaryCardTitle}</h2>
           {summaryError ? (
-            <p className="trisla-muted">Optional — unavailable: {summaryError}</p>
+            <p className="trisla-muted">Monitoring summary unavailable: {summaryError}</p>
           ) : null}
           {summaryStatus === "loading" ? (
             <p className="trisla-muted">Loading…</p>
@@ -156,11 +156,11 @@ export default function MonitoringPage() {
           <dl>
             <div className="trisla-status-row">
               <dt>Status</dt>
-              <dd>No Core metrics endpoint in current API</dd>
+              <dd>Not available</dd>
             </div>
             <div className="trisla-status-row">
-              <dt>Endpoint state</dt>
-              <dd>Core metrics not exposed by backend</dd>
+              <dt>Service</dt>
+              <dd>Core domain metrics not configured on this platform</dd>
             </div>
           </dl>
         </section>
