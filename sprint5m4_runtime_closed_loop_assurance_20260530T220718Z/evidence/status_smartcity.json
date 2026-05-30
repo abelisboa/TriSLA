@@ -1,0 +1,49 @@
+{
+  "sla_id": "4683d85c-a552-4966-b04c-e19fa23b5662",
+  "status": "ACTIVE",
+  "tenant_id": "trisla-5m4-0edcd170",
+  "intent_id": "4683d85c-a552-4966-b04c-e19fa23b5662",
+  "nest_id": "nest-4683d85c-a552-4966-b04c-e19fa23b5662",
+  "created_at": "2026-05-30T22:12:03",
+  "updated_at": null,
+  "telemetry_snapshot": {
+    "execution_id": "7a528bc8-5ab8-4336-8cc7-9d63673abe94",
+    "timestamp": "2026-05-30T22:12:03.825721+00:00",
+    "ran": {
+      "prb_utilization": 0.0,
+      "latency": 5.488293,
+      "latency_ms": 5.488293
+    },
+    "transport": {
+      "rtt": 10.000658000000001,
+      "jitter": 3.0760535000000004,
+      "rtt_ms": 10.000658000000001,
+      "jitter_ms": 3.0760535000000004
+    },
+    "core": {
+      "cpu": 0.0012941278063628924,
+      "memory": 0.008618719409557302,
+      "cpu_utilization": 0.0012941278063628924,
+      "memory_bytes": 0.008618719409557302
+    },
+    "telemetry_contract_version": "v2"
+  },
+  "runtime_assurance": {
+    "state": "COMPLIANT",
+    "violations": [],
+    "warnings": [],
+    "drift_detected": false,
+    "drift_indicators": [],
+    "recommendation": "Runtime metrics within SLA targets; continue periodic observation.",
+    "assurance_state": "COMPLIANT",
+    "last_evaluation": "2026-05-30T22:12:07.650266+00:00",
+    "slice_type": "EMBB",
+    "sla_compliance": 0.9998922660073806,
+    "bottleneck_domain": "ran",
+    "domain_compliance": {
+      "ran": 0.0,
+      "transport": 0.0,
+      "core": 0.9998922660073806
+    }
+  }
+}

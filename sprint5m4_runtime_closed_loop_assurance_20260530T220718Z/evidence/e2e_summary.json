@@ -1,0 +1,202 @@
+{
+  "results": {
+    "urllc": {
+      "intent_id": "48be675b-ea7b-4539-bd1d-182b27a8c694",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0x43f7737c61fc2899f76b96a46e3bd8dfc6ef4d5347cf86af15f0e57c3e6d2b8b",
+      "nest_id": "nest-48be675b-ea7b-4539-bd1d-182b27a8c694",
+      "governance_event_id": "ge_413d04b1e9eb158f0bc95fb7055a5329",
+      "governance_event_nest_id": "nest-48be675b-ea7b-4539-bd1d-182b27a8c694",
+      "submit_runtime_assurance_populated": true,
+      "status_runtime_assurance_populated": true,
+      "sla_agent_runtime_assurance": true,
+      "submit_runtime_assurance": {
+        "state": "WARNING",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Monitor review transport domain",
+        "assurance_state": "WARNING",
+        "last_evaluation": "2026-05-30T22:11:48.482044+00:00",
+        "slice_type": "URLLC",
+        "sla_compliance": 0.7062579,
+        "bottleneck_domain": "transport",
+        "domain_compliance": {
+          "ran": 0.7062579,
+          "transport": 0.0,
+          "core": 0.9998922920763845
+        }
+      },
+      "status_runtime_assurance": {
+        "state": "WARNING",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Monitor review transport domain",
+        "assurance_state": "WARNING",
+        "last_evaluation": "2026-05-30T22:11:49.617293+00:00",
+        "slice_type": "URLLC",
+        "sla_compliance": 0.7552559,
+        "bottleneck_domain": "transport",
+        "domain_compliance": {
+          "ran": 0.7552559,
+          "transport": 0.0,
+          "core": 0.9998922767416762
+        }
+      },
+      "pass": true
+    },
+    "embb": {
+      "intent_id": "5b1b8359-c4f5-4ca9-a0e8-446921b28a00",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0xa369dcce16a493335e186f63696875c1b5a9a3f5f4cdff73ea63b94d70a72f6d",
+      "nest_id": "nest-5b1b8359-c4f5-4ca9-a0e8-446921b28a00",
+      "governance_event_id": "ge_32a66f223a04306b183a2b45ca7f0a77",
+      "governance_event_nest_id": "nest-5b1b8359-c4f5-4ca9-a0e8-446921b28a00",
+      "submit_runtime_assurance_populated": true,
+      "status_runtime_assurance_populated": true,
+      "sla_agent_runtime_assurance": true,
+      "submit_runtime_assurance": {
+        "state": "COMPLIANT",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Runtime metrics within SLA targets; continue periodic observation.",
+        "assurance_state": "COMPLIANT",
+        "last_evaluation": "2026-05-30T22:11:54.529972+00:00",
+        "slice_type": "EMBB",
+        "sla_compliance": 0.9998922660073806,
+        "bottleneck_domain": "ran",
+        "domain_compliance": {
+          "ran": 0.0,
+          "transport": 0.0,
+          "core": 0.9998922660073806
+        }
+      },
+      "status_runtime_assurance": {
+        "state": "COMPLIANT",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Runtime metrics within SLA targets; continue periodic observation.",
+        "assurance_state": "COMPLIANT",
+        "last_evaluation": "2026-05-30T22:11:55.661555+00:00",
+        "slice_type": "EMBB",
+        "sla_compliance": 0.9998922920763845,
+        "bottleneck_domain": "ran",
+        "domain_compliance": {
+          "ran": 0.0,
+          "transport": 0.0,
+          "core": 0.9998922920763845
+        }
+      },
+      "pass": true
+    },
+    "mmtc": {
+      "intent_id": "0d74e39e-735a-4360-be04-bd3fd2698067",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0xe3dfe2e264f9aa3611dcb8b50e8ac5006545ad66a0af331b6df8a2f7e66562f3",
+      "nest_id": "nest-0d74e39e-735a-4360-be04-bd3fd2698067",
+      "governance_event_id": "ge_f0353d8455b19683a49ba07c6fbbcd2d",
+      "governance_event_nest_id": "nest-0d74e39e-735a-4360-be04-bd3fd2698067",
+      "submit_runtime_assurance_populated": true,
+      "status_runtime_assurance_populated": true,
+      "sla_agent_runtime_assurance": true,
+      "submit_runtime_assurance": {
+        "state": "COMPLIANT",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Runtime metrics within SLA targets; continue periodic observation.",
+        "assurance_state": "COMPLIANT",
+        "last_evaluation": "2026-05-30T22:12:00.558714+00:00",
+        "slice_type": "MMTC",
+        "sla_compliance": 0.9998922660073806,
+        "bottleneck_domain": "ran",
+        "domain_compliance": {
+          "ran": 0.0,
+          "transport": 0.0,
+          "core": 0.9998922660073806
+        }
+      },
+      "status_runtime_assurance": {
+        "state": "COMPLIANT",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Runtime metrics within SLA targets; continue periodic observation.",
+        "assurance_state": "COMPLIANT",
+        "last_evaluation": "2026-05-30T22:12:01.732389+00:00",
+        "slice_type": "MMTC",
+        "sla_compliance": 0.9998922660073806,
+        "bottleneck_domain": "ran",
+        "domain_compliance": {
+          "ran": 0.0,
+          "transport": 0.0,
+          "core": 0.9998922660073806
+        }
+      },
+      "pass": true
+    },
+    "smartcity": {
+      "intent_id": "4683d85c-a552-4966-b04c-e19fa23b5662",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0xa418bcd2009eaef52bc4b60ba67cf4bc4c15378b74709dac4f28cc0c03596ee2",
+      "nest_id": "nest-4683d85c-a552-4966-b04c-e19fa23b5662",
+      "governance_event_id": "ge_f1ec5d19547216b8a3eed5dd90346c58",
+      "governance_event_nest_id": "nest-4683d85c-a552-4966-b04c-e19fa23b5662",
+      "submit_runtime_assurance_populated": true,
+      "status_runtime_assurance_populated": true,
+      "sla_agent_runtime_assurance": true,
+      "submit_runtime_assurance": {
+        "state": "COMPLIANT",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Runtime metrics within SLA targets; continue periodic observation.",
+        "assurance_state": "COMPLIANT",
+        "last_evaluation": "2026-05-30T22:12:06.516975+00:00",
+        "slice_type": "EMBB",
+        "sla_compliance": 0.9998922660073806,
+        "bottleneck_domain": "ran",
+        "domain_compliance": {
+          "ran": 0.0,
+          "transport": 0.0,
+          "core": 0.9998922660073806
+        }
+      },
+      "status_runtime_assurance": {
+        "state": "COMPLIANT",
+        "violations": [],
+        "warnings": [],
+        "drift_detected": false,
+        "drift_indicators": [],
+        "recommendation": "Runtime metrics within SLA targets; continue periodic observation.",
+        "assurance_state": "COMPLIANT",
+        "last_evaluation": "2026-05-30T22:12:07.650266+00:00",
+        "slice_type": "EMBB",
+        "sla_compliance": 0.9998922660073806,
+        "bottleneck_domain": "ran",
+        "domain_compliance": {
+          "ran": 0.0,
+          "transport": 0.0,
+          "core": 0.9998922660073806
+        }
+      },
+      "pass": true
+    }
+  },
+  "failures": [],
+  "pass": true
+}

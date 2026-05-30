@@ -1,0 +1,48 @@
+{
+  "intent_id": "48be675b-ea7b-4539-bd1d-182b27a8c694",
+  "decision": "ACCEPT",
+  "bc_status": "COMMITTED",
+  "tx_hash": "0x43f7737c61fc2899f76b96a46e3bd8dfc6ef4d5347cf86af15f0e57c3e6d2b8b",
+  "nest_id": "nest-48be675b-ea7b-4539-bd1d-182b27a8c694",
+  "governance_event_id": "ge_413d04b1e9eb158f0bc95fb7055a5329",
+  "governance_event_nest_id": "nest-48be675b-ea7b-4539-bd1d-182b27a8c694",
+  "submit_runtime_assurance_populated": true,
+  "status_runtime_assurance_populated": true,
+  "sla_agent_runtime_assurance": true,
+  "submit_runtime_assurance": {
+    "state": "WARNING",
+    "violations": [],
+    "warnings": [],
+    "drift_detected": false,
+    "drift_indicators": [],
+    "recommendation": "Monitor review transport domain",
+    "assurance_state": "WARNING",
+    "last_evaluation": "2026-05-30T22:11:48.482044+00:00",
+    "slice_type": "URLLC",
+    "sla_compliance": 0.7062579,
+    "bottleneck_domain": "transport",
+    "domain_compliance": {
+      "ran": 0.7062579,
+      "transport": 0.0,
+      "core": 0.9998922920763845
+    }
+  },
+  "status_runtime_assurance": {
+    "state": "WARNING",
+    "violations": [],
+    "warnings": [],
+    "drift_detected": false,
+    "drift_indicators": [],
+    "recommendation": "Monitor review transport domain",
+    "assurance_state": "WARNING",
+    "last_evaluation": "2026-05-30T22:11:49.617293+00:00",
+    "slice_type": "URLLC",
+    "sla_compliance": 0.7552559,
+    "bottleneck_domain": "transport",
+    "domain_compliance": {
+      "ran": 0.7552559,
+      "transport": 0.0,
+      "core": 0.9998922767416762
+    }
+  }
+}

@@ -1,0 +1,3 @@
+trisla-sla-agent-layer=ghcr.io/abelisboa/trisla-sla-agent-layer@sha256:bbad9901e9023f3cd1f027f599ee735edfd17933626721af0de0bf0cc0cf3d4d
+trisla-portal-backend=ghcr.io/abelisboa/trisla-portal-backend@sha256:2fd21a28c8576bf8eef39783477d24fba8b4b2f86de829aa7d7f271e2bb2a7b0
+trisla-portal-frontend=ghcr.io/abelisboa/trisla-portal-frontend@sha256:1179359a27e573d4ce59e3947946cb4a1775c97fb826596e9426b8fd9c5793b7
