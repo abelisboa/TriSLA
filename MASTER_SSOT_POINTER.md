@@ -433,6 +433,32 @@
 
 ---
 
+## SPRINT_5C_OBSERVABILITY_PROMQL_ALIGNMENT_BASELINE (official — portal-backend summary CPU + TN-I1)
+
+| Field | Value |
+|-------|-------|
+| **Role** | Official runtime baseline for **TriSLA Portal Backend** after Sprint 5C observability PromQL alignment |
+| **Baseline name** | `SPRINT_5C_OBSERVABILITY_PROMQL_ALIGNMENT_BASELINE` |
+| **Sprint** | SPRINT 5C — Observability PromQL Alignment |
+| **Audit dependency** | `sprint5b_telemetry_summary_reality_audit_20260530T143049Z/` |
+| **Implementation pack** | `sprint5c_observability_promql_alignment_20260530T143727Z/` |
+| **Commit (runtime)** | `055f76e344e36fa73b38dfd486a51b9a5809597b` |
+| **Message** | Align summary CPU and TN-I1 transport PromQL with runtime SSOT |
+| **Prior backend digest** | `sha256:b0d098cfeab39f1bf7cd21a353db87dc753ba80cfdf3645298d1b93df9026fb1` |
+| **Digest (runtime SSOT)** | `sha256:7c4162ae6f94e051c254c18711983a2ead5758a3fd222900608c47639fe21d95` |
+| **Image** | `ghcr.io/abelisboa/trisla-portal-backend@sha256:7c4162ae6f94e051c254c18711983a2ead5758a3fd222900608c47639fe21d95` |
+| **Build tag** | `20260530T143743Z` |
+| **Deployment** | `trisla-portal-backend` (namespace `trisla`, container `backend`) |
+| **Frontend digest (unchanged)** | `sha256:9efe10e5ebf4b4f65173a7c573f1ebe6e64e772931cbd5d777cec903344b81f8` |
+| **Fix scope** | `cluster_cpu_percent` → container CPU share; TN-I1 jitter/latency → probe SSOT; payloads/URLs unchanged |
+| **Runtime validation** | summary `cpu: 12.97`; TN-I1 `jitter_ms: 1.06`, `latency_ms: 5.81`; CN-I1 unchanged; PNL ACCEPT |
+| **Known limitations** | Throughput still 0.0 idle (EMPTY, not WRONG_QUERY); summary CPU is trisla namespace share not CN-I1 |
+| **Status** | OBSERVABILITY PROMQL ALIGNED · CPU+JITTER REAL · CONTRACTS UNCHANGED |
+
+**Usage:** All portal-backend deploy references MUST cite digest `7c4162ae6f94...` unless a new freeze is explicitly registered. Supersedes `SPRINT_5A_CORE_METRICS_REAL_ALIGNMENT_BASELINE` for runtime references.
+
+---
+
 ## Freeze policy
 
 1. Frozen CSV, JSONL, and figure bytes are **immutable** after registration.
