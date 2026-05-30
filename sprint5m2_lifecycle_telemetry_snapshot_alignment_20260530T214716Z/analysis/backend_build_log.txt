@@ -1,0 +1,36 @@
+STEP 1/15: FROM python:3.10-slim
+STEP 2/15: WORKDIR /app
+--> Using cache 0b98f4b7dd9a2cfd00fb92a55f07c2125a439f22d01eb31e1d4c07f3deda7814
+--> 0b98f4b7dd9a
+STEP 3/15: RUN apt-get update && apt-get install -y --no-install-recommends     gcc     && rm -rf /var/lib/apt/lists/*
+--> Using cache bd8aed1f4ed152021481f4b7c8bb906612834208950cf983e7a77931ab7a0dc2
+--> bd8aed1f4ed1
+STEP 4/15: COPY requirements.txt .
+--> Using cache bc724483c83450da8dfa877d26d19b4e7c7a9d938f26fda56fe6ac07adb2e612
+--> bc724483c834
+STEP 5/15: RUN pip install --no-cache-dir -r requirements.txt
+--> Using cache 2de1b6ef256d7675bbd2e0f0f0faa94c6d7921b9fa2e94b5d40dd8fd7f16d06b
+--> 2de1b6ef256d
+STEP 6/15: COPY . .
+--> c6bd9268c500
+STEP 7/15: ENV PYTHONPATH=/app
+--> dc7cc9e00684
+STEP 8/15: ENV SEM_CSMF_URL=http://trisla-sem-csmf:8080
+--> 57994775d20a
+STEP 9/15: ENV ML_NSMF_URL=http://trisla-ml-nsmf:8081
+--> 3e7c0216104d
+STEP 10/15: ENV DECISION_ENGINE_URL=http://trisla-decision-engine:8082
+--> 62594557377b
+STEP 11/15: ENV BC_NSSMF_URL=http://trisla-bc-nssmf:8083
+--> 9e7318466c4d
+STEP 12/15: ENV SLA_AGENT_URL=http://trisla-sla-agent-layer:8084
+--> 712bb181eed2
+STEP 13/15: ENV OTEL_SDK_DISABLED=true
+--> b50115c84021
+STEP 14/15: EXPOSE 8001
+--> 3f34a258ce10
+STEP 15/15: CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1"]
+COMMIT ghcr.io/abelisboa/trisla-portal-backend:20260530T214736Z
+--> 4cee4707aa95
+Successfully tagged ghcr.io/abelisboa/trisla-portal-backend:20260530T214736Z
+4cee4707aa95cbc6bd22b8722645d90d4305926fa2f81c84fa4a3354dac263a0
