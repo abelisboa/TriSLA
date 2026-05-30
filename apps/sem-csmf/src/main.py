@@ -122,11 +122,13 @@ from models.intent import (
 from models.nest import NEST
 from models.db_models import IntentModel
 from database import get_db, init_db
-from repository import IntentRepository
+from repository import IntentRepository, NESTRepository
 from decision_engine_client import DecisionEngineHTTPClient
 from auth import get_current_user_optional
 from services.semantic_generator import generate_default_sla
+from services.semantic_resolver import apply_semantic_fill_to_intent_sla
 from security import RateLimitMiddleware, SecurityHeadersMiddleware
+from canonical_sla import canonicalize_sla_request
 
 from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -173,6 +175,42 @@ tracer = trace.get_tracer(__name__)
 
 intent_processor = IntentProcessor()
 decision_engine_client = DecisionEngineHTTPClient()
+
+
+def _apply_semantic_fill_pipeline(
+    validated_intent: Intent,
+    gst: dict,
+    nest,
+) -> dict:
+    """
+    Sprint 5K: fill missing sla_requirements from ontology → GST → NEST.
+    Returns internal semantic_sources map (not exposed in public API responses).
+    """
+    ontology_loader = intent_processor.ontology_parser.ontology_loader
+    base_sla = (
+        validated_intent.sla_requirements.model_dump()
+        if validated_intent.sla_requirements
+        else {}
+    )
+    filled, sources = apply_semantic_fill_to_intent_sla(
+        base_sla,
+        validated_intent.service_type.value,
+        ontology_loader=ontology_loader,
+        gst=gst,
+        nest=nest,
+    )
+    validated_intent.sla_requirements = SLARequirements(**filled)
+    if validated_intent.metadata is None:
+        validated_intent.metadata = {}
+    validated_intent.metadata["_semantic_sources"] = sources
+    logger.info(
+        "[semantic_fill] intent=%s slice=%s sources=%s",
+        validated_intent.intent_id,
+        validated_intent.service_type.value,
+        sources,
+    )
+    return sources
+
 
 # ============================================================
 # ENDPOINTS
@@ -271,6 +309,7 @@ async def interpret_intent(
             gst = await intent_processor.generate_gst(validated_intent)
             nest_generator = NESTGeneratorDB(db)
             nest = await nest_generator.generate_nest(gst)
+            _apply_semantic_fill_pipeline(validated_intent, gst, nest)
             
             span.set_attribute("intent.id", intent_id)
             span.set_attribute("nest.id", nest.nest_id)
@@ -278,6 +317,19 @@ async def interpret_intent(
             
             # 7. Retornar resposta padronizada (inclui tempo interno SEM-CSMF, sem rede cliente)
             sem_csmf_internal_latency_ms = (time.perf_counter() - t_sem0) * 1000.0
+            merged_sla_for_canon = dict(sla_req_dict)
+            if validated_intent.sla_requirements:
+                merged_sla_for_canon.update(
+                    validated_intent.sla_requirements.model_dump(exclude_none=True)
+                )
+            canonical_sla = canonicalize_sla_request(
+                {
+                    "service_type": validated_intent.service_type.value,
+                    "intent": intent_text,
+                    "tenant_id": tenant_id,
+                    "sla_requirements": merged_sla_for_canon,
+                }
+            )
             return {
                 "intent_id": intent_id,
                 "nest_id": nest.nest_id,
@@ -287,6 +339,7 @@ async def interpret_intent(
                 "status": "accepted",
                 "message": "Intent interpretado e NEST gerado com sucesso",
                 "sem_csmf_internal_latency_ms": round(sem_csmf_internal_latency_ms, 4),
+                "canonical_sla": canonical_sla,
             }
             
         except Exception as e:
@@ -378,21 +431,38 @@ async def create_intent(
             gst = await intent_processor.generate_gst(validated_intent)
             nest_generator = NESTGeneratorDB(db)
             nest = await nest_generator.generate_nest(gst)
-            metadata = await intent_processor.generate_metadata(intent, nest)
+            _apply_semantic_fill_pipeline(validated_intent, gst, nest)
+            intent.sla_requirements = validated_intent.sla_requirements
+            intent_model.sla_requirements = validated_intent.sla_requirements.model_dump()
+            db.commit()
+            metadata = await intent_processor.generate_metadata(validated_intent, nest)
             upstream_metadata = request.metadata if isinstance(request.metadata, dict) else {}
             if upstream_metadata:
                 merged_metadata = dict(upstream_metadata)
                 merged_metadata.update(metadata)
                 metadata = merged_metadata
             semantic_latency_ms = float((time.perf_counter() - t_sem0) * 1000.0)
-            
+
+            canonical_sla = canonicalize_sla_request(
+                {
+                    "service_type": request.service_type,
+                    "intent": request.intent,
+                    "tenant_id": tenant_id,
+                    "sla_requirements": validated_intent.sla_requirements.model_dump(),
+                    "metadata": upstream_metadata,
+                }
+            )
+            metadata["canonical_sla"] = canonical_sla
+
             # 7. Enviar metadados via I-01 (HTTP) para Decision Engine
             decision_response = await decision_engine_client.send_nest_metadata(
                 intent_id=intent.intent_id,
                 nest_id=nest.nest_id,
                 tenant_id=intent.tenant_id,
                 service_type=intent.service_type.value,
-                sla_requirements=intent.sla_requirements.model_dump() if intent.sla_requirements else {},
+                sla_requirements=validated_intent.sla_requirements.model_dump()
+                if validated_intent.sla_requirements
+                else {},
                 nest_status=nest.status.value,
                 metadata=metadata
             )
@@ -413,7 +483,8 @@ async def create_intent(
                 _resp_meta.setdefault(
                     "ml_confidence", decision_response.get("ml_confidence")
                 )
-            
+            _resp_meta["canonical_sla"] = canonical_sla
+
             return IntentResponse(
                 intent_id=intent.intent_id,
                 status="accepted",
@@ -510,6 +581,8 @@ async def get_intent(
         if not db_intent:
             raise HTTPException(status_code=404, detail="Intent not found")
         meta = db_intent.extra_metadata or {}
+        nest_row = NESTRepository.get_by_intent_id(db, intent_id)
+        nest_id = nest_row.nest_id if nest_row else meta.get("nest_id")
         out = {
             "intent_id": db_intent.intent_id,
             "tenant_id": db_intent.tenant_id,
@@ -519,6 +592,8 @@ async def get_intent(
             "created_at": db_intent.created_at.isoformat() if db_intent.created_at else None,
             "metadata": meta,
         }
+        if nest_id:
+            out["nest_id"] = nest_id
         # PROMPT_SNASP_02: expor NSI/NSSI/S-NSSAI quando presentes (retrocompatível)
         if meta.get("service_intent") is not None:
             out["service_intent"] = meta["service_intent"]

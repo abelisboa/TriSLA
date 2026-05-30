@@ -19,8 +19,10 @@ class SLARequirements(BaseModel):
     latency: Optional[str] = Field(None, description="Latência máxima (ex: 10ms)")
     throughput: Optional[str] = Field(None, description="Throughput mínimo (ex: 100Mbps)")
     reliability: Optional[float] = Field(None, description="Confiabilidade (ex: 0.999)")
+    availability: Optional[float] = Field(None, description="Disponibilidade (ex: 0.999)")
     jitter: Optional[str] = Field(None, description="Jitter máximo (ex: 5ms)")
     coverage: Optional[str] = Field(None, description="Cobertura (ex: Urban, Rural)")
+    device_density: Optional[float] = Field(None, description="Densidade de dispositivos (ex: 1000000)")
 
 
 class Intent(BaseModel):
