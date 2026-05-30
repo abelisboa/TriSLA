@@ -6,9 +6,11 @@ import {
   buildRevalidateRequest,
   intentIdFromSubmit,
   lifecycleStateFromSubmit,
+  referenceTelemetryFromSubmit,
   type RevalidateTelemetryResponse,
   type SlaRuntimeStatusResponse,
 } from "../../lib/runtimeSupervision";
+import { LifecycleRuntimeSnapshotPanel } from "../lifecycle/LifecycleRuntimeSnapshotPanel";
 import type { SubmitResponse } from "../../lib/submitResponse";
 import {
   DriftAnalysisPanel,
@@ -81,6 +83,13 @@ export function RuntimeSupervisionSection({
       ? (remediation as Record<string, unknown>)
       : undefined;
 
+  const submitTelemetrySnapshot = referenceTelemetryFromSubmit(response);
+  const runtimeSnapshot =
+    submitTelemetrySnapshot ??
+    (statusData?.telemetry_snapshot && typeof statusData.telemetry_snapshot === "object"
+      ? statusData.telemetry_snapshot
+      : undefined);
+
   return (
     <section className="trisla-status-card trisla-runtime-supervision" aria-label="Runtime Supervision">
       <h2>{heading}</h2>
@@ -98,6 +107,8 @@ export function RuntimeSupervisionSection({
         loading={statusLoading}
         error={statusError}
       />
+
+      <LifecycleRuntimeSnapshotPanel snapshot={runtimeSnapshot} />
 
       <section className="trisla-runtime-subsection" aria-label="Revalidate Telemetry">
         <h3>Revalidate Telemetry</h3>

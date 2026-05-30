@@ -9,6 +9,7 @@ export type SlaRuntimeStatusResponse = {
   nest_id?: string | null;
   created_at?: string;
   updated_at?: string | null;
+  telemetry_snapshot?: Record<string, unknown>;
 };
 
 /** POST /api/v1/sla/revalidate-telemetry — audited response shape. */

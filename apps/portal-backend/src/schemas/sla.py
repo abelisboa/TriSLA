@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Dict, Any
 
 
@@ -58,6 +58,7 @@ class SLAStatusResponse(BaseModel):
     nest_id: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
+    telemetry_snapshot: Optional[Dict[str, Any]] = None
 
 
 class SLAMetricsResponse(BaseModel):
@@ -129,3 +130,32 @@ class SLASubmitResponse(BaseModel):
     orchestration_reference: Optional[str] = None
     telemetry_status: Optional[str] = None
     telemetry_complete: Optional[bool] = None
+
+
+class SLARevalidateTelemetryRequest(BaseModel):
+    """P1: revalidação temporal — só telemetria; sem NASP/BC/decision."""
+
+    intent_id: str
+    temporal_intent_trace: Optional[Dict[str, Any]] = None
+    correlation_execution_id: Optional[str] = None
+    reference_telemetry_snapshot: Optional[Dict[str, Any]] = None
+
+    @field_validator("intent_id")
+    @classmethod
+    def _strip_intent(cls, v: str) -> str:
+        if not v or not str(v).strip():
+            raise ValueError("intent_id obrigatório")
+        return str(v).strip()
+
+
+class SLARevalidateTelemetryResponse(BaseModel):
+    """Resposta mínima P1 — alinhado ao plano temporal."""
+
+    intent_id: str
+    execution_id_revalidation: str
+    telemetry_snapshot_atual: Dict[str, Any]
+    timestamps_utc: Dict[str, Any]
+    drift_summary: Dict[str, Any]
+    revalidation_status: str  # OK | INCOMPLETE
+    temporal_correlation: Dict[str, Any]
+    metadata: Dict[str, Any] = Field(default_factory=dict)

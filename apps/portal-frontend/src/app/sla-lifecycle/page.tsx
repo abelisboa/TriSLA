@@ -1,10 +1,13 @@
- "use client";
+"use client";
 
- import { useEffect, useState } from "react";
- import { apiRequest, formatApiError } from "../../lib/api";
- import { DataState } from "../../components/common/DataState";
- import { formatValue } from "../../lib/format";
- import { AWAITING_DATA } from "../../lib/operatorLabels";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { apiRequest, formatApiError, portalApi } from "../../lib/api";
+import { DataState } from "../../components/common/DataState";
+import { formatValue } from "../../lib/format";
+import { AWAITING_DATA, operatorFieldLabel } from "../../lib/operatorLabels";
+import type { SlaRuntimeStatusResponse } from "../../lib/runtimeSupervision";
+import { LifecycleRuntimeSnapshotPanel } from "../../components/lifecycle/LifecycleRuntimeSnapshotPanel";
 
  type Status = "idle" | "loading" | "ready" | "error";
 
@@ -29,7 +32,22 @@
  }
 
 export default function SlaLifecyclePage() {
+  return (
+    <Suspense fallback={<section><h1>SLA Lifecycle</h1><p className="trisla-muted">Loading…</p></section>}>
+      <SlaLifecycleContent />
+    </Suspense>
+  );
+}
+
+function SlaLifecycleContent() {
   const awaiting = AWAITING_DATA;
+  const searchParams = useSearchParams();
+  const intentFromUrl = searchParams.get("intent_id")?.trim() ?? "";
+
+  const [intentQuery, setIntentQuery] = useState(intentFromUrl);
+  const [statusData, setStatusData] = useState<SlaRuntimeStatusResponse | null>(null);
+  const [statusLoad, setStatusLoad] = useState<Status>("idle");
+  const [statusError, setStatusError] = useState<string | undefined>();
  
    const [naspDiagnostics, setNaspDiagnostics] = useState<Record<string, unknown> | null>(
      null,
@@ -38,6 +56,42 @@ export default function SlaLifecyclePage() {
    const [naspError, setNaspError] = useState<string | undefined>(undefined);
  
    useEffect(() => {
+    if (intentFromUrl) setIntentQuery(intentFromUrl);
+  }, [intentFromUrl]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const intentId = intentQuery.trim();
+    if (!intentId) {
+      setStatusData(null);
+      setStatusLoad("idle");
+      setStatusError(undefined);
+      return;
+    }
+
+    setStatusLoad("loading");
+    setStatusError(undefined);
+
+    portalApi
+      .getSlaStatus(intentId)
+      .then((response) => {
+        if (cancelled) return;
+        setStatusData(response);
+        setStatusLoad("ready");
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setStatusLoad("error");
+        setStatusError(formatApiError(err));
+        setStatusData(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [intentQuery]);
+
+  useEffect(() => {
      let cancelled = false;
      setNaspStatus("loading");
      setNaspError(undefined);
@@ -140,6 +194,40 @@ export default function SlaLifecyclePage() {
     <section>
       <h1>SLA Lifecycle</h1>
       <p className="trisla-subtitle">SLA lifecycle status and runtime supervision overview.</p>
+      <section className="trisla-status-card" aria-label="SLA Runtime Identity">
+        <h2>Runtime Identity</h2>
+        <p className="trisla-muted">Look up persisted SLA identity via Intent ID.</p>
+        <div className="trisla-form-row" style={{ marginBottom: "1rem" }}>
+          <label htmlFor="lifecycle-intent-id">Intent ID</label>
+          <input
+            id="lifecycle-intent-id"
+            className="trisla-input"
+            value={intentQuery}
+            onChange={(e) => setIntentQuery(e.target.value)}
+            placeholder="Paste intent UUID from admission result"
+          />
+        </div>
+        <DataState status={statusLoad} errorMessage={statusError}>
+          {statusData ? (
+            <dl>
+              <div className="trisla-status-row">
+                <dt>{operatorFieldLabel("intent_id")}</dt>
+                <dd>{statusData.intent_id ?? statusData.sla_id ?? "Not available"}</dd>
+              </div>
+              <div className="trisla-status-row">
+                <dt>{operatorFieldLabel("nest_id")}</dt>
+                <dd>{statusData.nest_id ?? "Not available"}</dd>
+              </div>
+              <div className="trisla-status-row">
+                <dt>Status</dt>
+                <dd>{statusData.status ?? "Not available"}</dd>
+              </div>
+            </dl>
+          ) : intentQuery.trim() ? null : (
+            <p className="trisla-muted">Enter an Intent ID to load runtime identity.</p>
+          )}
+        </DataState>
+      </section>
       <div className="trisla-cards-grid">
         <section className="trisla-status-card" aria-label="Semantic Admission">
           <h2>Semantic Admission</h2>
@@ -210,6 +298,11 @@ export default function SlaLifecyclePage() {
           </DataState>
         </section>
       </div>
+      <LifecycleRuntimeSnapshotPanel
+        snapshot={statusData?.telemetry_snapshot}
+        loading={statusLoad === "loading" && Boolean(intentQuery.trim())}
+        error={statusError}
+      />
     </section>
   );
 }
