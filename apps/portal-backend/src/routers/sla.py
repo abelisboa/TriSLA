@@ -7,6 +7,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
 
 import httpx
 from fastapi import APIRouter, HTTPException
@@ -16,8 +17,11 @@ from src.schemas.sla import (
     SLAStatusResponse,
     SLAMetricsResponse,
     SLASubmitResponse,
+    SLARevalidateTelemetryRequest,
+    SLARevalidateTelemetryResponse,
 )
 from src.services.nasp import NASPService
+from src.services.sla_status_telemetry import resolve_status_telemetry_snapshot
 from src.services.sla_metrics import compute_sla_metrics
 from src.telemetry.collector import append_telemetry_csv, build_csv_row, collect_domain_metrics_async
 from src.telemetry.contract_v2 import TELEMETRY_UNITS_V2
@@ -181,6 +185,241 @@ def _ensure_telemetry_v2_flags(metadata: dict) -> None:
     metadata["telemetry_version"] = "v2"
     metadata["telemetry_complete"] = len(gaps) == 0
     metadata["telemetry_units"] = dict(TELEMETRY_UNITS_V2)
+
+
+def _build_temporal_intent_trace(
+    *,
+    intent_id: object,
+    nest_id: object,
+    execution_id: str,
+    t_submit_iso: str,
+    telemetry_pre_at: str | None,
+    timestamp_decision: str,
+    telemetry_snapshot: dict,
+    lifecycle_state: str,
+    sla_lifecycle: dict,
+) -> dict:
+    """
+    P0: metadata temporal mínima por intent — sem drift automático, sem storage externo.
+    """
+    snap = telemetry_snapshot if isinstance(telemetry_snapshot, dict) else {}
+    post_ts = snap.get("timestamp")
+    trace = {
+        "temporal_trace_version": "p0",
+        "intent_id": intent_id,
+        "nest_id": nest_id,
+        "execution_id": execution_id,
+        "timestamps_utc": {
+            "submitted": t_submit_iso,
+            "telemetry_pre_decision": telemetry_pre_at,
+            "decision_recorded": timestamp_decision,
+            "telemetry_post_snapshot": post_ts,
+        },
+        "lifecycle_state": lifecycle_state,
+        "sla_lifecycle": dict(sla_lifecycle) if isinstance(sla_lifecycle, dict) else {},
+        "telemetry_contract_version": snap.get("telemetry_contract_version"),
+    }
+    return trace
+
+
+def _minimal_telemetry_drift(reference: dict, current: dict) -> Dict[str, Any]:
+    """P1: deltas numéricos null-safe entre snapshots (contract v2 / legacy keys)."""
+    deltas: List[Dict[str, Any]] = []
+
+    def pick_num(d: dict, *keys: str) -> Optional[float]:
+        for k in keys:
+            v = d.get(k)
+            if v is not None:
+                try:
+                    return float(v)
+                except (TypeError, ValueError):
+                    continue
+        return None
+
+    def add_delta(path: str, ref_val: Optional[float], cur_val: Optional[float]) -> None:
+        if ref_val is None and cur_val is None:
+            return
+        entry: Dict[str, Any] = {"path": path, "reference": ref_val, "current": cur_val}
+        if ref_val is not None and cur_val is not None:
+            entry["delta"] = cur_val - ref_val
+        else:
+            entry["delta"] = None
+        deltas.append(entry)
+
+    if not isinstance(reference, dict) or not isinstance(current, dict):
+        return {"deltas": [], "fields_compared": 0, "error": "invalid_snapshot_shape"}
+
+    ran_r = reference.get("ran") if isinstance(reference.get("ran"), dict) else {}
+    ran_c = current.get("ran") if isinstance(current.get("ran"), dict) else {}
+    tr_r = reference.get("transport") if isinstance(reference.get("transport"), dict) else {}
+    tr_c = current.get("transport") if isinstance(current.get("transport"), dict) else {}
+    co_r = reference.get("core") if isinstance(reference.get("core"), dict) else {}
+    co_c = current.get("core") if isinstance(current.get("core"), dict) else {}
+
+    add_delta("ran.prb_utilization", pick_num(ran_r, "prb_utilization"), pick_num(ran_c, "prb_utilization"))
+    add_delta("ran.latency", pick_num(ran_r, "latency", "latency_ms"), pick_num(ran_c, "latency", "latency_ms"))
+    add_delta("transport.rtt", pick_num(tr_r, "rtt", "rtt_ms"), pick_num(tr_c, "rtt", "rtt_ms"))
+    add_delta("transport.jitter", pick_num(tr_r, "jitter", "jitter_ms"), pick_num(tr_c, "jitter", "jitter_ms"))
+    add_delta("core.cpu", pick_num(co_r, "cpu", "cpu_utilization"), pick_num(co_c, "cpu", "cpu_utilization"))
+    add_delta("core.memory", pick_num(co_r, "memory", "memory_bytes"), pick_num(co_c, "memory", "memory_bytes"))
+
+    return {"deltas": deltas, "fields_compared": len(deltas)}
+
+
+def _p2_env_float(name: str, default: float) -> float:
+    raw = os.getenv(name)
+    if raw is None or not str(raw).strip():
+        return default
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return default
+
+
+def _domain_from_drift_path(path: str) -> str:
+    if path.startswith("ran."):
+        return "ran"
+    if path.startswith("transport."):
+        return "transport"
+    if path.startswith("core."):
+        return "core"
+    return "unknown"
+
+
+def _build_remediation_evidence_p2(
+    *,
+    drift_summary: Dict[str, Any],
+    reference: Optional[Dict[str, Any]],
+    current: Dict[str, Any],
+    revalidation_status: str,
+) -> Dict[str, Any]:
+    """
+    P2: evidência declarativa apenas — sem execução automática, orchestration ou callbacks.
+    Usa drift_summary, limiares mínimos (env) e snapshots ref/atual.
+    """
+    th_prb = _p2_env_float("TRISLA_P2_PRB_DELTA_THRESHOLD", 5.0)
+    th_lat = _p2_env_float("TRISLA_P2_LATENCY_MS_DELTA_THRESHOLD", 2.0)
+    th_rtt = _p2_env_float("TRISLA_P2_RTT_MS_DELTA_THRESHOLD", 1.0)
+    th_jit = _p2_env_float("TRISLA_P2_JITTER_MS_DELTA_THRESHOLD", 1.0)
+    th_cpu = _p2_env_float("TRISLA_P2_CPU_DELTA_THRESHOLD", 5.0)
+    th_mem_rel = _p2_env_float("TRISLA_P2_MEMORY_RELATIVE_THRESHOLD", 0.05)
+
+    path_abs_thresholds = {
+        "ran.prb_utilization": th_prb,
+        "ran.latency": th_lat,
+        "transport.rtt": th_rtt,
+        "transport.jitter": th_jit,
+        "core.cpu": th_cpu,
+    }
+
+    affected: set[str] = set()
+    breach_paths: list[str] = []
+
+    compared = bool(drift_summary.get("compared"))
+    if not compared:
+        if revalidation_status == "INCOMPLETE":
+            for g in _snapshot_missing_fields(current):
+                dom = g.split(".", 1)[0]
+                if dom in ("ran", "transport", "core"):
+                    affected.add(dom)
+            return {
+                "recommendation": (
+                    "Telemetria atual incompleta e sem snapshot de referência; "
+                    "não há correlação de drift numérica."
+                ),
+                "severity": "MEDIUM",
+                "affected_domains": sorted(affected),
+                "suggested_action": (
+                    "Completar exportação Prometheus para o snapshot atual e "
+                    "reenviar revalidate-telemetry com reference_telemetry_snapshot."
+                ),
+                "revalidation_required": True,
+            }
+        return {
+            "recommendation": (
+                "Nenhuma comparação de drift: reference_telemetry_snapshot não foi enviado."
+            ),
+            "severity": "INFO",
+            "affected_domains": [],
+            "suggested_action": (
+                "Opcional: incluir reference_telemetry_snapshot (ex.: metadata.telemetry_snapshot "
+                "do submit) para gerar deltas e avaliação de remediação declarativa."
+            ),
+            "revalidation_required": False,
+        }
+
+    for d in drift_summary.get("deltas") or []:
+        if not isinstance(d, dict):
+            continue
+        path = str(d.get("path") or "")
+        delta = d.get("delta")
+        ref_v = d.get("reference")
+        cur_v = d.get("current")
+
+        if path == "core.memory":
+            if (
+                ref_v is not None
+                and cur_v is not None
+                and isinstance(ref_v, (int, float))
+                and isinstance(cur_v, (int, float))
+            ):
+                rv = float(ref_v)
+                cv = float(cur_v)
+                base = max(abs(rv), 1e-9)
+                if abs(cv - rv) / base > th_mem_rel:
+                    affected.add("core")
+                    breach_paths.append(path)
+            continue
+
+        if isinstance(delta, (int, float)):
+            lim = path_abs_thresholds.get(path)
+            if lim is not None and abs(float(delta)) > lim:
+                dom = _domain_from_drift_path(path)
+                if dom != "unknown":
+                    affected.add(dom)
+                breach_paths.append(path)
+
+    if revalidation_status == "INCOMPLETE":
+        for g in _snapshot_missing_fields(current):
+            dom = g.split(".", 1)[0]
+            if dom in ("ran", "transport", "core"):
+                affected.add(dom)
+
+    affected_sorted = sorted(affected)
+
+    if not affected_sorted:
+        return {
+            "recommendation": (
+                "Nenhum desvio acima dos limiares mínimos configurados; "
+                "telemetria atual dentro da banda em relação à referência."
+            ),
+            "severity": "INFO",
+            "affected_domains": [],
+            "suggested_action": (
+                "Nenhuma ação declarativa obrigatória; manter observabilidade conforme política de SLA."
+            ),
+            "revalidation_required": False,
+        }
+
+    if len(affected_sorted) > 1 or len(breach_paths) > 2:
+        severity = "HIGH"
+    else:
+        severity = "MEDIUM"
+
+    breach_txt = ", ".join(breach_paths) if breach_paths else ", ".join(affected_sorted)
+    return {
+        "recommendation": (
+            f"Desvio temporal acima dos limiares mínimos nos caminhos: {breach_txt}."
+        ),
+        "severity": severity,
+        "affected_domains": affected_sorted,
+        "suggested_action": (
+            "Revisar domínios listados e a política de slice no plano de controle; "
+            "após correções operacionais, chamar novamente revalidate-telemetry "
+            "(sem execução automática neste endpoint)."
+        ),
+        "revalidation_required": True,
+    }
 
 
 @router.post("/interpret")
@@ -577,6 +816,143 @@ async def submit_sla_template(request: SLASubmitRequest):
         metadata_out["sla_lifecycle"] = lifecycle
         metadata_out["lifecycle_state"] = lifecycle_state
 
+        de_orch_ls = metadata_out.get("orchestration_lifecycle_state")
+        if isinstance(de_orch_ls, str) and de_orch_ls.strip():
+            metadata_out["de_initial_lifecycle_state"] = de_orch_ls.strip()
+        if metadata_out.get("decision_engine_orchestration_authority") is True:
+            metadata_out["lifecycle_state_source"] = (
+                "decision_engine_authority_plus_portal_composite"
+            )
+        else:
+            metadata_out.setdefault(
+                "lifecycle_state_source",
+                "portal_legacy_composite",
+            )
+
+        # === FASE 4 — Portal Backend deixa de ser autoridade semântica de
+        # lifecycle/governance: apenas repassa o que o Decision Engine declarou
+        # (lifecycle_event/governance_event) e marca a fonte de autoridade.
+        # O bloco operacional (sla_lifecycle/lifecycle_state) é mantido por
+        # compatibilidade, mas explicitamente etiquetado como "pipeline".
+        try:
+            de_lifecycle_event = metadata_out.get("lifecycle_event")
+            de_governance_event = metadata_out.get("governance_event")
+            de_lifecycle_authority = metadata_out.get("lifecycle_authority")
+            de_governance_authority = metadata_out.get("governance_authority")
+            de_lc_auth_flag = bool(
+                metadata_out.get("decision_engine_lifecycle_authority")
+            )
+            de_gv_auth_flag = bool(
+                metadata_out.get("decision_engine_governance_authority")
+            )
+
+            metadata_out["lifecycle_pipeline_state"] = lifecycle_state
+            metadata_out["lifecycle_pipeline_state_source"] = (
+                "portal_backend_pipeline_composite"
+            )
+
+            if isinstance(de_lifecycle_event, dict) and de_lc_auth_flag:
+                metadata_out["lifecycle_authority_source"] = "decision-engine"
+                metadata_out["lifecycle_initial_state"] = de_lifecycle_event.get(
+                    "lifecycle_state"
+                )
+                metadata_out["lifecycle_event_type"] = de_lifecycle_event.get(
+                    "lifecycle_event_type"
+                )
+                metadata_out["lifecycle_transition_reason"] = de_lifecycle_event.get(
+                    "lifecycle_transition_reason"
+                )
+                metadata_out["lifecycle_authority"] = (
+                    de_lifecycle_authority or "decision-engine"
+                )
+                metadata_out["portal_lifecycle_role"] = "relay"
+            else:
+                metadata_out.setdefault("lifecycle_authority_source", "portal-legacy")
+                metadata_out.setdefault("portal_lifecycle_role", "legacy-composer")
+
+            governance_attempted = decision == "ACCEPT"
+            governance_registered = bool(result.get("bc_status") == "COMMITTED")
+            tx_hash_present = bool(result.get("tx_hash"))
+
+            if isinstance(de_governance_event, dict) and de_gv_auth_flag:
+                metadata_out["governance_authority_source"] = "decision-engine"
+                metadata_out["governance_event_id"] = de_governance_event.get(
+                    "governance_event_id"
+                )
+                metadata_out["governance_event_state"] = de_governance_event.get(
+                    "event_state"
+                )
+                metadata_out["governance_event_type"] = de_governance_event.get(
+                    "event_type"
+                )
+                metadata_out["governance_authority"] = (
+                    de_governance_authority or "decision-engine"
+                )
+                metadata_out["portal_governance_role"] = "relay"
+                if governance_registered and tx_hash_present:
+                    metadata_out["governance_registration_status"] = "REGISTERED"
+                    metadata_out["governance_registration_fallback"] = False
+                    metadata_out["governance_registration_authority"] = "bc-nssmf"
+                    metadata_out["governance_registration_tx_hash"] = result.get(
+                        "tx_hash"
+                    )
+                    metadata_out["governance_registration_block_number"] = result.get(
+                        "block_number"
+                    )
+                elif governance_attempted:
+                    metadata_out["governance_registration_status"] = "DEGRADED_FALLBACK"
+                    metadata_out["governance_registration_fallback"] = True
+                    metadata_out.setdefault(
+                        "governance_registration_fallback_reason",
+                        "bc_not_committed_or_tx_hash_absent",
+                    )
+                else:
+                    metadata_out["governance_registration_status"] = "SKIPPED_NO_ACCEPT"
+                    metadata_out["governance_registration_fallback"] = False
+            else:
+                metadata_out.setdefault("governance_authority_source", "portal-legacy")
+                metadata_out.setdefault("portal_governance_role", "legacy-relayer")
+                if governance_registered and tx_hash_present:
+                    metadata_out.setdefault(
+                        "governance_registration_status", "REGISTERED_LEGACY"
+                    )
+                    metadata_out.setdefault("governance_registration_fallback", False)
+                elif governance_attempted:
+                    metadata_out.setdefault(
+                        "governance_registration_status", "DEGRADED_FALLBACK"
+                    )
+                    metadata_out.setdefault("governance_registration_fallback", True)
+                else:
+                    metadata_out.setdefault(
+                        "governance_registration_status", "SKIPPED_NO_ACCEPT"
+                    )
+                    metadata_out.setdefault("governance_registration_fallback", False)
+        except Exception as _fase4_err:
+            metadata_out["governance_registration_fallback"] = True
+            metadata_out["lifecycle_authority_source"] = "portal-legacy-on-error"
+            metadata_out["governance_authority_source"] = "portal-legacy-on-error"
+            metadata_out["fase4_relay_error"] = str(_fase4_err)[:200]
+
+        md_pre = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
+        telemetry_pre_at = md_pre.get("telemetry_collected_at")
+        metadata_out["temporal_intent_trace"] = _build_temporal_intent_trace(
+            intent_id=result.get("intent_id"),
+            nest_id=result.get("nest_id"),
+            execution_id=execution_id,
+            t_submit_iso=t_submit_iso,
+            telemetry_pre_at=telemetry_pre_at if isinstance(telemetry_pre_at, str) else None,
+            timestamp_decision=timestamp_decision,
+            telemetry_snapshot=metadata_out.get("telemetry_snapshot") or {},
+            lifecycle_state=lifecycle_state,
+            sla_lifecycle=lifecycle,
+        )
+        logger.info(
+            "[TEMPORAL_P0] intent_id=%s execution_id=%s lifecycle_state=%s",
+            result.get("intent_id"),
+            execution_id,
+            lifecycle_state,
+        )
+
         _ensure_telemetry_v2_flags(metadata_out)
 
         telemetry_complete = bool(metadata_out.get("telemetry_complete"))
@@ -631,6 +1007,169 @@ async def submit_sla_template(request: SLASubmitRequest):
         )
 
 
+async def _revalidate_telemetry_local_fallback(
+    request: SLARevalidateTelemetryRequest,
+) -> SLARevalidateTelemetryResponse:
+    """
+    FALLBACK IN-PROCESS — comportamento histórico de /api/v1/sla/revalidate-telemetry.
+
+    Mantido intacto durante a FASE 2 da refatoração (REFACTOR_TRISLA_RESPONSIBILITY_GUIDE.md).
+    A autoridade canônica passa a ser o SLA-Agent (`POST /api/v1/agent/revalidate-telemetry`);
+    este caminho permanece como fallback quando o SLA-Agent estiver indisponível ou quando
+    `SLA_AGENT_REVALIDATE_URL` não estiver configurado.
+
+    Não remover até a FASE 7 (consolidação).
+    """
+    intent_id = request.intent_id
+    trace = request.temporal_intent_trace if isinstance(request.temporal_intent_trace, dict) else None
+    temporal_correlation: Dict[str, Any] = {
+        "intent_id_requested": intent_id,
+        "temporal_intent_trace_present": trace is not None,
+    }
+    if trace:
+        tid = trace.get("intent_id")
+        temporal_correlation["intent_id_match"] = tid is not None and str(tid) == intent_id
+        temporal_correlation["trace_execution_id"] = trace.get("execution_id")
+        temporal_correlation["trace_temporal_version"] = trace.get("temporal_trace_version")
+        ts_tr = trace.get("timestamps_utc")
+        if isinstance(ts_tr, dict):
+            temporal_correlation["prior_telemetry_post_at"] = ts_tr.get("telemetry_post_snapshot")
+    if request.correlation_execution_id:
+        cex = str(request.correlation_execution_id).strip()
+        temporal_correlation["correlation_execution_id"] = cex
+        tex = trace.get("execution_id") if trace else None
+        if tex is not None:
+            temporal_correlation["execution_id_match"] = str(tex) == cex
+        else:
+            temporal_correlation["execution_id_match"] = None
+
+    execution_id_rev = str(uuid.uuid4())
+    collected_at = datetime.now(timezone.utc).isoformat()
+    telemetry_snapshot_atual, _tel_ms = await collect_domain_metrics_async(
+        execution_id_rev,
+        collected_at,
+    )
+
+    ref = request.reference_telemetry_snapshot
+    if isinstance(ref, dict) and ref:
+        drift_summary: Dict[str, Any] = {"compared": True, **_minimal_telemetry_drift(ref, telemetry_snapshot_atual)}
+    else:
+        drift_summary = {
+            "compared": False,
+            "reason": "no_reference_telemetry_snapshot",
+            "note": "Opcional: enviar metadata.telemetry_snapshot do submit anterior para deltas numéricos.",
+        }
+
+    gaps = _snapshot_missing_fields(telemetry_snapshot_atual)
+    revalidation_status = "OK" if len(gaps) == 0 else "INCOMPLETE"
+
+    timestamps_utc = {
+        "revalidation_collected": telemetry_snapshot_atual.get("timestamp") or collected_at,
+        "revalidation_requested_wall": collected_at,
+        "prior_telemetry_post_from_trace": temporal_correlation.get("prior_telemetry_post_at"),
+    }
+
+    remediation = _build_remediation_evidence_p2(
+        drift_summary=drift_summary,
+        reference=ref if isinstance(ref, dict) else None,
+        current=telemetry_snapshot_atual,
+        revalidation_status=revalidation_status,
+    )
+    metadata_out: Dict[str, Any] = {"remediation_evidence": remediation}
+
+    logger.info(
+        "[TEMPORAL_P1] revalidate intent_id=%s execution_id_rev=%s status=%s",
+        intent_id,
+        execution_id_rev,
+        revalidation_status,
+    )
+
+    return SLARevalidateTelemetryResponse(
+        intent_id=intent_id,
+        execution_id_revalidation=execution_id_rev,
+        telemetry_snapshot_atual=telemetry_snapshot_atual,
+        timestamps_utc=timestamps_utc,
+        drift_summary=drift_summary,
+        revalidation_status=revalidation_status,
+        temporal_correlation=temporal_correlation,
+        metadata=metadata_out,
+    )
+
+
+async def _delegate_revalidate_to_sla_agent(
+    request: SLARevalidateTelemetryRequest,
+    url: str,
+    timeout_s: float,
+) -> SLARevalidateTelemetryResponse:
+    """Chama o SLA-Agent (HTTP) e devolve a resposta como modelo do contrato público."""
+    payload = request.model_dump(exclude_none=False)
+    async with httpx.AsyncClient() as client:
+        r = await client.post(url, json=payload, timeout=httpx.Timeout(timeout_s))
+        r.raise_for_status()
+        body = r.json()
+        if not isinstance(body, dict):
+            raise ValueError(
+                f"sla-agent response not a JSON object (got {type(body).__name__})"
+            )
+        return SLARevalidateTelemetryResponse(**body)
+
+
+@router.post("/revalidate-telemetry", response_model=SLARevalidateTelemetryResponse)
+async def revalidate_telemetry(request: SLARevalidateTelemetryRequest):
+    """
+    P1: revalidação temporal — nova leitura Prometheus.
+    P2: metadata.remediation_evidence (declarativo; sem execução automática).
+
+    REFACTOR FASE 2: a autoridade canônica passa a ser o SLA-Agent. Este endpoint
+    público permanece com o **mesmo contrato JSON** e apenas delega para
+    `SLA_AGENT_REVALIDATE_URL`. Em caso de falha (timeout, conexão recusada,
+    payload inválido) ou URL não configurada, executa o fallback in-process
+    (`_revalidate_telemetry_local_fallback`) e marca a evidência de delegação.
+
+    Sem NASP, BC, decision engine, Kafka ou persistência externa (inalterado).
+    """
+    sla_agent_url = (os.getenv("SLA_AGENT_REVALIDATE_URL") or "").strip()
+    timeout_s = float(os.getenv("SLA_AGENT_REVALIDATE_TIMEOUT_S", "8.0") or 8.0)
+    delegate_enabled = os.getenv("SLA_AGENT_REVALIDATE_ENABLED", "true").lower() == "true"
+
+    delegated = False
+    delegation_target: Optional[str] = sla_agent_url or None
+    delegation_fallback_reason: Optional[str] = None
+
+    response: Optional[SLARevalidateTelemetryResponse] = None
+    if delegate_enabled and sla_agent_url:
+        try:
+            response = await _delegate_revalidate_to_sla_agent(
+                request, sla_agent_url, timeout_s
+            )
+            delegated = True
+        except Exception as exc:
+            delegation_fallback_reason = (
+                f"sla_agent_call_failed: {type(exc).__name__}: {str(exc)[:200]}"
+            )
+            logger.warning(
+                "[REVALIDATE_DELEGATION] falha ao chamar SLA-Agent url=%s err=%s — usando fallback in-process",
+                sla_agent_url,
+                exc,
+            )
+    elif not delegate_enabled:
+        delegation_fallback_reason = "SLA_AGENT_REVALIDATE_ENABLED=false"
+    else:
+        delegation_fallback_reason = "SLA_AGENT_REVALIDATE_URL_unset"
+
+    if response is None:
+        response = await _revalidate_telemetry_local_fallback(request)
+
+    meta = dict(response.metadata) if isinstance(response.metadata, dict) else {}
+    meta["delegated_to_sla_agent"] = delegated
+    if delegation_target:
+        meta["delegation_target"] = delegation_target
+    if delegation_fallback_reason:
+        meta["delegation_fallback_reason"] = delegation_fallback_reason
+    response = response.model_copy(update={"metadata": meta})
+    return response
+
+
 @router.get("/status/{sla_id}", response_model=SLAStatusResponse)
 async def get_sla_status(sla_id: str):
     """
@@ -640,7 +1179,24 @@ async def get_sla_status(sla_id: str):
     """
     try:
         result = await nasp_service.get_sla_status(sla_id)
-        
+
+        collected_snapshot: Optional[Dict[str, Any]] = None
+        try:
+            collected_at = datetime.now(timezone.utc).isoformat()
+            execution_id = f"status-{sla_id}"
+            collected_snapshot, _tel_ms = await collect_domain_metrics_async(
+                execution_id,
+                collected_at,
+            )
+        except Exception as exc:
+            logger.warning(
+                "[SLA STATUS] telemetry_snapshot collect skipped intent=%s err=%s",
+                sla_id,
+                exc,
+            )
+
+        telemetry_snapshot = resolve_status_telemetry_snapshot(result, collected_snapshot)
+
         return SLAStatusResponse(
             sla_id=sla_id,
             status=result.get("status", "unknown"),
@@ -648,7 +1204,8 @@ async def get_sla_status(sla_id: str):
             intent_id=result.get("intent_id"),
             nest_id=result.get("nest_id"),
             created_at=result.get("created_at"),
-            updated_at=result.get("updated_at")
+            updated_at=result.get("updated_at"),
+            telemetry_snapshot=telemetry_snapshot,
         )
     except HTTPException:
         raise
