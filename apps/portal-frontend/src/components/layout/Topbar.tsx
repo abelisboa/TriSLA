@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 
 export function Topbar() {
-  const [runtimeTimestamp, setRuntimeTimestamp] = useState<string>(
-    () => new Date().toISOString(),
-  );
+  const [runtimeTimestamp, setRuntimeTimestamp] = useState<string | null>(null);
 
   useEffect(() => {
+    setRuntimeTimestamp(new Date().toISOString());
     const id = setInterval(() => {
       setRuntimeTimestamp(new Date().toISOString());
     }, 60_000);
@@ -38,7 +37,7 @@ export function Topbar() {
           className="trisla-topbar-runtime"
           aria-label="Frontend runtime timestamp (ISO8601)"
         >
-          {runtimeTimestamp}
+          {runtimeTimestamp ?? "—"}
         </span>
       </div>
     </header>
