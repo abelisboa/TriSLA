@@ -1,5 +1,9 @@
 import { asMetadata, type SubmitResponse } from "../../lib/submitResponse";
-import { operatorFieldLabel } from "../../lib/operatorLabels";
+import {
+  formatBlockchainStatusLabel,
+  formatRegistrationStatusLabel,
+  operatorFieldLabel,
+} from "../../lib/operatorLabels";
 import { FieldList } from "./FieldList";
 import {
   AuditabilityMetadataPanel,
@@ -22,8 +26,21 @@ export function GovernancePanel({ response, heading = "5. Governance" }: Props) 
         Governance registration, lifecycle traceability, and audit metadata from the SLA submission.
       </p>
 
+      <FieldList
+        fields={[
+          {
+            label: operatorFieldLabel("bc_status"),
+            value: formatBlockchainStatusLabel(response.bc_status),
+          },
+          {
+            label: operatorFieldLabel("registration_status"),
+            value: formatRegistrationStatusLabel(metadata?.governance_registration_status),
+          },
+        ]}
+      />
+
       <details className="trisla-details trisla-details-secondary">
-        <summary>Core governance fields</summary>
+        <summary>Technical Details</summary>
         <FieldList
           fields={[
             { label: operatorFieldLabel("bc_status"), value: response.bc_status },

@@ -13,8 +13,11 @@ export function healthFieldDisplay(value: unknown): string {
     return "Not reported by backend";
   }
   if (typeof value === "boolean") {
-    return value ? "true" : "false";
+    return value ? "Operational" : "Unavailable";
   }
+  const text = String(value).trim().toLowerCase();
+  if (text === "ok" || text === "healthy") return "Operational";
+  if (text === "degraded") return "Degraded";
   return String(value);
 }
 
@@ -30,13 +33,9 @@ export function inferNaspReachability(
     return "Not reported by backend";
   }
   if (reachableModules.length === moduleKeys.length) {
-    return "Reachable modules (from diagnostics)";
+    return "All modules connected";
   }
-  return `Partial — ${reachableModules.length}/${moduleKeys.length} modules reachable`;
-}
-
-export function formatNaspModuleLabel(key: string): string {
-  return key;
+  return `Partial — ${reachableModules.length}/${moduleKeys.length} modules connected`;
 }
 
 export function formatNaspModuleStatus(value: unknown): string {
@@ -49,16 +48,26 @@ export function formatNaspModuleStatus(value: unknown): string {
 
   const record = value as NaspModule;
   if (record.reachable === true) {
-    const detail =
-      record.detail ??
-      (record.status_code != null ? `HTTP ${record.status_code}` : "ok");
-    return `reachable — ${String(detail)}`;
+    return "Connected";
   }
   if (record.reachable === false) {
-    return "unreachable";
+    return "Unavailable";
   }
   if (record.status_code != null) {
-    return `HTTP ${record.status_code}`;
+    const code = Number(record.status_code);
+    if (code >= 200 && code < 300) return "Connected";
+    return "Unavailable";
   }
-  return "reported";
+  return "Reported";
+}
+
+/** Technical probe details for collapsed Technical Details section. */
+export function formatNaspModuleTechnical(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "Not available";
+  }
+  if (typeof value !== "object") {
+    return String(value);
+  }
+  return JSON.stringify(value, null, 2);
 }
