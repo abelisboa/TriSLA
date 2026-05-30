@@ -2,7 +2,12 @@ from fastapi import APIRouter, HTTPException
 import os
 import requests
 
-from src.telemetry.promql_ssot import CN_I1_CPU_DEFAULT, CN_I1_MEMORY_DEFAULT
+from src.telemetry.promql_ssot import (
+    CN_I1_CPU_DEFAULT,
+    CN_I1_MEMORY_DEFAULT,
+    TN_I1_JITTER_DEFAULT,
+    TN_I1_LATENCY_DEFAULT,
+)
 
 router = APIRouter(prefix="/api/v1/interfaces", tags=["TriSLA I1 Runtime Interfaces"])
 
@@ -39,8 +44,8 @@ def ran_i1_metrics():
 
 @router.get("/tn-i1/metrics")
 def tn_i1_metrics():
-    jitter = _prom_query(os.getenv("TN_I1_JITTER_QUERY", "avg(trisla_transport_jitter_ms)"))
-    latency = _prom_query(os.getenv("TN_I1_LATENCY_QUERY", "avg(trisla_transport_latency_ms)"))
+    jitter = _prom_query(os.getenv("TN_I1_JITTER_QUERY", TN_I1_JITTER_DEFAULT))
+    latency = _prom_query(os.getenv("TN_I1_LATENCY_QUERY", TN_I1_LATENCY_DEFAULT))
     return {
         "interface": "TN-I1",
         "version": "v1",

@@ -57,21 +57,27 @@ CORE_MEMORY_SCOPED_FREE5GC_STACK = (
 CN_I1_CPU_DEFAULT = CORE_CPU_SCOPED_FREE5GC_STACK
 CN_I1_MEMORY_DEFAULT = CORE_MEMORY_SCOPED_FREE5GC_STACK
 
+# GET /api/v1/interfaces/tn-i1/metrics — probe-based transport (Sprint 5C).
+TN_I1_LATENCY_DEFAULT = PROMQL_SSOT["TRANSPORT_RTT"]
+TN_I1_JITTER_DEFAULT = PROMQL_SSOT["TRANSPORT_JITTER"]
+
+# GET /api/v1/prometheus/summary — cluster CPU % (Sprint 5C).
+# node_cpu_seconds_total is absent on this cluster; use container CPU share (validated Sprint 5B).
+CLUSTER_CPU_PERCENT_SUMMARY = (
+    "sum(rate(container_cpu_usage_seconds_total{namespace=\"trisla\"}[1m]))/"
+    "sum(rate(container_cpu_usage_seconds_total[1m]))*100"
+)
+
 # GET /api/v1/prometheus/summary — instant queries (observability index; not telemetry_snapshot).
 PROMQL_SUMMARY: Dict[str, str] = {
     "throughput_mbps": (
         '8 * (sum(rate(container_network_receive_bytes_total{namespace="ns-1274485",pod=~"rantester.*"}[1m])) + '
         'sum(rate(container_network_transmit_bytes_total{namespace="ns-1274485",pod=~"rantester.*"}[1m]))) / 1000000'
     ),
-    "transport_latency_ms": (
-        'max(probe_duration_seconds{job="probe/monitoring/trisla-transport-tcp-probe"}) * 1000'
-    ),
+    "transport_latency_ms": PROMQL_SSOT["TRANSPORT_RTT"],
     "sessions": (
         'sum(kube_pod_status_phase{namespace="ns-1274485",phase="Running",pod=~"(rantester.*|amf.*|smf.*|upf.*)"})'
     ),
-    "cluster_cpu_percent": (
-        'sum(rate(container_cpu_usage_seconds_total{namespace="trisla"}[1m]))/'
-        'sum(rate(node_cpu_seconds_total[1m]))*100'
-    ),
+    "cluster_cpu_percent": CLUSTER_CPU_PERCENT_SUMMARY,
     "ran_prb_instant": 'trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"}',
 }
