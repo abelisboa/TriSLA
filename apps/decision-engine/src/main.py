@@ -121,6 +121,7 @@ from decision_persistence import persist_decision_evidence
 
 from service import DecisionService
 from models import DecisionResult, DecisionInput, SLAIntent, NestSubset, SLAEvaluateInput
+from nest_input_resolver import resolve_nest_for_evaluate
 from config import config
 from nasp_adapter_client import NASPAdapterClient
 from portal_backend_client import PortalBackendClient
@@ -283,7 +284,7 @@ async def evaluate_sla(sla_input: SLAEvaluateInput):
 
         decision_input = DecisionInput(
             intent=sla_input.intent,
-            nest=sla_input.nest,
+            nest=resolve_nest_for_evaluate(sla_input),
             context=merged_context if merged_context else None,
         )
 
