@@ -1,0 +1,634 @@
+{
+  "intent_id": "b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+  "service_type": "URLLC",
+  "sla_requirements": {
+    "latency": "10ms",
+    "throughput": "100Mbps",
+    "reliability": 0.99999,
+    "availability": 0.99999,
+    "jitter": "5ms",
+    "coverage": "Urban",
+    "device_density": 1000.0,
+    "original_text": "cirurgia remota",
+    "type": "URLLC",
+    "slice_type": "URLLC",
+    "sla_type": "URLLC",
+    "template_id": "urllc-template-001"
+  },
+  "ml_prediction": null,
+  "decision": "ACCEPT",
+  "justification": "",
+  "reason": "",
+  "blockchain_tx_hash": "0x4fa724be21e7c2a3f6ba31f53fa91764c991f570aadb5b8e4d63efbc86c994e9",
+  "tx_hash": "0x4fa724be21e7c2a3f6ba31f53fa91764c991f570aadb5b8e4d63efbc86c994e9",
+  "sla_hash": null,
+  "timestamp": null,
+  "status": "accepted",
+  "sla_id": null,
+  "nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+  "sem_csmf_status": "OK",
+  "ml_nsmf_status": "OK",
+  "bc_status": "COMMITTED",
+  "sla_agent_status": "OK",
+  "block_number": 5041611,
+  "reasoning": "decision_score=0.821 band=ACCEPT profile=URLLC (fonte=decision_score_mode). Fatores principais: feasibility_goodness, ran_prb_goodness, resource_headroom_goodness, risk_inverse, semantic_priority, transport_rtt_goodness. Domínios: RAN, Transporte, Core.",
+  "confidence": 0.0,
+  "domains": [
+    "RAN",
+    "Transporte",
+    "Core"
+  ],
+  "metadata": {
+    "raw_risk_score": 0.5892290014578603,
+    "slice_adjusted_risk_score": 0.5892290014578603,
+    "ran_prb_utilization_input": 0.0,
+    "transport_latency_input": 5.059139,
+    "transport_latency_ms_input": 5.059139,
+    "core_cpu_input": 0.00125024339518564,
+    "core_cpu_percent_input": 0.00125024339518564,
+    "core_memory_input": 0.42469781117281935,
+    "ran_aware_final_risk": 0.17724718500000003,
+    "prb_risk_alpha": 0.75,
+    "predicted_decision_class": null,
+    "confidence_score": 0.0,
+    "threshold_decision": "ACCEPT",
+    "final_decision": "ACCEPT",
+    "decision_divergence": false,
+    "decision_mode": "decision_score",
+    "thresholds_used": {
+      "accept_min": 0.55,
+      "reneg_min": 0.38
+    },
+    "top_factors": [],
+    "dominant_domain": "unknown",
+    "decision_explanation": "score_mode score=0.8212 band=ACCEPT source=decision_score_mode",
+    "decision_explanation_plain": "Score contínuo 0.82 (ACCEPT) via decision_score_mode.",
+    "final_decision_confidence": 0.0,
+    "decision_source": "decision_score_mode",
+    "policy_governed": false,
+    "decision_score": 0.821155691533352,
+    "decision_band": "ACCEPT",
+    "contributing_factors": [
+      {
+        "factor": "feasibility_goodness",
+        "weight": 0.22,
+        "input": 0.7015892696559771,
+        "contribution": 0.15434963932431497,
+        "direction": "up"
+      },
+      {
+        "factor": "ran_prb_goodness",
+        "weight": 0.22,
+        "input": 1.0,
+        "contribution": 0.22,
+        "direction": "up"
+      },
+      {
+        "factor": "resource_headroom_goodness",
+        "weight": 0.18,
+        "input": 0.9924075407698144,
+        "contribution": 0.17863335733856658,
+        "direction": "up"
+      },
+      {
+        "factor": "risk_inverse",
+        "weight": 0.28,
+        "input": 0.822752815,
+        "contribution": 0.2303707882,
+        "direction": "up"
+      },
+      {
+        "factor": "semantic_priority",
+        "weight": 0.12,
+        "input": 0.55,
+        "contribution": 0.066,
+        "direction": "up"
+      },
+      {
+        "factor": "transport_rtt_goodness",
+        "weight": 0.05,
+        "input": 0.5856561015561016,
+        "contribution": 0.02928280507780508,
+        "direction": "up"
+      }
+    ],
+    "reason_codes": [
+      "INPUT_DEGRADED"
+    ],
+    "normalized_inputs": {
+      "slice_profile": {
+        "slice": "URLLC",
+        "weights": {
+          "w_feas": 0.22,
+          "w_prb": 0.22,
+          "w_press": 0.18,
+          "w_risk": 0.28,
+          "w_sem": 0.12,
+          "w_transport": 0.05
+        },
+        "accept_min": 0.55,
+        "reneg_min": 0.38
+      },
+      "prb_goodness": {
+        "value": 1.0,
+        "raw_prb": 0.0,
+        "status": "present"
+      },
+      "risk_goodness": {
+        "value": 0.822752815,
+        "ran_aware_final_risk": 0.17724718500000003,
+        "status": "present"
+      },
+      "feasibility": {
+        "value": 0.7015892696559771,
+        "source": "sla_viability_derived"
+      },
+      "resource_pressure": {
+        "value": 0.007592459230185557,
+        "source": "resource_pressure_v1_derived",
+        "pressure_inverse_goodness": 0.9924075407698144
+      },
+      "semantic": {
+        "value": null,
+        "source": "missing"
+      },
+      "transport_rtt": {
+        "rtt_ms": 5.059139,
+        "source": "transport_latency_input",
+        "RTT_REF_ms": 12.21,
+        "goodness": 0.5856561015561016,
+        "weight": 0.05
+      }
+    },
+    "decision_policy_version": "v2_score_continuous",
+    "slice_profile_used": "URLLC",
+    "hard_prb_thresholds": {
+      "reject": 0.4,
+      "renegotiate": 0.25
+    },
+    "ml_risk_score": 0.5892290014578603,
+    "ml_confidence": 0.8215419970842794,
+    "ml_prediction_latency_ms": 166.98950715363026,
+    "decision_duration_ms": null,
+    "decision_snapshot": {
+      "sla_id": "b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "decision": "AC",
+      "slice_type": "URLLC",
+      "sla_compliance": 0.41,
+      "domains": {
+        "RAN": {
+          "latency_ms": 10.0,
+          "throughput_mbps": 100.0,
+          "reliability": 0.99999,
+          "status": "evaluated"
+        },
+        "Transport": {
+          "latency_ms": 10.0,
+          "bandwidth_mbps": null,
+          "jitter_ms": null,
+          "status": "evaluated"
+        },
+        "Core": {
+          "latency_ms": 10.0,
+          "throughput_mbps": null,
+          "availability": null,
+          "status": "evaluated"
+        }
+      },
+      "bottleneck_domain": "unknown",
+      "bottleneck_metric": null,
+      "timestamp_utc": "2026-05-30T20:16:40.729917+00:00",
+      "decision_id": "dec-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "ml_risk_score": 0.5892290014578603,
+      "raw_risk_score": 0.5892290014578603,
+      "slice_adjusted_risk_score": 0.5892290014578603,
+      "thresholds_used": {
+        "accept_min": 0.55,
+        "reneg_min": 0.38
+      },
+      "top_factors": [],
+      "decision_explanation": "score_mode score=0.8212 band=ACCEPT source=decision_score_mode",
+      "decision_explanation_plain": "Score contínuo 0.82 (ACCEPT) via decision_score_mode.",
+      "dominant_domain": "unknown",
+      "predicted_decision_class": null,
+      "classifier_confidence": 0.0,
+      "threshold_decision": "ACCEPT",
+      "final_decision": "ACCEPT",
+      "decision_divergence": false,
+      "decision_mode": "decision_score",
+      "ml_risk_level": "medium",
+      "ml_confidence": 0.0,
+      "ml_prediction_latency_ms": 166.98950715363026,
+      "decision_duration_ms": null,
+      "confidence": 0.0,
+      "reasoning": "decision_score=0.821 band=ACCEPT profile=URLLC (fonte=decision_score_mode). Fatores principais: feasibility_goodness, ran_prb_goodness, resource_headroom_goodness, risk_inverse, semantic_priority, transport_rtt_goodness. Domínios: RAN, Transporte, Core.",
+      "decision_score": 0.821155691533352,
+      "decision_band": "ACCEPT",
+      "contributing_factors": [
+        {
+          "factor": "feasibility_goodness",
+          "weight": 0.22,
+          "input": 0.7015892696559771,
+          "contribution": 0.15434963932431497,
+          "direction": "up"
+        },
+        {
+          "factor": "ran_prb_goodness",
+          "weight": 0.22,
+          "input": 1.0,
+          "contribution": 0.22,
+          "direction": "up"
+        },
+        {
+          "factor": "resource_headroom_goodness",
+          "weight": 0.18,
+          "input": 0.9924075407698144,
+          "contribution": 0.17863335733856658,
+          "direction": "up"
+        },
+        {
+          "factor": "risk_inverse",
+          "weight": 0.28,
+          "input": 0.822752815,
+          "contribution": 0.2303707882,
+          "direction": "up"
+        },
+        {
+          "factor": "semantic_priority",
+          "weight": 0.12,
+          "input": 0.55,
+          "contribution": 0.066,
+          "direction": "up"
+        },
+        {
+          "factor": "transport_rtt_goodness",
+          "weight": 0.05,
+          "input": 0.5856561015561016,
+          "contribution": 0.02928280507780508,
+          "direction": "up"
+        }
+      ],
+      "reason_codes": [
+        "INPUT_DEGRADED"
+      ],
+      "normalized_inputs": {
+        "slice_profile": {
+          "slice": "URLLC",
+          "weights": {
+            "w_feas": 0.22,
+            "w_prb": 0.22,
+            "w_press": 0.18,
+            "w_risk": 0.28,
+            "w_sem": 0.12,
+            "w_transport": 0.05
+          },
+          "accept_min": 0.55,
+          "reneg_min": 0.38
+        },
+        "prb_goodness": {
+          "value": 1.0,
+          "raw_prb": 0.0,
+          "status": "present"
+        },
+        "risk_goodness": {
+          "value": 0.822752815,
+          "ran_aware_final_risk": 0.17724718500000003,
+          "status": "present"
+        },
+        "feasibility": {
+          "value": 0.7015892696559771,
+          "source": "sla_viability_derived"
+        },
+        "resource_pressure": {
+          "value": 0.007592459230185557,
+          "source": "resource_pressure_v1_derived",
+          "pressure_inverse_goodness": 0.9924075407698144
+        },
+        "semantic": {
+          "value": null,
+          "source": "missing"
+        },
+        "transport_rtt": {
+          "rtt_ms": 5.059139,
+          "source": "transport_latency_input",
+          "RTT_REF_ms": 12.21,
+          "goodness": 0.5856561015561016,
+          "weight": 0.05
+        }
+      },
+      "decision_policy_version": "v2_score_continuous",
+      "slice_profile_used": "URLLC"
+    },
+    "system_xai_explanation": {
+      "decision": "AC",
+      "cause": "ALL_DOMAINS_COMPLIANT",
+      "explanation": "Todos os domínios (RAN, Transport, Core) atendem os requisitos do SLA. Compliance: 41.00%. Sistema viável para slice tipo URLLC. [decision_score=0.821] Fatores que mais elevaram o score: risk_inverse, ran_prb_goodness, resource_headroom_goodness, feasibility_goodness.",
+      "system_aware": true,
+      "domains_evaluated": [
+        "RAN",
+        "Transport",
+        "Core"
+      ]
+    },
+    "decision_engine_orchestration_authority": true,
+    "orchestration_required": true,
+    "orchestration_decision_source": "decision-engine",
+    "orchestration_lifecycle_state": "ORCHESTRATION_REQUESTED",
+    "orchestration_intent": {
+      "nsiId": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "serviceProfile": "URLLC",
+      "service_type": "URLLC",
+      "tenant_id": "trisla-5m1-016493a2",
+      "sla_requirements": {
+        "latency": "10ms",
+        "throughput": "100Mbps",
+        "reliability": 0.99999,
+        "availability": 0.99999,
+        "jitter": "5ms",
+        "coverage": "Urban",
+        "device_density": 1000.0
+      },
+      "sla": {
+        "latency": "10ms",
+        "throughput": "100Mbps",
+        "reliability": 0.99999,
+        "availability": 0.99999,
+        "jitter": "5ms",
+        "coverage": "Urban",
+        "device_density": 1000.0
+      },
+      "source": "decision-engine-orchestration-authority",
+      "intent_id": "b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec"
+    },
+    "risk_score": 0.5892290014578603,
+    "policy_context": {
+      "decision_mode": "decision_score",
+      "threshold_decision": "ACCEPT",
+      "final_decision": "ACCEPT",
+      "policy_governed": false
+    },
+    "lifecycle_event": {
+      "lifecycle_state": "ORCHESTRATION_REQUESTED",
+      "lifecycle_event_type": "SLA_DECISION_ACCEPT",
+      "lifecycle_transition_reason": "decision_accept;mode=decision_score;reasons=INPUT_DEGRADED",
+      "lifecycle_authority": "decision-engine",
+      "lifecycle_authority_version": "1.0",
+      "lifecycle_event_timestamp": "2026-05-30T20:16:40.731797+00:00",
+      "intent_id": "b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "tenant_id": "trisla-5m1-016493a2",
+      "service_type": "URLLC",
+      "decision": "AC",
+      "decision_mode": "decision_score",
+      "decision_score": 0.821155691533352,
+      "risk_score": 0.5892290014578603,
+      "reason_codes": [
+        "INPUT_DEGRADED"
+      ]
+    },
+    "governance_event": {
+      "event_version": "1.0",
+      "event_type": "SLA_LIFECYCLE_TRANSITION",
+      "event_state": "ORCHESTRATION_REQUESTED",
+      "event_action": "SLA_DECISION_ACCEPT",
+      "event_authority": "decision-engine",
+      "event_timestamp": "2026-05-30T20:16:40.731797+00:00",
+      "intent_id": "b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "tenant_id": "trisla-5m1-016493a2",
+      "service_type": "URLLC",
+      "decision": "AC",
+      "decision_score": 0.821155691533352,
+      "risk_score": 0.5892290014578603,
+      "reason_codes": [
+        "INPUT_DEGRADED"
+      ],
+      "transition_reason": "decision_accept;mode=decision_score;reasons=INPUT_DEGRADED",
+      "governance_event_id": "ge_4716c6b7475817684c5a2c73852fb2ea"
+    },
+    "lifecycle_authority": "decision-engine",
+    "lifecycle_authority_version": "1.0",
+    "governance_authority": "decision-engine",
+    "decision_engine_lifecycle_authority": true,
+    "decision_engine_governance_authority": true,
+    "canonical_sla": {
+      "slice_service_type": "URLLC",
+      "sst": null,
+      "sd": null,
+      "service_requirements": {
+        "latency_ms": 10.0,
+        "throughput_mbps": 100.0,
+        "availability": 0.99999,
+        "device_density": 1000,
+        "mobility_support": null
+      },
+      "semantic_context": {
+        "service_description": null,
+        "business_criticality": null,
+        "security_profile": null,
+        "service_continuity": null,
+        "edge_processing": null
+      },
+      "legacy_input": {
+        "template_id": null,
+        "form_values": {
+          "latency": "10ms",
+          "throughput": "100Mbps",
+          "reliability": 0.99999,
+          "availability": 0.99999,
+          "jitter": "5ms",
+          "coverage": "Urban",
+          "device_density": 1000.0
+        }
+      }
+    },
+    "domain_actions": {
+      "domain_actions_version": "v1",
+      "slice_type": "urllc",
+      "decision": "ACCEPT",
+      "ran_actions": {
+        "interface": "RAN-I1",
+        "policy": "latency_priority",
+        "evidence": {
+          "prb_utilization": 0.0,
+          "latency": 5.059139,
+          "latency_ms": 5.059139
+        }
+      },
+      "tn_actions": {
+        "interface": "TN-I1",
+        "policy": "low_latency_path",
+        "evidence": {
+          "rtt": 5.059139,
+          "jitter": 0.6064405,
+          "rtt_ms": 5.059139,
+          "jitter_ms": 0.6064405
+        }
+      },
+      "cn_actions": {
+        "interface": "CN-I1",
+        "policy": "priority_control_plane",
+        "evidence": {
+          "cpu": 0.00125024339518564,
+          "memory": 0.00856081555130791,
+          "cpu_utilization": 0.00125024339518564,
+          "memory_bytes": 0.00856081555130791
+        }
+      }
+    },
+    "nasp_orchestration_attempted": true,
+    "nasp_orchestration_status": "SUCCESS",
+    "nasp_latency_ms": 1911.5770671050996,
+    "nasp_latency_available": true,
+    "nasp_orchestration_response": {
+      "http_status": 200,
+      "success": true,
+      "nsi_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec"
+    },
+    "nasp_orchestration_requested_at": "2026-05-30T20:16:40.745054+00:00",
+    "telemetry_snapshot": {
+      "execution_id": "4ac8c92f-ddae-4634-9268-f2e0cfef9e1a",
+      "timestamp": "2026-05-30T20:16:44.448939+00:00",
+      "ran": {
+        "prb_utilization": 0.0,
+        "latency": 5.059139,
+        "latency_ms": 5.059139
+      },
+      "transport": {
+        "rtt": 5.0497309999999995,
+        "jitter": 0.6212121666666669,
+        "rtt_ms": 5.0497309999999995,
+        "jitter_ms": 0.6212121666666669
+      },
+      "core": {
+        "cpu": 0.001246047374301725,
+        "memory": 0.00856081555130791,
+        "cpu_utilization": 0.001246047374301725,
+        "memory_bytes": 0.00856081555130791
+      },
+      "telemetry_contract_version": "v2"
+    },
+    "execution_id": "4ac8c92f-ddae-4634-9268-f2e0cfef9e1a",
+    "telemetry_gaps": [],
+    "telemetry_complete": true,
+    "sla_metrics": {
+      "sla_satisfaction": 1,
+      "sla_violation": 0,
+      "resource_pressure": 0.061251019428131756,
+      "resource_pressure_v1": 0.007578334642122904,
+      "resource_pressure_v2": 0.061251019428131756,
+      "sla_policy_version": "v2",
+      "admission_confidence": 0.0,
+      "feasibility_score": 0.674759989557004
+    },
+    "sla_policy_version": "v2",
+    "module_latencies_ms": {
+      "semantic_parsing_ms": 36.0828,
+      "sem_csmf_internal_ms": 36.0828,
+      "sem_pipeline_to_decision_ms": 366.9747179374099,
+      "admission_total_ms": 433.1930361222476,
+      "ml_nsmf_predict_ms": 166.98950715363026,
+      "nasp_orchestration_ms": 1911.5770671050996,
+      "blockchain_register_ms": 1791.0299520008266,
+      "sla_agent_ingest_http_ms": 35.19890201278031
+    },
+    "sla_agent_ingest_latency_ms": 35.19890201278031,
+    "sla_agent_ingest": {
+      "status": "OK",
+      "http_status": 200,
+      "pipeline_ingested": true,
+      "slo_evaluation_executed": false,
+      "monitoring_note": "HTTP_pipeline_ingest_only_kafka_offline"
+    },
+    "sla_lifecycle": {
+      "SUBMITTED": "2026-05-30T20:16:40.249745+00:00",
+      "DECIDED": "2026-05-30T20:16:44.448939+00:00",
+      "DECIDED_ACCEPT": "2026-05-30T20:16:44.448939+00:00",
+      "ORCHESTRATION_REQUESTED": "2026-05-30T20:16:40.745054+00:00",
+      "ORCHESTRATED": "2026-05-30T20:16:44.511992+00:00",
+      "BLOCKCHAIN_COMMITTED": "2026-05-30T20:16:44.511992+00:00",
+      "BLOCKCHAIN_REGISTERED": "2026-05-30T20:16:44.511992+00:00",
+      "SLA_AGENT_REQUESTED": "2026-05-30T20:16:44.511992+00:00",
+      "PIPELINE_INGESTED": "2026-05-30T20:16:44.547272+00:00",
+      "MONITORED": "2026-05-30T20:16:44.547272+00:00",
+      "COMPLETED": "2026-05-30T20:16:44.547309+00:00"
+    },
+    "lifecycle_state": "COMPLETED",
+    "de_initial_lifecycle_state": "ORCHESTRATION_REQUESTED",
+    "lifecycle_state_source": "decision_engine_authority_plus_portal_composite",
+    "lifecycle_pipeline_state": "COMPLETED",
+    "lifecycle_pipeline_state_source": "portal_backend_pipeline_composite",
+    "lifecycle_authority_source": "decision-engine",
+    "lifecycle_initial_state": "ORCHESTRATION_REQUESTED",
+    "lifecycle_event_type": "SLA_DECISION_ACCEPT",
+    "lifecycle_transition_reason": "decision_accept;mode=decision_score;reasons=INPUT_DEGRADED",
+    "portal_lifecycle_role": "relay",
+    "governance_authority_source": "decision-engine",
+    "governance_event_id": "ge_4716c6b7475817684c5a2c73852fb2ea",
+    "governance_event_state": "ORCHESTRATION_REQUESTED",
+    "governance_event_type": "SLA_LIFECYCLE_TRANSITION",
+    "portal_governance_role": "relay",
+    "governance_registration_status": "REGISTERED",
+    "governance_registration_fallback": false,
+    "governance_registration_authority": "bc-nssmf",
+    "governance_registration_tx_hash": "0x4fa724be21e7c2a3f6ba31f53fa91764c991f570aadb5b8e4d63efbc86c994e9",
+    "governance_registration_block_number": 5041611,
+    "temporal_intent_trace": {
+      "temporal_trace_version": "p0",
+      "intent_id": "b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "execution_id": "4ac8c92f-ddae-4634-9268-f2e0cfef9e1a",
+      "timestamps_utc": {
+        "submitted": "2026-05-30T20:16:40.249745+00:00",
+        "telemetry_pre_decision": null,
+        "decision_recorded": "2026-05-30T20:16:44.448939+00:00",
+        "telemetry_post_snapshot": "2026-05-30T20:16:44.448939+00:00"
+      },
+      "lifecycle_state": "COMPLETED",
+      "sla_lifecycle": {
+        "SUBMITTED": "2026-05-30T20:16:40.249745+00:00",
+        "DECIDED": "2026-05-30T20:16:44.448939+00:00",
+        "DECIDED_ACCEPT": "2026-05-30T20:16:44.448939+00:00",
+        "ORCHESTRATION_REQUESTED": "2026-05-30T20:16:40.745054+00:00",
+        "ORCHESTRATED": "2026-05-30T20:16:44.511992+00:00",
+        "BLOCKCHAIN_COMMITTED": "2026-05-30T20:16:44.511992+00:00",
+        "BLOCKCHAIN_REGISTERED": "2026-05-30T20:16:44.511992+00:00",
+        "SLA_AGENT_REQUESTED": "2026-05-30T20:16:44.511992+00:00",
+        "PIPELINE_INGESTED": "2026-05-30T20:16:44.547272+00:00",
+        "MONITORED": "2026-05-30T20:16:44.547272+00:00",
+        "COMPLETED": "2026-05-30T20:16:44.547309+00:00"
+      },
+      "telemetry_contract_version": "v2"
+    },
+    "telemetry_version": "v2",
+    "telemetry_units": {
+      "ran.prb_utilization": "%",
+      "ran.latency": "ms",
+      "ran.latency_ms": "ms",
+      "transport.rtt": "ms",
+      "transport.rtt_ms": "ms",
+      "transport.jitter": "ms",
+      "transport.jitter_ms": "ms",
+      "core.cpu": "legacy_aggregate",
+      "core.cpu_utilization": "%",
+      "core.memory": "bytes",
+      "core.memory_bytes": "bytes",
+      "core.memory_utilization": "%",
+      "core.memory_ratio": "ratio_0_1"
+    }
+  },
+  "semantic_parsing_latency_ms": 36.0828,
+  "sem_csmf_internal_latency_ms": 36.0828,
+  "decision_duration_ms": 366.9747179374099,
+  "admission_time_total_ms": 433.1930361222476,
+  "blockchain_transaction_latency_ms": 1791.0299520008266,
+  "lifecycle_state": "COMPLETED",
+  "orchestration_status": "SUCCESS",
+  "blockchain_status": "BLOCKCHAIN_REGISTERED",
+  "failure_reason": null,
+  "failure_code": null,
+  "orchestration_reference": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+  "telemetry_status": "COMPLETE",
+  "telemetry_complete": true
+}

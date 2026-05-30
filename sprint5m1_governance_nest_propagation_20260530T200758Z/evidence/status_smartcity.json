@@ -1,0 +1,9 @@
+{
+  "sla_id": "6ea335f0-0adc-44f1-a03c-420338e066ea",
+  "status": "ACTIVE",
+  "tenant_id": "trisla-5m1-9b46a5d6",
+  "intent_id": "6ea335f0-0adc-44f1-a03c-420338e066ea",
+  "nest_id": "nest-6ea335f0-0adc-44f1-a03c-420338e066ea",
+  "created_at": "2026-05-30T20:17:01",
+  "updated_at": null
+}

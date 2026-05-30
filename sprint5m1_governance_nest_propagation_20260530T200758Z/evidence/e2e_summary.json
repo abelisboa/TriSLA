@@ -1,0 +1,54 @@
+{
+  "results": {
+    "urllc": {
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0x4fa724be21e7c2a3f6ba31f53fa91764c991f570aadb5b8e4d63efbc86c994e9",
+      "nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "governance_event_nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec",
+      "governance_event_id": "ge_4716c6b7475817684c5a2c73852fb2ea",
+      "lifecycle_state": "COMPLETED",
+      "decision_score": 0.821155691533352,
+      "match": true,
+      "status_nest_id": "nest-b61b5f98-5216-42f7-95b5-5c3d1ddfccec"
+    },
+    "embb": {
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0x3e7c6c69cea3db718c754b62013a3bda129ed269a100a575bf189f510ee6ab48",
+      "nest_id": "nest-5bf7eb0d-2819-4f4e-9e30-ee7153ac00d1",
+      "governance_event_nest_id": "nest-5bf7eb0d-2819-4f4e-9e30-ee7153ac00d1",
+      "governance_event_id": "ge_60e37c64b93e9085c0962709514b8d75",
+      "lifecycle_state": "COMPLETED",
+      "decision_score": 0.8104620753339022,
+      "match": true,
+      "status_nest_id": "nest-5bf7eb0d-2819-4f4e-9e30-ee7153ac00d1"
+    },
+    "mmtc": {
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0x8554103d2e7a04e37d4289c311d327ec2f9c68a2d16f40b84d1459275bf2afb8",
+      "nest_id": "nest-f0941f00-9e8c-4b9b-b86a-c7367e751156",
+      "governance_event_nest_id": "nest-f0941f00-9e8c-4b9b-b86a-c7367e751156",
+      "governance_event_id": "ge_fd4a48dc04e5a0166d72b588356b9b68",
+      "lifecycle_state": "COMPLETED",
+      "decision_score": 0.7912091706634606,
+      "match": true,
+      "status_nest_id": "nest-f0941f00-9e8c-4b9b-b86a-c7367e751156"
+    },
+    "smartcity": {
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0xc38fab608a682364424d7d0bf06516362973622e6fea0767fc9740c433cbdb35",
+      "nest_id": "nest-6ea335f0-0adc-44f1-a03c-420338e066ea",
+      "governance_event_nest_id": "nest-6ea335f0-0adc-44f1-a03c-420338e066ea",
+      "governance_event_id": "ge_21029828d00afe4d68ccd6ece8d1be58",
+      "lifecycle_state": "COMPLETED",
+      "decision_score": 0.8123766113995692,
+      "match": true,
+      "status_nest_id": "nest-6ea335f0-0adc-44f1-a03c-420338e066ea"
+    }
+  },
+  "failures": [],
+  "pass": true
+}
