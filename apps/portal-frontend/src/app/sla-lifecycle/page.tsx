@@ -8,6 +8,8 @@ import { formatValue } from "../../lib/format";
 import { AWAITING_DATA, operatorFieldLabel } from "../../lib/operatorLabels";
 import type { SlaRuntimeStatusResponse } from "../../lib/runtimeSupervision";
 import { LifecycleRuntimeSnapshotPanel } from "../../components/lifecycle/LifecycleRuntimeSnapshotPanel";
+import { RuntimeAssurancePanel } from "../../components/lifecycle/RuntimeAssurancePanel";
+import { parseRuntimeAssurance } from "../../lib/runtimeAssurance";
 
  type Status = "idle" | "loading" | "ready" | "error";
 
@@ -303,6 +305,7 @@ function SlaLifecycleContent() {
         loading={statusLoad === "loading" && Boolean(intentQuery.trim())}
         error={statusError}
       />
+      <RuntimeAssurancePanel assurance={parseRuntimeAssurance(statusData?.runtime_assurance)} />
     </section>
   );
 }
