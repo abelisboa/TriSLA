@@ -1,0 +1,34 @@
+STEP 1/14: FROM python:3.10-slim
+STEP 2/14: WORKDIR /app
+--> Using cache 0b98f4b7dd9a2cfd00fb92a55f07c2125a439f22d01eb31e1d4c07f3deda7814
+--> 0b98f4b7dd9a
+STEP 3/14: RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
+--> Using cache 7be642818c5709c46c10050afccaea62b77dc01172d350e0f1c1e4d789779bfe
+--> 7be642818c57
+STEP 4/14: COPY requirements.txt .
+--> Using cache 882b1ee45ea4df2d6accd228c44bd2d82e403a1d6fba0b3a3d64d90b3793ed7b
+--> 882b1ee45ea4
+STEP 5/14: RUN pip install --no-cache-dir -r requirements.txt
+--> Using cache b548cb54f6748e2e7aac89e4b2c5302b15b131e1b5793c0b2dc1592047db6784
+--> b548cb54f674
+STEP 6/14: COPY src/ ./src/
+--> e05e0f852770
+STEP 7/14: RUN python -c "from pathlib import Path; main_py = Path('/app/src/main.py'); content = main_py.read_text(encoding='utf-8'); required = '@app.post(\"/api/v1/ingest/pipeline-event\")'; assert required in content, 'Build sanity check failed: ingest route not found'; "
+--> ebba250388bc
+STEP 8/14: ENV PYTHONPATH=/app
+--> 452ffa930073
+STEP 9/14: ENV PORT=8084
+--> d61eab608346
+STEP 10/14: ENV KAFKA_ENABLED=false
+--> ea1e7d2c16b7
+STEP 11/14: ENV KAFKA_BROKERS=""
+--> ef92d9bbd765
+STEP 12/14: HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD python -c "import requests; requests.get('http://localhost:8084/health')"
+--> e9d64422d25a
+STEP 13/14: EXPOSE 8084
+--> 2e2bd5fd2026
+STEP 14/14: CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8084"]
+COMMIT ghcr.io/abelisboa/trisla-sla-agent-layer:20260530T220734Z
+--> 9a491a636be5
+Successfully tagged ghcr.io/abelisboa/trisla-sla-agent-layer:20260530T220734Z
+9a491a636be516f7d357ee7cfdffc42e2ef2705cc59d5b58c22794a835ef74a6

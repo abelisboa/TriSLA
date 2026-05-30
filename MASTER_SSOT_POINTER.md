@@ -557,6 +557,32 @@
 
 ---
 
+## SPRINT_5M4_RUNTIME_CLOSED_LOOP_ASSURANCE_BASELINE (official — SLA-Agent closed-loop observation)
+
+| Field | Value |
+|-------|-------|
+| **Role** | Official runtime baseline after Sprint 5M4 runtime closed-loop assurance (observation only) |
+| **Baseline name** | `SPRINT_5M4_RUNTIME_CLOSED_LOOP_ASSURANCE_BASELINE` |
+| **Sprint** | SPRINT 5M4 — Runtime Closed-Loop Assurance |
+| **Audit dependency** | `sprint5m_runtime_assurance_completion_audit_20260530T200010Z/` |
+| **Implementation pack** | `sprint5m4_runtime_closed_loop_assurance_20260530T220718Z/` |
+| **Commit** | `e8aaed3e1be6df5aa061c66f7bfcccf6d3cc6ead` |
+| **Prior SLA-Agent digest (rollback)** | `sha256:3dad23e25b30c6dced2f6ec8cc979da377b4cb32e6b3d67241f435bc95e966a1` |
+| **SLA-Agent digest (runtime SSOT)** | `sha256:bbad9901e9023f3cd1f027f599ee735edfd17933626721af0de0bf0cc0cf3d4d` |
+| **Prior portal-backend digest (rollback)** | `sha256:cab764f7c1ccf2c069145b366a81fa797ebff4eb5e840988af21ee2e28e7aa9e` |
+| **Portal Backend digest (runtime SSOT)** | `sha256:2fd21a28c8576bf8eef39783477d24fba8b4b2f86de829aa7d7f271e2bb2a7b0` |
+| **Prior portal-frontend digest (rollback)** | `sha256:7ef311fcd8f50601435ddd9bf6489be55057799919809accf86a5c445c4fc286` |
+| **Portal Frontend digest (runtime SSOT)** | `sha256:1179359a27e573d4ce59e3947946cb4a1775c97fb826596e9426b8fd9c5793b7` |
+| **Build tag** | `20260530T220734Z` |
+| **Fix scope** | SLA-Agent `runtime_slo_evaluator.py`; pipeline ingest `runtime_assurance=true`; additive RUNTIME_ASSURANCE governance events; portal status + Lifecycle UI panel |
+| **Runtime validation** | PNL 4/4: ACCEPT+COMMITTED+tx_hash; runtime_assurance populated submit+status; no autonomous remediation |
+| **Unchanged** | DE score formula, BC contracts, SEM semantic fill, telemetry contract v2, Prometheus |
+| **Status** | CLOSED-LOOP OBSERVATION OPERATIONAL · NO AUTONOMOUS REMEDIATION · PRODUCTION BASELINE |
+
+**Usage:** SLA-Agent MUST cite digest `bbad9901e902...`; portal-backend `2fd21a28c857...`; portal-frontend `1179359a27e5...` unless superseded. Supersedes SLA-Agent digest in `SPRINT_3_SLA_AGENT_DEPLOY_BASELINE` and portal digests in `SPRINT_5M2_LIFECYCLE_TELEMETRY_SNAPSHOT_ALIGNMENT_BASELINE`.
+
+---
+
 ## Freeze policy
 
 1. Frozen CSV, JSONL, and figure bytes are **immutable** after registration.
