@@ -1,0 +1,33 @@
+{
+  "intent_id": "10d4c1d9-7b2a-4f69-b4d2-7d6ad659cdfb",
+  "decision": "ACCEPT",
+  "bc_status": "COMMITTED",
+  "tx_hash": "0x3a54c70fcdaa87f6eae55a301e39c317e31da312cccb09782b7ff26d2c24fad2",
+  "nest_id": "nest-10d4c1d9-7b2a-4f69-b4d2-7d6ad659cdfb",
+  "governance_event_id": "ge_a0bdee05b7ca3ed53aa700bd2ac6b38e",
+  "governance_event_nest_id": "nest-10d4c1d9-7b2a-4f69-b4d2-7d6ad659cdfb",
+  "submit_telemetry_populated": true,
+  "status_telemetry_populated": true,
+  "status_telemetry_snapshot": {
+    "execution_id": "9751b49c-e55c-49c9-ae0b-400bc12ce415",
+    "timestamp": "2026-05-30T21:53:53.924325+00:00",
+    "ran": {
+      "prb_utilization": 0.0,
+      "latency": 5.004003,
+      "latency_ms": 5.004003
+    },
+    "transport": {
+      "rtt": 5.004003,
+      "jitter": 0.7588524999999997,
+      "rtt_ms": 5.004003,
+      "jitter_ms": 0.7588524999999997
+    },
+    "core": {
+      "cpu": 0.0011510288752709932,
+      "memory": 0.008652578445313303,
+      "cpu_utilization": 0.0011510288752709932,
+      "memory_bytes": 0.008652578445313303
+    },
+    "telemetry_contract_version": "v2"
+  }
+}

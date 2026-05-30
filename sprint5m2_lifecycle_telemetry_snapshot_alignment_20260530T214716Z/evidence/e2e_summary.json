@@ -1,0 +1,142 @@
+{
+  "results": {
+    "urllc": {
+      "intent_id": "8c32d654-028a-4833-b4b0-8bdc5337a973",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0xe0c69f535d087ebb403ddb48b461796f224d0510d849be979bcc074974fa5b88",
+      "nest_id": "nest-8c32d654-028a-4833-b4b0-8bdc5337a973",
+      "governance_event_id": "ge_809e8369c730e409d0a0711f8f8c045a",
+      "governance_event_nest_id": "nest-8c32d654-028a-4833-b4b0-8bdc5337a973",
+      "submit_telemetry_populated": true,
+      "status_telemetry_populated": true,
+      "status_telemetry_snapshot": {
+        "execution_id": "e757156b-433e-4cb5-9f7c-82468fd1e392",
+        "timestamp": "2026-05-30T21:53:35.852767+00:00",
+        "ran": {
+          "prb_utilization": 0.0,
+          "latency": 6.162709,
+          "latency_ms": 6.162709
+        },
+        "transport": {
+          "rtt": 5.118901999999999,
+          "jitter": 1.0164305000000002,
+          "rtt_ms": 5.118901999999999,
+          "jitter_ms": 1.0164305000000002
+        },
+        "core": {
+          "cpu": 0.001353804800764164,
+          "memory": 0.008568912277249562,
+          "cpu_utilization": 0.001353804800764164,
+          "memory_bytes": 0.008568912277249562
+        },
+        "telemetry_contract_version": "v2"
+      },
+      "pass": true
+    },
+    "embb": {
+      "intent_id": "9f770b0a-64ac-4e66-b7b2-44acb044b3e7",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0xe50b5b6f21bf037968500b3245fa7396cc4936ac00c7604c54f767619f7057c4",
+      "nest_id": "nest-9f770b0a-64ac-4e66-b7b2-44acb044b3e7",
+      "governance_event_id": "ge_22352718fa64a3240ed28f77d9cbb302",
+      "governance_event_nest_id": "nest-9f770b0a-64ac-4e66-b7b2-44acb044b3e7",
+      "submit_telemetry_populated": true,
+      "status_telemetry_populated": true,
+      "status_telemetry_snapshot": {
+        "execution_id": "628884ef-d44c-4073-b721-d152d02b389d",
+        "timestamp": "2026-05-30T21:53:41.742806+00:00",
+        "ran": {
+          "prb_utilization": 0.0,
+          "latency": 5.118902,
+          "latency_ms": 5.118902
+        },
+        "transport": {
+          "rtt": 5.118901999999999,
+          "jitter": 1.0164305000000002,
+          "rtt_ms": 5.118901999999999,
+          "jitter_ms": 1.0164305000000002
+        },
+        "core": {
+          "cpu": 0.0013334036013268426,
+          "memory": 0.008568912277249562,
+          "cpu_utilization": 0.0013334036013268426,
+          "memory_bytes": 0.008568912277249562
+        },
+        "telemetry_contract_version": "v2"
+      },
+      "pass": true
+    },
+    "mmtc": {
+      "intent_id": "e6466d27-6ebe-4fac-931b-135a9b3da43c",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0xd94122cbac2fc0856a2a23cceeeb202f01d1dbfcae6c6fe939790f5471a19382",
+      "nest_id": "nest-e6466d27-6ebe-4fac-931b-135a9b3da43c",
+      "governance_event_id": "ge_7d4f0d898e2f97fdb6f27f03ef8989b7",
+      "governance_event_nest_id": "nest-e6466d27-6ebe-4fac-931b-135a9b3da43c",
+      "submit_telemetry_populated": true,
+      "status_telemetry_populated": true,
+      "status_telemetry_snapshot": {
+        "execution_id": "a595095c-08b7-4656-9ce7-06996bc92cf4",
+        "timestamp": "2026-05-30T21:53:47.796507+00:00",
+        "ran": {
+          "prb_utilization": 0.0,
+          "latency": 5.118902,
+          "latency_ms": 5.118902
+        },
+        "transport": {
+          "rtt": 5.004003,
+          "jitter": 0.7588524999999997,
+          "rtt_ms": 5.004003,
+          "jitter_ms": 0.7588524999999997
+        },
+        "core": {
+          "cpu": 0.0011927723500693606,
+          "memory": 0.008652578445313303,
+          "cpu_utilization": 0.0011927723500693606,
+          "memory_bytes": 0.008652578445313303
+        },
+        "telemetry_contract_version": "v2"
+      },
+      "pass": true
+    },
+    "smartcity": {
+      "intent_id": "10d4c1d9-7b2a-4f69-b4d2-7d6ad659cdfb",
+      "decision": "ACCEPT",
+      "bc_status": "COMMITTED",
+      "tx_hash": "0x3a54c70fcdaa87f6eae55a301e39c317e31da312cccb09782b7ff26d2c24fad2",
+      "nest_id": "nest-10d4c1d9-7b2a-4f69-b4d2-7d6ad659cdfb",
+      "governance_event_id": "ge_a0bdee05b7ca3ed53aa700bd2ac6b38e",
+      "governance_event_nest_id": "nest-10d4c1d9-7b2a-4f69-b4d2-7d6ad659cdfb",
+      "submit_telemetry_populated": true,
+      "status_telemetry_populated": true,
+      "status_telemetry_snapshot": {
+        "execution_id": "9751b49c-e55c-49c9-ae0b-400bc12ce415",
+        "timestamp": "2026-05-30T21:53:53.924325+00:00",
+        "ran": {
+          "prb_utilization": 0.0,
+          "latency": 5.004003,
+          "latency_ms": 5.004003
+        },
+        "transport": {
+          "rtt": 5.004003,
+          "jitter": 0.7588524999999997,
+          "rtt_ms": 5.004003,
+          "jitter_ms": 0.7588524999999997
+        },
+        "core": {
+          "cpu": 0.0011510288752709932,
+          "memory": 0.008652578445313303,
+          "cpu_utilization": 0.0011510288752709932,
+          "memory_bytes": 0.008652578445313303
+        },
+        "telemetry_contract_version": "v2"
+      },
+      "pass": true
+    }
+  },
+  "failures": [],
+  "pass": true
+}
