@@ -5,9 +5,10 @@ import { FieldList } from "../submit-payload/FieldList";
 type Props = {
   interpret: InterpretResponse;
   inputText: string;
+  sessionTenantId?: string | null;
 };
 
-export function InterpretPreviewPanel({ interpret, inputText }: Props) {
+export function InterpretPreviewPanel({ interpret, inputText, sessionTenantId }: Props) {
   const sla = interpret.sla_requirements;
   const tech = interpret.technical_parameters;
 
@@ -21,7 +22,6 @@ export function InterpretPreviewPanel({ interpret, inputText }: Props) {
           { label: operatorFieldLabel("nest_id"), value: interpret.nest_id },
           { label: operatorFieldLabel("service_type"), value: interpret.service_type },
           { label: operatorFieldLabel("slice_type"), value: interpret.slice_type },
-          { label: operatorFieldLabel("tenant_id"), value: interpret.tenant_id },
           { label: "Status", value: interpret.status },
           { label: "Message", value: interpret.message },
           { label: operatorFieldLabel("sla_id"), value: interpret.sla_id },
@@ -36,8 +36,19 @@ export function InterpretPreviewPanel({ interpret, inputText }: Props) {
         ]}
       />
       <details className="trisla-details">
-        <summary>Technical details — full API response</summary>
-        <pre className="trisla-pre-secondary">{JSON.stringify(interpret, null, 2)}</pre>
+        <summary>Advanced details — session trace</summary>
+        <FieldList
+          fields={[
+            {
+              label: operatorFieldLabel("tenant_id"),
+              value: interpret.tenant_id ?? sessionTenantId,
+            },
+          ]}
+        />
+        <details className="trisla-details trisla-details-secondary">
+          <summary>Full API response</summary>
+          <pre className="trisla-pre-secondary">{JSON.stringify(interpret, null, 2)}</pre>
+        </details>
       </details>
     </section>
   );
