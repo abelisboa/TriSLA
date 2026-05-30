@@ -27,8 +27,8 @@ const SECTIONS: MenuSection[] = [
     id: "creation",
     title: "SLA Creation",
     items: [
-      { href: "/pnl", label: "Criar SLA PNL" },
-      { href: "/template", label: "Criar SLA Template" },
+      { href: "/pnl", label: "Natural Language SLA" },
+      { href: "/template", label: "Structured SLA" },
     ],
   },
   {

@@ -4,10 +4,14 @@ import { useEffect, useState } from "react";
 import { apiRequest, formatApiError } from "../../lib/api";
 import {
   formatNaspModuleStatus,
+  formatNaspModuleTechnical,
   healthFieldDisplay,
   inferNaspReachability,
 } from "../../lib/administrationDisplay";
-import { PLATFORM_SERVICE_LABELS } from "../../lib/operatorLabels";
+import {
+  formatNaspModuleLabel,
+  PLATFORM_SERVICE_LABELS,
+} from "../../lib/operatorLabels";
 import { StatusCard } from "../../components/common/StatusCard";
 
 type HealthV1 = {
@@ -22,6 +26,14 @@ type NaspDiagnostics = Record<string, unknown>;
 function normalizeError(err: unknown): string {
   return formatApiError(err);
 }
+
+const PLATFORM_SERVICE_ENDPOINTS = [
+  { key: "GLOBAL_HEALTH", path: "/api/v1/health/global" },
+  { key: "NASP_DIAGNOSTICS", path: "/nasp/diagnostics" },
+  { key: "PROMETHEUS_SUMMARY", path: "/api/v1/prometheus/summary" },
+  { key: "SLA_SUBMIT", path: "/api/v1/sla/submit" },
+  { key: "SLA_INTERPRET", path: "/api/v1/sla/interpret" },
+] as const;
 
 export default function AdministrationPage() {
   const [data, setData] = useState<HealthV1 | null>(null);
@@ -95,12 +107,8 @@ export default function AdministrationPage() {
       value: healthFieldDisplay(data?.version),
     },
     {
-      label: "NASP reachable",
+      label: "NASP connectivity",
       value: naspReachabilityDisplay,
-    },
-    {
-      label: "NASP details URL",
-      value: healthFieldDisplay(data?.nasp_details_url),
     },
   ];
 
@@ -109,7 +117,7 @@ export default function AdministrationPage() {
   const naspConnectivityItems =
     naspStatus === "ready" && nasp
       ? naspModuleKeys.map((key) => ({
-          label: key,
+          label: formatNaspModuleLabel(key),
           value: formatNaspModuleStatus(nasp[key]),
         }))
       : [
@@ -117,7 +125,7 @@ export default function AdministrationPage() {
             label: "Status",
             value:
               naspStatus === "error"
-                ? (naspError ?? "erro ao consultar fonte real")
+                ? (naspError ?? "Service unavailable")
                 : naspStatus === "loading"
                   ? "Loading…"
                   : "No NASP data",
@@ -134,13 +142,29 @@ export default function AdministrationPage() {
     { label: "Health monitoring", value: "Platform health service" },
   ];
 
-  const platformServiceItems = [
-    { label: PLATFORM_SERVICE_LABELS.GLOBAL_HEALTH, value: "/api/v1/health/global" },
-    { label: PLATFORM_SERVICE_LABELS.NASP_DIAGNOSTICS, value: "/nasp/diagnostics" },
-    { label: PLATFORM_SERVICE_LABELS.PROMETHEUS_SUMMARY, value: "/api/v1/prometheus/summary" },
-    { label: PLATFORM_SERVICE_LABELS.SLA_SUBMIT, value: "/api/v1/sla/submit" },
-    { label: PLATFORM_SERVICE_LABELS.SLA_INTERPRET, value: "/api/v1/sla/interpret" },
-  ];
+  const platformServiceItems = PLATFORM_SERVICE_ENDPOINTS.map(({ key }) => ({
+    label: PLATFORM_SERVICE_LABELS[key] ?? key,
+    value: "Operational endpoint",
+  }));
+
+  const platformServiceTechnical = PLATFORM_SERVICE_ENDPOINTS.map(({ key, path }) => ({
+    label: PLATFORM_SERVICE_LABELS[key] ?? key,
+    value: path,
+  }));
+
+  const naspTechnicalItems =
+    naspStatus === "ready" && nasp
+      ? [
+          {
+            label: "NASP details URL",
+            value: healthFieldDisplay(data?.nasp_details_url),
+          },
+          ...naspModuleKeys.map((key) => ({
+            label: `${formatNaspModuleLabel(key)} (probe)`,
+            value: formatNaspModuleTechnical(nasp[key]),
+          })),
+        ]
+      : [];
 
   return (
     <section>
@@ -148,8 +172,8 @@ export default function AdministrationPage() {
       <p className="trisla-subtitle">Platform health, NASP connectivity, and operational services.</p>
       {(status === "error" || naspStatus === "error") && (
         <p>
-          Fonte indisponível:{" "}
-          <span>{error ?? naspError ?? "erro ao consultar fonte real"}</span>
+          Service unavailable:{" "}
+          <span>{error ?? naspError ?? "Unable to reach backend"}</span>
         </p>
       )}
       <div className="trisla-cards-grid">
@@ -158,6 +182,15 @@ export default function AdministrationPage() {
         <StatusCard title="Runtime Environment" items={runtimeEnvironmentItems} />
         <StatusCard title="Platform Services" items={platformServiceItems} />
       </div>
+      <details className="trisla-details" style={{ marginTop: "1.5rem" }}>
+        <summary>Technical Details — service endpoints and probe payloads</summary>
+        <div className="trisla-cards-grid" style={{ marginTop: "1rem" }}>
+          <StatusCard title="Service endpoints" items={platformServiceTechnical} />
+          {naspTechnicalItems.length > 0 ? (
+            <StatusCard title="NASP probe details" items={naspTechnicalItems} />
+          ) : null}
+        </div>
+      </details>
     </section>
   );
 }

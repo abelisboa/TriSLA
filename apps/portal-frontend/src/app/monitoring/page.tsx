@@ -179,9 +179,9 @@ export default function MonitoringPage() {
             <p className="trisla-muted">Not available</p>
           ) : null}
         </section>
-        <DomainCard title="Core Domain" card={coreCard} ariaLabel="Core Domain" />
-        <DomainCard title="Transport Domain" card={transportCard} />
-        <DomainCard title="RAN Domain" card={ranCard} />
+        <DomainCard title="Core Network" card={coreCard} ariaLabel="Core Network" />
+        <DomainCard title="Transport Network" card={transportCard} />
+        <DomainCard title="Radio Network" card={ranCard} />
       </div>
     </section>
   );

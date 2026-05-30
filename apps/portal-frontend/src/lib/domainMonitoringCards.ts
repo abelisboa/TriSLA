@@ -2,6 +2,7 @@ import {
   formatMetricValue,
   type PrometheusSummaryPayload,
 } from "./prometheusSummary";
+import { formatOperatorMetric } from "./operatorFormat";
 
 export type I1MetricsResponse = {
   interface?: string;
@@ -35,7 +36,7 @@ function pickFirstReal(...values: unknown[]): unknown | undefined {
 }
 
 function row(label: string, value: unknown): DomainMetricRow {
-  return { label, value: formatMetricValue(value) };
+  return { label, value: formatOperatorMetric(label, value) };
 }
 
 function availabilityFromRows(rows: DomainMetricRow[]): string {

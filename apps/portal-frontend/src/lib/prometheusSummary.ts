@@ -1,3 +1,4 @@
+import { formatOperatorMetric } from "./operatorFormat";
 import {
   fallback,
   formatBytesToMB,
@@ -76,17 +77,17 @@ export function v2SummaryDisplayRows(
   payload: PrometheusSummaryV2,
 ): V2SummaryDisplayRow[] {
   return [
-    { label: "RAN Load", value: formatMetricValue(payload.ran_load) },
+    { label: "RAN Load", value: formatOperatorMetric("RAN Load", payload.ran_load) },
     {
       label: "Transport Latency",
-      value: formatMetricValue(payload.transport_latency),
+      value: formatOperatorMetric("Transport Latency", payload.transport_latency),
     },
-    { label: "Throughput", value: formatMetricValue(payload.throughput_mbps) },
-    { label: "Active Sessions", value: formatMetricValue(payload.sessions) },
-    { label: "CPU", value: formatMetricValue(payload.cpu) },
+    { label: "Throughput", value: formatOperatorMetric("Throughput", payload.throughput_mbps) },
+    { label: "Active Sessions", value: formatOperatorMetric("Active Sessions", payload.sessions) },
+    { label: "CPU", value: formatOperatorMetric("CPU Utilization", payload.cpu) },
     {
       label: "RAN PRB Utilization",
-      value: formatMetricValue(payload.ran_prb_utilization),
+      value: formatOperatorMetric("PRB Utilization", payload.ran_prb_utilization),
     },
   ];
 }
@@ -108,13 +109,13 @@ export function legacySummaryDisplayRows(
     { label: "Prometheus Up", value: prometheusUp },
     {
       label: "CPU",
-      value: cpuVal !== null ? String(cpuVal) : "Not available",
+      value: cpuVal !== null ? formatOperatorMetric("CPU Utilization", cpuVal) : "Not available",
     },
     {
       label: "Memory",
       value:
         memoryVal !== null
-          ? formatBytesToMB(memoryVal)
+          ? formatOperatorMetric("Memory Utilization", memoryVal)
           : "Not available",
     },
   ];
