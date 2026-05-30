@@ -14,7 +14,7 @@ type MenuSection = {
   items: MenuItem[];
 };
 
-/** Menus agrupados por domínio científico, mantendo as rotas atuais. */
+/** Menus agrupados por domínio operacional, mantendo as rotas atuais. */
 const SECTIONS: MenuSection[] = [
   {
     id: "lifecycle",
@@ -54,9 +54,9 @@ export function Sidebar() {
     <aside className="trisla-sidebar">
       <div className="trisla-sidebar-header">
         <span className="trisla-logo">TriSLA</span>
-        <span className="trisla-logo-subtitle">SLA-Centric Scientific Portal</span>
+        <span className="trisla-logo-subtitle">SLA Management Platform</span>
       </div>
-      <nav className="trisla-sidebar-nav" aria-label="TriSLA scientific navigation">
+      <nav className="trisla-sidebar-nav" aria-label="TriSLA operational navigation">
         {SECTIONS.map((section, index) => (
           <div key={section.id} className="trisla-sidebar-section">
             <div className="trisla-sidebar-section-title">{section.title}</div>

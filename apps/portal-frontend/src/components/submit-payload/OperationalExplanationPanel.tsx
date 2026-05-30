@@ -10,7 +10,7 @@ import {
 type Props = { response: SubmitResponse; heading?: string };
 
 const EXPLANATION_SCOPE_NOTE =
-  "This panel presents operational explanations available in the live admission workflow. Formal SHAP/LIME explanations implemented in ML-NSMF are not exposed by the current submit endpoint.";
+  "Operational explanations available from the live admission workflow. Extended ML explainability is not included in this view.";
 
 export function OperationalExplanationPanel({
   response,

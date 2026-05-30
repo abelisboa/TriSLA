@@ -1,4 +1,5 @@
 import { displayField } from "../../lib/submitResponse";
+import { operatorFieldLabel } from "../../lib/operatorLabels";
 import type { RevalidateTelemetryResponse, SlaRuntimeStatusResponse } from "../../lib/runtimeSupervision";
 import { FieldList } from "../submit-payload/FieldList";
 
@@ -18,9 +19,9 @@ export function RuntimeStatusPanel({ statusData, lifecycleState, loading, error 
       {!loading && !error && statusData && (
         <FieldList
           fields={[
-            { label: "intent_id", value: statusData.intent_id ?? statusData.sla_id },
-            { label: "status", value: statusData.status },
-            { label: "metadata.lifecycle_state (submit)", value: lifecycleState },
+            { label: operatorFieldLabel("intent_id"), value: statusData.intent_id ?? statusData.sla_id },
+            { label: "Status", value: statusData.status },
+            { label: operatorFieldLabel("lifecycle_state"), value: lifecycleState },
           ]}
         />
       )}
@@ -32,9 +33,9 @@ export function RuntimeStatusPanel({ statusData, lifecycleState, loading, error 
           <summary>Additional status fields</summary>
           <FieldList
             fields={[
-              { label: "sla_id", value: statusData.sla_id },
-              { label: "tenant_id", value: statusData.tenant_id },
-              { label: "nest_id", value: statusData.nest_id },
+              { label: operatorFieldLabel("sla_id"), value: statusData.sla_id },
+              { label: operatorFieldLabel("tenant_id"), value: statusData.tenant_id },
+              { label: operatorFieldLabel("nest_id"), value: statusData.nest_id },
               { label: "created_at", value: statusData.created_at },
               { label: "updated_at", value: statusData.updated_at },
             ]}

@@ -1,4 +1,5 @@
 import { asMetadata, displayField, type SubmitResponse } from "../../lib/submitResponse";
+import { operatorFieldLabel } from "../../lib/operatorLabels";
 import { FieldList } from "./FieldList";
 
 type Props = { response: SubmitResponse; heading?: string };
@@ -35,13 +36,13 @@ export function TelemetrySnapshotPanel({ response, heading = "4. Multidomain Tel
       <h2>{heading}</h2>
       <FieldList
         fields={[
-          { label: "metadata.telemetry_complete", value: metadata?.telemetry_complete },
-          { label: "metadata.telemetry_gaps", value: metadata?.telemetry_gaps },
-          { label: "metadata.telemetry_version", value: metadata?.telemetry_version },
+          { label: operatorFieldLabel("metadata.telemetry_complete"), value: metadata?.telemetry_complete },
+          { label: operatorFieldLabel("metadata.telemetry_gaps"), value: metadata?.telemetry_gaps },
+          { label: operatorFieldLabel("metadata.telemetry_version"), value: metadata?.telemetry_version },
         ]}
       />
       {!snap ? (
-        <p className="trisla-muted">metadata.telemetry_snapshot: Not available</p>
+        <p className="trisla-muted">Telemetry snapshot not available</p>
       ) : (
         <>
           <FieldList
@@ -55,7 +56,7 @@ export function TelemetrySnapshotPanel({ response, heading = "4. Multidomain Tel
           <DomainBlock title="Transport" data={snap.transport as Record<string, unknown> | undefined} />
           <DomainBlock title="Core" data={snap.core as Record<string, unknown> | undefined} />
           <details className="trisla-details">
-            <summary>metadata.telemetry_snapshot (full JSON)</summary>
+            <summary>Technical details — telemetry snapshot</summary>
             <pre className="trisla-pre-secondary">{displayField(snap)}</pre>
           </details>
         </>

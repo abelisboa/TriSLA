@@ -4,6 +4,7 @@
  import { apiRequest, formatApiError } from "../../lib/api";
  import { DataState } from "../../components/common/DataState";
  import { formatValue } from "../../lib/format";
+ import { AWAITING_DATA } from "../../lib/operatorLabels";
 
  type Status = "idle" | "loading" | "ready" | "error";
 
@@ -28,7 +29,7 @@
  }
 
 export default function SlaLifecyclePage() {
-  const awaiting = "Awaiting validated runtime feed";
+  const awaiting = AWAITING_DATA;
  
    const [naspDiagnostics, setNaspDiagnostics] = useState<Record<string, unknown> | null>(
      null,
@@ -138,7 +139,7 @@ export default function SlaLifecyclePage() {
   return (
     <section>
       <h1>SLA Lifecycle</h1>
-      <p className="trisla-subtitle">Scientific SLA lifecycle runtime evidence.</p>
+      <p className="trisla-subtitle">SLA lifecycle status and runtime supervision overview.</p>
       <div className="trisla-cards-grid">
         <section className="trisla-status-card" aria-label="Semantic Admission">
           <h2>Semantic Admission</h2>

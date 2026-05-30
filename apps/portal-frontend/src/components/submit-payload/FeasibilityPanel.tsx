@@ -1,4 +1,5 @@
 import { asMetadata, type SubmitResponse } from "../../lib/submitResponse";
+import { operatorFieldLabel } from "../../lib/operatorLabels";
 import { FieldList } from "./FieldList";
 
 type Props = { response: SubmitResponse };
@@ -15,13 +16,13 @@ export function FeasibilityPanel({ response }: Props) {
       <h2>2. Feasibility Assessment</h2>
       <FieldList
         fields={[
-          { label: "metadata.decision_score", value: metadata?.decision_score },
-          { label: "confidence", value: confidence },
-          { label: "metadata.decision_mode", value: metadata?.decision_mode },
-          { label: "metadata.policy_result", value: metadata?.policy_result },
-          { label: "metadata.decision_band", value: metadata?.decision_band },
-          { label: "metadata.final_decision", value: metadata?.final_decision },
-          { label: "metadata.threshold_decision", value: metadata?.threshold_decision },
+          { label: operatorFieldLabel("metadata.decision_score"), value: metadata?.decision_score },
+          { label: "Confidence", value: confidence },
+          { label: operatorFieldLabel("metadata.decision_mode"), value: metadata?.decision_mode },
+          { label: operatorFieldLabel("metadata.policy_result"), value: metadata?.policy_result },
+          { label: operatorFieldLabel("metadata.decision_band"), value: metadata?.decision_band },
+          { label: operatorFieldLabel("metadata.final_decision"), value: metadata?.final_decision },
+          { label: operatorFieldLabel("metadata.threshold_decision"), value: metadata?.threshold_decision },
         ]}
       />
     </section>

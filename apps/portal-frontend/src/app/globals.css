@@ -283,6 +283,13 @@ body.trisla-body {
   resize: vertical;
 }
 
+.trisla-field-help {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
 .trisla-form-row input:focus,
 .trisla-form-row textarea:focus {
   outline: none;
@@ -534,7 +541,7 @@ pre {
   color: #334155;
 }
 
-/* ——— F8 Demo / Reviewer polish ——— */
+/* ——— Operational workflow / lifecycle polish ——— */
 .trisla-section-lead {
   margin: 0 0 1rem;
   font-size: 0.875rem;
@@ -663,6 +670,71 @@ pre {
   border-left: 3px solid #0d9488;
 }
 
+.trisla-workflow {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.trisla-workflow-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.trisla-workflow-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.trisla-workflow-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 7rem;
+  padding: 0.5rem 0.65rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+}
+
+.trisla-workflow-step-active {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 1px #bfdbfe;
+}
+
+.trisla-workflow-step-complete {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.trisla-workflow-index {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.trisla-workflow-label {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.trisla-workflow-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
 .trisla-demo-flow {
   margin: 0 0 1.25rem;
   padding: 1rem 1.25rem;
@@ -737,6 +809,10 @@ pre {
 @media (max-width: 768px) {
   .trisla-section-nav {
     position: static;
+  }
+
+  .trisla-workflow-list {
+    flex-direction: column;
   }
 
   .trisla-demo-flow-list {

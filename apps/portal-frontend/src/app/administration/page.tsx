@@ -7,6 +7,7 @@ import {
   healthFieldDisplay,
   inferNaspReachability,
 } from "../../lib/administrationDisplay";
+import { PLATFORM_SERVICE_LABELS } from "../../lib/operatorLabels";
 import { StatusCard } from "../../components/common/StatusCard";
 
 type HealthV1 = {
@@ -130,21 +131,21 @@ export default function AdministrationPage() {
 
   const runtimeEnvironmentItems = [
     { label: "Environment", value: envLabel },
-    { label: "Health source", value: "Provided by health endpoint" },
+    { label: "Health monitoring", value: "Platform health service" },
   ];
 
-  const apiSurfaceItems = [
-    { label: "GLOBAL_HEALTH", value: "/api/v1/health/global" },
-    { label: "NASP_DIAGNOSTICS", value: "/nasp/diagnostics" },
-    { label: "PROMETHEUS_SUMMARY", value: "/api/v1/prometheus/summary (optional)" },
-    { label: "SLA_SUBMIT", value: "/api/v1/sla/submit" },
-    { label: "SLA_INTERPRET", value: "/api/v1/sla/interpret" },
+  const platformServiceItems = [
+    { label: PLATFORM_SERVICE_LABELS.GLOBAL_HEALTH, value: "/api/v1/health/global" },
+    { label: PLATFORM_SERVICE_LABELS.NASP_DIAGNOSTICS, value: "/nasp/diagnostics" },
+    { label: PLATFORM_SERVICE_LABELS.PROMETHEUS_SUMMARY, value: "/api/v1/prometheus/summary" },
+    { label: PLATFORM_SERVICE_LABELS.SLA_SUBMIT, value: "/api/v1/sla/submit" },
+    { label: PLATFORM_SERVICE_LABELS.SLA_INTERPRET, value: "/api/v1/sla/interpret" },
   ];
 
   return (
     <section>
       <h1>Administration</h1>
-      <p className="trisla-subtitle">Executive backend and NASP diagnostics.</p>
+      <p className="trisla-subtitle">Platform health, NASP connectivity, and operational services.</p>
       {(status === "error" || naspStatus === "error") && (
         <p>
           Fonte indisponível:{" "}
@@ -155,7 +156,7 @@ export default function AdministrationPage() {
         <StatusCard title="Backend Diagnostic" items={backendDiagnosticItems} />
         <StatusCard title="NASP Connectivity" items={naspConnectivityItems} />
         <StatusCard title="Runtime Environment" items={runtimeEnvironmentItems} />
-        <StatusCard title="API Surface" items={apiSurfaceItems} />
+        <StatusCard title="Platform Services" items={platformServiceItems} />
       </div>
     </section>
   );
