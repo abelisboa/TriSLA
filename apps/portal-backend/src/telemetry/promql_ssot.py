@@ -11,8 +11,10 @@ import os
 from typing import Dict
 
 # Telemetry snapshot (query_range) — keys match TELEMETRY_PROMQL_* suffixes.
+# RAN PRB: authoritative job = trisla-ran-ue-upf-proxy (rantester/free5GC path).
+# Unqualified average over trisla_ran_prb_utilization without job filter is forbidden (mixes simulator + proxy).
 PROMQL_SSOT: Dict[str, str] = {
-    "RAN_PRB": "avg(trisla_ran_prb_utilization)",
+    "RAN_PRB": 'avg(trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"})',
     "RAN_LATENCY": "avg(trisla_ran_latency_ms)",
     "TRANSPORT_RTT": (
         'max(probe_duration_seconds{job="probe/monitoring/trisla-transport-tcp-probe"}) * 1000'
@@ -49,6 +51,12 @@ CORE_MEMORY_SCOPED_FREE5GC_STACK = (
     'sum(container_memory_working_set_bytes{namespace="ns-1274485"})'
 )
 
+# GET /api/v1/interfaces/cn-i1/metrics — real container metrics (Sprint 5A).
+# cpu_utilization: aggregate core CPU rate (cores/sec sum across ns-1274485 stack).
+# memory_utilization: aggregate working-set bytes across ns-1274485 stack.
+CN_I1_CPU_DEFAULT = CORE_CPU_SCOPED_FREE5GC_STACK
+CN_I1_MEMORY_DEFAULT = CORE_MEMORY_SCOPED_FREE5GC_STACK
+
 # GET /api/v1/prometheus/summary — instant queries (observability index; not telemetry_snapshot).
 PROMQL_SUMMARY: Dict[str, str] = {
     "throughput_mbps": (
@@ -65,5 +73,5 @@ PROMQL_SUMMARY: Dict[str, str] = {
         'sum(rate(container_cpu_usage_seconds_total{namespace="trisla"}[1m]))/'
         'sum(rate(node_cpu_seconds_total[1m]))*100'
     ),
-    "ran_prb_instant": "trisla_ran_prb_utilization",
+    "ran_prb_instant": 'trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"}',
 }
