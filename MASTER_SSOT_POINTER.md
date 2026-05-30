@@ -529,6 +529,34 @@
 
 ---
 
+## SPRINT_5M2_LIFECYCLE_TELEMETRY_SNAPSHOT_ALIGNMENT_BASELINE (official — portal Lifecycle Runtime Snapshot)
+
+| Field | Value |
+|-------|-------|
+| **Role** | Official runtime baseline after Sprint 5M2 Lifecycle telemetry snapshot alignment |
+| **Baseline name** | `SPRINT_5M2_LIFECYCLE_TELEMETRY_SNAPSHOT_ALIGNMENT_BASELINE` |
+| **Sprint** | SPRINT 5M2 — Lifecycle Telemetry Snapshot Alignment (M2) |
+| **Audit dependency** | `sprint5m_runtime_assurance_completion_audit_20260530T200010Z/` |
+| **Implementation pack** | `sprint5m2_lifecycle_telemetry_snapshot_alignment_20260530T214716Z/` |
+| **Commit** | `fe65899708bf4a535c90db96b6d85395abac0d09` |
+| **Message** | Expose telemetry_snapshot on SLA status and bind Lifecycle UI. |
+| **Prior backend digest (rollback)** | `sha256:7c4162ae6f94e051c254c18711983a2ead5758a3fd222900608c47639fe21d95` |
+| **Portal Backend digest (runtime SSOT)** | `sha256:cab764f7c1ccf2c069145b366a81fa797ebff4eb5e840988af21ee2e28e7aa9e` |
+| **Image (backend)** | `ghcr.io/abelisboa/trisla-portal-backend@sha256:cab764f7c1ccf2c069145b366a81fa797ebff4eb5e840988af21ee2e28e7aa9e` |
+| **Prior frontend digest (rollback)** | `sha256:3aea606a904148449968091c0bc085b12d0101ea5fa022e4883e5bec1a9e8471` |
+| **Portal Frontend digest (runtime SSOT)** | `sha256:7ef311fcd8f50601435ddd9bf6489be55057799919809accf86a5c445c4fc286` |
+| **Image (frontend)** | `ghcr.io/abelisboa/trisla-portal-frontend@sha256:7ef311fcd8f50601435ddd9bf6489be55057799919809accf86a5c445c4fc286` |
+| **Build tag** | `20260530T214736Z` |
+| **Fix scope** | Portal only: expose `telemetry_snapshot` on `GET /sla/status`; Lifecycle Runtime Snapshot UI binding; no telemetry/DE/BC/SEM/SLA-Agent changes |
+| **Runtime validation** | PNL cirurgia remota / vídeo 4K / sensores IoT / cidade inteligente: ACCEPT+COMMITTED+tx_hash; status `telemetry_snapshot` populated 4/4; governance_event.nest_id == nest_id |
+| **Contracts** | Additive optional `telemetry_snapshot` on status response — contract v2 shape unchanged |
+| **SEM / DE / BC / SLA-Agent** | Digests unchanged from Sprint 5K/5M1 |
+| **Status** | LIFECYCLE RUNTIME SNAPSHOT ALIGNED · MONITORING UNCHANGED · READY FOR M3 |
+
+**Usage:** Portal-backend deploy references MUST cite digest `cab764f7c1cc...`; portal-frontend MUST cite `7ef311fcd8f5...` unless superseded. Supersedes portal digests in `SPRINT_5E_CONFIDENCE_AND_NEST_ALIGNMENT_BASELINE` / `SPRINT_5C_OBSERVABILITY_PROMQL_ALIGNMENT_BASELINE` for portal runtime references.
+
+---
+
 ## Freeze policy
 
 1. Frozen CSV, JSONL, and figure bytes are **immutable** after registration.

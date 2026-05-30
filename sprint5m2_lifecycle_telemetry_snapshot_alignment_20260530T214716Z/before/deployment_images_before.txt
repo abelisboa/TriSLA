@@ -1,0 +1,2 @@
+trisla-portal-backend	ghcr.io/abelisboa/trisla-portal-backend@sha256:7c4162ae6f94e051c254c18711983a2ead5758a3fd222900608c47639fe21d95
+trisla-portal-frontend	ghcr.io/abelisboa/trisla-portal-frontend@sha256:3aea606a904148449968091c0bc085b12d0101ea5fa022e4883e5bec1a9e8471
