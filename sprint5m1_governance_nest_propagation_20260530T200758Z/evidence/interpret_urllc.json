@@ -1,0 +1,24 @@
+{
+  "intent_id": "efdc6c46-ae76-4412-8393-835f672998c6",
+  "service_type": "URLLC",
+  "sla_requirements": {
+    "latency": "10ms",
+    "throughput": "100Mbps",
+    "reliability": 0.99999,
+    "availability": 0.99999,
+    "jitter": "5ms",
+    "coverage": "Urban",
+    "device_density": 1000.0,
+    "original_text": "cirurgia remota"
+  },
+  "sla_id": "efdc6c46-ae76-4412-8393-835f672998c6",
+  "status": "processing",
+  "tenant_id": "trisla-5m1-016493a2",
+  "nest_id": "nest-efdc6c46-ae76-4412-8393-835f672998c6",
+  "slice_type": "URLLC",
+  "technical_parameters": {
+    "original_text": "cirurgia remota"
+  },
+  "created_at": null,
+  "message": "SLA interpretado pelo SEM-CSMF com sucesso. Ajuste os parâmetros técnicos na próxima etapa."
+}

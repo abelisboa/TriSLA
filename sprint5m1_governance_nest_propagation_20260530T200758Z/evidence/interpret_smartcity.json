@@ -1,0 +1,24 @@
+{
+  "intent_id": "91f402af-c24e-4989-95ea-7d0ba8498cfa",
+  "service_type": "eMBB",
+  "sla_requirements": {
+    "latency": "50ms",
+    "throughput": "100Mbps",
+    "reliability": 0.99,
+    "availability": 0.99,
+    "jitter": null,
+    "coverage": "Urban",
+    "device_density": 10000.0,
+    "original_text": "cidade inteligente"
+  },
+  "sla_id": "91f402af-c24e-4989-95ea-7d0ba8498cfa",
+  "status": "processing",
+  "tenant_id": "trisla-5m1-9b46a5d6",
+  "nest_id": "nest-91f402af-c24e-4989-95ea-7d0ba8498cfa",
+  "slice_type": "eMBB",
+  "technical_parameters": {
+    "original_text": "cidade inteligente"
+  },
+  "created_at": null,
+  "message": "SLA interpretado pelo SEM-CSMF com sucesso. Ajuste os parâmetros técnicos na próxima etapa."
+}

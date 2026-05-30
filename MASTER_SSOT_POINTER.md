@@ -506,6 +506,29 @@
 
 ---
 
+## SPRINT_5M1_GOVERNANCE_NEST_PROPAGATION_BASELINE (official — DE governance nest_id)
+
+| Field | Value |
+|-------|-------|
+| **Role** | Official runtime baseline after Sprint 5M1 governance_event.nest_id propagation fix |
+| **Baseline name** | `SPRINT_5M1_GOVERNANCE_NEST_PROPAGATION_BASELINE` |
+| **Sprint** | SPRINT 5M1 — Governance NEST Propagation (M1) |
+| **Audit dependency** | `sprint5m_runtime_assurance_completion_audit_20260530T200010Z/` |
+| **Implementation pack** | `sprint5m1_governance_nest_propagation_20260530T200758Z/` |
+| **Commit** | `aeccbf6c01d4d182e2b4e884c22c02deaff29805` |
+| **Prior DE digest (rollback)** | `sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6` |
+| **Decision Engine digest (runtime SSOT)** | `sha256:47d2679de267d8613b4c01cfaa066aca2374cb80331745f75a14b88845872a37` |
+| **Build tag** | `20260530T201516Z` |
+| **Fix scope** | Decision Engine only: `nest_input_resolver.py` maps `sla_input.nest_id` → `DecisionInput.nest` |
+| **Runtime validation** | PNL cirurgia remota / vídeo 4K / sensores IoT / cidade inteligente: `governance_event.nest_id == nest_id` (4/4); ACCEPT+COMMITTED |
+| **Contracts** | Public JSON shape unchanged — existing `governance_event.nest_id` field populated |
+| **SEM / BC / Portal / SLA-Agent** | Digests unchanged from Sprint 5K/5L |
+| **Status** | GOVERNANCE NEST ALIGNED · SCORE/TELEMETRY/BLOCKCHAIN UNCHANGED · READY FOR M2 |
+
+**Usage:** Decision Engine deploy references MUST cite digest `47d2679de267...` unless superseded. Supersedes DE digest in `SPRINT_5K_SEMANTIC_FILL_IMPLEMENTATION_BASELINE` for decision-engine runtime references only.
+
+---
+
 ## Freeze policy
 
 1. Frozen CSV, JSONL, and figure bytes are **immutable** after registration.

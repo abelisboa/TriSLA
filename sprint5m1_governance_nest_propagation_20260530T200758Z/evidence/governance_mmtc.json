@@ -1,0 +1,12 @@
+{
+  "decision": "ACCEPT",
+  "bc_status": "COMMITTED",
+  "tx_hash": "0x8554103d2e7a04e37d4289c311d327ec2f9c68a2d16f40b84d1459275bf2afb8",
+  "nest_id": "nest-f0941f00-9e8c-4b9b-b86a-c7367e751156",
+  "governance_event_nest_id": "nest-f0941f00-9e8c-4b9b-b86a-c7367e751156",
+  "governance_event_id": "ge_fd4a48dc04e5a0166d72b588356b9b68",
+  "lifecycle_state": "COMPLETED",
+  "decision_score": 0.7912091706634606,
+  "match": true,
+  "status_nest_id": "nest-f0941f00-9e8c-4b9b-b86a-c7367e751156"
+}
