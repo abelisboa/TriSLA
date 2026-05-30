@@ -147,19 +147,43 @@ export default function CreateSlaTemplatePage() {
         </div>
         <div className="trisla-form-row">
           <label htmlFor="latency">Latency</label>
-          <input id="latency" type="number" value={latency} onChange={(e) => setLatency(e.target.value)} />
+          <input
+            id="latency"
+            type="number"
+            step="any"
+            value={latency}
+            onChange={(e) => setLatency(e.target.value)}
+          />
         </div>
         <div className="trisla-form-row">
           <label htmlFor="throughput">Throughput</label>
-          <input id="throughput" type="number" value={throughput} onChange={(e) => setThroughput(e.target.value)} />
+          <input
+            id="throughput"
+            type="number"
+            step="any"
+            value={throughput}
+            onChange={(e) => setThroughput(e.target.value)}
+          />
         </div>
         <div className="trisla-form-row">
           <label htmlFor="availability">Availability</label>
-          <input id="availability" type="number" value={availability} onChange={(e) => setAvailability(e.target.value)} />
+          <input
+            id="availability"
+            type="number"
+            step="any"
+            value={availability}
+            onChange={(e) => setAvailability(e.target.value)}
+          />
         </div>
         <div className="trisla-form-row">
           <label htmlFor="reliability">Reliability</label>
-          <input id="reliability" type="number" value={reliability} onChange={(e) => setReliability(e.target.value)} />
+          <input
+            id="reliability"
+            type="number"
+            step="any"
+            value={reliability}
+            onChange={(e) => setReliability(e.target.value)}
+          />
         </div>
         <div className="trisla-form-row">
           <label htmlFor="priority">Priority</label>

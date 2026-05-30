@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { apiRequest, formatApiError } from "../../lib/api";
+import {
+  formatNaspModuleStatus,
+  healthFieldDisplay,
+  inferNaspReachability,
+} from "../../lib/administrationDisplay";
 import { StatusCard } from "../../components/common/StatusCard";
-import { formatValue } from "../../lib/format";
 
 type HealthV1 = {
   status?: string;
@@ -75,22 +79,38 @@ export default function AdministrationPage() {
     };
   }, []);
 
+  const naspReachabilityDisplay =
+    data?.nasp_reachable != null
+      ? healthFieldDisplay(data.nasp_reachable)
+      : inferNaspReachability(nasp);
+
   const backendDiagnosticItems = [
-    { label: "Status", value: formatValue(data?.status) },
-    { label: "Version", value: formatValue(data?.version) },
-    { label: "NASP reachable", value: formatValue(data?.nasp_reachable) },
-    { label: "NASP details URL", value: formatValue(data?.nasp_details_url) },
+    {
+      label: "Status",
+      value: data?.status != null ? healthFieldDisplay(data.status) : "Not available",
+    },
+    {
+      label: "Version",
+      value: healthFieldDisplay(data?.version),
+    },
+    {
+      label: "NASP reachable",
+      value: naspReachabilityDisplay,
+    },
+    {
+      label: "NASP details URL",
+      value: healthFieldDisplay(data?.nasp_details_url),
+    },
   ];
+
+  const naspModuleKeys = ["sem_csmf", "ml_nsmf", "decision", "bc_nssmf", "sla_agent"];
 
   const naspConnectivityItems =
     naspStatus === "ready" && nasp
-      ? [
-          { label: "sem_csmf", value: formatValue(nasp["sem_csmf"]) },
-          { label: "ml_nsmf", value: formatValue(nasp["ml_nsmf"]) },
-          { label: "decision", value: formatValue(nasp["decision"]) },
-          { label: "bc_nssmf", value: formatValue(nasp["bc_nssmf"]) },
-          { label: "sla_agent", value: formatValue(nasp["sla_agent"]) },
-        ]
+      ? naspModuleKeys.map((key) => ({
+          label: key,
+          value: formatNaspModuleStatus(nasp[key]),
+        }))
       : [
           {
             label: "Status",
@@ -109,7 +129,8 @@ export default function AdministrationPage() {
     "local";
 
   const runtimeEnvironmentItems = [
-    { label: "Environment", value: formatValue(envLabel) },
+    { label: "Environment", value: envLabel },
+    { label: "Health source", value: "Provided by health endpoint" },
   ];
 
   const apiSurfaceItems = [

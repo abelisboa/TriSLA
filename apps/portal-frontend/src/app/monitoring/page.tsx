@@ -2,36 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { apiRequest, apiRequestOptional, formatApiError } from "../../lib/api";
-import { DataState } from "../../components/common/DataState";
 import {
-  fallback,
-  formatValue,
-  prometheusFirstValue,
-  formatBytesToMB,
-} from "../../lib/format";
-
-/** Payload real: GET /api/v1/prometheus/summary — up, cpu, memory. */
-type PrometheusSummaryReal = {
-  up?: {
-    status?: string;
-    data?: { result?: Array<{ value?: [number, string] }> };
-  };
-  cpu?: {
-    status?: string;
-    data?: { result?: Array<{ value?: [number, string] }> };
-  };
-  memory?: {
-    status?: string;
-    data?: { result?: Array<{ value?: [number, string] }> };
-  };
-};
+  formatDomainMetricsState,
+  isV2FlatSummary,
+  legacySummaryDisplayRows,
+  type PrometheusSummaryPayload,
+  v2SummaryDisplayRows,
+} from "../../lib/prometheusSummary";
 
 function normalizeError(err: unknown): string {
   return formatApiError(err);
 }
 
 export default function MonitoringPage() {
-  const [summary, setSummary] = useState<PrometheusSummaryReal | null>(null);
+  const [summary, setSummary] = useState<PrometheusSummaryPayload | null>(null);
   const [summaryStatus, setSummaryStatus] = useState<
     "idle" | "loading" | "ready" | "error"
   >("idle");
@@ -63,7 +47,7 @@ export default function MonitoringPage() {
     setRanStatus("loading");
     setRanError(undefined);
 
-    apiRequestOptional<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
+    apiRequestOptional<PrometheusSummaryPayload>("PROMETHEUS_SUMMARY")
       .then(({ data, error }) => {
         if (cancelled) return;
         setSummary(data);
@@ -100,43 +84,41 @@ export default function MonitoringPage() {
     };
   }, []);
 
-  const upCount = summary?.up?.data?.result?.length ?? null;
-  const prometheusUp =
-    summary?.up?.status != null
-      ? `${String(fallback(summary.up.status))}${upCount != null ? ` (${upCount} series)` : ""}`
-      : "N/A";
-  const cpuVal = prometheusFirstValue(summary?.cpu?.data?.result);
-  const memoryVal = prometheusFirstValue(summary?.memory?.data?.result);
+  const summaryRows = summary
+    ? isV2FlatSummary(summary)
+      ? v2SummaryDisplayRows(summary)
+      : legacySummaryDisplayRows(summary)
+    : [];
 
-  const awaitingFeed = "Awaiting validated runtime feed";
+  const summaryCardTitle = summary && isV2FlatSummary(summary)
+    ? "Telemetry Summary (v2)"
+    : "Prometheus Runtime";
 
   const transportStatusText =
     transportStatus === "ready"
       ? "ok"
       : transportStatus === "error"
         ? "erro ao consultar fonte real"
-        : awaitingFeed;
+        : transportStatus === "loading"
+          ? "Loading…"
+          : "Not available";
 
-  const transportEndpointState =
-    transportStatus === "ready"
-      ? formatValue(transport)
-      : transportStatus === "error"
-        ? formatValue(transportError ?? "erro ao consultar fonte real")
-        : awaitingFeed;
+  const transportEndpointState = formatDomainMetricsState(
+    transport,
+    transportStatus,
+    transportError,
+  );
 
   const ranStatusText =
     ranStatus === "ready"
       ? "ok"
       : ranStatus === "error"
         ? "erro ao consultar fonte real"
-        : awaitingFeed;
+        : ranStatus === "loading"
+          ? "Loading…"
+          : "Not available";
 
-  const ranEndpointState =
-    ranStatus === "ready"
-      ? formatValue(ran)
-      : ranStatus === "error"
-        ? formatValue(ranError ?? "erro ao consultar fonte real")
-        : awaitingFeed;
+  const ranEndpointState = formatDomainMetricsState(ran, ranStatus, ranError);
 
   return (
     <section>
@@ -144,25 +126,31 @@ export default function MonitoringPage() {
       <p className="trisla-subtitle">Multi-domain observability using real backend feed.</p>
       <div className="trisla-cards-grid">
         <section className="trisla-status-card">
-          <h2>Prometheus Runtime</h2>
+          <h2>{summaryCardTitle}</h2>
           {summaryError ? (
             <p className="trisla-muted">Optional — unavailable: {summaryError}</p>
           ) : null}
-          <dl>
-              <div className="trisla-status-row">
-                <dt>Prometheus Up</dt>
-                <dd>{prometheusUp}</dd>
-              </div>
-              <div className="trisla-status-row">
-                <dt>CPU</dt>
-                <dd>{cpuVal !== null ? String(cpuVal) : awaitingFeed}</dd>
-              </div>
-              <div className="trisla-status-row">
-                <dt>Memory</dt>
-                <dd>{memoryVal !== null ? formatBytesToMB(memoryVal) : awaitingFeed}</dd>
-              </div>
+          {summaryStatus === "loading" ? (
+            <p className="trisla-muted">Loading…</p>
+          ) : summaryStatus === "ready" && summaryRows.length > 0 ? (
+            <dl>
+              {summaryRows.map((row) => (
+                <div key={row.label} className="trisla-status-row">
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+              {summary?.metadata?.telemetry_version ? (
+                <div className="trisla-status-row">
+                  <dt>Telemetry version</dt>
+                  <dd>{summary.metadata.telemetry_version}</dd>
+                </div>
+              ) : null}
             </dl>
-          </section>
+          ) : summaryStatus === "ready" ? (
+            <p className="trisla-muted">Not available</p>
+          ) : null}
+        </section>
         <section className="trisla-status-card" aria-label="Core Domain">
           <h2>Core Domain</h2>
           <dl>
@@ -206,15 +194,3 @@ export default function MonitoringPage() {
     </section>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
