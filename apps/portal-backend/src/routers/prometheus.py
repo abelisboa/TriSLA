@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import Any, Optional
 
 from src.services.prometheus import PrometheusService
+from src.services.sla_metrics import safe_float
 from src.telemetry.contract_v2 import TELEMETRY_UNITS_V2
 from src.telemetry.promql_ssot import PROMQL_SUMMARY
 from src.utils.prometheus_response import safe_first_vector_value
@@ -10,10 +11,10 @@ router = APIRouter()
 prometheus_service = PrometheusService()
 
 _PROMQL_ALIASES = {
-    # Backward-compatible aliases for RAN PRB telemetry names.
-    "prb_usage": "trisla_ran_prb_utilization",
-    "gnb_prb_usage": "trisla_ran_prb_utilization",
-    "ran_prb_utilization": "trisla_ran_prb_utilization",
+    # Backward-compatible aliases for RAN PRB telemetry names (authoritative job only).
+    "prb_usage": 'trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"}',
+    "gnb_prb_usage": 'trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"}',
+    "ran_prb_utilization": 'trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"}',
 }
 
 
@@ -81,10 +82,13 @@ async def observability_summary():
     q_cpu_pct = PROMQL_SUMMARY["cluster_cpu_percent"]
     q_prb = PROMQL_SUMMARY["ran_prb_instant"]
 
-    def _norm(value: Optional[float], ceiling: float) -> float:
-        if value is None or ceiling <= 0:
+    def _norm(value: Any, ceiling: float) -> float:
+        if ceiling <= 0:
             return 0.0
-        return max(0.0, min(1.0, value / ceiling))
+        v = safe_float(value)
+        if v is None:
+            return 0.0
+        return max(0.0, min(1.0, v / ceiling))
 
     try:
         throughput_resp = await prometheus_service.query(q_throughput_mbps)
@@ -93,11 +97,11 @@ async def observability_summary():
         cpu_resp = await prometheus_service.query(q_cpu_pct)
         prb_resp = await prometheus_service.query(q_prb)
 
-        throughput_mbps = safe_first_vector_value(throughput_resp)
-        transport_latency_ms = safe_first_vector_value(latency_resp)
-        active_sessions = safe_first_vector_value(sessions_resp)
-        cpu_pct = safe_first_vector_value(cpu_resp)
-        ran_prb_utilization = safe_first_vector_value(prb_resp)
+        throughput_mbps = safe_float(safe_first_vector_value(throughput_resp))
+        transport_latency_ms = safe_float(safe_first_vector_value(latency_resp))
+        active_sessions = safe_float(safe_first_vector_value(sessions_resp))
+        cpu_pct = safe_float(safe_first_vector_value(cpu_resp))
+        ran_prb_utilization = safe_float(safe_first_vector_value(prb_resp))
 
         # Deterministic weighted index in [0,1]
         n_thr = _norm(throughput_mbps, 50.0)
