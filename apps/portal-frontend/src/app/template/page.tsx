@@ -4,7 +4,8 @@ import { FormEvent, useState } from "react";
 import { apiRequest, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
 import { WorkflowSteps, TEMPLATE_WORKFLOW_STEPS } from "../../components/workflow/WorkflowSteps";
-import { TENANT_ID_HELP, TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
+import { TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
+import { generateTrislaTenantId } from "../../lib/tenantAutogen";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 import type { SubmitResponse } from "../../lib/submitResponse";
 
@@ -32,7 +33,6 @@ function buildFormValues(fields: Record<string, string>): Record<string, unknown
 
 export default function CreateSlaTemplatePage() {
   const [templateId, setTemplateId] = useState("");
-  const [tenantId, setTenantId] = useState("");
   const [serviceName, setServiceName] = useState("");
   const [sliceType, setSliceType] = useState("");
   const [latency, setLatency] = useState("");
@@ -52,11 +52,8 @@ export default function CreateSlaTemplatePage() {
       setStatus("error");
       return;
     }
-    if (!tenantId.trim()) {
-      setError("Tenant ID não pode ser vazio");
-      setStatus("error");
-      return;
-    }
+    const tenantId = generateTrislaTenantId();
+
     setStatus("loading");
     setError(undefined);
     setResult(null);
@@ -115,16 +112,6 @@ export default function CreateSlaTemplatePage() {
             onChange={(e) => setTemplateId(e.target.value)}
           />
           <p className="trisla-field-help">{TEMPLATE_ID_HELP}</p>
-        </div>
-        <div className="trisla-form-row">
-          <label htmlFor="tenant_id">Tenant ID</label>
-          <input
-            id="tenant_id"
-            type="text"
-            value={tenantId}
-            onChange={(e) => setTenantId(e.target.value)}
-          />
-          <p className="trisla-field-help">{TENANT_ID_HELP}</p>
         </div>
         <div className="trisla-form-row">
           <label htmlFor="service_name">Service name</label>

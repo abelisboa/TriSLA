@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 import { apiRequest, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
 import { InterpretPreviewPanel } from "../../components/pnl/InterpretPreviewPanel";
@@ -9,16 +9,17 @@ import {
   type InterpretResponse,
 } from "../../lib/pnlSubmit";
 import type { SubmitResponse } from "../../lib/submitResponse";
+import { generateTrislaTenantId } from "../../lib/tenantAutogen";
 import { WorkflowSteps, PNL_WORKFLOW_STEPS } from "../../components/workflow/WorkflowSteps";
-import { TENANT_ID_HELP, TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
+import { TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 
 type FlowStatus = "idle" | "loading" | "ready" | "error";
 
 export default function CreateSlaPnlPage() {
   const [intentText, setIntentText] = useState("");
-  const [tenantId, setTenantId] = useState("");
   const [templateId, setTemplateId] = useState("");
+  const sessionTenantIdRef = useRef<string | null>(null);
 
   const [interpretResult, setInterpretResult] = useState<InterpretResponse | null>(null);
   const [interpretStatus, setInterpretStatus] = useState<FlowStatus>("idle");
@@ -35,16 +36,14 @@ export default function CreateSlaPnlPage() {
 
   async function handleInterpret(e: FormEvent) {
     e.preventDefault();
-    if (!tenantId.trim()) {
-      setInterpretError("Tenant ID não pode ser vazio");
-      setInterpretStatus("error");
-      return;
-    }
     if (!intentText.trim()) {
       setInterpretError("Natural Language Request não pode ser vazio");
       setInterpretStatus("error");
       return;
     }
+
+    const tenantId = generateTrislaTenantId();
+    sessionTenantIdRef.current = tenantId;
 
     setInterpretStatus("loading");
     setInterpretError(undefined);
@@ -133,17 +132,6 @@ export default function CreateSlaPnlPage() {
           />
         </div>
 
-        <div className="trisla-form-row">
-          <label htmlFor="tenant_id">Tenant ID</label>
-          <input
-            id="tenant_id"
-            type="text"
-            value={tenantId}
-            onChange={(e) => setTenantId(e.target.value)}
-          />
-          <p className="trisla-field-help">{TENANT_ID_HELP}</p>
-        </div>
-
         <button type="submit" disabled={interpretStatus === "loading"}>
           Interpret SLA
         </button>
@@ -152,7 +140,11 @@ export default function CreateSlaPnlPage() {
       <DataState status={interpretStatus} errorMessage={interpretError}>
         {interpretResult && (
           <>
-            <InterpretPreviewPanel interpret={interpretResult} inputText={intentText} />
+            <InterpretPreviewPanel
+              interpret={interpretResult}
+              inputText={intentText}
+              sessionTenantId={sessionTenantIdRef.current}
+            />
 
             <section className="trisla-status-card" aria-label="Submit confirmation">
               <h2>Confirm and Submit</h2>
