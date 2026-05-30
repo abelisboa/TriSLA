@@ -459,6 +459,53 @@
 
 ---
 
+## SPRINT_5E_CONFIDENCE_AND_NEST_ALIGNMENT_BASELINE (official — portal confidence + NEST status)
+
+| Field | Value |
+|-------|-------|
+| **Role** | Official runtime baseline after Sprint 5E confidence display + NEST status propagation |
+| **Baseline name** | `SPRINT_5E_CONFIDENCE_AND_NEST_ALIGNMENT_BASELINE` |
+| **Sprint** | SPRINT 5E — Confidence & NEST Alignment |
+| **Audit dependency** | `sprint5d_traceability_confidence_audit_20260530T150011Z/` |
+| **Implementation pack** | `sprint5e_confidence_nest_alignment_20260530T160730Z/` |
+| **Commit (build source)** | `b762c8a02f323f75bad0bc334416f87c531e5eb1` |
+| **Prior frontend digest** | `sha256:9efe10e5ebf4b4f65173a7c573f1ebe6e64e772931cbd5d777cec903344b81f8` |
+| **Frontend digest (runtime SSOT)** | `sha256:3aea606a904148449968091c0bc085b12d0101ea5fa022e4883e5bec1a9e8471` |
+| **SEM-CSMF digest (runtime SSOT)** | `sha256:02f2e5c2fd030999939b7c961f4bab3d1e072578d55210794bf7da9583825753` |
+| **Build tag** | `20260530T161230Z` |
+| **Backend digest (unchanged)** | `sha256:7c4162ae6f94e051c254c18711983a2ead5758a3fd222900608c47639fe21d95` |
+| **Fix scope** | Frontend: `resolveOperationalConfidence` SSOT chain, Model Confidence label, SLA Lifecycle Runtime Identity; SEM-CSMF: expose persisted `nest_id` in `get_intent` |
+| **Runtime validation** | URLLC/eMBB/mMTC ACCEPT+COMMITTED+REGISTERED+tx_hash; status API returns nest_id; ml_confidence 50%/64.6% display path |
+| **Contracts** | Unchanged — additive nest_id on SEM intent GET only |
+| **Trace ID** | Out of scope — not generated (documented, no change) |
+| **Status** | CONFIDENCE ALIGNED · NEST STATUS PROPAGATED · CONTRACTS UNCHANGED |
+
+**Usage:** Frontend deploy references MUST cite digest `3aea606a9041...`; SEM-CSMF MUST cite `02f2e5c2fd03...` unless superseded. Supersedes `SPRINT_5_OPERATOR_CONSOLE_HARDENING_BASELINE` for frontend runtime references.
+
+---
+
+## SPRINT_5K_SEMANTIC_FILL_IMPLEMENTATION_BASELINE (official — SEM ontology fill-missing)
+
+| Field | Value |
+|-------|-------|
+| **Role** | Official runtime baseline after Sprint 5K semantic fill-missing in SEM-CSMF |
+| **Baseline name** | `SPRINT_5K_SEMANTIC_FILL_IMPLEMENTATION_BASELINE` |
+| **Sprint** | SPRINT 5K — Semantic Fill Implementation |
+| **Audit dependency** | `sprint5j_real_runtime_flow_audit_20260530T185327Z/` (plus 5F–5I) |
+| **Implementation pack** | `sprint5k_semantic_fill_implementation_20260530T190900Z/` |
+| **Prior SEM digest (rollback)** | `sha256:02f2e5c2fd030999939b7c961f4bab3d1e072578d55210794bf7da9583825753` |
+| **SEM-CSMF digest (runtime SSOT)** | `sha256:bd0372d6808f005d80f26618154d367ebb856f40daf003601668d8cccab4eaf2` |
+| **Build tag** | `sprint5k-20260530T190900Z` |
+| **Decision Engine digest (unchanged)** | `sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6` |
+| **Fix scope** | SEM-CSMF only: `semantic_resolver.py` fill-missing chain ontology→GST→NEST; internal `_semantic_sources` trace |
+| **Runtime validation** | PNL URLLC/eMBB/mMTC/smartcity: latency+throughput+reliability filled; all ACCEPT+COMMITTED; sla_agent OK |
+| **Contracts** | Public JSON shape unchanged — optional KPI fields populated when previously null |
+| **Status** | SEMANTIC FILL OPERATIONAL · DE/BC/SLA-AGENT UNCHANGED · NO REGRESSION |
+
+**Usage:** SEM-CSMF deploy references MUST cite digest `bd0372d6808f...` unless superseded. Supersedes `SPRINT_5E_CONFIDENCE_AND_NEST_ALIGNMENT_BASELINE` for SEM runtime references only.
+
+---
+
 ## Freeze policy
 
 1. Frozen CSV, JSONL, and figure bytes are **immutable** after registration.
