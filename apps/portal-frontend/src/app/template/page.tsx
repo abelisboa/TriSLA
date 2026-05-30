@@ -1,11 +1,16 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { apiRequest, formatApiError } from "../../lib/api";
 import { DataState } from "../../components/common/DataState";
 import { WorkflowSteps, TEMPLATE_WORKFLOW_STEPS } from "../../components/workflow/WorkflowSteps";
-import { TEMPLATE_ID_HELP } from "../../lib/operatorLabels";
 import { generateTrislaTenantId } from "../../lib/tenantAutogen";
+import {
+  isKnownSliceType,
+  resolveTemplateId,
+  slaProfileLabel,
+  UnknownSliceTypeError,
+} from "../../lib/templateAutogen";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 import type { SubmitResponse } from "../../lib/submitResponse";
 
@@ -32,7 +37,6 @@ function buildFormValues(fields: Record<string, string>): Record<string, unknown
 }
 
 export default function CreateSlaTemplatePage() {
-  const [templateId, setTemplateId] = useState("");
   const [serviceName, setServiceName] = useState("");
   const [sliceType, setSliceType] = useState("");
   const [latency, setLatency] = useState("");
@@ -44,15 +48,35 @@ export default function CreateSlaTemplatePage() {
   const [result, setResult] = useState<SubmitResponse | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | undefined>(undefined);
+  const [lastResolvedTemplateId, setLastResolvedTemplateId] = useState<string | null>(null);
+
+  const profileLabel = useMemo(
+    () => (isKnownSliceType(sliceType) ? slaProfileLabel(sliceType) : null),
+    [sliceType],
+  );
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!templateId.trim()) {
-      setError("Template ID não pode ser vazio");
+    if (!sliceType.trim()) {
+      setError("Slice type is required to select an SLA profile");
       setStatus("error");
       return;
     }
+
+    let templateId: string;
+    try {
+      templateId = resolveTemplateId(sliceType);
+    } catch (err) {
+      if (err instanceof UnknownSliceTypeError) {
+        setError(err.message);
+        setStatus("error");
+        return;
+      }
+      throw err;
+    }
+
     const tenantId = generateTrislaTenantId();
+    setLastResolvedTemplateId(templateId);
 
     setStatus("loading");
     setError(undefined);
@@ -103,16 +127,14 @@ export default function CreateSlaTemplatePage() {
       <WorkflowSteps title="SLA workflow — template" steps={workflowSteps} />
 
       <form onSubmit={handleSubmit} className="trisla-form">
-        <div className="trisla-form-row">
-          <label htmlFor="template_id">Template ID</label>
-          <input
-            id="template_id"
-            type="text"
-            value={templateId}
-            onChange={(e) => setTemplateId(e.target.value)}
-          />
-          <p className="trisla-field-help">{TEMPLATE_ID_HELP}</p>
-        </div>
+        {profileLabel ? (
+          <dl className="trisla-profile-summary">
+            <div className="trisla-status-row">
+              <dt>Selected SLA Profile</dt>
+              <dd>{profileLabel}</dd>
+            </div>
+          </dl>
+        ) : null}
         <div className="trisla-form-row">
           <label htmlFor="service_name">Service name</label>
           <input id="service_name" type="text" value={serviceName} onChange={(e) => setServiceName(e.target.value)} />
@@ -165,6 +187,12 @@ export default function CreateSlaTemplatePage() {
           <label htmlFor="priority">Priority</label>
           <input id="priority" type="text" value={priority} onChange={(e) => setPriority(e.target.value)} />
         </div>
+        {lastResolvedTemplateId ? (
+          <details className="trisla-details">
+            <summary>Advanced details — resolved template</summary>
+            <p className="trisla-muted">{lastResolvedTemplateId}</p>
+          </details>
+        ) : null}
         <button type="submit" disabled={status === "loading"}>
           Submeter SLA Template
         </button>
