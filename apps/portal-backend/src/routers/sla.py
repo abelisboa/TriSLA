@@ -22,6 +22,7 @@ from src.schemas.sla import (
 )
 from src.services.nasp import NASPService
 from src.services.sla_status_telemetry import resolve_status_telemetry_snapshot
+from src.services.sla_status_assurance import resolve_status_runtime_assurance
 from src.services.sla_metrics import compute_sla_metrics
 from src.telemetry.collector import append_telemetry_csv, build_csv_row, collect_domain_metrics_async
 from src.telemetry.contract_v2 import TELEMETRY_UNITS_V2
@@ -60,6 +61,7 @@ async def _notify_sla_agent_pipeline(
         return "SKIPPED"
     intent_id = result.get("intent_id")
     run_slo = os.getenv("SLA_AGENT_INGEST_RUN_SLO", "false").lower() == "true"
+    run_assurance = os.getenv("SLA_AGENT_INGEST_RUN_ASSURANCE", "true").lower() == "true"
     payload = {
         "intent_id": intent_id,
         "sla_id": result.get("sla_id") or intent_id,
@@ -71,8 +73,13 @@ async def _notify_sla_agent_pipeline(
         "lifecycle": dict(lifecycle),
         "module_latencies_ms": metadata_out.get("module_latencies_ms"),
         "run_slo_evaluation": run_slo,
+        "run_runtime_assurance": run_assurance,
+        "telemetry_snapshot": metadata_out.get("telemetry_snapshot"),
+        "sla_requirements": result.get("sla_requirements"),
+        "slice_type": result.get("service_type"),
+        "service_type": result.get("service_type"),
     }
-    timeout = 20.0 if run_slo else 4.0
+    timeout = 25.0 if run_slo or run_assurance else 4.0
     t0 = time.perf_counter()
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -89,20 +96,38 @@ async def _notify_sla_agent_pipeline(
             "status": "OK",
             "http_status": r.status_code,
             "pipeline_ingested": body.get("pipeline_ingested"),
+            "runtime_assurance": body.get("runtime_assurance"),
             "slo_evaluation_executed": body.get("slo_evaluation_executed"),
             "monitoring_note": body.get("monitoring_note"),
         }
+        if body.get("runtime_assurance_payload") is not None:
+            metadata_out["runtime_assurance"] = body.get("runtime_assurance_payload")
+            ing["assurance_state"] = (body.get("runtime_assurance_payload") or {}).get("state")
+            ing["last_evaluation"] = (body.get("runtime_assurance_payload") or {}).get(
+                "last_evaluation"
+            )
+            ing["drift_detected"] = (body.get("runtime_assurance_payload") or {}).get(
+                "drift_detected"
+            )
+        if body.get("runtime_governance_event") is not None:
+            metadata_out["runtime_governance_event"] = body.get("runtime_governance_event")
         if body.get("slo_evaluation") is not None:
             ing["slo_evaluation"] = body.get("slo_evaluation")
         if body.get("slo_evaluation_error"):
             ing["slo_evaluation_error"] = body.get("slo_evaluation_error")
+        if body.get("runtime_assurance_error"):
+            ing["runtime_assurance_error"] = body.get("runtime_assurance_error")
         metadata_out["sla_agent_ingest"] = ing
         lifecycle["PIPELINE_INGESTED"] = ts
         lifecycle["MONITORED"] = ts
+        if body.get("runtime_assurance") is True:
+            lifecycle["RUNTIME_ASSURANCE"] = ts
         if body.get("slo_evaluation_executed") is True:
             lifecycle["SLO_EVALUATED"] = ts
         if body.get("slo_evaluation_executed") is True:
             return "OK_WITH_SLO"
+        if body.get("runtime_assurance") is True:
+            return "OK_WITH_ASSURANCE"
         return "OK"
     except Exception as e:
         ingest_http_ms = (time.perf_counter() - t0) * 1000.0
@@ -1197,6 +1222,11 @@ async def get_sla_status(sla_id: str):
 
         telemetry_snapshot = resolve_status_telemetry_snapshot(result, collected_snapshot)
 
+        runtime_assurance = resolve_status_runtime_assurance(
+            result,
+            telemetry_snapshot=telemetry_snapshot,
+        )
+
         return SLAStatusResponse(
             sla_id=sla_id,
             status=result.get("status", "unknown"),
@@ -1206,6 +1236,7 @@ async def get_sla_status(sla_id: str):
             created_at=result.get("created_at"),
             updated_at=result.get("updated_at"),
             telemetry_snapshot=telemetry_snapshot,
+            runtime_assurance=runtime_assurance,
         )
     except HTTPException:
         raise

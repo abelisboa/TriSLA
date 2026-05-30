@@ -59,6 +59,7 @@ class SLAStatusResponse(BaseModel):
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
     telemetry_snapshot: Optional[Dict[str, Any]] = None
+    runtime_assurance: Optional[Dict[str, Any]] = None
 
 
 class SLAMetricsResponse(BaseModel):

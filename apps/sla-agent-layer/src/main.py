@@ -93,6 +93,13 @@ from agent_transport import AgentTransport
 from agent_core import AgentCore
 from kafka_consumer import ActionConsumer
 from agent_coordinator import AgentCoordinator
+from revalidate import (
+    SLARevalidateTelemetryRequest,
+    SLARevalidateTelemetryResponse,
+    revalidate_telemetry_handler,
+)
+from runtime_assurance_store import get_previous_state, set_state
+from runtime_slo_evaluator import evaluate_runtime_assurance
 import logging
 
 logger = logging.getLogger(__name__)
@@ -110,7 +117,7 @@ if otlp_enabled:
     except Exception as e:
         print(f"⚠️ OTLP não disponível, continuando sem observabilidade: {e}")
 
-app = FastAPI(title="TriSLA SLA-Agent Layer", version="3.10.0")
+app = FastAPI(title="TriSLA SLA-Agent Layer", version="3.11.0")
 _trisla_attach_observability(app, os.getenv("TRISLA_SERVICE_NAME", "sla-agent-layer"))
 FastAPIInstrumentor.instrument_app(app)
 
@@ -306,6 +313,55 @@ async def create_snapshot_s29(request: dict):
     return result
 
 
+def _run_runtime_assurance_block(request: dict) -> dict:
+    """Evaluate closed-loop runtime assurance from pipeline/revalidate payload."""
+    intent_id = str(request.get("intent_id") or request.get("sla_id") or "").strip() or None
+    nest_id = request.get("nest_id")
+    telemetry = request.get("telemetry_snapshot")
+    if not isinstance(telemetry, dict):
+        lifecycle = request.get("lifecycle")
+        if isinstance(lifecycle, dict):
+            telemetry = lifecycle.get("telemetry_snapshot")
+    sla_req = request.get("sla_requirements")
+    if not isinstance(sla_req, dict):
+        form_values = request.get("form_values")
+        if isinstance(form_values, dict):
+            sla_req = form_values
+    slice_type = (
+        request.get("slice_type")
+        or request.get("service_type")
+        or (sla_req or {}).get("slice_type")
+        or (sla_req or {}).get("type")
+        or "EMBB"
+    )
+    ref = request.get("reference_telemetry_snapshot")
+    previous = get_previous_state(intent_id)
+    result = evaluate_runtime_assurance(
+        telemetry_snapshot=telemetry if isinstance(telemetry, dict) else {},
+        sla_requirements=sla_req if isinstance(sla_req, dict) else None,
+        slice_type=str(slice_type),
+        reference_telemetry_snapshot=ref if isinstance(ref, dict) else None,
+        previous_state=previous,
+        intent_id=intent_id,
+        nest_id=nest_id,
+    )
+    assurance = result.get("runtime_assurance") or {}
+    new_state = assurance.get("state")
+    if intent_id and new_state:
+        set_state(intent_id, str(new_state))
+    return result
+
+
+@app.post("/api/v1/runtime-assurance/evaluate")
+async def evaluate_runtime_assurance_endpoint(request: dict):
+    """On-demand runtime assurance evaluation (observation only)."""
+    result = _run_runtime_assurance_block(request)
+    return {
+        "status": "evaluated",
+        **result,
+    }
+
+
 @app.post("/api/v1/ingest/pipeline-event")
 async def ingest_pipeline_event(request: dict):
     """
@@ -329,9 +385,37 @@ async def ingest_pipeline_event(request: dict):
         "intent_id": intent_id,
         "sla_id": sla_id,
         "pipeline_ingested": True,
+        "runtime_assurance": False,
         "slo_evaluation_executed": False,
-        "monitoring_note": "HTTP_pipeline_ingest_only_kafka_offline",
+        "monitoring_note": "HTTP_pipeline_ingest_closed_loop_observation",
     }
+    run_assurance = request.get("run_runtime_assurance")
+    if run_assurance is None:
+        run_assurance = True
+    if run_assurance is True:
+        try:
+            assurance_result = _run_runtime_assurance_block(request)
+            out["runtime_assurance"] = True
+            out["runtime_assurance_evaluated"] = assurance_result.get(
+                "runtime_assurance_evaluated", True
+            )
+            out["runtime_assurance_state"] = (assurance_result.get("runtime_assurance") or {}).get(
+                "state"
+            )
+            out["assurance_state"] = out["runtime_assurance_state"]
+            out["last_evaluation"] = (assurance_result.get("runtime_assurance") or {}).get(
+                "last_evaluation"
+            )
+            out["drift_detected"] = (assurance_result.get("runtime_assurance") or {}).get(
+                "drift_detected", False
+            )
+            out["runtime_assurance_payload"] = assurance_result.get("runtime_assurance")
+            if assurance_result.get("runtime_governance_event"):
+                out["runtime_governance_event"] = assurance_result["runtime_governance_event"]
+        except Exception as e:
+            logger.warning("[SLA_AGENT_PIPELINE] runtime_assurance failed: %s", e)
+            out["runtime_assurance_error"] = str(e)[:300]
+            out["runtime_assurance"] = False
     if request.get("run_slo_evaluation") is True:
         try:
             out["slo_evaluation"] = await agent_coordinator.evaluate_all_slos()
@@ -341,6 +425,24 @@ async def ingest_pipeline_event(request: dict):
             out["slo_evaluation_error"] = str(e)[:300]
             out["slo_evaluation_executed"] = False
     return out
+
+
+@app.post(
+    "/api/v1/agent/revalidate-telemetry",
+    response_model=SLARevalidateTelemetryResponse,
+)
+async def revalidate_telemetry(request: SLARevalidateTelemetryRequest):
+    """
+    REFACTOR FASE 2 — endpoint interno de revalidação de telemetria.
+
+    Lógica copiada 1:1 do Portal Backend (`/api/v1/sla/revalidate-telemetry`) durante a
+    migração de responsabilidades para o SLA-Agent (ver
+    docs/REFACTOR_TRISLA_RESPONSIBILITY_GUIDE.md).
+
+    Endpoint *interno* — exposto como ClusterIP; o Portal Backend é o único cliente
+    público (`POST /api/v1/sla/revalidate-telemetry`) e delega para cá via HTTP.
+    """
+    return await revalidate_telemetry_handler(request)
 
 
 @app.post("/api/v1/s29/generate-explanation")

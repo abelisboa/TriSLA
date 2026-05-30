@@ -10,6 +10,14 @@ export type SlaRuntimeStatusResponse = {
   created_at?: string;
   updated_at?: string | null;
   telemetry_snapshot?: Record<string, unknown>;
+  runtime_assurance?: {
+    state?: string;
+    assurance_state?: string;
+    drift_detected?: boolean;
+    recommendation?: string;
+    last_evaluation?: string;
+    bottleneck_domain?: string;
+  };
 };
 
 /** POST /api/v1/sla/revalidate-telemetry — audited response shape. */
