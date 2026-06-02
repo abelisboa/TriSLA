@@ -1,4 +1,5 @@
 import { asMetadata, type SubmitResponse } from "../../lib/submitResponse";
+import { resolveOperationalConfidence } from "../../lib/confidenceDisplay";
 import {
   contributingFactorRows,
   ReasonCodesBlock,
@@ -27,10 +28,7 @@ export function OperationalExplanationPanel({
   const thresholds = thresholdRows(metadata?.thresholds_used);
   const systemXai = metadata?.system_xai_explanation;
 
-  const decisionConfidence =
-    response.confidence !== undefined && response.confidence !== null
-      ? response.confidence
-      : metadata?.confidence_score;
+  const decisionConfidence = resolveOperationalConfidence(response);
 
   return (
     <section className="trisla-status-card" aria-label="Operational Explanation">
@@ -82,8 +80,8 @@ export function OperationalExplanationPanel({
         <h3>Confidence Breakdown</h3>
         <dl>
           <div className="trisla-status-row">
-            <dt>Decision Confidence</dt>
-            <dd>{decisionConfidence !== undefined && decisionConfidence !== null ? String(decisionConfidence) : "Not available"}</dd>
+            <dt>Model Confidence</dt>
+            <dd>{decisionConfidence != null ? String(decisionConfidence) : "Not available"}</dd>
           </div>
           <div className="trisla-status-row">
             <dt>ML Confidence</dt>

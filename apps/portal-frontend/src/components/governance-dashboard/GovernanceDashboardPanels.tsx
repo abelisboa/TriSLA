@@ -13,6 +13,7 @@ import {
   operatorFieldLabel,
 } from "../../lib/operatorLabels";
 import { formatOperatorMetric } from "../../lib/operatorFormat";
+import { GOVERNANCE_TOOLTIPS } from "../../lib/governanceDisplayLabels";
 import { FieldList } from "../submit-payload/FieldList";
 
 export function GovernanceOverviewPanel({ response }: { response: SubmitResponse }) {
@@ -137,9 +138,11 @@ export function RegistrationEvidencePanel({ response }: { response: SubmitRespon
   const latency = response.blockchain_transaction_latency_ms;
 
   return (
-    <section className="trisla-governance-subsection" aria-label="Registration Evidence">
-      <h3>Registration Evidence</h3>
-      <p className="trisla-muted">Blockchain registry and registration status from the submission response.</p>
+    <section className="trisla-governance-subsection" aria-label="Local registration and on-chain evidence">
+      <h3>Local registration &amp; on-chain evidence</h3>
+      <p className="trisla-muted" title={GOVERNANCE_TOOLTIPS.localGovernance}>
+        Local BC-NSSMF lineage and per-SLA on-chain commit fields from the submission response.
+      </p>
       <FieldList
         fields={[
           {

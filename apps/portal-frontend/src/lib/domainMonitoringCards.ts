@@ -58,8 +58,11 @@ export function buildRanDomainCard(
     summary?.ran_load,
   );
 
+  const throughput = pickFirstReal(summary?.throughput_mbps);
+
   const rows: DomainMetricRow[] = [
     row("PRB Utilization", prb),
+    row("Dataplane Throughput (N6)", throughput),
   ];
 
   return {
@@ -68,7 +71,7 @@ export function buildRanDomainCard(
   };
 }
 
-/** Transport: I1 latency/jitter → summary transport_latency → throughput_mbps */
+/** Transport: I1 latency/jitter → summary transport_latency (no throughput — RAN-owned). */
 export function buildTransportDomainCard(
   i1: I1MetricsResponse | null | undefined,
   summary: PrometheusSummaryPayload | null | undefined,
@@ -76,12 +79,10 @@ export function buildTransportDomainCard(
   const i1Metrics = i1?.metrics ?? {};
   const latency = pickFirstReal(i1Metrics.latency_ms, summary?.transport_latency);
   const jitter = pickFirstReal(i1Metrics.jitter_ms);
-  const throughput = pickFirstReal(summary?.throughput_mbps);
 
   const rows: DomainMetricRow[] = [
     row("Latency (ms)", latency),
     row("Jitter (ms)", jitter),
-    row("Throughput (Mbps)", throughput),
   ];
 
   return {

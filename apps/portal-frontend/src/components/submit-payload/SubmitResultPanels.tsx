@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { SubmitResponse } from "../../lib/submitResponse";
+import { normalizeAdmissionDecision, showLifecycleSection } from "../../lib/admissionLifecycleGate";
 import { AdmissionDashboard } from "../admission-dashboard/AdmissionDashboard";
 import { AdmissionDecisionPanel } from "./AdmissionDecisionPanel";
 import { FeasibilityPanel } from "./FeasibilityPanel";
@@ -17,6 +18,8 @@ export function SubmitResultPanels({ response }: Props) {
 
 /** Legacy F2 sequential layout — preserved for non-regression. */
 export function SubmitResultPanelsF2({ response }: Props) {
+  const decision = normalizeAdmissionDecision(response.decision);
+  const showRuntimeCta = showLifecycleSection("viewRuntimeCta", decision);
   return (
     <>
       <AdmissionDecisionPanel response={response} />
@@ -27,11 +30,17 @@ export function SubmitResultPanelsF2({ response }: Props) {
       <RawPayloadPanel response={response} />
       <section className="trisla-status-card" aria-label="Next steps">
         <h2>Next steps</h2>
-        <p className="trisla-muted">View runtime orchestration and observability after admission.</p>
+        <p className="trisla-muted">
+          {showRuntimeCta
+            ? "View runtime orchestration and observability after admission."
+            : "Admission-only view — runtime lifecycle is unavailable for this decision."}
+        </p>
         <div className="trisla-cta-row">
-          <Link href="/sla-lifecycle" className="trisla-cta-button">
-            View Runtime
-          </Link>
+          {showRuntimeCta ? (
+            <Link href="/sla-lifecycle" className="trisla-cta-button">
+              View Runtime
+            </Link>
+          ) : null}
           <Link href="/monitoring" className="trisla-cta-button">
             View Monitoring
           </Link>

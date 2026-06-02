@@ -156,8 +156,10 @@ export default function MonitoringPage() {
 
   return (
     <section>
-      <h1>Monitoring</h1>
-      <p className="trisla-subtitle">Multi-domain observability using real backend feed.</p>
+      <h1>Domain Analytics</h1>
+      <p className="trisla-subtitle">
+        Multi-domain platform observability. Per-SLA runtime: open Runtime Lifecycle with Intent ID.
+      </p>
       <div className="trisla-cards-grid">
         <section className="trisla-status-card">
           <h2>{summaryCardTitle}</h2>
@@ -170,7 +172,7 @@ export default function MonitoringPage() {
             <dl>
               {summaryRows.map((row) => (
                 <div key={row.label} className="trisla-status-row">
-                  <dt>{row.label}</dt>
+                  <dt title={row.title}>{row.label}</dt>
                   <dd>{row.value}</dd>
                 </div>
               ))}

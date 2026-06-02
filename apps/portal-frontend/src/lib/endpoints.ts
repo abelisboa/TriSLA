@@ -1,6 +1,8 @@
 /** Relative paths under /api/v1 (Portal Backend). */
 export const API_V1_PATHS = {
   GLOBAL_HEALTH: "/health/global",
+  /** Legacy platform health — exposes version (not on /health/global). */
+  PLATFORM_HEALTH: "/health",
   PROMETHEUS_SUMMARY: "/prometheus/summary",
   RAN_I1_METRICS: "/interfaces/ran-i1/metrics",
   TN_I1_METRICS: "/interfaces/tn-i1/metrics",
@@ -26,6 +28,7 @@ export type ApiEndpointKey = ApiV1EndpointKey | BackendRootEndpointKey;
 /** @deprecated Use API_V1_PATHS / BACKEND_ROOT_PATHS via api client. */
 export const API_ENDPOINTS = {
   GLOBAL_HEALTH: "/api/v1/health/global",
+  PLATFORM_HEALTH: "/api/v1/health",
   PROMETHEUS_SUMMARY: "/api/v1/prometheus/summary",
   RAN_I1_METRICS: "/api/v1/interfaces/ran-i1/metrics",
   TN_I1_METRICS: "/api/v1/interfaces/tn-i1/metrics",

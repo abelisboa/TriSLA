@@ -9,6 +9,7 @@ import {
   type InterpretResponse,
 } from "../../lib/pnlSubmit";
 import type { SubmitResponse } from "../../lib/submitResponse";
+import { cacheAdmissionOperationalSnapshot } from "../../lib/admissionOperationalCache";
 import { generateTrislaTenantId } from "../../lib/tenantAutogen";
 import {
   resolveTemplateId,
@@ -111,6 +112,7 @@ export default function CreateSlaPnlPage() {
         body: submitPayload,
       });
       setSubmitResult(response);
+      cacheAdmissionOperationalSnapshot(response);
       setSubmitStatus("ready");
     } catch (err) {
       setSubmitStatus("error");

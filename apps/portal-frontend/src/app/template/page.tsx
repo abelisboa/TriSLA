@@ -13,6 +13,7 @@ import {
 } from "../../lib/templateAutogen";
 import { SubmitResultPanels } from "../../components/submit-payload/SubmitResultPanels";
 import type { SubmitResponse } from "../../lib/submitResponse";
+import { cacheAdmissionOperationalSnapshot } from "../../lib/admissionOperationalCache";
 
 type Status = "idle" | "loading" | "ready" | "error";
 
@@ -102,6 +103,7 @@ export default function CreateSlaTemplatePage() {
         },
       });
       setResult(response);
+      cacheAdmissionOperationalSnapshot(response);
       setStatus("ready");
     } catch (err) {
       setStatus("error");
