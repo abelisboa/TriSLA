@@ -7,6 +7,15 @@ from typing import Any, Dict
 import httpx
 import requests
 from fastapi import HTTPException
+from src.domain_actions.translator import translate_sla_to_domain_actions
+from src.observability.distributed_trace import (
+    build_distributed_traceability,
+    child_trace,
+    inject_http_headers,
+    merge_trace_into_metadata,
+    new_root_trace,
+    trace_from_metadata,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -49,14 +58,14 @@ class NASPService:
 
     def check_all_nasp_modules(self):
         return {
-            "sem_csmf": self.check_sem_csmf(),
-            "ml_nsmf": {"reachable": True},
-            "decision": {"reachable": True},
-            "bc_nssmf": self.check_bc_nssmf(),
-            "sla_agent": {"reachable": True}
+            "sem_csmf": self._probe("sem-csmf", self.sem_url),
+            "ml_nsmf": self._probe("ml-nsmf", "http://trisla-ml-nsmf:8081/health"),
+            "decision": self._probe("decision-engine", "http://trisla-decision-engine:8082/health"),
+            "bc_nssmf": self._probe("bc-nssmf", self.bc_url),
+            "sla_agent": self._probe("sla-agent", "http://trisla-sla-agent-layer:8084/health"),
         }
 
-    async def call_sem_csmf(self, intent_text: str, tenant_id: str):
+    async def call_sem_csmf(self, intent_text: str, tenant_id: str, headers: dict | None = None):
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 f"{self.sem_base}/api/v1/interpret",
@@ -64,11 +73,17 @@ class NASPService:
                     "intent": intent_text,
                     "tenant_id": tenant_id
                 },
+                headers=headers or {},
             )
             response.raise_for_status()
             return response.json()
 
     async def submit_template_to_nasp(self, nest_template: dict, tenant_id: str):
+        upstream_metadata = nest_template.get("metadata")
+        metadata_for_sem = upstream_metadata if isinstance(upstream_metadata, dict) else {}
+        root_trace = trace_from_metadata(metadata_for_sem) or new_root_trace("portal-backend")
+        trace_hops: list[dict] = [dict(root_trace)]
+
         # PASSO 2 — extrair intent a partir do input recebido.
         # O SEM-CSMF /api/v1/interpret exige campo "intent" não vazio.
         sla_requirements = nest_template.get("sla_requirements") or {}
@@ -82,7 +97,10 @@ class NASPService:
         )
 
         t0 = time.perf_counter()
-        interpret_result = await self.call_sem_csmf(intent, tenant_id)
+        sem_interpret_trace = child_trace(root_trace, "sem-csmf")
+        interpret_headers = inject_http_headers({}, sem_interpret_trace)
+        interpret_result = await self.call_sem_csmf(intent, tenant_id, headers=interpret_headers)
+        trace_hops.append(dict(sem_interpret_trace))
         t1 = time.perf_counter()
         rtt_interpret_ms = (t1 - t0) * 1000
         internal = interpret_result.get("sem_csmf_internal_latency_ms")
@@ -144,8 +162,13 @@ class NASPService:
 
         upstream_metadata = nest_template.get("metadata")
         metadata_for_sem = upstream_metadata if isinstance(upstream_metadata, dict) else None
+        if metadata_for_sem is None:
+            metadata_for_sem = {}
+        metadata_for_sem = merge_trace_into_metadata(metadata_for_sem, root_trace)
 
         t2 = time.perf_counter()
+        sem_intent_trace = child_trace(root_trace, "sem-csmf")
+        sem_headers = inject_http_headers({}, sem_intent_trace)
         async with httpx.AsyncClient(timeout=30.0) as client:
             intent_payload = {
                 "service_type": service_type,
@@ -158,9 +181,11 @@ class NASPService:
             response = await client.post(
                 f"{self.sem_base}/api/v1/intents",
                 json=intent_payload,
+                headers=sem_headers,
             )
             response.raise_for_status()
             sem_result = response.json()
+            trace_hops.append(dict(sem_intent_trace))
             t3 = time.perf_counter()
             decision_duration_ms = (t3 - t2) * 1000
             admission_time_total_ms = (t3 - t0) * 1000
@@ -176,12 +201,26 @@ class NASPService:
             else:
                 merged["ml_nsmf_status"] = "SKIPPED"
             decision = (merged.get("decision") or "").upper()
+            md_sem = merged.get("metadata") if isinstance(merged.get("metadata"), dict) else {}
+            authority_ok = (
+                md_sem.get("decision_engine_orchestration_authority") is True
+                and isinstance(md_sem.get("orchestration_required"), bool)
+            )
+            if authority_ok:
+                should_orchestrate = bool(md_sem.get("orchestration_required"))
+            else:
+                should_orchestrate = decision == "ACCEPT"
+
             orch_payload = self._build_orchestration_payload(
                 merged=merged,
                 service_type=service_type,
                 sla_requirements=sla_requirements_forward,
                 tenant_id=tenant_id,
             )
+            if authority_ok and isinstance(md_sem.get("orchestration_intent"), dict) and md_sem.get(
+                "orchestration_intent"
+            ):
+                orch_payload = {**orch_payload, **md_sem["orchestration_intent"]}
             orch_meta = {
                 "nasp_orchestration_attempted": False,
                 "nasp_orchestration_status": "SKIPPED",
@@ -192,7 +231,7 @@ class NASPService:
                     "endpoint": "/api/v1/nsi/instantiate",
                 },
             }
-            if decision == "ACCEPT":
+            if decision == "ACCEPT" and should_orchestrate:
                 orch_meta["nasp_orchestration_requested_at"] = datetime.now(
                     timezone.utc
                 ).isoformat()
@@ -280,6 +319,11 @@ class NASPService:
                     nasp_t1 = time.perf_counter()
                     orch_meta["nasp_latency_ms"] = (nasp_t1 - nasp_t0) * 1000.0
                     orch_meta["nasp_latency_available"] = True
+            elif decision == "ACCEPT" and not should_orchestrate:
+                orch_meta["nasp_orchestration_response"] = {
+                    "reason": "ACCEPT_but_orchestration_not_required_by_authority_fields",
+                    "endpoint": "/api/v1/nsi/instantiate",
+                }
             elif decision == "RENEGOTIATE":
                 orch_meta["nasp_orchestration_response"] = {
                     "reason": "decision=RENEGOTIATE (intermediate decision)",
@@ -292,7 +336,34 @@ class NASPService:
                 }
 
             md = merged.get("metadata") if isinstance(merged.get("metadata"), dict) else {}
+            telemetry_snapshot = (
+                metadata_for_sem.get("telemetry_snapshot")
+                if isinstance(metadata_for_sem, dict)
+                else {}
+            )
+            if callable(translate_sla_to_domain_actions):
+                try:
+                    domain_actions = translate_sla_to_domain_actions(
+                        sla=sla_requirements_forward,
+                        decision={"decision": decision},
+                        telemetry_snapshot=telemetry_snapshot if isinstance(telemetry_snapshot, dict) else {},
+                    )
+                    md["domain_actions"] = domain_actions
+                except Exception as exc:
+                    logger.warning("[NASP ORCH] domain_actions enrichment skipped: %s", exc)
             md.update(orch_meta)
+            if authority_ok:
+                md["decision_engine_orchestration_authority"] = True
+                md.setdefault(
+                    "orchestration_decision_source",
+                    md_sem.get("orchestration_decision_source", "decision-engine"),
+                )
+            else:
+                md["decision_engine_orchestration_authority"] = False
+                md.setdefault(
+                    "orchestration_authority_fallback_reason",
+                    "orchestration_authority_fields_absent_using_legacy_accept_triggers_orchestration",
+                )
             merged["metadata"] = md
 
             merged["orchestration_status"] = orch_meta.get("nasp_orchestration_status")
@@ -309,13 +380,17 @@ class NASPService:
                         "decision": decision,
                         "metadata": merged.get("metadata"),
                     }
+                    bc_trace = child_trace(root_trace, "bc-nssmf")
+                    bc_headers = inject_http_headers({}, bc_trace)
                     bc_t0 = time.perf_counter()
                     response = requests.post(
                         f"{self.bc_nssmf_url}/api/v1/register-sla",
                         json=bc_payload,
                         timeout=10,
+                        headers=bc_headers,
                     )
                     bc_t1 = time.perf_counter()
+                    trace_hops.append(dict(bc_trace))
                     merged["blockchain_transaction_latency_ms"] = (bc_t1 - bc_t0) * 1000
                     response.raise_for_status()
                     bc_result = response.json()
@@ -348,6 +423,17 @@ class NASPService:
             merged["admission_time_total_ms"] = admission_time_total_ms
             merged.setdefault("service_type", service_type)
             merged.setdefault("sla_requirements", sla_requirements_forward)
+            md_final = merged.get("metadata") if isinstance(merged.get("metadata"), dict) else {}
+            de_meta = trace_from_metadata(md_final)
+            if de_meta and not any(h.get("service") == "decision-engine" for h in trace_hops):
+                trace_hops.append({**de_meta, "service": "decision-engine"})
+            md_final = merge_trace_into_metadata(md_final, root_trace)
+            md_final["distributed_trace_hops"] = trace_hops
+            md_final["distributed_traceability"] = build_distributed_traceability(
+                root_trace, trace_hops
+            )
+            merged["metadata"] = md_final
+            merged["trace_id"] = root_trace.get("trace_id")
             return merged
 
     def _build_orchestration_payload(
@@ -378,6 +464,38 @@ class NASPService:
             "sla": sla_requirements,
             "source": "portal-backend-submit",
         }
+
+    async def persist_intent_governance_metadata(
+        self, intent_id: str, governance_fields: Dict[str, Any]
+    ) -> bool:
+        """
+        Merge governance/on-chain fields into SEM intent extra_metadata (Sprint 10G.4).
+        Non-fatal: submit may succeed even if SEM is temporarily unavailable.
+        """
+        if not intent_id or not governance_fields:
+            return False
+        url = f"{self.sem_base}/api/v1/intents/{intent_id}/governance-metadata"
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            try:
+                response = await client.patch(url, json=governance_fields)
+                response.raise_for_status()
+                body = response.json()
+                return bool(body.get("updated", True))
+            except httpx.HTTPStatusError as e:
+                logger.warning(
+                    "[GOV_PROPAGATION] SEM patch HTTP %s intent=%s: %s",
+                    e.response.status_code,
+                    intent_id,
+                    e.response.text[:200],
+                )
+                return False
+            except httpx.RequestError as e:
+                logger.warning(
+                    "[GOV_PROPAGATION] SEM patch connection intent=%s: %s",
+                    intent_id,
+                    e,
+                )
+                return False
 
     async def get_sla_status(self, sla_id: str) -> Dict[str, Any]:
         """Consulta status do intent/SLA no SEM-CSMF."""

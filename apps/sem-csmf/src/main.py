@@ -282,7 +282,7 @@ async def interpret_intent(
                     }
                 elif inferred_service_type == SliceType.MMTC:
                     sla_req_dict = {
-                        "device_density": 10000,  # IoT massivo
+                        "device_density": 1000000,  # IoT massivo (3GPP / GST / NEST SSOT)
                         "coverage": "Urban"
                     }
                 else:  # eMBB
@@ -485,6 +485,29 @@ async def create_intent(
                 )
             _resp_meta["canonical_sla"] = canonical_sla
 
+            from observability.distributed_trace import (
+                build_distributed_traceability,
+                child_trace,
+                merge_trace_into_metadata,
+                trace_from_metadata,
+            )
+            upstream_trace = trace_from_metadata(upstream_metadata)
+            if upstream_trace:
+                _resp_meta = merge_trace_into_metadata(_resp_meta, upstream_trace)
+                hops = [
+                    {**upstream_trace, "service": upstream_trace.get("service") or "portal-backend"},
+                    {**child_trace(upstream_trace, "sem-csmf"), "service": "sem-csmf"},
+                ]
+                de_trace = trace_from_metadata(_resp_meta)
+                if de_trace:
+                    hops.append({**de_trace, "service": "decision-engine"})
+                _resp_meta["distributed_trace_hops"] = hops
+                _resp_meta["distributed_traceability"] = build_distributed_traceability(
+                    upstream_trace, hops
+                )
+            intent_model.extra_metadata = _resp_meta
+            db.commit()
+
             return IntentResponse(
                 intent_id=intent.intent_id,
                 status="accepted",
@@ -604,6 +627,59 @@ async def get_intent(
         if meta.get("nssi") is not None:
             out["nssi"] = meta["nssi"]
         return out
+
+
+_GOVERNANCE_METADATA_KEYS = frozenset(
+    {
+        "bc_status",
+        "tx_hash",
+        "block_number",
+        "blockchain_tx_hash",
+        "blockchain_status",
+        "governance_registration_status",
+        "governance_registration_tx_hash",
+        "governance_registration_block_number",
+        "governance_registration_fallback",
+        "governance_event_id",
+        "transaction_receipt",
+    }
+)
+
+
+@app.patch("/api/v1/intents/{intent_id}/governance-metadata")
+async def patch_intent_governance_metadata(
+    intent_id: str,
+    request: dict,
+    db: Session = Depends(get_db),
+    current_user: str = get_current_user_optional(),
+):
+    """
+    Merge governance / on-chain fields into intent extra_metadata (Sprint 10G.4).
+    Does not alter semantic pipeline — persistence only for runtime status propagation.
+    """
+    with tracer.start_as_current_span("patch_intent_governance_metadata") as span:
+        span.set_attribute("intent.id", intent_id)
+        db_intent = IntentRepository.get_by_id(db, intent_id)
+        if not db_intent:
+            raise HTTPException(status_code=404, detail="Intent not found")
+        patch = {
+            k: v
+            for k, v in (request or {}).items()
+            if k in _GOVERNANCE_METADATA_KEYS and v is not None
+        }
+        if not patch:
+            return {"intent_id": intent_id, "updated": False, "metadata": db_intent.extra_metadata or {}}
+        meta = dict(db_intent.extra_metadata or {})
+        meta.update(patch)
+        db_intent.extra_metadata = meta
+        db.commit()
+        db.refresh(db_intent)
+        logger.info(
+            "[GOV_PROPAGATION] intent=%s keys=%s",
+            intent_id,
+            sorted(patch.keys()),
+        )
+        return {"intent_id": intent_id, "updated": True, "metadata": meta}
 
 
 @app.post("/api/v1/intents/register")
