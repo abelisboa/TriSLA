@@ -71,7 +71,14 @@ export function isV2FlatSummary(
   return hasV2Field && !hasLegacyEnvelope;
 }
 
-export type V2SummaryDisplayRow = { label: string; value: string };
+export type V2SummaryDisplayRow = {
+  label: string;
+  value: string;
+  title?: string;
+};
+
+export const OBSERVED_THROUGHPUT_TOOLTIP =
+  "RAN dataplane throughput proxy (N6 peer ingress)";
 
 export function v2SummaryDisplayRows(
   payload: PrometheusSummaryV2,
@@ -82,7 +89,11 @@ export function v2SummaryDisplayRows(
       label: "Transport Latency",
       value: formatOperatorMetric("Transport Latency", payload.transport_latency),
     },
-    { label: "Throughput", value: formatOperatorMetric("Throughput", payload.throughput_mbps) },
+    {
+      label: "Observed Throughput",
+      value: formatOperatorMetric("Throughput", payload.throughput_mbps),
+      title: OBSERVED_THROUGHPUT_TOOLTIP,
+    },
     { label: "Active Sessions", value: formatOperatorMetric("Active Sessions", payload.sessions) },
     { label: "CPU", value: formatOperatorMetric("CPU Utilization", payload.cpu) },
     {
@@ -92,7 +103,7 @@ export function v2SummaryDisplayRows(
   ];
 }
 
-export type LegacySummaryDisplayRow = { label: string; value: string };
+export type LegacySummaryDisplayRow = { label: string; value: string; title?: string };
 
 export function legacySummaryDisplayRows(
   payload: PrometheusSummaryLegacy,

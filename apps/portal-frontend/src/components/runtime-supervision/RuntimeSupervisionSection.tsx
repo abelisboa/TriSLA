@@ -3,6 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { formatApiError, portalApi } from "../../lib/api";
 import {
+  admissionDecisionFromStatus,
+  isRuntimeLifecycleEnabled,
+  showLifecycleSection,
+} from "../../lib/admissionLifecycleGate";
+import {
   buildRevalidateRequest,
   intentIdFromSubmit,
   lifecycleStateFromSubmit,
@@ -19,6 +24,9 @@ import {
   RuntimePayloadPanel,
   RuntimeStatusPanel,
 } from "./RuntimeSupervisionPanels";
+import { RuntimeAssurancePanel } from "../lifecycle/RuntimeAssurancePanel";
+import { parseRuntimeAssurance } from "../../lib/runtimeAssurance";
+import { AdmissionOnlyBanner } from "../gating/AdmissionOnlyBanner";
 
 type Props = { response: SubmitResponse; heading?: string };
 
@@ -55,6 +63,18 @@ export function RuntimeSupervisionSection({
   useEffect(() => {
     void loadStatus();
   }, [loadStatus]);
+
+  const admissionDecision = admissionDecisionFromStatus(statusData);
+  const runtimeEnabled = isRuntimeLifecycleEnabled(statusData);
+
+  if (!runtimeEnabled && statusData) {
+    return (
+      <section className="trisla-status-card trisla-runtime-supervision" aria-label="Runtime Supervision">
+        <h2>{heading}</h2>
+        <AdmissionOnlyBanner decision={admissionDecision} />
+      </section>
+    );
+  }
 
   async function handleRevalidate() {
     const body = buildRevalidateRequest(response);
@@ -106,29 +126,41 @@ export function RuntimeSupervisionSection({
         lifecycleState={lifecycleState}
         loading={statusLoading}
         error={statusError}
+        assurance={parseRuntimeAssurance(statusData?.runtime_assurance)}
       />
 
-      <LifecycleRuntimeSnapshotPanel snapshot={runtimeSnapshot} />
+      {showLifecycleSection("runtimeAssurance", admissionDecision) ? (
+        <RuntimeAssurancePanel
+          assurance={parseRuntimeAssurance(statusData?.runtime_assurance)}
+          telemetrySnapshot={statusData?.telemetry_snapshot ?? runtimeSnapshot}
+        />
+      ) : null}
 
-      <section className="trisla-runtime-subsection" aria-label="Revalidate Telemetry">
-        <h3>Revalidate Telemetry</h3>
-        <button
-          type="button"
-          className="trisla-cta-button"
-          onClick={() => void handleRevalidate()}
-          disabled={!intentId || revalidateLoading}
-        >
-          {revalidateLoading ? "Revalidating…" : "Revalidate Telemetry"}
-        </button>
-        {revalidateError && <p className="trisla-error">{revalidateError}</p>}
-        {revalidation?.revalidation_status && (
-          <p>
-            revalidation_status: <strong>{revalidation.revalidation_status}</strong>
-          </p>
-        )}
-      </section>
+      {showLifecycleSection("runtimeSnapshot", admissionDecision) ? (
+        <LifecycleRuntimeSnapshotPanel snapshot={runtimeSnapshot} />
+      ) : null}
 
-      {revalidation && (
+      {showLifecycleSection("revalidation", admissionDecision) ? (
+        <section className="trisla-runtime-subsection" aria-label="Revalidate Telemetry">
+          <h3>Revalidate Telemetry</h3>
+          <button
+            type="button"
+            className="trisla-cta-button"
+            onClick={() => void handleRevalidate()}
+            disabled={!intentId || revalidateLoading}
+          >
+            {revalidateLoading ? "Revalidating…" : "Revalidate Telemetry"}
+          </button>
+          {revalidateError && <p className="trisla-error">{revalidateError}</p>}
+          {revalidation?.revalidation_status && (
+            <p>
+              revalidation_status: <strong>{revalidation.revalidation_status}</strong>
+            </p>
+          )}
+        </section>
+      ) : null}
+
+      {revalidation && showLifecycleSection("driftAnalysis", admissionDecision) ? (
         <>
           <FreshTelemetryPanel
             snapshot={
@@ -137,12 +169,15 @@ export function RuntimeSupervisionSection({
                 ? revalidation.telemetry_snapshot_atual
                 : undefined
             }
+            revalidationStatus={revalidation.revalidation_status}
           />
           <DriftAnalysisPanel driftSummary={revalidation.drift_summary} />
-          <RemediationEvidencePanel evidence={remediationObj} />
+          {showLifecycleSection("remediation", admissionDecision) ? (
+            <RemediationEvidencePanel evidence={remediationObj} />
+          ) : null}
           <RuntimePayloadPanel payload={revalidation} />
         </>
-      )}
+      ) : null}
     </section>
   );
 }

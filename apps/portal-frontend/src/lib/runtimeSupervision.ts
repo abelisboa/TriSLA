@@ -10,6 +10,11 @@ export type SlaRuntimeStatusResponse = {
   created_at?: string;
   updated_at?: string | null;
   telemetry_snapshot?: Record<string, unknown>;
+  admission_decision?: string;
+  runtime_lifecycle_enabled?: boolean;
+  admission_telemetry_snapshot?: Record<string, unknown>;
+  admission_decision_evidence?: Array<Record<string, unknown>>;
+  admission_reasoning?: string | null;
   runtime_assurance?: {
     state?: string;
     assurance_state?: string;
@@ -17,6 +22,33 @@ export type SlaRuntimeStatusResponse = {
     recommendation?: string;
     last_evaluation?: string;
     bottleneck_domain?: string;
+  };
+  operational_summary?: {
+    lifecycle_status?: string;
+    lifecycle_status_label?: string;
+    semantic_validation?: string;
+    gst_generated?: string;
+    nest_generated?: string;
+    semantic_fill?: string;
+    ml_confidence?: number;
+    decision_score?: number;
+    bc_status?: string;
+    tx_hash?: string;
+    block_number?: unknown;
+    governance_event_id?: string;
+    admission_decision?: string;
+  };
+  traceability?: {
+    trace_id?: string;
+    span_id?: string;
+    parent_span_id?: string | null;
+    correlation_chain?: Array<{
+      service?: string;
+      trace_id?: string;
+      span_id?: string;
+      parent_span_id?: string | null;
+    }>;
+    end_to_end?: boolean;
   };
 };
 

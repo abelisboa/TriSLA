@@ -595,6 +595,26 @@ pre {
   cursor: pointer;
 }
 
+.trisla-hash-inline {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+}
+
+.trisla-copy-btn {
+  margin-left: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.trisla-copy-btn:hover {
+  background: #e2e8f0;
+}
+
 .trisla-section-nav {
   position: sticky;
   top: 0.75rem;
@@ -826,4 +846,330 @@ pre {
   .trisla-summary-cards {
     grid-template-columns: 1fr;
   }
+}
+
+/* Runtime Assurance — Sprint 5M4 / 6B explainability */
+.trisla-assurance-compliant {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.trisla-assurance-warning {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.trisla-assurance-at-risk {
+  color: #c2410c;
+  font-weight: 600;
+}
+
+.trisla-assurance-violated {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.trisla-assurance-incomplete {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.trisla-assurance-unknown {
+  color: #475569;
+  font-weight: 600;
+}
+
+.trisla-explainability-block {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.trisla-explainability-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.trisla-explain-section {
+  margin-bottom: 1rem;
+}
+
+.trisla-explain-section h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.trisla-explain-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.trisla-explain-list li {
+  margin-bottom: 0.35rem;
+}
+
+.trisla-why-section .trisla-why-card {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.trisla-why-summary {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.trisla-why-metric {
+  margin: 0.15rem 0;
+  font-size: 0.9375rem;
+}
+
+.trisla-why-metric span {
+  font-weight: 600;
+  color: #475569;
+}
+
+.trisla-why-source {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+}
+
+/* Sprint 6C — domain explainability */
+.trisla-domain-explainability {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Phase Next — Portal consistency UI */
+.trisla-consistency-panel {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.trisla-consistency-title {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.trisla-compliance-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.trisla-summary-source {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8125rem;
+}
+
+.trisla-inline-code {
+  font-size: 0.8125rem;
+  background: #f1f5f9;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.trisla-gov-ok {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.trisla-gov-warn {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.trisla-gov-muted {
+  color: #475569;
+  font-weight: 600;
+}
+
+.trisla-fidelity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.trisla-fidelity-card {
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.trisla-fidelity-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: #334155;
+}
+
+.trisla-fidelity-badge {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.trisla-closed-loop-flow {
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.trisla-cl-step,
+.trisla-cl-step-active {
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.trisla-cl-step-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.trisla-cl-arrow {
+  display: block;
+  margin-left: 0.5rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.trisla-closed-loop-details {
+  margin-top: 0.75rem;
+}
+
+.trisla-admission-only-banner {
+  margin: 1rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid #fcd34d;
+  background: #fffbeb;
+  border-radius: 8px;
+}
+
+.trisla-admission-only-banner strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #92400e;
+}
+
+.trisla-domain-explain-block {
+  margin-bottom: 1.25rem;
+}
+
+.trisla-domain-explain-block h4 {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.trisla-domain-score {
+  font-weight: 600;
+  color: #64748b;
+  text-transform: none;
+}
+
+.trisla-domain-metrics-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.trisla-domain-metric-card {
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.trisla-domain-metric-card h5 {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.trisla-metric-pass {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.trisla-metric-fail {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.trisla-metric-missing {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.trisla-metric-na {
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.trisla-metric-unknown {
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Sprint 6E — explainability UX */
+.trisla-field-label {
+  cursor: help;
+}
+
+.trisla-field-info {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  cursor: help;
+}
+
+.trisla-metric-status-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: #64748b;
+  font-weight: normal;
+}
+
+.trisla-compliance-help {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.trisla-compliance-help summary {
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.trisla-compliance-example {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #cbd5e1;
+  font-size: 0.875rem;
 }

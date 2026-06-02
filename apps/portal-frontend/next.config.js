@@ -14,6 +14,12 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
   reactStrictMode: true,
+  async redirects() {
+    return [
+      { source: "/metrics", destination: "/monitoring", permanent: false },
+      { source: "/defense", destination: "/", permanent: false },
+    ];
+  },
   async rewrites() {
     return [
       {

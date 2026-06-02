@@ -14,11 +14,15 @@ import {
 } from "../../lib/operatorLabels";
 import { StatusCard } from "../../components/common/StatusCard";
 
-type HealthV1 = {
+type GlobalHealth = {
   status?: string;
+  reachable_modules?: number;
+  total_modules?: number;
+  reachability_percent?: number;
+};
+
+type PlatformHealth = {
   version?: string;
-  nasp_reachable?: boolean | null;
-  nasp_details_url?: string | null;
 };
 
 type NaspDiagnostics = Record<string, unknown>;
@@ -36,7 +40,8 @@ const PLATFORM_SERVICE_ENDPOINTS = [
 ] as const;
 
 export default function AdministrationPage() {
-  const [data, setData] = useState<HealthV1 | null>(null);
+  const [globalHealth, setGlobalHealth] = useState<GlobalHealth | null>(null);
+  const [platformHealth, setPlatformHealth] = useState<PlatformHealth | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     "idle",
   );
@@ -53,10 +58,14 @@ export default function AdministrationPage() {
     setStatus("loading");
     setError(undefined);
 
-    apiRequest<HealthV1>("GLOBAL_HEALTH")
-      .then((response) => {
+    Promise.all([
+      apiRequest<GlobalHealth>("GLOBAL_HEALTH"),
+      apiRequest<PlatformHealth>("PLATFORM_HEALTH"),
+    ])
+      .then(([global, platform]) => {
         if (cancelled) return;
-        setData(response);
+        setGlobalHealth(global);
+        setPlatformHealth(platform);
         setStatus("ready");
       })
       .catch((err: unknown) => {
@@ -92,19 +101,19 @@ export default function AdministrationPage() {
     };
   }, []);
 
-  const naspReachabilityDisplay =
-    data?.nasp_reachable != null
-      ? healthFieldDisplay(data.nasp_reachable)
-      : inferNaspReachability(nasp);
+  const naspReachabilityDisplay = inferNaspReachability(nasp);
 
   const backendDiagnosticItems = [
     {
       label: "Status",
-      value: data?.status != null ? healthFieldDisplay(data.status) : "Not available",
+      value:
+        globalHealth?.status != null
+          ? healthFieldDisplay(globalHealth.status)
+          : "Not available",
     },
     {
       label: "Version",
-      value: healthFieldDisplay(data?.version),
+      value: healthFieldDisplay(platformHealth?.version),
     },
     {
       label: "NASP connectivity",
@@ -154,16 +163,10 @@ export default function AdministrationPage() {
 
   const naspTechnicalItems =
     naspStatus === "ready" && nasp
-      ? [
-          {
-            label: "NASP details URL",
-            value: healthFieldDisplay(data?.nasp_details_url),
-          },
-          ...naspModuleKeys.map((key) => ({
-            label: `${formatNaspModuleLabel(key)} (probe)`,
-            value: formatNaspModuleTechnical(nasp[key]),
-          })),
-        ]
+      ? naspModuleKeys.map((key) => ({
+          label: `${formatNaspModuleLabel(key)} (probe)`,
+          value: formatNaspModuleTechnical(nasp[key]),
+        }))
       : [];
 
   return (

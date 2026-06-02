@@ -1,88 +1,57 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { apiRequest, apiRequestOptional, formatApiError } from "../lib/api";
 import { StatusCard } from "../components/common/StatusCard";
 import { DataState } from "../components/common/DataState";
-import {
-  formatValue,
-  fallback,
-  prometheusFirstValue,
-  formatBytesToMB,
-} from "../lib/format";
+import { fallback } from "../lib/format";
 import { AWAITING_DATA } from "../lib/operatorLabels";
+import {
+  formatModuleOperationalState,
+  moduleOperationalLabel,
+  normalizeModuleProbe,
+} from "../lib/operatorDiagnostics";
+import {
+  isV2FlatSummary,
+  legacySummaryDisplayRows,
+  type PrometheusSummaryPayload,
+  v2SummaryDisplayRows,
+} from "../lib/prometheusSummary";
+import {
+  aggregateFromDiagnostics,
+  formatPlatformReachability,
+  parseReachabilityAggregate,
+} from "../lib/platformReachability";
 
-/** Payload real: GET /api/v1/health */
 type HealthV1 = {
   status?: string;
   version?: string;
   nasp_reachable?: boolean | null;
   nasp_details_url?: string | null;
-};
-
-/** Payload real: GET /api/v1/prometheus/summary — up, cpu, memory (Prometheus query result). */
-type PrometheusSummaryReal = {
-  up?: {
-    status?: string;
-    data?: { result?: Array<{ value?: [number, string] }> };
-  };
-  cpu?: {
-    status?: string;
-    data?: { result?: Array<{ value?: [number, string] }> };
-  };
-  memory?: {
-    status?: string;
-    data?: { result?: Array<{ value?: [number, string] }> };
-  };
+  reachable_modules?: number;
+  total_modules?: number;
+  reachability_percent?: number;
 };
 
 export default function HomePage() {
   const [data, setData] = useState<HealthV1 | null>(null);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const [summary, setSummary] = useState<PrometheusSummaryReal | null>(null);
-  const [summaryStatus, setSummaryStatus] = useState<
-    "idle" | "loading" | "ready" | "error"
-  >("idle");
-  const [summaryError, setSummaryError] = useState<string | undefined>(
-    undefined,
-  );
+  const [summary, setSummary] = useState<PrometheusSummaryPayload | null>(null);
+  const [summaryStatus, setSummaryStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [summaryError, setSummaryError] = useState<string | undefined>(undefined);
 
-  const [naspDiagnostics, setNaspDiagnostics] = useState<Record<string, unknown> | null>(
-    null,
-  );
-  const [naspStatus, setNaspStatus] = useState<
-    "idle" | "loading" | "ready" | "error"
-  >("idle");
+  const [naspDiagnostics, setNaspDiagnostics] = useState<Record<string, unknown> | null>(null);
+  const [naspStatus, setNaspStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [naspError, setNaspError] = useState<string | undefined>(undefined);
-
-  function normalizeModuleProbe(moduleProbe: unknown): {
-    reachable: boolean | null;
-    status_code: unknown;
-    detail: unknown;
-  } {
-    if (!moduleProbe || typeof moduleProbe !== "object") {
-      return { reachable: null, status_code: null, detail: null };
-    }
-    const obj = moduleProbe as Record<string, unknown>;
-    return {
-      reachable: typeof obj.reachable === "boolean" ? (obj.reachable as boolean) : null,
-      status_code: obj.status_code ?? null,
-      detail: obj.detail ?? null,
-    };
-  }
 
   useEffect(() => {
     let cancelled = false;
     setStatus("loading");
-    setError(undefined);
     setSummaryStatus("loading");
-    setSummaryError(undefined);
     setNaspStatus("loading");
-    setNaspError(undefined);
 
     apiRequest<HealthV1>("GLOBAL_HEALTH")
       .then((response) => {
@@ -96,13 +65,12 @@ export default function HomePage() {
         setError(formatApiError(err));
       });
 
-    apiRequestOptional<PrometheusSummaryReal>("PROMETHEUS_SUMMARY")
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        setSummary(data);
-        setSummaryStatus("ready");
-        setSummaryError(error ? formatApiError(error) : undefined);
-      });
+    apiRequestOptional<PrometheusSummaryPayload>("PROMETHEUS_SUMMARY").then(({ data, error }) => {
+      if (cancelled) return;
+      setSummary(data);
+      setSummaryStatus("ready");
+      setSummaryError(error ? formatApiError(error) : undefined);
+    });
 
     apiRequest<Record<string, unknown>>("NASP_DIAGNOSTICS")
       .then((response) => {
@@ -121,163 +89,76 @@ export default function HomePage() {
     };
   }, []);
 
+  const reachabilityAggregate =
+    parseReachabilityAggregate(data) ?? aggregateFromDiagnostics(naspDiagnostics);
+  const reachabilityLoadState =
+    status === "loading" || naspStatus === "loading"
+      ? "loading"
+      : status === "error" && naspStatus === "error"
+        ? "error"
+        : "ready";
+
   const healthItems = [
     { label: "Status", value: String(fallback(data?.status)) },
-    { label: "Versão", value: String(fallback(data?.version)) },
+    { label: "Version", value: String(fallback(data?.version)) },
     {
-      label: "NASP reachable",
-      value: formatValue(data?.nasp_reachable ?? "N/A"),
-    },
-    {
-      label: "NASP details URL",
-      value: String(fallback(data?.nasp_details_url)),
+      label: "Platform Reachability",
+      value: formatPlatformReachability(reachabilityAggregate, reachabilityLoadState),
     },
   ];
 
-  const upCount =
-    summary?.up?.data?.result?.length ?? null;
-  const prometheusUpDisplay =
-    summary?.up?.status != null
-      ? `${String(fallback(summary.up.status))}${upCount != null ? ` (${upCount} series)` : ""}`
-      : "N/A";
-  const cpuVal = prometheusFirstValue(summary?.cpu?.data?.result);
-  const memoryVal = prometheusFirstValue(summary?.memory?.data?.result);
+  const summaryItems =
+    summary && !summaryError
+      ? isV2FlatSummary(summary)
+        ? [
+            {
+              label: "Prometheus Up",
+              value: summary.cpu != null || summary.ran_load != null ? "Operational" : "Not available",
+            },
+            ...v2SummaryDisplayRows(summary),
+          ]
+        : legacySummaryDisplayRows(summary)
+      : summaryError
+        ? [
+            { label: "Status", value: "Unavailable" },
+            { label: "Detail", value: summaryError },
+          ]
+        : [{ label: "Status", value: AWAITING_DATA }];
 
-  const summaryItems = [
-    { label: "Prometheus Up", value: prometheusUpDisplay },
-    {
-      label: "CPU",
-      value: cpuVal !== null ? String(cpuVal) : "N/A",
-    },
-    {
-      label: "Memory",
-      value: formatBytesToMB(memoryVal),
-    },
-  ];
-
-  const semanticEngineItems = [
-    {
-      label: "Status",
-      value: "Awaiting runtime feed",
-    },
-  ];
-
-  const mlEngineItems = [
-    {
-      label: "Status",
-      value: "Awaiting runtime feed",
-    },
-  ];
-
-  const bcProbe = normalizeModuleProbe(naspDiagnostics?.["bc_nssmf"] ?? null);
-  const bcStatusText =
-    naspStatus === "loading"
-      ? AWAITING_DATA
-      : naspStatus === "error"
-        ? "erro ao consultar fonte real"
-        : bcProbe.reachable === true
-          ? "reachable"
-          : bcProbe.reachable === false
-            ? "unreachable"
-            : AWAITING_DATA;
-
-  const bcEndpointState =
-    naspStatus === "ready"
-      ? formatValue({ status_code: bcProbe.status_code, detail: bcProbe.detail })
-      : naspStatus === "error"
-        ? formatValue(naspError ?? "erro ao consultar fonte real")
-        : AWAITING_DATA;
-
-  const blockchainItemsControlled = [
-    { label: "Status", value: bcStatusText },
-    { label: "Endpoint state", value: bcEndpointState },
-  ];
-
-  const semCsmf = (naspDiagnostics?.["sem_csmf"] ?? null) as
-    | Record<string, unknown>
-    | null;
-  const semReachable =
-    semCsmf && typeof semCsmf === "object" ? semCsmf["reachable"] : null;
-  const semStatusText =
-    naspStatus === "loading"
-      ? AWAITING_DATA
-      : naspStatus === "error"
-        ? "erro ao consultar fonte real"
-        : semReachable === true
-          ? "reachable"
-          : semReachable === false
-            ? "unreachable"
-            : AWAITING_DATA;
-
-  const semEndpointState =
-    naspStatus === "ready" && semCsmf
-      ? formatValue({
-          status_code: (semCsmf as Record<string, unknown>)["status_code"],
-          detail: (semCsmf as Record<string, unknown>)["detail"],
-        })
-      : naspStatus === "error"
-        ? formatValue(naspError ?? "erro ao consultar fonte real")
-        : AWAITING_DATA;
-
-  const semanticEngineItemsControlled = [
-    { label: "Status", value: semStatusText },
-    { label: "Endpoint state", value: semEndpointState },
-  ];
-
-  const mlProbe = normalizeModuleProbe(naspDiagnostics?.["ml_nsmf"] ?? null);
-  const mlStatusText =
-    naspStatus === "loading"
-      ? AWAITING_DATA
-      : naspStatus === "error"
-        ? "erro ao consultar fonte real"
-        : mlProbe.reachable === true
-          ? "reachable"
-          : mlProbe.reachable === false
-            ? "unreachable"
-            : AWAITING_DATA;
-
-  const mlEndpointState =
-    naspStatus === "ready"
-      ? formatValue({ status_code: mlProbe.status_code, detail: mlProbe.detail })
-      : naspStatus === "error"
-        ? formatValue(naspError ?? "erro ao consultar fonte real")
-        : AWAITING_DATA;
-
-  const mlEngineItemsControlled = [
-    { label: "Status", value: mlStatusText },
-    { label: "Endpoint state", value: mlEndpointState },
-  ];
+  function moduleItems(key: string) {
+    const probe = normalizeModuleProbe(naspDiagnostics?.[key]);
+    const opState = formatModuleOperationalState(probe, naspStatus);
+    return [
+      { label: "Status", value: moduleOperationalLabel(opState) },
+      {
+        label: "Health check",
+        value:
+          probe.status_code != null
+            ? `HTTP ${String(probe.status_code)}`
+            : naspStatus === "error"
+              ? "Unavailable"
+              : "Not available",
+      },
+    ];
+  }
 
   return (
     <section>
-      <h1>Home</h1>
-      <p className="trisla-subtitle">Platform overview — backend health, NASP modules, and monitoring.</p>
+      <h1>Platform Overview</h1>
+      <p className="trisla-subtitle">
+        Platform health, NASP modules, and reachability.{" "}
+        <Link href="/administration">Administration</Link>.
+      </p>
       <div className="trisla-cards-grid">
         <DataState status={status} errorMessage={error}>
           <StatusCard title="Backend Health" items={healthItems} />
         </DataState>
-        <DataState status={summaryStatus} errorMessage={undefined}>
-          <StatusCard
-            title="Prometheus Summary"
-            items={
-              summaryError
-                ? [
-                    { label: "Status", value: "Unavailable" },
-                    { label: "Detail", value: summaryError },
-                  ]
-                : summaryItems
-            }
-          />
+        <DataState status={summaryStatus} errorMessage={summaryError}>
+          <StatusCard title="Prometheus Summary" items={summaryItems} />
         </DataState>
-        <StatusCard
-          title="Semantic Engine"
-          items={semanticEngineItemsControlled}
-        />
-        <StatusCard title="ML Engine" items={mlEngineItemsControlled} />
-        <StatusCard
-          title="Blockchain Governance"
-          items={blockchainItemsControlled}
-        />
+        <StatusCard title="Semantic Engine" items={moduleItems("sem_csmf")} />
+        <StatusCard title="ML Engine" items={moduleItems("ml_nsmf")} />
+        <StatusCard title="BC-NSSMF service health" items={moduleItems("bc_nssmf")} />
       </div>
     </section>
   );

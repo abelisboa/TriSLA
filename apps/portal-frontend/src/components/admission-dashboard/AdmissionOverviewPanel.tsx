@@ -1,19 +1,20 @@
 import { asMetadata, type SubmitResponse } from "../../lib/submitResponse";
+import { resolveOperationalConfidence } from "../../lib/confidenceDisplay";
 import { formatDecisionScore } from "../../lib/operatorFormat";
 import { operatorFieldLabel } from "../../lib/operatorLabels";
 import { FieldList } from "../submit-payload/FieldList";
+import { DecisionEvidencePanel } from "../consistency/DecisionEvidencePanel";
+import { decisionEvidenceFromSubmit } from "../../lib/phaseNextConsistency";
 
 type Props = { response: SubmitResponse };
 
 export function AdmissionOverviewPanel({ response }: Props) {
   const metadata = asMetadata(response);
-  const confidence =
-    response.confidence !== undefined && response.confidence !== null
-      ? response.confidence
-      : metadata?.confidence_score;
+  const modelConfidence = resolveOperationalConfidence(response);
 
   const decision = response.decision ?? "—";
   const decisionScore = metadata?.decision_score;
+  const evidence = decisionEvidenceFromSubmit(response);
 
   return (
     <section className="trisla-status-card trisla-admission-section" aria-label="Admission Overview">
@@ -32,20 +33,23 @@ export function AdmissionOverviewPanel({ response }: Props) {
           </span>
         </article>
         <article className="trisla-summary-card" role="listitem">
-          <span className="trisla-summary-label">Confidence</span>
+          <span className="trisla-summary-label">Model Confidence</span>
           <span className="trisla-summary-value">
-            {confidence !== undefined && confidence !== null
-              ? formatDecisionScore(confidence)
-              : "—"}
+            {modelConfidence != null ? formatDecisionScore(modelConfidence) : "Not available"}
           </span>
         </article>
       </div>
+
+      <DecisionEvidencePanel evidence={evidence} />
 
       <details className="trisla-details trisla-details-secondary">
         <summary>Technical Details — decision metadata</summary>
         <FieldList
           fields={[
             { label: operatorFieldLabel("metadata.decision_score"), value: metadata?.decision_score },
+            { label: "response.confidence", value: response.confidence },
+            { label: operatorFieldLabel("metadata.ml_confidence"), value: metadata?.ml_confidence },
+            { label: operatorFieldLabel("metadata.confidence_score"), value: metadata?.confidence_score },
             { label: operatorFieldLabel("metadata.decision_mode"), value: metadata?.decision_mode },
             { label: operatorFieldLabel("metadata.policy_result"), value: metadata?.policy_result },
             { label: operatorFieldLabel("metadata.decision_band"), value: metadata?.decision_band },

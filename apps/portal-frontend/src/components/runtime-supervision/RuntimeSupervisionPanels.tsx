@@ -1,6 +1,16 @@
 import { displayField } from "../../lib/submitResponse";
 import { operatorFieldLabel } from "../../lib/operatorLabels";
+import {
+  coreRowsForLifecycle,
+  parseTelemetrySnapshot,
+  ranRowsForLifecycle,
+  transportRowsForLifecycle,
+  type TelemetrySnapshotV2,
+} from "../../lib/lifecycleRuntimeSnapshot";
 import type { RevalidateTelemetryResponse, SlaRuntimeStatusResponse } from "../../lib/runtimeSupervision";
+import { operationalStatusFromAssurance } from "../../lib/phaseNextConsistency";
+import type { RuntimeAssurancePayload } from "../../lib/runtimeAssurance";
+import { formatLifecycleStateLabel } from "../../lib/operatorLabels";
 import { FieldList } from "../submit-payload/FieldList";
 
 type Props = {
@@ -8,9 +18,12 @@ type Props = {
   lifecycleState: unknown;
   loading: boolean;
   error: string | undefined;
+  assurance?: RuntimeAssurancePayload;
 };
 
-export function RuntimeStatusPanel({ statusData, lifecycleState, loading, error }: Props) {
+export function RuntimeStatusPanel({ statusData, lifecycleState, loading, error, assurance }: Props) {
+  const operationalStatus =
+    operationalStatusFromAssurance(assurance) ?? statusData?.status;
   return (
     <section className="trisla-runtime-subsection" aria-label="Runtime Status">
       <h3>Runtime Status</h3>
@@ -20,8 +33,12 @@ export function RuntimeStatusPanel({ statusData, lifecycleState, loading, error 
         <FieldList
           fields={[
             { label: operatorFieldLabel("intent_id"), value: statusData.intent_id ?? statusData.sla_id },
-            { label: "Status", value: statusData.status },
-            { label: operatorFieldLabel("lifecycle_state"), value: lifecycleState },
+            { label: operatorFieldLabel("nest_id"), value: statusData.nest_id },
+            {
+              label: "Operational Status",
+              value: formatLifecycleStateLabel(operationalStatus),
+            },
+            { label: "Lifecycle Outcome", value: lifecycleState },
           ]}
         />
       )}
@@ -33,9 +50,7 @@ export function RuntimeStatusPanel({ statusData, lifecycleState, loading, error 
           <summary>Additional status fields</summary>
           <FieldList
             fields={[
-              { label: operatorFieldLabel("sla_id"), value: statusData.sla_id },
               { label: operatorFieldLabel("tenant_id"), value: statusData.tenant_id },
-              { label: operatorFieldLabel("nest_id"), value: statusData.nest_id },
               { label: "created_at", value: statusData.created_at },
               { label: "updated_at", value: statusData.updated_at },
             ]}
@@ -46,8 +61,14 @@ export function RuntimeStatusPanel({ statusData, lifecycleState, loading, error 
   );
 }
 
-function DomainBlock({ title, data }: { title: string; data: Record<string, unknown> | undefined }) {
-  if (!data || typeof data !== "object") {
+function DomainBlockLabeled({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: { label: string; value: unknown }[];
+}) {
+  if (rows.length === 0) {
     return (
       <div className="trisla-status-row">
         <dt>{title}</dt>
@@ -58,17 +79,17 @@ function DomainBlock({ title, data }: { title: string; data: Record<string, unkn
   return (
     <div className="trisla-telemetry-domain">
       <h4>{title}</h4>
-      <FieldList
-        fields={Object.entries(data).map(([label, value]) => ({ label, value }))}
-      />
+      <FieldList fields={rows.map((row) => ({ label: row.label, value: row.value }))} />
     </div>
   );
 }
 
 export function FreshTelemetryPanel({
   snapshot,
+  revalidationStatus,
 }: {
   snapshot: Record<string, unknown> | undefined;
+  revalidationStatus?: string;
 }) {
   if (!snapshot) {
     return (
@@ -79,19 +100,26 @@ export function FreshTelemetryPanel({
     );
   }
 
+  const parsed: TelemetrySnapshotV2 = parseTelemetrySnapshot(snapshot) ?? {};
+
   return (
     <section className="trisla-runtime-subsection" aria-label="Fresh Telemetry">
       <h3>Fresh Telemetry</h3>
+      {revalidationStatus === "INCOMPLETE" ? (
+        <p className="trisla-muted">
+          Revalidation incomplete — some Prometheus samples were unavailable at collection time.
+        </p>
+      ) : null}
       <FieldList
         fields={[
-          { label: "execution_id", value: snapshot.execution_id },
-          { label: "timestamp", value: snapshot.timestamp },
-          { label: "telemetry_contract_version", value: snapshot.telemetry_contract_version },
+          { label: "execution_id", value: parsed.execution_id },
+          { label: "timestamp", value: parsed.timestamp },
+          { label: "telemetry_contract_version", value: parsed.telemetry_contract_version },
         ]}
       />
-      <DomainBlock title="RAN" data={snapshot.ran as Record<string, unknown> | undefined} />
-      <DomainBlock title="Transport" data={snapshot.transport as Record<string, unknown> | undefined} />
-      <DomainBlock title="Core" data={snapshot.core as Record<string, unknown> | undefined} />
+      <DomainBlockLabeled title="RAN" rows={ranRowsForLifecycle(parsed.ran)} />
+      <DomainBlockLabeled title="Transport" rows={transportRowsForLifecycle(parsed.transport)} />
+      <DomainBlockLabeled title="Core" rows={coreRowsForLifecycle(parsed.core)} />
     </section>
   );
 }
