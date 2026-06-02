@@ -23,9 +23,30 @@ from src.schemas.sla import (
 from src.services.nasp import NASPService
 from src.services.sla_status_telemetry import resolve_status_telemetry_snapshot
 from src.services.sla_status_assurance import resolve_status_runtime_assurance
+from src.services.sla_operational_summary import build_operational_summary
+from src.services.admission_decision import (
+    resolve_admission_context,
+    resolve_admission_decision,
+    resolve_runtime_lifecycle_enabled,
+)
+from src.services.sla_traceability import build_traceability_summary
+from src.services.sla_lifecycle_success import is_sla_agent_ingest_success
+from src.services.sla_revalidate_telemetry import enrich_revalidate_with_local_collect
 from src.services.sla_metrics import compute_sla_metrics
+from src.services.governance_metadata import (
+    extract_governance_metadata,
+    merge_governance_into_metadata,
+)
 from src.telemetry.collector import append_telemetry_csv, build_csv_row, collect_domain_metrics_async
 from src.telemetry.contract_v2 import TELEMETRY_UNITS_V2
+from src.observability.distributed_trace import (
+    build_distributed_traceability,
+    child_trace,
+    inject_http_headers,
+    merge_trace_into_metadata,
+    new_root_trace,
+    trace_from_metadata,
+)
 from src.utils.text_processing import corrigir_erros_ortograficos, inferir_tipo_slice, extrair_parametros_tecnicos
 
 logger = logging.getLogger(__name__)
@@ -78,12 +99,26 @@ async def _notify_sla_agent_pipeline(
         "sla_requirements": result.get("sla_requirements"),
         "slice_type": result.get("service_type"),
         "service_type": result.get("service_type"),
+        "metadata": {
+            k: metadata_out.get(k)
+            for k in ("trace_id", "span_id", "parent_span_id", "distributed_traceability")
+            if metadata_out.get(k) is not None
+        },
     }
+    root_trace = trace_from_metadata(metadata_out) or trace_from_metadata(
+        metadata_out.get("distributed_traceability")
+    )
+    if root_trace:
+        sla_trace = child_trace(root_trace, "sla-agent")
+        headers = inject_http_headers({}, sla_trace)
+    else:
+        sla_trace = None
+        headers = {}
     timeout = 25.0 if run_slo or run_assurance else 4.0
     t0 = time.perf_counter()
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
-            r = await client.post(url, json=payload)
+            r = await client.post(url, json=payload, headers=headers)
             r.raise_for_status()
             body = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
         ingest_http_ms = (time.perf_counter() - t0) * 1000.0
@@ -111,6 +146,13 @@ async def _notify_sla_agent_pipeline(
             )
         if body.get("runtime_governance_event") is not None:
             metadata_out["runtime_governance_event"] = body.get("runtime_governance_event")
+        if sla_trace:
+            hops = list(metadata_out.get("distributed_trace_hops") or [])
+            hops.append(dict(sla_trace))
+            metadata_out["distributed_trace_hops"] = hops
+            root = trace_from_metadata(metadata_out) or sla_trace
+            metadata_out["distributed_traceability"] = build_distributed_traceability(root, hops)
+            metadata_out = merge_trace_into_metadata(metadata_out, root)
         if body.get("slo_evaluation") is not None:
             ing["slo_evaluation"] = body.get("slo_evaluation")
         if body.get("slo_evaluation_error"):
@@ -223,6 +265,9 @@ def _build_temporal_intent_trace(
     telemetry_snapshot: dict,
     lifecycle_state: str,
     sla_lifecycle: dict,
+    trace_id: str | None = None,
+    span_id: str | None = None,
+    parent_span_id: str | None = None,
 ) -> dict:
     """
     P0: metadata temporal mínima por intent — sem drift automático, sem storage externo.
@@ -234,6 +279,9 @@ def _build_temporal_intent_trace(
         "intent_id": intent_id,
         "nest_id": nest_id,
         "execution_id": execution_id,
+        "trace_id": trace_id,
+        "span_id": span_id,
+        "parent_span_id": parent_span_id,
         "timestamps_utc": {
             "submitted": t_submit_iso,
             "telemetry_pre_decision": telemetry_pre_at,
@@ -607,6 +655,7 @@ async def submit_sla_template(request: SLASubmitRequest):
         )
         t_submit_iso = datetime.now(timezone.utc).isoformat()
         execution_id = str(uuid.uuid4())
+        root_trace = new_root_trace("portal-backend")
         timestamp_pre_decision = datetime.now(timezone.utc).isoformat()
 
         # Coleta telemetria antes da decisão para preservar causalidade PRB -> Decision Engine.
@@ -624,12 +673,15 @@ async def submit_sla_template(request: SLASubmitRequest):
         if service_type_from_form:
             nest_template["type"] = service_type_from_form
             nest_template["slice_type"] = service_type_from_form
-        nest_template["metadata"] = {
-            "telemetry_snapshot": telemetry_before_decision,
-            "ran_prb_utilization_input": prb_value_pre,
-            "telemetry_collected_at": timestamp_pre_decision,
-            "execution_id": execution_id,
-        }
+        nest_template["metadata"] = merge_trace_into_metadata(
+            {
+                "telemetry_snapshot": telemetry_before_decision,
+                "ran_prb_utilization_input": prb_value_pre,
+                "telemetry_collected_at": timestamp_pre_decision,
+                "execution_id": execution_id,
+            },
+            root_trace,
+        )
         
         # Enviar ao NASP com TODOS os módulos (sequência completa)
         result = await nasp_service.submit_template_to_nasp(
@@ -645,6 +697,16 @@ async def submit_sla_template(request: SLASubmitRequest):
 
         timestamp_decision = datetime.now(timezone.utc).isoformat()
         metadata_out = dict(result.get("metadata") or {})
+        result_meta = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
+        for key in (
+            "trace_id",
+            "span_id",
+            "parent_span_id",
+            "distributed_trace_hops",
+            "distributed_traceability",
+        ):
+            if result_meta.get(key) is not None:
+                metadata_out[key] = result_meta[key]
         try:
             telemetry_snapshot, _tel_ms = await collect_domain_metrics_async(
                 execution_id, timestamp_decision
@@ -803,7 +865,7 @@ async def submit_sla_template(request: SLASubmitRequest):
                 sla_agent_status = "SKIPPED"
 
         base_done = decision == "ACCEPT" and orch_ok and bc_ok
-        if base_done and (not req_sa or sla_agent_status in ("OK", "OK_WITH_SLO")):
+        if base_done and (not req_sa or is_sla_agent_ingest_success(sla_agent_status)):
             lifecycle["COMPLETED"] = datetime.now(timezone.utc).isoformat()
         elif decision == "ACCEPT" and metadata_out.get("nasp_orchestration_attempted") and not orch_ok:
             metadata_out["failure_reason"] = "orchestration_failed"
@@ -813,9 +875,8 @@ async def submit_sla_template(request: SLASubmitRequest):
             metadata_out["failure_reason"] = metadata_out.get("failure_reason") or "blockchain_failed"
             metadata_out["failure_code"] = metadata_out.get("failure_code") or "BLOCKCHAIN_FAILED"
             lifecycle["FAILED"] = now_iso
-        elif decision == "ACCEPT" and base_done and req_sa and sla_agent_status not in (
-            "OK",
-            "OK_WITH_SLO",
+        elif decision == "ACCEPT" and base_done and req_sa and not is_sla_agent_ingest_success(
+            sla_agent_status
         ):
             metadata_out["failure_reason"] = "sla_agent_ingest_failed"
             metadata_out["failure_code"] = "SLA_AGENT_FAILED"
@@ -970,6 +1031,9 @@ async def submit_sla_template(request: SLASubmitRequest):
             telemetry_snapshot=metadata_out.get("telemetry_snapshot") or {},
             lifecycle_state=lifecycle_state,
             sla_lifecycle=lifecycle,
+            trace_id=metadata_out.get("trace_id"),
+            span_id=metadata_out.get("span_id"),
+            parent_span_id=metadata_out.get("parent_span_id"),
         )
         logger.info(
             "[TEMPORAL_P0] intent_id=%s execution_id=%s lifecycle_state=%s",
@@ -979,6 +1043,21 @@ async def submit_sla_template(request: SLASubmitRequest):
         )
 
         _ensure_telemetry_v2_flags(metadata_out)
+
+        merge_governance_into_metadata(metadata_out, result)
+        intent_id_for_gov = result.get("intent_id")
+        if intent_id_for_gov:
+            gov_patch = extract_governance_metadata(result, metadata_out)
+            if gov_patch:
+                persisted = await nasp_service.persist_intent_governance_metadata(
+                    str(intent_id_for_gov), gov_patch
+                )
+                metadata_out["governance_metadata_persisted"] = persisted
+                if not persisted:
+                    logger.warning(
+                        "[GOV_PROPAGATION] SEM persistence failed intent=%s",
+                        intent_id_for_gov,
+                    )
 
         telemetry_complete = bool(metadata_out.get("telemetry_complete"))
         telemetry_status = "COMPLETE" if telemetry_complete else "INCOMPLETE"
@@ -1145,14 +1224,23 @@ async def revalidate_telemetry(request: SLARevalidateTelemetryRequest):
     P1: revalidação temporal — nova leitura Prometheus.
     P2: metadata.remediation_evidence (declarativo; sem execução automática).
 
-    REFACTOR FASE 2: a autoridade canônica passa a ser o SLA-Agent. Este endpoint
-    público permanece com o **mesmo contrato JSON** e apenas delega para
-    `SLA_AGENT_REVALIDATE_URL`. Em caso de falha (timeout, conexão recusada,
-    payload inválido) ou URL não configurada, executa o fallback in-process
-    (`_revalidate_telemetry_local_fallback`) e marca a evidência de delegação.
-
-    Sem NASP, BC, decision engine, Kafka ou persistência externa (inalterado).
+    Runtime gating: only ACCEPT SLAs may revalidate (HTTP 409 otherwise).
     """
+    try:
+        sem_result = await nasp_service.get_sla_status(request.intent_id)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.warning("[REVALIDATE_GATE] status lookup failed intent=%s err=%s", request.intent_id, exc)
+        sem_result = {}
+
+    admission_decision = resolve_admission_decision(sem_result if isinstance(sem_result, dict) else {})
+    if admission_decision != "ACCEPT":
+        raise HTTPException(
+            status_code=409,
+            detail="Runtime lifecycle unavailable for non-accepted SLA.",
+        )
+
     sla_agent_url = (os.getenv("SLA_AGENT_REVALIDATE_URL") or "").strip()
     timeout_s = float(os.getenv("SLA_AGENT_REVALIDATE_TIMEOUT_S", "8.0") or 8.0)
     delegate_enabled = os.getenv("SLA_AGENT_REVALIDATE_ENABLED", "true").lower() == "true"
@@ -1185,6 +1273,14 @@ async def revalidate_telemetry(request: SLARevalidateTelemetryRequest):
     if response is None:
         response = await _revalidate_telemetry_local_fallback(request)
 
+    response = await enrich_revalidate_with_local_collect(
+        request,
+        response,
+        collect_fn=collect_domain_metrics_async,
+        drift_fn=_minimal_telemetry_drift,
+        remediation_fn=_build_remediation_evidence_p2,
+    )
+
     meta = dict(response.metadata) if isinstance(response.metadata, dict) else {}
     meta["delegated_to_sla_agent"] = delegated
     if delegation_target:
@@ -1205,26 +1301,46 @@ async def get_sla_status(sla_id: str):
     try:
         result = await nasp_service.get_sla_status(sla_id)
 
-        collected_snapshot: Optional[Dict[str, Any]] = None
-        try:
-            collected_at = datetime.now(timezone.utc).isoformat()
-            execution_id = f"status-{sla_id}"
-            collected_snapshot, _tel_ms = await collect_domain_metrics_async(
-                execution_id,
-                collected_at,
-            )
-        except Exception as exc:
-            logger.warning(
-                "[SLA STATUS] telemetry_snapshot collect skipped intent=%s err=%s",
-                sla_id,
-                exc,
-            )
+        admission_decision, runtime_enabled, admission_snap = resolve_admission_context(result)
 
-        telemetry_snapshot = resolve_status_telemetry_snapshot(result, collected_snapshot)
+        collected_snapshot: Optional[Dict[str, Any]] = None
+        if runtime_enabled:
+            try:
+                collected_at = datetime.now(timezone.utc).isoformat()
+                execution_id = f"status-{sla_id}"
+                collected_snapshot, _tel_ms = await collect_domain_metrics_async(
+                    execution_id,
+                    collected_at,
+                )
+            except Exception as exc:
+                logger.warning(
+                    "[SLA STATUS] telemetry_snapshot collect skipped intent=%s err=%s",
+                    sla_id,
+                    exc,
+                )
+
+        telemetry_snapshot = resolve_status_telemetry_snapshot(
+            result,
+            collected_snapshot,
+            runtime_lifecycle_enabled=runtime_enabled,
+        )
 
         runtime_assurance = resolve_status_runtime_assurance(
             result,
             telemetry_snapshot=telemetry_snapshot,
+            runtime_lifecycle_enabled=runtime_enabled,
+        )
+
+        operational_summary = build_operational_summary(result)
+        traceability = build_traceability_summary(result)
+        md = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
+        decision_evidence = md.get("decision_evidence")
+        if not isinstance(decision_evidence, list):
+            decision_evidence = None
+        admission_reasoning = (
+            md.get("decision_explanation_plain")
+            or md.get("decision_explanation")
+            or md.get("reasoning")
         )
 
         return SLAStatusResponse(
@@ -1235,8 +1351,15 @@ async def get_sla_status(sla_id: str):
             nest_id=result.get("nest_id"),
             created_at=result.get("created_at"),
             updated_at=result.get("updated_at"),
+            admission_decision=admission_decision,
+            runtime_lifecycle_enabled=runtime_enabled,
+            admission_telemetry_snapshot=admission_snap,
+            admission_decision_evidence=decision_evidence,
+            admission_reasoning=str(admission_reasoning) if admission_reasoning else None,
             telemetry_snapshot=telemetry_snapshot,
             runtime_assurance=runtime_assurance,
+            operational_summary=operational_summary,
+            traceability=traceability,
         )
     except HTTPException:
         raise
