@@ -58,8 +58,6 @@ decisionEngine:
     # V5 (PROMPT_V5): widen score path (PRB < renegotiate) and delay hard REJECT vs V11 defaults.
     HARD_PRB_RENEGOTIATE: "0.25"
     HARD_PRB_REJECT: "0.40"
-<<<<<<< Updated upstream
-=======
     # Phase 2 transport-informed score term (frozen RTT_REF; w=0.05 initial).
     TRISLA_TRANSPORT_RTT_REF_MS: "12.21"
     TRISLA_TRANSPORT_SCORE_WEIGHT: "0.05"
@@ -69,7 +67,6 @@ decisionEngine:
     TRISLA_FEASIBILITY_RUNTIME_ENABLED: "true"
     # Phase 6: activate latent resource_headroom term (g_headroom = 1 - pressure V1).
     TRISLA_RESOURCE_HEADROOM_RUNTIME_ENABLED: "true"
->>>>>>> Stashed changes
   enabled: true
   image:
     repository: ghcr.io/abelisboa/trisla-decision-engine
@@ -174,7 +171,7 @@ naspAdapter:
   image:
     repository: trisla-nasp-adapter
     tag: ''
-    digest: "sha256:a7e7d562baae88ae1010caf6d5e53fa18db15ee788bc746d07965219cecc7785"
+    digest: "sha256:bb1e44097a40f93257281eb9ed5b601b233cb0537e5bfe9935aa53b500d9a32e"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
