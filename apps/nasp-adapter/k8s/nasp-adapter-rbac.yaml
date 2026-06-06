@@ -65,6 +65,15 @@ rules:
       - create
       - update
       - patch
+  # O2C — read AMF/SMF pod logs in Free5GC namespace (observation only)
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/log
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

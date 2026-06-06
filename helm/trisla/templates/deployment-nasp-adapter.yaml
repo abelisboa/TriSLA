@@ -110,6 +110,12 @@ spec:
         {{- $nssf := .Values.naspAdapter.nssfAdapter | default dict }}
         - name: NSSF_ADAPTER_ENABLED
           value: {{ $nssf.enabled | default false | quote }}
+        # O2C — AMF/SMF Binding (default off — no regression)
+        {{- $o2c := .Values.naspAdapter.amfSmfBinding | default dict }}
+        - name: AMF_BINDING_ENABLED
+          value: {{ $o2c.amfEnabled | default false | quote }}
+        - name: SMF_BINDING_ENABLED
+          value: {{ $o2c.smfEnabled | default false | quote }}
         livenessProbe:
           httpGet:
             path: /health

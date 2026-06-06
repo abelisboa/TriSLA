@@ -33,6 +33,21 @@ except ImportError:
     select_nssf_slice = None  # type: ignore
     NSSF_SELECTION_ANNOTATION_KEY = "trisla.io/nssf-selection"
 
+try:
+    from amf_smf_correlation import (
+        AMF_BINDING_ANNOTATION_KEY,
+        PDU_SESSION_SUMMARY_ANNOTATION_KEY,
+        SMF_BINDING_ANNOTATION_KEY,
+        run_amf_smf_binding,
+    )
+    from nssf_adapter import parse_nssf_selection_annotation
+except ImportError:
+    run_amf_smf_binding = None  # type: ignore
+    AMF_BINDING_ANNOTATION_KEY = "trisla.io/amf-binding"
+    SMF_BINDING_ANNOTATION_KEY = "trisla.io/smf-binding"
+    PDU_SESSION_SUMMARY_ANNOTATION_KEY = "trisla.io/pdu-session-summary"
+    parse_nssf_selection_annotation = None  # type: ignore
+
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 
@@ -261,6 +276,8 @@ class NSIController:
                 logger.info(f"✅ [NSI] Instantiating → Active: {nsi_id}")
                 span.set_attribute("nsi.phase", "Active")
                 span.set_attribute("nsi.nssi_count", len(nssi_ids))
+
+                self._apply_o2c_bindings(nsi_id)
                 
             except Exception as e:
                 logger.error(f"❌ [NSI] Erro ao instanciar NSI {nsi_id}: {e}", exc_info=True)
@@ -444,6 +461,74 @@ namespace=self.namespace,
                 logger.error(f"❌ [NSSI] Erro ao criar NSSI {nssi_id}: {e}")
                 raise
     
+    def _apply_o2c_bindings(self, nsi_id: str) -> None:
+        """O2C: AMF/SMF read-only observation + correlation (non-blocking)."""
+        if run_amf_smf_binding is None or mapping_annotation_value is None:
+            return
+        try:
+            nsi = self.custom_api.get_namespaced_custom_object(
+                group="trisla.io",
+                version="v1",
+                namespace=self.namespace,
+                plural="networksliceinstances",
+                name=nsi_id,
+            )
+            ann = (nsi.get("metadata") or {}).get("annotations") or {}
+            from slice_service_binding import parse_mapping_annotation
+
+            ssb = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+            if not isinstance(ssb, dict):
+                return
+
+            nssf_sel = None
+            if parse_nssf_selection_annotation is not None:
+                nssf_sel = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
+
+            result = run_amf_smf_binding(ssb, nssf_selection=nssf_sel)
+            if result.get("skipped"):
+                return
+
+            binding = result.get("binding") or ssb
+            patch_ann = dict(ann)
+            patch_ann[MAPPING_ANNOTATION_KEY] = mapping_annotation_value(binding)
+            if result.get("amf_binding_annotation"):
+                patch_ann[AMF_BINDING_ANNOTATION_KEY] = result["amf_binding_annotation"]
+            if result.get("smf_binding_annotation"):
+                patch_ann[SMF_BINDING_ANNOTATION_KEY] = result["smf_binding_annotation"]
+            if result.get("pdu_session_summary_annotation"):
+                patch_ann[PDU_SESSION_SUMMARY_ANNOTATION_KEY] = result["pdu_session_summary_annotation"]
+
+            patch_labels = dict((nsi.get("metadata") or {}).get("labels") or {})
+            patch_labels["trisla.io/binding-phase"] = str(binding.get("binding_phase", "METADATA_ONLY"))
+            flags = binding.get("integration_flags") or {}
+            if flags.get("amf_integrated"):
+                patch_labels["trisla.io/amf-integrated"] = "true"
+            if flags.get("smf_integrated"):
+                patch_labels["trisla.io/smf-integrated"] = "true"
+
+            body = {
+                "metadata": {
+                    "annotations": patch_ann,
+                    "labels": patch_labels,
+                }
+            }
+            self.custom_api.patch_namespaced_custom_object(
+                group="trisla.io",
+                version="v1",
+                namespace=self.namespace,
+                plural="networksliceinstances",
+                name=nsi_id,
+                body=body,
+            )
+            logger.info(
+                "[O2C] bindings applied nsi=%s phase=%s correlation=%s",
+                nsi_id,
+                binding.get("binding_phase"),
+                result.get("correlation_status"),
+            )
+        except Exception as exc:
+            logger.warning("[O2C] binding apply failed (non-blocking): %s", exc)
+
     def _update_nsi_phase(self, nsi_id: str, phase: str, message: str):
         """Atualiza a fase do NSI (via subresource status)."""
         try:

@@ -211,6 +211,9 @@ naspAdapter:
     enabled: true
   nssfAdapter:
     enabled: false
+  amfSmfBinding:
+    amfEnabled: false
+    smfEnabled: false
 
 uiDashboard:
   enabled: true

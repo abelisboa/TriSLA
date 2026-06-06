@@ -1,0 +1,28 @@
+contract_version: AMF_SMF_CONTRACT_SSOT_V1
+amf:
+  nf_id: "095d920e-1782-4572-a1a0-7824c8393900"
+  core_namespace_env: NASP_FREE5GC_NAMESPACE
+  core_namespace: ns-1274485
+  pod_label: nf=amf
+  log_tail_lines: 3000
+  observation_window_seconds: 300
+smf:
+  core_namespace_env: NASP_FREE5GC_NAMESPACE
+  core_namespace: ns-1274485
+  pod_label: nf=smf
+  log_tail_lines: 3000
+lab:
+  default_supi: "imsi-208930000000001"
+  pdu_snssai:
+    sst: 1
+    sd: "010203"
+  dnn: internet
+  user_plane_nsi_id: "22"
+correlation:
+  orchestration_nsi_ids: ["11", "12", "13"]
+  allow_context_split: true
+fallback:
+  never_block_instantiate: true
+feature_flags:
+  amf_env: AMF_BINDING_ENABLED
+  smf_env: SMF_BINDING_ENABLED

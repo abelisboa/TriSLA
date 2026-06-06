@@ -569,6 +569,126 @@ async def nssf_status_endpoint(nsi_id: str):
     }
 
 
+@app.post("/api/v1/slice-service-binding/amf/observe")
+async def amf_observe_endpoint(payload: dict):
+    """O2C: AMF read-only observation (log parse or cluster fetch)."""
+    from amf_binding_adapter import amf_binding_enabled, parse_amf_binding_annotation, observe_amf_binding
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    log_text = payload.get("log_text")
+    result = observe_amf_binding(ssb, log_text=log_text)
+    ann = parse_amf_binding_annotation(result.get("amf_binding_annotation"))
+    return {
+        "enabled": amf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "amf_binding": ann or result.get("amf_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/smf/observe")
+async def smf_observe_endpoint(payload: dict):
+    """O2C: SMF read-only observation (log parse or cluster fetch)."""
+    from smf_binding_adapter import parse_smf_binding_annotation, observe_smf_binding, smf_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    log_text = payload.get("log_text")
+    result = observe_smf_binding(ssb, log_text=log_text)
+    ann = parse_smf_binding_annotation(result.get("smf_binding_annotation"))
+    return {
+        "enabled": smf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "smf_binding": ann or result.get("smf_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/pdu/correlate")
+async def pdu_correlate_endpoint(payload: dict):
+    """O2C: AMF+SMF observe and correlate."""
+    from amf_smf_correlation import (
+        parse_pdu_session_summary_annotation,
+        run_amf_smf_binding,
+    )
+    from amf_binding_adapter import amf_binding_enabled
+    from smf_binding_adapter import smf_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = run_amf_smf_binding(
+        ssb,
+        nssf_selection=payload.get("nssf_selection"),
+        amf_log_text=payload.get("amf_log_text"),
+        smf_log_text=payload.get("smf_log_text"),
+    )
+    summary = parse_pdu_session_summary_annotation(result.get("pdu_session_summary_annotation"))
+    return {
+        "amf_enabled": amf_binding_enabled(),
+        "smf_enabled": smf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "binding_phase": (result.get("binding") or {}).get("binding_phase"),
+        "correlation_status": result.get("correlation_status"),
+        "slice_service_binding": result.get("binding"),
+        "pdu_session_summary": summary,
+    }
+
+
+@app.get("/api/v1/slice-service-binding/binding/status/{nsi_id}")
+async def binding_status_endpoint(nsi_id: str):
+    """O2C: full binding status for NSI."""
+    from amf_binding_adapter import AMF_BINDING_ANNOTATION_KEY, parse_amf_binding_annotation
+    from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
+    from amf_smf_correlation import PDU_SESSION_SUMMARY_ANNOTATION_KEY, parse_pdu_session_summary_annotation
+    from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
+    from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
+
+    try:
+        nsi = nsi_controller.custom_api.get_namespaced_custom_object(
+            group="trisla.io",
+            version="v1",
+            namespace=nsi_controller.namespace,
+            plural="networksliceinstances",
+            name=nsi_id,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail=f"NSI not found: {exc}") from exc
+
+    ann = (nsi.get("metadata") or {}).get("annotations") or {}
+    ssb = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+    return {
+        "nsi_id": nsi_id,
+        "binding_phase": (ssb or {}).get("binding_phase", "METADATA_ONLY"),
+        "correlation_status": (ssb or {}).get("correlation_status"),
+        "integration_flags": (ssb or {}).get("integration_flags"),
+        "nssf_selection": parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY)),
+        "amf_binding": parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY)),
+        "smf_binding": parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY)),
+        "pdu_session_summary": parse_pdu_session_summary_annotation(
+            ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
+        ),
+    }
+
+
 @app.post("/api/v1/nsi/instantiate")
 async def instantiate_nsi(nsi_spec: dict):
     """
@@ -658,14 +778,35 @@ async def instantiate_nsi(nsi_spec: dict):
 
             slice_service_binding = None
             nssf_selection = None
+            amf_binding = None
+            smf_binding = None
+            pdu_session_summary = None
             binding_phase = "METADATA_ONLY"
             try:
+                from amf_binding_adapter import AMF_BINDING_ANNOTATION_KEY, parse_amf_binding_annotation
+                from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
+                from amf_smf_correlation import (
+                    PDU_SESSION_SUMMARY_ANNOTATION_KEY,
+                    parse_pdu_session_summary_annotation,
+                )
                 from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
                 from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
 
-                ann = (created_nsi.get("metadata") or {}).get("annotations") or {}
+                fresh = nsi_controller.custom_api.get_namespaced_custom_object(
+                    group="trisla.io",
+                    version="v1",
+                    namespace=nsi_controller.namespace,
+                    plural="networksliceinstances",
+                    name=nsi_id,
+                )
+                ann = (fresh.get("metadata") or {}).get("annotations") or {}
                 slice_service_binding = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
                 nssf_selection = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
+                amf_binding = parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY))
+                smf_binding = parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY))
+                pdu_session_summary = parse_pdu_session_summary_annotation(
+                    ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
+                )
                 if slice_service_binding:
                     binding_phase = slice_service_binding.get("binding_phase", binding_phase)
             except Exception:
@@ -676,6 +817,9 @@ async def instantiate_nsi(nsi_spec: dict):
                 "nsi": created_nsi,
                 "slice_service_binding": slice_service_binding,
                 "nssf_selection": nssf_selection,
+                "amf_binding": amf_binding,
+                "smf_binding": smf_binding,
+                "pdu_session_summary": pdu_session_summary,
                 "binding_phase": binding_phase,
                 "message": "NSI instantiated successfully",
             }
