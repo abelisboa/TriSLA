@@ -218,6 +218,8 @@ naspAdapter:
     enabled: false
   ranBinding:
     enabled: false
+  transportBinding:
+    enabled: false
 
 uiDashboard:
   enabled: true

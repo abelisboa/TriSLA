@@ -62,6 +62,13 @@ except ImportError:
     run_ran_access_binding = None  # type: ignore
     RAN_BIND_KEY = "trisla.io/ran-binding"
 
+try:
+    from transport_correlation import run_transport_binding
+    from transport_binding_adapter import TRANSPORT_BINDING_ANNOTATION_KEY as TRANSPORT_BIND_KEY
+except ImportError:
+    run_transport_binding = None  # type: ignore
+    TRANSPORT_BIND_KEY = "trisla.io/transport-binding"
+
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 
@@ -294,6 +301,7 @@ class NSIController:
                 self._apply_o2c_bindings(nsi_id)
                 self._apply_o3c_bindings(nsi_id)
                 self._apply_o4c_bindings(nsi_id)
+                self._apply_o5c_bindings(nsi_id)
                 
             except Exception as e:
                 logger.error(f"❌ [NSI] Erro ao instanciar NSI {nsi_id}: {e}", exc_info=True)
@@ -706,6 +714,90 @@ namespace=self.namespace,
             )
         except Exception as exc:
             logger.warning("[O4C] binding apply failed (non-blocking): %s", exc)
+
+    def _apply_o5c_bindings(self, nsi_id: str) -> None:
+        """O5C: ONOS read-only observation + transport correlation (non-blocking)."""
+        if run_transport_binding is None or mapping_annotation_value is None:
+            return
+        try:
+            nsi = self.custom_api.get_namespaced_custom_object(
+                group="trisla.io",
+                version="v1",
+                namespace=self.namespace,
+                plural="networksliceinstances",
+                name=nsi_id,
+            )
+            ann = (nsi.get("metadata") or {}).get("annotations") or {}
+            from slice_service_binding import parse_mapping_annotation
+
+            ssb = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+            if not isinstance(ssb, dict):
+                return
+
+            nssf_sel = None
+            if parse_nssf_selection_annotation is not None:
+                nssf_sel = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
+
+            from amf_binding_adapter import parse_amf_binding_annotation as _parse_amf
+            from smf_binding_adapter import parse_smf_binding_annotation as _parse_smf
+            from upf_binding_adapter import parse_upf_binding_annotation as _parse_upf
+            from ran_binding_adapter import parse_ran_binding_annotation as _parse_ran
+            from amf_smf_correlation import parse_pdu_session_summary_annotation
+
+            amf_binding = _parse_amf(ann.get(AMF_BINDING_ANNOTATION_KEY))
+            smf_binding = _parse_smf(ann.get(SMF_BINDING_ANNOTATION_KEY))
+            upf_binding = _parse_upf(ann.get(UPF_BIND_KEY))
+            ran_binding = _parse_ran(ann.get(RAN_BIND_KEY))
+            pdu_summary = parse_pdu_session_summary_annotation(ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY))
+
+            result = run_transport_binding(
+                ssb,
+                nssf_selection=nssf_sel,
+                amf_binding=amf_binding,
+                smf_binding=smf_binding,
+                upf_binding=upf_binding,
+                ran_binding=ran_binding,
+                pdu_session_summary=pdu_summary,
+            )
+            if result.get("skipped"):
+                return
+
+            binding = result.get("binding") or ssb
+            patch_ann = dict(ann)
+            patch_ann[MAPPING_ANNOTATION_KEY] = mapping_annotation_value(binding)
+            if result.get("transport_binding_annotation"):
+                patch_ann[TRANSPORT_BIND_KEY] = result["transport_binding_annotation"]
+            if result.get("pdu_session_summary_annotation"):
+                patch_ann[PDU_SESSION_SUMMARY_ANNOTATION_KEY] = result["pdu_session_summary_annotation"]
+
+            patch_labels = dict((nsi.get("metadata") or {}).get("labels") or {})
+            patch_labels["trisla.io/binding-phase"] = str(binding.get("binding_phase", "METADATA_ONLY"))
+            flags = binding.get("integration_flags") or {}
+            if flags.get("onos_integrated"):
+                patch_labels["trisla.io/transport-integrated"] = "true"
+
+            body = {
+                "metadata": {
+                    "annotations": patch_ann,
+                    "labels": patch_labels,
+                }
+            }
+            self.custom_api.patch_namespaced_custom_object(
+                group="trisla.io",
+                version="v1",
+                namespace=self.namespace,
+                plural="networksliceinstances",
+                name=nsi_id,
+                body=body,
+            )
+            logger.info(
+                "[O5C] bindings applied nsi=%s phase=%s transport_correlated=%s",
+                nsi_id,
+                binding.get("binding_phase"),
+                result.get("transport_correlated"),
+            )
+        except Exception as exc:
+            logger.warning("[O5C] binding apply failed (non-blocking): %s", exc)
 
     def _update_nsi_phase(self, nsi_id: str, phase: str, message: str):
         """Atualiza a fase do NSI (via subresource status)."""
