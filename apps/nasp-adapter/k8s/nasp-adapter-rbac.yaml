@@ -15,7 +15,7 @@ metadata:
     app: trisla
     component: nasp-adapter
 rules:
-  # CRDs - NetworkSliceInstances e NetworkSliceSubnetInstances
+  # CRDs - NetworkSliceInstances, NetworkSliceSubnetInstances, TriSLAReservations
   - apiGroups:
       - trisla.io
     resources:
@@ -23,6 +23,7 @@ rules:
       - networksliceinstances/status
       - networkslicesubnetinstances
       - networkslicesubnetinstances/status
+      - trislareservations
     verbs:
       - get
       - list
