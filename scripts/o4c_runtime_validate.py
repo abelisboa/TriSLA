@@ -42,7 +42,7 @@ CASES = [
         "embb-template-001",
         {"type": "eMBB", "throughput": "1Gbps", "service_name": "O4C-D6", "intent_text": "O4C eMBB"},
     ),
-)
+]
 
 
 def kubectl(*args, text=True):
