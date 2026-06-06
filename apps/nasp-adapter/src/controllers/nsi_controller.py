@@ -24,6 +24,15 @@ except ImportError:
     mapping_annotation_value = None  # type: ignore
     MAPPING_ANNOTATION_KEY = "trisla.io/slice-service-binding"
 
+try:
+    from nssf_adapter import (
+        NSSF_SELECTION_ANNOTATION_KEY,
+        select_nssf_slice,
+    )
+except ImportError:
+    select_nssf_slice = None  # type: ignore
+    NSSF_SELECTION_ANNOTATION_KEY = "trisla.io/nssf-selection"
+
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 
@@ -82,6 +91,15 @@ class NSIController:
             slice_service_binding = nsi_spec.pop("_sliceServiceBinding", None)
             nssai_spec = nsi_spec.get("nssai", {"sst": 1})
 
+            nssf_sel_ann = None
+            if isinstance(slice_service_binding, dict) and select_nssf_slice is not None:
+                try:
+                    nssf_result = select_nssf_slice(slice_service_binding)
+                    slice_service_binding = nssf_result.get("binding", slice_service_binding)
+                    nssf_sel_ann = nssf_result.get("nssf_selection_annotation")
+                except Exception as exc:
+                    logger.warning("[NSSF] selection failed (non-blocking): %s", exc)
+
             labels = {
                 "trisla.io/nsi-id": nsi_id,
                 "trisla.io/tenant-id": nsi_spec.get("tenantId", "default"),
@@ -93,9 +111,19 @@ class NSIController:
             if isinstance(slice_service_binding, dict) and mapping_annotation_value is not None:
                 annotations[MAPPING_ANNOTATION_KEY] = mapping_annotation_value(slice_service_binding)
                 labels["trisla.io/ssb-version"] = slice_service_binding.get("mapping_version", "ssb-v1")
+                labels["trisla.io/binding-phase"] = str(
+                    slice_service_binding.get("binding_phase", "METADATA_ONLY")
+                )
                 if slice_service_binding.get("sd"):
                     labels["trisla.io/sd"] = str(slice_service_binding["sd"])
                 labels["trisla.io/sst"] = str(slice_service_binding.get("sst", nssai_spec.get("sst", 1)))
+                if nssf_sel_ann:
+                    annotations[NSSF_SELECTION_ANNOTATION_KEY] = nssf_sel_ann
+                if slice_service_binding.get("integration_flags", {}).get("nssf_integrated"):
+                    labels["trisla.io/nssf-integrated"] = "true"
+                    nsi_info = (slice_service_binding.get("nssf_selection") or {}).get("nsiInformation") or {}
+                    if nsi_info.get("nsiId"):
+                        labels["trisla.io/nssf-nsi-id"] = str(nsi_info["nsiId"])
 
             # Criar objeto NSI no mesmo namespace do adapter (trisla)
             nsi_body = {

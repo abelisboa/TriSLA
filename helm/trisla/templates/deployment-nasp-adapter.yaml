@@ -106,6 +106,10 @@ spec:
         {{- $ssb := .Values.naspAdapter.sliceServiceBinding | default dict }}
         - name: SLICE_SERVICE_BINDING_ENABLED
           value: {{ $ssb.enabled | default true | quote }}
+        # O1C — NSSF Adapter (default off — no regression)
+        {{- $nssf := .Values.naspAdapter.nssfAdapter | default dict }}
+        - name: NSSF_ADAPTER_ENABLED
+          value: {{ $nssf.enabled | default false | quote }}
         livenessProbe:
           httpGet:
             path: /health

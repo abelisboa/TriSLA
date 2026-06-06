@@ -174,7 +174,7 @@ naspAdapter:
   image:
     repository: trisla-nasp-adapter
     tag: ''
-    digest: "sha256:34b5849eb81eb3b4cd3a858ff3dee3e8ab953b7ec8f66f4e83717b0cf8056529"
+    digest: "sha256:7fd6d11502e16e1bcd7eb0e56883e00cbb3c6eedef0330c4f96cff0d961973df"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -209,6 +209,8 @@ naspAdapter:
   prometheusUrl: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
   sliceServiceBinding:
     enabled: true
+  nssfAdapter:
+    enabled: false
 
 uiDashboard:
   enabled: true

@@ -510,6 +510,65 @@ async def resolve_slice_service_binding_endpoint(
     )
 
 
+@app.post("/api/v1/slice-service-binding/nssf/select")
+async def nssf_select_endpoint(payload: dict):
+    """O1C: executa NSSF selection para um slice_service_binding (non-blocking preview)."""
+    from nssf_adapter import (
+        nssf_adapter_enabled,
+        parse_nssf_selection_annotation,
+        select_nssf_slice,
+    )
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        profile = payload.get("service_profile") or payload.get("slice_type") or "eMBB"
+        ssb = resolve_slice_service_binding(
+            service_profile=profile,
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    force = bool((payload.get("options") or {}).get("force_refresh"))
+    result = select_nssf_slice(ssb, force_refresh=force)
+    binding = result.get("binding", ssb)
+    ann = parse_nssf_selection_annotation(result.get("nssf_selection_annotation"))
+    return {
+        "enabled": nssf_adapter_enabled(),
+        "skipped": result.get("skipped", False),
+        "slice_service_binding": binding,
+        "nssf_selection": ann or binding.get("nssf_selection"),
+        "binding_phase": binding.get("binding_phase", "METADATA_ONLY"),
+    }
+
+
+@app.get("/api/v1/slice-service-binding/nssf/status/{nsi_id}")
+async def nssf_status_endpoint(nsi_id: str):
+    """O1C: lê status NSSF selection de NSI existente."""
+    from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
+    from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
+
+    try:
+        nsi = nsi_controller.custom_api.get_namespaced_custom_object(
+            group="trisla.io",
+            version="v1",
+            namespace=nsi_controller.namespace,
+            plural="networksliceinstances",
+            name=nsi_id,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail=f"NSI not found: {exc}") from exc
+
+    ann = (nsi.get("metadata") or {}).get("annotations") or {}
+    ssb = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+    nssf_sel = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
+    return {
+        "nsi_id": nsi_id,
+        "binding_phase": (ssb or {}).get("binding_phase", "METADATA_ONLY"),
+        "nssf_selection": nssf_sel or (ssb or {}).get("nssf_selection"),
+        "integration_flags": (ssb or {}).get("integration_flags"),
+    }
+
+
 @app.post("/api/v1/nsi/instantiate")
 async def instantiate_nsi(nsi_spec: dict):
     """
@@ -598,11 +657,17 @@ async def instantiate_nsi(nsi_spec: dict):
             )
 
             slice_service_binding = None
+            nssf_selection = None
+            binding_phase = "METADATA_ONLY"
             try:
+                from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
                 from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
 
                 ann = (created_nsi.get("metadata") or {}).get("annotations") or {}
                 slice_service_binding = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+                nssf_selection = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
+                if slice_service_binding:
+                    binding_phase = slice_service_binding.get("binding_phase", binding_phase)
             except Exception:
                 slice_service_binding = None
 
@@ -610,7 +675,8 @@ async def instantiate_nsi(nsi_spec: dict):
                 "success": True,
                 "nsi": created_nsi,
                 "slice_service_binding": slice_service_binding,
-                "binding_phase": "METADATA_ONLY",
+                "nssf_selection": nssf_selection,
+                "binding_phase": binding_phase,
                 "message": "NSI instantiated successfully",
             }
 
