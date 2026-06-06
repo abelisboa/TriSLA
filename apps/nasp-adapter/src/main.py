@@ -722,6 +722,77 @@ async def user_plane_correlate_endpoint(payload: dict):
     }
 
 
+@app.post("/api/v1/slice-service-binding/ran/observe")
+async def ran_observe_endpoint(payload: dict):
+    """O4C: RAN read-only observation (AMF NGAP log parse or cluster fetch)."""
+    from ran_binding_adapter import parse_ran_binding_annotation, observe_ran_binding, ran_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = observe_ran_binding(
+        ssb,
+        amf_log_text=payload.get("amf_log_text") or payload.get("log_text"),
+        gnb_log_text=payload.get("gnb_log_text"),
+        correlation_status=payload.get("correlation_status", "UNKNOWN"),
+        target_supi=payload.get("supi"),
+    )
+    ann = parse_ran_binding_annotation(result.get("ran_binding_annotation"))
+    return {
+        "enabled": ran_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "ran_binding": ann or result.get("ran_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/access/correlate")
+async def access_correlate_endpoint(payload: dict):
+    """O4C: RAN observe + access correlation with O2C/O3C chain."""
+    from ran_correlation import run_ran_access_binding
+    from ran_binding_adapter import ran_binding_enabled, parse_ran_binding_annotation
+    from amf_binding_adapter import parse_amf_binding_annotation
+    from smf_binding_adapter import parse_smf_binding_annotation
+    from upf_binding_adapter import parse_upf_binding_annotation
+    from amf_smf_correlation import parse_pdu_session_summary_annotation
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = run_ran_access_binding(
+        ssb,
+        nssf_selection=payload.get("nssf_selection"),
+        amf_binding=payload.get("amf_binding"),
+        smf_binding=payload.get("smf_binding"),
+        upf_binding=payload.get("upf_binding"),
+        pdu_session_summary=payload.get("pdu_session_summary"),
+        amf_log_text=payload.get("amf_log_text"),
+        gnb_log_text=payload.get("gnb_log_text"),
+    )
+    summary = parse_pdu_session_summary_annotation(result.get("pdu_session_summary_annotation"))
+    ran = parse_ran_binding_annotation(result.get("ran_binding_annotation"))
+    return {
+        "ran_enabled": ran_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "binding_phase": (result.get("binding") or {}).get("binding_phase"),
+        "correlation_status": result.get("correlation_status"),
+        "access_correlated": result.get("access_correlated"),
+        "slice_service_binding": result.get("binding"),
+        "ran_binding": ran,
+        "pdu_session_summary": summary,
+    }
+
+
 @app.get("/api/v1/slice-service-binding/binding/status/{nsi_id}")
 async def binding_status_endpoint(nsi_id: str):
     """O2C: full binding status for NSI."""
@@ -729,6 +800,7 @@ async def binding_status_endpoint(nsi_id: str):
     from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
     from amf_smf_correlation import PDU_SESSION_SUMMARY_ANNOTATION_KEY, parse_pdu_session_summary_annotation
     from upf_binding_adapter import UPF_BINDING_ANNOTATION_KEY, parse_upf_binding_annotation
+    from ran_binding_adapter import RAN_BINDING_ANNOTATION_KEY, parse_ran_binding_annotation
     from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
     from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
 
@@ -754,6 +826,7 @@ async def binding_status_endpoint(nsi_id: str):
         "amf_binding": parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY)),
         "smf_binding": parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY)),
         "upf_binding": parse_upf_binding_annotation(ann.get(UPF_BINDING_ANNOTATION_KEY)),
+        "ran_binding": parse_ran_binding_annotation(ann.get(RAN_BINDING_ANNOTATION_KEY)),
         "pdu_session_summary": parse_pdu_session_summary_annotation(
             ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
         ),
@@ -852,12 +925,14 @@ async def instantiate_nsi(nsi_spec: dict):
             amf_binding = None
             smf_binding = None
             upf_binding = None
+            ran_binding = None
             pdu_session_summary = None
             binding_phase = "METADATA_ONLY"
             try:
                 from amf_binding_adapter import AMF_BINDING_ANNOTATION_KEY, parse_amf_binding_annotation
                 from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
                 from upf_binding_adapter import UPF_BINDING_ANNOTATION_KEY, parse_upf_binding_annotation
+                from ran_binding_adapter import RAN_BINDING_ANNOTATION_KEY, parse_ran_binding_annotation
                 from amf_smf_correlation import (
                     PDU_SESSION_SUMMARY_ANNOTATION_KEY,
                     parse_pdu_session_summary_annotation,
@@ -878,6 +953,7 @@ async def instantiate_nsi(nsi_spec: dict):
                 amf_binding = parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY))
                 smf_binding = parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY))
                 upf_binding = parse_upf_binding_annotation(ann.get(UPF_BINDING_ANNOTATION_KEY))
+                ran_binding = parse_ran_binding_annotation(ann.get(RAN_BINDING_ANNOTATION_KEY))
                 pdu_session_summary = parse_pdu_session_summary_annotation(
                     ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
                 )
@@ -894,6 +970,7 @@ async def instantiate_nsi(nsi_spec: dict):
                 "amf_binding": amf_binding,
                 "smf_binding": smf_binding,
                 "upf_binding": upf_binding,
+                "ran_binding": ran_binding,
                 "pdu_session_summary": pdu_session_summary,
                 "binding_phase": binding_phase,
                 "message": "NSI instantiated successfully",

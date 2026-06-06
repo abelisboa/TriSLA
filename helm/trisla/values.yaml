@@ -216,6 +216,8 @@ naspAdapter:
     smfEnabled: false
   upfBinding:
     enabled: false
+  ranBinding:
+    enabled: false
 
 uiDashboard:
   enabled: true

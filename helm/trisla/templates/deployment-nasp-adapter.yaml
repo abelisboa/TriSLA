@@ -120,6 +120,10 @@ spec:
         {{- $o3c := .Values.naspAdapter.upfBinding | default dict }}
         - name: UPF_BINDING_ENABLED
           value: {{ $o3c.enabled | default false | quote }}
+        # O4C — RAN Binding (default off — no regression)
+        {{- $o4c := .Values.naspAdapter.ranBinding | default dict }}
+        - name: RAN_BINDING_ENABLED
+          value: {{ $o4c.enabled | default false | quote }}
         livenessProbe:
           httpGet:
             path: /health
