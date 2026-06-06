@@ -116,6 +116,10 @@ spec:
           value: {{ $o2c.amfEnabled | default false | quote }}
         - name: SMF_BINDING_ENABLED
           value: {{ $o2c.smfEnabled | default false | quote }}
+        # O3C — UPF Binding (default off — no regression)
+        {{- $o3c := .Values.naspAdapter.upfBinding | default dict }}
+        - name: UPF_BINDING_ENABLED
+          value: {{ $o3c.enabled | default false | quote }}
         livenessProbe:
           httpGet:
             path: /health

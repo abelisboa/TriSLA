@@ -1,0 +1,31 @@
+contract_version: UPF_CONTRACT_SSOT_V1
+upf:
+  core_namespace_env: NASP_FREE5GC_NAMESPACE
+  core_namespace: ns-1274485
+  pod_label: nf=upf
+  log_tail_lines: 3000
+  observation_window_seconds: 300
+lab:
+  upf_node_name: UPF
+  upf_n4_addr: "10.233.75.38"
+  upf_gtpu_addr: "10.233.75.38"
+  upf_n6_addr: "192.168.100.74"
+  default_supi: "imsi-208930000000001"
+  pdu_snssai:
+    sst: 1
+    sd: "010203"
+  dnn: internet
+  user_plane_nsi_id: "22"
+freshness:
+  ue_ip_source_priority:
+    - upf
+    - smf
+    - amf
+  stale_threshold_seconds: 600
+correlation:
+  orchestration_nsi_ids: ["11", "12", "13"]
+  allow_context_split: true
+fallback:
+  never_block_instantiate: true
+feature_flags:
+  upf_env: UPF_BINDING_ENABLED

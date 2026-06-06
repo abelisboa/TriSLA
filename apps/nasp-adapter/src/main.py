@@ -653,12 +653,82 @@ async def pdu_correlate_endpoint(payload: dict):
     }
 
 
+@app.post("/api/v1/slice-service-binding/upf/observe")
+async def upf_observe_endpoint(payload: dict):
+    """O3C: UPF read-only observation (log parse or cluster fetch)."""
+    from upf_binding_adapter import parse_upf_binding_annotation, observe_upf_binding, upf_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    log_text = payload.get("log_text")
+    result = observe_upf_binding(
+        ssb,
+        log_text=log_text,
+        correlation_status=payload.get("correlation_status", "UNKNOWN"),
+        session_id=payload.get("session_id"),
+    )
+    ann = parse_upf_binding_annotation(result.get("upf_binding_annotation"))
+    return {
+        "enabled": upf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "upf_binding": ann or result.get("upf_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/user-plane/correlate")
+async def user_plane_correlate_endpoint(payload: dict):
+    """O3C: UPF observe + user plane correlation with freshness."""
+    from upf_correlation import run_upf_user_plane_binding
+    from upf_binding_adapter import upf_binding_enabled, parse_upf_binding_annotation
+    from amf_binding_adapter import parse_amf_binding_annotation
+    from smf_binding_adapter import parse_smf_binding_annotation
+    from amf_smf_correlation import parse_pdu_session_summary_annotation
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = run_upf_user_plane_binding(
+        ssb,
+        nssf_selection=payload.get("nssf_selection"),
+        amf_binding=payload.get("amf_binding"),
+        smf_binding=payload.get("smf_binding"),
+        pdu_session_summary=payload.get("pdu_session_summary"),
+        upf_log_text=payload.get("upf_log_text"),
+    )
+    summary = parse_pdu_session_summary_annotation(result.get("pdu_session_summary_annotation"))
+    upf = parse_upf_binding_annotation(result.get("upf_binding_annotation"))
+    return {
+        "upf_enabled": upf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "binding_phase": (result.get("binding") or {}).get("binding_phase"),
+        "correlation_status": result.get("correlation_status"),
+        "fresh_ue_ip": result.get("fresh_ue_ip"),
+        "freshness_source": result.get("freshness_source"),
+        "slice_service_binding": result.get("binding"),
+        "upf_binding": upf,
+        "pdu_session_summary": summary,
+    }
+
+
 @app.get("/api/v1/slice-service-binding/binding/status/{nsi_id}")
 async def binding_status_endpoint(nsi_id: str):
     """O2C: full binding status for NSI."""
     from amf_binding_adapter import AMF_BINDING_ANNOTATION_KEY, parse_amf_binding_annotation
     from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
     from amf_smf_correlation import PDU_SESSION_SUMMARY_ANNOTATION_KEY, parse_pdu_session_summary_annotation
+    from upf_binding_adapter import UPF_BINDING_ANNOTATION_KEY, parse_upf_binding_annotation
     from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
     from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
 
@@ -683,6 +753,7 @@ async def binding_status_endpoint(nsi_id: str):
         "nssf_selection": parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY)),
         "amf_binding": parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY)),
         "smf_binding": parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY)),
+        "upf_binding": parse_upf_binding_annotation(ann.get(UPF_BINDING_ANNOTATION_KEY)),
         "pdu_session_summary": parse_pdu_session_summary_annotation(
             ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
         ),
@@ -780,11 +851,13 @@ async def instantiate_nsi(nsi_spec: dict):
             nssf_selection = None
             amf_binding = None
             smf_binding = None
+            upf_binding = None
             pdu_session_summary = None
             binding_phase = "METADATA_ONLY"
             try:
                 from amf_binding_adapter import AMF_BINDING_ANNOTATION_KEY, parse_amf_binding_annotation
                 from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
+                from upf_binding_adapter import UPF_BINDING_ANNOTATION_KEY, parse_upf_binding_annotation
                 from amf_smf_correlation import (
                     PDU_SESSION_SUMMARY_ANNOTATION_KEY,
                     parse_pdu_session_summary_annotation,
@@ -804,6 +877,7 @@ async def instantiate_nsi(nsi_spec: dict):
                 nssf_selection = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
                 amf_binding = parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY))
                 smf_binding = parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY))
+                upf_binding = parse_upf_binding_annotation(ann.get(UPF_BINDING_ANNOTATION_KEY))
                 pdu_session_summary = parse_pdu_session_summary_annotation(
                     ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
                 )
@@ -819,6 +893,7 @@ async def instantiate_nsi(nsi_spec: dict):
                 "nssf_selection": nssf_selection,
                 "amf_binding": amf_binding,
                 "smf_binding": smf_binding,
+                "upf_binding": upf_binding,
                 "pdu_session_summary": pdu_session_summary,
                 "binding_phase": binding_phase,
                 "message": "NSI instantiated successfully",
