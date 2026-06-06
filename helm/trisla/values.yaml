@@ -174,7 +174,7 @@ naspAdapter:
   image:
     repository: trisla-nasp-adapter
     tag: ''
-    digest: "sha256:7fd6d11502e16e1bcd7eb0e56883e00cbb3c6eedef0330c4f96cff0d961973df"
+    digest: "sha256:581bce2bffb46d30a589cb7cf5290a4681cd508e2c22bf37843c2ecd8f74b13d"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
