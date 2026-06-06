@@ -13,6 +13,17 @@ from kubernetes.client.rest import ApiException
 from opentelemetry import trace
 from .k8s_auth import load_incluster_config_with_validation
 
+try:
+    from slice_service_binding import (
+        MAPPING_ANNOTATION_KEY,
+        enrich_nsi_spec,
+        mapping_annotation_value,
+    )
+except ImportError:
+    enrich_nsi_spec = None  # type: ignore
+    mapping_annotation_value = None  # type: ignore
+    MAPPING_ANNOTATION_KEY = "trisla.io/slice-service-binding"
+
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 
@@ -64,7 +75,28 @@ class NSIController:
             span.set_attribute("nsi.id", nsi_id)
             
             logger.info(f"🔷 [NSI] Criando NSI: {nsi_id}")
-            
+
+            if enrich_nsi_spec is not None:
+                enrich_nsi_spec(nsi_spec)
+
+            slice_service_binding = nsi_spec.pop("_sliceServiceBinding", None)
+            nssai_spec = nsi_spec.get("nssai", {"sst": 1})
+
+            labels = {
+                "trisla.io/nsi-id": nsi_id,
+                "trisla.io/tenant-id": nsi_spec.get("tenantId", "default"),
+                "trisla.io/service-profile": nsi_spec.get("serviceProfile", "eMBB"),
+                "app": "trisla",
+                "component": "nsi",
+            }
+            annotations: Dict[str, str] = {}
+            if isinstance(slice_service_binding, dict) and mapping_annotation_value is not None:
+                annotations[MAPPING_ANNOTATION_KEY] = mapping_annotation_value(slice_service_binding)
+                labels["trisla.io/ssb-version"] = slice_service_binding.get("mapping_version", "ssb-v1")
+                if slice_service_binding.get("sd"):
+                    labels["trisla.io/sd"] = str(slice_service_binding["sd"])
+                labels["trisla.io/sst"] = str(slice_service_binding.get("sst", nssai_spec.get("sst", 1)))
+
             # Criar objeto NSI no mesmo namespace do adapter (trisla)
             nsi_body = {
                 "apiVersion": "trisla.io/v1",
@@ -72,19 +104,14 @@ class NSIController:
                 "metadata": {
                     "name": nsi_id,
                     "namespace": self.namespace,
-                    "labels": {
-                        "trisla.io/nsi-id": nsi_id,
-                        "trisla.io/tenant-id": nsi_spec.get("tenantId", "default"),
-                        "trisla.io/service-profile": nsi_spec.get("serviceProfile", "eMBB"),
-                        "app": "trisla",
-                        "component": "nsi"
-                    }
+                    "labels": labels,
+                    "annotations": annotations,
                 },
                 "spec": {
                     "nsiId": nsi_id,
                     "tenantId": nsi_spec.get("tenantId", "default"),
                     "serviceProfile": nsi_spec.get("serviceProfile", "eMBB"),
-                    "nssai": nsi_spec.get("nssai", {"sst": 1}),
+                    "nssai": nssai_spec,
                     "sla": nsi_spec.get("sla", {})
                 },
                 "status": {
@@ -328,6 +355,20 @@ class NSIController:
         nssi_id = f"{nsi_id}-{domain.lower()}"
         
         logger.info(f"🔷 [NSSI] Criando NSSI: {nssi_id} (domain={domain})")
+
+        nssi_annotations: Dict[str, str] = {}
+        nssi_labels = {
+            "trisla.io/nsi-id": nsi_id,
+            "trisla.io/nssi-id": nssi_id,
+            "trisla.io/nssi-domain": domain,
+            "trisla.io/service-profile": nsi["spec"]["serviceProfile"],
+            "app": "trisla",
+            "component": "nssi",
+        }
+        raw_map = (nsi.get("metadata") or {}).get("annotations", {}).get(MAPPING_ANNOTATION_KEY)
+        if raw_map:
+            nssi_annotations["trisla.io/parent-slice-service-binding"] = raw_map
+            nssi_labels["trisla.io/ssb-version"] = "ssb-v1"
         
         nssi_body = {
             "apiVersion": "trisla.io/v1",
@@ -335,14 +376,8 @@ class NSIController:
             "metadata": {
                 "name": nssi_id,
                 "namespace": self.namespace,
-                "labels": {
-                    "trisla.io/nsi-id": nsi_id,
-                    "trisla.io/nssi-id": nssi_id,
-                    "trisla.io/nssi-domain": domain,
-                    "trisla.io/service-profile": nsi["spec"]["serviceProfile"],
-                    "app": "trisla",
-                    "component": "nssi"
-                }
+                "labels": nssi_labels,
+                "annotations": nssi_annotations,
             },
             "spec": {
                 "nssiId": nssi_id,

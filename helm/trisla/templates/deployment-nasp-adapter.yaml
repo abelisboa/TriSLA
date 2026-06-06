@@ -102,6 +102,10 @@ spec:
         # Telemetria real (PROMPT_STELEMETRY_REAL_ACTIVATION)
         - name: PROMETHEUS_URL
           value: {{ .Values.naspAdapter.prometheusUrl | default "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090" | quote }}
+        # O6 — slice service binding SSOT (metadata only)
+        {{- $ssb := .Values.naspAdapter.sliceServiceBinding | default dict }}
+        - name: SLICE_SERVICE_BINDING_ENABLED
+          value: {{ $ssb.enabled | default true | quote }}
         livenessProbe:
           httpGet:
             path: /health

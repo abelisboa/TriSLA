@@ -191,6 +191,7 @@ def _sanitize_nsi_payload(nsi_spec: dict) -> dict:
     nsi_id = nsi_spec.get("nsiId") or nsi_spec.get("nsi_id") or nsi_spec.get("intent_id")
     service_profile = nsi_spec.get("serviceProfile") or nsi_spec.get("service_profile") or nsi_spec.get("service_type")
     tenant_id = nsi_spec.get("tenantId") or nsi_spec.get("tenant_id") or "default"
+    nest_id = nsi_spec.get("nestId") or nsi_spec.get("nest_id")
 
     # nssai: manter apenas sst/sd se existir
     nssai = nsi_spec.get("nssai") or {}
@@ -222,6 +223,8 @@ def _sanitize_nsi_payload(nsi_spec: dict) -> dict:
         "nssai": clean_nssai,
         "sla": clean_sla,
     }
+    if nest_id:
+        out["nestId"] = nest_id
 
     # suporte a reserveOnly (cap accounting TTL tests)
     if nsi_spec.get("_reserveOnly") is True:
@@ -361,6 +364,14 @@ async def startup_event():
         logger.info("[BOOTSTRAP] NSI Watch Controller STARTED")
         logger.info(f"[BOOTSTRAP] Watch thread is alive: {watch_thread.is_alive()}")
         logger.info(f"[BOOTSTRAP] Watch thread name: {watch_thread.name}")
+
+        # Sprint 8G — real NASP Core connectivity (AMF/SMF SBI, ns-1274485)
+        connected = await nasp_client.connect()
+        logger.info(
+            "[BOOTSTRAP] NASP connectivity probe complete nasp_connected=%s detail=%s",
+            connected,
+            nasp_client.get_connectivity_detail(),
+        )
         
     except Exception as e:
         logger.exception("[BOOTSTRAP] FAILED to start NSI Watch Controller")
@@ -373,7 +384,8 @@ async def health():
     return {
         "status": "healthy",
         "module": "nasp-adapter",
-        "nasp_connected": nasp_client.is_connected()
+        "nasp_connected": nasp_client.is_connected(),
+        "nasp_connectivity": nasp_client.get_connectivity_detail(),
     }
 
 
@@ -468,6 +480,36 @@ async def post_3gpp_gate(payload: dict = None):
         return result
 
 
+@app.get("/api/v1/slice-service-binding/ssot")
+async def get_slice_service_binding_ssot():
+    """O6: expõe SSOT slice service binding (read-only, sem side-effects)."""
+    from slice_service_binding import load_mapping_config, slice_service_binding_enabled
+
+    cfg = load_mapping_config()
+    return {
+        "enabled": slice_service_binding_enabled(),
+        "mapping_version": cfg.get("mapping_version"),
+        "binding_phase": "METADATA_ONLY",
+        "profiles": cfg.get("profiles"),
+    }
+
+
+@app.get("/api/v1/slice-service-binding/resolve")
+async def resolve_slice_service_binding_endpoint(
+    service_profile: str = "eMBB",
+    nsi_id: str = "",
+    nest_id: str = "",
+):
+    """O6: resolve slice service binding para um perfil (preview, sem instantiate)."""
+    from slice_service_binding import resolve_slice_service_binding
+
+    return resolve_slice_service_binding(
+        service_profile=service_profile,
+        nsi_id=nsi_id or None,
+        nest_id=nest_id or None,
+    )
+
+
 @app.post("/api/v1/nsi/instantiate")
 async def instantiate_nsi(nsi_spec: dict):
     """
@@ -555,10 +597,21 @@ async def instantiate_nsi(nsi_spec: dict):
                 nsi_spec.get("nsiId"),
             )
 
+            slice_service_binding = None
+            try:
+                from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
+
+                ann = (created_nsi.get("metadata") or {}).get("annotations") or {}
+                slice_service_binding = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+            except Exception:
+                slice_service_binding = None
+
             return {
                 "success": True,
                 "nsi": created_nsi,
-                "message": "NSI instantiated successfully"
+                "slice_service_binding": slice_service_binding,
+                "binding_phase": "METADATA_ONLY",
+                "message": "NSI instantiated successfully",
             }
 
         except HTTPException:

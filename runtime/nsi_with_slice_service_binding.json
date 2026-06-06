@@ -1,0 +1,32 @@
+{
+  "phase": "O6",
+  "feature": "slice_service_binding",
+  "status": "PENDING_DEPLOY",
+  "mapping_version": "ssb-v1",
+  "binding_phase": "METADATA_ONLY",
+  "annotation_key": "trisla.io/slice-service-binding",
+  "example_resolve_urllc": {
+    "nest_id": "nest-example-urllc",
+    "nsi_id": "nest-example-urllc",
+    "slice_type": "URLLC",
+    "sst": 1,
+    "sd": "000001",
+    "dnn": "urllc",
+    "nssai": { "sst": 1, "sd": "000001" },
+    "nssf_ref": "nssf-nnssf.ns-1274485.svc.cluster.local:80",
+    "amf_ref": "amf-namf.ns-1274485.svc.cluster.local:80",
+    "smf_ref": "smf-nsmf.ns-1274485.svc.cluster.local:80",
+    "upf_ref": "upf-service.ns-1274485.svc.cluster.local:8805",
+    "ran_ref": "ueransim-gnb.ueransim.svc.cluster.local",
+    "transport_ref": "onos.nasp-transport.svc.cluster.local:8181",
+    "integration_flags": {
+      "nssf_integrated": false,
+      "amf_integrated": false,
+      "smf_integrated": false,
+      "upf_integrated": false,
+      "ran_integrated": false,
+      "onos_integrated": false
+    }
+  },
+  "note": "Populate from live NSI after deploy: kubectl get nsi -n trisla <id> -o json"
+}

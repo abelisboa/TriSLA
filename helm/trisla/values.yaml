@@ -58,11 +58,23 @@ decisionEngine:
     # V5 (PROMPT_V5): widen score path (PRB < renegotiate) and delay hard REJECT vs V11 defaults.
     HARD_PRB_RENEGOTIATE: "0.25"
     HARD_PRB_REJECT: "0.40"
+<<<<<<< Updated upstream
+=======
+    # Phase 2 transport-informed score term (frozen RTT_REF; w=0.05 initial).
+    TRISLA_TRANSPORT_RTT_REF_MS: "12.21"
+    TRISLA_TRANSPORT_SCORE_WEIGHT: "0.05"
+    TRISLA_TRANSPORT_SCORE_WEIGHT_MAX: "0.10"
+    TRISLA_TRANSPORT_RTT_GOODNESS_ENABLED: "true"
+    # Phase 5: activate latent feasibility term in score_mode (portal sla_metrics parity).
+    TRISLA_FEASIBILITY_RUNTIME_ENABLED: "true"
+    # Phase 6: activate latent resource_headroom term (g_headroom = 1 - pressure V1).
+    TRISLA_RESOURCE_HEADROOM_RUNTIME_ENABLED: "true"
+>>>>>>> Stashed changes
   enabled: true
   image:
     repository: ghcr.io/abelisboa/trisla-decision-engine
     tag: ''
-    digest: "sha256:5695c700be9b83bd11bdf846a5762f1f9ba3dde143c73f3cec2b55472bb4caa6"
+    digest: "sha256:67659064d35a72656f1554cfbdb7a166a052d1a20a01aa5688baf201023f6be5"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -195,6 +207,8 @@ naspAdapter:
     costMmtcRan: 1
     costMmtcTransport: 1
   prometheusUrl: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+  sliceServiceBinding:
+    enabled: true
 
 uiDashboard:
   enabled: true

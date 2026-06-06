@@ -1,0 +1,67 @@
+# Slice Service Binding (O6) — SSOT: NSI/NSSI TriSLA → parâmetros 5G/O-RAN (metadata only; sem chamadas NF).
+# Version: ssb-v1
+mapping_version: ssb-v1
+core_namespace: ns-1274485
+transport_namespace: nasp-transport
+ran_namespace: ueransim
+
+profiles:
+  URLLC:
+    slice_type: URLLC
+    sst: 1
+    sd: "000001"
+    dnn: urllc
+    nssf_ref: nssf-nnssf.ns-1274485.svc.cluster.local:80
+    amf_ref: amf-namf.ns-1274485.svc.cluster.local:80
+    smf_ref: smf-nsmf.ns-1274485.svc.cluster.local:80
+    upf_ref: upf-service.ns-1274485.svc.cluster.local:8805
+    ran_ref: ueransim-gnb.ueransim.svc.cluster.local
+    transport_ref: onos.nasp-transport.svc.cluster.local:8181
+
+  eMBB:
+    slice_type: eMBB
+    sst: 1
+    sd: "000002"
+    dnn: embb
+    nssf_ref: nssf-nnssf.ns-1274485.svc.cluster.local:80
+    amf_ref: amf-namf.ns-1274485.svc.cluster.local:80
+    smf_ref: smf-nsmf.ns-1274485.svc.cluster.local:80
+    upf_ref: upf-service.ns-1274485.svc.cluster.local:8805
+    ran_ref: ueransim-gnb.ueransim.svc.cluster.local
+    transport_ref: onos.nasp-transport.svc.cluster.local:8181
+
+  mMTC:
+    slice_type: mMTC
+    sst: 1
+    sd: "000003"
+    dnn: mmtc
+    nssf_ref: nssf-nnssf.ns-1274485.svc.cluster.local:80
+    amf_ref: amf-namf.ns-1274485.svc.cluster.local:80
+    smf_ref: smf-nsmf.ns-1274485.svc.cluster.local:80
+    upf_ref: upf-service.ns-1274485.svc.cluster.local:8805
+    ran_ref: ueransim-gnb.ueransim.svc.cluster.local
+    transport_ref: onos.nasp-transport.svc.cluster.local:8181
+
+  EMBB:
+    slice_type: eMBB
+    sst: 1
+    sd: "000002"
+    dnn: embb
+    nssf_ref: nssf-nnssf.ns-1274485.svc.cluster.local:80
+    amf_ref: amf-namf.ns-1274485.svc.cluster.local:80
+    smf_ref: smf-nsmf.ns-1274485.svc.cluster.local:80
+    upf_ref: upf-service.ns-1274485.svc.cluster.local:8805
+    ran_ref: ueransim-gnb.ueransim.svc.cluster.local
+    transport_ref: onos.nasp-transport.svc.cluster.local:8181
+
+  MMTC:
+    slice_type: mMTC
+    sst: 1
+    sd: "000003"
+    dnn: mmtc
+    nssf_ref: nssf-nnssf.ns-1274485.svc.cluster.local:80
+    amf_ref: amf-namf.ns-1274485.svc.cluster.local:80
+    smf_ref: smf-nsmf.ns-1274485.svc.cluster.local:80
+    upf_ref: upf-service.ns-1274485.svc.cluster.local:8805
+    ran_ref: ueransim-gnb.ueransim.svc.cluster.local
+    transport_ref: onos.nasp-transport.svc.cluster.local:8181
