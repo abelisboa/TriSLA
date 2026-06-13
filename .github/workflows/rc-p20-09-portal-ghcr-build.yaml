@@ -1,0 +1,86 @@
+name: "RC-P20-09 — Portal GHCR Build (digest-only)"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, e2e-o6-mapping-ssot]
+    paths:
+      - 'apps/portal-backend/**'
+      - 'apps/portal-frontend/**'
+      - '.github/workflows/rc-p20-09-portal-ghcr-build.yaml'
+
+env:
+  REGISTRY: ghcr.io/abelisboa
+
+jobs:
+  build-portal-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      build_tag: ${{ steps.meta.outputs.build_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        run: echo "build_tag=$(date -u +%Y%m%dT%H%M%SZ)" >> "$GITHUB_OUTPUT"
+      - id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/portal-backend
+          file: ./apps/portal-backend/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/trisla-portal-backend:${{ steps.meta.outputs.build_tag }}
+          provenance: false
+          sbom: false
+      - run: |
+          echo "${{ steps.build.outputs.digest }}" > portal-backend-digest.txt
+          echo "build_tag=${{ steps.meta.outputs.build_tag }}" >> portal-backend-digest.txt
+          echo "image_ref=${{ env.REGISTRY }}/trisla-portal-backend@${{ steps.build.outputs.digest }}" >> portal-backend-digest.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rc-p20-09-portal-backend-digest
+          path: portal-backend-digest.txt
+
+  build-portal-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      build_tag: ${{ steps.meta.outputs.build_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        run: echo "build_tag=$(date -u +%Y%m%dT%H%M%SZ)" >> "$GITHUB_OUTPUT"
+      - id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/portal-frontend
+          file: ./apps/portal-frontend/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/trisla-portal-frontend:${{ steps.meta.outputs.build_tag }}
+          provenance: false
+          sbom: false
+      - run: |
+          echo "${{ steps.build.outputs.digest }}" > portal-frontend-digest.txt
+          echo "build_tag=${{ steps.meta.outputs.build_tag }}" >> portal-frontend-digest.txt
+          echo "image_ref=${{ env.REGISTRY }}/trisla-portal-frontend@${{ steps.build.outputs.digest }}" >> portal-frontend-digest.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rc-p20-09-portal-frontend-digest
+          path: portal-frontend-digest.txt

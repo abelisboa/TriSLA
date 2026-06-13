@@ -14,6 +14,7 @@ export type LifecycleView = "admission" | "runtime";
 const ADMISSION_VIEW_SECTIONS: ReadonlySet<LifecycleSection> = new Set([
   "runtimeIdentity",
   "semanticAdmission",
+  "serviceProfile",
   "mlDecision",
   "blockchain",
   "runtimeOrchestration",

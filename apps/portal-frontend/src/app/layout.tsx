@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="en-US">
       <body className="trisla-body">
         <PortalNavProvider>
           <div className="trisla-shell">

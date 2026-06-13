@@ -112,7 +112,7 @@ export function formatApiError(err: unknown): string {
     return err.message;
   }
   if (err instanceof Error) return err.message;
-  return 'erro ao consultar fonte real';
+  return 'error retrieving source data';
 }
 
 export async function apiFetch<T>(

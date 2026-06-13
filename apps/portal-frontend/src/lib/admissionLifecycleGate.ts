@@ -11,6 +11,7 @@ export type AdmissionDecision = "ACCEPT" | "REJECT" | "RENEGOTIATE" | "UNKNOWN";
 export type LifecycleSection =
   | "runtimeIdentity"
   | "semanticAdmission"
+  | "serviceProfile"
   | "mlDecision"
   | "blockchain"
   | "runtimeOrchestration"
@@ -31,6 +32,7 @@ export type LifecycleSection =
 const ACCEPT_SECTIONS: ReadonlySet<LifecycleSection> = new Set([
   "runtimeIdentity",
   "semanticAdmission",
+  "serviceProfile",
   "mlDecision",
   "blockchain",
   "runtimeOrchestration",
@@ -50,6 +52,7 @@ const ACCEPT_SECTIONS: ReadonlySet<LifecycleSection> = new Set([
 const REJECT_SECTIONS: ReadonlySet<LifecycleSection> = new Set([
   "runtimeIdentity",
   "semanticAdmission",
+  "serviceProfile",
   "mlDecision",
   "decisionEvidence",
   "governance",
@@ -60,6 +63,7 @@ const REJECT_SECTIONS: ReadonlySet<LifecycleSection> = new Set([
 const RENEGOTIATE_SECTIONS: ReadonlySet<LifecycleSection> = new Set([
   "runtimeIdentity",
   "semanticAdmission",
+  "serviceProfile",
   "mlDecision",
   "decisionEvidence",
   "governance",

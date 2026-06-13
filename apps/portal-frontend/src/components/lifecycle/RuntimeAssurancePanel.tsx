@@ -10,13 +10,6 @@ import {
   assuranceExplanationForState,
   LIFECYCLE_ACTIVE_EXPLANATION,
 } from "../../lib/runtimeAssuranceStateModel";
-import {
-  buildWhyExplanations,
-  formatDomainCompliance,
-  hasExplainabilityContent,
-  parseDriftIndicators,
-  whySectionHeading,
-} from "../../lib/runtimeAssuranceExplainability";
 import { formatLifecycleStateLabel } from "../../lib/operatorLabels";
 import {
   governanceClarityFromAssurance,
@@ -24,11 +17,9 @@ import {
   telemetryFidelityFromAssurance,
 } from "../../lib/phaseNextConsistency";
 import { ClosedLoopAssurancePanel } from "../consistency/ClosedLoopAssurancePanel";
-import { ComplianceSplitPanel } from "../consistency/ComplianceSplitPanel";
 import type { OnChainEvidenceFields } from "../../lib/blockchainEvidenceDisplay";
 import { GovernanceClarityPanel } from "../consistency/GovernanceClarityPanel";
 import { TelemetryFidelityPanel } from "../consistency/TelemetryFidelityPanel";
-import { DomainExplainabilityPanel } from "./DomainExplainabilityPanel";
 
 export type RuntimeAssuranceTraceContext = {
   intent_id?: string;
@@ -41,9 +32,7 @@ type Props = {
   assurance?: RuntimeAssurancePayload;
   /** Deprecated — use operational_status from assurance only. */
   lifecycleStatus?: string;
-  telemetrySnapshot?: unknown;
   traceContext?: RuntimeAssuranceTraceContext;
-  admissionCompliancePercent?: number;
   onChainEvidence?: OnChainEvidenceFields;
 };
 
@@ -60,12 +49,15 @@ function ListOrMuted({ items, emptyLabel }: { items: string[]; emptyLabel: strin
   );
 }
 
+/**
+ * RC-P20-03 — closed-loop assurance state only.
+ * Compliance scores and per-KPI evaluation live in ComplianceEvaluationPanel.
+ * Raw telemetry lives in Multidomain Telemetry panels.
+ */
 export function RuntimeAssurancePanel({
   assurance,
   lifecycleStatus: _legacyLifecycleStatus,
-  telemetrySnapshot,
   traceContext,
-  admissionCompliancePercent,
   onChainEvidence,
 }: Props) {
   const state = assurance?.state ?? assurance?.assurance_state;
@@ -79,11 +71,6 @@ export function RuntimeAssurancePanel({
 
   const violations = assurance?.violations ?? [];
   const warnings = assurance?.warnings ?? [];
-  const driftIndicators = parseDriftIndicators(assurance?.drift_indicators);
-  const domainRows = formatDomainCompliance(assurance?.domain_compliance);
-  const whyHeading = whySectionHeading(state);
-  const whyItems = buildWhyExplanations(assurance, telemetrySnapshot);
-  const showExplainability = hasExplainabilityContent(assurance);
   const fidelity = telemetryFidelityFromAssurance(assurance);
   const governanceClarity = governanceClarityFromAssurance(assurance);
 
@@ -91,7 +78,8 @@ export function RuntimeAssurancePanel({
     <section className="trisla-status-card trisla-runtime-assurance" aria-label="Runtime Assurance">
       <h2>Runtime Assurance</h2>
       <p className="trisla-muted">
-        Closed-loop observation — observe, detect, evaluate, act (simulation), revalidate.
+        Closed-loop assurance state — observe, detect, evaluate, act (simulation), revalidate.
+        Per-KPI compliance is under Compliance Evaluation; raw metrics under Multidomain Telemetry.
       </p>
       {!assurance || !state ? (
         <p className="trisla-muted">Not available</p>
@@ -157,76 +145,11 @@ export function RuntimeAssurancePanel({
             ) : null}
           </dl>
 
-          <ComplianceSplitPanel
-            assurance={assurance}
-            admissionCompliancePercent={admissionCompliancePercent}
-          />
-
           <GovernanceClarityPanel clarity={governanceClarity} onChainEvidence={onChainEvidence} />
 
           <TelemetryFidelityPanel fidelity={fidelity} />
 
           <ClosedLoopAssurancePanel assurance={assurance} />
-
-          {showExplainability ? (
-            <div className="trisla-explainability-block">
-              <h3 className="trisla-explainability-title">Operational Explanation</h3>
-
-              {domainRows.length > 0 ? (
-                <div className="trisla-explain-section">
-                  <h4>Domain compliance</h4>
-                  <dl>
-                    {domainRows.map(({ domain, score }) => (
-                      <div key={domain} className="trisla-status-row">
-                        <dt>{domain}</dt>
-                        <dd>{score}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              ) : null}
-
-              {driftIndicators.length > 0 ? (
-                <div className="trisla-explain-section">
-                  <h4>Drift indicators</h4>
-                  <ul className="trisla-explain-list">
-                    {driftIndicators.map((d, i) => (
-                      <li key={`${d.path ?? "drift"}-${i}`}>
-                        <strong>{d.path ?? "metric"}</strong>
-                        {d.current !== undefined ? ` — Observed: ${d.current}` : ""}
-                        {d.reference !== undefined ? ` · Baseline: ${d.reference}` : ""}
-                        {d.delta !== undefined ? ` · Δ ${d.delta}` : ""}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              {whyHeading && whyItems.length > 0 ? (
-                <div className="trisla-explain-section trisla-why-section">
-                  <h4>{whyHeading}</h4>
-                  {whyItems.map((item, idx) => (
-                    <article key={`${item.source}-${idx}`} className="trisla-why-card">
-                      <p className="trisla-why-summary">{item.summary}</p>
-                      {item.observed ? (
-                        <p className="trisla-why-metric">
-                          <span>Observed:</span> {item.observed}
-                        </p>
-                      ) : null}
-                      {item.target ? (
-                        <p className="trisla-why-metric">
-                          <span>Reference / band:</span> {item.target}
-                        </p>
-                      ) : null}
-                      <p className="trisla-muted trisla-why-source">Source: {item.source}</p>
-                    </article>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          <DomainExplainabilityPanel assurance={assurance} />
 
           {showActiveWarningNote ? (
             <p className="trisla-muted" style={{ marginTop: "0.75rem" }}>

@@ -10,6 +10,16 @@ from __future__ import annotations
 import os
 from typing import Dict
 
+_PACKET_LOSS_PCT_EXPR = (
+    "("
+    'sum(rate(container_network_receive_packets_dropped_total{namespace="ns-1274485"}[2m]))'
+    '+ sum(rate(container_network_transmit_packets_dropped_total{namespace="ns-1274485"}[2m]))'
+    ") / ("
+    'sum(rate(container_network_receive_packets_total{namespace="ns-1274485"}[2m]))'
+    '+ sum(rate(container_network_transmit_packets_total{namespace="ns-1274485"}[2m]))'
+    ") * 100"
+)
+
 # Telemetry snapshot (query_range) — keys match TELEMETRY_PROMQL_* suffixes.
 # RAN PRB: authoritative job = trisla-ran-ue-upf-proxy (rantester/free5GC path).
 # Unqualified average over trisla_ran_prb_utilization without job filter is forbidden (mixes simulator + proxy).
@@ -38,6 +48,23 @@ PROMQL_SSOT: Dict[str, str] = {
     "CORE_MEMORY": os.getenv(
         "TELEMETRY_PROMQL_CORE_MEMORY",
         "sum(process_resident_memory_bytes)",
+    ),
+    # RC-P19-001 / Sprint 7C — N6 peer dataplane via ran-ue-upf-proxy exporter (not rantester cAdvisor).
+    "TRANSPORT_BANDWIDTH_MBPS": (
+        'avg(trisla_ran_ue_proxy_throughput_bps{job="trisla-ran-ue-upf-proxy"}) / 1000000'
+    ),
+    # Sprint 7C — 1:1 from sla-agent SSOT (RC-P20-04A wiring recovery)
+    "TRANSPORT_PACKET_LOSS_PCT": _PACKET_LOSS_PCT_EXPR,
+    "RELIABILITY_PROXY_PCT": f"100 - ({_PACKET_LOSS_PCT_EXPR})",
+    "CORE_AVAILABILITY_PCT": (
+        "100 * ("
+        '0.7 * avg(probe_success{job=~"probe/monitoring/trisla-.*"})'
+        ' + 0.3 * ('
+        'sum(kube_deployment_status_condition{namespace="trisla",condition="Available",status="true"})'
+        " / "
+        'count(kube_deployment_status_condition{namespace="trisla",condition="Available"})'
+        ")"
+        ")"
     ),
 }
 
@@ -70,10 +97,8 @@ CLUSTER_CPU_PERCENT_SUMMARY = (
 
 # GET /api/v1/prometheus/summary — instant queries (observability index; not telemetry_snapshot).
 PROMQL_SUMMARY: Dict[str, str] = {
-    "throughput_mbps": (
-        '8 * (sum(rate(container_network_receive_bytes_total{namespace="ns-1274485",pod=~"rantester.*"}[1m])) + '
-        'sum(rate(container_network_transmit_bytes_total{namespace="ns-1274485",pod=~"rantester.*"}[1m]))) / 1000000'
-    ),
+    # RC-P19-001: aligned with SLA-Agent TRANSPORT_BANDWIDTH_MBPS (trisla_ran_ue_proxy_throughput_bps → Mbps).
+    "throughput_mbps": PROMQL_SSOT["TRANSPORT_BANDWIDTH_MBPS"],
     "transport_latency_ms": PROMQL_SSOT["TRANSPORT_RTT"],
     "sessions": (
         'sum(kube_pod_status_phase{namespace="ns-1274485",phase="Running",pod=~"(rantester.*|amf.*|smf.*|upf.*)"})'

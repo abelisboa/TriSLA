@@ -1,12 +1,10 @@
 import { displayField } from "../../lib/submitResponse";
 import { operatorFieldLabel } from "../../lib/operatorLabels";
 import {
-  coreRowsForLifecycle,
-  parseTelemetrySnapshot,
-  ranRowsForLifecycle,
-  transportRowsForLifecycle,
-  type TelemetrySnapshotV2,
-} from "../../lib/lifecycleRuntimeSnapshot";
+  observedCoreRows,
+  observedRanRows,
+  observedTransportRows,
+} from "../../lib/observedTelemetry";
 import type { RevalidateTelemetryResponse, SlaRuntimeStatusResponse } from "../../lib/runtimeSupervision";
 import { operationalStatusFromAssurance } from "../../lib/phaseNextConsistency";
 import type { RuntimeAssurancePayload } from "../../lib/runtimeAssurance";
@@ -100,11 +98,12 @@ export function FreshTelemetryPanel({
     );
   }
 
-  const parsed: TelemetrySnapshotV2 = parseTelemetrySnapshot(snapshot) ?? {};
+  const parsed = snapshot && typeof snapshot === "object" ? snapshot : undefined;
 
   return (
     <section className="trisla-runtime-subsection" aria-label="Fresh Telemetry">
       <h3>Fresh Telemetry</h3>
+      <p className="trisla-muted">Observed metrics only — no compliance evaluation.</p>
       {revalidationStatus === "INCOMPLETE" ? (
         <p className="trisla-muted">
           Revalidation incomplete — some Prometheus samples were unavailable at collection time.
@@ -112,14 +111,37 @@ export function FreshTelemetryPanel({
       ) : null}
       <FieldList
         fields={[
-          { label: "execution_id", value: parsed.execution_id },
-          { label: "timestamp", value: parsed.timestamp },
-          { label: "telemetry_contract_version", value: parsed.telemetry_contract_version },
+          {
+            label: "execution_id",
+            value: (parsed as Record<string, unknown> | undefined)?.execution_id,
+          },
+          {
+            label: "timestamp",
+            value: (parsed as Record<string, unknown> | undefined)?.timestamp,
+          },
         ]}
       />
-      <DomainBlockLabeled title="RAN" rows={ranRowsForLifecycle(parsed.ran)} />
-      <DomainBlockLabeled title="Transport" rows={transportRowsForLifecycle(parsed.transport)} />
-      <DomainBlockLabeled title="Core" rows={coreRowsForLifecycle(parsed.core)} />
+      <DomainBlockLabeled
+        title="RAN"
+        rows={observedRanRows((parsed as Record<string, unknown>)?.ran).map((r) => ({
+          label: r.label,
+          value: r.value,
+        }))}
+      />
+      <DomainBlockLabeled
+        title="Transport"
+        rows={observedTransportRows((parsed as Record<string, unknown>)?.transport).map((r) => ({
+          label: r.label,
+          value: r.value,
+        }))}
+      />
+      <DomainBlockLabeled
+        title="Core"
+        rows={observedCoreRows((parsed as Record<string, unknown>)?.core).map((r) => ({
+          label: r.label,
+          value: r.value,
+        }))}
+      />
     </section>
   );
 }

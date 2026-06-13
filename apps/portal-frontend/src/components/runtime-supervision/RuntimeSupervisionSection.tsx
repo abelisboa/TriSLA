@@ -24,6 +24,7 @@ import {
   RuntimePayloadPanel,
   RuntimeStatusPanel,
 } from "./RuntimeSupervisionPanels";
+import { ComplianceEvaluationPanel } from "../lifecycle/ComplianceEvaluationPanel";
 import { RuntimeAssurancePanel } from "../lifecycle/RuntimeAssurancePanel";
 import { parseRuntimeAssurance } from "../../lib/runtimeAssurance";
 import { AdmissionOnlyBanner } from "../gating/AdmissionOnlyBanner";
@@ -130,10 +131,11 @@ export function RuntimeSupervisionSection({
       />
 
       {showLifecycleSection("runtimeAssurance", admissionDecision) ? (
-        <RuntimeAssurancePanel
-          assurance={parseRuntimeAssurance(statusData?.runtime_assurance)}
-          telemetrySnapshot={statusData?.telemetry_snapshot ?? runtimeSnapshot}
-        />
+        <RuntimeAssurancePanel assurance={parseRuntimeAssurance(statusData?.runtime_assurance)} />
+      ) : null}
+
+      {showLifecycleSection("runtimeCompliance", admissionDecision) ? (
+        <ComplianceEvaluationPanel assurance={parseRuntimeAssurance(statusData?.runtime_assurance)} />
       ) : null}
 
       {showLifecycleSection("runtimeSnapshot", admissionDecision) ? (
