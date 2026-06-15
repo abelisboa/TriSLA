@@ -1,5 +1,0 @@
-PASS urllc
-PASS embb
-PASS mmtc
-PASS smartcity
-All lifecycle runtime snapshot mapping tests passed.

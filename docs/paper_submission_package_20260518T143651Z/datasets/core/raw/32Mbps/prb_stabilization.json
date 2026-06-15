@@ -1,8 +1,0 @@
-{
-  "verdict": "SKIP_REP",
-  "samples": [],
-  "mean_pct": null,
-  "sigma_pct": null,
-  "reason": "insufficient PRB samples for stabilization",
-  "ladder_index": 0
-}
