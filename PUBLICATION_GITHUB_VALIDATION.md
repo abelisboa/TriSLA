@@ -1,14 +1,29 @@
 # PUBLICATION_GITHUB_VALIDATION
 
-LOCAL_PRE_PUSH_VALIDATION = TRUE
+GITHUB_VALIDATED = TRUE
 
-Required roots present locally:
+Validated via remote main ref and local post-push tree corresponding to published content.
 
-- apps/
-- docs/
-- helm/
+Required roots:
 
-docs/modules/ present = True
+- apps/ = PRESENT
+- docs/ = PRESENT
+- helm/ = PRESENT
+
+docs/modules/ = PRESENT
 Missing canonical docs = []
 
-GITHUB_VALIDATED = PENDING_REMOTE_PUSH
+Canonical docs expected:
+
+- sem-csmf.md
+- nasp-adapter.md
+- decision-engine.md
+- ml-nsmf.md
+- bc-nssmf.md
+- sla-agent-layer.md
+- telemetry.md
+- observability.md
+- portal-backend.md
+- portal-frontend.md
+- governance.md
+- interfaces.md

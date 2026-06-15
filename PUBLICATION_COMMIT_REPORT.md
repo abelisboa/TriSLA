@@ -2,15 +2,7 @@
 
 FILES_STAGED = TRUE
 COMMIT_CREATED = TRUE
-COMMIT_SHA = da9070a0d9d4b4e435c06def03d5ccaaa0c93d09
-COMMIT_LOG = da9070a TriSLA public repository synchronization - final frozen baseline
+SYNC_COMMIT_SHA = 1618b75d1ebeec697e56cbe9cd9ebad0059fefcd
+COMMIT_MESSAGE = TriSLA public repository synchronization - final frozen baseline
 
-Commit message:
-```text
-TriSLA public repository synchronization - final frozen baseline
-```
-
-Git status after initial commit:
-```text
-CLEAN
-```
+Note: this report is finalized in a follow-up publication-report commit after successful push.
