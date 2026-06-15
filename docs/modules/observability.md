@@ -10,6 +10,10 @@
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
 
+> Implementation SSOT: `monitoring/prometheus-kube-prometheus-operator/`. Digest SSOT: `docs/TRISLA_INFRA_SSOT.md`.
+>
+> Prometheus Operator is the runtime controller responsible for Prometheus, ServiceMonitor, and PrometheusRule lifecycle in the frozen observability stack.
+
 ## Frozen Status
 
 | Property | Status |
@@ -105,6 +109,7 @@ Implementation-first boundary: observability supports telemetry visibility and e
 | Capability | Status | Runtime truth |
 |------------|--------|---------------|
 | Prometheus Server | ACTIVE | `prometheus-prometheus-kube-prometheus-prometheus-0` in namespace `monitoring` |
+| Prometheus Operator | ACTIVE | `prometheus-kube-prometheus-operator` deployment managing ServiceMonitors, PrometheusRules, and Prometheus config |
 | ServiceMonitors | ACTIVE | TriSLA service monitors plus kube-prometheus stack monitors are present |
 | PrometheusRules | ACTIVE | kube-prometheus rules plus TriSLA rules are present |
 | Recording Rules | ACTIVE | `monitoring/o7c-trisla-recording-rules.yaml` / `trisla-recording-rules` |
