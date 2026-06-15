@@ -1,8 +1,12 @@
 # TriSLA
 
-TriSLA is a tri-dimensional SLA-aware orchestration architecture for 5G/O-RAN network slicing. It evaluates SLA feasibility at request time, before resources are committed, using semantic intent processing, runtime multidomain telemetry, machine-learning risk prediction, deterministic admission control, detached NASP orchestration, blockchain evidence, and runtime assurance.
+TriSLA is a tri-dimensional SLA-aware architecture for 5G/O-RAN network slicing. Its central research problem is how to decide, at the moment an SLA is requested, whether sufficient resources exist across the network-slice lifecycle to support admission while considering RAN, transport, and core domains.
 
-TriSLA addresses the problem of deciding whether a requested network-slice SLA can be sustained under current RAN, transport, and core conditions. Its objective is preventive SLA admission with explicit causal boundaries between admission, orchestration, reconciliation, lifecycle, and governance. Its contribution is a frozen public runtime and documentation baseline that combines semantic interpretation, explainable prediction, admission rules, NASP integration, on-chain evidence, and runtime reassessment without claiming balanced multidomain causal dominance, orchestration-to-admission feedback, core-driven admission, continuous autonomous reevaluation, or standards certification.
+The project focuses on preventive SLA assurance: before a slice is accepted, TriSLA combines semantic interpretation, artificial intelligence, blockchain-based governance, and multidomain observability to evaluate feasibility and produce an auditable admission decision. The architecture is conceptually aligned with 3GPP, GSMA, O-RAN, and ETSI ZSM references without declaring formal certification or standards compliance.
+
+TriSLA is organized around three official scientific pillars. SEM-CSMF interprets SLA intents, validates them against the ontology, and materializes GST/NEST artifacts. ML-NSMF evaluates viability, predicts risk, and produces explainability metadata for the admission process. BC-NSSMF registers accepted SLA evidence through smart contracts, supporting traceability, governance, and immutable evidence.
+
+Complementary runtime components complete the control path: the Decision Engine acts as the SLA admission authority, while the SLA-Agent Layer provides temporal reassessment and runtime assurance. Together, these components support a reproducible public implementation of preventive, explainable, and governable SLA management for network slicing.
 
 This root README is the GitHub landing page for the project. The complete public documentation entry point remains [docs/README.md](docs/README.md).
 
