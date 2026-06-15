@@ -1,0 +1,87 @@
+# TriSLA Interface Catalog v1 (documental)
+# Compatível com PROPOSED_INTERFACE_MODEL.md — não altera endpoints em runtime.
+# Referência de fluxo: docs/TRISLA_E2E_FLOW_CANONICAL.md
+
+version: "1"
+updated: "2026-04-30"
+interfaces:
+
+  RAN-I1:
+    purpose: "Dados e ações RAN usados no ciclo de decisão e assurance (PRB, indicadores UE/RAN, ações RAN)."
+    source: "Portal Backend, Decision context, SLA-Agent Layer (consumidores/agentes)"
+    target: "Coletores RAN, Prometheus (séries RAN), rotas de agente RAN no SLA-Agent quando usadas"
+    current_channel:
+      - "Campos telemetry_snapshot.ran e PromQL RAN (ex. trisla_ran_prb_utilization via stack de observabilidade)"
+      - "HTTP GET /api/v1/prometheus/query (portal) — consultas derivadas"
+      - "HTTP /api/v1/agents/ran/* no SLA-Agent (quando exposto)"
+    logical_payload: "Snapshot ran (estrutura em metadata), amostras PRB/latência conforme SSOT de telemetria; ações RAN via agentes quando ativos"
+    standard_alignment: "O-RAN O1-like observability (comportamental); não O1 protocol nativo. 3GPP RAN data path via métricas/exportadores."
+    current_evidence: "docs/AUDIT_INTERFACES_CURRENT_STATE.md; docs/PROPOSED_INTERFACE_MODEL.md (RAN-I1); docs/TRISLA_MASTER_RUNBOOK.md (métricas RAN); docs/INTERFACE_TRACEABILITY_MATRIX.md"
+    migration_phase: "shadow"
+    regression_risk: "medium"
+    owner: "Observability + SLA-Agent teams (co-responsabilidade RAN pipeline)"
+
+  TN-I1:
+    purpose: "Dados e ações de transporte (RTT, jitter, perda, throughput, ações TN)."
+    source: "Portal Backend, Decision context, SLA-Agent Layer"
+    target: "Coletores transport, Prometheus transport, agentes transport"
+    current_channel:
+      - "telemetry_snapshot.transport"
+      - "HTTP /api/v1/agents/transport/* (SLA-Agent)"
+      - "Consultas Prometheus alinhadas a transporte (documentação/runbook)"
+    logical_payload: "Métricas e metadados de domínio transport no snapshot e agentes"
+    standard_alignment: "ETSI ZSM data/control (funcional); sem interface TN formal 3GPP única no código"
+    current_evidence: "docs/PROPOSED_INTERFACE_MODEL.md (TN-I1); docs/AUDIT_INTERFACES_CLASSIFICATION.md"
+    migration_phase: "shadow"
+    regression_risk: "medium"
+    owner: "Observability + SLA-Agent teams"
+
+  CN-I1:
+    purpose: "Orquestração core/NSI, gates 3GPP e handoff CSMF/NSMF no pipeline de controlo."
+    source: "Portal Backend, SEM-CSMF, orquestração; consumidores que chamam adapter"
+    target: "NASP Adapter, encadeamento SEM→Decision→ML, agentes core no SLA-Agent"
+    current_channel:
+      - "POST /api/v1/sla/interpret, POST /api/v1/sla/submit (entrada)"
+      - "POST /api/v1/interpret, POST /api/v1/intents (Portal→SEM)"
+      - "POST /evaluate (SEM→Decision)"
+      - "POST /api/v1/predict (Decision→ML)"
+      - "POST /api/v1/nsi/instantiate, GET/POST /api/v1/3gpp/gate, POST /api/v1/sla/register (adapter)"
+      - "HTTP /api/v1/agents/core/* (SLA-Agent)"
+    logical_payload: "Requests/responses dos endpoints acima; orch_payload; intent_payload; decisão ML"
+    standard_alignment: "3GPP CSMF/NSMF/NSSMF (funcional). O-RAN SMO orchestration aproximada para instantiate; sem A1/E2 nativos."
+    current_evidence: "docs/AUDIT_INTERFACES_3GPP_MAPPING.md; docs/TRISLA_ARCHITECTURE_EVIDENCE_PATCHED.md §1–2; docs/TRISLA_E2E_FLOW_CANONICAL.md"
+    migration_phase: "shadow_to_wrapper"
+    regression_risk: "high"
+    owner: "Portal Backend + SEM-CSMF + Decision + ML + NASP Adapter teams (interface lógica partilhada)"
+
+  OBS-I1:
+    purpose: "Coleta, snapshot e ingestão de observabilidade para closed-loop e relatórios."
+    source: "Portal Backend, SEM-CSMF, Decision Engine, SLA-Agent"
+    target: "Prometheus HTTP API, collector interno, ingest configurável SLA-Agent"
+    current_channel:
+      - "GET /api/v1/query, GET /api/v1/query_range (Prometheus)"
+      - "GET /api/v1/prometheus/query (router portal; uso SEM→Portal)"
+      - "Campo metadata.telemetry_snapshot no submit"
+      - "POST para SLA_AGENT_PIPELINE_INGEST_URL"
+      - "Rotas /api/v1/metrics/realtime e afins quando documentadas"
+    logical_payload: "PromQL params; snapshot agregado ran/transport/core; payload ingest pipeline"
+    standard_alignment: "O-RAN O1-like + ETSI ZSM management/assurance (funcional); não protocolo O1 formal"
+    current_evidence: "docs/AUDIT_INTERFACES_CURRENT_STATE.md; docs/INTERFACE_NON_REGRESSION_CHECKLIST.md (telemetria)"
+    migration_phase: "shadow"
+    regression_risk: "high"
+    owner: "Portal Backend (collector/router) + Observability"
+
+  BC-I1:
+    purpose: "Governança e trilha blockchain de SLA (registo, estado, execução de contrato)."
+    source: "Portal Backend, orquestração; SLA-Agent→adapter em fluxos Kafka"
+    target: "BC-NSSMF / Besu stack"
+    current_channel:
+      - "POST /api/v1/register-sla"
+      - "POST /api/v1/update-sla-status"
+      - "POST /api/v1/execute-contract"
+    logical_payload: "bc_payload; tx_hash; block_number; estados de ciclo de vida SLA"
+    standard_alignment: "Fora do núcleo 3GPP/O-RAN clássico; camada de governança complementar"
+    current_evidence: "docs/AUDIT_INTERFACES_CURRENT_STATE.md; docs/TRISLA_E2E_FLOW_CANONICAL.md (fase BC)"
+    migration_phase: "dual"
+    regression_risk: "high"
+    owner: "BC-NSSMF team"

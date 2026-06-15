@@ -1,0 +1,617 @@
+PROMPT_TRISLA_O7D_GRAFANA_DASHBOARD_IMPLEMENTATION
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+OBJETIVO
+
+Implementar a fase:
+
+O7D
+Grafana Dashboard Implementation
+
+utilizando exclusivamente os contratos aprovados em:
+
+* O7A Grafana/Prometheus Discovery Audit
+* O7B Observability Contract Model
+* O7C Prometheus Scrape & Recording Rules
+
+====================================================
+BASELINE CONGELADO
+==================
+
+CURRENT_ARCHITECTURE_STATUS
+
+TRANSPORT_CORRELATED
+
+O1C = FROZEN
+O2C = FROZEN
+O3C = FROZEN
+O4C = FROZEN
+O5C = FROZEN
+O6 = FROZEN
+O7A = APPROVED
+O7B = APPROVED
+O7C = APPROVED
+
+PROMETHEUS_READY_FOR_GRAFANA = YES
+
+Digest runtime ativo:
+
+sha256:bb1e44097a40f93257281eb9ed5b601b233cb0537e5bfe9935aa53b500d9a32e
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO ALTERAR:
+
+Decision Engine
+
+SEM-CSMF
+
+ML-NSMF
+
+BC-NSSMF
+
+SLA-Agent
+
+NSSF Binding
+
+AMF Binding
+
+SMF Binding
+
+UPF Binding
+
+RAN Binding
+
+Transport Binding
+
+Prometheus Rules
+
+ServiceMonitor
+
+Admission Logic
+
+Thresholds
+
+Datasets
+
+====================================================
+PERMITIDO
+=========
+
+Grafana Dashboards
+
+Grafana Folders
+
+Grafana Variables
+
+Grafana Panels
+
+Grafana Queries
+
+Grafana Layout
+
+Grafana Transformations
+
+====================================================
+OBJETIVO PRINCIPAL
+==================
+
+Transformar a arquitetura TriSLA em evidência visual.
+
+Os dashboards devem demonstrar:
+
+Intent
+↓
+Decision
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+Transport
+↓
+Assurance
+↓
+Governance
+
+alinhados aos referenciais:
+
+3GPP
+
+O-RAN
+
+ETSI ZSM
+
+====================================================
+FASE 1 — GRAFANA INVENTORY
+==========================
+
+Inventariar:
+
+Folders
+
+Dashboards
+
+UIDs
+
+Datasources
+
+Painéis
+
+Identificar:
+
+REUSABLE
+
+PARTIAL
+
+OBSOLETE
+
+Gerar:
+
+analysis/o7d_dashboard_inventory.md
+
+====================================================
+FASE 2 — GRAFANA FOLDER STRUCTURE
+=================================
+
+Criar folders oficiais:
+
+TriSLA Service Orchestration
+
+TriSLA Service Assurance
+
+TriSLA Intelligence
+
+TriSLA Governance
+
+TriSLA RAN Transport
+
+TriSLA Multidomain Lifecycle
+
+Gerar:
+
+analysis/o7d_folder_structure.md
+
+====================================================
+FASE 3 — DASHBOARD DB-ORCH-001
+==============================
+
+Nome:
+
+Network Slice Service Orchestration
+
+Alinhamento:
+
+3GPP TS 28.541
+
+Painéis mínimos:
+
+NSI Active
+
+NSSI Active
+
+NSSF Selection
+
+AMF Binding
+
+SMF Binding
+
+UPF Binding
+
+Slice Service Binding
+
+Slice Lifecycle Status
+
+Correlation Status
+
+Binding Phase Evolution
+
+Validar:
+
+URLLC
+
+eMBB
+
+mMTC
+
+Gerar:
+
+analysis/o7d_db_orch_validation.md
+
+====================================================
+FASE 4 — DASHBOARD DB-ASSUR-001
+===============================
+
+Nome:
+
+Closed-Loop Service Assurance
+
+Alinhamento:
+
+ETSI ZSM
+
+Painéis mínimos:
+
+SLA Compliance
+
+Domain Compliance
+
+Runtime Assurance
+
+Violations
+
+Drift
+
+Assurance Status
+
+Assurance Success Rate
+
+Assurance Failure Rate
+
+Gerar:
+
+analysis/o7d_db_assurance_validation.md
+
+====================================================
+FASE 5 — DASHBOARD DB-INTEL-001
+===============================
+
+Nome:
+
+Intent Translation and Intelligence
+
+Painéis mínimos:
+
+Semantic Requests
+
+Ontology Resolution
+
+GST Generation
+
+NEST Generation
+
+Prediction Requests
+
+Decision Score
+
+Decision Confidence
+
+XAI Activity
+
+Decision Outcomes
+
+Classificar:
+
+VISIBLE
+
+NO DATA
+
+MISSING
+
+Gerar:
+
+analysis/o7d_db_intelligence_validation.md
+
+====================================================
+FASE 6 — DASHBOARD DB-GOV-001
+=============================
+
+Nome:
+
+Governance and Smart Contract Enforcement
+
+Painéis mínimos:
+
+Blockchain Commits
+
+Commit Success Rate
+
+Governance Status
+
+Contracts Active
+
+Block Number
+
+Transaction Tracking
+
+Gerar:
+
+analysis/o7d_db_governance_validation.md
+
+====================================================
+FASE 7 — DASHBOARD DB-RAN-001
+=============================
+
+Nome:
+
+RAN and Transport Service Correlation
+
+Alinhamento:
+
+O-RAN
+
+Painéis mínimos:
+
+RAN Binding Status
+
+Access Correlation
+
+gNB Visibility
+
+NGAP Correlation
+
+Transport Correlation
+
+ONOS Health
+
+Devices
+
+Links
+
+Flows
+
+Failed Intents
+
+Gerar:
+
+analysis/o7d_db_ran_transport_validation.md
+
+====================================================
+FASE 8 — DASHBOARD DB-LIFE-001
+==============================
+
+Nome:
+
+Multidomain Service Lifecycle
+
+Painéis mínimos:
+
+Intent Submitted
+
+Decision
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+Assurance
+
+Governance
+
+Lifecycle Funnel
+
+Lifecycle Completion %
+
+Domain Health Score
+
+Gerar:
+
+analysis/o7d_db_lifecycle_validation.md
+
+====================================================
+FASE 9 — DASHBOARD DATA VALIDATION
+==================================
+
+Executar:
+
+D1
+
+D2
+
+D6
+
+Validar:
+
+dados aparecem
+
+painéis carregam
+
+queries retornam
+
+sem erro Grafana
+
+Gerar:
+
+analysis/o7d_dashboard_data_validation.md
+
+====================================================
+FASE 10 — SCIENTIFIC VISIBILITY AUDIT
+=====================================
+
+Responder:
+
+A arquitetura TriSLA está visualmente demonstrada?
+
+A cadeia O1C–O5C está visível?
+
+O6 está visível?
+
+Assurance está visível?
+
+Governance está visível?
+
+Gerar:
+
+analysis/o7d_scientific_visibility.md
+
+====================================================
+FASE 11 — BUILD & EXPORT
+========================
+
+Exportar:
+
+JSON dashboards
+
+UIDs
+
+Folder structure
+
+Datasource references
+
+Gerar:
+
+grafana/
+
+DB-ORCH-001.json
+
+DB-ASSUR-001.json
+
+DB-INTEL-001.json
+
+DB-GOV-001.json
+
+DB-RAN-001.json
+
+DB-LIFE-001.json
+
+====================================================
+FASE 12 — RUNTIME VALIDATION
+============================
+
+Validar:
+
+Grafana loads
+
+Datasource OK
+
+Prometheus OK
+
+Panels OK
+
+Variables OK
+
+No broken queries
+
+Gerar:
+
+analysis/o7d_runtime_validation.md
+
+====================================================
+FASE 13 — REGRESSION AUDIT
+==========================
+
+Validar:
+
+Portal
+
+Prometheus
+
+Grafana
+
+SEM
+
+ML
+
+Decision
+
+BC
+
+SLA-Agent
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+Sem regressão.
+
+====================================================
+FASE 14 — FREEZE PACKAGE
+========================
+
+Gerar:
+
+evidencias_trisla_o7d_grafana_dashboard_implementation_<timestamp>
+
+Conteúdo:
+
+analysis/
+
+grafana/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+DB_ORCH_APPROVED = YES/NO
+
+DB_ASSURANCE_APPROVED = YES/NO
+
+DB_INTELLIGENCE_APPROVED = YES/NO
+
+DB_GOVERNANCE_APPROVED = YES/NO
+
+DB_RAN_APPROVED = YES/NO
+
+DB_LIFECYCLE_APPROVED = YES/NO
+
+GRAFANA_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+MULTIDOMAIN_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+SCIENTIFIC_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+READY_FOR_O7D_FREEZE = YES/NO
+
+REGRESSION = NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_O7D_FREEZE = YES
+
+executar:
+
+O7D_FINALIZE_AND_FREEZE
+
+para alinhar:
+
+Git
+↓
+Grafana
+↓
+Runtime
+↓
+Evidence Pack
+
+e congelar oficialmente a camada de observabilidade da TriSLA.

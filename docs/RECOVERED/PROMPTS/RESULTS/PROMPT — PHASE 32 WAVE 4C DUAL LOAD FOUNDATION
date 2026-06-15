@@ -1,0 +1,224 @@
+# PROMPT — PHASE 32 WAVE 4C DUAL LOAD FOUNDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 31 concluída
+* Golden Vector Set congelado
+* Wave 1 Freeze
+* Wave 2 Freeze
+* Wave 3A Freeze
+
+Status:
+
+PHASE_32_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Implementar exclusivamente a infraestrutura de dual-load no ML-NSMF.
+
+Não executar shadow.
+
+Não promover modelos.
+
+Não realizar retraining.
+
+Não alterar decisões do TriSLA.
+
+---
+
+# Fluxo obrigatório
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+e simultaneamente:
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OpenTelemetry
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# Fontes obrigatórias
+
+model-registry/
+
+shadow-validation/
+
+golden_vectors_v1.json
+
+golden_vectors_manifest_v1.json
+
+promotion/
+
+baseline-registry/
+
+change-control-registry/
+
+evidencias_trisla_phase29_shadow_readiness_*
+
+evidencias_trisla_phase30_shadow_foundation_*
+
+evidencias_trisla_phase31_golden_vectors_*
+
+---
+
+# Escopo
+
+ML-NSMF somente
+
+---
+
+# Implementação permitida
+
+Dual model loading
+
+ACTIVE_MODEL
+
+CANDIDATE_MODEL
+
+Dependency injection
+
+Model loader abstraction
+
+Candidate lifecycle hooks
+
+---
+
+# Proibido
+
+Shadow execution
+
+Candidate scoring exposure
+
+Decision replacement
+
+Promotion
+
+Retraining
+
+Portal changes
+
+Decision Engine changes
+
+SEM changes
+
+BC changes
+
+SLA-Agent changes
+
+G3-D
+
+---
+
+# Requisitos
+
+ACTIVE model continua sendo:
+
+única fonte de decisão
+
+única fonte de confidence
+
+única fonte de score
+
+---
+
+# Candidate model
+
+Pode ser carregado
+
+Pode ser inicializado
+
+Pode ser validado
+
+Não pode participar da decisão
+
+---
+
+# Testes obrigatórios
+
+Model loading tests
+
+Registry loading tests
+
+Golden vector loading tests
+
+Backward compatibility tests
+
+Regression tests
+
+---
+
+# Critérios de aprovação
+
+DUAL_LOAD_IMPLEMENTED = TRUE
+
+ACTIVE_MODEL_AUTHORITY = TRUE
+
+CANDIDATE_MODEL_LOADED = TRUE
+
+NO_DECISION_CHANGE = TRUE
+
+NO_SCORE_CHANGE = TRUE
+
+NO_CONFIDENCE_CHANGE = TRUE
+
+NO_RUNTIME_REGRESSION = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase32_dual_load_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_32_STATUS = READY_FOR_REVIEW
+
+DUAL_LOAD_READY = TRUE
+
+SHADOW_EXECUTION = NOT_STARTED
+
+Parar.
+
+Não iniciar Phase 33.
+
+Não executar Shadow.
+
+Não promover modelos.
+
+Aguardar aprovação humana.

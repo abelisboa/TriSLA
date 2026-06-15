@@ -23,6 +23,10 @@ from src.schemas.sla import (
 from src.services.nasp import NASPService
 from src.services.sla_status_telemetry import resolve_status_telemetry_snapshot
 from src.services.sla_status_assurance import resolve_status_runtime_assurance
+from src.services.admission_compliance import (
+    enrich_status_runtime_assurance,
+    wire_admission_compliance_fields,
+)
 from src.services.sla_operational_summary import build_operational_summary
 from src.services.admission_decision import (
     resolve_admission_context,
@@ -397,26 +401,26 @@ def _build_remediation_evidence_p2(
                     affected.add(dom)
             return {
                 "recommendation": (
-                    "Telemetria atual incompleta e sem snapshot de referência; "
-                    "não há correlação de drift numérica."
+                    "Current telemetry incomplete and no reference snapshot; "
+                    "no numeric drift correlation available."
                 ),
                 "severity": "MEDIUM",
                 "affected_domains": sorted(affected),
                 "suggested_action": (
-                    "Completar exportação Prometheus para o snapshot atual e "
-                    "reenviar revalidate-telemetry com reference_telemetry_snapshot."
+                    "Complete Prometheus export for the current snapshot and "
+                    "resubmit revalidate-telemetry with reference_telemetry_snapshot."
                 ),
                 "revalidation_required": True,
             }
         return {
             "recommendation": (
-                "Nenhuma comparação de drift: reference_telemetry_snapshot não foi enviado."
+                "No drift comparison: reference_telemetry_snapshot was not provided."
             ),
             "severity": "INFO",
             "affected_domains": [],
             "suggested_action": (
-                "Opcional: incluir reference_telemetry_snapshot (ex.: metadata.telemetry_snapshot "
-                "do submit) para gerar deltas e avaliação de remediação declarativa."
+                "Optional: include reference_telemetry_snapshot (e.g., metadata.telemetry_snapshot "
+                "from submit) to generate deltas and declarative remediation assessment."
             ),
             "revalidation_required": False,
         }
@@ -463,13 +467,13 @@ def _build_remediation_evidence_p2(
     if not affected_sorted:
         return {
             "recommendation": (
-                "Nenhum desvio acima dos limiares mínimos configurados; "
-                "telemetria atual dentro da banda em relação à referência."
+                "No deviation above configured minimum thresholds; "
+                "current telemetry within band relative to reference."
             ),
             "severity": "INFO",
             "affected_domains": [],
             "suggested_action": (
-                "Nenhuma ação declarativa obrigatória; manter observabilidade conforme política de SLA."
+                "No mandatory declarative action; maintain observability per SLA policy."
             ),
             "revalidation_required": False,
         }
@@ -482,14 +486,14 @@ def _build_remediation_evidence_p2(
     breach_txt = ", ".join(breach_paths) if breach_paths else ", ".join(affected_sorted)
     return {
         "recommendation": (
-            f"Desvio temporal acima dos limiares mínimos nos caminhos: {breach_txt}."
+            f"Temporal deviation above minimum thresholds on paths: {breach_txt}."
         ),
         "severity": severity,
         "affected_domains": affected_sorted,
         "suggested_action": (
-            "Revisar domínios listados e a política de slice no plano de controle; "
-            "após correções operacionais, chamar novamente revalidate-telemetry "
-            "(sem execução automática neste endpoint)."
+            "Review listed domains and slice policy in the control plane; "
+            "after operational corrections, call revalidate-telemetry again "
+            "(no automatic execution on this endpoint)."
         ),
         "revalidation_required": True,
     }
@@ -511,13 +515,13 @@ async def interpret_sla(request: SLAInterpretRequest):
         if not request.intent_text or not request.intent_text.strip():
             raise HTTPException(
                 status_code=400,
-                detail="Intent text não pode ser vazio"
+                detail="Intent text cannot be empty"
             )
         
         if not request.tenant_id or not request.tenant_id.strip():
             raise HTTPException(
                 status_code=400,
-                detail="Tenant ID não pode ser vazio"
+                detail="Tenant ID cannot be empty"
             )
         
         # ETAPA 1: Corrigir erros ortográficos (Cap. 5 - PNL)
@@ -556,36 +560,15 @@ async def interpret_sla(request: SLAInterpretRequest):
         # Conforme Capítulo 5 - SEM-CSMF deve retornar parâmetros técnicos editáveis
         service_type_final = result.get("service_type") or result.get("slice_type") or tipo_slice_inferido
         
-        # Construir parâmetros técnicos sugeridos (ETAPA 2)
-        technical_parameters = result.get("technical_parameters", {})
-        if parametros_extraidos:
-            technical_parameters.update(parametros_extraidos)
-        
-        # Se SEM-CSMF não retornou parâmetros, usar valores padrão baseados no tipo de slice
-        if not technical_parameters and service_type_final:
-            if service_type_final.upper() == "URLLC":
-                technical_parameters = {
-                    "latency_maxima_ms": 10,
-                    "disponibilidade_percent": 99.99,
-                    "confiabilidade_percent": 99.99,
-                    "numero_dispositivos": 10
-                }
-            elif service_type_final.upper() == "EMBB":
-                technical_parameters = {
-                    "latency_maxima_ms": 50,
-                    "disponibilidade_percent": 99.9,
-                    "confiabilidade_percent": 99.9,
-                    "throughput_min_dl_mbps": 100,
-                    "throughput_min_ul_mbps": 50
-                }
-            elif service_type_final.upper() == "MMTC":
-                technical_parameters = {
-                    "latency_maxima_ms": 100,
-                    "disponibilidade_percent": 95,
-                    "confiabilidade_percent": 95,
-                    "numero_dispositivos": 1000
-                }
-        
+        # technical_parameters: SEM-only (P1 — explicit null propagation, no catalog defaults)
+        sem_technical_parameters = result.get("technical_parameters")
+        if isinstance(sem_technical_parameters, dict) and sem_technical_parameters:
+            technical_parameters = dict(sem_technical_parameters)
+            technical_parameters_status = "PROVIDED"
+        else:
+            technical_parameters = {}
+            technical_parameters_status = "NOT_PROVIDED"
+
         return {
             "intent_id": result.get("intent_id") or result.get("id"),
             "service_type": service_type_final,
@@ -595,9 +578,10 @@ async def interpret_sla(request: SLAInterpretRequest):
             "tenant_id": request.tenant_id,
             "nest_id": result.get("nest_id"),
             "slice_type": service_type_final,
-            "technical_parameters": technical_parameters,  # Parâmetros técnicos sugeridos (ETAPA 2)
+            "technical_parameters": technical_parameters,
+            "technical_parameters_status": technical_parameters_status,
             "created_at": result.get("created_at") or result.get("timestamp") or None,
-            "message": "SLA interpretado pelo SEM-CSMF com sucesso. Ajuste os parâmetros técnicos na próxima etapa."
+            "message": "SLA interpreted by SEM-CSMF successfully. Adjust technical parameters in the next step."
         }
     except HTTPException:
         raise
@@ -624,13 +608,13 @@ async def submit_sla_template(request: SLASubmitRequest):
         if not request.template_id or not request.template_id.strip():
             raise HTTPException(
                 status_code=400,
-                detail="Template ID não pode ser vazio"
+                detail="Template ID cannot be empty"
             )
         
         if not request.form_values:
             raise HTTPException(
                 status_code=400,
-                detail="Form values não podem ser vazios"
+                detail="Form values cannot be empty"
             )
         
         # Construir template NEST a partir do template_id e form_values
@@ -1044,6 +1028,8 @@ async def submit_sla_template(request: SLASubmitRequest):
 
         _ensure_telemetry_v2_flags(metadata_out)
 
+        wire_admission_compliance_fields(metadata_out)
+
         merge_governance_into_metadata(metadata_out, result)
         intent_id_for_gov = result.get("intent_id")
         if intent_id_for_gov:
@@ -1107,7 +1093,7 @@ async def submit_sla_template(request: SLASubmitRequest):
         logger.error(f"❌ Erro ao submeter SLA: {type(e).__name__}: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"Erro ao processar submissão do SLA: {str(e)}"
+            detail=f"Error processing SLA submission: {str(e)}"
         )
 
 
@@ -1161,7 +1147,7 @@ async def _revalidate_telemetry_local_fallback(
         drift_summary = {
             "compared": False,
             "reason": "no_reference_telemetry_snapshot",
-            "note": "Opcional: enviar metadata.telemetry_snapshot do submit anterior para deltas numéricos.",
+            "note": "Optional: send metadata.telemetry_snapshot from the prior submit for numeric deltas.",
         }
 
     gaps = _snapshot_missing_fields(telemetry_snapshot_atual)
@@ -1325,15 +1311,20 @@ async def get_sla_status(sla_id: str):
             runtime_lifecycle_enabled=runtime_enabled,
         )
 
+        md = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
+        sla_req = result.get("sla_requirements")
+        if not isinstance(sla_req, dict) and isinstance(md.get("sla_requirements"), dict):
+            sla_req = md.get("sla_requirements")
+
         runtime_assurance = resolve_status_runtime_assurance(
             result,
             telemetry_snapshot=telemetry_snapshot,
             runtime_lifecycle_enabled=runtime_enabled,
         )
+        runtime_assurance = enrich_status_runtime_assurance(md, runtime_assurance)
 
         operational_summary = build_operational_summary(result)
         traceability = build_traceability_summary(result)
-        md = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
         decision_evidence = md.get("decision_evidence")
         if not isinstance(decision_evidence, list):
             decision_evidence = None
@@ -1360,6 +1351,8 @@ async def get_sla_status(sla_id: str):
             runtime_assurance=runtime_assurance,
             operational_summary=operational_summary,
             traceability=traceability,
+            service_type=result.get("service_type"),
+            sla_requirements=sla_req if isinstance(sla_req, dict) else None,
         )
     except HTTPException:
         raise

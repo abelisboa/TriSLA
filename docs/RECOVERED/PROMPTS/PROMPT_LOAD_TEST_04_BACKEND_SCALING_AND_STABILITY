@@ -1,0 +1,152 @@
+# =========================================================
+# PROMPT_LOAD_TEST_04 — BACKEND SCALING & STABILITY
+# =========================================================
+# MISSÃO:
+# Aumentar a capacidade do backend do TriSLA para:
+# 1) evitar HTTP 500 sob carga
+# 2) permitir que o Decision Engine produza decisões (incl. REJECT)
+#
+# REGRAS:
+# - NÃO alterar código
+# - NÃO alterar lógica de decisão
+# - SOMENTE escalar recursos Kubernetes
+# - TOTALMENTE reversível
+# =========================================================
+
+set -euo pipefail
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+EVID_DIR="evidencias_resultados_trisla_v2_load04"
+mkdir -p "$EVID_DIR"/{analysis,actions,manifests,logs}
+
+date -u > "$EVID_DIR/analysis/start.txt"
+
+# =========================================================
+# FASE 0 — SNAPSHOT DO ESTADO ATUAL (REVERSÃO)
+# =========================================================
+
+kubectl -n trisla get deploy trisla-portal-backend -o yaml \
+  > "$EVID_DIR/manifests/portal-backend_before.yaml"
+
+kubectl -n trisla get deploy trisla-decision-engine -o yaml \
+  > "$EVID_DIR/manifests/decision-engine_before.yaml"
+
+kubectl -n trisla get deploy trisla-sla-agent -o yaml \
+  > "$EVID_DIR/manifests/sla-agent_before.yaml" 2>/dev/null || true
+
+kubectl -n trisla get pods -o wide \
+  > "$EVID_DIR/analysis/pods_before.txt"
+
+# =========================================================
+# FASE 1 — ESCALAR REPLICAS (HORIZONTAL)
+# =========================================================
+
+# Backend API (gargalo principal)
+kubectl -n trisla scale deployment/trisla-portal-backend --replicas=4 \
+  | tee "$EVID_DIR/actions/scale_backend.txt"
+
+# Decision Engine (garantir throughput)
+kubectl -n trisla scale deployment/trisla-decision-engine --replicas=3 \
+  | tee "$EVID_DIR/actions/scale_decision.txt"
+
+# SLA Agent (se existir)
+kubectl -n trisla scale deployment/trisla-sla-agent --replicas=2 \
+  > "$EVID_DIR/actions/scale_agent.txt" 2>&1 || true
+
+# =========================================================
+# FASE 2 — AUMENTAR RECURSOS (VERTICAL)
+# =========================================================
+
+# Portal Backend
+kubectl -n trisla set resources deployment/trisla-portal-backend \
+  --requests=cpu=500m,memory=512Mi \
+  --limits=cpu=1500m,memory=1Gi \
+  | tee "$EVID_DIR/actions/resources_backend.txt"
+
+# Decision Engine
+kubectl -n trisla set resources deployment/trisla-decision-engine \
+  --requests=cpu=500m,memory=512Mi \
+  --limits=cpu=1500m,memory=1Gi \
+  | tee "$EVID_DIR/actions/resources_decision.txt"
+
+# SLA Agent (opcional)
+kubectl -n trisla set resources deployment/trisla-sla-agent \
+  --requests=cpu=200m,memory=256Mi \
+  --limits=cpu=800m,memory=512Mi \
+  > "$EVID_DIR/actions/resources_agent.txt" 2>&1 || true
+
+# =========================================================
+# FASE 3 — ROLLOUT E ESTABILIZAÇÃO
+# =========================================================
+
+kubectl -n trisla rollout status deployment/trisla-portal-backend --timeout=240s
+kubectl -n trisla rollout status deployment/trisla-decision-engine --timeout=240s
+
+kubectl -n trisla get pods -o wide \
+  > "$EVID_DIR/analysis/pods_after_scaling.txt"
+
+sleep 10
+
+# =========================================================
+# FASE 4 — VERIFICAÇÃO DE SAÚDE
+# =========================================================
+
+# Port-forward controlado
+PF_CREATED=0
+if ! lsof -i:18001 >/dev/null 2>&1; then
+  kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 \
+    > "$EVID_DIR/logs/portforward.log" 2>&1 &
+  PF_PID=$!
+  PF_CREATED=1
+  sleep 4
+fi
+
+curl -s --max-time 20 http://localhost:18001/api/v1/health/global \
+  > "$EVID_DIR/analysis/health_after_scaling.txt"
+
+# =========================================================
+# FASE 5 — COLETA DE LOGS PÓS-SCALE
+# =========================================================
+
+kubectl -n trisla logs deploy/trisla-portal-backend --tail=200 \
+  > "$EVID_DIR/logs/backend_tail.txt"
+
+kubectl -n trisla logs deploy/trisla-decision-engine --tail=200 \
+  > "$EVID_DIR/logs/decision_tail.txt"
+
+# =========================================================
+# FASE 6 — RELATÓRIO
+# =========================================================
+
+cat > "$EVID_DIR/analysis/report.md" <<EOF
+# LOAD TEST 04 — Backend Scaling
+
+## Objetivo
+Aumentar capacidade do sistema para evitar HTTP 500 e permitir decisões completas.
+
+## Alterações
+- Portal Backend: replicas=4, CPU até 1500m
+- Decision Engine: replicas=3, CPU até 1500m
+- SLA Agent: replicas=2 (se aplicável)
+
+## Resultado Esperado
+- Redução significativa de HTTP 500
+- Aumento de SUCCESS sob carga
+- Possível ocorrência de REJECT antes de falha
+
+## Próximo passo
+Executar novamente LOAD_TEST_03B com o sistema escalado.
+EOF
+
+# =========================================================
+# FASE 7 — LIMPEZA CONTROLADA
+# =========================================================
+
+if [ "$PF_CREATED" = "1" ]; then
+  kill "$PF_PID" 2>/dev/null || true
+fi
+
+date -u > "$EVID_DIR/analysis/end.txt"
+
+echo "PROMPT_LOAD_TEST_04_BACKEND_SCALING_AND_STABILITY FINALIZADO"

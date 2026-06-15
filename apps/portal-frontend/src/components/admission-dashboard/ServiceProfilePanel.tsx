@@ -1,32 +1,25 @@
-import {
-  asSlaRequirements,
-  tenantIdFromResponse,
-  type SubmitResponse,
-} from "../../lib/submitResponse";
-import { operatorFieldLabel } from "../../lib/operatorLabels";
 import { FieldList } from "../submit-payload/FieldList";
+import {
+  SERVICE_PROFILE_SOURCE,
+  asSlaRequirementsRecord,
+  serviceProfileContractFields,
+} from "../../lib/serviceProfileContract";
 
-type Props = { response: SubmitResponse };
+type Props = {
+  slaRequirements?: unknown;
+  serviceType?: unknown;
+};
 
-export function ServiceProfilePanel({ response }: Props) {
-  const sla = asSlaRequirements(response);
+export function ServiceProfilePanel({ slaRequirements, serviceType }: Props) {
+  const sla = asSlaRequirementsRecord(slaRequirements);
+  const fields = serviceProfileContractFields(sla, serviceType);
 
   return (
-    <section className="trisla-status-card trisla-admission-section" aria-label="Service Profile">
+    <section className="trisla-status-card trisla-admission-section" aria-label="SLA Contract">
       <h2>2. Service Profile</h2>
-      <FieldList
-        fields={[
-          { label: operatorFieldLabel("tenant_id"), value: tenantIdFromResponse(response) },
-          {
-            label: operatorFieldLabel("slice_type"),
-            value: sla?.slice_type ?? response.service_type,
-          },
-          { label: operatorFieldLabel("template_id"), value: sla?.template_id },
-          { label: "latency", value: sla?.latency },
-          { label: "throughput", value: sla?.throughput },
-          { label: "reliability", value: sla?.reliability },
-        ]}
-      />
+      <p className="trisla-muted">SLA requirements — contract view only (no observed telemetry).</p>
+      <FieldList fields={fields} />
+      <p className="trisla-muted trisla-summary-source">Source: {SERVICE_PROFILE_SOURCE}</p>
     </section>
   );
 }

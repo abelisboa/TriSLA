@@ -1,0 +1,517 @@
+PROMPT_TRISLA_E2E_O2C_AMF_SMF_BINDING_IMPLEMENTATION
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+OBJETIVO
+
+Implementar a fase:
+
+E2E-O2C
+AMF/SMF Binding
+
+seguindo rigorosamente:
+
+* AMF_SMF_CONTRACT_SSOT_V1.md
+* NSSF_CONTRACT_SSOT_V1.md
+
+e mantendo alinhamento com:
+
+* 3GPP TS 23.501
+* 3GPP TS 23.502
+* 3GPP TS 29.503
+* 3GPP TS 29.518
+* O-RAN
+* ETSI ZSM
+
+IMPORTANTE
+
+Esta fase NÃO implementa:
+
+* controle AMF
+* controle SMF
+* controle UPF
+* controle NSSF
+* alteração de PDU Session
+* alteração Free5GC
+
+Esta fase implementa APENAS:
+
+OBSERVAÇÃO
+CORRELAÇÃO
+PERSISTÊNCIA
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO alterar:
+
+Decision Engine
+
+NÃO alterar:
+
+Blockchain
+
+NÃO alterar:
+
+SLA-Agent
+
+NÃO alterar:
+
+NSSF Adapter O1C
+
+NÃO alterar:
+
+Fluxo ACCEPT
+
+NÃO alterar:
+
+Fluxo NSI/NSSI
+
+NÃO alterar:
+
+Free5GC
+
+NÃO alterar:
+
+UERANSIM
+
+NÃO alterar:
+
+ONOS
+
+Toda implementação deve ser:
+
+ADITIVA
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+O6_APPROVED = YES
+
+O1A_APPROVED = YES
+
+O1B_APPROVED = YES
+
+O1C_APPROVED = YES
+
+O2A_APPROVED = YES
+
+O2B_APPROVED = YES
+
+O2C_ARCHITECTURE_APPROVED = YES
+
+READY_FOR_O2C_IMPLEMENTATION = YES
+
+====================================================
+FASE 1 — AMF OBSERVER
+=====================
+
+Criar:
+
+amf_binding_adapter.py
+
+Responsabilidade:
+
+observar:
+
+AMF
+
+correlacionar:
+
+SUPI
+
+S-NSSAI
+
+DNN
+
+SM Context
+
+Selected SMF
+
+Sem alterar AMF.
+
+Sem chamar APIs de escrita.
+
+Modo:
+
+READ-ONLY
+
+====================================================
+FASE 2 — SMF OBSERVER
+=====================
+
+Criar:
+
+smf_binding_adapter.py
+
+Responsabilidade:
+
+observar:
+
+PDU Session
+
+UE IP
+
+UPF
+
+DNN
+
+Session Context
+
+Sem alterar SMF.
+
+Sem criar sessões.
+
+Sem modificar sessões.
+
+====================================================
+FASE 3 — CORRELATION ENGINE
+===========================
+
+Criar:
+
+amf_smf_correlation.py
+
+Baseado em:
+
+AMF_SMF_CONTRACT_SSOT_V1.md
+
+Implementar:
+
+CONTEXT_A
+
+TriSLA orchestration
+
+CONTEXT_B
+
+Lab operational slice
+
+Regras:
+
+Nunca unir automaticamente:
+
+nsiId 11/12/13
+
+com
+
+nsiId 22
+
+Persistir:
+
+correlation_status
+
+Valores:
+
+DIRECT
+
+CONTEXT_SPLIT
+
+UNKNOWN
+
+====================================================
+FASE 4 — PERSISTÊNCIA AMF
+=========================
+
+Criar annotation:
+
+trisla.io/amf-binding
+
+Estrutura:
+
+{
+"contract_version":"1.0",
+"binding_status":"OBSERVED",
+"supi":"...",
+"serving_snssai":"...",
+"selected_smf":"...",
+"correlation_status":"..."
+}
+
+====================================================
+FASE 5 — PERSISTÊNCIA SMF
+=========================
+
+Criar annotation:
+
+trisla.io/smf-binding
+
+Estrutura:
+
+{
+"contract_version":"1.0",
+"binding_status":"OBSERVED",
+"session_id":"...",
+"dnn":"...",
+"ue_ip":"...",
+"selected_upf":"..."
+}
+
+====================================================
+FASE 6 — PDU SESSION SUMMARY
+============================
+
+Criar annotation:
+
+trisla.io/pdu-session-summary
+
+Estrutura:
+
+{
+"session_id":"...",
+"ue_ip":"...",
+"dnn":"...",
+"upf":"...",
+"correlation_status":"..."
+}
+
+====================================================
+FASE 7 — BINDING PHASE
+======================
+
+Atualizar progressão:
+
+METADATA_ONLY
+↓
+NSSF_SELECTED
+↓
+AMF_OBSERVED
+↓
+SMF_OBSERVED
+↓
+PDU_CORRELATED
+
+Nunca remover estados anteriores.
+
+====================================================
+FASE 8 — FEATURE FLAGS
+======================
+
+Criar:
+
+AMF_BINDING_ENABLED
+
+SMF_BINDING_ENABLED
+
+Default:
+
+false
+
+Rollback imediato possível.
+
+====================================================
+FASE 9 — TESTES
+===============
+
+Criar testes:
+
+AMF parser
+
+SMF parser
+
+Correlation engine
+
+Context split
+
+Annotation persistence
+
+Fallback
+
+Meta:
+
+100% PASS
+
+Gerar:
+
+analysis/o2c_test_results.md
+
+====================================================
+FASE 10 — BUILD OFICIAL
+=======================
+
+Obrigatório:
+
+Git
+↓
+GitHub
+↓
+GHCR
+↓
+Digest
+
+Capturar:
+
+workflow
+
+run id
+
+digest
+
+Gerar:
+
+analysis/o2c_build_validation.md
+
+====================================================
+FASE 11 — DEPLOY OFICIAL
+========================
+
+Executar:
+
+ssh node006
+
+Deploy:
+
+somente por digest
+
+Nunca:
+
+latest
+
+Validar rollout.
+
+Gerar:
+
+analysis/o2c_deploy_validation.md
+
+====================================================
+FASE 12 — VALIDAÇÃO RUNTIME
+===========================
+
+Executar:
+
+D1 URLLC
+
+D2 mMTC
+
+D6 eMBB
+
+Validar:
+
+ACCEPT
+
+COMMITTED
+
+OK_WITH_ASSURANCE
+
+NSSF_SELECTED
+
+AMF_OBSERVED
+
+SMF_OBSERVED
+
+PDU_CORRELATED
+
+Capturar:
+
+supi
+
+selected_smf
+
+session_id
+
+ue_ip
+
+selected_upf
+
+====================================================
+FASE 13 — REGRESSÃO
+===================
+
+Validar:
+
+Portal
+
+Grafana
+
+Decision Engine
+
+NSSF Adapter
+
+Blockchain
+
+SLA-Agent
+
+NSI/NSSI
+
+Confirmar:
+
+SEM REGRESSÃO
+
+====================================================
+FASE 14 — FREEZE
+================
+
+Gerar:
+
+evidencias_trisla_o2c_amf_smf_binding_<timestamp>
+
+Conteúdo:
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+AMF_BINDING_IMPLEMENTED = YES/NO
+
+SMF_BINDING_IMPLEMENTED = YES/NO
+
+PDU_CORRELATION_IMPLEMENTED = YES/NO
+
+AMF_OBSERVED = YES/NO
+
+SMF_OBSERVED = YES/NO
+
+PDU_CORRELATED = YES/NO
+
+PORTAL_REGRESSION = NO
+
+BC_REGRESSION = NO
+
+NSSF_REGRESSION = NO
+
+SLA_AGENT_REGRESSION = NO
+
+RUNTIME_VALIDATION_APPROVED = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+RUNTIME_VALIDATION_APPROVED = YES
+
+iniciar:
+
+E2E-O3
+UPF Binding
+
+utilizando os campos persistidos:
+
+session_id
+
+ue_ip
+
+selected_upf
+
+dnn
+
+correlation_status
+
+como âncoras oficiais da próxima evolução.

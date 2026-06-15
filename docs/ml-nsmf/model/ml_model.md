@@ -1,149 +1,70 @@
-# ML-NSMF Decision Model
+# ML-NSMF — Research Model
+
+> **NOT OPERATIONAL SSOT**
+>
+> Runtime inference, models, features, XAI behavior, and integrations are defined in [`docs/modules/ml-nsmf.md`](../../modules/ml-nsmf.md) and implemented in `apps/ml-nsmf/src/`.
+>
+> This document preserves the **scientific / dissertation** formulation. Do not use for deployment, troubleshooting, or integration.
+
+---
 
 ## 1. Problem Definition
 
-Given:
+Given SLA requirements and network-state features, estimate feasibility / violation risk as a scalar score used downstream by the Decision Engine.
 
-- SLA requirements (latency, throughput, reliability)
-- Current network state (RAN, Transport, Core)
-
-Predict:
-
-**Formal Definition**
-
-$$
-score \in [0,1]
-$$
+**ML-NSMF does not apply admission thresholds.** Decision mapping (ACCEPT / RENEG / REJECT) is owned by the Decision Engine.
 
 ---
 
-## 2. Input Variables
-
-Let:
-
-$$
-R_{ran} = PRB_{utilization}
-$$
-
-$$
-R_{transport} = (latency, jitter)
-$$
-
-$$
-R_{core} = (cpu, memory)
-$$
-
-$$
-SLA = (latency_{req}, throughput_{req}, reliability_{req})
-$$
-
----
-
-## 3. Feature Vector
-
-**Formal Definition**
+## 2. Input Variables (research notation)
 
 $$
 X = f(SLA, R_{ran}, R_{transport}, R_{core})
 $$
 
-Example:
-
-**Feature Vector Example**
-
-$$
-X = [
-latency,\ throughput,\ reliability,\ jitter,\ cpu_{utilization},\ memory_{utilization},\ bandwidth_{available},\ active_{slices}
-]
-$$
-
-Typical engineered features include latency/throughput ratio, reliability-to-loss relations, and resource pressure terms.
+Conceptual multi-domain variables; runtime feature vector includes base SLA metrics, derived v3 scores, and slice-type encoding — see canonical module doc.
 
 ---
 
-## 4. Learned Function
-
-The model approximates:
-
-**Formal Definition**
+## 3. Learned Function (research abstraction)
 
 $$
 score = ML(X)
 $$
 
-where ML is a trained model (Random Forest or similar).
-
-In implementation terms, preprocessing (scaling/normalization) and model inference are applied as a chained function over X.
+Runtime implementation: **Random Forest Regressor** on scaled features (`viability_model.pkl` + `scaler.pkl`), plus optional slice-adjusted risk post-processing.
 
 ---
 
-## 5. Interpretation
-
-Higher score -> higher risk of SLA violation
-
-Lower score -> higher confidence that SLA can be satisfied under current conditions.
-
----
-
-## 6. Relation to Multi-Domain Model
-
-The score implicitly encodes:
-
-**Multi-Domain Risk Aggregation**
+## 4. Multi-Domain Interpretation (conceptual)
 
 $$
 R_{total} = \alpha \cdot R_{ran} + \beta \cdot R_{transport} + \gamma \cdot R_{core}
 $$
 
-Where:
-
-alpha, beta, gamma are learned weights (not fixed).
-
-This interpretation is conceptual; practical models may capture nonlinear interactions and cross-domain dependencies.
+Research weights may vary by slice narrative. Runtime slice adjustment uses explicit URLLC/eMBB/mMTC weight tables in `slice_risk_adjustment.py`.
 
 ---
 
-## 7. Explainability
+## 5. Explainability (research)
 
-SHAP/LIME approximates:
-
-**Formal Definition**
-
-$$
-score = \sum contribution(feature_i)
-$$
-
-allowing interpretation of decision factors.
-
-Explainability outputs should be treated as local/approximate reasoning aids, not strict causal proofs.
+SHAP/LIME and feature attribution support interpretability claims in publication. Runtime: best-effort SHAP → LIME → metadata fallback — see canonical doc § Explainability runtime truth.
 
 ---
 
-## 8. Decision Threshold Mapping
+## 6. Scientific vs operational baselines
 
-Operational threshold policy:
+| Artifact | Classification |
+|----------|----------------|
+| BUNDLE-OP-001 (`viability_model.pkl`, `scaler.pkl`) | **ACTIVE** |
+| BUNDLE-SCI-001 (`decision_classifier.pkl` v7) | **SCIENTIFIC_BASELINE** — candidate / not loaded in production per traceability matrix |
 
-**Decision Function**
-
-$$
-Decision =
-\begin{cases}
-ACCEPT & \text{if } score \leq T_{accept} \\
-RENEGOTIATE & \text{if } T_{accept} < score < T_{reject} \\
-REJECT & \text{if } score \geq T_{reject}
-\end{cases}
-$$
-
-Typical operating values:
-
-$$
-T_{accept} = 0.4,\quad T_{reject} = 0.7
-$$
-
-This mapping aligns model output with orchestration semantics expected by Decision Engine.
+Evidence: `model-registry/traceability/MODEL_TRACEABILITY_MATRIX.json`.
 
 ---
 
-## 9. Conclusion
+## 7. Not in scope (research mentions without runtime)
 
-The ML model provides a data-driven approximation of SLA feasibility, integrating multi-domain conditions into a single decision metric while preserving interpretability through XAI methods.
+- LSTM / GRU — **NOT IMPLEMENTED**
+- XGBoost — **NOT IMPLEMENTED**
+- Federated Learning — **NOT IMPLEMENTED**

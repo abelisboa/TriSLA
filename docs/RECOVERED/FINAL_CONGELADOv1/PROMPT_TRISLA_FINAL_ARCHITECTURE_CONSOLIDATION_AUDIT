@@ -1,0 +1,456 @@
+PROMPT_TRISLA_FINAL_ARCHITECTURE_CONSOLIDATION_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM COMMIT
+
+SEM PUSH
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM ALTERAÇÃO DE DASHBOARDS
+
+SEM ALTERAÇÃO DE PROMETHEUS
+
+SEM ALTERAÇÃO DE ONOS
+
+SEM ALTERAÇÃO DE HELM
+
+====================================================
+OBJETIVO
+========
+
+Executar a auditoria final de consolidação da arquitetura TriSLA após a conclusão de:
+
+O1C → O9C
+
+e após:
+
+ACT-TN-002 LIVE FINAL PREFLIGHT
+
+Objetivo principal:
+
+Separar definitivamente:
+
+CAPACIDADES DA TRISLA
+
+de
+
+LIMITAÇÕES DO LABORATÓRIO
+
+e emitir o estado final de maturidade da arquitetura.
+
+====================================================
+BASELINE OBRIGATÓRIA
+====================
+
+O1C = FROZEN
+
+O2C = FROZEN
+
+O3C = FROZEN
+
+O4C = FROZEN
+
+O5C = FROZEN
+
+O6 = FROZEN
+
+O7A = FROZEN
+
+O7B = FROZEN
+
+O7C = FROZEN
+
+O7D = FROZEN
+
+O8A = APPROVED
+
+O8B = APPROVED
+
+O8C-W1 = APPROVED
+
+O8C-W2A = APPROVED
+
+O8C-W2B = APPROVED
+
+O8C-W2C = APPROVED
+
+O8C-W3 = APPROVED
+
+O9A = APPROVED
+
+O9B = APPROVED
+
+O9C = APPROVED
+
+ACT-TN-002 PRE-FLIGHT = APPROVED
+
+ACT-TN-002 FINAL PRE-FLIGHT = APPROVED
+
+====================================================
+EVIDÊNCIAS OBRIGATÓRIAS
+=======================
+
+Consultar obrigatoriamente:
+
+evidencias_trisla_o1c_final_freeze_*
+
+evidencias_trisla_o2c_final_freeze_*
+
+evidencias_trisla_o3c_final_freeze_*
+
+evidencias_trisla_o4c_final_freeze_*
+
+evidencias_trisla_o5c_final_freeze_*
+
+evidencias_trisla_o6_multidomain_metrics_export_*
+
+evidencias_trisla_o7d_final_freeze_*
+
+evidencias_trisla_o8c_wave1_*
+
+evidencias_trisla_o8c_w2a_*
+
+evidencias_trisla_o8c_w2b_*
+
+evidencias_trisla_o8c_w2c_*
+
+evidencias_trisla_o8c_w3_*
+
+evidencias_trisla_o9a_*
+
+evidencias_trisla_o9b_*
+
+evidencias_trisla_o9c_*
+
+evidencias_trisla_act_tn_002_live_preflight_*
+
+====================================================
+FASE 1 — ARCHITECTURE INVENTORY
+===============================
+
+Inventariar todos os componentes finais:
+
+SEM-CSMF
+
+ML-NSMF
+
+BC-NSSMF
+
+Decision Engine
+
+SLA-Agent
+
+NASP Adapter
+
+NSSF Binding
+
+AMF Binding
+
+SMF Binding
+
+UPF Binding
+
+RAN Binding
+
+Transport Binding
+
+Governance
+
+Automation
+
+Observability
+
+Gerar:
+
+analysis/final_architecture_inventory.md
+
+====================================================
+FASE 2 — MATURITY MATRIX
+========================
+
+Classificar cada domínio:
+
+LOW
+
+MEDIUM
+
+HIGH
+
+VERY_HIGH
+
+Gerar:
+
+analysis/final_maturity_matrix.md
+
+====================================================
+FASE 3 — 3GPP AUDIT
+===================
+
+Avaliar aderência real:
+
+TS 28.541
+
+TS 28.533
+
+TS 23.501
+
+NSMF
+
+NSSMF
+
+Slice Lifecycle
+
+Admission Management
+
+Closed Loop
+
+Classificar:
+
+LOW
+
+MEDIUM
+
+HIGH
+
+Gerar:
+
+analysis/final_3gpp_audit.md
+
+====================================================
+FASE 4 — O-RAN AUDIT
+====================
+
+Avaliar:
+
+SMO
+
+O1
+
+A1
+
+E2
+
+Near-RT RIC
+
+Non-RT RIC
+
+xApps
+
+rApps
+
+Classificar:
+
+Implementado
+
+Parcial
+
+Conceitual
+
+Ausente
+
+Gerar:
+
+analysis/final_oran_audit.md
+
+====================================================
+FASE 5 — ETSI ZSM AUDIT
+=======================
+
+Avaliar:
+
+Observe
+
+Analyze
+
+Decide
+
+Authorize
+
+Execute
+
+Verify
+
+Rollback
+
+Govern
+
+Gerar:
+
+analysis/final_zsm_audit.md
+
+====================================================
+FASE 6 — SCIENTIFIC PACKAGE AUDIT
+=================================
+
+Validar:
+
+Dissertação
+
+Artigo IEEE
+
+Figuras
+
+Dashboards
+
+Métricas
+
+KPIs
+
+Evidências
+
+Gerar:
+
+analysis/final_scientific_package_audit.md
+
+====================================================
+FASE 7 — TRISLA VS LAB
+======================
+
+Responder explicitamente:
+
+Quais limitações pertencem à TriSLA?
+
+Quais limitações pertencem ao laboratório?
+
+Avaliar:
+
+ACT-TN-002 LIVE
+
+Topologia ONOS
+
+Devices
+
+Links
+
+Hosts
+
+Flows
+
+Gerar:
+
+analysis/final_trisla_vs_lab.md
+
+====================================================
+FASE 8 — FUTURE EVOLUTION ROADMAP
+=================================
+
+Definir roadmap pós-dissertação:
+
+Fase A
+
+O-RAN Native
+
+Fase B
+
+ONOS Real Topology
+
+Fase C
+
+ACT-TN-002 LIVE
+
+Fase D
+
+Transport Closed Loop
+
+Fase E
+
+RIC Integration
+
+Gerar:
+
+analysis/final_future_roadmap.md
+
+====================================================
+FASE 9 — EXECUTIVE VERDICT
+==========================
+
+Emitir:
+
+THESIS_COMPLETE = YES/NO
+
+IEEE_PAPER_COMPLETE = YES/NO
+
+PROTOTYPE_COMPLETE = YES/NO
+
+SCIENTIFIC_PACKAGE_COMPLETE = YES/NO
+
+THREE_GPP_ALIGNMENT = LOW/MEDIUM/HIGH
+
+ORAN_ALIGNMENT = LOW/MEDIUM/HIGH
+
+ETSI_ZSM_ALIGNMENT = LOW/MEDIUM/HIGH
+
+TRISLA_READY_FOR_DEFENSE = YES/NO
+
+ACT_TN_002_BLOCKED_BY_ARCHITECTURE = YES/NO
+
+ACT_TN_002_BLOCKED_BY_LAB = YES/NO
+
+NEXT_RECOMMENDED_ACTION = <ação>
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+FASE 10 — FINAL CONSOLIDATION REPORT
+====================================
+
+Gerar documento consolidado:
+
+analysis/TRISLA_FINAL_CONSOLIDATION_REPORT.md
+
+Contendo:
+
+Resumo executivo
+
+Arquitetura final
+
+Maturidade
+
+Alinhamento normativo
+
+Resultados científicos
+
+Limitações
+
+Roadmap futuro
+
+Conclusão oficial
+
+====================================================
+EVIDENCE PACK
+=============
+
+Gerar:
+
+evidencias_trisla_final_architecture_consolidation_audit_<timestamp>
+
+analysis/
+
+runtime/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+CRITÉRIO DE SUCESSO
+===================
+
+Responder definitivamente:
+
+A TriSLA atingiu os objetivos da dissertação?
+
+A TriSLA atingiu os objetivos do artigo?
+
+A TriSLA está pronta para defesa?
+
+O que falta é arquitetura ou laboratório?
+
+Emitir um veredito final único e inequívoco para encerrar a fase de evolução O1C–O9C.

@@ -1,0 +1,179 @@
+# PROMPT — PHASE 12 SEMANTIC RUNTIME DEPENDENCY AUDIT
+
+Operar sob:
+
+* TRISLA_EVOLUTION_MASTER_PLAN_V1 v1.2
+* PROMPT 3 Governance
+* Phase 11 aprovada
+
+Status de entrada:
+
+MASTER_PLAN_V1_2_APPROVED = TRUE
+
+PHASE_1_APPROVED = TRUE
+PHASE_2_APPROVED = TRUE
+PHASE_3_APPROVED = TRUE
+PHASE_4_APPROVED = TRUE
+PHASE_5_APPROVED = TRUE
+PHASE_6_APPROVED = TRUE
+PHASE_7_APPROVED = TRUE
+PHASE_8_APPROVED = TRUE
+PHASE_9_APPROVED = TRUE
+PHASE_10_APPROVED = TRUE
+PHASE_11_APPROVED = TRUE
+
+FASE_12_PHASE_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Mapear todas as dependências semânticas efetivamente utilizadas pelo runtime.
+
+Sem alterar runtime.
+
+---
+
+# Modo
+
+STRICT READ ONLY
+
+---
+
+# Proibido
+
+* build
+* deploy
+* patch
+* alteração de código
+* alteração de APIs
+* alteração de schemas
+* alteração de ontologias
+
+---
+
+# Atividade 1
+
+Criar:
+
+SEMANTIC_RUNTIME_DEPENDENCY_AUDIT.md
+
+---
+
+# Atividade 2
+
+Mapear dependências de:
+
+OntologyLoader
+
+SemanticMatcher
+
+generate_gst
+
+generate_nest
+
+semantic_resolver
+
+fallback modules
+
+---
+
+# Atividade 3
+
+Classificar:
+
+RUNTIME_REQUIRED
+
+OPTIONAL
+
+DEAD_PATH
+
+---
+
+# Atividade 4
+
+Criar:
+
+SEMANTIC_DEPENDENCY_MATRIX.json
+
+---
+
+# Atividade 5
+
+Executar análise de impacto teórica:
+
+Remover fallback
+
+Remover OWL
+
+Remover TTL
+
+Substituir GST por Registry
+
+Substituir NEST por Registry
+
+---
+
+# Atividade 6
+
+Produzir:
+
+SEMANTIC_RUNTIME_IMPACT_REPORT.md
+
+---
+
+# Atividade 7
+
+Avaliar readiness para:
+
+Registry Read Validation
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_fase12_<timestamp>/
+
+Contendo:
+
+* dependency_audit
+* dependency_matrix
+* impact_report
+* readiness_report
+* validation_report
+
+---
+
+# Critério de sucesso
+
+SEMANTIC_RUNTIME_DEPENDENCIES_FULLY_MAPPED = TRUE
+
+REGISTRY_READ_VALIDATION_READINESS = CLASSIFIED
+
+NO_RUNTIME_CHANGE = TRUE
+
+RUNTIME_BEHAVIOR = IDENTICAL
+
+---
+
+# Resultado final
+
+Produzir:
+
+PHASE_12_COMPLETION_REPORT
+
+Finalizar com:
+
+PHASE_12_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Registry Read Validation.
+
+Não iniciar Shadow Registry.
+
+Não iniciar integração runtime.
+
+Aguardar aprovação humana.

@@ -1,0 +1,221 @@
+# PROMPT — PHASE 42 WAVE 4M eMBB CLASSIFIER DECISION BOUNDARY ANALYSIS
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Wave 1 Freeze
+* Wave 3A Freeze
+* Wave 4 Freeze
+* Phase 41 aprovada
+
+Status:
+
+PHASE_42_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Analisar as fronteiras de decisão do classificador v7 para explicar os 16 flips eMBB observados na Phase 41.
+
+Não executar promoção.
+
+Não executar retraining.
+
+Não alterar modelos.
+
+Não alterar runtime.
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+Snapshot obrigatório:
+
+[t-1s, t]
+
+SNAPSHOT_MAX_AGE = 35s
+
+---
+
+# Fontes obrigatórias
+
+evidencias_trisla_phase41_embb_flip_analysis_*
+
+EMBB_PROBABILITY_REPORT.md
+
+EMBB_THRESHOLD_REPORT.md
+
+EMBB_ROOT_CAUSE_REPORT.md
+
+ACTION_FLIP_MATRIX.json
+
+RUNTIME_SHADOW_LOG.jsonl
+
+PM2_PARITY_SUMMARY.json
+
+golden_vectors_v1.json
+
+---
+
+# Investigações obrigatórias
+
+B1
+
+Distribuição de:
+
+P(ACCEPT)
+
+P(RENEG)
+
+P(REJECT)
+
+para os 20 vetores eMBB
+
+---
+
+B2
+
+Análise dos 16 flips
+
+---
+
+B3
+
+Análise do vetor
+
+GV-eMBB-017
+
+(REJECT)
+
+---
+
+B4
+
+Impacto de
+
+ML_REFINEMENT_CONFIDENCE
+
+---
+
+B5
+
+Sensitivity analysis
+
+0.50
+
+0.55
+
+0.60
+
+0.65
+
+0.70
+
+---
+
+B6
+
+Boundary clusters
+
+ACCEPT
+
+RENEGOTIATE
+
+REJECT
+
+---
+
+B7
+
+Decision surface characterization
+
+---
+
+# Produzir
+
+EMBB_DECISION_BOUNDARY_ANALYSIS.md
+
+EMBB_CONFIDENCE_SENSITIVITY.md
+
+EMBB_CLASS_PROBABILITY_DISTRIBUTION.md
+
+EMBB_CLUSTER_ANALYSIS.md
+
+EMBB_DECISION_SURFACE_REPORT.md
+
+PROMOTION_BLOCKER_UPDATE_V2.json
+
+---
+
+# Critérios
+
+DECISION_BOUNDARIES_MAPPED = TRUE
+
+CONFIDENCE_IMPACT_MEASURED = TRUE
+
+ROOT_CAUSE_REFINED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase42_embb_boundary_analysis_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_42_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Promotion.
+
+Não iniciar Retraining.
+
+Não iniciar Runtime Shadow adicional.
+
+Aguardar aprovação humana.

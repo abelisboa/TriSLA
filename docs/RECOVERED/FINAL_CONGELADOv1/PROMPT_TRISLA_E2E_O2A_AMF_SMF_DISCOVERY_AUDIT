@@ -1,0 +1,504 @@
+PROMPT_TRISLA_E2E_O2A_AMF_SMF_DISCOVERY_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Executar auditoria profunda do comportamento real do:
+
+AMF
+↓
+SMF
+
+após a seleção realizada pelo NSSF já integrada na fase O1C.
+
+O objetivo é descobrir, provar e documentar:
+
+* como o AMF utiliza o resultado do NSSF;
+* como o SMF participa do fluxo;
+* quais informações são propagadas;
+* quais campos podem ser vinculados ao NSI da TriSLA;
+* quais gaps existem para a futura fase O2C.
+
+IMPORTANTE
+
+Não implementar integração.
+
+Não alterar Free5GC.
+
+Não alterar TriSLA.
+
+Não alterar runtime.
+
+Toda conclusão deve ser baseada em:
+
+* logs
+* APIs
+* configurações
+* runtime real
+* evidências coletadas no cluster
+
+Nunca em documentação externa.
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+O6_APPROVED = YES
+
+O1A_APPROVED = YES
+
+O1B_APPROVED = YES
+
+O1C_APPROVED = YES
+
+CURRENT_ORCHESTRATION_LEVEL =
+
+NSI/NSSI
++
+SLICE_SERVICE_BINDING
++
+NSSF_SELECTION
+
+Runtime:
+
+NSSF Running
+
+AMF Running
+
+SMF Running
+
+UPF Running
+
+UERANSIM Running
+
+====================================================
+FASE 1 — INVENTÁRIO AMF
+=======================
+
+Identificar:
+
+pod
+
+service
+
+image
+
+version
+
+ports
+
+configmaps
+
+NFs registradas
+
+Gerar:
+
+analysis/amf_inventory.md
+
+====================================================
+FASE 2 — INVENTÁRIO SMF
+=======================
+
+Identificar:
+
+pod
+
+service
+
+image
+
+version
+
+ports
+
+configmaps
+
+DNNs
+
+UPFs associados
+
+Gerar:
+
+analysis/smf_inventory.md
+
+====================================================
+FASE 3 — AUDITORIA NSSF → AMF
+=============================
+
+Determinar exatamente:
+
+como o AMF consome o resultado do NSSF.
+
+Capturar:
+
+requests
+
+responses
+
+logs
+
+selection
+
+NSSAI
+
+S-NSSAI
+
+nsiId
+
+Verificar:
+
+AMF armazena nsiId?
+
+AMF usa S-NSSAI?
+
+AMF ignora parte do retorno?
+
+Gerar:
+
+analysis/nssf_to_amf_flow.md
+
+====================================================
+FASE 4 — AUDITORIA AMF → SMF
+============================
+
+Determinar:
+
+como o AMF encaminha a seleção ao SMF.
+
+Capturar:
+
+N1/N2 signaling relevante
+
+SM Context
+
+PDU Session
+
+Slice information
+
+DNN
+
+S-NSSAI
+
+Gerar:
+
+analysis/amf_to_smf_flow.md
+
+====================================================
+FASE 5 — AUDITORIA SMF
+======================
+
+Determinar:
+
+como o SMF representa:
+
+slice
+
+DNN
+
+UPF
+
+PDU Session
+
+Verificar:
+
+campos disponíveis
+
+identificadores
+
+persistência
+
+Gerar:
+
+analysis/smf_slice_model.md
+
+====================================================
+FASE 6 — AUDITORIA UERANSIM
+===========================
+
+Verificar:
+
+sst
+
+sd
+
+registration
+
+slice selection
+
+PDU session
+
+Mapear:
+
+o que chega do Core ao UE.
+
+Gerar:
+
+analysis/ueransim_slice_trace.md
+
+====================================================
+FASE 7 — AUDITORIA PDU SESSION
+==============================
+
+Determinar:
+
+como o SMF cria a sessão.
+
+Capturar:
+
+DNN
+
+UPF
+
+Session ID
+
+Slice info
+
+NSSAI
+
+Gerar:
+
+analysis/pdu_session_trace.md
+
+====================================================
+FASE 8 — MATRIZ DE CORRELAÇÃO
+=============================
+
+Construir tabela:
+
+TriSLA
+
+↓
+
+NSSF
+
+↓
+
+AMF
+
+↓
+
+SMF
+
+↓
+
+UPF
+
+Exemplo:
+
+sst
+
+sd
+
+dnn
+
+nsiId
+
+session id
+
+upf id
+
+selection status
+
+Identificar:
+
+compatível
+
+transformação
+
+inexistente
+
+Gerar:
+
+analysis/amf_smf_correlation_matrix.md
+
+====================================================
+FASE 9 — PONTOS DE PERSISTÊNCIA
+===============================
+
+Determinar o que poderá ser armazenado futuramente em:
+
+NSI
+
+NSSI
+
+Portal
+
+Governance
+
+Runtime Assurance
+
+Exemplos:
+
+nsiId NSSF
+
+amf_context
+
+smf_context
+
+session_id
+
+dnn_resolved
+
+Gerar:
+
+analysis/amf_smf_persistence_model.md
+
+====================================================
+FASE 10 — GAP ANALYSIS
+======================
+
+Responder:
+
+O que existe hoje?
+
+O que falta?
+
+O que O2C precisará implementar?
+
+O que não deve ser implementado?
+
+Gerar:
+
+analysis/amf_smf_gap_matrix.md
+
+====================================================
+FASE 11 — PROPOSTA O2C
+======================
+
+SEM IMPLEMENTAR.
+
+Definir arquitetura alvo:
+
+TriSLA
+↓
+NSSF Selection
+↓
+AMF Binding
+↓
+SMF Binding
+↓
+Persistência
+
+Nunca:
+
+TriSLA controlar AMF
+
+Nunca:
+
+TriSLA controlar SMF
+
+Gerar:
+
+analysis/o2c_binding_design.md
+
+====================================================
+FASE 12 — RISCOS
+================
+
+Avaliar:
+
+dependências
+
+timeouts
+
+inconsistência
+
+NSSF mismatch
+
+DNN mismatch
+
+Session mismatch
+
+rollback
+
+fallback
+
+Gerar:
+
+analysis/o2_risk_assessment.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/amf_inventory.md
+
+analysis/smf_inventory.md
+
+analysis/nssf_to_amf_flow.md
+
+analysis/amf_to_smf_flow.md
+
+analysis/smf_slice_model.md
+
+analysis/ueransim_slice_trace.md
+
+analysis/pdu_session_trace.md
+
+analysis/amf_smf_correlation_matrix.md
+
+analysis/amf_smf_persistence_model.md
+
+analysis/amf_smf_gap_matrix.md
+
+analysis/o2c_binding_design.md
+
+analysis/o2_risk_assessment.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+AMF_DISCOVERED = YES/NO
+
+SMF_DISCOVERED = YES/NO
+
+AMF_SMF_FLOW_DISCOVERED = YES/NO
+
+PDU_SESSION_FLOW_DISCOVERED = YES/NO
+
+TRISLA_AMF_COMPATIBLE = YES/NO
+
+TRISLA_SMF_COMPATIBLE = YES/NO
+
+AMF_BINDING_FEASIBLE = YES/NO
+
+SMF_BINDING_FEASIBLE = YES/NO
+
+RECOMMENDED_NEXT_PHASE =
+
+E2E-O2B_AMF_SMF_CONTRACT_MODEL
+
+ou
+
+E2E-O2C_IMPLEMENTATION
+
+EVIDENCE_CONFIDENCE = HIGH
+
+IMPORTANTE
+
+Não implementar nada.
+
+Não alterar nada.
+
+Não integrar nada.
+
+Somente descobrir, provar e documentar o comportamento real do AMF e do SMF para suportar a próxima fase da evolução da TriSLA.

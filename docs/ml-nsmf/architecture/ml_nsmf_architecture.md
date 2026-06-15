@@ -1,37 +1,22 @@
 # ML-NSMF Architecture
 
-## 1. Position in TriSLA
+> **Operational SSOT:** [`docs/modules/ml-nsmf.md`](../../modules/ml-nsmf.md)
 
-ML-NSMF is the predictive analysis layer between semantic intent formalization and final policy decision.
+Architecture, inference hot path, model inventory, and integration boundaries are maintained in the canonical module document to avoid duplication.
 
-Flow position:
+## Quick reference
 
-SEM-CSMF (semantic output) -> ML-NSMF (feasibility prediction) -> Decision Engine (final decision)
+| Layer | Module | Hot path |
+|-------|--------|----------|
+| HTTP ingress | `main.py` → `POST /api/v1/predict` | Yes |
+| Orchestration | `dual_load_service.py` → `DualLoadService` | Yes |
+| Inference | `prediction_pipeline.py` → `build_active_prediction` | Yes |
+| Model | `predictor.py` → `RiskPredictor` | Yes |
+| Slice XAI | `slice_risk_adjustment.py` | Yes |
+| Explain | `predictor.explain` (SHAP/LIME/fallback) | Yes (conditional) |
+| Kafka producer | `kafka_producer.py` | Conditional side effect |
+| Kafka consumer | `kafka_consumer.py` | No |
+| Prometheus client | `nasp_prometheus_client.py` | No |
+| Legacy | `ml_nsmf.py` | No |
 
-## 2. Main Components
-
-- `RiskPredictor` (core inference component)
-- `KafkaConsumer` (NEST intake, I-02)
-- `KafkaProducer` (prediction output, I-03)
-- Model artifacts (`viability_model.pkl`, `scaler.pkl`, metadata)
-- XAI layer (SHAP/LIME/fallback explanation)
-
-## 3. Internal Runtime Blocks
-
-1. Intake and validation
-2. Metrics aggregation and feature assembly
-3. Preprocessing and normalization
-4. Model inference
-5. Explainability generation
-6. Kafka dispatch to Decision Engine
-
-## 4. Non-Functional Requirements
-
-- Prediction latency target (< 500 ms for operational path)
-- Repeatable model versioning and metadata traceability
-- Explainability payload availability
-- Observability through metrics and traces
-
-## 5. Scientific Coherence
-
-ML-NSMF transforms multi-domain state and SLA requirements into a scalar feasibility estimate while preserving feature-level interpretation. This makes it suitable for reproducible evaluation and publication-oriented analysis.
+Frozen position: Decision Engine calls ML-NSMF synchronously; ML returns scores; DE decides SLA outcome.

@@ -1,0 +1,213 @@
+# PROMPT — PHASE 31 WAVE 4B GOLDEN VECTOR FOUNDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 30 concluída
+* Wave 1 Freeze
+* Wave 2 Freeze
+* Wave 3A Freeze
+
+Status:
+
+PHASE_31_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Implementar exclusivamente a fundação do Golden Vector Set.
+
+Não implementar dual-load.
+
+Não implementar shadow logger.
+
+Não executar shadow.
+
+Não promover modelos.
+
+---
+
+# Fluxo obrigatório
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+e simultaneamente:
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OpenTelemetry
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# Fonte obrigatória
+
+RESULTS_FREEZE_MAIN
+
+multidomain_stress_final.csv
+
+aeb26946...
+
+scientific baseline
+
+operational baseline
+
+model registry
+
+dataset registry
+
+---
+
+# Atividade 1
+
+Criar:
+
+golden_vectors_v1.json
+
+---
+
+# Atividade 2
+
+Criar:
+
+golden_vectors_manifest_v1.json
+
+---
+
+# Atividade 3
+
+Criar:
+
+checksums
+
+lineage
+
+traceability
+
+---
+
+# Atividade 4
+
+Selecionar:
+
+20 URLLC
+
+20 eMBB
+
+20 mMTC
+
+Conforme especificação da Phase 30.
+
+---
+
+# Atividade 5
+
+Registrar:
+
+dataset source
+
+scientific baseline source
+
+operational baseline source
+
+---
+
+# Atividade 6
+
+Atualizar:
+
+model-registry/
+
+dataset-registry/
+
+baseline-registry/
+
+somente onde previsto na Phase 30.
+
+---
+
+# Proibido
+
+Dual-load
+
+Shadow Logger
+
+Shadow Execution
+
+Promotion
+
+Retraining
+
+Deploy
+
+Build
+
+Digest changes
+
+Runtime changes
+
+G3-D
+
+---
+
+# Critérios de aprovação
+
+GOLDEN_VECTOR_SET_CREATED = TRUE
+
+LINEAGE_REGISTERED = TRUE
+
+CHECKSUMS_REGISTERED = TRUE
+
+TRACEABILITY_COMPLETE = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase31_golden_vectors_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_31_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Phase 32.
+
+Não executar Shadow.
+
+Aguardar aprovação humana.

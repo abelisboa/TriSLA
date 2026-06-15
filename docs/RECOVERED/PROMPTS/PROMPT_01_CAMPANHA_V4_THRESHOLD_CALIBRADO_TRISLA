@@ -1,0 +1,235 @@
+(FRONTEIRA DECISÓRIA CONTROLADA — OPÇÃO A)
+MISSÃO
+
+Executar uma nova campanha científica para forçar observação completa da fronteira decisória do TriSLA, mantendo:
+
+arquitetura intacta
+pipeline real
+coleta limpa
+sem burst
+com baixa contaminação por CPU
+
+Objetivo científico:
+
+demonstrar ACCEPT / RENEGOTIATE / REJECT de forma observável,
+com PRB como dominância decisória e transporte/core como refinamento/contexto
+REGRAS ABSOLUTAS
+NÃO alterar endpoints
+NÃO alterar arquitetura
+NÃO alterar SEM, ML, NASP, BC, SLA-Agent
+NÃO gerar carga artificial fora do pipeline
+USAR somente POST /api/v1/sla/submit
+INSERIR sleep 4s entre requests
+COLETAR tudo em nova pasta
+SE houver regressão do pipeline, PARAR
+PASTA DE SAÍDA
+
+Criar e usar:
+
+evidencias_resultados_trisla_baseline_v11/
+
+Estrutura mínima:
+
+evidencias_resultados_trisla_baseline_v11/
+  dataset/
+  figures/
+  analysis/
+  report/
+  logs/
+HIPÓTESES
+
+H1 — PRB domina a decisão quando os thresholds refletem o range real do ambiente
+
+H2 — RTT/jitter refinam comportamento na zona intermediária
+
+H3 — CPU/Mem permanecem contextuais e não dominam decisão
+
+H4 — A fronteira decisória pode ser observada claramente com thresholds calibrados
+
+FASE 0 — AUDITORIA DOS THRESHOLDS ATUAIS
+
+Ler o runtime atual do decision-engine e registrar:
+
+HARD_PRB_RENEGOTIATE
+HARD_PRB_REJECT
+qualquer threshold de score complementar
+
+Salvar em:
+
+analysis/thresholds_before.txt
+
+Também registrar o range observado de PRB da campanha anterior V10.
+
+Objetivo:
+
+provar que os thresholds atuais estão acima do range operacional observado
+FASE 1 — CALIBRAÇÃO DOS THRESHOLDS PARA O AMBIENTE REAL
+
+Sem alterar a arquitetura, calibrar apenas os thresholds de PRB para cobrir o range real observado.
+
+Proposta inicial de trabalho
+
+Usar como ponto de partida:
+
+HARD_PRB_RENEGOTIATE = 0.20
+HARD_PRB_REJECT = 0.30
+
+Esses valores devem ser confirmados com base no range já observado no ambiente.
+
+Regra
+mudança mínima
+só no decision-engine
+sem tocar nos demais módulos
+
+Registrar no relatório:
+
+threshold calibration rationale
+FASE 2 — BUILD E DEPLOY CONTROLADO (SOMENTE DECISION-ENGINE)
+
+Executar build e push somente do decision-engine.
+
+Usar:
+
+tag temporal
+push para GHCR
+deploy apenas por digest remoto
+rollout controlado
+confirmação final da imagem ativa no deployment
+
+Salvar em:
+
+analysis/deploy_digest.txt
+analysis/deploy_rollout.txt
+FASE 3 — VALIDAÇÃO PÓS-DEPLOY
+
+Fazer um submit de controle e validar:
+
+pipeline responde
+decision
+bc_status
+sla_agent_status
+telemetry_complete
+
+Critério:
+
+pipeline precisa continuar íntegro
+
+Salvar em:
+
+analysis/pre_campaign_submit_check.json
+FASE 4 — CAMPANHA V4 CONTROLADA
+
+Executar campanha limpa com sleep 4s.
+
+Regimes obrigatórios
+REGIME A — LOW PRB
+
+Objetivo: observar ACCEPT
+
+REGIME B — MID PRB
+
+Objetivo: observar RENEGOTIATE
+
+REGIME C — HIGH PRB
+
+Objetivo: observar REJECT
+
+Exigência
+
+A campanha deve continuar até obter cobertura das três classes ou até esgotar o número máximo planejado de requests.
+
+FASE 5 — DATASET
+
+Salvar:
+
+dataset/final_dataset_v4.csv
+dataset/final_dataset_mid_prb_v4.csv
+dataset/final_dataset_all.json
+
+Campos obrigatórios:
+
+timestamp
+prb_utilization_real
+telemetry_transport_rtt_ms
+telemetry_transport_jitter_ms
+telemetry_core_cpu
+telemetry_core_memory
+decision
+decision_score
+final_score
+ran_score
+transport_score
+core_score
+FASE 6 — MÉTRICAS CORRETAS DE VALIDAÇÃO
+
+Calcular:
+
+Métricas principais
+corr(PRB, decision_num)
+corr(RTT, score) no MID PRB
+corr(CPU, score) no MID PRB
+Não usar como métrica principal
+corr(PRB, score) global
+FASE 7 — CRITÉRIOS DE APROVAÇÃO
+
+A campanha só é aprovada se:
+
+houver pelo menos duas classes decisórias observadas, idealmente três
+|corr(PRB, decision_num)| > 0.8
+|corr(CPU, score_mid)| < 0.5
+RTT/jitter mostrarem papel secundário/moderado no MID
+pipeline permanecer íntegro
+
+Se falhar, registrar explicitamente a causa.
+
+FASE 8 — FIGURAS IEEE OBRIGATÓRIAS
+
+Gerar no diretório:
+
+figures/
+Grupo 1 — Fronteira decisória
+fig01_prb_vs_decision_boxplot.png
+fig02_prb_accept_probability.png
+fig03_decision_boundary_prb_score.png
+Grupo 2 — Zona intermediária
+fig04_score_vs_rtt_mid_prb.png
+fig05_score_vs_cpu_mid_prb.png
+fig06_heatmap_prb_rtt_decision.png
+Grupo 3 — Multi-domínio
+fig07_scatter_prb_rtt_decision.png
+fig08_feature_importance_mid_prb.png
+fig09_partial_dependence_prb.png
+Grupo 4 — Robustez
+fig10_score_stability_time.png
+fig11_cdf_rtt.png
+fig12_boxplot_prb_por_decisao.png
+FASE 9 — RELATÓRIO CIENTÍFICO
+
+Gerar:
+
+report/SCIENTIFIC_REPORT_V4.md
+
+O relatório deve conter:
+
+thresholds usados
+justificativa da calibração
+cobertura de classes
+validação das hipóteses
+interpretação por domínio:
+RAN = decisão
+transporte = refinamento
+core = contexto
+conclusão clara sobre a pergunta de pesquisa
+FASE 10 — FRASE FINAL OBRIGATÓRIA
+
+O relatório deve terminar com algo equivalente a:
+
+A fronteira decisória do TriSLA foi observada sob thresholds calibrados ao range operacional do ambiente, confirmando a dominância da RAN na decisão de SLA, com influência secundária do transporte e papel contextual do Core.
+
+CRITÉRIO DE PARADA
+NÃO alterar mais nenhum módulo
+NÃO prosseguir para build final se a campanha não aprovar
+NÃO mascarar resultado se ainda houver dominância indevida do Core
+OBJETIVO FINAL
+
+Produzir uma campanha V4 que prove, de forma controlada e reproduzível, a estrutura hierárquica de decisão do TriSLA e libere o caminho para o build final por digest.

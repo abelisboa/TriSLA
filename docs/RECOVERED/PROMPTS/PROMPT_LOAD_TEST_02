@@ -1,0 +1,253 @@
+# =========================================================
+# PROMPT_LOAD_TEST_02
+# Campanha controlada TriSLA — regimes A/B/C multi-slice
+# =========================================================
+
+# MISSÃO
+# Executar uma campanha controlada com múltiplos regimes de SLA
+# para observar variação de score, decisão e latência sob diferentes perfis.
+
+# REGRAS
+# 1. NÃO alterar código
+# 2. NÃO alterar cluster
+# 3. NÃO alterar deploy
+# 4. NÃO alterar thresholds
+# 5. Apenas executar requests e coletar evidências
+# 6. Abort se houver HTTP != 200 em excesso
+# 7. Interface Layer deve permanecer ativa em shadow
+
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_load_test_v2_controlled"
+mkdir -p "$OUT/raw" "$OUT/analysis"
+
+URL="http://localhost:18001/api/v1/sla/submit"
+REPEATS=10
+SLEEP=1
+
+# =========================================================
+# FASE 0 — SNAPSHOT DO ESTADO
+# =========================================================
+
+kubectl -n trisla get deployment trisla-decision-engine \
+  -o jsonpath='{.spec.template.spec.containers[0].image}'; echo \
+  | tee "$OUT/analysis/decision_engine_image.txt"
+
+kubectl -n trisla exec deployment/trisla-decision-engine -- printenv \
+  | egrep 'INTERFACE_LAYER|POLICY|PRB|DECISION_SCORE|ML_' \
+  | tee "$OUT/analysis/decision_engine_env.txt"
+
+kubectl -n trisla get pods | tee "$OUT/analysis/pods_before.txt"
+
+# =========================================================
+# FASE 1 — PORT-FORWARD
+# =========================================================
+
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 \
+  > "$OUT/raw/port_forward.log" 2>&1 &
+
+PF_PID=$!
+sleep 3
+
+curl -s http://localhost:18001/api/v1/health/global \
+  | tee "$OUT/raw/health_before.json"
+
+# =========================================================
+# FASE 2 — FUNÇÃO DE REQUEST
+# =========================================================
+
+send_request() {
+  REGIME=$1
+  SLICE=$2
+  ID=$3
+
+  case "$REGIME" in
+
+    ideal)
+      case "$SLICE" in
+        URLLC)
+          LAT=5; REL=99.999; THR=50 ;;
+        EMBB)
+          LAT=20; REL=99.9; THR=500 ;;
+        MMTC)
+          LAT=80; REL=95; THR=10 ;;
+      esac
+      ;;
+
+    intermediate)
+      case "$SLICE" in
+        URLLC)
+          LAT=15; REL=99.5; THR=80 ;;
+        EMBB)
+          LAT=35; REL=99.0; THR=800 ;;
+        MMTC)
+          LAT=120; REL=92; THR=30 ;;
+      esac
+      ;;
+
+    critical)
+      case "$SLICE" in
+        URLLC)
+          LAT=80; REL=95; THR=300 ;;
+        EMBB)
+          LAT=120; REL=90; THR=1500 ;;
+        MMTC)
+          LAT=250; REL=85; THR=100 ;;
+      esac
+      ;;
+  esac
+
+  FILE="$OUT/raw/${REGIME}_${SLICE}_${ID}.json"
+  STATUS_FILE="$OUT/raw/${REGIME}_${SLICE}_${ID}.status"
+
+  BODY='{
+    "template_id": "standard",
+    "tenant_id": "lt2-'$REGIME'-'$SLICE'-'$ID'",
+    "form_values": {
+      "latency": '$LAT',
+      "reliability": '$REL',
+      "throughput": '$THR'
+    }
+  }'
+
+  HTTP_CODE=$(curl -s -o "$FILE" -w "%{http_code}" \
+    -X POST "$URL" \
+    -H "Content-Type: application/json" \
+    -d "$BODY")
+
+  echo "$HTTP_CODE" > "$STATUS_FILE"
+
+  if [ "$HTTP_CODE" != "200" ]; then
+    echo "[ERRO] $REGIME $SLICE $ID HTTP=$HTTP_CODE"
+  else
+    DEC=$(jq -r '.decision // "null"' "$FILE")
+    SCORE=$(jq -r '.metadata.decision_score // "null"' "$FILE")
+    echo "[OK] $REGIME $SLICE $ID decision=$DEC score=$SCORE"
+  fi
+
+  sleep "$SLEEP"
+}
+
+# =========================================================
+# FASE 3 — EXECUÇÃO CONTROLADA
+# 3 regimes x 3 slices x 10 repetições = 90 requests
+# =========================================================
+
+for REGIME in ideal intermediate critical; do
+  for SLICE in URLLC EMBB MMTC; do
+    for ID in $(seq 1 $REPEATS); do
+      send_request "$REGIME" "$SLICE" "$ID"
+    done
+  done
+done
+
+kill $PF_PID 2>/dev/null
+
+# =========================================================
+# FASE 4 — DATASET ESTRUTURADO
+# =========================================================
+
+cat > "$OUT/analysis/dataset.csv" << 'EOF'
+regime,slice,id,http_status,decision,decision_score,decision_band,confidence,nasp_status,bc_status,sla_agent_status,telemetry_complete,dominant_domain,reason_codes,ran_prb,transport_rtt,transport_jitter,core_cpu,core_memory,admission_total_ms,semantic_ms,decision_ms,ml_ms,nasp_ms,blockchain_ms,sla_agent_ms,tx_hash,block_number
+EOF
+
+for f in "$OUT"/raw/*.json; do
+  base=$(basename "$f" .json)
+  REGIME=$(echo "$base" | cut -d_ -f1)
+  SLICE=$(echo "$base" | cut -d_ -f2)
+  ID=$(echo "$base" | cut -d_ -f3)
+  STATUS=$(cat "$OUT/raw/${base}.status" 2>/dev/null || echo "NA")
+
+  jq -r \
+    --arg regime "$REGIME" \
+    --arg slice "$SLICE" \
+    --arg id "$ID" \
+    --arg http "$STATUS" '
+    [
+      $regime,
+      $slice,
+      $id,
+      $http,
+      (.decision // ""),
+      (.metadata.decision_score // ""),
+      (.metadata.decision_band // ""),
+      (.confidence // .metadata.final_decision_confidence // ""),
+      (.metadata.nasp_orchestration_status // ""),
+      (.bc_status // ""),
+      (.sla_agent_status // ""),
+      (.metadata.telemetry_complete // .telemetry_complete // ""),
+      (.metadata.dominant_domain // ""),
+      ((.metadata.reason_codes // []) | join("|")),
+      (.metadata.telemetry_snapshot.ran.prb_utilization // ""),
+      (.metadata.telemetry_snapshot.transport.rtt_ms // .metadata.telemetry_snapshot.transport.rtt // ""),
+      (.metadata.telemetry_snapshot.transport.jitter_ms // .metadata.telemetry_snapshot.transport.jitter // ""),
+      (.metadata.telemetry_snapshot.core.cpu_utilization // .metadata.telemetry_snapshot.core.cpu // ""),
+      (.metadata.telemetry_snapshot.core.memory_bytes // .metadata.telemetry_snapshot.core.memory // ""),
+      (.metadata.module_latencies_ms.admission_total_ms // .admission_time_total_ms // ""),
+      (.metadata.module_latencies_ms.semantic_parsing_ms // .semantic_parsing_latency_ms // ""),
+      (.metadata.module_latencies_ms.sem_pipeline_to_decision_ms // .decision_duration_ms // ""),
+      (.metadata.module_latencies_ms.ml_nsmf_predict_ms // ""),
+      (.metadata.module_latencies_ms.nasp_orchestration_ms // ""),
+      (.metadata.module_latencies_ms.blockchain_register_ms // ""),
+      (.metadata.module_latencies_ms.sla_agent_ingest_http_ms // ""),
+      (.tx_hash // .blockchain_tx_hash // ""),
+      (.block_number // "")
+    ] | @csv
+  ' "$f" >> "$OUT/analysis/dataset.csv"
+done
+
+# =========================================================
+# FASE 5 — RESUMOS
+# =========================================================
+
+echo "[INFO] Gerando resumo..."
+
+python3 - << 'PY'
+import pandas as pd
+from pathlib import Path
+
+out = Path("evidencias_load_test_v2_controlled/analysis")
+df = pd.read_csv(out / "dataset.csv")
+
+summary = df.groupby(["regime", "slice", "decision"]).size().reset_index(name="count")
+summary.to_csv(out / "decision_summary.csv", index=False)
+
+score_summary = df.groupby(["regime", "slice"])["decision_score"].agg(
+    ["count", "mean", "std", "min", "max"]
+).reset_index()
+score_summary.to_csv(out / "score_summary.csv", index=False)
+
+lat_cols = ["admission_total_ms", "semantic_ms", "decision_ms", "ml_ms", "nasp_ms", "blockchain_ms", "sla_agent_ms"]
+lat_summary = df.groupby(["regime", "slice"])[lat_cols].agg(["mean", "std", "min", "max"])
+lat_summary.to_csv(out / "latency_summary.csv")
+
+print("=== Decision Summary ===")
+print(summary.to_string(index=False))
+print("\n=== Score Summary ===")
+print(score_summary.to_string(index=False))
+PY
+
+# =========================================================
+# FASE 6 — LOGS INTERFACE
+# =========================================================
+
+kubectl -n trisla logs deployment/trisla-decision-engine --tail=1000 \
+  | grep INTERFACE \
+  | tee "$OUT/analysis/interface_logs_tail.txt"
+
+grep -c "CN-I1" "$OUT/analysis/interface_logs_tail.txt" > "$OUT/analysis/interface_log_counts.txt"
+grep -c "OBS-I1" "$OUT/analysis/interface_logs_tail.txt" >> "$OUT/analysis/interface_log_counts.txt"
+grep -c "RAN-I1" "$OUT/analysis/interface_logs_tail.txt" >> "$OUT/analysis/interface_log_counts.txt"
+grep -c "TN-I1" "$OUT/analysis/interface_logs_tail.txt" >> "$OUT/analysis/interface_log_counts.txt"
+grep -c "BC-I1" "$OUT/analysis/interface_logs_tail.txt" >> "$OUT/analysis/interface_log_counts.txt"
+
+# =========================================================
+# FASE 7 — HEALTH FINAL
+# =========================================================
+
+kubectl -n trisla get pods | tee "$OUT/analysis/pods_after.txt"
+
+echo "[OK] Campanha LOAD_TEST_02 concluída"
+echo "Dataset: $OUT/analysis/dataset.csv"
+echo "Resumo:  $OUT/analysis/decision_summary.csv"

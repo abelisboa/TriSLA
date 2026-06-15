@@ -1,70 +1,63 @@
 # SLO Evaluation Model
 
-## 1. Objective
+> **TRACEABILITY_ONLY**
+> **NOT OPERATIONAL SSOT**
 
-Evaluate whether an SLA remains compliant over time.
+This document preserves the research-level SLO evaluation abstraction. The operational runtime truth is documented in [`docs/modules/sla-agent-layer.md`](../../modules/sla-agent-layer.md) and implemented in `apps/sla-agent-layer/src/domain_compliance.py` plus `apps/sla-agent-layer/src/runtime_slo_evaluator.py`.
 
----
+## Research objective
 
-## 2. Variables
+Evaluate whether an SLA remains compliant over time using observed metrics and SLO constraints.
 
-Let:
+```text
+M = observed metrics
+SLO = constraints
+```
 
-$$
-M = \{observed\ metrics\}
-$$
+For each metric `m`, the research abstraction is:
 
-$$
-SLO = \{constraints\}
-$$
+```text
+compliance(m) = TRUE if m satisfies the SLO threshold
+```
 
----
+A simplified compliance ratio may be expressed as:
 
-## 3. Evaluation Function
+```text
+C = compliant metrics / total metrics
+```
 
-For each metric m:
+## Research states
 
-**Formal Definition**
+The earlier research model used:
 
-$$
-compliance(m) = TRUE \text{ if } m \text{ satisfies SLO threshold}
-$$
+```text
+OK
+RISK
+VIOLATED
+```
 
----
+These names do **not** represent the real runtime state set.
 
-## 4. Global Compliance
+## Runtime state set
 
-**Compliance Ratio**
+The frozen SLA-Agent runtime documents and exposes:
 
-$$
-C = \frac{compliant\ metrics}{total\ metrics}
-$$
+| Runtime state | Status |
+|---------------|--------|
+| `COMPLIANT` | ACTIVE |
+| `WARNING` | ACTIVE |
+| `AT_RISK` | ACTIVE |
+| `VIOLATED` | ACTIVE |
+| `INCOMPLETE` | NOT WIRED |
 
----
+## Operational pointers
 
-## 5. State Definition
+| Runtime concern | Operational SSOT |
+|-----------------|------------------|
+| Metric compliance | `compute_metric_compliance` |
+| Domain compliance | `compute_all_domains_compliance` |
+| Slice thresholds | `SLICE_THRESHOLDS` for URLLC, EMBB, MMTC |
+| Explainability rows | `metric_explainability[]` |
+| Runtime assurance | `evaluate_runtime_assurance` |
 
-**Decision Function**
-
-$$
-Decision =
-\begin{cases}
-OK & \text{if } C = 1 \\
-RISK & \text{if } 0.8 \leq C < 1 \\
-VIOLATED & \text{if } C < 0.8
-\end{cases}
-$$
-
----
-
-## 6. Interpretation
-
-- OK → SLA is stable  
-- RISK → SLA degradation likely  
-- VIOLATED → SLA breach  
-
----
-
-## 7. Conclusion
-
-The SLA-Agent provides runtime validation of SLA feasibility through continuous monitoring.
+This research model must not be used to override implementation behavior, endpoint classification, or Phase 47 baseline documentation.

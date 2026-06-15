@@ -1,0 +1,470 @@
+PROMPT_TRISLA_O8C_W2A_GOVERNANCE_EXECUTION_SCAFFOLD
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+OBJETIVO
+
+Implementar a infraestrutura de execução governada necessária para habilitar futuras ações Closed-Loop da TriSLA.
+
+ATENÇÃO:
+
+Esta fase NÃO executa ações sobre:
+
+* ONOS
+* NSSF
+* AMF
+* SMF
+* UPF
+* RAN
+* Transport
+
+O objetivo é completar o ciclo formal:
+
+Observe
+↓
+Analyze
+↓
+Decide
+↓
+Authorize
+↓
+Execute
+↓
+Verify
+↓
+Govern
+
+sem mutação de domínio.
+
+====================================================
+BASELINE CONGELADO
+==================
+
+O1C = FROZEN
+O2C = FROZEN
+O3C = FROZEN
+O4C = FROZEN
+O5C = FROZEN
+
+O6 = FROZEN
+O7A = FROZEN
+O7B = FROZEN
+O7C = FROZEN
+O7D = FROZEN
+
+O8A = APPROVED
+O8B = APPROVED
+O8C Wave 1 = APPROVED
+
+CURRENT_ARCHITECTURE_STATUS
+
+TRANSPORT_CORRELATED
++
+AUTHORIZED_CLOSED_LOOP
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+PROIBIDO
+
+Criar intents ONOS
+
+Criar flows ONOS
+
+Alterar AMF
+
+Alterar SMF
+
+Alterar UPF
+
+Alterar NSSF
+
+Alterar RAN
+
+Alterar Admission Logic
+
+Alterar Decision Engine
+
+Alterar Thresholds
+
+Alterar Blockchain Logic
+
+Executar qualquer ação de domínio
+
+====================================================
+PERMITIDO
+=========
+
+Schema
+
+Governance States
+
+Execution States
+
+Audit Records
+
+Metrics
+
+Grafana
+
+Prometheus
+
+Persistence
+
+Rollback Metadata
+
+====================================================
+FASE 1 — EXECUTION STATE MODEL
+==============================
+
+Expandir ActuationRequest.
+
+Adicionar estados:
+
+EXECUTING
+
+SUCCEEDED
+
+FAILED
+
+ROLLED_BACK
+
+EXPIRED
+
+Preservar:
+
+AUTH_PENDING
+
+AUTH_POLICY
+
+AUTH_OPERATOR
+
+AUTH_GOVERNANCE
+
+AUTH_DENIED
+
+AUTH_EXPIRED
+
+Gerar:
+
+analysis/o8c_w2a_execution_state_model.md
+
+====================================================
+FASE 2 — EXECUTION LIFECYCLE
+============================
+
+Implementar ciclo:
+
+AUTH_PENDING
+↓
+AUTH_POLICY
+↓
+AUTH_OPERATOR
+↓
+EXECUTING
+↓
+SUCCEEDED
+
+e
+
+EXECUTING
+↓
+FAILED
+
+e
+
+SUCCEEDED
+↓
+ROLLED_BACK
+
+Somente persistência.
+
+Nenhuma ação real.
+
+Gerar:
+
+analysis/o8c_w2a_execution_lifecycle.md
+
+====================================================
+FASE 3 — VERIFY CONTRACT
+========================
+
+Implementar Verify Hook.
+
+Usar:
+
+ACT-ASSUR-002
+
+/api/v1/agent/revalidate-telemetry
+
+Somente registrar.
+
+Não alterar Assurance.
+
+Gerar:
+
+analysis/o8c_w2a_verify_contract.md
+
+====================================================
+FASE 4 — TTL EXPIRATION
+=======================
+
+Implementar:
+
+request_expiration
+
+authorization_timeout
+
+execution_timeout
+
+Gerar:
+
+analysis/o8c_w2a_ttl_model.md
+
+====================================================
+FASE 5 — GOVERNANCE AUDIT TRAIL
+===============================
+
+Persistir:
+
+request_id
+
+intent_id
+
+nsi_id
+
+action_type
+
+risk_level
+
+authorization_state
+
+execution_state
+
+verify_state
+
+timestamps
+
+rollback_reference
+
+contract_version
+
+Gerar:
+
+analysis/o8c_w2a_audit_trail.md
+
+====================================================
+FASE 6 — PROMETHEUS EXPORT
+==========================
+
+Adicionar métricas:
+
+trisla_actuation_executing_total
+
+trisla_actuation_succeeded_total
+
+trisla_actuation_failed_total
+
+trisla_actuation_rollback_total
+
+trisla_actuation_expired_total
+
+trisla_actuation_verify_total
+
+Gerar:
+
+analysis/o8c_w2a_prometheus_metrics.md
+
+====================================================
+FASE 7 — GRAFANA VISIBILITY
+===========================
+
+Atualizar apenas:
+
+DB-GOV-001
+
+DB-LIFE-001
+
+Adicionar:
+
+Authorization Funnel
+
+Execution Funnel
+
+Verify Funnel
+
+Rollback Funnel
+
+Sem novos dashboards.
+
+Gerar:
+
+analysis/o8c_w2a_grafana_visibility.md
+
+====================================================
+FASE 8 — SYNTHETIC EXECUTION TESTS
+==================================
+
+Criar testes sintéticos:
+
+SAFE
+
+CONTROLLED
+
+HIGH_RISK
+
+Validar:
+
+authorize
+
+execute
+
+verify
+
+rollback
+
+expire
+
+Sem ação real.
+
+Gerar:
+
+analysis/o8c_w2a_synthetic_tests.md
+
+====================================================
+FASE 9 — REGRESSION AUDIT
+=========================
+
+Validar:
+
+Portal
+
+SEM
+
+ML
+
+Decision
+
+BC
+
+SLA-Agent
+
+Prometheus
+
+Grafana
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+Sem regressão.
+
+====================================================
+FASE 10 — BUILD
+===============
+
+Fluxo obrigatório:
+
+Git
+↓
+GitHub
+↓
+GHCR
+↓
+Digest
+
+Nunca latest.
+
+====================================================
+FASE 11 — DEPLOY
+================
+
+Obrigatório:
+
+ssh node006
+
+Deploy por digest.
+
+Jamais usar imagens locais.
+
+====================================================
+FASE 12 — EVIDENCE PACK
+=======================
+
+Gerar:
+
+evidencias_trisla_o8c_w2a_governance_execution_scaffold_<timestamp>
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+EXECUTION_STATE_MODEL_IMPLEMENTED = YES/NO
+
+EXECUTION_LIFECYCLE_IMPLEMENTED = YES/NO
+
+VERIFY_HOOK_IMPLEMENTED = YES/NO
+
+TTL_MODEL_IMPLEMENTED = YES/NO
+
+AUDIT_TRAIL_IMPLEMENTED = YES/NO
+
+PROMETHEUS_VISIBILITY = YES/NO
+
+GRAFANA_VISIBILITY = YES/NO
+
+DOMAIN_MUTATION = NO
+
+REGRESSION = NO
+
+READY_FOR_W2B = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_W2B = YES
+
+executar:
+
+O8C-W2B
+
+ACT-TN-002
+
+ONOS Intent Dry-Run
+
+com:
+
+AUTH_OPERATOR obrigatório
+
+VERIFY obrigatório
+
+ROLLBACK obrigatório
+
+e sem alteração de tráfego real.

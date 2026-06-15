@@ -25,28 +25,36 @@ function slaRequirements(
   return req && typeof req === "object" ? req : undefined;
 }
 
+function isPresent(value: unknown): value is NonNullable<unknown> {
+  return value !== null && value !== undefined && value !== "";
+}
+
 /**
- * Maps interpret → submit form_values using only fields present in REAL_PAYLOAD_FREEZE
- * (payload_pnl.json sla_requirements + slice_type/service_type).
- * Omits null/empty values (backend validator skips them).
+ * Maps interpret → submit form_values (P2 — PNL = TRANSPORT).
+ * Forwards all present sla_requirements keys without conversion or filtering.
+ * Omits null/empty values only (backend validator skips them).
  */
 export function buildFormValuesFromInterpret(
   interpret: InterpretResponse,
 ): Record<string, unknown> {
   const formValues: Record<string, unknown> = {};
-  const sliceType = interpret.slice_type ?? interpret.service_type;
-  if (sliceType !== null && sliceType !== undefined && String(sliceType).trim()) {
-    formValues.type = sliceType;
-    formValues.slice_type = sliceType;
-  }
 
   const sla = slaRequirements(interpret);
   if (sla) {
-    for (const key of ["latency", "throughput", "reliability"] as const) {
-      const value = sla[key];
-      if (value !== null && value !== undefined && value !== "") {
+    for (const [key, value] of Object.entries(sla)) {
+      if (isPresent(value)) {
         formValues[key] = value;
       }
+    }
+  }
+
+  const sliceType = interpret.slice_type ?? interpret.service_type;
+  if (isPresent(sliceType)) {
+    if (!isPresent(formValues.slice_type)) {
+      formValues.slice_type = sliceType;
+    }
+    if (!isPresent(formValues.type)) {
+      formValues.type = sliceType;
     }
   }
 

@@ -1,0 +1,136 @@
+# PROMPT — PHASE 25A.1 HOTFIX IMPACT AUDIT
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 25A aprovada
+
+Status:
+
+PHASE_25A_APPROVED = TRUE
+
+PHASE_25A1_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Auditar exclusivamente o hotfix:
+
+ml_risk_for_prb = slice_adjusted
+
+Sem deploy.
+
+Sem alteração de código.
+
+---
+
+# Modo
+
+STRICT READ ONLY
+
+---
+
+# Atividade 1
+
+Identificar:
+
+onde ml_risk_for_prb era utilizado.
+
+---
+
+# Atividade 2
+
+Identificar:
+
+por que a variável não estava definida.
+
+---
+
+# Atividade 3
+
+Mapear:
+
+todos os caminhos de execução afetados.
+
+---
+
+# Atividade 4
+
+Comparar:
+
+comportamento antes do fix
+
+vs
+
+comportamento após o fix
+
+---
+
+# Atividade 5
+
+Classificar:
+
+BUG FIX
+
+BEHAVIOR CHANGE
+
+SCIENTIFIC IMPACT
+
+---
+
+# Atividade 6
+
+Determinar:
+
+score impact
+
+confidence impact
+
+decision impact
+
+---
+
+# Atividade 7
+
+Criar:
+
+HOTFIX_IMPACT_REPORT.md
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_wave1_hotfix_audit_<timestamp>/
+
+---
+
+# Critério de sucesso
+
+HOTFIX_FULLY_UNDERSTOOD = TRUE
+
+SCIENTIFIC_IMPACT_CLASSIFIED = TRUE
+
+DEPLOY_READINESS_UPDATED = TRUE
+
+---
+
+# Resultado final
+
+Produzir:
+
+PHASE_25A1_COMPLETION_REPORT
+
+Finalizar com:
+
+PHASE_25A1_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não executar deploy.
+
+Não alterar código.
+
+Aguardar aprovação humana.

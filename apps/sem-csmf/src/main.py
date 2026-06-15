@@ -464,7 +464,8 @@ async def create_intent(
                 if validated_intent.sla_requirements
                 else {},
                 nest_status=nest.status.value,
-                metadata=metadata
+                metadata=metadata,
+                nest=nest,
             )
             
             span.set_attribute("nest.id", nest.nest_id)

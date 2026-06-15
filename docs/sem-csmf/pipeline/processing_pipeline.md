@@ -1,76 +1,102 @@
 # SEM-CSMF Processing Pipeline
 
+> Components and layers: [`architecture/sem_csmf_architecture.md`](../architecture/sem_csmf_architecture.md).
+> Operational endpoints and digest: [`docs/modules/sem-csmf.md`](../../modules/sem-csmf.md).
+
+This document is the **single in-depth pipeline reference** for SEM-CSMF.
+
 ## 1. Canonical Flow
 
-Intent -> NLP -> Ontology -> Validation -> NEST -> Dispatch
+```text
+Intent → NLP → Ontology → Validation → GST → NEST → Semantic Fill → Canonical SLA → I-01 HTTP
+```
 
-The pipeline formalizes how raw intent statements become semantically validated artifacts for decision and prediction modules.
-
-## 2. End-to-End Lifecycle
-
-1. **Intent Reception**
-   - Accepts intent from REST/gRPC endpoint
-   - Supports natural language and structured JSON payloads
-   - Validates schema-level consistency
-
-2. **NLP Extraction**
-   - Identifies slice type candidates (`eMBB`, `URLLC`, `mMTC`)
-   - Extracts requirement entities (latency, throughput, reliability, jitter, packet loss)
-   - Normalizes units and lexical variants
-
-3. **Ontology Validation**
-   - Loads ontology graph (`trisla.ttl`) via `owlready2`
-   - Checks class/property compatibility
-   - Rejects semantically inconsistent intent formulations
-
-4. **Semantic Matching**
-   - Resolves intent constraints into ontology-grounded slice semantics
-   - Applies reasoner-based validation
-   - Produces validated semantic representation
-
-5. **NEST Generation**
-   - Converts validated intent to NEST artifact (GST-to-NEST mapping)
-   - Includes multi-domain semantic structure (RAN, Transport, Core)
-   - Persists NEST and processing metadata
-
-6. **Dispatch to Decision Engine and ML-NSMF**
-   - I-01 gRPC dispatch of decision metadata to Decision Engine
-   - I-02 Kafka publish of NEST event to ML-NSMF
-   - Emits observability traces and metrics
-
-## 3. Formal View
-
-Semantic projection:
-
-**Formal Definition**
+Formal projection:
 
 $$
-NEST = T(V(O(P(I))))
+NEST = T(F(V(O(P(I)))))
 $$
 
-where:
+where `F` = semantic fill, `T` = NEST transformation, `V` = validation, `O` = ontology mapping, `P` = NLP parsing, `I` = raw intent.
 
-- `I`: raw intent
-- `P`: NLP parsing and normalization
-- `O`: ontology mapping
-- `V`: semantic validation and reasoning
-- `T`: template transformation (NEST generation)
+## 2. Runtime Paths
 
-This decomposition allows deterministic analysis of failure points and supports reproducible experiment design.
+### Path A — `POST /api/v1/interpret` (interpretation only)
 
-## 4. Failure Modes and Guardrails
+Used by Portal for pre-submit interpretation. **Does not persist intent or call Decision Engine.**
 
-- **Parsing ambiguity:** mitigated by fallback to structured constraints
-- **Ontology mismatch:** explicit validation failure with traceable diagnostics
-- **Interface dispatch failure:** retry-enabled clients for gRPC and Kafka
-- **Persistence unavailability:** repository-level error handling and controlled failure propagation
+1. NLP parse (optional) + keyword fallback for slice type
+2. Default SLA by slice type if NLP yields nothing
+3. `validate_semantic(intent, intent_text)`
+4. `generate_gst(validated)` → `NESTGeneratorDB.generate_nest(gst)`
+5. `_apply_semantic_fill_pipeline()` — priority: explicit → ontology → GST → NEST
+6. `canonicalize_sla_request()` → included in response
+7. Return `{intent_id, nest_id, service_type, sla_requirements, canonical_sla, sem_csmf_internal_latency_ms}`
 
-## 5. Reproducibility Notes
+### Path B — `POST /api/v1/intents` (admission pipeline)
 
-- Maintain stable ontology version and parser configuration during experiments
-- Log full intent, normalized fields, and validation outcomes
-- Preserve dispatch timestamps for cross-module correlation
+**Production admission path.** Portal submits structured intent; SEM orchestrates semantic processing and I-01 dispatch.
 
-## 6. Pipeline Summary
+1. **Intent reception** — `IntentRequest`; `generate_default_sla()` if `sla_requirements` absent
+2. **Persist** — `IntentModel` to database
+3. **NLP extraction** — when `intent` text present, merge extracted fields
+4. **Ontology validation** — `validate_semantic()` via loader/reasoner/matcher
+5. **GST generation** — `generate_gst()` with slice-specific QoS templates
+6. **NEST generation** — `NESTGeneratorDB.generate_nest()`; persist NEST + slices
+7. **Semantic fill** — `apply_semantic_fill_to_intent_sla()`; update `sla_requirements`
+8. **Metadata** — `generate_metadata()`; merge upstream Portal `metadata`
+9. **Canonical SLA** — `canonicalize_sla_request()` → `metadata.canonical_sla`
+10. **I-01 dispatch** — `DecisionEngineHTTPClient.send_nest_metadata()`:
+    - HTTP POST `/evaluate`
+    - `telemetry_snapshot` + `context.telemetry_features` (PRB via Portal Prometheus proxy)
+    - optional `nest` body when `SEM_I01_NEST_TRANSMIT=true` (Wave 3A echo)
+11. **Response** — `IntentResponse` with DE decision fields; `distributed_trace` merged into metadata; persist `extra_metadata`
 
-The SEM-CSMF pipeline is not a generic ETL chain; it is a semantic control process that converts human-level intent into machine-level contractual artifacts suitable for SLA-aware decisioning in TriSLA.
+ML-NSMF participates **inside Decision Engine** on this path — not via Kafka from SEM.
+
+### Path C — Auxiliary (non-admission)
+
+| Endpoint | Role |
+|----------|------|
+| `POST /api/v1/intents/register` | Idempotent NASP SLA registration |
+| `GET /api/v1/intents/{id}` | Status polling for Portal |
+| `PATCH .../governance-metadata` | Merge BC/governance keys (persistence only) |
+
+## 3. Semantic Fill Detail
+
+Code: `apps/sem-csmf/src/services/semantic_resolver.py`
+
+KPI fields: `latency`, `throughput`, `reliability`, `availability`, `coverage`, `device_density`, `jitter`
+
+| Priority | Source |
+|----------|--------|
+| 1 | Explicit value in request |
+| 2 | Ontology slice-type individuals (`trisla_complete.owl` / `trisla.ttl`) |
+| 3 | GST template (`qos` / `sla`) |
+| 4 | NEST primary slice resources |
+
+Internal provenance stored in `metadata._semantic_sources` (not returned in public API).
+
+## 4. Canonical SLA Detail
+
+Code: `apps/sem-csmf/src/canonical_sla.py`
+
+Produces GSMA-aligned block (`slice_service_type`, `sst`, `sd`, `service_requirements`, `semantic_context`, `legacy_input`) **in parallel** with legacy `sla_requirements` sent to DE.
+
+## 5. Failure Modes and Guardrails
+
+- **Parsing ambiguity:** fallback to structured constraints and slice-type defaults
+- **Ontology mismatch / load failure:** degraded mode; matcher continues with fallbacks
+- **I-01 HTTP failure:** controlled REJECT response; span + log diagnostics
+- **Persistence failure:** rollback; HTTP 500
+- **Legacy gRPC/Kafka:** not on production hot path — do not use for admission troubleshooting
+
+## 6. Reproducibility Notes
+
+- Pin ontology file (`trisla_complete.owl` preferred) and app digest for campaign runs
+- Preserve `intent_id`, `nest_id` across logs and I-01 payload
+- Record `metadata.canonical_sla` and dispatch timestamps for cross-module correlation
+
+## 7. Pipeline Summary
+
+The SEM-CSMF pipeline converts human-level intent into machine-level contractual artifacts suitable for SLA-aware decisioning. Production dispatch is **I-01 HTTP only**; Kafka I-02 remains legacy code in the repository.

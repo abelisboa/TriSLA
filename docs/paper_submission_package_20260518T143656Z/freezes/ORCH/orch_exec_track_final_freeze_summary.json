@@ -1,0 +1,257 @@
+{
+  "phase": "ORCH-EXEC-04",
+  "timestamp_utc": "2026-05-18T03:05:55.060646Z",
+  "verdict": "ORCH_EXEC_TRACK_FROZEN",
+  "science_outcome": "REVIEWER_SAFE_ORCHESTRATION_RUNTIME_MODEL_FROZEN",
+  "track_status": "ORCH_EXEC_TRACK_FROZEN",
+  "active_digest": "sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6",
+  "upstream_packs": {
+    "ssot": "evidencias_trisla_phase6_ssot_controlled_execution_20260517T154849Z",
+    "sr09": "evidencias_trisla_sr_exec_09_final_program_freeze_20260517T192637Z",
+    "nad15": "evidencias_trisla_nad_exec_15_final_freeze_20260518T001715Z",
+    "core09": "evidencias_trisla_core_exec_09_core_track_final_freeze_20260518T012114Z",
+    "ncm06": "evidencias_trisla_ncm_exec_06_ncm_track_final_freeze_20260518T022058Z",
+    "life06": "evidencias_trisla_life_exec_06_lifecycle_track_final_freeze_20260518T024647Z"
+  },
+  "orch_phases": [
+    [
+      "01",
+      "evidencias_trisla_orch_exec_01_orchestration_causality_audit_20260518T025032Z",
+      "orchestration_causality_audit_summary.json",
+      "ORCHESTRATION_CAUSALITY_CLASSIFIED"
+    ],
+    [
+      "02",
+      "evidencias_trisla_orch_exec_02_orchestration_runtime_mapping_20260518T025739Z",
+      "orchestration_runtime_mapping_summary.json",
+      "ORCHESTRATION_GAPS_CLASSIFIED"
+    ],
+    [
+      "03",
+      "evidencias_trisla_orch_exec_03_orchestration_state_and_feedback_validation_20260518T030223Z",
+      "orchestration_state_and_feedback_validation_summary.json",
+      "ORCHESTRATION_RUNTIME_CAUSALITY_CLASSIFIED"
+    ]
+  ],
+  "track": {
+    "phases": [
+      {
+        "phase": "ORCH-EXEC-01",
+        "pack": "evidencias_trisla_orch_exec_01_orchestration_causality_audit_20260518T025032Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "ORCHESTRATION_CAUSALITY_CLASSIFIED",
+        "science": "REVIEWER_SAFE_ORCHESTRATION_CLAIMS_READY",
+        "causal": null
+      },
+      {
+        "phase": "ORCH-EXEC-02",
+        "pack": "evidencias_trisla_orch_exec_02_orchestration_runtime_mapping_20260518T025739Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "ORCHESTRATION_GAPS_CLASSIFIED",
+        "science": "REVIEWER_SAFE_ORCHESTRATION_RUNTIME_MODEL_READY",
+        "causal": null
+      },
+      {
+        "phase": "ORCH-EXEC-03",
+        "pack": "evidencias_trisla_orch_exec_03_orchestration_state_and_feedback_validation_20260518T030223Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "ORCHESTRATION_RUNTIME_CAUSALITY_CLASSIFIED",
+        "science": "REVIEWER_SAFE_ORCHESTRATION_FEEDBACK_MODEL_READY",
+        "causal": false
+      }
+    ],
+    "all_packs_present": true,
+    "all_summaries_present": true,
+    "scripts_present": true,
+    "upstream_present": true
+  },
+  "consistency_notes": [
+    "ORCH-01: orchestration detached / not causal \u2014 consistent with ORCH-03 Q8=false",
+    "ORCH-02: admission-before-orchestration (hop 3\u21924) \u2014 not contradicted by ORCH-01/03",
+    "ORCH-03: no feedback paths validated \u2014 aligns with LIMIT-ORCH-01..06",
+    "Phase 5 ORCH-03: ORCHESTRATION_RUNTIME_NOT_CAUSAL_CONFIRMED \u2014 frozen at track level",
+    "No hidden causality: DE main does not invoke execute_slice_creation; Portal owns instantiate",
+    "NCM latency partial claim preserved; no pressure/feasibility orchestration coupling introduced"
+  ],
+  "proven_claims": [
+    "Orchestration persistence via TriSLAReservation + NetworkSliceInstance CRDs (10k+ / 9k+)",
+    "NASP runtime authority: instantiate, capacity ledger, NSI watch, 60s reconciler",
+    "Reconciliation continuity (TTL expire PENDING + orphan mark; detached from admission)",
+    "Admission-before-orchestration (DE score/admission precedes Portal\u2192NASP instantiate)",
+    "Detached orchestration runtime (no feedback to DE, score, pressure, feasibility, reevaluation)",
+    "Portal synchronous orchestration executor (POST /api/v1/nsi/instantiate after ACCEPT)",
+    "DE orchestration authority semantic-only (orchestration_intent metadata; does not execute NASP)"
+  ],
+  "partial_claims": [
+    "Governance continuity (DE semantic + portal lifecycle timestamps; not closed-loop)",
+    "Operational continuity under concurrent submits (HTTP latency contention; NCM-ORCH-01)",
+    "NSI phase observability (CRD states; weak coupling to TriSLA score)"
+  ],
+  "unsupported_claims": [
+    "Orchestration-driven admission recomputation",
+    "Orchestration-driven resource_pressure or feasibility",
+    "Orchestration-driven score_mode triplets",
+    "Orchestration-driven continuous reevaluation",
+    "Closed-loop orchestration causality",
+    "Autonomous orchestration causality",
+    "NSI reconciliation feeding DE decision engine"
+  ],
+  "forbidden_claims": [
+    "orchestration-driven admission",
+    "orchestration-driven pressure",
+    "orchestration-driven score",
+    "orchestration-driven reevaluation",
+    "closed-loop orchestration",
+    "autonomous orchestration causality",
+    "runtime orchestration causality",
+    "reconciliation\u2192admission recomputation under frozen digest",
+    "synthetic orchestration callbacks"
+  ],
+  "limits": [
+    {
+      "id": "LIMIT-ORCH-01",
+      "limit": "no orchestration-to-DE callback",
+      "class": "architectural",
+      "type": "implementation_required"
+    },
+    {
+      "id": "LIMIT-ORCH-02",
+      "limit": "no orchestration-driven pressure",
+      "class": "frozen_invariant",
+      "type": "invariant"
+    },
+    {
+      "id": "LIMIT-ORCH-03",
+      "limit": "no orchestration-driven feasibility",
+      "class": "frozen_invariant",
+      "type": "invariant"
+    },
+    {
+      "id": "LIMIT-ORCH-04",
+      "limit": "no orchestration-driven score",
+      "class": "frozen_invariant",
+      "type": "invariant"
+    },
+    {
+      "id": "LIMIT-ORCH-05",
+      "limit": "no orchestration-driven reevaluation",
+      "class": "runtime_limitation",
+      "type": "future_work"
+    },
+    {
+      "id": "LIMIT-ORCH-06",
+      "limit": "no closed-loop orchestration causality",
+      "class": "forbidden_claim",
+      "type": "invariant"
+    }
+  ],
+  "cross_track": [
+    {
+      "track": "NAD",
+      "finding": "admission bands frozen; no NSI/CRD input at decision",
+      "orch_relation": "orchestration does not resolve NAD liminal gaps"
+    },
+    {
+      "track": "CORE",
+      "finding": "no core causal path; UPF-first insufficient",
+      "orch_relation": "orchestration\u2260transport pressure causality"
+    },
+    {
+      "track": "NCM",
+      "finding": "orchestration HTTP latency ~9\u00d7 under contention; pressure_max not orch-driven",
+      "orch_relation": "operational latency only"
+    },
+    {
+      "track": "LIFE",
+      "finding": "reconciliation detached; no continuous reevaluation",
+      "orch_relation": "NASP reconcile\u2260lifecycle closed-loop"
+    },
+    {
+      "track": "ORCH",
+      "finding": "detached operational+reconciliatory+persistent; not causal",
+      "orch_relation": "track complete at freeze"
+    }
+  ],
+  "future_work": {
+    "implementation_required": [
+      "orchestration\u2192DE callbacks (NSI/reconcile events)",
+      "orchestration pressure coupling (if ever desired under new digest)",
+      "orchestration reevaluation loop (beyond SLA-Agent HTTP revalidate)",
+      "orchestration-driven admission recomputation hook"
+    ],
+    "research_required": [
+      "orchestration causality under frozen TriSLA math (likely negative)",
+      "orchestration-driven admission (contradicts current ordering proof)"
+    ],
+    "next_track_options": [
+      "FUTURE_RUNTIME_TRACK",
+      "IMPLEMENTATION_TRACK",
+      "PAPER_CONSOLIDATION_TRACK"
+    ],
+    "forbidden_under_frozen_digest": [
+      "fake orchestration / synthetic callbacks",
+      "guard/threshold/formula weakening to simulate causality",
+      "claiming closed-loop orchestration without new wired paths"
+    ]
+  },
+  "mandatory_questions": {
+    "Q1_orch_exec_consistent": true,
+    "Q2_regression": false,
+    "Q3_orchestration_runtime_persistent": true,
+    "Q3_detail": "CRD cluster state + reconciler loops",
+    "Q4_orchestration_runtime_causal": false,
+    "Q5_orchestration_driven_pressure": false,
+    "Q6_orchestration_driven_reevaluation": false,
+    "Q7_orchestration_to_DE_callbacks": false,
+    "Q8_reviewer_safe": [
+      "Orchestration persistence via TriSLAReservation + NetworkSliceInstance CRDs (10k+ / 9k+)",
+      "NASP runtime authority: instantiate, capacity ledger, NSI watch, 60s reconciler",
+      "Reconciliation continuity (TTL expire PENDING + orphan mark; detached from admission)",
+      "Admission-before-orchestration (DE score/admission precedes Portal\u2192NASP instantiate)",
+      "Detached orchestration runtime (no feedback to DE, score, pressure, feasibility, reevaluation)",
+      "Portal synchronous orchestration executor (POST /api/v1/nsi/instantiate after ACCEPT)",
+      "DE orchestration authority semantic-only (orchestration_intent metadata; does not execute NASP)"
+    ],
+    "Q9_forbidden": [
+      "orchestration-driven admission",
+      "orchestration-driven pressure",
+      "orchestration-driven score",
+      "orchestration-driven reevaluation",
+      "closed-loop orchestration",
+      "autonomous orchestration causality",
+      "runtime orchestration causality",
+      "reconciliation\u2192admission recomputation under frozen digest",
+      "synthetic orchestration callbacks"
+    ],
+    "Q10_orch_exec_officially_closed": true,
+    "Q10_next_tracks": [
+      "FUTURE_RUNTIME_TRACK",
+      "IMPLEMENTATION_TRACK",
+      "PAPER_CONSOLIDATION_TRACK"
+    ]
+  },
+  "phase_verdicts": {
+    "phase_1": "ORCH_TRACK_INTEGRITY_VALIDATED",
+    "phase_2": "ORCHESTRATION_MODEL_CONSISTENT",
+    "phase_3": "REVIEWER_SAFE_ORCHESTRATION_CLAIMS_FROZEN",
+    "phase_4": "REVIEWER_SAFE_ORCHESTRATION_RUNTIME_MODEL_FROZEN",
+    "phase_5": "ORCHESTRATION_LIMITATIONS_FROZEN",
+    "phase_6": "ORCHESTRATION_CROSS_TRACK_ALIGNMENT_CONFIRMED",
+    "phase_7": "FUTURE_WORK_CLASSIFIED",
+    "phase_8": "ORCH_EXEC_TRACK_FROZEN",
+    "phase_9": "ORCH_EXEC_TRACK_FROZEN"
+  },
+  "next_tracks": [
+    "FUTURE_RUNTIME_TRACK",
+    "IMPLEMENTATION_TRACK",
+    "PAPER_CONSOLIDATION_TRACK"
+  ],
+  "approval_required": "ORCH_EXEC_04_APPROVED",
+  "hard_stop": true,
+  "global_program_state": "ORCH_EXEC_FINAL_FREEZE_PENDING_APPROVAL",
+  "decision_engine_image": "ghcr.io/abelisboa/trisla-decision-engine@sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6",
+  "runtime_freeze_ok": true
+}

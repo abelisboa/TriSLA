@@ -1,0 +1,21 @@
+{{- if and .Values.naspAdapter.enabled .Values.naspAdapter.metricsService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trisla.name" . }}-nasp-adapter-metrics
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: trisla-nasp-adapter-metrics
+    {{- include "trisla.labels" (dict "Values" .Values "Release" .Release "Chart" .Chart "component" "nasp-adapter") | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics
+      port: {{ .Values.naspAdapter.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    app: trisla-nasp-adapter
+    app.kubernetes.io/name: {{ include "trisla.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

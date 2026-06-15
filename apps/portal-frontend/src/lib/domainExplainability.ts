@@ -24,25 +24,41 @@ const METRIC_LABELS: Record<string, string> = {
   jitter_ms: "Jitter",
   reliability: "Reliability",
   cpu_utilization: "CPU Utilization",
+  prb_utilization: "PRB Utilization",
   packet_loss: "Packet Loss",
+  packet_loss_pct: "Packet Loss",
   bandwidth: "Bandwidth",
+  bandwidth_mbps: "Bandwidth",
   throughput_dl_mbps: "Throughput DL",
   throughput_ul_mbps: "Throughput UL",
   cpu: "CPU",
   memory: "Memory",
   availability: "Availability",
+  availability_pct: "Availability",
   attach_success_rate: "Attach Success Rate",
   event_throughput: "Event Throughput",
   session_setup_time: "Session Setup Time",
 };
+
+/** Metrics stored as fractional utilization (0–1) but displayed with % suffix. */
+const FRACTIONAL_PERCENT_METRICS = new Set(["cpu", "memory", "cpu_utilization"]);
 
 export function parseDomainExplainability(raw: unknown): DomainExplainabilityPayload | undefined {
   if (!raw || typeof raw !== "object") return undefined;
   return raw as DomainExplainabilityPayload;
 }
 
-export function metricDisplayName(metric: string | undefined): string {
+export function metricDisplayName(
+  metric: string | undefined,
+  row?: Pick<DomainMetricExplainability, "measurement_note">,
+): string {
   if (!metric) return "Metric";
+  if (
+    metric === "cpu_utilization" &&
+    row?.measurement_note?.includes("PRB")
+  ) {
+    return "PRB Utilization";
+  }
   return METRIC_LABELS[metric] ?? metric.replace(/_/g, " ");
 }
 
@@ -62,7 +78,17 @@ export function unitForMetric(metric: string | undefined): string {
 export function formatMetricValue(value: number | null | undefined, metric?: string): string {
   if (value === null || value === undefined) return "Not available";
   const unit = unitForMetric(metric);
-  const rounded = Number.isInteger(value) ? String(value) : value.toFixed(2);
+  let display = value;
+  const m = (metric || "").toLowerCase();
+  if (
+    unit === "%" &&
+    FRACTIONAL_PERCENT_METRICS.has(m) &&
+    Math.abs(value) >= 0 &&
+    Math.abs(value) < 1.5
+  ) {
+    display = value * 100;
+  }
+  const rounded = Number.isInteger(display) ? String(display) : display.toFixed(2);
   return unit ? `${rounded} ${unit}` : rounded;
 }
 

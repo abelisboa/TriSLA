@@ -1,0 +1,362 @@
+PROMPT_TRISLA_ACT_TN_002_LIVE_IMPL
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+COM BUILD
+
+COM DEPLOY
+
+COM TESTES
+
+COM ROLLBACK
+
+SEM EXECUTAR INTENT REAL EM PRODUÇÃO
+
+SEM CRIAR FLOWS REAIS
+
+SEM MUTAÇÃO DE TOPOLOGIA
+
+====================================================
+OBJETIVO
+========
+
+Implementar toda a infraestrutura necessária para ACT-TN-002 LIVE.
+
+NÃO executar LIVE.
+
+NÃO criar intents reais.
+
+NÃO modificar rede.
+
+Objetivo:
+
+sair de:
+
+READY_FOR_ACT_TN_002_LIVE = NO
+
+para:
+
+READY_FOR_ACT_TN_002_LIVE = YES
+
+====================================================
+BASELINE
+========
+
+O1C–O5C = FROZEN
+
+O6–O7D = FROZEN
+
+O8C-W3 = APPROVED
+
+O9A/O9B/O9C = APPROVED
+
+ACT-TN-002 PRE-FLIGHT = APPROVED
+
+====================================================
+BLOQUEADORES IDENTIFICADOS
+==========================
+
+CRITICAL-1
+
+No ONOS DELETE client
+
+ROLLBACK_READY = NO
+
+CRITICAL-2
+
+No ONOS POST client
+
+INTENT_CREATION_READY = NO
+
+HIGH-1
+
+Topology EMPTY
+
+devices=0
+
+links=0
+
+hosts=0
+
+flows=0
+
+HIGH-2
+
+Intent 0x288 FAILED
+
+PathNotFoundException
+
+====================================================
+FASE 1 — ONOS CLIENT IMPLEMENTATION
+===================================
+
+Implementar:
+
+onos_post.py
+
+onos_delete.py
+
+Funcionalidades:
+
+POST intent
+
+GET intent
+
+DELETE intent
+
+Timeouts
+
+Retries
+
+Audit logging
+
+Gerar:
+
+analysis/tn002_live_impl_onos_client.md
+
+====================================================
+FASE 2 — EXECUTION PATH
+=======================
+
+Implementar:
+
+execute_tn002_live()
+
+em:
+
+service.py
+
+Fluxo:
+
+AUTH_OPERATOR
+↓
+EXECUTING
+↓
+VERIFY
+↓
+ROLLBACK
+↓
+SUCCEEDED
+
+Gerar:
+
+analysis/tn002_live_impl_execution_path.md
+
+====================================================
+FASE 3 — FEATURE FLAGS
+======================
+
+Adicionar:
+
+TN002_LIVE_ENABLED=false
+
+TN002_LIVE_DRYRUN_FALLBACK=true
+
+Garantir:
+
+default = OFF
+
+Gerar:
+
+analysis/tn002_live_impl_flags.md
+
+====================================================
+FASE 4 — ROLLBACK ENGINE
+========================
+
+Implementar:
+
+delete_intent()
+
+rollback_reference
+
+rollback_status
+
+rollback_timestamp
+
+Gerar:
+
+analysis/tn002_live_impl_rollback.md
+
+====================================================
+FASE 5 — TOPOLOGY READINESS CHECK
+=================================
+
+Implementar:
+
+before execute:
+
+devices > 0
+
+links > 0
+
+hosts > 0
+
+Caso contrário:
+
+AUTH_DENIED
+
+TOPOLOGY_NOT_READY
+
+Gerar:
+
+analysis/tn002_live_impl_topology_gate.md
+
+====================================================
+FASE 6 — FAILED INTENT CLEANUP
+==============================
+
+Auditar:
+
+0x288
+
+Caso permitido:
+
+remover intent FAILED
+
+Registrar:
+
+cleanup evidence
+
+Gerar:
+
+analysis/tn002_live_impl_failed_intent_cleanup.md
+
+====================================================
+FASE 7 — UNIT TESTS
+===================
+
+Validar:
+
+POST
+
+DELETE
+
+ROLLBACK
+
+TIMEOUT
+
+AUTH_OPERATOR
+
+AUTH_DENIED
+
+TOPOLOGY_NOT_READY
+
+Objetivo:
+
+100%
+
+Gerar:
+
+analysis/tn002_live_impl_tests.md
+
+====================================================
+FASE 8 — BUILD
+==============
+
+Build apenas:
+
+sla-agent-layer
+
+Executar via:
+
+ssh node006
+
+Digest obrigatório.
+
+Gerar:
+
+analysis/tn002_live_impl_build.md
+
+====================================================
+FASE 9 — DEPLOY
+===============
+
+Deploy:
+
+TN002_LIVE_ENABLED=false
+
+Obrigatório.
+
+Nenhuma execução LIVE.
+
+Gerar:
+
+analysis/tn002_live_impl_deploy.md
+
+====================================================
+FASE 10 — RUNTIME VALIDATION
+============================
+
+Validar:
+
+POST path disponível
+
+DELETE path disponível
+
+Rollback disponível
+
+Topology gate disponível
+
+Feature flag OFF
+
+Nenhuma mutação ONOS
+
+Gerar:
+
+analysis/tn002_live_impl_runtime_validation.md
+
+====================================================
+FASE 11 — EXECUTIVE VERDICT
+===========================
+
+Emitir:
+
+ONOS_POST_IMPLEMENTED = YES/NO
+
+ONOS_DELETE_IMPLEMENTED = YES/NO
+
+ROLLBACK_READY = YES/NO
+
+TOPOLOGY_GATE_READY = YES/NO
+
+FEATURE_FLAG_SAFE = YES/NO
+
+READY_FOR_ACT_TN_002_LIVE = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+EVIDENCE PACK
+=============
+
+Gerar:
+
+evidencias_trisla_act_tn_002_live_impl_<timestamp>
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+CRITÉRIO DE SUCESSO
+===================
+
+Nenhum intent criado.
+
+Nenhum flow instalado.
+
+Nenhuma mutação ONOS.
+
+Apenas infraestrutura pronta.
+
+Ao final:
+
+READY_FOR_ACT_TN_002_LIVE = YES

@@ -1,0 +1,102 @@
+PROMPT_TRISLA_EVIDENCE_AUDIT_V2
+
+MISSÃO
+Transformar o estado atual do TriSLA em um conjunto de evidências científicas
+robustas, rastreáveis e publicáveis, alinhadas com a auditoria existente e
+sem qualquer regressão arquitetural ou experimental.
+
+REGRAS ABSOLUTAS
+- NÃO modificar arquitetura
+- NÃO alterar modelo matemático
+- NÃO simular dados
+- NÃO inventar métricas
+- USAR apenas execução real e dados reais
+- NÃO reutilizar execuções inconsistentes
+- VALIDAR consistência entre CSV, figuras e tabelas
+- TODA evidência deve ser rastreável a execução real
+
+OBJETIVO
+Gerar evidência pública suficiente para:
+- sustentar superioridade do TriSLA
+- alinhar artigo com auditoria técnica
+- suportar submissão IEEE
+
+FASE 1 — VALIDAÇÃO DO DATASET
+- Consolidar dataset final único
+- Validar:
+  - número de amostras consistente
+  - slices consistentes
+  - decisões consistentes
+- Gerar:
+  - dataset_final_validado.csv
+
+FASE 2 — MÉTRICAS MULTIDOMÍNIO
+Para cada requisição:
+- extrair métricas:
+  - RAN (PRB)
+  - Transport (latency/jitter)
+  - Core (CPU/memory)
+- calcular:
+  - correlação com decisão
+- gerar:
+  - multidomain_correlation.csv
+
+FASE 3 — DIFERENCIAÇÃO POR SLICE
+Comparar:
+- URLLC vs eMBB vs mMTC
+
+Gerar:
+- média de score por slice
+- variância
+- sensibilidade por métrica
+
+FASE 4 — EXPLICABILIDADE
+Extrair:
+- feature importance global
+- feature importance por slice
+
+Gerar:
+- xai_feature_ranking.csv
+
+FASE 5 — GOVERNANÇA
+Para cada decisão:
+- verificar:
+  - presença de registro
+  - consistência de metadados
+
+Gerar:
+- governance_trace.csv
+
+FASE 6 — VIABILIDADE OPERACIONAL
+Para decisões ACCEPT:
+- verificar:
+  - execução pipeline completa
+  - evidência operacional
+
+Gerar:
+- operational_validation.csv
+
+FASE 7 — FIGURAS IEEE
+Gerar:
+- score vs PRB
+- score vs latency
+- distribuição por slice
+- ranking XAI
+- multidomain timeseries
+
+PADRÃO:
+- alta resolução
+- sem ruído
+- interpretável
+
+FASE 8 — MATRIZ DE SUPERIORIDADE
+Construir tabela:
+
+lacuna estado da arte | capacidade TriSLA | métrica | evidência
+
+SAÍDA FINAL
+- dataset validado
+- métricas consolidadas
+- figuras prontas IEEE
+- tabela de superioridade
+- validação completa para paper

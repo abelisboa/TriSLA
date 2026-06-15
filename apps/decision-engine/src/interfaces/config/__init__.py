@@ -1,0 +1,1 @@
+"""Configuração da Interface Layer."""

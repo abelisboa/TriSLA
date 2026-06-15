@@ -1,0 +1,493 @@
+PROMPT_TRISLA_E2E_O1A_NSSF_DISCOVERY_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+SEM DEPLOY
+SEM ALTERAÇÃO DE CÓDIGO
+SEM COMMIT
+SEM PUSH
+
+OBJETIVO
+
+Executar auditoria profunda do NSSF real existente no ambiente Free5GC para determinar exatamente:
+
+* quais APIs estão disponíveis;
+* quais payloads são aceitos;
+* como o AMF consulta o NSSF;
+* quais estruturas são retornadas;
+* como a TriSLA poderá integrar-se futuramente através do NSSF Adapter.
+
+IMPORTANTE
+
+O objetivo NÃO é implementar integração.
+
+O objetivo NÃO é modificar Free5GC.
+
+O objetivo NÃO é modificar TriSLA.
+
+O objetivo é descobrir, provar e documentar o contrato real do NSSF existente no ambiente.
+
+Toda conclusão deve ser baseada em:
+
+* runtime
+* APIs
+* logs
+* configs
+* código Free5GC instalado
+
+Nunca em documentação externa.
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+Estado atual:
+
+CURRENT_ORCHESTRATION_LEVEL =
+TRISLA_NSI_NSSI
+
+SLICE_SERVICE_BINDING_APPROVED =
+YES
+
+Runtime:
+
+NSSF Running
+
+AMF Running
+
+SMF Running
+
+UPF Running
+
+UERANSIM Running
+
+ONOS Running
+
+TriSLA ainda NÃO integrada ao NSSF.
+
+====================================================
+FASE 1 — INVENTÁRIO DO NSSF
+===========================
+
+Identificar:
+
+pod
+
+service
+
+endpoints
+
+container image
+
+versão
+
+configmaps
+
+secrets
+
+ports
+
+protocolos
+
+Executar:
+
+kubectl get pods -n ns-1274485
+
+kubectl get svc -n ns-1274485
+
+kubectl describe pod <nssf>
+
+kubectl get cm -n ns-1274485
+
+Gerar:
+
+analysis/nssf_inventory.md
+
+====================================================
+FASE 2 — DESCOBERTA DE APIs
+===========================
+
+Identificar:
+
+Nnssf_NSSelection
+
+Nnssf_NSSAIAvailability
+
+ou equivalentes
+
+Descobrir:
+
+URI
+
+método
+
+payload
+
+headers
+
+auth
+
+response
+
+Executar:
+
+curl
+
+openapi
+
+swagger
+
+config
+
+logs
+
+Gerar:
+
+analysis/nssf_api_discovery.md
+
+====================================================
+FASE 3 — ANÁLISE DAS CONFIGURAÇÕES
+==================================
+
+Auditar:
+
+NSSF config
+
+NSSAI
+
+S-NSSAI
+
+slice definitions
+
+DNN
+
+TAI
+
+PLMN
+
+Mapear:
+
+sst
+
+sd
+
+slice list
+
+availability
+
+Gerar:
+
+analysis/nssf_configuration_model.md
+
+====================================================
+FASE 4 — AUDITORIA DO AMF
+=========================
+
+Determinar exatamente:
+
+como o AMF consulta o NSSF.
+
+Procurar:
+
+logs
+
+configs
+
+requests
+
+service discovery
+
+NF discovery
+
+Executar:
+
+kubectl logs <amf>
+
+grep
+
+curl
+
+Verificar:
+
+request
+
+response
+
+URI
+
+payload
+
+headers
+
+Gerar:
+
+analysis/amf_nssf_interaction.md
+
+====================================================
+FASE 5 — TRAÇO COMPLETO DE SELEÇÃO
+==================================
+
+Executar auditoria do fluxo:
+
+UE
+↓
+gNB
+↓
+AMF
+↓
+NSSF
+
+Determinar:
+
+onde ocorre a seleção
+
+qual NSSAI é utilizado
+
+qual resposta retorna
+
+qual campo identifica o slice
+
+Gerar:
+
+analysis/nssf_selection_trace.md
+
+====================================================
+FASE 6 — CONTRATO REAL DO NSSF
+==============================
+
+Produzir modelo consolidado:
+
+Request
+
+Response
+
+Campos obrigatórios
+
+Campos opcionais
+
+NSSAI
+
+S-NSSAI
+
+DNN
+
+Allowed NSSAI
+
+Rejected NSSAI
+
+Gerar:
+
+analysis/nssf_contract_model.md
+
+====================================================
+FASE 7 — COMPATIBILIDADE COM TRISLA
+===================================
+
+Comparar:
+
+slice_service_binding
+
+↓
+
+sst
+
+sd
+
+dnn
+
+com:
+
+contrato real do NSSF
+
+Responder:
+
+Mapeamento direto possível?
+
+Transformação necessária?
+
+Campos faltantes?
+
+Campos excedentes?
+
+Gerar:
+
+analysis/trisla_nssf_compatibility.md
+
+====================================================
+FASE 8 — GAP ANALYSIS
+=====================
+
+Construir tabela:
+
+Campo TriSLA
+
+Campo NSSF
+
+Status
+
+Compatível
+
+Transformação
+
+Inexistente
+
+Exemplo:
+
+sst
+↓
+
+snssai.sst
+
+sd
+↓
+
+snssai.sd
+
+dnn
+↓
+
+dnn
+
+Gerar:
+
+analysis/nssf_gap_matrix.md
+
+====================================================
+FASE 9 — PROPOSTA DO NSSF ADAPTER
+=================================
+
+SEM IMPLEMENTAR.
+
+Definir:
+
+arquitetura
+
+payload
+
+API
+
+adapter boundaries
+
+cache
+
+fallback
+
+persistência
+
+metadata
+
+Proposta obrigatória:
+
+TriSLA
+↓
+slice_service_binding
+↓
+NSSF Adapter
+↓
+Nnssf_NSSelection
+↓
+NSSF
+
+Nunca:
+
+TriSLA
+↓
+AMF direto
+
+Gerar:
+
+analysis/nssf_adapter_design.md
+
+====================================================
+FASE 10 — RISCOS
+================
+
+Identificar:
+
+impactos
+
+dependências
+
+autenticação
+
+timeout
+
+cache
+
+consistência
+
+fallback
+
+rollback
+
+Gerar:
+
+analysis/nssf_risk_assessment.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/nssf_inventory.md
+
+analysis/nssf_api_discovery.md
+
+analysis/nssf_configuration_model.md
+
+analysis/amf_nssf_interaction.md
+
+analysis/nssf_selection_trace.md
+
+analysis/nssf_contract_model.md
+
+analysis/trisla_nssf_compatibility.md
+
+analysis/nssf_gap_matrix.md
+
+analysis/nssf_adapter_design.md
+
+analysis/nssf_risk_assessment.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+NSSF_API_DISCOVERED = YES/NO
+
+NSSF_CONTRACT_DISCOVERED = YES/NO
+
+AMF_NSSF_FLOW_DISCOVERED = YES/NO
+
+TRISLA_NSSF_COMPATIBLE = YES/NO
+
+DIRECT_MAPPING_POSSIBLE = YES/NO
+
+TRANSFORMATION_REQUIRED = YES/NO
+
+NSSF_ADAPTER_FEASIBLE = YES/NO
+
+RECOMMENDED_NEXT_PHASE =
+E2E-O1B_NSSF_CONTRACT_MODEL
+ou
+E2E-O1C_NSSF_ADAPTER_IMPLEMENTATION
+
+EVIDENCE_CONFIDENCE =
+HIGH
+
+IMPORTANTE
+
+Não implementar nada.
+
+Não alterar nada.
+
+Não integrar nada.
+
+Somente descobrir, provar e documentar o contrato real do NSSF existente no ambiente.

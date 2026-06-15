@@ -1,0 +1,559 @@
+PROMPT_TRISLA_ARCHITECTURE_CONSOLIDATION_AUDIT_V1
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Executar uma auditoria arquitetural consolidada da TriSLA após a conclusão e congelamento das fases:
+
+O1C
+O2C
+O3C
+O4C
+
+para determinar, com base exclusivamente nas evidências reais do ambiente, qual deve ser a próxima linha oficial de evolução da arquitetura.
+
+A auditoria deve responder:
+
+```text
+Qual domínio produz o maior ganho:
+
+científico
+arquitetural
+operacional
+3GPP
+O-RAN
+ETSI ZSM
+```
+
+e definir um roadmap oficial O5 → O10.
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO IMPLEMENTAR NADA
+
+NÃO MODIFICAR NADA
+
+NÃO ALTERAR:
+
+Decision Engine
+
+Portal
+
+Blockchain
+
+SLA-Agent
+
+NASP
+
+Free5GC
+
+UERANSIM
+
+ONOS
+
+Somente auditar.
+
+====================================================
+BASELINE CONGELADO
+==================
+
+O1C_FREEZE = APPROVED
+
+NSSF Selection
+
+Digest histórico:
+581bce2b...
+
+---
+
+O2C_FREEZE = APPROVED
+
+AMF/SMF Binding
+
+Digest histórico:
+7948f194...
+
+---
+
+O3C_FREEZE = APPROVED
+
+UPF Binding
+
+Digest histórico:
+d581fd71...
+
+---
+
+O4C_FREEZE = APPROVED
+
+RAN Binding
+
+Digest atual:
+
+a7e7d562baae88ae1010caf6d5e53fa18db15ee788bc746d07965219cecc7785
+
+====================================================
+ESTADO ARQUITETURAL ATUAL
+=========================
+
+TriSLA possui:
+
+NSI/NSSI
+↓
+Slice Service Binding
+↓
+NSSF Selection
+↓
+AMF Observation
+↓
+SMF Observation
+↓
+UPF Observation
+↓
+User Plane Correlation
+↓
+RAN Observation
+↓
+Access Correlation
+
+Status:
+
+ACCESS_CORRELATED
+
+====================================================
+FASE 1 — INVENTÁRIO CONSOLIDADO
+===============================
+
+Auditar todas as fases O1C–O4C.
+
+Construir:
+
+analysis/current_architecture_inventory.md
+
+Mapear:
+
+componentes
+
+bindings
+
+annotations
+
+feature flags
+
+correlation chain
+
+====================================================
+FASE 2 — MATRIZ DE CAPACIDADES
+==============================
+
+Construir:
+
+analysis/capability_matrix.md
+
+Responder:
+
+o que a TriSLA já faz hoje.
+
+Exemplo:
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+ONOS
+
+O-RAN
+
+SLA-Agent
+
+Observability
+
+Closed Loop
+
+====================================================
+FASE 3 — AUDITORIA TRANSPORTE
+=============================
+
+Reavaliar:
+
+ONOS
+
+nasp-transport
+
+transport probes
+
+RTT
+
+latency
+
+jitter
+
+intent model
+
+transport topology
+
+Responder:
+
+quanto do domínio Transporte já está operacional.
+
+Gerar:
+
+analysis/transport_domain_audit.md
+
+====================================================
+FASE 4 — AUDITORIA O-RAN
+========================
+
+Auditar:
+
+SMO
+
+O1
+
+A1
+
+E2
+
+Near-RT RIC
+
+Non-RT RIC
+
+Responder:
+
+o que existe.
+
+o que é apenas conceitual.
+
+o que pode ser implementado.
+
+Gerar:
+
+analysis/oran_domain_audit.md
+
+====================================================
+FASE 5 — AUDITORIA SLA-AGENT
+============================
+
+Auditar:
+
+SLA-Agent
+
+RAN Agent
+
+Core Agent
+
+Transport Agent
+
+closed-loop
+
+runtime actions
+
+simulation mode
+
+Responder:
+
+o que é observação.
+
+o que é ação real.
+
+o que ainda falta.
+
+Gerar:
+
+analysis/sla_agent_domain_audit.md
+
+====================================================
+FASE 6 — AUDITORIA ETSI ZSM
+===========================
+
+Mapear:
+
+Service Assurance
+
+Closed Loop
+
+Automation
+
+Governance
+
+Cross-domain orchestration
+
+Responder:
+
+qual domínio aproxima mais a TriSLA do ETSI ZSM.
+
+Gerar:
+
+analysis/zsm_alignment_audit.md
+
+====================================================
+FASE 7 — AUDITORIA 3GPP
+=======================
+
+Mapear aderência atual:
+
+23.501
+
+23.502
+
+28.541
+
+28.533
+
+28.550
+
+29.520
+
+Responder:
+
+qual domínio aumenta mais a aderência.
+
+Gerar:
+
+analysis/threegpp_alignment_audit.md
+
+====================================================
+FASE 8 — AUDITORIA CIENTÍFICA
+=============================
+
+Avaliar impacto para:
+
+Dissertação
+
+Artigo IEEE
+
+Originalidade
+
+Contribuição científica
+
+Reprodutibilidade
+
+Responder:
+
+qual domínio gera maior contribuição científica.
+
+Gerar:
+
+analysis/scientific_value_audit.md
+
+====================================================
+FASE 9 — PRIORIZAÇÃO O5
+=======================
+
+Comparar:
+
+OPÇÃO A
+
+Transport Binding
+
+---
+
+OPÇÃO B
+
+SLA-Agent Runtime Actions
+
+---
+
+OPÇÃO C
+
+O-RAN Integration
+
+---
+
+OPÇÃO D
+
+Observability Expansion
+
+---
+
+OPÇÃO E
+
+Outra evolução identificada
+
+Construir:
+
+analysis/o5_prioritization_matrix.md
+
+====================================================
+FASE 10 — ROADMAP O5 → O10
+==========================
+
+Definir roadmap oficial.
+
+Exemplo:
+
+O5
+
+...
+
+O6
+
+...
+
+O7
+
+...
+
+O8
+
+...
+
+O9
+
+...
+
+O10
+
+...
+
+Cada fase deve conter:
+
+objetivo
+
+ganho arquitetural
+
+ganho científico
+
+dependências
+
+risco
+
+Gerar:
+
+analysis/official_roadmap_o5_o10.md
+
+====================================================
+FASE 11 — GAP MATRIX FINAL
+==========================
+
+Construir:
+
+analysis/final_gap_matrix.md
+
+Responder:
+
+o que falta para:
+
+TriSLA Full Multidomain
+
+TriSLA O-RAN
+
+TriSLA ZSM
+
+TriSLA Closed Loop
+
+====================================================
+FASE 12 — VEREDITO EXECUTIVO
+============================
+
+Produzir:
+
+analysis/executive_recommendation.md
+
+Responder objetivamente:
+
+```text
+QUAL DEVE SER A PRÓXIMA FASE OFICIAL?
+```
+
+e justificar com base em evidências.
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/current_architecture_inventory.md
+
+analysis/capability_matrix.md
+
+analysis/transport_domain_audit.md
+
+analysis/oran_domain_audit.md
+
+analysis/sla_agent_domain_audit.md
+
+analysis/zsm_alignment_audit.md
+
+analysis/threegpp_alignment_audit.md
+
+analysis/scientific_value_audit.md
+
+analysis/o5_prioritization_matrix.md
+
+analysis/official_roadmap_o5_o10.md
+
+analysis/final_gap_matrix.md
+
+analysis/executive_recommendation.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+CURRENT_ARCHITECTURE_STATUS = ...
+
+TRANSPORT_DOMAIN_MATURITY = ...
+
+ORAN_DOMAIN_MATURITY = ...
+
+SLA_AGENT_MATURITY = ...
+
+ZSM_ALIGNMENT_LEVEL = ...
+
+SCIENTIFIC_MATURITY = ...
+
+RECOMMENDED_O5 = ...
+
+RECOMMENDED_O6 = ...
+
+RECOMMENDED_O7 = ...
+
+RECOMMENDED_O8 = ...
+
+RECOMMENDED_O9 = ...
+
+RECOMMENDED_O10 = ...
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+RESULTADO ESPERADO
+==================
+
+Ao final da auditoria deve existir uma decisão arquitetural oficial e baseada em evidências para a evolução da TriSLA, evitando implementar funcionalidades que não tragam ganho mensurável para:
+
+* arquitetura
+* dissertação
+* artigo científico
+* alinhamento 3GPP
+* alinhamento O-RAN
+* alinhamento ETSI ZSM
+* operação multidomínio real

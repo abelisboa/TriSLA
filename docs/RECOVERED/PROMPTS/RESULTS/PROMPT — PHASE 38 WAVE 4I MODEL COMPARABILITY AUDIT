@@ -1,0 +1,207 @@
+# PROMPT — PHASE 38 WAVE 4I MODEL COMPARABILITY AUDIT
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 37 concluída
+* Wave 1 Freeze ativo
+* Wave 3A Freeze ativo
+* Wave 4 Freeze ativo
+
+Status:
+
+PHASE_38_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Determinar se ACTIVE e CANDIDATE são comparáveis sob a mesma métrica.
+
+Não executar shadow.
+
+Não executar replay.
+
+Não executar deploy.
+
+Não executar promoção.
+
+Não executar retraining.
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# Fontes obrigatórias
+
+evidencias_trisla_phase35_offline_replay_*
+
+evidencias_trisla_phase36_replay_analysis_*
+
+evidencias_trisla_phase37_model_divergence_*
+
+MODEL_REGISTRY_V1.json
+
+MODEL_PROMOTION_REGISTRY.json
+
+SHADOW_VALIDATION_REGISTRY.json
+
+---
+
+# Investigações obrigatórias
+
+C1
+
+Comparabilidade matemática
+
+regressor
+
+vs
+
+classificador multiclasses
+
+---
+
+C2
+
+Comparabilidade operacional
+
+---
+
+C3
+
+Comparabilidade de risco
+
+---
+
+C4
+
+Comparabilidade de confiança
+
+---
+
+C5
+
+Mapeamento
+
+risk_score
+
+↔
+
+P(ACCEPT)
+
+P(RENEG)
+
+P(REJECT)
+
+---
+
+C6
+
+Possibilidade de normalização
+
+sem alterar modelos
+
+---
+
+C7
+
+Definição de métrica válida de parity
+
+---
+
+# Produzir
+
+MODEL_COMPARABILITY_AUDIT.md
+
+RISK_MAPPING_ANALYSIS.md
+
+PARITY_METHODOLOGY_REPORT.md
+
+COMPARABILITY_MATRIX.json
+
+PROMOTION_GOVERNANCE_IMPACT.md
+
+---
+
+# Classificações obrigatórias
+
+COMPARABLE
+
+PARTIALLY_COMPARABLE
+
+NOT_COMPARABLE
+
+---
+
+# Critérios de aprovação
+
+MODEL_COMPARABILITY_ANALYZED = TRUE
+
+PARITY_METHODOLOGY_DEFINED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase38_model_comparability_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_38_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Runtime Shadow.
+
+Não iniciar Promotion.
+
+Não iniciar Retraining.
+
+Aguardar aprovação humana.

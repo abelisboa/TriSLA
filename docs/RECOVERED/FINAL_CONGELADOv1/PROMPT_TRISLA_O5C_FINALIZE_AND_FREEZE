@@ -1,0 +1,446 @@
+PROMPT_TRISLA_O5C_FINALIZE_AND_FREEZE
+
+MODO:
+CONTROLLED FINALIZATION
+
+OBJETIVO
+
+Finalizar formalmente a fase:
+
+O5C
+Transport Binding
+
+eliminando qualquer divergência entre:
+
+* Runtime
+* Git
+* Helm
+* Evidências
+
+e congelando o baseline oficial do domínio Transporte antes de iniciar qualquer evolução posterior.
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO implementar novas funcionalidades
+
+NÃO alterar:
+
+NSSF Binding
+
+AMF Binding
+
+SMF Binding
+
+UPF Binding
+
+RAN Binding
+
+Decision Engine
+
+Portal
+
+Blockchain
+
+SLA-Agent
+
+Free5GC
+
+UERANSIM
+
+ONOS
+
+Transporte
+
+Utilizar sempre:
+
+ssh node006
+
+Nunca:
+
+latest
+
+Nunca:
+
+ssh node1
+
+====================================================
+BASELINE O5C
+============
+
+TRANSPORT_BINDING_IMPLEMENTED = YES
+
+TRANSPORT_OBSERVED = YES
+
+TRANSPORT_CORRELATED = YES
+
+ONOS_REST_OBSERVED = YES
+
+RUNTIME_VALIDATION_APPROVED = YES
+
+Digest runtime aprovado:
+
+ghcr.io/abelisboa/trisla-nasp-adapter@sha256:bb1e44097a40f93257281eb9ed5b601b233cb0537e5bfe9935aa53b500d9a32e
+
+Rollback aprovado:
+
+ghcr.io/abelisboa/trisla-nasp-adapter@sha256:a7e7d562baae88ae1010caf6d5e53fa18db15ee788bc746d07965219cecc7785
+
+====================================================
+FASE 1 — DRIFT AUDIT
+====================
+
+Auditar:
+
+Git
+
+Helm
+
+Runtime
+
+Comparar:
+
+digest Git
+
+digest Helm
+
+digest Runtime
+
+Emitir:
+
+DRIFT = YES/NO
+
+Gerar:
+
+analysis/o5c_drift_audit.md
+
+====================================================
+FASE 2 — HELM ALIGNMENT
+=======================
+
+Atualizar exclusivamente:
+
+helm/trisla/values.yaml
+
+para refletir:
+
+sha256:bb1e44097a40f93257281eb9ed5b601b233cb0537e5bfe9935aa53b500d9a32e
+
+Nenhuma outra alteração.
+
+Gerar:
+
+analysis/o5c_helm_alignment.md
+
+====================================================
+FASE 3 — RBAC AUDIT
+===================
+
+Validar:
+
+apps/nasp-adapter/k8s/nasp-adapter-rbac.yaml
+
+helm/trisla/templates/nasp-adapter-rbac.yaml
+
+Confirmar:
+
+* trislareservations
+* pods
+* pods/log
+
+Validar runtime:
+
+kubectl auth can-i
+
+Gerar:
+
+analysis/o5c_rbac_validation.md
+
+====================================================
+FASE 4 — COMMIT CONTROLADO
+==========================
+
+Commit sugerido:
+
+chore(nasp): pin O5C transport binding digest and freeze baseline
+
+Registrar:
+
+hash
+
+arquivos alterados
+
+diff resumido
+
+Gerar:
+
+analysis/o5c_commit_validation.md
+
+====================================================
+FASE 5 — PUSH
+=============
+
+Executar push.
+
+Registrar:
+
+branch
+
+remote
+
+hash final
+
+Gerar:
+
+analysis/o5c_push_validation.md
+
+====================================================
+FASE 6 — RUNTIME REVALIDATION
+=============================
+
+Via:
+
+ssh node006
+
+Validar:
+
+deployment
+
+pod
+
+digest
+
+rollout
+
+Confirmar:
+
+runtime utiliza:
+
+sha256:bb1e44097a40f93257281eb9ed5b601b233cb0537e5bfe9935aa53b500d9a32e
+
+Gerar:
+
+analysis/o5c_runtime_revalidation.md
+
+====================================================
+FASE 7 — FUNCTIONAL REVALIDATION
+================================
+
+Executar:
+
+D1 URLLC
+
+D2 mMTC
+
+D6 eMBB
+
+Validar:
+
+ACCEPT
+
+COMMITTED
+
+OK_WITH_ASSURANCE
+
+TRANSPORT_OBSERVED
+
+TRANSPORT_CORRELATED
+
+Capturar:
+
+controller_health
+
+devices_count
+
+links_count
+
+flows_count
+
+intents_count
+
+failed_intents
+
+topology_state
+
+transport_binding_status
+
+====================================================
+FASE 8 — REGRESSION VALIDATION
+==============================
+
+Validar:
+
+Portal
+
+Grafana
+
+Decision Engine
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+ONOS Observation
+
+Blockchain
+
+SLA-Agent
+
+NSI
+
+NSSI
+
+Confirmar:
+
+SEM REGRESSÃO
+
+Gerar:
+
+analysis/o5c_regression_validation.md
+
+====================================================
+FASE 9 — FREEZE PACK
+====================
+
+Gerar:
+
+evidencias_trisla_o5c_final_freeze_<timestamp>
+
+Conteúdo:
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+Incluir referências:
+
+NSSF_CONTRACT_SSOT_V1.md
+
+AMF_SMF_CONTRACT_SSOT_V1.md
+
+UPF_CONTRACT_SSOT_V1.md
+
+RAN_CONTRACT_SSOT_V1.md
+
+TRANSPORT_CONTRACT_SSOT_V1.md
+
+====================================================
+FASE 10 — READINESS AUDIT
+=========================
+
+Checklist:
+
+O1C congelado?
+
+O2C congelado?
+
+O3C congelado?
+
+O4C congelado?
+
+O5C congelado?
+
+Git sincronizado?
+
+Helm sincronizado?
+
+Runtime sincronizado?
+
+Sem drift?
+
+Emitir:
+
+NEXT_PHASE_READY = YES/NO
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+HELM_ALIGNMENT_APPROVED = YES/NO
+
+RBAC_ALIGNMENT_APPROVED = YES/NO
+
+RUNTIME_ALIGNMENT_APPROVED = YES/NO
+
+O5C_FREEZE_COMPLETED = YES/NO
+
+DRIFT_ELIMINATED = YES/NO
+
+REPOSITORY_CLEAN = YES/NO
+
+NEXT_PHASE_READY = YES/NO
+
+CURRENT_ARCHITECTURE_STATUS = TRANSPORT_CORRELATED
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/o5c_drift_audit.md
+
+analysis/o5c_helm_alignment.md
+
+analysis/o5c_rbac_validation.md
+
+analysis/o5c_commit_validation.md
+
+analysis/o5c_push_validation.md
+
+analysis/o5c_runtime_revalidation.md
+
+analysis/o5c_functional_revalidation.md
+
+analysis/o5c_regression_validation.md
+
+analysis/final_verdict.md
+
+runtime/o5c_runtime_validation.json
+
+MANIFEST.json
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+NEXT_PHASE_READY = YES
+
+executar:
+
+ARCHITECTURE_EVOLUTION_AUDIT_O6
+
+para determinar a próxima evolução prioritária da TriSLA após a consolidação completa dos domínios:
+
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+TRANSPORT
+↓
+TRANSPORT_CORRELATED
+
+e definir oficialmente o roadmap O6 → O10 baseado em evidências reais e alinhamento 3GPP/O-RAN/ETSI ZSM.

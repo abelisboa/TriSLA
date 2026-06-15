@@ -1,0 +1,42 @@
+# ============================================================
+# PROMPT_CURSOR_TOP12_FIGURES_TRISLA_FINAL
+# ============================================================
+
+BASE="evidencias_resultados_trisla_final/figures_ieee_final_curated/selected"
+OUT="evidencias_resultados_trisla_final/figures_ieee_top12"
+
+mkdir -p ${OUT}
+
+# ============================================================
+# CORE DECISION
+# ============================================================
+
+cp ${BASE}/fig_01_fig_01_decision_boundary_plot_ieee.pdf ${OUT}/fig_01_decision_boundary.pdf
+cp ${BASE}/fig_03_fig_05_decision_transition_map_ieee.pdf ${OUT}/fig_02_transition_map.pdf
+cp ${BASE}/fig_20_fig_v3_02_roc_accept_vs_nonaccept.pdf ${OUT}/fig_03_roc_curve.pdf
+cp ${BASE}/fig_19_fig_v3_01_decision_score_ci95_by_class.pdf ${OUT}/fig_04_ci95_classes.pdf
+
+# ============================================================
+# RESOURCE RELATION
+# ============================================================
+
+cp ${BASE}/fig_05_fig_prb_lowess.pdf ${OUT}/fig_05_prb_lowess.pdf
+cp ${BASE}/fig_21_fig_v3_03_bootstrap_prb_vs_score.pdf ${OUT}/fig_06_prb_bootstrap.pdf
+cp ${BASE}/fig_08_fig_08_latency_vs_score_URLLC_ieee.pdf ${OUT}/fig_07_latency_urllc.pdf
+cp ${BASE}/fig_06_fig_latency_embb_lowess.pdf ${OUT}/fig_08_latency_embb.pdf
+
+# ============================================================
+# GLOBAL BEHAVIOR
+# ============================================================
+
+cp ${BASE}/fig_02_fig_04_tradeoff_multidimensional_contour_ieee.pdf ${OUT}/fig_09_tradeoff.pdf
+cp ${BASE}/fig_13_fig_14_multidomain_correlation_ieee.pdf ${OUT}/fig_10_correlation.pdf
+
+# ============================================================
+# SYSTEM VALIDATION
+# ============================================================
+
+cp ${BASE}/fig_17_fig_18_decision_vs_orchestration_consistency_ieee.pdf ${OUT}/fig_11_consistency.pdf
+cp ${BASE}/fig_14_fig_15_xai_factor_ranking_ieee.pdf ${OUT}/fig_12_xai_ranking.pdf
+
+echo "TOP 12 FIGURAS IEEE FINAL CRIADAS COM SUCESSO"

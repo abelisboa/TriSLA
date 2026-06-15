@@ -1,0 +1,468 @@
+PROMPT_TRISLA_O9A_SCIENTIFIC_EVIDENCE_AND_GRAFANA_VALUE_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM COMMIT
+
+SEM PUSH
+
+SEM ALTERAÇÃO DE DASHBOARDS
+
+SEM ALTERAÇÃO DE PROMETHEUS
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+====================================================
+OBJETIVO
+========
+
+Executar uma auditoria científica completa da TriSLA após a conclusão de:
+
+O1C → O8C-W3
+
+para determinar:
+
+1. Se as evidências atuais são suficientes para dissertação e publicação.
+
+2. Se os dashboards O7 demonstram todo o potencial científico da arquitetura.
+
+3. Quais métricas realmente comprovam:
+
+* SLA-aware orchestration
+* Multidomain awareness
+* Closed-loop automation
+* Governance
+* Explainability
+* Transport correlation
+* Runtime assurance
+
+4. Quais gráficos devem ser utilizados na dissertação.
+
+5. Quais gráficos devem ser utilizados no artigo científico.
+
+6. Quais lacunas ainda existem para atingir maior aderência:
+
+* 3GPP
+* O-RAN
+* ETSI ZSM
+
+====================================================
+BASELINE OBRIGATÓRIA
+====================
+
+O1C = FROZEN
+
+O2C = FROZEN
+
+O3C = FROZEN
+
+O4C = FROZEN
+
+O5C = FROZEN
+
+O6 = FROZEN
+
+O7A = FROZEN
+
+O7B = FROZEN
+
+O7C = FROZEN
+
+O7D = FROZEN
+
+O8A = APPROVED
+
+O8B = APPROVED
+
+O8C-W1 = APPROVED
+
+O8C-W2A = APPROVED
+
+O8C-W2B = APPROVED
+
+O8C-W2C = APPROVED
+
+O8C-W3 = APPROVED
+
+CURRENT_ARCHITECTURE_STATUS
+
+AUTHORIZED
++
+EXECUTED
++
+VERIFIED
++
+ROLLED_BACK
++
+TRANSPORT_CORRELATED
+
+====================================================
+EVIDÊNCIAS OBRIGATÓRIAS
+=======================
+
+Consultar obrigatoriamente:
+
+evidencias_trisla_o1c_final_freeze_*
+
+evidencias_trisla_o2c_final_freeze_*
+
+evidencias_trisla_o3c_final_freeze_*
+
+evidencias_trisla_o4c_final_freeze_*
+
+evidencias_trisla_o5c_final_freeze_*
+
+evidencias_trisla_o6_multidomain_metrics_export_*
+
+evidencias_trisla_o7a_grafana_prometheus_discovery_audit_*
+
+evidencias_trisla_o7b_observability_contract_model_*
+
+evidencias_trisla_o7c_prometheus_scrape_recording_rules_*
+
+evidencias_trisla_o7d_final_freeze_*
+
+evidencias_trisla_o8a_closed_loop_automation_audit_*
+
+evidencias_trisla_o8b_closed_loop_automation_contract_*
+
+evidencias_trisla_o8c_wave1_actuation_audit_*
+
+evidencias_trisla_o8c_w2a_governance_execution_scaffold_*
+
+evidencias_trisla_o8c_w2b_onos_intent_dryrun_*
+
+evidencias_trisla_o8c_w2c_controlled_domain_action_readiness_*
+
+evidencias_trisla_o8c_w3_act_orch_005_*
+
+====================================================
+FASE 1 — DASHBOARD INVENTORY
+============================
+
+Auditar:
+
+DB-ORCH-001
+
+DB-ASSUR-001
+
+DB-INTEL-001
+
+DB-GOV-001
+
+DB-RAN-001
+
+DB-LIFE-001
+
+Responder:
+
+Quais painéis possuem dados reais?
+
+Quais possuem NO DATA?
+
+Quais dependem de counters não ligados?
+
+Gerar:
+
+analysis/o9a_dashboard_inventory.md
+
+====================================================
+FASE 2 — PROMETHEUS COVERAGE
+============================
+
+Inventariar:
+
+todas métricas trisla_*
+
+Classificar:
+
+USED
+
+UNUSED
+
+PARTIAL
+
+Responder:
+
+quais métricas ainda não aparecem em dashboards.
+
+Gerar:
+
+analysis/o9a_prometheus_coverage.md
+
+====================================================
+FASE 3 — DOMAIN COVERAGE
+========================
+
+Avaliar cobertura visual:
+
+SEM-CSMF
+
+ML-NSMF
+
+BC-NSSMF
+
+Decision Engine
+
+SLA-Agent
+
+NASP Adapter
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+Governance
+
+Automation
+
+Gerar:
+
+analysis/o9a_domain_visibility_matrix.md
+
+====================================================
+FASE 4 — SCIENTIFIC KPI AUDIT
+=============================
+
+Avaliar se existem KPIs visíveis para:
+
+Admission Success
+
+Decision Score
+
+Decision Confidence
+
+Runtime Assurance
+
+Governance Compliance
+
+Automation Success
+
+Binding Progression
+
+Multidomain Correlation
+
+Intent Translation
+
+Explainability
+
+Gerar:
+
+analysis/o9a_scientific_kpi_audit.md
+
+====================================================
+FASE 5 — THESIS FIGURE SELECTION
+================================
+
+Selecionar os gráficos mais fortes para dissertação.
+
+Classificar:
+
+MANDATORY
+
+RECOMMENDED
+
+OPTIONAL
+
+Gerar:
+
+analysis/o9a_thesis_figures.md
+
+====================================================
+FASE 6 — PAPER FIGURE SELECTION
+===============================
+
+Selecionar figuras para artigo IEEE.
+
+Máximo:
+
+8 figuras
+
+Responder:
+
+quais possuem maior valor científico.
+
+Gerar:
+
+analysis/o9a_paper_figures.md
+
+====================================================
+FASE 7 — 3GPP ALIGNMENT AUDIT
+=============================
+
+Avaliar aderência real:
+
+TS 28.541
+
+TS 28.533
+
+NSMF
+
+NSSMF
+
+Network Slice Lifecycle
+
+Admission Management
+
+Closed Loop
+
+Gerar:
+
+analysis/o9a_3gpp_alignment.md
+
+====================================================
+FASE 8 — O-RAN ALIGNMENT AUDIT
+==============================
+
+Avaliar:
+
+SMO
+
+O1
+
+A1
+
+E2
+
+RIC
+
+xApps
+
+rApps
+
+Responder:
+
+o que existe
+
+o que falta
+
+o que é apenas conceitual
+
+Gerar:
+
+analysis/o9a_oran_alignment.md
+
+====================================================
+FASE 9 — ETSI ZSM ALIGNMENT AUDIT
+=================================
+
+Avaliar:
+
+Observe
+
+Analyze
+
+Decide
+
+Authorize
+
+Execute
+
+Verify
+
+Rollback
+
+Govern
+
+Gerar:
+
+analysis/o9a_zsm_alignment.md
+
+====================================================
+FASE 10 — GAP ANALYSIS
+======================
+
+Responder:
+
+O que falta para:
+
+3GPP HIGH
+
+O-RAN HIGH
+
+ETSI ZSM HIGH
+
+Scientific Package COMPLETE
+
+Gerar:
+
+analysis/o9a_gap_analysis.md
+
+====================================================
+FASE 11 — EXECUTIVE VERDICT
+===========================
+
+Responder:
+
+TriSLA está pronta para dissertação?
+
+TriSLA está pronta para artigo?
+
+Quais gráficos são obrigatórios?
+
+Qual o próximo passo prioritário:
+
+O9B
+
+ACT-TN-002 LIVE
+
+ou outra fase?
+
+Gerar:
+
+analysis/o9a_executive_verdict.md
+
+====================================================
+EVIDENCE PACK
+=============
+
+Gerar:
+
+evidencias_trisla_o9a_scientific_evidence_audit_<timestamp>
+
+analysis/
+
+runtime/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+THESIS_READY = YES/NO
+
+PAPER_READY = YES/NO
+
+SCIENTIFIC_VISIBILITY_COMPLETE = YES/NO
+
+PROMETHEUS_COVERAGE_COMPLETE = YES/NO
+
+GRAFANA_VALUE_MAXIMIZED = YES/NO
+
+THREE_GPP_ALIGNMENT = LOW/MEDIUM/HIGH
+
+ORAN_ALIGNMENT = LOW/MEDIUM/HIGH
+
+ETSI_ZSM_ALIGNMENT = LOW/MEDIUM/HIGH
+
+NEXT_PRIORITY_PHASE = <nome>
+
+EVIDENCE_CONFIDENCE = HIGH

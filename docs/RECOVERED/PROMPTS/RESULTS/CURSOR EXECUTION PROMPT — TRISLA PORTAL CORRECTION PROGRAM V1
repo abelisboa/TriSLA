@@ -1,0 +1,795 @@
+# CURSOR EXECUTION PROMPT — TRISLA PORTAL CORRECTION PROGRAM V1
+
+Você é o agente oficial responsável pela execução controlada das correções do Portal TriSLA.
+
+Sua autoridade é limitada aos documentos:
+
+```text
+TRISLA_PORTAL_CORRECTION_MASTER_GUIDE_V1.md
+
+evidencias_trisla_portal_consistency_audit_20260613T050000Z/
+```
+
+Não existe autorização para executar atividades fora deste escopo.
+
+---
+
+# MISSÃO
+
+Executar integralmente o programa de correção do Portal TriSLA definido no guia mestre, preservando:
+
+```text
+ARCHITECTURE = FROZEN
+
+RUNTIME_BASELINE = FROZEN
+
+SCIENTIFIC_BASELINE = FROZEN
+
+RESULTS_FREEZE_MAIN = FROZEN
+
+PHASE_47 = CONSOLIDATED
+
+NO_REGRESSION = MANDATORY
+```
+
+Objetivo:
+
+```text
+Eliminar inconsistências identificadas no Portal
+sem alterar comportamento científico,
+sem alterar runtime operacional
+e sem alterar decisões do TriSLA.
+```
+
+---
+
+# LEITURA OBRIGATÓRIA
+
+Antes de qualquer ação:
+
+Ler integralmente:
+
+```text
+TRISLA_PORTAL_CORRECTION_MASTER_GUIDE_V1.md
+```
+
+Consultar obrigatoriamente:
+
+```text
+MASTER_SSOT_POINTER.md
+
+TRISLA_MASTER_SSOT_RUNTIME_BASELINE_V1.md
+
+TRISLA_MASTER_RUNBOOK.md
+
+TRISLA_INFRA_SSOT.md
+
+TRISLA_FINAL_RUNTIME_BASELINE_Q1.md
+```
+
+Consultar evidências:
+
+```text
+evidencias_trisla_true_multidomain_runtime_20260517T031129Z
+
+evidencias_trisla_phase4_publication_consolidation_20260517T140548Z
+
+evidencias_trisla_phase6_ssot_controlled_execution_20260517T154849Z
+
+evidencias_multidomain_stress_campaign_v2_20260529T115740Z
+
+evidencias_trisla_portal_consistency_audit_20260613T050000Z
+```
+
+---
+
+# REGRA SUPREMA
+
+O Portal deve obedecer:
+
+```text
+PORTAL = VIEW
+```
+
+Logo:
+
+```text
+Portal NÃO calcula
+
+Portal NÃO infere
+
+Portal NÃO cria valores
+
+Portal NÃO gera defaults
+
+Portal NÃO reconstrói objetos
+
+Portal NÃO substitui payloads
+
+Portal NÃO usa template quando existir instância efetiva
+```
+
+Backend deve atuar apenas como transporte dos dados produzidos pelos serviços autorizados.
+
+---
+
+# EXECUÇÃO OBRIGATÓRIA POR FASE
+
+Executar rigorosamente:
+
+```text
+P0
+↓
+P1
+↓
+P2
+↓
+P3
+↓
+P4
+↓
+P5
+↓
+P6
+↓
+P7
+↓
+P8
+```
+
+Nunca pular fases.
+
+Nunca executar fases simultaneamente.
+
+Nunca iniciar a próxima fase sem aprovação humana.
+
+---
+
+# FASE P0
+
+Portal Correction Planning
+
+Entradas:
+
+```text
+TRISLA_PORTAL_CONSISTENCY_AUDIT.md
+
+PORTAL_CONSISTENCY_MATRIX.json
+
+INCONSISTENCY_REGISTER.json
+
+CORRECTION_PLAN_NO_REGRESSION.md
+```
+
+Gerar:
+
+```text
+PHASE_P0_CORRECTION_PLAN.md
+
+RISK_REGISTER.json
+
+ROLLBACK_PLAN.md
+
+TEST_PLAN.md
+```
+
+Executar:
+
+```text
+Read-only validation
+
+Impact assessment
+
+Risk review
+```
+
+Finalizar:
+
+```text
+PHASE_P0_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P1
+
+Remove Backend Default Injection
+
+Origem:
+
+```text
+INC-P01
+```
+
+Problema:
+
+```text
+Backend injeta:
+
+10ms
+100Mbps
+0.99999
+```
+
+quando o SEM não retorna parâmetros.
+
+Local:
+
+```text
+sla.py:565-587
+```
+
+Objetivo:
+
+```text
+Remover defaults inventados
+```
+
+Sem alterar:
+
+```text
+SEM-CSMF
+
+Decision Engine
+
+ML
+
+Runtime Logic
+```
+
+Testes obrigatórios:
+
+```text
+URLLC completo
+
+URLLC sem parâmetros
+
+Portal sem inventar valores
+```
+
+Gerar evidências.
+
+Finalizar:
+
+```text
+PHASE_P1_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P2
+
+Fix PNL Bridge Propagation
+
+Origem:
+
+```text
+INC-P04
+```
+
+Local:
+
+```text
+pnlSubmit.ts
+```
+
+Garantir propagação:
+
+```text
+latency
+
+throughput
+
+reliability
+
+availability
+
+jitter
+
+coverage
+
+device_density
+
+original_text
+```
+
+Regra:
+
+```text
+Não criar campos
+
+Não alterar payload
+
+Apenas preservar
+```
+
+Executar validações.
+
+Gerar evidências.
+
+Finalizar:
+
+```text
+PHASE_P2_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P3
+
+Decision Evidence Propagation
+
+Origem:
+
+```text
+INC-P02
+```
+
+Objetivo:
+
+Propagar até o Portal:
+
+```text
+decision_evidence
+
+decision_score
+
+decision_band
+
+policy_result
+
+decision_mode
+
+final_decision
+
+confidence_chain
+```
+
+Sem recalcular.
+
+Sem inferir.
+
+Sem alterar lógica do Decision Engine.
+
+Executar:
+
+```text
+ACCEPT
+
+REJECT
+
+hard_prb_gate
+```
+
+Gerar evidências.
+
+Finalizar:
+
+```text
+PHASE_P3_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P4
+
+Schema Alignment
+
+Origem:
+
+```text
+INC-P03
+```
+
+Locais:
+
+```text
+schemas/sla.py
+
+sla.py:1346
+```
+
+Objetivo:
+
+```text
+Alinhar schema
+```
+
+Sem alterar runtime.
+
+Executar:
+
+```text
+Schema validation
+
+API validation
+
+Portal validation
+
+Backward compatibility
+```
+
+Gerar evidências.
+
+Finalizar:
+
+```text
+PHASE_P4_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P5
+
+Remove Semantic Inference
+
+Origem:
+
+```text
+INC-P05
+```
+
+Local:
+
+```text
+admissionOperationalCache.ts
+```
+
+Objetivo:
+
+Eliminar:
+
+```text
+Passed
+
+Review
+```
+
+gerados localmente.
+
+Se backend não enviar:
+
+```text
+Not provided by backend
+```
+
+Executar validações.
+
+Gerar evidências.
+
+Finalizar:
+
+```text
+PHASE_P5_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P6
+
+Remove Renegotiation Hardcodes
+
+Origem:
+
+```text
+INC-P09
+```
+
+Local:
+
+```text
+RenegotiationProposalPanel.tsx
+```
+
+Eliminar:
+
+```text
+eMBB
+
+5ms
+```
+
+hardcoded.
+
+Portal deve renderizar apenas payload.
+
+Executar validações.
+
+Gerar evidências.
+
+Finalizar:
+
+```text
+PHASE_P6_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P7
+
+Full Regression Validation
+
+Executar:
+
+```text
+Interpret Preview
+
+Decision
+
+Service Profile
+
+Explainability
+
+Runtime Assurance
+
+Governance
+
+Renegotiation
+```
+
+Submissões:
+
+```text
+URLLC
+
+eMBB
+
+mMTC
+```
+
+Validar:
+
+```text
+Portal não inventa dados
+
+Backend não injeta defaults
+
+Payload íntegro
+
+Sem regressão
+
+Sem alteração do baseline científico
+```
+
+Gerar evidências.
+
+Finalizar:
+
+```text
+PHASE_P7_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+---
+
+# FASE P8
+
+Build / Deploy / Freeze
+
+Somente após aprovação humana explícita.
+
+Build obrigatório:
+
+```text
+docker build
+```
+
+Push:
+
+```text
+GHCR
+```
+
+Deploy:
+
+```text
+Remote Deploy
+```
+
+Obrigatório:
+
+```text
+Digest Pinning
+
+Rollback Digest
+
+Deploy Report
+```
+
+Proibido:
+
+```text
+latest
+
+mutable tags
+
+kubectl edit
+
+manual patch
+
+manual rollout
+```
+
+Gerar:
+
+```text
+BUILD_REPORT.md
+
+DEPLOY_REPORT.md
+
+DIGEST_REPORT.md
+
+ROLLBACK_REPORT.md
+
+FINAL_VALIDATION_REPORT.md
+```
+
+Finalizar:
+
+```text
+PORTAL_CORRECTION_STATUS =
+READY_FOR_OPERATIONAL_FREEZE
+```
+
+---
+
+# REGRA DE NÃO REGRESSÃO
+
+Antes de qualquer alteração comparar com:
+
+```text
+PHASE_47
+
+RESULTS_FREEZE_MAIN
+
+Runtime Baseline
+
+Scientific Baseline
+
+Deployment Freeze
+```
+
+Validar:
+
+```text
+APIs
+
+Payloads
+
+Decision outputs
+
+Explainability
+
+Governance
+
+Runtime lifecycle
+
+Portal rendering
+```
+
+Se houver divergência:
+
+```text
+REGRESSION_DETECTED
+```
+
+Parar imediatamente.
+
+Gerar relatório.
+
+Não prosseguir.
+
+---
+
+# REGRA DE BUILD E DEPLOY
+
+Sempre:
+
+```text
+Build
+
+GHCR
+
+Digest
+
+Remote Deploy
+
+Digest Pinning
+```
+
+Nunca:
+
+```text
+latest
+
+mutable tags
+
+kubectl edit
+
+patch ad-hoc
+
+manual rollout
+```
+
+---
+
+# REGRA DE EVIDÊNCIAS
+
+Cada fase deve gerar:
+
+```text
+evidencias_trisla_portal_fix_<fase>_<timestamp>
+```
+
+Contendo:
+
+```text
+architecture/
+
+runtime/
+
+validation/
+
+regression/
+
+rollback/
+
+screenshots/
+
+logs/
+
+api_results/
+
+checksums/
+```
+
+---
+
+# REGRA FINAL
+
+Após concluir uma fase:
+
+Gerar:
+
+```text
+PHASE_COMPLETION_REPORT
+```
+
+Finalizar:
+
+```text
+PHASE_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+Nunca iniciar a próxima fase automaticamente.
+
+Aguardar aprovação humana explícita.
+
+Objetivo final:
+
+```text
+PORTAL_CORRECTION_STATUS = READY_FOR_OPERATIONAL_FREEZE
+
+NO_REGRESSION = TRUE
+
+RUNTIME_BASELINE_PRESERVED = TRUE
+
+SCIENTIFIC_BASELINE_PRESERVED = TRUE
+```

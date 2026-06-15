@@ -100,6 +100,24 @@ from revalidate import (
 )
 from runtime_assurance_store import get_previous_state, set_state
 from runtime_slo_evaluator import evaluate_runtime_assurance
+from actuation.admission_throttle_store import gate_status
+from actuation import (
+    ActuationRequestIn,
+    AuthorizeRequest,
+    ExecuteRequest,
+    ExpireRequest,
+    RollbackRequest,
+    VerifyRequest,
+    authorize_actuation,
+    execute_actuation,
+    expire_actuation,
+    get_record,
+    list_recent,
+    rollback_actuation,
+    submit_actuation_request,
+    verify_actuation,
+)
+from actuation.hook import maybe_audit_violation
 import logging
 
 logger = logging.getLogger(__name__)
@@ -349,6 +367,14 @@ def _run_runtime_assurance_block(request: dict) -> dict:
     new_state = assurance.get("state")
     if intent_id and new_state:
         set_state(intent_id, str(new_state))
+    audit = maybe_audit_violation(
+        intent_id=intent_id or "",
+        nsi_id=str(request.get("nsi_id") or request.get("nest_id") or "unknown"),
+        assurance_payload=assurance,
+        decision_reference=str(request.get("decision") or ""),
+    )
+    if audit:
+        result["actuation_audit"] = audit
     return result
 
 
@@ -425,6 +451,111 @@ async def ingest_pipeline_event(request: dict):
             out["slo_evaluation_error"] = str(e)[:300]
             out["slo_evaluation_executed"] = False
     return out
+
+
+@app.get("/api/v1/admission/gate")
+async def admission_gate():
+    """O8C W3 — external admission gate (does not modify Decision Engine)."""
+    return gate_status()
+
+
+@app.post("/api/v1/actuation/request")
+async def actuation_request(body: ActuationRequestIn):
+    """O8C — submit actuation request (scaffold, no domain mutation)."""
+    try:
+        return submit_actuation_request(body)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/actuation/authorize")
+async def actuation_authorize(body: AuthorizeRequest):
+    """O8C — transition authorization state (no domain execution)."""
+    try:
+        return authorize_actuation(
+            body.request_id,
+            body.authorization_state,
+            authorized_by=body.authorized_by,
+            reason=body.reason,
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/actuation/execute")
+async def actuation_execute(body: ExecuteRequest):
+    """O8C W2A — scaffold execute (persistence only, no domain mutation)."""
+    try:
+        return execute_actuation(
+            body.request_id,
+            executed_by=body.executed_by,
+            simulate_failure=body.simulate_failure,
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/actuation/verify")
+async def actuation_verify(body: VerifyRequest):
+    """O8C W2A — register ACT-ASSUR-002 verify (no assurance mutation)."""
+    try:
+        return verify_actuation(
+            body.request_id,
+            verified_by=body.verified_by,
+            simulate_failure=body.simulate_failure,
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/actuation/rollback")
+async def actuation_rollback(body: RollbackRequest):
+    """O8C W2A — record rollback metadata (no domain mutation)."""
+    try:
+        return rollback_actuation(
+            body.request_id,
+            rolled_back_by=body.rolled_back_by,
+            reason=body.reason,
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/actuation/expire")
+async def actuation_expire(body: ExpireRequest):
+    """O8C W2A — apply TTL expiration rules."""
+    try:
+        results = expire_actuation(request_id=body.request_id, force=body.force)
+        return {"expired_count": len(results), "results": results}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/actuation/records/{request_id}")
+async def actuation_get_record(request_id: str):
+    record = get_record(request_id)
+    if not record:
+        raise HTTPException(status_code=404, detail="request_id not found")
+    return record.model_dump(mode="json")
+
+
+@app.get("/api/v1/actuation/records")
+async def actuation_list_records(limit: int = 50):
+    return [r.model_dump(mode="json") for r in list_recent(limit=limit)]
 
 
 @app.post(

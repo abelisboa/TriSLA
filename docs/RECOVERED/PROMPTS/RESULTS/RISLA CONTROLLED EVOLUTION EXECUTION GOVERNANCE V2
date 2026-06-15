@@ -1,0 +1,345 @@
+TRISLA CONTROLLED EVOLUTION EXECUTION GOVERNANCE V2
+
+OBJETIVO
+
+Executar exclusivamente as fases ainda não implementadas ou parcialmente implementadas do TRISLA_EVOLUTION_MASTER_PLAN_V1, preservando integralmente:
+
+* Runtime operacional congelado
+* Scientific Baseline (BUNDLE-SCI-001)
+* RESULTS_FREEZE_MAIN
+* SSOT Runtime
+* Architecture Freeze
+* Deployment Freeze
+* Digest Freeze
+
+Nenhuma implementação pode comprometer:
+
+* Decision Engine científico
+* ML-NSMF científico
+* SEM-CSMF científico
+* SLA-Agent científico
+* BC-NSSMF científico
+* NASP Adapter científico
+
+---
+
+FASES ELEGÍVEIS
+
+FASE 1
+Semantic Registry (complementação)
+
+FASE 2
+GST Catalog Registry
+
+FASE 3
+NEST Catalog Registry
+
+FASE 4
+Ontology Governance Registry (complementação)
+
+FASE 5
+Model Registry
+
+FASE 6
+Runtime Baseline Registry
+
+FASE 7
+Dataset Registry
+
+FASE 8
+Dataset Builder
+
+FASE 9
+Decision Policy Registry
+
+FASE 10
+Shadow Validation Framework
+
+FASE 11
+Training Pipeline
+
+FASE 12
+Candidate Model Validation
+
+FASE 13
+Controlled Promotion Pipeline
+
+FASE 14
+Runtime Drift Detection (complementação)
+
+FASE 15
+Controlled Retraining Governance
+
+---
+
+REGRA MÁXIMA
+
+Antes de iniciar qualquer fase:
+
+1. Ler integralmente:
+
+* MASTER_SSOT_POINTER.md
+* TRISLA_MASTER_SSOT_RUNTIME_BASELINE_V1.md
+* TRISLA_MASTER_RUNBOOK.md
+* RESULTS_FREEZE_MAIN
+* CLAIMS_MATRIX
+* TRACEABILITY_MATRIX
+
+2. Validar:
+
+PHASE_APPROVED = TRUE
+
+3. Confirmar:
+
+NO_REGRESSION_RISK = TRUE
+
+Caso contrário:
+
+PARAR
+
+---
+
+EXECUÇÃO OBRIGATÓRIA DE CADA FASE
+
+PASSO 1
+
+READ-ONLY AUDIT
+
+Produzir:
+
+AUDIT_REPORT
+
+Contendo:
+
+* escopo
+* componentes impactados
+* APIs impactadas
+* dados impactados
+* registries impactados
+* riscos
+
+Nenhuma alteração permitida.
+
+---
+
+PASSO 2
+
+IMPACT ASSESSMENT
+
+Produzir:
+
+IMPACT_REPORT
+
+Validando:
+
+* runtime
+* deployment
+* APIs
+* dashboards
+* explainability
+* governance
+* telemetry
+
+---
+
+PASSO 3
+
+RISK REGISTER
+
+Produzir:
+
+RISK_REGISTER
+
+Classificando:
+
+LOW
+MEDIUM
+HIGH
+CRITICAL
+
+---
+
+PASSO 4
+
+ROLLBACK PLAN
+
+Produzir:
+
+ROLLBACK_PLAN
+
+Incluindo:
+
+* digest anterior
+* manifests
+* restauração
+* validação pós rollback
+
+---
+
+PASSO 5
+
+HUMAN APPROVAL
+
+Ao concluir:
+
+PHASE_STATUS = READY_FOR_REVIEW
+
+PARAR
+
+Não implementar.
+
+Aguardar aprovação humana.
+
+---
+
+APÓS APROVAÇÃO
+
+Executar:
+
+Implementation
+↓
+Build
+↓
+Digest Generation
+↓
+GHCR Push
+↓
+Remote Deploy
+↓
+Validation
+↓
+Evidence Collection
+
+---
+
+REGRA DE BUILD
+
+Somente:
+
+docker build
+GHCR
+digest pinning
+
+Proibido:
+
+latest
+mutable tags
+
+---
+
+REGRA DE DEPLOY
+
+Obrigatório registrar:
+
+DEPLOY_REPORT
+
+Com:
+
+* digest atual
+* digest anterior
+* rollback digest
+* timestamp
+* evidências
+
+---
+
+REGRA DE TESTES
+
+Obrigatório executar:
+
+Unit Tests
+Integration Tests
+Runtime Tests
+Regression Tests
+Portal Validation
+
+e submissões reais:
+
+* URLLC
+* eMBB
+* mMTC
+
+---
+
+REGRA DE NÃO REGRESSÃO
+
+Comparar sempre com:
+
+* Runtime Freeze
+* Scientific Freeze
+* Deployment Freeze
+* Digest Freeze
+
+Validar:
+
+* APIs
+* contratos
+* métricas
+* decisões
+* explainability
+* governança
+* telemetria
+
+Se qualquer divergência ocorrer:
+
+REGRESSION_DETECTED
+
+PARAR IMEDIATAMENTE
+
+---
+
+REGRA DE EVIDÊNCIAS
+
+Cada fase deve gerar:
+
+evidencias_trisla_<fase>_<timestamp>
+
+Contendo:
+
+* architecture
+* runtime
+* validation
+* regression
+* rollback
+
+---
+
+REGRA DE APROVAÇÃO
+
+Ao final de cada fase:
+
+Produzir:
+
+PHASE_COMPLETION_REPORT
+
+Com:
+
+* objetivo atingido
+* testes executados
+* regressão encontrada
+* rollback disponível
+* evidências geradas
+* riscos remanescentes
+
+Finalizar:
+
+PHASE_STATUS = READY_FOR_REVIEW
+
+PARAR
+
+Nunca iniciar a próxima fase sem aprovação humana explícita.
+
+---
+
+REGRA FINAL
+
+A prioridade máxima é:
+
+1. Preservar o runtime operacional
+2. Preservar o baseline científico
+3. Preservar RESULTS_FREEZE_MAIN
+4. Evitar regressões
+5. Garantir rastreabilidade
+6. Executar somente a fase aprovada
+7. Produzir evidências completas
+8. Solicitar aprovação humana antes da próxima fase

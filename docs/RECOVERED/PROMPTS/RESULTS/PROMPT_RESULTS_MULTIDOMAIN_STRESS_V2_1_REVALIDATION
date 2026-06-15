@@ -1,0 +1,396 @@
+# PROMPT_RESULTS_MULTIDOMAIN_STRESS_V2_1_REVALIDATION
+
+OBJETIVO
+
+Executar revalidação científica completa da campanha:
+
+evidencias_multidomain_stress_campaign_v2_20260529T115740Z
+
+SEM executar nova campanha.
+
+SEM gerar novos dados.
+
+SEM modificar datasets.
+
+SEM alterar resultados experimentais.
+
+A presente fase existe exclusivamente para verificar se o critério de aprovação utilizado em V2 foi excessivamente restritivo ao exigir influência multidomínio apenas via correlação linear de score.
+
+====================================================================
+CONTEXTO OBRIGATÓRIO
+====================
+
+A campanha V2 foi concluída com:
+
+* 240/240 submissões
+* dataset consolidado
+* JSONL completo
+* figuras R1–R9
+* relatório científico
+* validação automática
+
+Resultado:
+
+campaign_approved = false
+
+Motivo:
+
+O domínio de transporte demonstrou influência operacional principalmente através de:
+
+* hard gates;
+* aumento de REJECT;
+* alteração de decisão;
+
+mas não através de forte correlação linear com o score.
+
+A revalidação deve determinar se:
+
+"o domínio de transporte influencia a decisão"
+
+mesmo quando:
+
+"não influencia fortemente o score".
+
+====================================================================
+PROIBIÇÕES
+==========
+
+NÃO:
+
+* executar novas submissões;
+* gerar novos datasets;
+* alterar CSVs;
+* alterar JSONL;
+* recalcular campanhas;
+* criar dados sintéticos;
+* modificar figuras aprovadas;
+* substituir evidências.
+
+Utilizar EXCLUSIVAMENTE:
+
+evidencias_multidomain_stress_campaign_v2_20260529T115740Z
+
+====================================================================
+FASE 1 — AUDITORIA DOS CRITÉRIOS DE APROVAÇÃO
+=============================================
+
+Identificar:
+
+1. Critérios utilizados em V2
+2. Critérios efetivamente medidos
+3. Critérios não satisfeitos
+4. Critérios satisfeitos mas classificados como falha
+
+Gerar:
+
+analysis/v21_approval_audit.md
+
+Responder:
+
+A campanha falhou por:
+
+(A) ausência de efeito multidomínio
+
+ou
+
+(B) excesso de rigidez do critério?
+
+====================================================================
+FASE 2 — SCORE EFFECT VS DECISION EFFECT
+========================================
+
+Separar completamente:
+
+A. Score Influence
+
+e
+
+B. Decision Influence
+
+Criar tabela:
+
+| Domain    | Score Effect | Decision Effect |
+| --------- | ------------ | --------------- |
+| RAN       | ?            | ?               |
+| Transport | ?            | ?               |
+| Core      | ?            | ?               |
+
+Considerar:
+
+* score
+* ACCEPT
+* REJECT
+* RENEGOTIATE
+* hard gates
+* threshold crossing
+
+Gerar:
+
+analysis/domain_effect_matrix.csv
+
+====================================================================
+FASE 3 — HARD-GATE CONTRIBUTION ANALYSIS
+========================================
+
+Objetivo:
+
+Quantificar contribuição de cada domínio para:
+
+REJECT
+
+RENEGOTIATE
+
+ACCEPT
+
+Identificar:
+
+* RAN-induced reject
+* Transport-induced reject
+* Core-induced reject
+* Combined reject
+
+Gerar:
+
+analysis/hard_gate_contribution.csv
+
+Criar gráfico:
+
+R10_hard_gate_contribution.png
+R10_hard_gate_contribution.svg
+
+Tipo:
+
+Stacked bar chart
+
+Eixo X:
+Domain
+
+Eixo Y:
+Contribution to decision outcome
+
+====================================================================
+FASE 4 — DECISION-LEVEL MULTIDOMAIN EFFECT
+==========================================
+
+Objetivo:
+
+Determinar se o transporte:
+
+altera decisões
+
+mesmo quando não altera fortemente score.
+
+Construir:
+
+Decision Outcome Matrix
+
+| Scenario | ACCEPT | RENEGOTIATE | REJECT |
+| -------- | ------ | ----------- | ------ |
+
+Gerar:
+
+analysis/decision_effect_matrix.csv
+
+Criar gráfico:
+
+R11_decision_outcomes_by_domain.png
+R11_decision_outcomes_by_domain.svg
+
+Tipo:
+
+Grouped stacked bars
+
+Objetivo:
+
+Provar influência multidomínio na decisão.
+
+====================================================================
+FASE 5 — DOMAIN DOMINANCE ANALYSIS
+==================================
+
+Objetivo:
+
+Determinar:
+
+quando cada domínio domina.
+
+Analisar:
+
+C0–C7
+
+Responder:
+
+* Qual domínio domina cada cenário?
+* Existe mudança de dominância?
+* Transporte domina algum cenário?
+* Core domina algum cenário?
+* Apenas RAN domina todos?
+
+Gerar:
+
+analysis/domain_dominance_report.md
+
+Criar:
+
+R12_domain_dominance_heatmap.png
+R12_domain_dominance_heatmap.svg
+
+====================================================================
+FASE 6 — RECLASSIFICAÇÃO DAS HIPÓTESES
+======================================
+
+Reavaliar:
+
+H1 Multidomain telemetry influence
+H2 Preventive feasibility
+H3 Slice-aware behavior
+H4 Runtime consistency
+H5 Closed-loop supervision
+H6 Explainability
+H7 Governance continuity
+
+Classificar:
+
+* APPROVED
+* PARTIAL
+* REJECTED
+
+Com justificativa baseada em evidência.
+
+Gerar:
+
+analysis/v21_hypothesis_reclassification.json
+
+====================================================================
+FASE 7 — REVISÃO DAS FIGURAS R1–R9
+==================================
+
+Para cada figura:
+
+R1
+R2
+R3
+R4
+R5
+R6
+R7
+R8
+R9
+
+Responder:
+
+1. Continua válida?
+2. Continua alinhada ao SSOT?
+3. Continua suportando a hipótese?
+4. Deve permanecer no paper?
+
+Gerar:
+
+analysis/v21_figure_review.md
+
+====================================================================
+FASE 8 — DECISÃO FINAL DA CAMPANHA
+==================================
+
+Responder explicitamente:
+
+A campanha deve ser classificada como:
+
+(A)
+APPROVED
+
+(B)
+PARTIAL
+
+(C)
+REJECTED
+
+Responder:
+
+1. O TriSLA demonstrou influência multidomínio?
+
+2. O transporte influencia score?
+
+3. O transporte influencia decisão?
+
+4. O core influencia score?
+
+5. O core influencia decisão?
+
+6. A hipótese central foi demonstrada?
+
+====================================================================
+HIPÓTESE CENTRAL
+================
+
+Verificar se a campanha demonstra:
+
+"TriSLA can determine SLA feasibility before orchestration execution using multidomain telemetry correlation while preserving runtime consistency."
+
+====================================================================
+CRITÉRIO FINAL DE APROVAÇÃO
+===========================
+
+A campanha deve ser considerada APPROVED se:
+
+1. RAN influencia score ou decisão;
+
+2. Transporte influencia score OU decisão;
+
+3. Core influencia score ou decisão;
+
+4. Existe evidência de efeito multidomínio combinado;
+
+5. Runtime consistency permanece válida;
+
+6. Governance permanece operacional;
+
+7. Os resultados permanecem alinhados ao SSOT.
+
+IMPORTANTE:
+
+Não exigir que todos os domínios apresentem forte correlação linear com o score.
+
+Aceitar influência demonstrada por:
+
+* score;
+* hard gates;
+* decision outcomes;
+* threshold crossings;
+* reject behavior.
+
+====================================================================
+ENTREGÁVEIS FINAIS
+==================
+
+Gerar:
+
+analysis/v21_final_verdict.md
+
+analysis/v21_hypothesis_reclassification.json
+
+analysis/domain_effect_matrix.csv
+
+analysis/hard_gate_contribution.csv
+
+analysis/decision_effect_matrix.csv
+
+analysis/domain_dominance_report.md
+
+analysis/v21_figure_review.md
+
+R10_hard_gate_contribution.*
+
+R11_decision_outcomes_by_domain.*
+
+R12_domain_dominance_heatmap.*
+
+====================================================================
+A EXECUÇÃO SOMENTE TERMINA QUANDO
+=================================
+
+* todas as hipóteses forem reavaliadas;
+* a influência multidomínio for medida em score e decisão;
+* as figuras R1–R9 forem revisadas;
+* existir um veredito científico final;
+* a campanha V2 possuir classificação definitiva.

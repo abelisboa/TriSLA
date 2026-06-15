@@ -27,6 +27,20 @@ PORTAL_PROM_QUERY_URL = os.getenv(
 # Timeout curto para não bloquear o fluxo de intents (segundos)
 SEM_PRB_PROM_TIMEOUT = float(os.getenv("SEM_PRB_PROM_TIMEOUT", "3.0"))
 
+# Wave 3A G3-C — transmit NEST body on I-01 (echo-only at DE; disable for rollback)
+SEM_I01_NEST_TRANSMIT = os.getenv("SEM_I01_NEST_TRANSMIT", "true").lower() == "true"
+
+
+def serialize_nest_for_i01(nest: Any) -> Optional[Dict[str, Any]]:
+    """Serialize SEM NEST model to JSON-compatible dict for I-01 payload."""
+    if nest is None:
+        return None
+    if hasattr(nest, "model_dump"):
+        return nest.model_dump(mode="json")
+    if isinstance(nest, dict):
+        return dict(nest)
+    return None
+
 # PROMPT_116: preferir proxy UE/UPF antes do simulador; override via SEM_PRB_JOB_PRIORITY.
 _SEM_PRB_JOB_PRIORITY = tuple(
     j.strip()
@@ -348,7 +362,8 @@ class DecisionEngineHTTPClient:
         service_type: str,
         sla_requirements: Dict[str, Any],
         nest_status: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
+        nest: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """
         Envia metadados de NEST para Decision Engine via HTTP POST
@@ -357,6 +372,7 @@ class DecisionEngineHTTPClient:
         {
             "intent_id": str,
             "nest_id": str,
+            "nest": dict (opcional, Wave 3A G3-C),
             "tenant_id": str,
             "service_type": str,
             "sla_requirements": dict,
@@ -391,6 +407,16 @@ class DecisionEngineHTTPClient:
                 # Adicionar metadata se fornecido
                 if metadata:
                     payload["metadata"] = metadata
+
+                # Wave 3A G3-C — optional NEST body (echo-only at DE)
+                if SEM_I01_NEST_TRANSMIT:
+                    nest_payload = serialize_nest_for_i01(nest)
+                    if nest_payload:
+                        payload["nest"] = nest_payload
+                        span.set_attribute(
+                            "nest.slice_count",
+                            len(nest_payload.get("network_slices") or []),
+                        )
 
                 # FASE 1R: snapshot multi-domínio (PRB + transporte + core) no payload.
                 telemetry, prb_source = self._extract_or_fetch_telemetry(metadata)

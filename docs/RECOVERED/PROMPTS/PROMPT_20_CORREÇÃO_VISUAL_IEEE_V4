@@ -1,0 +1,133 @@
+# ============================================================
+# PROMPT_CURSOR_V4_UPGRADE_VISUAL_CIENTIFICO — DEFINITIVO
+# ============================================================
+
+# MISSÃO
+# Transformar gráficos atuais (scatter) em gráficos científicos IEEE:
+# - manter dados reais
+# - adicionar tendência (LOWESS)
+# - adicionar densidade (KDE)
+# - melhorar interpretação visual
+
+# PROIBIDO:
+# - remover pontos
+# - inventar dados
+# - alterar dataset
+
+# ============================================================
+# FASE 1 — SETUP
+# ============================================================
+
+DATASET="evidencias_resultados_trisla_final/dataset/dataset_v3_ssot.csv"
+OUT_DIR="evidencias_resultados_trisla_final/figures_ieee_v4"
+
+mkdir -p ${OUT_DIR}
+
+# ============================================================
+# FASE 2 — GERAR GRÁFICOS COM LOWESS + DENSIDADE
+# ============================================================
+
+python3 << 'EOF'
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("evidencias_resultados_trisla_final/dataset/dataset_v3_ssot.csv")
+
+sns.set(style="whitegrid")
+
+# ============================================================
+# PRB vs SCORE (GLOBAL)
+# ============================================================
+
+plt.figure(figsize=(6.5, 3.2))
+
+sns.scatterplot(
+    data=df,
+    x="prb_utilization",
+    y="decision_score",
+    hue="decision",
+    alpha=0.5
+)
+
+# LOWESS curve
+sns.regplot(
+    data=df,
+    x="prb_utilization",
+    y="decision_score",
+    scatter=False,
+    lowess=True,
+    color="black",
+    line_kws={"linewidth":2}
+)
+
+plt.title("PRB vs Decision Score (LOWESS Trend)")
+plt.xlabel("PRB Utilization (%)")
+plt.ylabel("Decision Score")
+
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_v4/fig_prb_lowess.png", dpi=300)
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_v4/fig_prb_lowess.pdf")
+plt.close()
+
+# ============================================================
+# LATÊNCIA vs SCORE (eMBB)
+# ============================================================
+
+df_embb = df[df["slice_type"] == "eMBB"]
+
+plt.figure(figsize=(6.5, 3.2))
+
+sns.scatterplot(
+    data=df_embb,
+    x="transport_rtt_ms",
+    y="decision_score",
+    hue="decision",
+    alpha=0.5
+)
+
+sns.regplot(
+    data=df_embb,
+    x="transport_rtt_ms",
+    y="decision_score",
+    scatter=False,
+    lowess=True,
+    color="black",
+    line_kws={"linewidth":2}
+)
+
+plt.title("Latency vs Score (eMBB — LOWESS)")
+plt.xlabel("Transport RTT (ms)")
+plt.ylabel("Decision Score")
+
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_v4/fig_latency_embb_lowess.png", dpi=300)
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_v4/fig_latency_embb_lowess.pdf")
+plt.close()
+
+# ============================================================
+# DENSIDADE (KDE)
+# ============================================================
+
+plt.figure(figsize=(6.5, 3.2))
+
+sns.kdeplot(
+    data=df,
+    x="decision_score",
+    hue="decision",
+    fill=True,
+    alpha=0.4
+)
+
+plt.title("Decision Score Density by Class")
+plt.xlabel("Decision Score")
+
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_v4/fig_density_score.png", dpi=300)
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_v4/fig_density_score.pdf")
+plt.close()
+
+EOF
+
+# ============================================================
+# FINAL
+# ============================================================
+
+echo "FIGURAS ATUALIZADAS PARA NIVEL IEEE REAL"

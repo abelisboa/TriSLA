@@ -1,0 +1,580 @@
+PROMPT_TRISLA_O4A_RAN_DISCOVERY_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Executar auditoria profunda do domínio RAN para descobrir exatamente como o ambiente atual expõe:
+
+* gNB
+* UE Context
+* NGAP
+* NAS Registration
+* S-NSSAI
+* PDU Session Association
+* RAN Telemetry
+
+e como essas informações podem ser correlacionadas com os baselines já congelados:
+
+O1C
+NSSF Selection
+
+O2C
+AMF/SMF Binding
+
+O3C
+UPF Binding
+
+Toda conclusão deve ser baseada exclusivamente em:
+
+* runtime real
+* logs reais
+* UERANSIM
+* AMF
+* NGAP
+* Free5GC
+* Prometheus
+* Telemetria RAN
+
+Nunca em documentação externa.
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+O1C_APPROVED = YES
+
+O2C_APPROVED = YES
+
+O3C_APPROVED = YES
+
+O4_READY = YES
+
+CURRENT_ORCHESTRATION_LEVEL =
+
+NSI/NSSI
++
+Slice Service Binding
++
+NSSF Selection
++
+AMF Observation
++
+SMF Observation
++
+UPF Observation
++
+User Plane Correlation
+
+ÂNCORAS OFICIAIS
+
+session_id = 1
+
+fresh_ue_ip = 10.1.0.1
+
+upf_gtpu_addr = 10.233.75.38
+
+selected_upf = UPF
+
+supi = imsi-208930000000001
+
+correlation_status = CONTEXT_SPLIT
+
+====================================================
+FASE 1 — INVENTÁRIO RAN
+=======================
+
+Identificar:
+
+gNB
+
+UE
+
+Pods
+
+Containers
+
+Images
+
+Versions
+
+Namespaces
+
+Interfaces
+
+IPs
+
+Executar:
+
+kubectl get pods
+
+kubectl get svc
+
+kubectl describe pod
+
+Gerar:
+
+analysis/ran_inventory.md
+
+====================================================
+FASE 2 — AUDITORIA UERANSIM
+===========================
+
+Mapear:
+
+UE
+
+gNB
+
+S-NSSAI
+
+DNN
+
+PLMN
+
+Registration
+
+PDU Session
+
+Capturar:
+
+SUPI
+
+GUTI
+
+RAN UE NGAP ID
+
+AMF UE NGAP ID
+
+Gerar:
+
+analysis/ueransim_runtime_model.md
+
+====================================================
+FASE 3 — AUDITORIA NGAP
+=======================
+
+Determinar:
+
+como ocorre:
+
+gNB
+↓
+AMF
+
+Capturar:
+
+NG Setup
+
+Initial UE Message
+
+Registration
+
+PDU Session Resource Setup
+
+UE Context
+
+Gerar:
+
+analysis/ngap_flow_discovery.md
+
+====================================================
+FASE 4 — CORRELAÇÃO UE
+======================
+
+Construir:
+
+SUPI
+↓
+UE
+↓
+gNB
+↓
+AMF
+↓
+SMF
+↓
+UPF
+
+Mapear:
+
+supi
+
+snssai
+
+dnn
+
+session_id
+
+ue_ip
+
+selected_upf
+
+upf_gtpu_addr
+
+Gerar:
+
+analysis/ue_correlation_matrix.md
+
+====================================================
+FASE 5 — CONTEXTO RAN
+=====================
+
+Determinar:
+
+quais informações de contexto RAN existem.
+
+Exemplos:
+
+RAN UE NGAP ID
+
+AMF UE NGAP ID
+
+Cell ID
+
+gNB ID
+
+Tracking Area
+
+PLMN
+
+S-NSSAI
+
+QoS Flow
+
+Gerar:
+
+analysis/ran_context_model.md
+
+====================================================
+FASE 6 — TELEMETRIA RAN
+=======================
+
+Auditar:
+
+Prometheus
+
+Portal Backend
+
+SLA-Agent
+
+RAN Proxy
+
+Identificar:
+
+PRB
+
+UE count
+
+Throughput
+
+Latency
+
+Packet counters
+
+Métricas reais disponíveis
+
+Gerar:
+
+analysis/ran_telemetry_inventory.md
+
+====================================================
+FASE 7 — MATRIZ DE CORRELAÇÃO
+=============================
+
+Construir:
+
+TriSLA
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+
+Mapear:
+
+sst
+
+sd
+
+dnn
+
+nsiId
+
+session_id
+
+supi
+
+ue_ip
+
+selected_upf
+
+gnb_id
+
+ran_ue_ngap_id
+
+amf_ue_ngap_id
+
+Gerar:
+
+analysis/ran_correlation_matrix.md
+
+====================================================
+FASE 8 — CAMPOS PERSISTÍVEIS
+============================
+
+Determinar:
+
+o que O4C poderá armazenar.
+
+Exemplos:
+
+gnb_id
+
+cell_id
+
+ran_ue_ngap_id
+
+amf_ue_ngap_id
+
+serving_snssai
+
+plmn
+
+registration_state
+
+Responder:
+
+quais são estáveis?
+
+quais são transitórios?
+
+Gerar:
+
+analysis/ran_persistence_model.md
+
+====================================================
+FASE 9 — ALINHAMENTO 3GPP
+=========================
+
+Mapear evidências para:
+
+23.501
+
+23.502
+
+38.300
+
+38.401
+
+38.413
+
+Responder:
+
+o modelo observado é compatível?
+
+Gerar:
+
+analysis/ran_3gpp_alignment.md
+
+====================================================
+FASE 10 — ALINHAMENTO O-RAN
+===========================
+
+Verificar:
+
+O1
+
+A1
+
+E2
+
+Near-RT RIC
+
+Non-RT RIC
+
+SMO
+
+Responder:
+
+como o domínio RAN observado se encaixa na evolução O-RAN da TriSLA.
+
+Gerar:
+
+analysis/ran_oran_alignment.md
+
+====================================================
+FASE 11 — ALINHAMENTO ETSI ZSM
+==============================
+
+Verificar:
+
+Service Assurance
+
+Closed Loop
+
+Service Context
+
+Automation
+
+Governance
+
+Responder:
+
+como o futuro RAN Binding contribuirá para o ciclo ZSM.
+
+Gerar:
+
+analysis/ran_zsm_alignment.md
+
+====================================================
+FASE 12 — GAP ANALYSIS
+======================
+
+Determinar:
+
+o que existe hoje.
+
+o que O4C precisará implementar.
+
+o que deve permanecer metadata.
+
+o que nunca deve controlar.
+
+Gerar:
+
+analysis/ran_gap_matrix.md
+
+====================================================
+FASE 13 — PROPOSTA O4B
+======================
+
+SEM IMPLEMENTAR.
+
+Definir arquitetura alvo:
+
+TriSLA
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN Binding
+
+IMPORTANTE
+
+TriSLA NÃO controla:
+
+gNB
+
+UE
+
+NGAP
+
+RRC
+
+RAN
+
+TriSLA apenas:
+
+observa
+correlaciona
+persiste
+
+Gerar:
+
+analysis/o4b_target_design.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/ran_inventory.md
+
+analysis/ueransim_runtime_model.md
+
+analysis/ngap_flow_discovery.md
+
+analysis/ue_correlation_matrix.md
+
+analysis/ran_context_model.md
+
+analysis/ran_telemetry_inventory.md
+
+analysis/ran_correlation_matrix.md
+
+analysis/ran_persistence_model.md
+
+analysis/ran_3gpp_alignment.md
+
+analysis/ran_oran_alignment.md
+
+analysis/ran_zsm_alignment.md
+
+analysis/ran_gap_matrix.md
+
+analysis/o4b_target_design.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+RAN_DISCOVERED = YES/NO
+
+UE_CONTEXT_DISCOVERED = YES/NO
+
+NGAP_FLOW_DISCOVERED = YES/NO
+
+RAN_TELEMETRY_DISCOVERED = YES/NO
+
+TRISLA_RAN_COMPATIBLE = YES/NO
+
+RAN_BINDING_FEASIBLE = YES/NO
+
+RECOMMENDED_NEXT_PHASE =
+
+O4B_RAN_CONTRACT_MODEL
+
+ou
+
+O4C_RAN_BINDING_IMPLEMENTATION
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+IMPORTANTE
+==========
+
+Não implementar nada.
+
+Não alterar nada.
+
+Não integrar nada.
+
+Somente descobrir, provar e documentar o comportamento real do domínio RAN para suportar a próxima fase da evolução da TriSLA.

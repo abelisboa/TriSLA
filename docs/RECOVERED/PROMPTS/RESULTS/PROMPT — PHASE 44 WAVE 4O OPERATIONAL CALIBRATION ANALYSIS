@@ -1,0 +1,227 @@
+# PROMPT — PHASE 44 WAVE 4O OPERATIONAL CALIBRATION ANALYSIS
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 43 aprovada
+* Wave 1 Freeze ativo
+* Wave 3A Freeze ativo
+* Wave 4 Freeze ativo
+
+Status:
+
+PHASE_44_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Avaliar se existe uma calibração operacional do classificador v7 capaz de preservar o valor preventivo observado na Phase 43 sem causar redução extrema da taxa de aceitação eMBB.
+
+Não executar promoção.
+
+Não executar retraining.
+
+Não alterar modelos.
+
+Não alterar runtime.
+
+Não alterar Decision Engine.
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+Snapshot obrigatório:
+
+[t-1s, t]
+
+SNAPSHOT_MAX_AGE = 35s
+
+---
+
+# Fontes obrigatórias
+
+evidencias_trisla_phase40_runtime_shadow_*
+
+evidencias_trisla_phase41_embb_flip_analysis_*
+
+evidencias_trisla_phase42_embb_boundary_analysis_*
+
+evidencias_trisla_phase43_embb_counterfactual_*
+
+EMBB_FLIP_CLASSIFICATION_MATRIX.json
+
+EMBB_COUNTERFACTUAL_IMPACT_ANALYSIS.md
+
+EMBB_CLASS_PROBABILITY_DISTRIBUTION.md
+
+BOUNDARY_ANALYSIS_DATA.json
+
+PROMOTION_BLOCKER_UPDATE_V3.json
+
+---
+
+# Escopo
+
+Read-only.
+
+Sem deploy.
+
+Sem replay novo.
+
+Sem runtime shadow novo.
+
+Sem promoção.
+
+Sem retraining.
+
+---
+
+# Investigações obrigatórias
+
+OC-1
+
+Separar:
+
+DESIRABLE_PREVENTIVE_RENEGOTIATION
+
+OVER_CONSERVATIVE_RENEGOTIATION
+
+INCONCLUSIVE
+
+---
+
+OC-2
+
+Mapear regiões de probabilidade:
+
+P(ACCEPT)
+
+P(RENEG)
+
+P(REJECT)
+
+---
+
+OC-3
+
+Avaliar calibração hipotética:
+
+0.60
+0.65
+0.70
+0.75
+0.80
+
+---
+
+OC-4
+
+Calcular impacto em:
+
+Acceptance Rate
+
+Preventive Protection Rate
+
+False Renegotiation Rate
+
+---
+
+OC-5
+
+Identificar ponto ótimo teórico.
+
+---
+
+OC-6
+
+Determinar se existe região operacionalmente viável.
+
+---
+
+# Produzir
+
+OPERATIONAL_CALIBRATION_ANALYSIS.md
+
+ACCEPTANCE_PROTECTION_CURVE.md
+
+CALIBRATION_SENSITIVITY_REPORT.md
+
+THEORETICAL_OPTIMAL_REGION.md
+
+PROMOTION_BLOCKER_UPDATE_V4.json
+
+---
+
+# Critérios
+
+CALIBRATION_ANALYSIS_COMPLETE = TRUE
+
+OPTIMAL_REGION_IDENTIFIED = TRUE
+
+PROMOTION_BLOCKER_REFINED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase44_operational_calibration_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_44_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Promotion.
+
+Não iniciar Retraining.
+
+Não executar Runtime Shadow adicional.
+
+Aguardar aprovação humana.

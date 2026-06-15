@@ -11,6 +11,7 @@ from models import DecisionResult, DecisionInput
 from decision_snapshot import build_decision_snapshot
 from system_xai import explain_decision
 from decision_persistence import persist_decision_evidence
+from decision_evidence import attach_decision_evidence_metadata
 import logging
 
 tracer = trace.get_tracer(__name__)
@@ -148,6 +149,16 @@ class DecisionService:
                 result.metadata = result.metadata or {}
                 result.metadata["decision_snapshot"] = snapshot
                 result.metadata["system_xai_explanation"] = explanation
+                attach_decision_evidence_metadata(
+                    result.metadata,
+                    reasoning=reasoning,
+                    xai_bundle=xai_bundle,
+                    context=(
+                        decision_input.context
+                        if isinstance(decision_input.context, dict)
+                        else None
+                    ),
+                )
             except Exception as e:
                 logger.exception("[S30] Failed to persist decision evidence")
             

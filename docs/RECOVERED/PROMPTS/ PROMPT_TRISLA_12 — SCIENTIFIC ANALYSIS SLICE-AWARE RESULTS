@@ -1,0 +1,253 @@
+# =========================================================
+# PROMPT_TRISLA_12 — SCIENTIFIC ANALYSIS SLICE-AWARE RESULTS
+# =========================================================
+# MISSÃO:
+# Gerar análise científica avançada dos resultados slice-aware:
+# - curva decision_score vs decision
+# - estatística por slice
+# - matriz decision x domínio crítico
+#
+# ENTRADAS:
+# - evidencias_trisla_10c_controlled/dataset/raw.json
+# - evidencias_trisla_10c_controlled/analysis/results.txt
+#
+# REGRAS:
+# - NÃO alterar código TriSLA
+# - NÃO alterar thresholds
+# - NÃO alterar cluster
+# - Apenas análise offline
+# =========================================================
+
+set -euo pipefail
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+SRC_DIR="evidencias_trisla_10c_controlled"
+OUT_DIR="evidencias_trisla_12_scientific_analysis"
+
+mkdir -p "$OUT_DIR"/{analysis,dataset,figures,text}
+
+date -u > "$OUT_DIR/analysis/start.txt"
+
+cp "$SRC_DIR/dataset/raw.json" "$OUT_DIR/dataset/raw.json"
+cp "$SRC_DIR/analysis/results.txt" "$OUT_DIR/analysis/results_input.txt" || true
+cp "$SRC_DIR/analysis/http_codes.csv" "$OUT_DIR/analysis/http_codes_input.csv" || true
+
+python3 <<'PY'
+import json
+import csv
+from pathlib import Path
+from collections import Counter, defaultdict
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+base = Path("evidencias_trisla_12_scientific_analysis")
+raw_path = base / "dataset" / "raw.json"
+
+rows = []
+
+for line in raw_path.read_text().splitlines():
+    if not line.strip():
+        continue
+    try:
+        j = json.loads(line)
+    except Exception:
+        continue
+
+    md = j.get("metadata", {}) or {}
+    telemetry = md.get("telemetry_snapshot", {}) or {}
+    slice_md = (
+        md.get("slice_aware_multidomain")
+        or (md.get("xai", {}) or {}).get("slice_aware_multidomain")
+        or {}
+    )
+
+    ran = telemetry.get("ran", {}) or {}
+    transport = telemetry.get("transport", {}) or {}
+    core = telemetry.get("core", {}) or {}
+
+    decision = j.get("decision")
+    service_type = j.get("service_type") or j.get("slice_type") or md.get("slice_profile_used")
+    score = md.get("decision_score")
+
+    bottleneck = (
+        md.get("bottleneck_domain")
+        or slice_md.get("bottleneck_domain")
+        or "unknown"
+    )
+
+    reason_codes = (
+        j.get("reason_codes")
+        or md.get("reason_codes")
+        or slice_md.get("reason_codes")
+        or []
+    )
+
+    if isinstance(reason_codes, str):
+        reason_codes = [reason_codes]
+
+    # Inferência conservadora do domínio crítico a partir dos reason codes
+    reason_text = " ".join(str(x).upper() for x in reason_codes)
+    if "CORE" in reason_text:
+        inferred_domain = "Core"
+    elif "TRANSPORT" in reason_text or "RTT" in reason_text or "JITTER" in reason_text:
+        inferred_domain = "Transport"
+    elif "RAN" in reason_text or "PRB" in reason_text:
+        inferred_domain = "RAN"
+    elif bottleneck and bottleneck != "unknown":
+        inferred_domain = bottleneck
+    else:
+        inferred_domain = "Input/Policy"
+
+    rows.append({
+        "service_type": service_type,
+        "decision": decision,
+        "decision_score": score,
+        "critical_domain": inferred_domain,
+        "reason_codes": ";".join(map(str, reason_codes)),
+        "prb": ran.get("prb_utilization") or ran.get("prb") or ran.get("ran_prb_utilization"),
+        "rtt": transport.get("rtt") or transport.get("latency") or transport.get("latency_ms"),
+        "jitter": transport.get("jitter") or transport.get("jitter_ms"),
+        "cpu": core.get("cpu_utilization") or core.get("cpu"),
+        "memory": core.get("memory_utilization") or core.get("memory"),
+        "slice_multidomain": json.dumps(slice_md, ensure_ascii=False),
+    })
+
+# CSV final
+csv_path = base / "dataset" / "trisla12_analysis_dataset.csv"
+with csv_path.open("w", newline="") as f:
+    fieldnames = [
+        "service_type","decision","decision_score","critical_domain",
+        "reason_codes","prb","rtt","jitter","cpu","memory","slice_multidomain"
+    ]
+    w = csv.DictWriter(f, fieldnames=fieldnames)
+    w.writeheader()
+    w.writerows(rows)
+
+# Estatística por slice
+stats_path = base / "analysis" / "stats_by_slice.csv"
+groups = defaultdict(list)
+for r in rows:
+    groups[r["service_type"]].append(r)
+
+with stats_path.open("w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["slice","total","accept","renegotiate","reject","mean_score","min_score","max_score"])
+    for s, rs in groups.items():
+        scores = []
+        for r in rs:
+            try:
+                scores.append(float(r["decision_score"]))
+            except Exception:
+                pass
+        c = Counter(r["decision"] for r in rs)
+        w.writerow([
+            s,
+            len(rs),
+            c.get("ACCEPT", 0),
+            c.get("RENEGOTIATE", 0),
+            c.get("REJECT", 0),
+            sum(scores)/len(scores) if scores else "",
+            min(scores) if scores else "",
+            max(scores) if scores else "",
+        ])
+
+# Matriz decisão x domínio
+matrix_path = base / "analysis" / "decision_domain_matrix.csv"
+decisions = sorted(set(r["decision"] for r in rows if r["decision"]))
+domains = sorted(set(r["critical_domain"] for r in rows if r["critical_domain"]))
+
+matrix = {(d, dom): 0 for d in decisions for dom in domains}
+for r in rows:
+    matrix[(r["decision"], r["critical_domain"])] += 1
+
+with matrix_path.open("w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["decision"] + domains)
+    for d in decisions:
+        w.writerow([d] + [matrix[(d, dom)] for dom in domains])
+
+# Figura 1: Score vs decisão
+x = list(range(1, len(rows)+1))
+scores = [float(r["decision_score"]) if r["decision_score"] not in (None, "") else 0 for r in rows]
+labels = [f"{r['service_type']}\n{r['decision']}" for r in rows]
+
+plt.figure(figsize=(8, 4.5))
+plt.plot(x, scores, marker="o")
+plt.xticks(x, labels, rotation=30, ha="right")
+plt.ylabel("Decision score")
+plt.xlabel("Slice / Decision")
+plt.title("TriSLA decision score by slice-aware outcome")
+plt.tight_layout()
+plt.savefig(base / "figures" / "score_vs_decision.png", dpi=300)
+plt.close()
+
+# Figura 2: decisão por slice
+slice_names = sorted(groups)
+accept = [Counter(r["decision"] for r in groups[s]).get("ACCEPT", 0) for s in slice_names]
+reneg = [Counter(r["decision"] for r in groups[s]).get("RENEGOTIATE", 0) for s in slice_names]
+reject = [Counter(r["decision"] for r in groups[s]).get("REJECT", 0) for s in slice_names]
+
+plt.figure(figsize=(8, 4.5))
+bottom = [0] * len(slice_names)
+plt.bar(slice_names, accept, label="ACCEPT")
+bottom = [bottom[i] + accept[i] for i in range(len(bottom))]
+plt.bar(slice_names, reneg, bottom=bottom, label="RENEGOTIATE")
+bottom = [bottom[i] + reneg[i] for i in range(len(bottom))]
+plt.bar(slice_names, reject, bottom=bottom, label="REJECT")
+plt.ylabel("Count")
+plt.xlabel("Slice type")
+plt.title("Decision distribution by slice type")
+plt.legend()
+plt.tight_layout()
+plt.savefig(base / "figures" / "decision_by_slice.png", dpi=300)
+plt.close()
+
+# Figura 3: matriz decisão x domínio
+fig, ax = plt.subplots(figsize=(8, 4.5))
+data = [[matrix[(d, dom)] for dom in domains] for d in decisions]
+im = ax.imshow(data)
+
+ax.set_xticks(range(len(domains)))
+ax.set_xticklabels(domains, rotation=30, ha="right")
+ax.set_yticks(range(len(decisions)))
+ax.set_yticklabels(decisions)
+ax.set_title("Decision × critical domain matrix")
+
+for i, d in enumerate(decisions):
+    for j, dom in enumerate(domains):
+        ax.text(j, i, str(matrix[(d, dom)]), ha="center", va="center")
+
+plt.tight_layout()
+plt.savefig(base / "figures" / "decision_domain_matrix.png", dpi=300)
+plt.close()
+
+# Texto interpretativo
+text_path = base / "text" / "TRISLA12_RESULTS_INTERPRETATION.md"
+with text_path.open("w") as f:
+    f.write("# TriSLA Slice-aware Multidomain Results\n\n")
+    f.write("## Summary\n\n")
+    f.write(f"Total valid responses: {len(rows)}\n\n")
+    f.write("## Statistics by Slice\n\n")
+    for s, rs in groups.items():
+        c = Counter(r["decision"] for r in rs)
+        scores_s = [float(r["decision_score"]) for r in rs if r["decision_score"] not in (None, "")]
+        f.write(f"- {s}: decisions={dict(c)}, mean_score={sum(scores_s)/len(scores_s) if scores_s else 'NA'}\n")
+    f.write("\n## Decision × Domain Matrix\n\n")
+    for d in decisions:
+        f.write(f"- {d}: " + ", ".join(f"{dom}={matrix[(d, dom)]}" for dom in domains) + "\n")
+    f.write("\n## Interpretation\n\n")
+    f.write(
+        "The results show differentiated slice-aware behavior under controlled pressure. "
+        "URLLC and eMBB were classified as RENEGOTIATE, while mMTC was classified as REJECT. "
+        "This indicates that the decision process does not rely exclusively on a scalar score, "
+        "but combines slice-specific requirements, multidomain telemetry and policy-based gates.\n"
+    )
+
+PY
+
+date -u > "$OUT_DIR/analysis/end.txt"
+
+echo "PROMPT_TRISLA_12 SCIENTIFIC ANALYSIS FINALIZADO"

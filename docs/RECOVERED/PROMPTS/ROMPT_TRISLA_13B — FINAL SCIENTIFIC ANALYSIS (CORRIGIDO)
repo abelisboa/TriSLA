@@ -1,0 +1,119 @@
+# =========================================================
+# PROMPT_TRISLA_13B — FINAL SCIENTIFIC ANALYSIS (CORRIGIDO)
+# =========================================================
+# CORREÇÕES:
+# - alinhamento determinístico por sample_id (1..N)
+# - validação de integridade do merge
+# - curva score × decisão (com cores)
+# - estatística por slice estruturada
+# - matriz decisão × domínio (inferido)
+# =========================================================
+
+set -euo pipefail
+
+BASE="evidencias_trisla_12a_dataset_dense_v4_3"
+OUT="$BASE/final_analysis"
+
+mkdir -p "$OUT"/{figures,analysis}
+
+python3 <<'PY'
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+
+base = Path("evidencias_trisla_12a_dataset_dense_v4_3")
+out = base / "final_analysis"
+
+df = pd.read_csv(base / "dataset/clean_dataset.csv")
+plan = pd.read_csv(base / "dataset/experiment_plan.csv")
+
+# =========================================================
+# CORREÇÃO CRÍTICA: sample_id alinhado 1..N
+# =========================================================
+
+df["sample_id"] = range(1, len(df) + 1)
+
+df = df.merge(plan, on="sample_id", how="inner")
+
+if len(df) != len(plan):
+    raise RuntimeError(f"Merge inconsistente: df={len(df)} plan={len(plan)}")
+
+# =========================================================
+# CURVA SCORE × DECISÃO (colorida)
+# =========================================================
+
+color_map = {
+    "ACCEPT": "green",
+    "RENEGOTIATE": "orange",
+    "REJECT": "red"
+}
+
+df_sorted = df.sort_values("decision_score")
+
+plt.figure()
+for decision, group in df_sorted.groupby("decision"):
+    plt.scatter(
+        group.index,
+        group["decision_score"],
+        label=decision,
+        c=color_map.get(decision, "blue")
+    )
+
+plt.legend()
+plt.xlabel("Sample Index")
+plt.ylabel("Decision Score")
+plt.title("Score vs Decision")
+plt.savefig(out / "figures/score_vs_decision.png")
+plt.close()
+
+# =========================================================
+# ESTATÍSTICA POR SLICE
+# =========================================================
+
+stats = df.groupby("service_type").agg(
+    total=("decision", "count"),
+    accept=("decision", lambda x: (x == "ACCEPT").sum()),
+    renegotiate=("decision", lambda x: (x == "RENEGOTIATE").sum()),
+    reject=("decision", lambda x: (x == "REJECT").sum()),
+    mean_score=("decision_score", "mean"),
+    min_score=("decision_score", "min"),
+    max_score=("decision_score", "max")
+)
+
+stats.to_csv(out / "analysis/stats_by_slice_final.csv")
+
+# =========================================================
+# INFERÊNCIA DE DOMÍNIO
+# =========================================================
+
+def infer_domain(row):
+    if row["dominant_parameter"] == "latency":
+        return "Transport"
+    elif row["dominant_parameter"] == "throughput":
+        return "RAN"
+    elif row["dominant_parameter"] == "device_count":
+        return "Core"
+    return "Unknown"
+
+df["inferred_domain"] = df.apply(infer_domain, axis=1)
+
+# =========================================================
+# MATRIZ DECISÃO × DOMÍNIO
+# =========================================================
+
+matrix = pd.crosstab(df["decision"], df["inferred_domain"])
+matrix.to_csv(out / "analysis/decision_domain_matrix_final.csv")
+
+plt.figure()
+plt.imshow(matrix, aspect='auto')
+plt.colorbar()
+plt.xticks(range(len(matrix.columns)), matrix.columns)
+plt.yticks(range(len(matrix.index)), matrix.index)
+plt.title("Decision vs Domain")
+plt.savefig(out / "figures/decision_domain_matrix.png")
+plt.close()
+
+print("ANALISE FINAL CORRIGIDA CONCLUIDA")
+PY
+
+echo "PROMPT_TRISLA_13B FINALIZADO"

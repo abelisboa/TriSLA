@@ -1,0 +1,412 @@
+# PROMPT_AUDITORIA_COMPLETA_PROTO_TRISLA_RUNTIME_CAPABILITIES_V2
+
+## MISSÃO
+
+Executar uma auditoria COMPLETA e ESTRITAMENTE READ-ONLY sobre TODAS as evidências operacionais, freezes, runtime validations, deployment artifacts, APIs, telemetry evidence, orchestration integrations, runtime temporal extensions, resultados experimentais e documentação SSOT do TriSLA para identificar:
+
+* capacidades implementadas;
+* capacidades operacionalmente validadas;
+* integrações reais;
+* workflows runtime comprovados;
+* funcionalidades SLA-aware já operacionalizadas;
+* mecanismos de observabilidade e governança já existentes;
+* lineage temporal runtime;
+* orchestration coordination já implementada;
+* capacidades subrepresentadas no paper.
+
+O objetivo é EVITAR que o paper minimize o que o TriSLA realmente implementa.
+
+---
+
+# REGRA ABSOLUTA
+
+## STRICT READ-ONLY
+
+PROIBIDO:
+
+* patch;
+* deploy;
+* rebuild;
+* cleanup;
+* kubectl apply;
+* helm upgrade;
+* rollout;
+* restart;
+* mutation;
+* edição de manifests;
+* alteração de código.
+
+A auditoria deve:
+
+* apenas ler;
+* correlacionar;
+* classificar;
+* consolidar evidências.
+
+---
+
+# SOURCE OF TRUTH OBRIGATÓRIA
+
+A auditoria deve SEMPRE considerar:
+
+```text id="xj7q2m"
+evidencias_*
+```
+
+como:
+
+* runtime truth;
+* deployment truth;
+* telemetry truth;
+* governance truth;
+* orchestration truth;
+* lifecycle truth.
+
+Se existir divergência entre:
+
+* narrativa do paper;
+* memória do chat;
+* documentação antiga;
+  e:
+* evidência operacional congelada,
+
+a evidência congelada é a SOURCE OF TRUTH.
+
+---
+
+# OBRIGATÓRIO AUDITAR TODAS AS FAMÍLIAS
+
+## BASELINES E FREEZES
+
+Consultar obrigatoriamente:
+
+* evidencias_FINAL_RUNTIME_BASELINE_Q1_20260506T203529Z
+* evidencias_Q1_RUNTIME_FREEZE_20260506T204554Z
+* evidencias_q1_otel_stabilized_freeze_20260506T213837Z
+* evidencias_monitoring_hardening_final_q1_20260506T214644Z
+* evidencias_controlled_evolution_q1_20260506T205828Z
+* evidencias_clean_legacy_runtime_freeze_q1_20260506T225056Z
+* evidencias_closed_loop_audit_20260506T225530Z
+* evidencias_minimal_closed_loop_component_audit_20260506T230215Z
+* evidencias_TEMPORAL_TRACKING_P0_FREEZE_20260506T234500Z
+* evidencias_TEMPORAL_REVALIDATION_P1_FREEZE_20260506T235000Z
+* evidencias_TEMPORAL_CLOSED_LOOP_P0_P2_FREEZE_20260507T020000Z
+* evidencias_proto_audit_final
+* evidencias_baseline_oficial
+
+---
+
+# RESULTADOS E EXPERIMENTOS
+
+Consultar:
+
+* evidencias_prompt8_audit_v2_20260420T212259Z
+* evidencias_prompt9_slice_aware
+* evidencias_trisla_09_slice_aware_multidomain
+* evidencias_resultados_trisla_baseline_v10
+* evidencias_resultados_trisla_baseline_v11
+* evidencias_resultados_trisla_baseline_v12
+* evidencias_resultados_trisla_baseline_v13
+* evidencias_resultados_trisla_baseline_v13_1
+* evidencias_resultados_trisla_baseline_v13_2
+* evidencias_resultados_trisla_final
+* evidencias_metricas_operacionais
+* evidencias_trisla_12_scientific_analysis
+
+---
+
+# RUNTIME TEMPORAL / CLOSED-LOOP
+
+Consultar:
+
+* P0_RUNTIME_EVIDENCE.json
+* P1_RUNTIME_EVIDENCE.json
+* P2_RUNTIME_EVIDENCE.json
+* CLOSED_LOOP_P0_P2_FINAL_STATUS.md
+* CLOSED_LOOP_EVOLUTION_CHAIN.md
+* RUNTIME_TEMPORAL_FEATURES.md
+* TEMPORAL_RUNTIME_RESULTS_SECTION.md
+* TEMPORAL_RUNTIME_DISCUSSION.md
+* TEMPORAL_RUNTIME_LIMITATIONS.md
+* TEMPORAL_RUNTIME_FUTURE_WORK.md
+
+---
+
+# DOCUMENTAÇÃO SSOT
+
+Consultar obrigatoriamente:
+
+## docs/
+
+* TRISLA_MASTER_RUNBOOK.md
+* TRISLA_INFRA_SSOT.md
+* TRISLA_FINAL_RUNTIME_BASELINE_Q1.md
+* TRISLA_ARCHITECTURE_EVIDENCE.md
+* architecture/trisla_architecture.md
+
+---
+
+# AUDITORIAS IMPORTANTES
+
+Consultar:
+
+* evidencias_trisla_15_prototype_audit
+* evidencias_trisla_audit_full
+* evidencias_audit_docs_runbook_20260506T024859Z
+* prototype_audit_final.md
+* FIGURE_MAPPING_FINAL.md
+
+---
+
+# AUDITAR O CÓDIGO REAL
+
+Auditar profundamente:
+
+* apps/portal-backend
+* routers/sla.py
+* schemas/sla.py
+* telemetry/
+* domain_actions/
+* orchestration/
+* sem-csmf/
+* ml-nsmf/
+* decision-engine/
+* bc-nssmf/
+* sla-agent-layer/
+
+Objetivo:
+identificar:
+
+* capacidades reais;
+* integrações runtime;
+* lineage propagation;
+* telemetry continuity;
+* orchestration hooks;
+* governance metadata;
+* differentiated SLA-aware logic.
+
+---
+
+# AUDITAR METADADOS RUNTIME
+
+Verificar profundamente:
+
+* telemetry_snapshot
+* temporal_intent_trace
+* drift_summary
+* remediation_evidence
+* domain_actions
+* execution_id
+* intent_id
+* tx_hash
+* governance metadata
+* sla_lifecycle
+* orchestration metadata
+
+Objetivo:
+identificar:
+
+* SLA lifecycle continuity;
+* telemetry evolution;
+* runtime correlation;
+* governance lineage;
+* runtime assurance semantics.
+
+---
+
+# AUDITAR SLA-AWARE MULTIDOMÍNIO
+
+## OBRIGATÓRIO
+
+Verificar evidências reais de:
+
+| Capability              | Verificar                   |
+| ----------------------- | --------------------------- |
+| URLLC differentiation   | runtime sensitivity         |
+| eMBB differentiation    | throughput continuity       |
+| mMTC differentiation    | scalability behavior        |
+| RAN awareness           | PRB gating                  |
+| Transport awareness     | jitter / latency            |
+| Core awareness          | CPU / memory / runtime load |
+| Slice-aware feasibility | differentiated evaluation   |
+| Drift differentiation   | SLA-specific interpretation |
+
+IMPORTANTE:
+não reduzir TriSLA a:
+
+* PRB-only;
+* radio-only.
+
+---
+
+# AUDITAR ORCHESTRATION SCOPE
+
+## OBRIGATÓRIO
+
+Determinar exatamente:
+
+| Capability                       | Status |
+| -------------------------------- | ------ |
+| orchestration integration        |        |
+| provisioning coordination        |        |
+| ONOS integration                 |        |
+| free5GC integration              |        |
+| orchestration-facing APIs        |        |
+| provisioning ACK                 |        |
+| NSI-related workflows            |        |
+| full NSI lifecycle orchestration |        |
+
+Distinguir claramente:
+
+## IMPLEMENTADO
+
+vs
+
+## PARCIAL
+
+vs
+
+## FUTURE WORK
+
+---
+
+# AUDITAR GOVERNANÇA
+
+Verificar:
+
+* Hyperledger Besu integration
+* tx_hash propagation
+* immutable lineage
+* governance continuity
+* lifecycle registration
+* blockchain evidence
+* runtime reassessment lineage
+
+---
+
+# AUDITAR OBSERVABILIDADE
+
+Verificar:
+
+* Prometheus integration
+* telemetry continuity
+* telemetry evolution
+* t0/t1 correlation
+* temporal reassessment
+* runtime drift
+* telemetry lineage
+* runtime auditability
+
+---
+
+# AUDITAR DEPLOYMENT REALISM
+
+Verificar:
+
+* Kubernetes
+* Helm
+* GHCR
+* digest deployment
+* rollout lineage
+* runtime namespaces
+* ConfigMaps
+* StatefulSets
+* Services
+* immutable deployment lineage
+* reproducibility evidence
+
+---
+
+# AUDITAR FIGURAS E WORKFLOWS
+
+Verificar:
+
+* runtime architecture
+* temporal closed-loop
+* metadata lifecycle
+* telemetry correlation
+* governance pipeline
+* orchestration workflow
+
+Objetivo:
+identificar:
+
+* quais capacidades já aparecem visualmente;
+* quais ainda não estão refletidas no texto.
+
+---
+
+# CLASSIFICAÇÃO OBRIGATÓRIA
+
+Cada capacidade deve ser classificada como:
+
+| Status                  |
+| ----------------------- |
+| FULLY IMPLEMENTED       |
+| OPERATIONALLY VALIDATED |
+| PARTIALLY IMPLEMENTED   |
+| EXPERIMENTALLY OBSERVED |
+| FUTURE WORK             |
+| NOT IMPLEMENTED         |
+
+---
+
+# PRINCIPAL OBJETIVO DA AUDITORIA
+
+Responder:
+
+```text id="8u6w8f"
+What does TriSLA operationally implement today that is still underrepresented, minimized, or insufficiently demonstrated in the current paper narrative?
+```
+
+---
+
+# ENTREGÁVEIS OBRIGATÓRIOS
+
+Gerar em:
+
+```text id="plf5g4"
+analysis/
+```
+
+os seguintes arquivos:
+
+| Arquivo                                   | Conteúdo                                    |
+| ----------------------------------------- | ------------------------------------------- |
+| TRISLA_REAL_IMPLEMENTED_CAPABILITIES.md   | capacidades reais implementadas             |
+| TRISLA_RUNTIME_OPERATIONAL_SCOPE.md       | escopo operacional real                     |
+| TRISLA_UNDERREPRESENTED_FEATURES.md       | funcionalidades minimizadas no paper        |
+| TRISLA_RUNTIME_LINEAGE_AUDIT.md           | lineage temporal/governança                 |
+| TRISLA_ORCHESTRATION_SCOPE.md             | orchestration integration vs NSI lifecycle  |
+| TRISLA_MULTIDOMAIN_SLA_AWARE_AUDIT.md     | diferenciação SLA-aware real                |
+| TRISLA_RUNTIME_ASSURANCE_AUDIT.md         | observabilidade e reassessment              |
+| TRISLA_DEPLOYMENT_REALISM_AUDIT.md        | deployment/runtime realism                  |
+| TRISLA_GOVERNANCE_AND_BLOCKCHAIN_AUDIT.md | governança real                             |
+| TRISLA_SEMANTIC_SLA_WORKFLOW_AUDIT.md     | semantic SLA lifecycle                      |
+| TRISLA_VS_NASP_OPERATIONAL_COMPARISON.md  | comparação objetiva                         |
+| TRISLA_PROTOTYPE_NARRATIVE_GAPS.md        | gaps da narrativa atual                     |
+| TRISLA_RUNTIME_FEATURES_NOT_EXPLOITED.md  | capacidades ainda pouco exploradas no paper |
+
+---
+
+# RESULTADO ESPERADO
+
+A auditoria deve permitir:
+
+* reescrever o protótipo sem minimizar o TriSLA;
+* evitar overclaim;
+* transformar evidências runtime em narrativa operacional;
+* demonstrar corretamente:
+
+  * admissibilidade preventiva;
+  * semantic SLA interpretation;
+  * telemetry-aware feasibility;
+  * governance continuity;
+  * temporal SLA validation;
+  * runtime assurance;
+  * multidomain sustainability evaluation;
+  * orchestration coordination;
+  * telemetry lineage;
+  * deployment reproducibility.
+
+Sem inventar absolutamente nada além do que já está operacionalmente comprovado nas evidências do projeto. 

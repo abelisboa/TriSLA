@@ -1,59 +1,58 @@
 # Metric Normalization Model
 
+> Operational metrics endpoints: [`docs/modules/nasp-adapter.md`](../../modules/nasp-adapter.md).
+> Observability detail: [`observability/observability.md`](../observability/observability.md).
+
 ## 1. Objective
 
-Transform heterogeneous metrics from different domains into a unified normalized space.
+Transform heterogeneous infrastructure signals (RAN, transport, core) into a **unified multidomain representation** suitable for feasibility checks, capacity accounting, and Portal telemetry composition.
 
----
+## 2. Input Domains
 
-## 2. Input
+```text
+M = (M_ran, M_transport, M_core)
+```
 
-Let:
+| Domain | Sources (implementation) |
+|--------|--------------------------|
+| RAN | NASP RAN metrics endpoint; PRB via `metrics_collector.py` |
+| Transport | Prometheus probes; ONOS snapshot (O5C) |
+| Core | Prometheus container metrics; Free5GC AMF/SMF probes |
 
-$$
-M = (M_{ran}, M_{transport}, M_{core})
-$$
+## 3. MDCE Export Schema
 
----
+Primary structured export: `GET /api/v1/metrics/multidomain`
 
-## 3. Normalization Function
+Implemented in `metrics_collector.get_multidomain()` — aligns with MDCE SSOT schema (`docs/MDCE_SCHEMA.json` reference in code).
 
-Each metric m is transformed:
+Fields include core CPU/memory, RAN UE count proxy, transport RTT, and `reasons[]` for unavailable metrics (null-safe).
 
-**Normalization Function**
+## 4. Normalization Approach
 
-$$
-m_{norm} = \frac{m - m_{min}}{m_{max} - m_{min}}
-$$
+Operational normalization (not a single min-max formula on all fields):
 
----
+- Prometheus scalar extraction with null on failure
+- MDCE field mapping with explicit `reasons` when unavailable
+- PRB exported as percent `[0, 100]` via `trisla_ran_prb_utilization` gauge
+- Capacity ledger consumes multidomain snapshot at instantiate time
 
-## 4. Aggregated State
+Legacy generic formula \(m_{norm} = (m - m_{min}) / (m_{max} - m_{min})\) applies to analytical modeling only; runtime uses schema-driven MDCE mapping.
 
-**Formal Definition**
+## 5. Consumers (runtime truth)
 
-$$
-X = [m_{1,norm},\ m_{2,norm},\ \ldots,\ m_{n,norm}]
-$$
+| Consumer | Path | Notes |
+|----------|------|-------|
+| **Portal Backend** | Telemetry collector / submit flow | Primary consumer of multidomain context |
+| **Capacity accounting** | Pre-instantiate in `main.py` | Uses `get_multidomain()` for ledger check |
+| **Prometheus scrapers** | `/metrics`, PRB gauge | Observability and cross-module Prom queries |
+| **SEM-CSMF** | Indirect via Portal Prom proxy | PRB resolution in `decision_engine_client.py` |
 
----
-
-## 5. Output
-
-Normalized metrics used by:
-
-- Decision Engine
-- SLA-Agent
-- BC-NSSMF
-
----
+Decision Engine does **not** consume NASP Adapter metrics via a direct HTTP API in the production admission path. DE receives `telemetry_snapshot` composed upstream (Portal / SEM enrichment).
 
 ## 6. Importance
 
-Ensures comparability across domains.
-
----
+Consistent multidomain representation enables capacity accounting before NSI creation and supports reproducible validation campaigns without coupling admission logic to infrastructure adapters.
 
 ## 7. Conclusion
 
-The NASP Adapter guarantees metric consistency required for SLA-aware decisions.
+The NASP Adapter normalizes infrastructure metrics into MDCE-aligned structures. Consumption flows through Portal and capacity subsystems, preserving the frozen admission boundary.

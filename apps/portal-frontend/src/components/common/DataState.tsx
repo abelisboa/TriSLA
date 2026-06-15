@@ -6,13 +6,13 @@ type DataStateProps = {
 
 export function DataState({ status, errorMessage, children }: DataStateProps) {
   if (status === "loading") {
-    return <p>Carregando dados reais do backend TriSLA…</p>;
+    return <p>Loading live data from TriSLA backend…</p>;
   }
 
   if (status === "error") {
     return (
       <p>
-        Fonte indisponível: <span>{errorMessage ?? "erro ao consultar fonte real"}</span>
+        Source unavailable: <span>{errorMessage ?? "error retrieving source data"}</span>
       </p>
     );
   }

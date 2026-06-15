@@ -1,0 +1,665 @@
+# TRISLA_FRONTEND_SSOT_EVOLUTION_PLAN_V1
+
+## STATUS
+
+Documento oficial para evolução do frontend TriSLA.
+
+Este documento substitui decisões ad-hoc, suposições e implementações não auditadas.
+
+Nenhuma fase poderá ser iniciada sem obedecer integralmente este documento.
+
+Nenhuma nova fase poderá ser criada sem aprovação explícita do responsável pelo projeto.
+
+---
+
+# OBJETIVO
+
+Evoluir o frontend TriSLA para uma demonstração completa da arquitetura proposta, utilizando exclusivamente:
+
+* runtime real;
+* endpoints reais;
+* payloads reais;
+* telemetria real;
+* governança real;
+* componentes efetivamente implementados no backend.
+
+O frontend deverá demonstrar:
+
+1. Solicitação de SLA estruturada.
+2. Solicitação de SLA por linguagem natural.
+3. Interpretação semântica.
+4. Feasibility estimation.
+5. Admission decision.
+6. Multidomain telemetry.
+7. Operational explanation.
+8. Runtime supervision.
+9. Governance continuity.
+
+Sem simuladores.
+
+Sem mocks.
+
+Sem dados sintéticos.
+
+---
+
+# FONTES OFICIAIS (SSOT)
+
+Antes de qualquer fase, consultar obrigatoriamente:
+
+## Documentos
+
+docs/TRISLA_MASTER_SSOT_RUNTIME_BASELINE_V1.md
+
+docs/TRISLA_MASTER_RUNBOOK.md
+
+docs/TRISLA_INFRA_SSOT.md
+
+docs/TRISLA_FINAL_RUNTIME_BASELINE_Q1.md
+
+---
+
+## Runtime Freeze Oficial
+
+evidencias_trisla_phase6_ssot_controlled_execution_20260517T154849Z/
+
+---
+
+## Runtime Multidomínio
+
+evidencias_trisla_true_multidomain_runtime_20260517T031129Z/
+
+---
+
+## Publicação
+
+evidencias_trisla_phase4_publication_consolidation_20260517T140548Z/
+
+---
+
+## Results Freeze
+
+evidencias_multidomain_stress_campaign_v2_20260529T115740Z/
+
+---
+
+## Auditoria Frontend
+
+frontend_audit_20260529T173000Z/
+
+---
+
+## Evolução Frontend
+
+frontend_evolution_f0_f1_20260529T173411Z/
+
+---
+
+# ESTADO ATUAL APROVADO
+
+## Frontend oficial
+
+apps/portal-frontend
+
+Framework:
+
+Next.js 15
+
+---
+
+## Backend oficial
+
+Portal Backend
+
+NodePort:
+
+32002
+
+Porta interna:
+
+8001
+
+---
+
+## Frontend Runtime
+
+NodePort:
+
+32561
+
+---
+
+## Túnel aprovado
+
+ssh -L 32561:192.168.10.15:32561 
+-L 32002:192.168.10.15:32002 
+user@jump 
+"ssh node006"
+
+---
+
+# REGRA DE OURO
+
+Nenhuma tela poderá ser desenvolvida baseada em documentação.
+
+Nenhuma tela poderá ser desenvolvida baseada em hipótese.
+
+Nenhuma tela poderá ser desenvolvida baseada em exemplos antigos.
+
+Toda implementação deverá ser baseada exclusivamente em payloads reais capturados do runtime atual.
+
+---
+
+# ETAPA OBRIGATÓRIA ZERO
+
+## REAL_PAYLOAD_FREEZE
+
+Antes de iniciar F2.
+
+Objetivo:
+
+Capturar payloads reais.
+
+Nenhuma implementação pode começar sem esta etapa.
+
+---
+
+## Capturar
+
+### Payload 1
+
+URLLC
+
+POST /api/v1/sla/submit
+
+Salvar:
+
+payload_urllc.json
+
+---
+
+### Payload 2
+
+eMBB
+
+POST /api/v1/sla/submit
+
+Salvar:
+
+payload_embb.json
+
+---
+
+### Payload 3
+
+mMTC
+
+POST /api/v1/sla/submit
+
+Salvar:
+
+payload_mmtc.json
+
+---
+
+### Payload 4
+
+PNL
+
+POST interpret endpoint real
+
+Salvar:
+
+payload_pnl.json
+
+---
+
+### Payload 5
+
+Governance
+
+Capturar resposta contendo:
+
+tx_hash
+
+bc_status
+
+block_number
+
+Salvar:
+
+payload_governance.json
+
+---
+
+### Payload 6
+
+Telemetry Snapshot
+
+Capturar resposta contendo:
+
+metadata.telemetry_snapshot
+
+Salvar:
+
+payload_telemetry_snapshot.json
+
+---
+
+# MAPEAMENTO OBRIGATÓRIO
+
+Gerar:
+
+REAL_API_SCHEMA.md
+
+Documentar:
+
+campo
+
+tipo
+
+obrigatório
+
+opcional
+
+origem
+
+uso frontend
+
+---
+
+# APROVAÇÃO
+
+REAL_PAYLOAD_FREEZE
+
+Somente após aprovação manual.
+
+---
+
+# FASE F2
+
+## SUBMIT + FULL PAYLOAD RENDERING
+
+Objetivo:
+
+Exibir tudo que já existe no backend.
+
+Nenhum gráfico.
+
+Nenhuma IA visual.
+
+Nenhum dashboard.
+
+Somente renderização fiel.
+
+---
+
+## Exibir
+
+Decision
+
+Decision Score
+
+Confidence
+
+Reason Codes
+
+Telemetry Snapshot
+
+Governance
+
+JSON completo
+
+---
+
+## PROIBIDO
+
+Criar métricas derivadas.
+
+Criar gráficos.
+
+Criar explicações artificiais.
+
+Criar painéis de XAI.
+
+---
+
+# APROVAÇÃO
+
+F2_APPROVED
+
+Somente após aprovação manual.
+
+---
+
+# FASE F3
+
+## PNL COMPLETE FLOW
+
+Objetivo:
+
+Tenant → Linguagem Natural → SEM-CSMF → Preview → Submit → Decision
+
+---
+
+## Fluxo obrigatório
+
+Texto
+
+↓
+
+Interpret
+
+↓
+
+SLA estruturado
+
+↓
+
+Preview
+
+↓
+
+Confirmação
+
+↓
+
+Submit
+
+↓
+
+Decision
+
+---
+
+## PROIBIDO
+
+Submit automático sem confirmação.
+
+Inferências não retornadas pelo backend.
+
+---
+
+# APROVAÇÃO
+
+F3_APPROVED
+
+Somente após aprovação manual.
+
+---
+
+# FASE F4
+
+## ADMISSION DASHBOARD
+
+Objetivo:
+
+Organizar visualmente informações existentes.
+
+Sem criar novos cálculos.
+
+---
+
+## Painéis
+
+Admission
+
+Feasibility
+
+Telemetry
+
+Governance
+
+---
+
+## Fonte
+
+Somente payloads reais.
+
+---
+
+# APROVAÇÃO
+
+F4_APPROVED
+
+Somente após aprovação manual.
+
+---
+
+# FASE F5
+
+## OPERATIONAL EXPLANATION
+
+Objetivo:
+
+Explicar decisão utilizando informações existentes.
+
+---
+
+## Permitido
+
+reason_codes
+
+threshold_triggered
+
+dominant_metric
+
+domain influence
+
+---
+
+## Proibido
+
+SHAP
+
+LIME
+
+Explainable AI formal
+
+feature attribution inventado
+
+---
+
+# APROVAÇÃO
+
+F5_APPROVED
+
+Somente após aprovação manual.
+
+---
+
+# FASE F6
+
+## RUNTIME SUPERVISION
+
+Objetivo:
+
+Exibir estado operacional.
+
+---
+
+## Somente se endpoint real existir
+
+SLA-Agent
+
+Runtime validation
+
+Reassessment
+
+Runtime status
+
+---
+
+## Se endpoint não existir
+
+Não implementar.
+
+Registrar GAP.
+
+---
+
+# APROVAÇÃO
+
+F6_APPROVED
+
+Somente após aprovação manual.
+
+---
+
+# FASE F7
+
+## GOVERNANCE PANEL
+
+Objetivo:
+
+Visualizar governança blockchain.
+
+---
+
+## Somente se campo existir
+
+tx_hash
+
+bc_status
+
+block_number
+
+commit metadata
+
+---
+
+## Proibido
+
+Inferir blockchain state.
+
+Criar estados fictícios.
+
+---
+
+# APROVAÇÃO
+
+F7_APPROVED
+
+Somente após aprovação manual.
+
+---
+
+# FASE F8
+
+## DEMO POLISH
+
+Objetivo:
+
+Melhorias visuais.
+
+---
+
+## Permitido
+
+Layout
+
+UX
+
+Responsividade
+
+Tema
+
+Cards
+
+Tabelas
+
+---
+
+## Proibido
+
+Alterar comportamento funcional.
+
+---
+
+# APROVAÇÃO
+
+F8_APPROVED
+
+Somente após aprovação manual.
+
+---
+
+# REGRAS DE NÃO REGRESSÃO
+
+Nunca alterar:
+
+SEM-CSMF
+
+ML-NSMF
+
+Decision Engine
+
+NASP Adapter
+
+BC-NSSMF
+
+SLA-Agent
+
+Prometheus
+
+Thresholds
+
+Policy Engine
+
+---
+
+Nunca usar:
+
+Mocks
+
+Simuladores
+
+Dados sintéticos
+
+---
+
+Nunca usar:
+
+:latest
+
+---
+
+Nunca fazer deploy sem aprovação explícita.
+
+---
+
+# CRITÉRIO FINAL DE CONCLUSÃO
+
+O frontend somente será considerado concluído quando demonstrar:
+
+Tenant Request
+
+↓
+
+PNL
+
+↓
+
+SEM-CSMF
+
+↓
+
+Feasibility
+
+↓
+
+Decision
+
+↓
+
+Telemetry
+
+↓
+
+Runtime
+
+↓
+
+Governance
+
+utilizando exclusivamente dados reais provenientes do runtime TriSLA.

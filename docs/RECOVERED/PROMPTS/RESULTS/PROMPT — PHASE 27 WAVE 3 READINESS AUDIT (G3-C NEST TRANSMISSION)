@@ -1,0 +1,491 @@
+# PROMPT — PHASE 27 WAVE 3 READINESS AUDIT (G3-C NEST TRANSMISSION)
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Wave 1 oficialmente congelada
+* Wave 2 concluída
+* Operational Freeze ativo
+* Scientific Baseline preservada
+* No deploy autorizado
+
+Status:
+
+PHASE_25D_APPROVED = TRUE
+
+WAVE2_APPROVED = TRUE
+
+PHASE_27_APPROVED = TRUE
+
+---
+
+# OBJETIVO
+
+Executar auditoria completa de prontidão da Wave 3 (G3-C NEST Transmission).
+
+Esta fase é exclusivamente de análise e planejamento.
+
+Nenhuma implementação.
+
+Nenhum build.
+
+Nenhum deploy.
+
+Nenhuma alteração em runtime.
+
+Nenhuma alteração em contratos ativos.
+
+---
+
+# MODO
+
+STRICT READ ONLY
+
+---
+
+# REGRA SUPREMA
+
+Toda análise deverá considerar obrigatoriamente o fluxo operacional completo do TriSLA.
+
+É proibido utilizar fluxos simplificados.
+
+Fluxo obrigatório:
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+e simultaneamente:
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OpenTelemetry
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# FONTES OBRIGATÓRIAS (SSOT)
+
+Consultar obrigatoriamente antes de qualquer conclusão:
+
+MASTER_SSOT_POINTER.md
+
+docs/TRISLA_MASTER_SSOT_RUNTIME_BASELINE_V1.md
+
+baseline-registry/
+
+semantic-registry/
+
+model-registry/
+
+interface-registry/i01/
+
+change-control-registry/
+
+implementation-readiness/
+
+evidencias_trisla_fase0_*
+
+evidencias_trisla_phase0a_*
+
+evidencias_trisla_phase0b_*
+
+evidencias_trisla_fase1_*
+
+...
+
+evidencias_trisla_fase26_*
+
+evidencias_trisla_wave1_*
+
+evidencias_trisla_wave2_*
+
+WAVE1_OPERATIONAL_FREEZE.md
+
+OPERATIONAL_BASELINE_REGISTRY.json
+
+DEPLOYMENT_BASELINE_REGISTRY.json
+
+WAVE1_TRACEABILITY_MATRIX.json
+
+---
+
+# ESCOPO
+
+Somente:
+
+G3-C
+
+NEST Transmission
+
+Nada além disso.
+
+---
+
+# PROIBIDO
+
+G1
+
+DIV-O001
+
+G2
+
+100 Mbps vs 1000 Mbps
+
+G3-D
+
+Semantic Consumers
+
+Shadow Validation Execution
+
+Model Promotion
+
+Retraining
+
+Semantic Runtime Registry Integration
+
+Helm Upgrade
+
+Deploy
+
+Build
+
+Image Creation
+
+Digest Changes
+
+Cluster Changes
+
+API Changes
+
+Schema Changes
+
+---
+
+# ATIVIDADE 1 — MAPEAMENTO COMPLETO DO I-01
+
+Auditar:
+
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+
+Identificar:
+
+* Payload atual transmitido
+* Campos descartados
+* Campos parcialmente utilizados
+* Campos utilizados
+* Campos mortos
+
+Produzir:
+
+I01_NEST_TRANSMISSION_AUDIT.md
+
+---
+
+# ATIVIDADE 2 — MAPEAMENTO DO NEST
+
+Comparar:
+
+NEST produzido pelo SEM
+
+versus
+
+NEST efetivamente recebido pelo Decision Engine
+
+Classificar:
+
+IDENTICAL
+
+PARTIAL
+
+LOST
+
+DEAD_PATH
+
+Produzir:
+
+NEST_TRACEABILITY_MATRIX.json
+
+---
+
+# ATIVIDADE 3 — IMPACTO ARQUITETURAL
+
+Determinar impacto potencial da transmissão do NEST sobre:
+
+Decision Score
+
+Confidence
+
+Action
+
+Governance
+
+Explainability
+
+ML Features
+
+Telemetry Processing
+
+Runtime Assurance
+
+Produzir:
+
+WAVE3_ARCHITECTURAL_IMPACT_REPORT.md
+
+---
+
+# ATIVIDADE 4 — IMPACTO NOS COMPONENTES
+
+Classificar por componente:
+
+Portal Frontend
+
+Portal Backend
+
+SEM-CSMF
+
+NASP Adapter
+
+Decision Engine
+
+ML-NSMF
+
+BC-NSSMF
+
+SLA-Agent
+
+UERANSIM
+
+RAN
+
+ONOS
+
+5GC
+
+Prometheus
+
+OpenTelemetry
+
+Classificação:
+
+NO_IMPACT
+
+LOW
+
+MEDIUM
+
+HIGH
+
+CRITICAL
+
+Produzir:
+
+WAVE3_COMPONENT_IMPACT_MATRIX.json
+
+---
+
+# ATIVIDADE 5 — IMPACTO NO SCIENTIFIC BASELINE
+
+Determinar:
+
+A mudança altera:
+
+* resultados da dissertação?
+* Results Freeze Main?
+* Scientific Baseline?
+* métricas publicadas?
+* figuras?
+* tabelas?
+* claims?
+
+Classificar:
+
+NO_IMPACT
+
+TRACEABLE
+
+SCIENTIFIC_IMPACT
+
+Produzir:
+
+SCIENTIFIC_BASELINE_IMPACT_ASSESSMENT.md
+
+---
+
+# ATIVIDADE 6 — RISCOS
+
+Criar:
+
+WAVE3_RISK_REGISTER.md
+
+Classificando:
+
+LOW
+
+MEDIUM
+
+HIGH
+
+CRITICAL
+
+Com:
+
+* mitigação
+* rollback
+* validação
+* evidências necessárias
+
+---
+
+# ATIVIDADE 7 — PLANO DE IMPLEMENTAÇÃO
+
+SEM IMPLEMENTAR.
+
+Somente projetar.
+
+Criar:
+
+WAVE3_IMPLEMENTATION_PLAN.md
+
+Definir:
+
+Phase A
+
+Phase B
+
+Phase C
+
+Phase D
+
+Para eventual execução futura.
+
+---
+
+# ATIVIDADE 8 — CRITÉRIOS DE PROMOÇÃO
+
+Definir critérios obrigatórios para autorização futura:
+
+NEST_PARITY >= 99%
+
+NO_DECISION_REGRESSION = TRUE
+
+NO_SCORE_REGRESSION = TRUE
+
+NO_CONFIDENCE_REGRESSION = TRUE
+
+NO_GOVERNANCE_REGRESSION = TRUE
+
+FULL_E2E_VALIDATION_REQUIRED = TRUE
+
+FULL_TELEMETRY_VALIDATION_REQUIRED = TRUE
+
+ROLLBACK_PLAN_AVAILABLE = TRUE
+
+---
+
+# CRITÉRIOS DE SUCESSO
+
+WAVE3_READINESS_AUDIT_COMPLETE = TRUE
+
+I01_FULLY_MAPPED = TRUE
+
+NEST_TRACEABILITY_COMPLETE = TRUE
+
+ARCHITECTURAL_IMPACT_CLASSIFIED = TRUE
+
+SCIENTIFIC_IMPACT_CLASSIFIED = TRUE
+
+RISK_REGISTER_COMPLETE = TRUE
+
+IMPLEMENTATION_PLAN_READY = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# EVIDÊNCIAS
+
+Gerar:
+
+evidencias_trisla_phase27_<timestamp>/
+
+---
+
+# RESULTADOS OBRIGATÓRIOS
+
+Produzir:
+
+WAVE3_READINESS_REPORT.md
+
+I01_NEST_TRANSMISSION_AUDIT.md
+
+NEST_TRACEABILITY_MATRIX.json
+
+WAVE3_ARCHITECTURAL_IMPACT_REPORT.md
+
+WAVE3_COMPONENT_IMPACT_MATRIX.json
+
+SCIENTIFIC_BASELINE_IMPACT_ASSESSMENT.md
+
+WAVE3_RISK_REGISTER.md
+
+WAVE3_IMPLEMENTATION_PLAN.md
+
+PHASE_27_COMPLETION_REPORT.md
+
+---
+
+# SAÍDA FINAL
+
+Finalizar com:
+
+PHASE_27_STATUS = READY_FOR_REVIEW
+
+WAVE3_EXECUTION = NOT AUTHORIZED
+
+NO_RUNTIME_CHANGE = TRUE
+
+PARAR.
+
+Não implementar.
+
+Não compilar.
+
+Não gerar imagem.
+
+Não alterar código.
+
+Não abrir Wave 3 automaticamente.
+
+Aguardar aprovação humana explícita.

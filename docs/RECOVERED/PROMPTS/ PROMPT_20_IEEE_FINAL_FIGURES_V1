@@ -1,0 +1,105 @@
+# =========================================
+# PROMPT_IEEE_FINAL_FIGURES_V1
+# =========================================
+
+# MISSÃO
+# Gerar os 4 gráficos finais IEEE:
+# 1. Confusion Matrix
+# 2. Boxplot Score por Classe
+# 3. Feature Importance Global
+# 4. Latência E2E por módulo
+
+# REGRAS CRÍTICAS
+# - NÃO inventar dados
+# - Usar apenas dataset real existente
+# - NÃO alterar pipeline
+# - NÃO alterar modelo
+# - NÃO simular valores
+# - Apenas analisar e plotar
+
+cd /home/porvir5g/gtp5g/trisla
+
+mkdir -p evidencias_resultados_trisla_final/figures_ieee_final
+
+cat > scripts/e2e/generate_final_ieee_figures.py << 'EOF'
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+# =========================
+# LOAD DATASET
+# =========================
+df = pd.read_csv("evidencias_resultados_trisla_baseline_v13/dataset/final_dataset_v6.csv")
+
+# =========================
+# 1. CONFUSION MATRIX
+# =========================
+y_true = df["final_decision"]
+y_pred = df["predicted_decision"]
+
+labels = ["ACCEPT", "RENEGOTIATE", "REJECT"]
+
+cm = confusion_matrix(y_true, y_pred, labels=labels)
+
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
+disp.plot()
+
+plt.title("Confusion Matrix - SLA Decision")
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_final/confusion_matrix_ieee.pdf")
+plt.close()
+
+# =========================
+# 2. BOXPLOT SCORE
+# =========================
+plt.figure()
+sns.boxplot(x="final_decision", y="decision_score", data=df)
+plt.title("Decision Score Distribution per Class")
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_final/boxplot_score_ieee.pdf")
+plt.close()
+
+# =========================
+# 3. FEATURE IMPORTANCE
+# =========================
+features = ["prb_utilization", "rtt", "jitter", "cpu_usage", "memory_usage"]
+
+importance = df[features].corrwith(df["decision_score"]).abs().sort_values(ascending=False)
+
+plt.figure()
+importance.plot(kind="bar")
+plt.title("Global Feature Importance")
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_final/feature_importance_ieee.pdf")
+plt.close()
+
+# =========================
+# 4. LATÊNCIA E2E
+# =========================
+
+modules = ["sem_latency", "ml_latency", "decision_latency", "nasp_latency", "blockchain_latency"]
+
+latency_means = df[modules].mean()
+
+plt.figure()
+latency_means.plot(kind="bar")
+plt.title("End-to-End Latency per Module")
+plt.ylabel("Latency (ms)")
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_final/e2e_latency_ieee.pdf")
+plt.close()
+
+# TOTAL LATENCY
+df["total_latency"] = df[modules].sum(axis=1)
+
+plt.figure()
+sns.histplot(df["total_latency"], bins=20)
+plt.title("Total End-to-End Latency Distribution")
+plt.savefig("evidencias_resultados_trisla_final/figures_ieee_final/e2e_total_latency_ieee.pdf")
+plt.close()
+
+print("FIGURAS IEEE GERADAS COM SUCESSO")
+EOF
+
+# EXECUTAR
+python3 scripts/e2e/generate_final_ieee_figures.py
+
+# VALIDAR
+ls -lh evidencias_resultados_trisla_final/figures_ieee_final/

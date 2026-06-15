@@ -1,0 +1,265 @@
+# PROMPT — PHASE 0B DUAL BASELINE GOVERNANCE
+
+Operar sob:
+
+* TRISLA_EVOLUTION_MASTER_PLAN_V1 v1.2
+* PROMPT 3 — Controlled Phase Execution Governance
+
+Objetivo:
+
+Criar a governança formal entre:
+
+1. Scientific Baseline
+2. Operational Baseline
+
+Sem realizar qualquer alteração em runtime.
+
+---
+
+# STATUS DE ENTRADA
+
+Considerar aprovados:
+
+```text
+MASTER_PLAN_V1_2_APPROVED = TRUE
+
+FASE_0_ARCHITECTURE_AUDIT_APPROVED = TRUE
+
+PHASE_0A_OPERATIONAL_BASELINE_ACCEPTED = TRUE
+
+DEPLOYMENT_CONSISTENCY_GATE = PASS_WITH_TRACEABILITY
+```
+
+---
+
+# MODO DE EXECUÇÃO
+
+```text
+READ ONLY
+```
+
+Proibido:
+
+* build
+* deploy
+* rollback
+* helm upgrade
+* alteração de manifests
+* alteração de código
+* alteração de runtime
+* alteração de imagens
+* alteração de digests
+
+---
+
+# NOVO ENTREGÁVEL
+
+Criar:
+
+```text
+PHASE_0B_DUAL_BASELINE_GOVERNANCE
+```
+
+---
+
+# OBJETIVO
+
+Formalizar a coexistência de:
+
+## Scientific Baseline
+
+Usado para:
+
+* dissertação
+* artigos
+* resultados científicos
+* campanhas congeladas
+* reproduzibilidade
+
+---
+
+## Operational Baseline
+
+Usado para:
+
+* portal
+* demonstrações
+* operação diária
+* runtime atual
+
+---
+
+# ATIVIDADE 1
+
+Criar:
+
+```text
+scientific_baseline_registry/
+```
+
+Registrar:
+
+* componentes
+* versões
+* imagens
+* digests
+* datasets
+* ontologias
+* políticas
+* freeze associado
+
+Fonte:
+
+* RESULTS_FREEZE_MAIN
+* MASTER_SSOT_POINTER
+* PHASE6 BASELINE
+
+---
+
+# ATIVIDADE 2
+
+Criar:
+
+```text
+operational_baseline_registry/
+```
+
+Registrar:
+
+* componentes atuais
+* imagens atuais
+* digests atuais
+* runtime atual
+* helm atual
+
+Fonte:
+
+* cluster runtime
+* deployment inventory
+* phase 0 audit
+
+---
+
+# ATIVIDADE 3
+
+Criar:
+
+```text
+baseline_traceability_matrix/
+```
+
+Mapear:
+
+```text
+Scientific Baseline
+       ↓
+Component
+       ↓
+Operational Baseline
+```
+
+Para:
+
+* SEM-CSMF
+* ML-NSMF
+* Decision Engine
+* SLA-Agent
+* BC-NSSMF
+* NASP Adapter
+* Portal Backend
+* Portal Frontend
+
+---
+
+# ATIVIDADE 4
+
+Classificar diferenças
+
+Categorias:
+
+```text
+IDENTICAL
+
+TRACEABLE_DIFFERENCE
+
+UNEXPLAINED_DIFFERENCE
+```
+
+---
+
+# ATIVIDADE 5
+
+Criar:
+
+```text
+BASELINE_GOVERNANCE_POLICY.md
+```
+
+Definindo:
+
+* Scientific Baseline
+* Operational Baseline
+* Processo de sincronização
+* Processo de auditoria
+* Processo de aprovação
+
+---
+
+# EVIDÊNCIAS
+
+Gerar:
+
+```text
+evidencias_trisla_phase0b_<timestamp>/
+```
+
+Contendo:
+
+* scientific_baseline_registry
+* operational_baseline_registry
+* baseline_traceability_matrix
+* baseline_governance_policy
+* findings
+* risks
+
+---
+
+# TESTES
+
+Somente validações documentais.
+
+Não executar:
+
+* SLA submissions
+* runtime tests
+* deployments
+
+---
+
+# RESULTADO FINAL
+
+Produzir:
+
+```text
+PHASE_0B_COMPLETION_REPORT
+```
+
+Contendo:
+
+* objetivos atingidos
+* diferenças encontradas
+* diferenças justificadas
+* diferenças não justificadas
+* riscos remanescentes
+
+Finalizar com:
+
+```text
+PHASE_0B_STATUS = READY_FOR_REVIEW
+```
+
+Parar.
+
+Não iniciar a Fase 1.
+
+Aguardar aprovação humana explícita.

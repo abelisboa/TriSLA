@@ -1,0 +1,15 @@
+URLLC:
+- Dominant domain: Transport
+- Slope RTT: -0.0054436
+- Consistency: 60.30%
+
+eMBB:
+- Dominant domain: RAN
+- Slope PRB: 1.5401e-05
+- Consistency: 49.77%
+
+mMTC:
+- Dominant domain: Core
+- Slope CPU: 33.1699
+- Slope MEMORY: 175.619
+- Consistency: 42.36%

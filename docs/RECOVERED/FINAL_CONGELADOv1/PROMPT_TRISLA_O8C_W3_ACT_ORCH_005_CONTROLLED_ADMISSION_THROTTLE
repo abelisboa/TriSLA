@@ -1,0 +1,382 @@
+PROMPT_TRISLA_O8C_W3_ACT_ORCH_005_CONTROLLED_ADMISSION_THROTTLE
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+OBJETIVO
+
+Implementar a primeira ação real de domínio da TriSLA:
+
+ACT-ORCH-005
+
+Controlled Admission Throttle
+
+utilizando o framework de governança implementado em:
+
+O8C Wave 1
+
+O8C W2A
+
+O8C W2B
+
+sem alterar:
+
+Decision Engine
+
+Thresholds
+
+Admission Logic
+
+Bindings O1C–O5C
+
+====================================================
+BASELINE
+========
+
+O1C–O7D = FROZEN
+
+O8A = APPROVED
+
+O8B = APPROVED
+
+O8C Wave1 = APPROVED
+
+O8C W2A = APPROVED
+
+O8C W2B = APPROVED
+
+O8C W2C = APPROVED
+
+CURRENT_STATUS
+
+AUTHORIZED
++
+EXECUTED
++
+VERIFIED
++
+ROLLED_BACK
+
+====================================================
+OBJETIVO FUNCIONAL
+==================
+
+Implementar um mecanismo externo de controle de admissão.
+
+Exemplo:
+
+NORMAL
+↓
+THROTTLED
+↓
+NORMAL
+
+Sem alterar o algoritmo do Decision Engine.
+
+O throttle atua apenas como gate externo.
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+PROIBIDO
+
+Alterar thresholds
+
+Alterar score
+
+Alterar confidence
+
+Alterar Decision Engine
+
+Alterar ONOS
+
+Alterar Core
+
+Alterar RAN
+
+Alterar Transport
+
+====================================================
+PERMITIDO
+=========
+
+Admission gate
+
+Flags
+
+Governance
+
+Metrics
+
+Audit trail
+
+Rollback
+
+Verify
+
+====================================================
+FASE 1 — ACT-ORCH-005 CONTRACT
+==============================
+
+Criar contrato:
+
+ACT-ORCH-005
+
+domain:
+
+ORCHESTRATION
+
+risk:
+
+SAFE
+
+rollback:
+
+SUPPORTED
+
+Gerar:
+
+analysis/o8c_w3_contract.md
+
+====================================================
+FASE 2 — THROTTLE STATE MODEL
+=============================
+
+Estados:
+
+NORMAL
+
+THROTTLED
+
+RESTORED
+
+Persistir:
+
+reason
+
+actor
+
+authorization
+
+timestamps
+
+Gerar:
+
+analysis/o8c_w3_state_model.md
+
+====================================================
+FASE 3 — GOVERNANCE
+===================
+
+Obrigatório:
+
+AUTH_OPERATOR
+
+AUTH_GOVERNANCE
+
+Sem autorização:
+
+AUTH_DENIED
+
+====================================================
+FASE 4 — EXECUTION
+==================
+
+Implementar:
+
+ACTUATION_REQUEST
+↓
+AUTHORIZATION
+↓
+EXECUTING
+↓
+SUCCEEDED
+
+Mudança real:
+
+NORMAL → THROTTLED
+
+====================================================
+FASE 5 — VERIFY
+===============
+
+Executar:
+
+ACT-ASSUR-002
+
+Registrar verify.
+
+====================================================
+FASE 6 — ROLLBACK
+=================
+
+Executar:
+
+THROTTLED
+↓
+RESTORED
+
+Validar reversão.
+
+====================================================
+FASE 7 — PROMETHEUS
+===================
+
+Exportar:
+
+trisla_admission_throttle_state
+
+trisla_admission_throttle_total
+
+trisla_admission_restore_total
+
+trisla_admission_throttle_verify_total
+
+====================================================
+FASE 8 — GRAFANA
+================
+
+Atualizar:
+
+DB-GOV-001
+
+DB-LIFE-001
+
+Adicionar:
+
+Admission Throttle State
+
+Throttle Events
+
+Restore Events
+
+====================================================
+FASE 9 — TESTES
+===============
+
+Executar:
+
+NORMAL
+
+THROTTLED
+
+RESTORED
+
+Rollback
+
+Verify
+
+====================================================
+FASE 10 — REGRESSION
+====================
+
+Validar:
+
+Portal
+
+SEM
+
+ML
+
+Decision
+
+BC
+
+SLA-Agent
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+Sem regressão.
+
+====================================================
+FASE 11 — BUILD
+===============
+
+Fluxo obrigatório:
+
+Git
+↓
+GitHub
+↓
+GHCR
+↓
+Digest
+
+Nunca latest.
+
+====================================================
+FASE 12 — DEPLOY
+================
+
+Obrigatório:
+
+ssh node006
+
+Deploy por digest.
+
+====================================================
+FASE 13 — EVIDENCE PACK
+=======================
+
+Gerar:
+
+evidencias_trisla_o8c_w3_act_orch_005_<timestamp>
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+ACT_ORCH_005_IMPLEMENTED = YES/NO
+
+REAL_DOMAIN_ACTION = YES/NO
+
+AUTHORIZATION_VALIDATED = YES/NO
+
+VERIFY_VALIDATED = YES/NO
+
+ROLLBACK_VALIDATED = YES/NO
+
+THROTTLE_RESTORE_VALIDATED = YES/NO
+
+REGRESSION = NO
+
+READY_FOR_NEXT_DOMAIN_ACTION = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_NEXT_DOMAIN_ACTION = YES
+
+avaliar:
+
+ACT-TN-002 LIVE
+
+com rollback ONOS obrigatório.

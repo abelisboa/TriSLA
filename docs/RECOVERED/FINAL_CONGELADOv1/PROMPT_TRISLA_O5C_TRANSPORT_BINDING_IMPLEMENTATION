@@ -1,0 +1,520 @@
+PROMPT_TRISLA_O5C_TRANSPORT_BINDING_IMPLEMENTATION
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+OBJETIVO
+
+Implementar a fase:
+
+O5C
+Transport Binding
+
+seguindo rigorosamente:
+
+* TRANSPORT_CONTRACT_SSOT_V1.md
+* RAN_CONTRACT_SSOT_V1.md
+* UPF_CONTRACT_SSOT_V1.md
+* AMF_SMF_CONTRACT_SSOT_V1.md
+* NSSF_CONTRACT_SSOT_V1.md
+
+e preservando integralmente os baselines congelados O1C–O4C.
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO instalar flows
+
+NÃO criar intents
+
+NÃO modificar ONOS
+
+NÃO modificar switches
+
+NÃO modificar rotas
+
+NÃO modificar transporte
+
+NÃO modificar Free5GC
+
+NÃO modificar UERANSIM
+
+NÃO modificar ONOS runtime
+
+TriSLA deve apenas:
+
+OBSERVAR
+
+CORRELACIONAR
+
+PERSISTIR
+
+====================================================
+BASELINE CONGELADO
+==================
+
+O1C_FREEZE = APPROVED
+
+O2C_FREEZE = APPROVED
+
+O3C_FREEZE = APPROVED
+
+O4C_FREEZE = APPROVED
+
+O5B_FREEZE = APPROVED
+
+Digest ativo:
+
+ghcr.io/abelisboa/trisla-nasp-adapter@sha256:a7e7d562baae88ae1010caf6d5e53fa18db15ee788bc746d07965219cecc7785
+
+====================================================
+FASE 1 — TRANSPORT OBSERVER
+===========================
+
+Criar:
+
+transport_binding_adapter.py
+
+Responsabilidades:
+
+consultar ONOS REST
+
+modo read-only
+
+coletar:
+
+controller health
+
+version
+
+devices count
+
+links count
+
+flows count
+
+intents count
+
+failed intents
+
+topology status
+
+authentication status
+
+timeout status
+
+Nunca executar:
+
+POST
+
+PUT
+
+DELETE
+
+Somente:
+
+GET
+
+====================================================
+FASE 2 — TRANSPORT CORRELATION
+==============================
+
+Criar:
+
+transport_correlation.py
+
+Correlacionar:
+
+NSI
+
+transport_ref
+
+ONOS controller
+
+controller health
+
+intent inventory
+
+topology inventory
+
+RTT
+
+latency
+
+jitter
+
+packet loss
+
+availability
+
+reliability
+
+Gerar:
+
+TRANSPORT_OBSERVED
+
+TRANSPORT_CORRELATED
+
+====================================================
+FASE 3 — HEALTH ENGINE
+======================
+
+Implementar conforme:
+
+TRANSPORT_CONTRACT_SSOT_V1.md
+
+Estados:
+
+FRESH
+
+STALE
+
+FAILED
+
+UNKNOWN
+
+Considerar:
+
+REST timeout
+
+authentication failure
+
+controller unavailable
+
+failed intents
+
+empty topology
+
+====================================================
+FASE 4 — ANNOTATION
+===================
+
+Criar:
+
+trisla.io/transport-binding
+
+Estrutura mínima:
+
+{
+"contract_version":"1.0",
+"binding_status":"OBSERVED",
+"controller":"onos",
+"controller_health":"...",
+"devices_count":0,
+"links_count":0,
+"flows_count":0,
+"intents_count":1,
+"failed_intents":1,
+"topology_state":"EMPTY",
+"freshness_source":"onos_rest",
+"correlation_status":"..."
+}
+
+====================================================
+FASE 5 — PDU SESSION SUMMARY
+============================
+
+Atualizar:
+
+trisla.io/pdu-session-summary
+
+Adicionar:
+
+transport_binding_status
+
+controller_health
+
+topology_state
+
+intent_state
+
+freshness_timestamp
+
+Sem remover campos O1C–O4C.
+
+====================================================
+FASE 6 — BINDING PHASE
+======================
+
+Expandir progressão:
+
+METADATA_ONLY
+↓
+NSSF_SELECTED
+↓
+AMF_OBSERVED
+↓
+SMF_OBSERVED
+↓
+PDU_CORRELATED
+↓
+UPF_OBSERVED
+↓
+USER_PLANE_CORRELATED
+↓
+RAN_OBSERVED
+↓
+ACCESS_CORRELATED
+↓
+TRANSPORT_OBSERVED
+↓
+TRANSPORT_CORRELATED
+
+Nunca remover estados anteriores.
+
+====================================================
+FASE 7 — FEATURE FLAG
+=====================
+
+Criar:
+
+TRANSPORT_BINDING_ENABLED
+
+Default:
+
+false
+
+Rollback imediato possível.
+
+====================================================
+FASE 8 — TESTES
+===============
+
+Criar testes:
+
+ONOS parser
+
+health engine
+
+transport correlation
+
+annotation persistence
+
+fallback mode
+
+Meta:
+
+100% PASS
+
+Gerar:
+
+analysis/o5c_test_results.md
+
+====================================================
+FASE 9 — BUILD OFICIAL
+======================
+
+Fluxo obrigatório:
+
+Git
+↓
+GitHub
+↓
+GHCR
+↓
+Digest
+
+Capturar:
+
+workflow
+
+run id
+
+digest
+
+Gerar:
+
+analysis/o5c_build_validation.md
+
+====================================================
+FASE 10 — DEPLOY OFICIAL
+========================
+
+Executar:
+
+ssh node006
+
+Deploy:
+
+somente por digest
+
+Nunca latest.
+
+Gerar:
+
+analysis/o5c_deploy_validation.md
+
+====================================================
+FASE 11 — VALIDAÇÃO RUNTIME
+===========================
+
+Executar:
+
+D1 URLLC
+
+D2 mMTC
+
+D6 eMBB
+
+Validar:
+
+ACCEPT
+
+COMMITTED
+
+OK_WITH_ASSURANCE
+
+TRANSPORT_OBSERVED
+
+TRANSPORT_CORRELATED
+
+Capturar:
+
+controller_health
+
+devices_count
+
+links_count
+
+flows_count
+
+intents_count
+
+failed_intents
+
+topology_state
+
+transport_binding_status
+
+====================================================
+FASE 12 — REGRESSÃO
+===================
+
+Validar:
+
+Portal
+
+Grafana
+
+Decision Engine
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Blockchain
+
+SLA-Agent
+
+NSI
+
+NSSI
+
+Confirmar:
+
+SEM REGRESSÃO
+
+====================================================
+FASE 13 — EVIDÊNCIAS
+====================
+
+Gerar:
+
+evidencias_trisla_o5c_transport_binding_<timestamp>
+
+Conteúdo:
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+TRANSPORT_BINDING_IMPLEMENTED = YES/NO
+
+TRANSPORT_OBSERVED = YES/NO
+
+TRANSPORT_CORRELATED = YES/NO
+
+TRANSPORT_HEALTH_ENGINE_IMPLEMENTED = YES/NO
+
+ONOS_REST_OBSERVED = YES/NO
+
+PORTAL_REGRESSION = NO
+
+BC_REGRESSION = NO
+
+NSSF_REGRESSION = NO
+
+AMF_REGRESSION = NO
+
+SMF_REGRESSION = NO
+
+UPF_REGRESSION = NO
+
+RAN_REGRESSION = NO
+
+SLA_AGENT_REGRESSION = NO
+
+RUNTIME_VALIDATION_APPROVED = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+RUNTIME_VALIDATION_APPROVED = YES
+
+executar:
+
+O5C_FINALIZE_AND_FREEZE
+
+para alinhar:
+
+Git
+
+Helm
+
+Runtime
+
+Digest
+
+e consolidar oficialmente o domínio Transporte na cadeia multidomínio da TriSLA.
+
+Resultado esperado:
+
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+TRANSPORT
+↓
+TRANSPORT_CORRELATED
+
+com todos os domínios observados, correlacionados e persistidos.

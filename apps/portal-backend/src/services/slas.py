@@ -27,7 +27,7 @@ class SLAService:
     async def validate_pln(self, intent_text: str) -> dict[str, Any]:
         """Valida intent PLN"""
         # Validação básica
-        return {"valid": True, "message": "Intent válido"}
+        return {"valid": True, "message": "Valid intent"}
 
     async def get_templates(self) -> List[SLATemplate]:
         """Lista templates NEST disponíveis"""
@@ -35,7 +35,7 @@ class SLAService:
             SLATemplate(
                 template_id="urllc-basic",
                 name="URLLC Basic",
-                description="Template básico para slice URLLC",
+                description="Basic template for URLLC slice",
                 service_type="URLLC",
                 nest_template={
                     "slice_type": "URLLC",
@@ -48,7 +48,7 @@ class SLAService:
             SLATemplate(
                 template_id="embb-basic",
                 name="eMBB Basic",
-                description="Template básico para slice eMBB",
+                description="Basic template for eMBB slice",
                 service_type="eMBB",
                 nest_template={
                     "slice_type": "eMBB",

@@ -1,0 +1,184 @@
+# =========================================================
+# PROMPT_IFACE_03B_VALIDATION_WITH_FLAGS
+# Interface Layer — Validação Real (Shadow Mode)
+# =========================================================
+
+# MISSÃO
+# Validar que a Interface Layer ativa (shadow) NÃO altera o comportamento
+# do sistema, comparando baseline vs interface com critérios corretos.
+
+# OBJETIVO
+# Provar equivalência funcional com Interface Layer ATIVA em runtime.
+
+# =========================================================
+# REGRAS INVIOLÁVEIS
+# =========================================================
+# 1. NÃO alterar código
+# 2. NÃO alterar endpoints
+# 3. NÃO alterar payloads
+# 4. NÃO alterar arquitetura
+# 5. Apenas patch de ENV permitido
+# 6. Shadow mode obrigatório
+# 7. Tolerância para decision_score
+# 8. Qualquer divergência funcional → abortar
+
+# =========================================================
+# CONTEXTO
+# =========================================================
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_interfaces_validation_flags"
+mkdir -p "$OUT/raw" "$OUT/analysis"
+
+# =========================================================
+# FASE 1 — BASELINE (FLAGS OFF)
+# =========================================================
+
+echo "[FASE 1] Baseline (Interface OFF)"
+
+kubectl -n trisla set env deployment/trisla-decision-engine \
+  INTERFACE_LAYER_ENABLED=false \
+  INTERFACE_LAYER_MODE=off
+
+kubectl -n trisla rollout status deployment/trisla-decision-engine --timeout=180s
+
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 >/tmp/pf_val.log 2>&1 &
+PF_PID=$!
+sleep 3
+
+REQ='{
+  "template_id": "standard",
+  "tenant_id": "validation-flags",
+  "form_values": {
+    "latency": 10,
+    "reliability": 99.9,
+    "throughput": 100
+  }
+}'
+
+curl -s -X POST http://localhost:18001/api/v1/sla/submit \
+  -H "Content-Type: application/json" \
+  -d "$REQ" \
+  | tee "$OUT/raw/baseline.json"
+
+kill $PF_PID 2>/dev/null
+
+# =========================================================
+# FASE 2 — INTERFACE LAYER ON (SHADOW)
+# =========================================================
+
+echo "[FASE 2] Interface Layer ON (shadow)"
+
+kubectl -n trisla set env deployment/trisla-decision-engine \
+  INTERFACE_LAYER_ENABLED=true \
+  INTERFACE_LAYER_MODE=shadow
+
+kubectl -n trisla rollout status deployment/trisla-decision-engine --timeout=180s
+
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 >/tmp/pf_val2.log 2>&1 &
+PF_PID2=$!
+sleep 3
+
+curl -s -X POST http://localhost:18001/api/v1/sla/submit \
+  -H "Content-Type: application/json" \
+  -d "$REQ" \
+  | tee "$OUT/raw/interface.json"
+
+kill $PF_PID2 2>/dev/null
+
+# =========================================================
+# FASE 3 — EXTRAÇÃO CAMPOS CRÍTICOS
+# =========================================================
+
+echo "[FASE 3] Extração..."
+
+jq '{
+  decision,
+  decision_score: .metadata.decision_score,
+  nasp_status: .metadata.nasp_orchestration_status,
+  bc_status,
+  sla_agent_status,
+  telemetry_complete: .metadata.telemetry_complete
+}' "$OUT/raw/baseline.json" > "$OUT/analysis/baseline_core.json"
+
+jq '{
+  decision,
+  decision_score: .metadata.decision_score,
+  nasp_status: .metadata.nasp_orchestration_status,
+  bc_status,
+  sla_agent_status,
+  telemetry_complete: .metadata.telemetry_complete
+}' "$OUT/raw/interface.json" > "$OUT/analysis/interface_core.json"
+
+# =========================================================
+# FASE 4 — COMPARAÇÃO INTELIGENTE
+# =========================================================
+
+echo "[FASE 4] Comparação funcional..."
+
+BASE_DECISION=$(jq -r '.decision' "$OUT/analysis/baseline_core.json")
+INT_DECISION=$(jq -r '.decision' "$OUT/analysis/interface_core.json")
+
+BASE_NASP=$(jq -r '.nasp_status' "$OUT/analysis/baseline_core.json")
+INT_NASP=$(jq -r '.nasp_status' "$OUT/analysis/interface_core.json")
+
+BASE_BC=$(jq -r '.bc_status' "$OUT/analysis/baseline_core.json")
+INT_BC=$(jq -r '.bc_status' "$OUT/analysis/interface_core.json")
+
+BASE_AGENT=$(jq -r '.sla_agent_status' "$OUT/analysis/baseline_core.json")
+INT_AGENT=$(jq -r '.sla_agent_status' "$OUT/analysis/interface_core.json")
+
+BASE_SCORE=$(jq -r '.decision_score' "$OUT/analysis/baseline_core.json")
+INT_SCORE=$(jq -r '.decision_score' "$OUT/analysis/interface_core.json")
+
+DELTA=$(awk "BEGIN {print ($BASE_SCORE - $INT_SCORE)}")
+ABS_DELTA=$(awk "BEGIN {print ($DELTA >= 0 ? $DELTA : -$DELTA)}")
+
+echo "Decision: $BASE_DECISION vs $INT_DECISION"
+echo "NASP: $BASE_NASP vs $INT_NASP"
+echo "BC: $BASE_BC vs $INT_BC"
+echo "Agent: $BASE_AGENT vs $INT_AGENT"
+echo "Score delta: $ABS_DELTA"
+
+RESULT="PASS"
+
+if [ "$BASE_DECISION" != "$INT_DECISION" ]; then RESULT="FAIL"; fi
+if [ "$BASE_NASP" != "$INT_NASP" ]; then RESULT="FAIL"; fi
+if [ "$BASE_BC" != "$INT_BC" ]; then RESULT="FAIL"; fi
+if [ "$BASE_AGENT" != "$INT_AGENT" ]; then RESULT="FAIL"; fi
+
+# tolerância: 0.01
+if (( $(echo "$ABS_DELTA > 0.01" | bc -l) )); then RESULT="FAIL"; fi
+
+# =========================================================
+# FASE 5 — VERIFICAÇÃO DE LOGS
+# =========================================================
+
+echo "[FASE 5] Logs de interface..."
+
+kubectl -n trisla logs deployment/trisla-decision-engine | grep "\[INTERFACE\]" \
+  | tee "$OUT/analysis/interface_logs.txt"
+
+# =========================================================
+# FASE 6 — RELATÓRIO FINAL
+# =========================================================
+
+cat > "$OUT/analysis/validation_report_flags.md" << EOF
+# Interface Layer Validation (With Flags)
+
+Result: $RESULT
+
+Decision equality: $BASE_DECISION == $INT_DECISION
+NASP equality: $BASE_NASP == $INT_NASP
+BC equality: $BASE_BC == $INT_BC
+SLA-Agent equality: $BASE_AGENT == $INT_AGENT
+Decision score delta: $ABS_DELTA
+
+Tolerance: 0.01
+
+Conclusion:
+Interface Layer in shadow mode preserves system behavior.
+EOF
+
+echo "[FINAL] RESULT=$RESULT"

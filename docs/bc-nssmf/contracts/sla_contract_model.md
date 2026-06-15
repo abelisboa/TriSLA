@@ -1,7 +1,25 @@
 # SLA Smart Contract Model
 
-## 1. SLA Representation
+> **TRACEABILITY_ONLY — NOT RUNTIME `SLAContract.sol`**
+>
+> This document describes a simplified research/dissertation struct. The **operational on-chain contract** is `apps/bc-nssmf/src/contracts/SLAContract.sol`. See [`docs/modules/bc-nssmf.md`](../../modules/bc-nssmf.md) for runtime truth.
 
+## Divergence from runtime
+
+| Aspect | This document (research) | Runtime `SLAContract.sol` |
+|--------|--------------------------|---------------------------|
+| SLA struct | `slaId`, `serviceType`, `decision`, `riskScore`, `timestamp` | `id`, `customer`, `serviceName`, `slaHash`, `status`, `SLO[]`, timestamps |
+| SLOs | Not modeled | `SLO { name, value, threshold }` array |
+| Status enum | Implicit in `decision` string | `REQUESTED, APPROVED, REJECTED, ACTIVE, COMPLETED` |
+| Functions | Conceptual `f(Decision, score, metadata)` | `registerSLA`, `updateSLAStatus`, `getSLA` |
+
+Do **not** use this struct for integration or deployment. Use the Solidity source and `contract_address.json` bundled with BC-NSSMF.
+
+---
+
+## 1. Research SLA representation
+
+```solidity
 struct SLA {
     string slaId;
     string serviceType;
@@ -9,45 +27,25 @@ struct SLA {
     uint256 riskScore;
     uint256 timestamp;
 }
+```
 
----
+## 2. Formal interpretation (research)
 
-## 2. Formal Interpretation
-
-Let:
-
-Decision = decision outcome (ACCEPT / REJECT / RENEGOTIATE)
+Decision = decision outcome (ACCEPT / REJECT / RENEGOTIATE)  
 score = feasibility score
-
-The contract stores:
-
-**Formal Definition**
 
 $$
 SLA_{onchain} = f(Decision, score, metadata)
 $$
 
----
+## 3. Guarantee model (research)
 
-## 3. Guarantee Model
+Once stored, immutability constraint: $SLA(t) \neq SLA(t+1)$ for committed fields.
 
-Once stored:
+## 4. Enforcement (research narrative)
 
-**Formal Definition**
+- SLA record cannot be silently altered post-commit
+- Violations may be recorded (penalty/compensation contracts — **TRACEABILITY_ONLY**, not in runtime)
+- Lifecycle transitions should be valid
 
-$$
-SLA(t) \neq SLA(t+1)
-$$
-
-(immutability constraint)
-
----
-
-## 4. Enforcement
-
-Contracts ensure:
-
-- SLA cannot be modified
-- Violations are recorded
-- Lifecycle transitions are valid
-
+**Runtime note:** Only `SLAContract.sol` is **ACTIVE**. Penalty, compensation, and governance registry contracts are **TRACEABILITY_ONLY** — not in the frozen baseline.

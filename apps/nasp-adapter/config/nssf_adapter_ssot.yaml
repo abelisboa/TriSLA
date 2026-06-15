@@ -1,0 +1,35 @@
+contract_version: NSSF_CONTRACT_SSOT_V1
+nssf:
+  base_url: http://nssf-nnssf.ns-1274485.svc.cluster.local:80
+  nf_type: AMF
+  amf_nf_id: ""
+  nrf_discovery_url: http://nrf-nnrf.ns-1274485.svc.cluster.local:8000/nnrf-nfm/v1/nf-instances
+  selection_path: /nnssf-nsselection/v1/network-slice-information
+  selection_type: PDU_SESSION
+  roaming_indication: NON_ROAMING
+sd_map:
+  URLLC:
+    sd_trisla: "000001"
+    sd_nssf: "1"
+  eMBB:
+    sd_trisla: "000002"
+    sd_nssf: "2"
+  mMTC:
+    sd_trisla: "000003"
+    sd_nssf: "3"
+dnn_map:
+  urllc: internet
+  embb: internet
+  mmtc: internet
+lab_unified:
+  enabled_env: NSSF_LAB_UNIFIED_SLICE
+  sd_nssf: "010203"
+fallback:
+  max_retries: 2
+  retry_delay_seconds: 0.5
+  cache_ttl_seconds: 300
+  never_block_instantiate: true
+timeouts:
+  connect_seconds: 2
+  read_seconds: 5
+feature_flag_env: NSSF_ADAPTER_ENABLED

@@ -1,0 +1,100 @@
+# =========================================================
+# PROMPT_GNB_05E_AUTH_FIX — GHCR DIGEST AUTH FIX
+# =========================================================
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+export EVID_DIR="evidencias_gnb_real/single_ue_attach_05e_auth_fix"
+mkdir -p "$EVID_DIR"/analysis
+
+date -u > "$EVID_DIR/analysis/start_time.txt"
+
+# =========================================================
+# FASE 1 — VALIDAR LOGIN GHCR (PODMAN/DOCKER COMPAT)
+# =========================================================
+
+echo "Validando autenticação GHCR..."
+
+cat ~/.config/containers/auth.json \
+  > "$EVID_DIR/analysis/authfile_dump.txt" 2>/dev/null || true
+
+# Caso authfile esteja vazio ou inválido → login obrigatório
+
+if ! grep -q "ghcr.io" ~/.config/containers/auth.json 2>/dev/null; then
+  echo "[INFO] Reautenticando GHCR..."
+
+  echo "$GITHUB_TOKEN" | podman login ghcr.io \
+    -u "$GITHUB_USER" \
+    --password-stdin \
+    > "$EVID_DIR/analysis/podman_login.txt" 2>&1 || {
+      echo "[ERRO] Falha no login GHCR"
+      exit 1
+    }
+fi
+
+# =========================================================
+# FASE 2 — OBTER IMAGEM PROMOVIDA
+# =========================================================
+
+GHCR_IMAGE=$(cat evidencias_gnb_real/single_ue_attach_05e/analysis/ghcr_image.txt)
+
+echo "$GHCR_IMAGE" > "$EVID_DIR/analysis/ghcr_image.txt"
+
+# =========================================================
+# FASE 3 — OBTER DIGEST (AGORA AUTENTICADO)
+# =========================================================
+
+echo "Obtendo digest remoto via skopeo..."
+
+UE_DIGEST=$(skopeo inspect \
+  --authfile ~/.config/containers/auth.json \
+  docker://$GHCR_IMAGE | jq -r .Digest)
+
+echo "$UE_DIGEST" > "$EVID_DIR/analysis/digest.txt"
+
+test -n "$UE_DIGEST" && [ "$UE_DIGEST" != "null" ] || {
+  echo "[ERRO] Digest não obtido após auth"
+  exit 1
+}
+
+# =========================================================
+# FASE 4 — MONTAR IMAGEM FINAL
+# =========================================================
+
+UE_IMAGE="ghcr.io/abelisboa/trisla-ueransim@${UE_DIGEST}"
+
+echo "$UE_IMAGE" > "$EVID_DIR/analysis/final_image.txt"
+
+# =========================================================
+# FASE 5 — PROVA DE ACESSO (CRÍTICO)
+# =========================================================
+
+skopeo inspect \
+  --authfile ~/.config/containers/auth.json \
+  docker://$UE_IMAGE \
+  > "$EVID_DIR/analysis/inspect_final.txt" 2>&1 || {
+    echo "[ERRO] Falha ao validar imagem final por digest"
+    exit 1
+  }
+
+# =========================================================
+# RELATORIO
+# =========================================================
+
+cat > "$EVID_DIR/RELATORIO_GNB_05E_AUTH_FIX.md" <<EOF
+# RELATORIO GNB_05E_AUTH_FIX
+
+Imagem base:
+$(cat $EVID_DIR/analysis/ghcr_image.txt)
+
+Digest:
+$(cat $EVID_DIR/analysis/digest.txt)
+
+Imagem final:
+$(cat $EVID_DIR/analysis/final_image.txt)
+
+Status:
+AUTH OK + DIGEST VALIDADO
+EOF
+
+echo "PROMPT_GNB_05E_AUTH_FIX FINALIZADO"

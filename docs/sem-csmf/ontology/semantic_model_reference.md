@@ -1,5 +1,8 @@
 # TriSLA Ontology Semantic Model Reference
 
+Canonical module reference: [`docs/modules/sem-csmf.md`](../../modules/sem-csmf.md).
+Canonical interface reference: [`docs/modules/interfaces.md`](../../modules/interfaces.md).
+
 ## 1. Ontology Profile
 
 - Format: OWL 2.0 (Turtle)

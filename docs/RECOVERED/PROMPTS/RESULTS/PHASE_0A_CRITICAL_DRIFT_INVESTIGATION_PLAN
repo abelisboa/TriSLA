@@ -1,0 +1,39 @@
+PHASE_0A_CRITICAL_DRIFT_INVESTIGATION_PLAN
+
+Objetivo:
+Investigar R-001 e R-002.
+
+Modo:
+READ ONLY
+
+Proibido:
+
+* build
+* deploy
+* rollback
+* patch
+* alteração de YAML
+* alteração de Helm
+* alteração de runtime
+
+Entregáveis:
+
+1. Digest lineage report
+2. Git commit lineage report
+3. Helm lineage report
+4. Runtime lineage report
+5. Root cause analysis
+6. Recommendation
+
+Resultado possível:
+
+A. Drift confirmado
+B. Drift falso positivo
+C. Baseline incorreto
+D. Runtime incorreto
+
+Ao final gerar:
+
+CRITICAL_DRIFT_REPORT
+
+e aguardar aprovação humana.

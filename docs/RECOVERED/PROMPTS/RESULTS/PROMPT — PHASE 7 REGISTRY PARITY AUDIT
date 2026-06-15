@@ -1,0 +1,177 @@
+# PROMPT — PHASE 7 REGISTRY PARITY AUDIT
+
+Operar sob:
+
+* TRISLA_EVOLUTION_MASTER_PLAN_V1 v1.2
+* PROMPT 3 Governance
+* Phase 6 aprovada
+
+Status de entrada:
+
+MASTER_PLAN_V1_2_APPROVED = TRUE
+
+PHASE_1_APPROVED = TRUE
+
+PHASE_2_APPROVED = TRUE
+
+PHASE_3_APPROVED = TRUE
+
+PHASE_4_APPROVED = TRUE
+
+PHASE_5_APPROVED = TRUE
+
+PHASE_6_APPROVED = TRUE
+
+FASE_7_PHASE_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Verificar se os registries produziriam exatamente o mesmo comportamento semântico do runtime atual.
+
+Sem alterar runtime.
+
+---
+
+# Modo
+
+STRICT READ ONLY
+
+Proibido:
+
+* build
+* deploy
+* patch
+* alteração de código
+* alteração de ontologia
+* alteração de runtime
+* alteração de APIs
+
+---
+
+# Atividade 1
+
+Criar:
+
+REGISTRY_PARITY_AUDIT.md
+
+---
+
+# Atividade 2
+
+Comparar:
+
+Runtime Current
+
+versus
+
+Semantic Registry
+
+Para:
+
+* GST
+* NEST
+* Slice Classification
+* Metadata
+
+---
+
+# Atividade 3
+
+Executar análise para:
+
+* eMBB
+* URLLC
+* mMTC
+
+---
+
+# Atividade 4
+
+Identificar divergências.
+
+Classificar:
+
+A.
+IDENTICAL
+
+B.
+TRACEABLE_DIFFERENCE
+
+C.
+FUNCTIONAL_DIFFERENCE
+
+D.
+REGRESSION_RISK
+
+---
+
+# Atividade 5
+
+Criar:
+
+REGISTRY_PARITY_MATRIX
+
+Mapear:
+
+Current Runtime
+↓
+Registry Output
+↓
+Parity %
+
+---
+
+# Atividade 6
+
+Avaliar readiness para:
+
+Phase A
+Registry Read Validation
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_fase7_<timestamp>/
+
+Contendo:
+
+* registry_parity_audit
+* parity_matrix
+* divergence_report
+* readiness_assessment
+* validation_report
+
+---
+
+# Critério de sucesso
+
+REGISTRY_PARITY_MEASURED = TRUE
+
+RUNTIME_BEHAVIOR = IDENTICAL
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Resultado final
+
+Produzir:
+
+PHASE_7_COMPLETION_REPORT
+
+Finalizar com:
+
+PHASE_7_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Registry Read Validation.
+
+Não iniciar Shadow Registry.
+
+Aguardar aprovação humana.

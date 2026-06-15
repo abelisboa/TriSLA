@@ -1,0 +1,92 @@
+{{- if .Values.prometheusRecording.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: trisla-recording-rules
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app.kubernetes.io/part-of: trisla
+    app.kubernetes.io/managed-by: Helm
+spec:
+  groups:
+    - name: trisla_recording_orchestration
+      interval: 30s
+      rules:
+        - record: slice_service_binding_phase_by_profile
+          expr: max by (slice_type) (trisla_binding_phase)
+        - record: slice_service_binding_active_total
+          expr: count by (slice_type) (trisla_binding_phase > 0)
+        - record: slice_service_correlation_total
+          expr: count(trisla_binding_phase == 8)
+        - record: nssf_selection_success_by_profile
+          expr: count by (slice_type) (trisla_nssf_selection_status == 2)
+        - record: amf_binding_observed_by_profile
+          expr: count by (slice_type) (trisla_amf_binding_status == 2)
+        - record: smf_binding_observed_by_profile
+          expr: count by (slice_type) (trisla_smf_binding_status == 2)
+        - record: upf_binding_observed_by_profile
+          expr: count by (slice_type) (trisla_upf_binding_status == 2)
+        - record: ran_binding_observed_by_profile
+          expr: count by (slice_type) (trisla_ran_binding_status == 2)
+        - record: transport_binding_observed_by_profile
+          expr: count by (slice_type) (trisla_transport_binding_status == 2)
+        - record: transport_topology_state_by_profile
+          expr: max by (slice_type) (trisla_transport_topology_state)
+        - record: transport_failed_intents_sum
+          expr: sum(trisla_transport_failed_intents)
+
+    - name: trisla_recording_assurance
+      interval: 30s
+      rules:
+        - record: service_assurance_compliance_pct
+          expr: avg(trisla_sla_compliance) * 100
+        - record: service_assurance_domain_compliance_pct
+          expr: avg(trisla_domain_compliance) * 100
+        - record: service_assurance_violation_total
+          expr: sum(trisla_violation_count)
+        - record: service_assurance_drift_total
+          expr: sum(trisla_drift_count)
+        - record: service_assurance_violated_slices
+          expr: count(trisla_runtime_assurance_status == 4)
+        - record: sla_violation_rate_5m
+          expr: sum(rate(trisla_sla_violations_total[5m]))
+
+    - name: trisla_recording_intelligence
+      interval: 30s
+      rules:
+        - record: decision_accept_rate_5m
+          expr: sum(rate(trisla_decision_accepted_total[5m]))
+        - record: decision_renegotiate_rate_5m
+          expr: sum(rate(trisla_decision_renegotiate_total[5m]))
+        - record: decision_reject_rate_5m
+          expr: sum(rate(trisla_decision_rejected_total[5m]))
+        - record: decision_score_avg
+          expr: avg(trisla_decision_score)
+        - record: sem_intent_rate_5m
+          expr: sum(rate(trisla_sem_intents_total[5m]))
+        - record: ml_prediction_rate_5m
+          expr: sum(rate(trisla_ml_requests_total[5m]))
+        - record: xai_execution_rate_5m
+          expr: sum(rate(trisla_xai_executions_total[5m]))
+
+    - name: trisla_recording_governance
+      interval: 30s
+      rules:
+        - record: governance_commit_success_pct
+          expr: sum(trisla_blockchain_tx_present) / count(trisla_blockchain_tx_present) * 100
+        - record: governance_committed_slices
+          expr: count(trisla_blockchain_commit_status == 2)
+        - record: governance_block_height_max
+          expr: max(trisla_blockchain_block_number)
+        - record: bc_transaction_rate_5m
+          expr: sum(rate(trisla_bc_transactions_total{status="committed"}[5m]))
+
+    - name: trisla_recording_lifecycle
+      interval: 30s
+      rules:
+        - record: multidomain_domain_health_score
+          expr: (avg(trisla_sla_compliance) + avg(trisla_domain_compliance) + (count(trisla_binding_phase == 8) / count(trisla_binding_phase > 0))) / 3
+        - record: lifecycle_chain_complete_total
+          expr: count(trisla_binding_phase == 8 and trisla_blockchain_tx_present == 1)
+{{- end }}

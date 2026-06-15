@@ -1,0 +1,153 @@
+# =========================================================
+# PROMPT_LOAD_TEST_01
+# Campanha de carga controlada TriSLA (multi-slice)
+# =========================================================
+
+# MISSÃO
+# Executar múltiplos submits SLA com diferentes perfis (URLLC, eMBB, mMTC),
+# coletar respostas completas e gerar dataset estruturado.
+
+# OBJETIVO
+# Produzir dataset confiável para análise de:
+# - decision_score
+# - latência
+# - comportamento por slice
+# - estabilidade do sistema
+
+# =========================================================
+# REGRAS
+# =========================================================
+# 1. NÃO alterar código
+# 2. NÃO alterar cluster
+# 3. NÃO alterar deploy
+# 4. Apenas executar e coletar
+# 5. Abort em erro HTTP != 200
+
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_load_test_v1"
+mkdir -p "$OUT/raw" "$OUT/analysis"
+
+# =========================================================
+# CONFIGURAÇÃO
+# =========================================================
+
+TOTAL=60
+SLEEP=1
+
+URL="http://localhost:18001/api/v1/sla/submit"
+
+# iniciar port-forward
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 >/tmp/pf_load.log 2>&1 &
+PF_PID=$!
+sleep 3
+
+echo "[INFO] Iniciando carga..."
+
+# =========================================================
+# FUNÇÃO DE REQUEST
+# =========================================================
+
+send_request() {
+  TYPE=$1
+  ID=$2
+
+  case $TYPE in
+    URLLC)
+      BODY='{
+        "template_id": "standard",
+        "tenant_id": "load-urlcc-'$ID'",
+        "form_values": {
+          "latency": 5,
+          "reliability": 99.999,
+          "throughput": 50
+        }
+      }'
+      ;;
+    EMBB)
+      BODY='{
+        "template_id": "standard",
+        "tenant_id": "load-embb-'$ID'",
+        "form_values": {
+          "latency": 20,
+          "reliability": 99.9,
+          "throughput": 500
+        }
+      }'
+      ;;
+    MMTC)
+      BODY='{
+        "template_id": "standard",
+        "tenant_id": "load-mmtc-'$ID'",
+        "form_values": {
+          "latency": 50,
+          "reliability": 95,
+          "throughput": 10
+        }
+      }'
+      ;;
+  esac
+
+  curl -s -o "$OUT/raw/${TYPE}_${ID}.json" \
+       -w "%{http_code}" \
+       -X POST "$URL" \
+       -H "Content-Type: application/json" \
+       -d "$BODY" > "$OUT/raw/${TYPE}_${ID}.status"
+
+  STATUS=$(cat "$OUT/raw/${TYPE}_${ID}.status")
+
+  if [ "$STATUS" != "200" ]; then
+    echo "[ERRO] $TYPE $ID HTTP $STATUS"
+  else
+    echo "[OK] $TYPE $ID"
+  fi
+}
+
+# =========================================================
+# EXECUÇÃO
+# =========================================================
+
+for i in $(seq 1 $TOTAL); do
+
+  case $((i % 3)) in
+    0) TYPE="URLLC" ;;
+    1) TYPE="EMBB" ;;
+    2) TYPE="MMTC" ;;
+  esac
+
+  send_request $TYPE $i
+  sleep $SLEEP
+
+done
+
+kill $PF_PID 2>/dev/null
+
+echo "[INFO] Coleta concluída"
+
+# =========================================================
+# EXTRAÇÃO PARA DATASET
+# =========================================================
+
+echo "type,id,decision,score,nasp_latency,bc_latency,agent_latency" > "$OUT/analysis/dataset.csv"
+
+for f in $OUT/raw/*.json; do
+
+  TYPE=$(basename $f | cut -d_ -f1)
+  ID=$(basename $f | cut -d_ -f2 | cut -d. -f1)
+
+  jq -r --arg t "$TYPE" --arg id "$ID" '
+    [
+      $t,
+      $id,
+      .decision,
+      .metadata.decision_score,
+      .metadata.nasp_latency_ms,
+      .metadata.blockchain_latency_ms,
+      .metadata.sla_agent_latency_ms
+    ] | @csv
+  ' "$f" >> "$OUT/analysis/dataset.csv"
+
+done
+
+echo "[OK] Dataset gerado em $OUT/analysis/dataset.csv"

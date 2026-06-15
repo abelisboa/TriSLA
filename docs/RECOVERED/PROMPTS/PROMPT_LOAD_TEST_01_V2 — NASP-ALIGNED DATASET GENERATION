@@ -1,0 +1,117 @@
+# =========================================================
+# PROMPT_LOAD_TEST_01_V2 — NASP-ALIGNED DATASET GENERATION
+# =========================================================
+# MISSÃO:
+# Executar campanha controlada de requisições SLA
+# para geração de dataset científico do TriSLA
+#
+# BASE:
+# docs/TRISLA_EXPERIMENTAL_CANONICAL (SSOT)
+#
+# REGRAS:
+# - NÃO alterar arquitetura
+# - NÃO usar simulador
+# - NÃO inventar métricas
+# - USAR pipeline real (POST /sla/submit)
+# =========================================================
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+export EVID_DIR="evidencias_resultados_trisla_v2_load01"
+mkdir -p $EVID_DIR/{dataset,analysis,logs}
+
+date -u > $EVID_DIR/analysis/start.txt
+
+# =========================================================
+# FASE 1 — HEALTH CHECK
+# =========================================================
+
+curl -s http://localhost:18001/api/v1/health/global \
+  > $EVID_DIR/analysis/health.txt || exit 1
+
+# =========================================================
+# FASE 2 — EXECUÇÃO CONTROLADA
+# =========================================================
+
+TOTAL=30
+
+for i in $(seq 1 $TOTAL); do
+
+  curl -s -X POST http://localhost:18001/api/v1/sla/submit \
+    -H "Content-Type: application/json" \
+    -d '{
+      "template_id": "standard",
+      "tenant_id": "lab",
+      "form_values": {
+        "latency": 10,
+        "reliability": 99.9,
+        "throughput": 100,
+        "device_count": 50
+      }
+    }' >> $EVID_DIR/dataset/raw.json
+
+  echo "" >> $EVID_DIR/dataset/raw.json
+  sleep 1
+
+done
+
+# =========================================================
+# FASE 3 — EXTRAÇÃO
+# =========================================================
+
+cat $EVID_DIR/dataset/raw.json | jq -c '{
+  decision: .decision,
+  score: .metadata.decision_score,
+  prb: .metadata.telemetry_snapshot.ran.prb_utilization,
+  latency: .metadata.telemetry_snapshot.transport.latency,
+  cpu: .metadata.telemetry_snapshot.core.cpu_utilization
+}' > $EVID_DIR/dataset/dataset.json
+
+# =========================================================
+# FASE 4 — CSV FINAL
+# =========================================================
+
+echo "decision,score,prb,latency,cpu" > $EVID_DIR/dataset/dataset.csv
+
+cat $EVID_DIR/dataset/dataset.json | jq -r '
+[
+  .decision,
+  .score,
+  .prb,
+  .latency,
+  .cpu
+] | @csv' >> $EVID_DIR/dataset/dataset.csv
+
+# =========================================================
+# FASE 5 — ANÁLISE BÁSICA
+# =========================================================
+
+jq -r '.score' $EVID_DIR/dataset/dataset.json \
+  > $EVID_DIR/analysis/scores.txt
+
+jq -r '.prb' $EVID_DIR/dataset/dataset.json \
+  > $EVID_DIR/analysis/prb.txt
+
+# =========================================================
+# RELATÓRIO
+# =========================================================
+
+cat > $EVID_DIR/analysis/report.md <<EOF
+# LOAD TEST 01 (NASP ALIGNED)
+
+## Execuções
+$TOTAL requisições SLA
+
+## Objetivo
+Gerar dataset para análise do Decision Engine
+
+## Observações
+- Pipeline real usado
+- Nenhum simulador
+- Métricas coletadas diretamente do sistema
+
+## Próximo passo
+LOAD_TEST_02 — regimes controlados
+EOF
+
+echo "PROMPT_LOAD_TEST_01_V2 FINALIZADO"

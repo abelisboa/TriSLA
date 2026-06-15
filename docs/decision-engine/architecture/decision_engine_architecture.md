@@ -1,20 +1,20 @@
 # Decision Engine Architecture
 
-## Components
+> **Operational SSOT:** [`docs/modules/decision-engine.md`](../../modules/decision-engine.md)
 
-- Input Normalizer (SEM-CSMF + ML-NSMF payload alignment)
-- Policy Evaluator
-- Threshold Engine
-- Telemetry Collector (Prometheus adapters)
-- Decision Publisher (Kafka/REST)
+Architecture, component inventory, production hot path, and integration boundaries are maintained in the canonical module document to avoid duplication.
 
-## Data Flow
+## Quick reference
 
-SEM-CSMF + ML-NSMF + Telemetry -> Decision Engine -> BC-NSSMF / SLA-Agent
+| Layer | Module | Hot path |
+|-------|--------|----------|
+| HTTP ingress | `main.py` → `POST /evaluate` | Yes |
+| Service | `service.py` → `DecisionService` | Yes |
+| Admission rules | `engine.py` → `_apply_decision_rules` | Yes |
+| ML client | `ml_client.py` | Yes |
+| I-01 echo | `i01_metadata_echo.py`, `i01_nest_echo.py` | Yes |
+| Explainability | `decision_snapshot.py`, `system_xai.py`, `decision_evidence.py` | Yes |
+| Legacy gRPC | `grpc_server.py` + `RuleEngine` | No — TRACEABILITY_ONLY |
+| Authority enrichers | `orchestration_authority.py`, `lifecycle_authority.py` | No — NOT WIRED |
 
-## Responsibilities
-
-- Fuse multi-domain inputs
-- Apply admission policy thresholds
-- Produce deterministic SLA decision output
-
+Frozen chain position: SEM-CSMF → Decision Engine → (return) → Portal → NASP Adapter (post-ACCEPT).

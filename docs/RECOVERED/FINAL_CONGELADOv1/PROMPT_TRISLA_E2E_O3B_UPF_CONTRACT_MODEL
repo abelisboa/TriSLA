@@ -1,0 +1,484 @@
+PROMPT_TRISLA_E2E_O3B_UPF_CONTRACT_MODEL
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Formalizar o contrato SSOT da fase O3 entre:
+
+TriSLA
+↓
+NSSF Selection
+↓
+AMF Binding
+↓
+SMF Binding
+↓
+UPF Binding
+↓
+User Plane Context
+
+alinhado às especificações:
+
+* 3GPP TS 23.501
+* 3GPP TS 23.502
+* 3GPP TS 29.244 (PFCP)
+* O-RAN Architecture
+* ETSI ZSM
+
+IMPORTANTE
+
+Esta fase NÃO implementa integração.
+
+Esta fase NÃO altera Free5GC.
+
+Esta fase NÃO altera UPF.
+
+Esta fase NÃO altera PFCP.
+
+Esta fase NÃO altera TriSLA.
+
+O objetivo é congelar o contrato canônico que servirá de base para O3C.
+
+Toda conclusão deve ser baseada em:
+
+* evidências O3A
+* runtime real
+* logs UPF
+* logs SMF
+* PFCP observado
+* sessões PDU observadas
+
+Nunca em hipóteses.
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+O1C_APPROVED = YES
+
+O2C_APPROVED = YES
+
+O3A_APPROVED = YES
+
+UPF_DISCOVERED = YES
+
+PFCP_DISCOVERED = YES
+
+SMF_UPF_FLOW_DISCOVERED = YES
+
+CURRENT_ORCHESTRATION_LEVEL =
+
+NSI/NSSI
++
+SLICE_SERVICE_BINDING
++
+NSSF_SELECTION
++
+AMF_OBSERVED
++
+SMF_OBSERVED
++
+PDU_CORRELATED
+
+====================================================
+FASE 1 — MODELO 3GPP DE REFERÊNCIA
+==================================
+
+Mapear os elementos observados no runtime para:
+
+3GPP TS 23.501
+
+3GPP TS 23.502
+
+3GPP TS 29.244
+
+Identificar:
+
+UPF
+
+PFCP Session
+
+PDR
+
+FAR
+
+QER
+
+F-TEID
+
+UE IP
+
+PDU Session
+
+DNN
+
+Gerar:
+
+analysis/o3b_3gpp_reference_model.md
+
+====================================================
+FASE 2 — CONTRATO UPF
+=====================
+
+Congelar:
+
+campos observados
+
+UPF Identity
+
+UPF N4 Address
+
+UPF GTP-U Address
+
+Session State
+
+PFCP State
+
+UE IP
+
+DNN
+
+Slice Information
+
+Identificar:
+
+campos persistíveis
+
+campos transitórios
+
+campos descartáveis
+
+Gerar:
+
+analysis/o3b_upf_contract.md
+
+====================================================
+FASE 3 — POLÍTICA DE FRESHNESS
+==============================
+
+Auditar:
+
+ue_ip
+
+session_state
+
+PFCP events
+
+Foi observado:
+
+UE IP pode mudar após
+delete/re-establish.
+
+Definir:
+
+source_of_truth
+
+prioridade de fontes
+
+freshness window
+
+stale detection
+
+Gerar:
+
+analysis/o3b_freshness_policy.md
+
+====================================================
+FASE 4 — MATRIZ DE CORRELAÇÃO
+=============================
+
+Construir:
+
+TriSLA
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+
+Mapear:
+
+sst
+
+sd
+
+dnn
+
+nsiId
+
+session_id
+
+ue_ip
+
+selected_upf
+
+upf_n4_addr
+
+upf_gtpu_addr
+
+correlation_status
+
+Gerar:
+
+analysis/o3b_correlation_matrix.md
+
+====================================================
+FASE 5 — MODELO DE PERSISTÊNCIA
+===============================
+
+Definir o que O3C poderá armazenar.
+
+Annotations previstas:
+
+trisla.io/upf-binding
+
+Atualizações possíveis:
+
+trisla.io/pdu-session-summary
+
+Definir:
+
+campos obrigatórios
+
+campos opcionais
+
+contract_version
+
+timestamps
+
+Gerar:
+
+analysis/o3b_persistence_model.md
+
+====================================================
+FASE 6 — MODELO PFCP
+====================
+
+Determinar:
+
+o que pode ser observado.
+
+o que não deve ser observado.
+
+o que não deve ser persistido.
+
+Responder:
+
+TriSLA deve armazenar PFCP completo?
+
+ou apenas metadados?
+
+Gerar:
+
+analysis/o3b_pfcp_policy.md
+
+====================================================
+FASE 7 — ALINHAMENTO O-RAN
+==========================
+
+Verificar:
+
+SMO
+
+O1
+
+A1
+
+E2
+
+Near-RT RIC
+
+Non-RT RIC
+
+Responder:
+
+O contrato UPF proposto é compatível com a evolução O-RAN?
+
+Gerar:
+
+analysis/o3b_oran_alignment.md
+
+====================================================
+FASE 8 — ALINHAMENTO ETSI ZSM
+=============================
+
+Verificar:
+
+Service Assurance
+
+Service Context
+
+Closed Loop
+
+Governance
+
+Automation
+
+Responder:
+
+O contrato UPF proposto é compatível com ETSI ZSM?
+
+Gerar:
+
+analysis/o3b_zsm_alignment.md
+
+====================================================
+FASE 9 — GAP ANALYSIS
+=====================
+
+Determinar:
+
+o que existe hoje.
+
+o que O3C precisará implementar.
+
+o que deve permanecer metadata.
+
+o que nunca deve controlar.
+
+Gerar:
+
+analysis/o3b_gap_matrix.md
+
+====================================================
+FASE 10 — O3C TARGET DESIGN
+===========================
+
+SEM IMPLEMENTAR.
+
+Definir arquitetura alvo:
+
+TriSLA
+↓
+NSSF Selection
+↓
+AMF Binding
+↓
+SMF Binding
+↓
+UPF Binding
+↓
+Metadata Persistence
+
+IMPORTANTE
+
+TriSLA NÃO controla:
+
+UPF
+
+PFCP
+
+SMF
+
+AMF
+
+TriSLA apenas:
+
+observa
+correlaciona
+persiste
+
+Gerar:
+
+analysis/O3C_TARGET_DESIGN.md
+
+====================================================
+SSOT FINAL
+==========
+
+Produzir:
+
+UPF_CONTRACT_SSOT_V1.md
+
+Este documento será a autoridade única para O3C.
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/o3b_3gpp_reference_model.md
+
+analysis/o3b_upf_contract.md
+
+analysis/o3b_freshness_policy.md
+
+analysis/o3b_correlation_matrix.md
+
+analysis/o3b_persistence_model.md
+
+analysis/o3b_pfcp_policy.md
+
+analysis/o3b_oran_alignment.md
+
+analysis/o3b_zsm_alignment.md
+
+analysis/o3b_gap_matrix.md
+
+analysis/O3C_TARGET_DESIGN.md
+
+analysis/UPF_CONTRACT_SSOT_V1.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+UPF_CONTRACT_APPROVED = YES/NO
+
+FRESHNESS_POLICY_APPROVED = YES/NO
+
+PFCP_POLICY_APPROVED = YES/NO
+
+CORRELATION_MODEL_APPROVED = YES/NO
+
+PERSISTENCE_MODEL_APPROVED = YES/NO
+
+ORAN_ALIGNMENT_APPROVED = YES/NO
+
+ETSI_ZSM_ALIGNMENT_APPROVED = YES/NO
+
+READY_FOR_O3C = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_O3C = YES
+
+iniciar:
+
+E2E-O3C_UPF_BINDING_IMPLEMENTATION
+
+seguindo rigorosamente:
+
+UPF_CONTRACT_SSOT_V1.md
+
+AMF_SMF_CONTRACT_SSOT_V1.md
+
+NSSF_CONTRACT_SSOT_V1.md
+
+sem alterar o comportamento operacional do Core 5G e sem regressão dos baselines O1C e O2C.

@@ -1,0 +1,413 @@
+PROMPT_TRISLA_O2C_FINALIZE_AND_FREEZE
+
+MODO:
+CONTROLLED FINALIZATION
+
+OBJETIVO
+
+Finalizar formalmente a fase:
+
+E2E-O2C
+AMF/SMF Binding
+
+eliminando qualquer divergência entre:
+
+* Runtime
+* Git
+* Helm
+* Evidências congeladas
+
+antes de iniciar:
+
+E2E-O3
+UPF Binding
+
+IMPORTANTE
+
+O2C já está aprovado funcionalmente.
+
+Este prompt NÃO implementa novas funcionalidades.
+
+Este prompt apenas:
+
+* sincroniza RBAC
+* sincroniza Helm
+* sincroniza digest
+* congela baseline
+* prepara transição segura para O3
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO alterar:
+
+AMF Binding
+
+NÃO alterar:
+
+SMF Binding
+
+NÃO alterar:
+
+NSSF Adapter
+
+NÃO alterar:
+
+Decision Engine
+
+NÃO alterar:
+
+Blockchain
+
+NÃO alterar:
+
+SLA-Agent
+
+NÃO alterar:
+
+Free5GC
+
+NÃO alterar:
+
+UERANSIM
+
+NÃO alterar:
+
+ONOS
+
+Utilizar sempre:
+
+ssh node006
+
+Nunca:
+
+latest
+
+Nunca:
+
+ssh node1
+
+====================================================
+BASELINE OFICIAL
+================
+
+AMF_BINDING_IMPLEMENTED = YES
+
+SMF_BINDING_IMPLEMENTED = YES
+
+PDU_CORRELATION_IMPLEMENTED = YES
+
+RUNTIME_VALIDATION_APPROVED = YES
+
+Digest runtime aprovado:
+
+ghcr.io/abelisboa/trisla-nasp-adapter@sha256:7948f1945e4aeb2d333b0eeb4a7bf3cd953a44681817b84c6bf6ad607ebbfd92
+
+====================================================
+FASE 1 — AUDITORIA DE DRIFT
+===========================
+
+Verificar:
+
+Git
+
+Helm
+
+Runtime
+
+Comparar:
+
+digest Git
+
+digest Helm
+
+digest runtime
+
+Emitir:
+
+DRIFT = YES/NO
+
+Gerar:
+
+analysis/o2c_drift_audit.md
+
+====================================================
+FASE 2 — SINCRONIZAÇÃO HELM
+===========================
+
+Atualizar:
+
+helm/trisla/values.yaml
+
+para refletir exatamente:
+
+sha256:7948f1945e4aeb2d333b0eeb4a7bf3cd953a44681817b84c6bf6ad607ebbfd92
+
+Nenhuma outra alteração.
+
+Gerar:
+
+analysis/o2c_helm_alignment.md
+
+====================================================
+FASE 3 — VALIDAÇÃO RBAC
+=======================
+
+Auditar:
+
+apps/nasp-adapter/k8s/nasp-adapter-rbac.yaml
+
+helm/trisla/templates/nasp-adapter-rbac.yaml
+
+Confirmar presença de:
+
+trislareservations
+
+pods
+
+pods/log
+
+Verificar consistência entre:
+
+manifesto K8s
+
+template Helm
+
+runtime
+
+Gerar:
+
+analysis/o2c_rbac_validation.md
+
+====================================================
+FASE 4 — COMMIT CONTROLADO
+==========================
+
+Commit sugerido:
+
+fix(nasp): preserve reservation RBAC and pin O2C digest
+
+Registrar:
+
+hash
+
+arquivos alterados
+
+diff resumido
+
+Gerar:
+
+analysis/o2c_commit_validation.md
+
+====================================================
+FASE 5 — PUSH
+=============
+
+Executar push.
+
+Registrar:
+
+branch
+
+remote
+
+hash final
+
+Gerar:
+
+analysis/o2c_push_validation.md
+
+====================================================
+FASE 6 — REVALIDAÇÃO RUNTIME
+============================
+
+Via:
+
+ssh node006
+
+Validar:
+
+deployment
+
+pod
+
+digest
+
+rollout
+
+Confirmar:
+
+runtime continua usando:
+
+sha256:7948f1945e4aeb2d333b0eeb4a7bf3cd953a44681817b84c6bf6ad607ebbfd92
+
+Gerar:
+
+analysis/o2c_runtime_revalidation.md
+
+====================================================
+FASE 7 — REVALIDAÇÃO FUNCIONAL
+==============================
+
+Executar:
+
+D1 URLLC
+
+Validar:
+
+ACCEPT
+
+COMMITTED
+
+OK_WITH_ASSURANCE
+
+PDU_CORRELATED
+
+AMF_OBSERVED
+
+SMF_OBSERVED
+
+Capturar:
+
+supi
+
+session_id
+
+ue_ip
+
+selected_upf
+
+correlation_status
+
+Gerar:
+
+analysis/o2c_functional_revalidation.md
+
+====================================================
+FASE 8 — REGRESSÃO
+==================
+
+Validar:
+
+Portal
+
+Grafana
+
+Decision Engine
+
+NSSF Adapter
+
+Blockchain
+
+SLA-Agent
+
+NSI
+
+NSSI
+
+Confirmar:
+
+SEM REGRESSÃO
+
+Gerar:
+
+analysis/o2c_regression_validation.md
+
+====================================================
+FASE 9 — FREEZE FINAL O2C
+=========================
+
+Gerar:
+
+evidencias_trisla_o2c_final_freeze_<timestamp>
+
+Conteúdo:
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+Incluir referência:
+
+AMF_SMF_CONTRACT_SSOT_V1.md
+
+NSSF_CONTRACT_SSOT_V1.md
+
+====================================================
+FASE 10 — PRONTIDÃO PARA O3
+===========================
+
+Checklist obrigatório:
+
+O1C congelado?
+
+O2C congelado?
+
+RBAC sincronizado?
+
+Helm sincronizado?
+
+Git sincronizado?
+
+Runtime sincronizado?
+
+Sem drift?
+
+Emitir:
+
+O3_READY = YES/NO
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+RBAC_ALIGNMENT_APPROVED = YES/NO
+
+HELM_ALIGNMENT_APPROVED = YES/NO
+
+RUNTIME_ALIGNMENT_APPROVED = YES/NO
+
+O2C_FREEZE_COMPLETED = YES/NO
+
+DRIFT_ELIMINATED = YES/NO
+
+REPOSITORY_CLEAN = YES/NO
+
+O3_READY = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+O3_READY = YES
+
+iniciar:
+
+E2E-O3A_UPF_DISCOVERY_AUDIT
+
+utilizando como âncoras oficiais:
+
+session_id
+
+ue_ip
+
+selected_upf
+
+dnn
+
+correlation_status
+
+persistidos durante O2C.

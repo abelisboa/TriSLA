@@ -1,0 +1,412 @@
+PROMPT_TRISLA_E2E_O2C_PRE_IMPLEMENTATION_ARCHITECTURE_REVIEW
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Executar uma revisão arquitetural completa da evolução planejada da TriSLA antes da implementação da fase:
+
+E2E-O2C — AMF/SMF Binding
+
+O objetivo é garantir que:
+
+* O2C não introduza dívida arquitetural;
+* O2C seja compatível com O3, O4, O5 e fases posteriores;
+* os modelos de persistência sejam reutilizáveis;
+* não exista necessidade de migração estrutural futura;
+* a evolução permaneça alinhada com 3GPP, O-RAN e ETSI ZSM.
+
+IMPORTANTE
+
+Não implementar nada.
+
+Não alterar nada.
+
+Não modificar runtime.
+
+Não modificar Free5GC.
+
+Não modificar TriSLA.
+
+Não modificar O1C.
+
+Não modificar O2B.
+
+Apenas auditar e validar a coerência arquitetural do roadmap.
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+O6_APPROVED = YES
+
+O1A_APPROVED = YES
+
+O1B_APPROVED = YES
+
+O1C_APPROVED = YES
+
+O2A_APPROVED = YES
+
+O2B_APPROVED = YES
+
+AMF_SMF_CONTRACT_SSOT_V1.md = AUTORIDADE
+
+NSSF_CONTRACT_SSOT_V1.md = AUTORIDADE
+
+====================================================
+FASE 1 — REVISÃO DO ROADMAP
+===========================
+
+Auditar a sequência:
+
+O2C
+↓
+O3
+↓
+O4
+↓
+O5
+↓
+O6+
+
+Identificar:
+
+dependências
+
+sobreposições
+
+acoplamentos
+
+riscos
+
+Gerar:
+
+analysis/o2c_roadmap_review.md
+
+====================================================
+FASE 2 — REVISÃO DO MODELO DE PERSISTÊNCIA
+==========================================
+
+Auditar os artefatos previstos:
+
+trisla.io/nssf-selection
+
+trisla.io/amf-binding
+
+trisla.io/smf-binding
+
+trisla.io/pdu-session-summary
+
+Responder:
+
+São suficientes?
+
+Precisarão ser alterados em O3/O4/O5?
+
+Precisarão ser migrados?
+
+Gerar:
+
+analysis/o2c_persistence_review.md
+
+====================================================
+FASE 3 — COMPATIBILIDADE COM O3
+===============================
+
+Assumindo:
+
+O3 = UPF Binding
+
+Verificar:
+
+Como o UPF será correlacionado?
+
+session_id é suficiente?
+
+ue_ip é suficiente?
+
+selected_upf é suficiente?
+
+Que campos devem existir já em O2C?
+
+Gerar:
+
+analysis/o3_upf_compatibility.md
+
+====================================================
+FASE 4 — COMPATIBILIDADE COM O4
+===============================
+
+Assumindo:
+
+O4 = RAN Binding
+
+Verificar:
+
+SUPI
+
+gNB
+
+NSSAI
+
+UE Context
+
+Session Context
+
+Precisarão ser persistidos?
+
+Como serão correlacionados?
+
+Gerar:
+
+analysis/o4_ran_compatibility.md
+
+====================================================
+FASE 5 — COMPATIBILIDADE COM O5
+===============================
+
+Assumindo:
+
+O5 = Transport Binding
+
+Verificar:
+
+Path
+
+Latency
+
+Jitter
+
+Transport Context
+
+Será necessário novo modelo?
+
+Os metadados atuais suportam?
+
+Gerar:
+
+analysis/o5_transport_compatibility.md
+
+====================================================
+FASE 6 — ALINHAMENTO 3GPP
+=========================
+
+Verificar:
+
+23.501
+
+23.502
+
+28.541
+
+28.533
+
+29.518
+
+29.503
+
+Responder:
+
+O modelo previsto para O2C permanece compatível?
+
+SIM ou NÃO
+
+Justificar.
+
+Gerar:
+
+analysis/o2c_3gpp_alignment.md
+
+====================================================
+FASE 7 — ALINHAMENTO O-RAN
+==========================
+
+Verificar:
+
+SMO
+
+O1
+
+A1
+
+E2
+
+Near-RT RIC
+
+Non-RT RIC
+
+Responder:
+
+O modelo previsto para O2C permanece compatível?
+
+SIM ou NÃO
+
+Gerar:
+
+analysis/o2c_oran_alignment.md
+
+====================================================
+FASE 8 — ALINHAMENTO ETSI ZSM
+=============================
+
+Verificar:
+
+Closed Loop
+
+Service Assurance
+
+Governance
+
+Autonomous Management
+
+Responder:
+
+O modelo previsto para O2C permanece compatível?
+
+SIM ou NÃO
+
+Gerar:
+
+analysis/o2c_zsm_alignment.md
+
+====================================================
+FASE 9 — MODELO CANÔNICO FUTURO
+===============================
+
+Propor o modelo alvo completo:
+
+NSI
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+Transport
+
+Identificar:
+
+campos obrigatórios
+
+campos opcionais
+
+campos descartáveis
+
+Gerar:
+
+analysis/future_canonical_model.md
+
+====================================================
+FASE 10 — PRONTIDÃO PARA IMPLEMENTAÇÃO
+======================================
+
+Responder:
+
+O2C pode ser implementado sem risco?
+
+O modelo atual é suficiente?
+
+Há necessidade de ajustes prévios?
+
+Existe risco de refatoração futura?
+
+Gerar:
+
+analysis/o2c_readiness_assessment.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/o2c_roadmap_review.md
+
+analysis/o2c_persistence_review.md
+
+analysis/o3_upf_compatibility.md
+
+analysis/o4_ran_compatibility.md
+
+analysis/o5_transport_compatibility.md
+
+analysis/o2c_3gpp_alignment.md
+
+analysis/o2c_oran_alignment.md
+
+analysis/o2c_zsm_alignment.md
+
+analysis/future_canonical_model.md
+
+analysis/o2c_readiness_assessment.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+O2C_ARCHITECTURE_APPROVED = YES/NO
+
+PERSISTENCE_MODEL_FUTURE_PROOF = YES/NO
+
+O3_COMPATIBLE = YES/NO
+
+O4_COMPATIBLE = YES/NO
+
+O5_COMPATIBLE = YES/NO
+
+THREE_GPP_ALIGNMENT_APPROVED = YES/NO
+
+ORAN_ALIGNMENT_APPROVED = YES/NO
+
+ETSI_ZSM_ALIGNMENT_APPROVED = YES/NO
+
+READY_FOR_O2C_IMPLEMENTATION = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_O2C_IMPLEMENTATION = YES
+
+iniciar:
+
+E2E-O2C_AMF_SMF_BINDING_IMPLEMENTATION
+
+utilizando exclusivamente:
+
+AMF_SMF_CONTRACT_SSOT_V1.md
+
+NSSF_CONTRACT_SSOT_V1.md
+
+e mantendo total compatibilidade com:
+
+3GPP
+O-RAN
+ETSI ZSM
+
+sem regressão do baseline congelado O1C.

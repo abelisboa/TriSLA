@@ -1,0 +1,176 @@
+# PROMPT — PHASE 40 WAVE 4K RUNTIME SHADOW VALIDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 39 aprovada
+* Wave 1 Freeze ativo
+* Wave 3A Freeze ativo
+* Wave 4 Freeze ativo
+
+Status:
+
+PHASE_40_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Executar Runtime Shadow Validation (PM-4).
+
+Primeira validação do candidato em runtime real.
+
+Sem promoção.
+
+Sem retraining.
+
+Sem alteração da decisão operacional.
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# Política temporal obrigatória
+
+Replay/Shadow snapshot:
+
+[t-1s, t]
+
+step = 1s
+
+SNAPSHOT_MAX_AGE = 35s
+
+---
+
+# Invariantes obrigatórios
+
+ACTIVE_RUNTIME
+
+(BUNDLE-OP-001)
+
+continua sendo:
+
+única autoridade operacional
+
+---
+
+CANDIDATE
+
+(BUNDLE-SCI-001)
+
+apenas observa
+
+---
+
+Proibido:
+
+* alterar action
+* alterar score operacional
+* alterar confidence operacional
+* alterar blockchain
+* alterar SLA-Agent actions
+* alterar Portal outputs
+
+---
+
+# Métricas obrigatórias
+
+PM-4
+
+Decision Action Flip Rate
+
+PM-5
+
+Explainability Agreement
+
+PM-6
+
+Confidence Authority Track
+
+---
+
+# Produzir
+
+RUNTIME_SHADOW_REPORT.md
+
+ACTION_FLIP_MATRIX.json
+
+SHADOW_PARITY_MATRIX.json
+
+SLICE_RUNTIME_ANALYSIS.md
+
+PROMOTION_READINESS_UPDATE.md
+
+---
+
+# Critérios de aprovação
+
+RUNTIME_SHADOW_EXECUTED = TRUE
+
+ACTIVE_AUTHORITY_PRESERVED = TRUE
+
+NO_RUNTIME_IMPACT = TRUE
+
+PM4_MEASURED = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase40_runtime_shadow_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_40_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não promover modelos.
+
+Não executar retraining.
+
+Aguardar aprovação humana.

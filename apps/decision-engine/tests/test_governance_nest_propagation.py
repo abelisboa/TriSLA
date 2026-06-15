@@ -74,24 +74,27 @@ def test_resolve_nest_from_top_level_nest_id_only():
     assert nest.intent_id == intent_id
 
 
-def test_resolve_nest_prefers_explicit_nest_dict():
+def test_resolve_nest_ignores_explicit_nest_dict_for_decision():
+    """Wave 3A: explicit nest body is echo-only; decision path stays minimal."""
     intent_id = "11111111-2222-3333-4444-555555555555"
     nest_id = f"nest-{intent_id}"
     sla_input = SLAEvaluateInput(
         intent_id=intent_id,
-        nest_id="nest-should-not-win",
+        nest_id=nest_id,
         intent={"intent_id": intent_id, "service_type": "eMBB", "sla_requirements": {}},
         nest={
             "nest_id": nest_id,
             "intent_id": intent_id,
-            "network_slices": [],
-            "resources": {},
+            "network_slices": [{"slice_id": "s1", "slice_type": "eMBB", "resources": {"x": 1}}],
+            "resources": {"feasibility_score": 0.99},
             "status": "generated",
         },
     )
     nest = resolve_nest_for_evaluate(sla_input)
     assert nest is not None
     assert nest.nest_id == nest_id
+    assert nest.network_slices == []
+    assert nest.resources == {}
 
 
 def test_governance_event_nest_id_urllc():

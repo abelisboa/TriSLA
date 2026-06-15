@@ -1,0 +1,45 @@
+{
+  "program": "FINAL_SCIENTIFIC_CLOSURE_PROGRAM_V1",
+  "timestamp_utc": "2026-05-18T17:53:32.901514+00:00",
+  "verdict": "FINAL_Q1_SCIENTIFIC_PACKAGE_READY",
+  "phase1": {
+    "phase": "FINAL_SCIENTIFIC_FREEZE",
+    "timestamp_utc": "2026-05-18T17:53:24.881740+00:00",
+    "verdict": "FINAL_SCIENTIFIC_BASELINE_FROZEN",
+    "digests": {
+      "paper_tracks": "sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6",
+      "ssot_master_doc": "sha256:67659064d35a72656f1554cfbdb7a166a052d1a20a01aa5688baf201023f6be5"
+    },
+    "freeze_dir": "docs/final_scientific_freeze"
+  },
+  "phase2": {
+    "n_decomposition": 450,
+    "table_rows": 7
+  },
+  "phase3": {
+    "epoch_levels": 3,
+    "regime_levels": 5
+  },
+  "phase4": {
+    "r_prb_score": -0.9484372232119738,
+    "r_prb_press": 0.9858076663398713
+  },
+  "validation": {
+    "checks": {
+      "figures": true,
+      "tables": true,
+      "datasets": true,
+      "freeze_docs": true,
+      "readiness": true
+    },
+    "counts": {
+      "figures": 31,
+      "tables": 4,
+      "datasets": 4
+    }
+  },
+  "paths": {
+    "freeze": "docs/final_scientific_freeze",
+    "package": "docs/final_q1_scientific_package"
+  }
+}

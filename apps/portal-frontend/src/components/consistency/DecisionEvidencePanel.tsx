@@ -27,7 +27,10 @@ export function DecisionEvidencePanel({
     <section className="trisla-consistency-panel" aria-label={heading}>
       <h3 className="trisla-consistency-title">{heading}</h3>
       {!compact ? (
-        <p className="trisla-muted">Quantitative justification from Decision Engine metadata.</p>
+        <p className="trisla-muted">
+          Admission decision rules only — observed, threshold, delta, and rule from Decision Engine.
+          Runtime compliance scores are under Compliance Evaluation.
+        </p>
       ) : null}
       {compact ? (
         evidence.map((row, idx) => (

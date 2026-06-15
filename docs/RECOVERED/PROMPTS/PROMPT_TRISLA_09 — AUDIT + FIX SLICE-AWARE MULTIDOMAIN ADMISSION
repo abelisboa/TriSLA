@@ -1,0 +1,480 @@
+# =========================================================
+# PROMPT_TRISLA_09 — AUDIT + FIX SLICE-AWARE MULTIDOMAIN ADMISSION
+# =========================================================
+# MISSÃO:
+# Auditar e corrigir o Decision Engine do TriSLA para garantir que a decisão
+# de SLA considere:
+# - tipo de slice: URLLC, eMBB, mMTC
+# - requisitos específicos do SLA
+# - métricas multidomínio: RAN, Transporte e Core
+#
+# OBJETIVO:
+# Garantir que o TriSLA responda corretamente à pergunta de pesquisa:
+# "há recursos suficientes, no momento da solicitação, para atender o SLA
+# de acordo com o tipo de serviço solicitado?"
+#
+# REGRAS:
+# - NÃO inventar comportamento
+# - NÃO alterar código antes da auditoria
+# - NÃO usar thresholds iguais para todos os slices sem justificativa
+# - NÃO remover PRB gating existente
+# - PRIMEIRO auditar, depois corrigir
+# - Toda alteração deve gerar evidência e rollback
+# =========================================================
+
+set -euo pipefail
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+EVID_DIR="evidencias_trisla_09_slice_aware_multidomain"
+mkdir -p "$EVID_DIR"/{raw,analysis,patches,logs,tests,rollback}
+
+date -u > "$EVID_DIR/analysis/start.txt"
+
+# =========================================================
+# FASE 0 — SNAPSHOT E BACKUP
+# =========================================================
+
+cp -r apps/decision-engine "$EVID_DIR/raw/decision-engine_before"
+cp -r apps/portal-backend "$EVID_DIR/raw/portal-backend_before" 2>/dev/null || true
+
+kubectl -n trisla get deploy trisla-decision-engine -o yaml \
+  > "$EVID_DIR/rollback/decision-engine_deploy_before.yaml" 2>/dev/null || true
+
+kubectl -n trisla get deploy trisla-portal-backend -o yaml \
+  > "$EVID_DIR/rollback/portal-backend_deploy_before.yaml" 2>/dev/null || true
+
+# =========================================================
+# FASE 1 — AUDITORIA DO FLUXO DE SLICE TYPE
+# =========================================================
+# Verificar se URLLC/eMBB/mMTC chegam ao Decision Engine.
+
+grep -R "slice_type\|URLLC\|eMBB\|embb\|mMTC\|mmtc" -n apps \
+  > "$EVID_DIR/analysis/slice_type_usage.txt" || true
+
+grep -R "form_values\|template_id\|tenant_id\|intent\|nest" -n apps/portal-backend \
+  > "$EVID_DIR/analysis/portal_payload_mapping.txt" || true
+
+grep -R "slice_type\|service_type\|sst\|sd\|latency\|reliability\|throughput\|device_count" -n apps/decision-engine \
+  > "$EVID_DIR/analysis/decision_input_fields.txt" || true
+
+# =========================================================
+# FASE 2 — AUDITORIA DOS GATES ATUAIS
+# =========================================================
+# Verificar se só existe PRB gating ou se já existem gates de RTT/Core.
+
+grep -R "PRB\|prb\|HARD_PRB\|REJECT\|RENEGOTIATE\|threshold\|latency\|rtt\|jitter\|cpu\|memory" -n apps/decision-engine \
+  > "$EVID_DIR/analysis/current_gates_and_thresholds.txt" || true
+
+grep -R "ML_CAN_OVERRIDE_REJECT\|POLICY_GOVERNED_MODE\|PRB_RISK_ALPHA\|risk" -n apps/decision-engine \
+  > "$EVID_DIR/analysis/current_policy_mode.txt" || true
+
+# =========================================================
+# FASE 3 — AUDITORIA DA TELEMETRIA DISPONÍVEL
+# =========================================================
+# Verificar nomes reais no telemetry_snapshot.
+
+grep -R "telemetry_snapshot\|ran\|transport\|core\|rtt\|jitter\|cpu_utilization\|memory" -n apps/portal-backend apps/decision-engine \
+  > "$EVID_DIR/analysis/telemetry_contract_usage.txt" || true
+
+# =========================================================
+# FASE 4 — GERAR DIAGNÓSTICO OBRIGATÓRIO
+# =========================================================
+
+cat > "$EVID_DIR/analysis/EXPECTED_MODEL.md" <<'EOF'
+# Expected Slice-Aware Multidomain Admission Model
+
+A decisão deve considerar:
+
+## URLLC
+Prioridades:
+- latência baixa
+- jitter baixo
+- confiabilidade alta
+- PRB suficiente
+
+Gates fortes:
+- RTT acima do limite -> RENEGOTIATE/REJECT
+- jitter acima do limite -> RENEGOTIATE/REJECT
+- PRB alto -> REJECT
+
+## eMBB
+Prioridades:
+- throughput alto
+- capacidade rádio
+- transporte estável
+- Core suficiente
+
+Gates fortes:
+- PRB alto -> REJECT
+- throughput requerido muito acima da capacidade estimada -> RENEGOTIATE/REJECT
+- CPU/memória crítica -> RENEGOTIATE/REJECT
+
+## mMTC
+Prioridades:
+- muitos dispositivos
+- Core escalável
+- baixa exigência de throughput individual
+- tolerância maior a latência
+
+Gates fortes:
+- device_count alto + Core CPU/memória alta -> RENEGOTIATE/REJECT
+- Core saturado -> REJECT
+- PRB alto pode influenciar, mas não deve dominar sozinho como em URLLC/eMBB
+
+## Modelo esperado
+ran_risk = f(PRB)
+transport_risk = f(RTT, jitter)
+core_risk = f(CPU, memory)
+sla_risk = f(slice_type, latency, reliability, throughput, device_count)
+
+multidomain_risk =
+  w_ran(slice_type) * ran_risk +
+  w_transport(slice_type) * transport_risk +
+  w_core(slice_type) * core_risk +
+  w_sla(slice_type) * sla_risk +
+  w_ml * ml_risk
+
+Decisão:
+- se qualquer gate crítico específico do slice for violado: REJECT
+- se risco agregado moderado: RENEGOTIATE
+- caso contrário: ACCEPT
+EOF
+
+# =========================================================
+# FASE 5 — IMPLEMENTAÇÃO CONTROLADA
+# =========================================================
+# Só executar esta fase se a auditoria confirmar ausência de gates multidomínio/slice-aware.
+# A correção deve:
+# 1. preservar PRB gating existente;
+# 2. adicionar Transport gate;
+# 3. adicionar Core gate;
+# 4. adicionar pesos por slice_type;
+# 5. gerar reason_codes específicos.
+
+python3 <<'PY'
+from pathlib import Path
+import re, sys, shutil, datetime
+
+engine_dir = Path("apps/decision-engine")
+candidates = list(engine_dir.rglob("*.py"))
+
+target = None
+for p in candidates:
+    txt = p.read_text(errors="ignore")
+    if ("HARD_PRB" in txt or "PRB_RISK_ALPHA" in txt) and ("decision" in txt.lower()):
+        target = p
+        break
+
+out = Path("evidencias_trisla_09_slice_aware_multidomain/analysis/patch_target.txt")
+out.write_text(str(target) if target else "NOT_FOUND")
+
+if target is None:
+    print("[ERRO] Arquivo principal do Decision Engine não encontrado")
+    sys.exit(2)
+
+backup = Path("evidencias_trisla_09_slice_aware_multidomain/rollback") / (target.name + ".before")
+backup.write_text(target.read_text(errors="ignore"))
+
+txt = target.read_text(errors="ignore")
+
+marker = "TRISLA_09_SLICE_AWARE_MULTIDOMAIN"
+if marker in txt:
+    print("[SKIP] Patch já aplicado")
+    sys.exit(0)
+
+helper = r'''
+
+# =========================================================
+# TRISLA_09_SLICE_AWARE_MULTIDOMAIN
+# Slice-aware multidomain admission helpers
+# =========================================================
+
+def _safe_float(value, default=0.0):
+    try:
+        if value is None:
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _normalize_ratio(value, limit):
+    value = _safe_float(value)
+    limit = max(_safe_float(limit), 1e-9)
+    return max(0.0, min(1.0, value / limit))
+
+
+def _infer_slice_type(payload):
+    """Infer slice_type from explicit fields or SLA requirements."""
+    if not isinstance(payload, dict):
+        return "embb"
+
+    for key in ("slice_type", "service_type", "slice", "sst_name"):
+        val = payload.get(key)
+        if isinstance(val, str) and val.strip():
+            s = val.strip().lower()
+            if "urllc" in s:
+                return "urllc"
+            if "mmtc" in s or "miot" in s:
+                return "mmtc"
+            if "embb" in s or "emmb" in s:
+                return "embb"
+
+    form = payload.get("form_values") or payload.get("requirements") or {}
+    latency = _safe_float(form.get("latency") or form.get("latency_ms"), 999)
+    reliability = _safe_float(form.get("reliability"), 0)
+    throughput = _safe_float(form.get("throughput") or form.get("throughput_mbps"), 0)
+    devices = _safe_float(form.get("device_count") or form.get("devices"), 0)
+
+    if latency <= 10 and reliability >= 99.99:
+        return "urllc"
+    if devices >= 500:
+        return "mmtc"
+    if throughput >= 100:
+        return "embb"
+    return "embb"
+
+
+SLICE_POLICY = {
+    "urllc": {
+        "weights": {"ran": 0.30, "transport": 0.40, "core": 0.15, "sla": 0.15},
+        "rtt_reject_ms": 20,
+        "rtt_renegotiate_ms": 10,
+        "jitter_reject_ms": 10,
+        "jitter_renegotiate_ms": 5,
+        "core_cpu_reject": 90,
+        "core_cpu_renegotiate": 75,
+        "core_mem_reject": 90,
+        "core_mem_renegotiate": 75,
+        "prb_reject": 85,
+        "prb_renegotiate": 70,
+    },
+    "embb": {
+        "weights": {"ran": 0.40, "transport": 0.20, "core": 0.20, "sla": 0.20},
+        "rtt_reject_ms": 80,
+        "rtt_renegotiate_ms": 50,
+        "jitter_reject_ms": 40,
+        "jitter_renegotiate_ms": 25,
+        "core_cpu_reject": 90,
+        "core_cpu_renegotiate": 80,
+        "core_mem_reject": 90,
+        "core_mem_renegotiate": 80,
+        "prb_reject": 85,
+        "prb_renegotiate": 75,
+    },
+    "mmtc": {
+        "weights": {"ran": 0.20, "transport": 0.15, "core": 0.40, "sla": 0.25},
+        "rtt_reject_ms": 200,
+        "rtt_renegotiate_ms": 120,
+        "jitter_reject_ms": 80,
+        "jitter_renegotiate_ms": 50,
+        "core_cpu_reject": 85,
+        "core_cpu_renegotiate": 70,
+        "core_mem_reject": 85,
+        "core_mem_renegotiate": 70,
+        "prb_reject": 90,
+        "prb_renegotiate": 80,
+    },
+}
+
+
+def compute_slice_aware_multidomain_decision(payload, telemetry_snapshot, ml_risk=0.0):
+    """Return decision package using slice-aware RAN/Transport/Core gates."""
+    slice_type = _infer_slice_type(payload)
+    policy = SLICE_POLICY.get(slice_type, SLICE_POLICY["embb"])
+    weights = policy["weights"]
+
+    telemetry_snapshot = telemetry_snapshot or {}
+    ran = telemetry_snapshot.get("ran") or {}
+    transport = telemetry_snapshot.get("transport") or {}
+    core = telemetry_snapshot.get("core") or {}
+    form = (payload or {}).get("form_values") or (payload or {}).get("requirements") or {}
+
+    prb = _safe_float(ran.get("prb_utilization") or ran.get("prb") or ran.get("ran_prb_utilization"), 0)
+    rtt = _safe_float(transport.get("rtt") or transport.get("latency") or transport.get("latency_ms"), 0)
+    jitter = _safe_float(transport.get("jitter") or transport.get("jitter_ms"), 0)
+    cpu = _safe_float(core.get("cpu_utilization") or core.get("cpu"), 0)
+    mem = _safe_float(core.get("memory_utilization") or core.get("memory"), 0)
+
+    latency_req = _safe_float(form.get("latency") or form.get("latency_ms"), 0)
+    reliability_req = _safe_float(form.get("reliability"), 0)
+    throughput_req = _safe_float(form.get("throughput") or form.get("throughput_mbps"), 0)
+    devices_req = _safe_float(form.get("device_count") or form.get("devices"), 0)
+
+    reason_codes = []
+
+    # Critical gates by slice type
+    if prb >= policy["prb_reject"]:
+        reason_codes.append(f"{slice_type.upper()}_RAN_PRB_REJECT")
+        return {
+            "decision": "REJECT",
+            "decision_score": 0.0,
+            "slice_type": slice_type,
+            "reason_codes": reason_codes,
+            "multidomain_risk": 1.0,
+        }
+
+    if rtt >= policy["rtt_reject_ms"] and slice_type == "urllc":
+        reason_codes.append("URLLC_TRANSPORT_RTT_REJECT")
+        return {
+            "decision": "REJECT",
+            "decision_score": 0.0,
+            "slice_type": slice_type,
+            "reason_codes": reason_codes,
+            "multidomain_risk": 1.0,
+        }
+
+    if jitter >= policy["jitter_reject_ms"] and slice_type == "urllc":
+        reason_codes.append("URLLC_TRANSPORT_JITTER_REJECT")
+        return {
+            "decision": "REJECT",
+            "decision_score": 0.0,
+            "slice_type": slice_type,
+            "reason_codes": reason_codes,
+            "multidomain_risk": 1.0,
+        }
+
+    if (cpu >= policy["core_cpu_reject"] or mem >= policy["core_mem_reject"]) and slice_type == "mmtc":
+        reason_codes.append("MMTC_CORE_CAPACITY_REJECT")
+        return {
+            "decision": "REJECT",
+            "decision_score": 0.0,
+            "slice_type": slice_type,
+            "reason_codes": reason_codes,
+            "multidomain_risk": 1.0,
+        }
+
+    ran_risk = _normalize_ratio(prb, policy["prb_reject"])
+    transport_risk = max(
+        _normalize_ratio(rtt, policy["rtt_reject_ms"]),
+        _normalize_ratio(jitter, policy["jitter_reject_ms"]),
+    )
+    core_risk = max(
+        _normalize_ratio(cpu, policy["core_cpu_reject"]),
+        _normalize_ratio(mem, policy["core_mem_reject"]),
+    )
+
+    # SLA demand risk by type
+    if slice_type == "urllc":
+        sla_risk = max(
+            _normalize_ratio(max(0, 10 - latency_req), 10) if latency_req else 0,
+            _normalize_ratio(max(0, reliability_req - 99.99), 0.01) if reliability_req else 0,
+        )
+    elif slice_type == "mmtc":
+        sla_risk = _normalize_ratio(devices_req, 1000)
+    else:
+        sla_risk = _normalize_ratio(throughput_req, 500)
+
+    multidomain_risk = (
+        weights["ran"] * ran_risk +
+        weights["transport"] * transport_risk +
+        weights["core"] * core_risk +
+        weights["sla"] * sla_risk
+    )
+
+    # incorporate ML risk as refinement
+    ml_risk = _safe_float(ml_risk, 0)
+    final_risk = min(1.0, 0.80 * multidomain_risk + 0.20 * ml_risk)
+    decision_score = max(0.0, 1.0 - final_risk)
+
+    if prb >= policy["prb_renegotiate"]:
+        reason_codes.append(f"{slice_type.upper()}_RAN_PRB_RENEGOTIATE")
+    if rtt >= policy["rtt_renegotiate_ms"]:
+        reason_codes.append(f"{slice_type.upper()}_TRANSPORT_RTT_RENEGOTIATE")
+    if jitter >= policy["jitter_renegotiate_ms"]:
+        reason_codes.append(f"{slice_type.upper()}_TRANSPORT_JITTER_RENEGOTIATE")
+    if cpu >= policy["core_cpu_renegotiate"] or mem >= policy["core_mem_renegotiate"]:
+        reason_codes.append(f"{slice_type.upper()}_CORE_RENEGOTIATE")
+
+    if final_risk >= 0.75:
+        decision = "REJECT"
+        reason_codes.append(f"{slice_type.upper()}_MULTIDOMAIN_RISK_REJECT")
+    elif final_risk >= 0.55 or reason_codes:
+        decision = "RENEGOTIATE"
+        if not reason_codes:
+            reason_codes.append(f"{slice_type.upper()}_MULTIDOMAIN_RISK_RENEGOTIATE")
+    else:
+        decision = "ACCEPT"
+        reason_codes.append(f"{slice_type.upper()}_MULTIDOMAIN_FEASIBLE")
+
+    return {
+        "decision": decision,
+        "decision_score": round(decision_score, 6),
+        "slice_type": slice_type,
+        "reason_codes": reason_codes,
+        "ran_risk": round(ran_risk, 6),
+        "transport_risk": round(transport_risk, 6),
+        "core_risk": round(core_risk, 6),
+        "sla_risk": round(sla_risk, 6),
+        "multidomain_risk": round(multidomain_risk, 6),
+        "final_risk": round(final_risk, 6),
+    }
+
+'''
+
+# Only append helper for now. Integration point must be manually verified from audit.
+target.write_text(txt + "\n" + helper)
+print(f"[OK] helper appended to {target}")
+PY
+
+# =========================================================
+# FASE 6 — TESTES UNITÁRIOS DIRETOS DO MODELO
+# =========================================================
+
+python3 <<'PY' > "$EVID_DIR/tests/slice_aware_model_tests.txt"
+import importlib.util
+from pathlib import Path
+import sys
+
+target = Path("evidencias_trisla_09_slice_aware_multidomain/analysis/patch_target.txt").read_text().strip()
+spec = importlib.util.spec_from_file_location("engine", target)
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+
+cases = [
+    ("URLLC_OK", {"form_values":{"latency":5,"reliability":99.999,"throughput":50,"device_count":10},"slice_type":"URLLC"}, {"ran":{"prb_utilization":10},"transport":{"rtt":4,"jitter":1},"core":{"cpu_utilization":20,"memory_utilization":20}}),
+    ("URLLC_RTT_BAD", {"form_values":{"latency":5,"reliability":99.999,"throughput":50,"device_count":10},"slice_type":"URLLC"}, {"ran":{"prb_utilization":10},"transport":{"rtt":25,"jitter":1},"core":{"cpu_utilization":20,"memory_utilization":20}}),
+    ("EMBB_PRB_BAD", {"form_values":{"latency":30,"reliability":99.9,"throughput":500,"device_count":50},"slice_type":"eMBB"}, {"ran":{"prb_utilization":90},"transport":{"rtt":20,"jitter":5},"core":{"cpu_utilization":30,"memory_utilization":30}}),
+    ("MMTC_CORE_BAD", {"form_values":{"latency":100,"reliability":99,"throughput":10,"device_count":1000},"slice_type":"mMTC"}, {"ran":{"prb_utilization":20},"transport":{"rtt":80,"jitter":20},"core":{"cpu_utilization":90,"memory_utilization":88}}),
+]
+
+for name, payload, telemetry in cases:
+    print(name, mod.compute_slice_aware_multidomain_decision(payload, telemetry, ml_risk=0.1))
+PY
+
+# =========================================================
+# FASE 7 — GERAR RELATÓRIO DE AUDITORIA E CORREÇÃO
+# =========================================================
+
+cat > "$EVID_DIR/analysis/report.md" <<EOF
+# PROMPT_TRISLA_09 — Slice-aware Multidomain Admission Audit
+
+## Objetivo
+Auditar e preparar correção para garantir que o Decision Engine considere:
+- tipo de slice
+- requisitos SLA
+- RAN
+- Transporte
+- Core
+- ML risk
+
+## Evidências geradas
+- analysis/slice_type_usage.txt
+- analysis/current_gates_and_thresholds.txt
+- analysis/telemetry_contract_usage.txt
+- tests/slice_aware_model_tests.txt
+
+## Observação crítica
+Se o helper foi apenas anexado e não integrado ao fluxo principal de decisão,
+é necessário fazer uma segunda etapa controlada para conectar a função
+compute_slice_aware_multidomain_decision ao endpoint real de decisão.
+
+## Próximo passo
+Validar manualmente o arquivo indicado em analysis/patch_target.txt e integrar
+o helper no ponto real onde a decisão final é produzida.
+EOF
+
+date -u > "$EVID_DIR/analysis/end.txt"
+
+echo "PROMPT_TRISLA_09 AUDIT + PREP FIX FINALIZADO"

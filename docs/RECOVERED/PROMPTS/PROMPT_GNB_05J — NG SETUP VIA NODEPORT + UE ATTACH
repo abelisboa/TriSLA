@@ -1,0 +1,217 @@
+# =========================================================
+# PROMPT_GNB_05J — NG SETUP VIA NODEPORT + UE ATTACH
+# =========================================================
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+export EVID_DIR="$(pwd)/evidencias_gnb_real/single_ue_attach_05j"
+mkdir -p "$EVID_DIR"/{analysis,logs,config}
+
+date -u > "$EVID_DIR/analysis/start_time.txt"
+
+# =========================================================
+# FASE 1 — LIMPEZA CONTROLADA
+# =========================================================
+pkill -f "nr-ue" || true
+pkill -f "gnb -c" || true
+pkill -f "srsran.*gnb" || true
+sleep 3
+
+# =========================================================
+# FASE 2 — PARAMETROS N2 (NODEPORT)
+# =========================================================
+NODE_IP="$(cat evidencias_gnb_real/n2_fix_05i/analysis/node_ip.txt)"
+N2_PORT="31412"
+
+echo "$NODE_IP" > "$EVID_DIR/analysis/node_ip.txt"
+echo "$N2_PORT" > "$EVID_DIR/analysis/n2_port.txt"
+
+# =========================================================
+# FASE 3 — GERAR gNB.yaml PARA NODEPORT
+# (mantendo PLMN/TAC/SNSSAI do 04C)
+# =========================================================
+PLMN="20893"
+TAC="1"
+SST="1"
+SD="010203"
+
+HOST_IP=$(ip route get "$NODE_IP" | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1); exit}')
+
+cat > "$EVID_DIR/config/gnb.yaml" <<EOF
+cu_cp:
+  amf:
+    addr: ${NODE_IP}
+    port: ${N2_PORT}
+    bind_addr: ${HOST_IP}
+    supported_tracking_areas:
+      - tac: ${TAC}
+        plmn_list:
+          - plmn: "${PLMN}"
+            tai_slice_support_list:
+              - sst: ${SST}
+                sd: ${SD}
+
+cell_cfg:
+  plmn: "${PLMN}"
+  tac: ${TAC}
+  pci: 1
+EOF
+
+cat "$EVID_DIR/config/gnb.yaml" > "$EVID_DIR/analysis/gnb_config_used.txt"
+
+# =========================================================
+# FASE 4 — INICIAR gNB (VALIDAR NG SETUP)
+# =========================================================
+docker run --rm \
+  --network host \
+  -v "$EVID_DIR/config/gnb.yaml:/gnb.yaml" \
+  softwareradiosystems/srsran-project \
+  gnb -c /gnb.yaml \
+  > "$EVID_DIR/logs/gnb.log" 2>&1 &
+
+GNB_PID=$!
+echo "$GNB_PID" > "$EVID_DIR/analysis/gnb_pid.txt"
+
+sleep 20
+
+grep -Ei 'N2: Connection|NG Setup|SCTP|gNB started|error|fail' \
+  "$EVID_DIR/logs/gnb.log" \
+  > "$EVID_DIR/analysis/gnb_ngap_extract.txt" || true
+
+# critério mínimo: conexão N2 + start
+if ! grep -q "gNB started" "$EVID_DIR/logs/gnb.log"; then
+  echo "[ERRO] gNB não iniciou" > "$EVID_DIR/analysis/error.txt"
+  kill "$GNB_PID" 2>/dev/null || true
+  exit 1
+fi
+
+# =========================================================
+# FASE 5 — VALIDAR NG SETUP NO AMF (timestamp recente)
+# =========================================================
+AMF_NS=$(cat evidencias_gnb_real/n2_fix_03/analysis/amf_namespace.txt)
+AMF_POD=$(kubectl -n "$AMF_NS" get pods -o name | grep -i amf | head -n1 | sed 's#pod/##')
+
+kubectl -n "$AMF_NS" logs "$AMF_POD" --since=90s \
+  > "$EVID_DIR/logs/amf_ngap.log" 2>&1 || true
+
+grep -Ei 'SCTP Accept|NGSetupRequest|NG-Setup response' \
+  "$EVID_DIR/logs/amf_ngap.log" \
+  > "$EVID_DIR/analysis/amf_ngap_extract.txt" || true
+
+# =========================================================
+# FASE 6 — SUBIR UE (APÓS NG SETUP OK)
+# =========================================================
+LOCAL_UE_IMG=$(cat evidencias_gnb_real/single_ue_attach_05h/analysis/local_image.txt)
+
+UE_CFG_SRC="evidencias_gnb_real/single_ue_attach_05h/config/ue.yaml"
+cp "$UE_CFG_SRC" "$EVID_DIR/config/ue.yaml"
+
+docker run --rm \
+  --network host \
+  --cap-add NET_ADMIN \
+  --device /dev/net/tun \
+  -v "$EVID_DIR/config/ue.yaml:/ue.yaml" \
+  "$LOCAL_UE_IMG" \
+  -c /ue.yaml \
+  > "$EVID_DIR/logs/ue.log" 2>&1 &
+
+UE_PID=$!
+echo "$UE_PID" > "$EVID_DIR/analysis/ue_pid.txt"
+
+sleep 50
+
+# =========================================================
+# FASE 7 — COLETAR LOGS CORE (ATTACH)
+# =========================================================
+kubectl -n "$AMF_NS" logs "$AMF_POD" --since=90s \
+  > "$EVID_DIR/logs/amf.log" 2>&1 || true
+
+SMF_NS=$(kubectl get pods -A | grep -i smf | awk '{print $1}' | head -n1)
+SMF_POD=$(kubectl -n "$SMF_NS" get pods -o name | grep -i smf | head -n1 | sed 's#pod/##')
+
+UPF_NS=$(kubectl get pods -A | grep -i upf | awk '{print $1}' | head -n1)
+UPF_POD=$(kubectl -n "$UPF_NS" get pods -o name | grep -i upf | head -n1 | sed 's#pod/##')
+
+kubectl -n "$SMF_NS" logs "$SMF_POD" --since=90s > "$EVID_DIR/logs/smf.log" 2>&1 || true
+kubectl -n "$UPF_NS" logs "$UPF_POD" --since=90s > "$EVID_DIR/logs/upf.log" 2>&1 || true
+
+# =========================================================
+# FASE 8 — EXTRAÇÕES
+# =========================================================
+grep -Ei 'cell|selected|rrc|connected|registration|authentication|pdu|session|accept|reject|fail|error' \
+  "$EVID_DIR/logs/ue.log" \
+  > "$EVID_DIR/analysis/ue_extract.txt" || true
+
+grep -Ei 'registration|authentication|security|pdu|session|supi|accept|reject|fail|error' \
+  "$EVID_DIR/logs/amf.log" \
+  > "$EVID_DIR/analysis/amf_extract.txt" || true
+
+grep -Ei 'pdu|session|dnn|snssai|accept|reject|fail|error' \
+  "$EVID_DIR/logs/smf.log" \
+  > "$EVID_DIR/analysis/smf_extract.txt" || true
+
+grep -Ei 'pfcp|pdr|far|qer|gtp|n3|session|created|fail|error' \
+  "$EVID_DIR/logs/upf.log" \
+  > "$EVID_DIR/analysis/upf_extract.txt" || true
+
+ip link | grep -Ei 'tun|ue|uesim' > "$EVID_DIR/analysis/tun_interfaces.txt" || true
+
+# teste de dados (se houver TUN)
+UE_IF=$(ip -o link | awk -F': ' '/tun|ue|uesim/ {print $2; exit}')
+echo "$UE_IF" > "$EVID_DIR/analysis/ue_interface.txt"
+
+if [ -n "$UE_IF" ]; then
+  ping -I "$UE_IF" -c 5 8.8.8.8 > "$EVID_DIR/analysis/ping.txt" 2>&1 || true
+else
+  echo "No TUN interface" > "$EVID_DIR/analysis/ping.txt"
+fi
+
+# =========================================================
+# FASE 9 — ENCERRAMENTO
+# =========================================================
+kill "$UE_PID" 2>/dev/null || true
+kill "$GNB_PID" 2>/dev/null || true
+date -u > "$EVID_DIR/analysis/end_time.txt"
+
+# =========================================================
+# RELATÓRIO
+# =========================================================
+cat > "$EVID_DIR/RELATORIO_GNB_05J.md" <<EOF
+# RELATÓRIO GNB_05J — NODEPORT N2 + UE ATTACH
+
+## N2 endpoint
+${NODE_IP}:${N2_PORT}
+
+## gNB NGAP
+$(cat "$EVID_DIR/analysis/gnb_ngap_extract.txt")
+
+## AMF NGAP
+$(cat "$EVID_DIR/analysis/amf_ngap_extract.txt")
+
+## UE
+$(cat "$EVID_DIR/analysis/ue_extract.txt")
+
+## AMF
+$(cat "$EVID_DIR/analysis/amf_extract.txt")
+
+## SMF
+$(cat "$EVID_DIR/analysis/smf_extract.txt")
+
+## UPF
+$(cat "$EVID_DIR/analysis/upf_extract.txt")
+
+## TUN
+$(cat "$EVID_DIR/analysis/tun_interfaces.txt")
+
+## Ping
+$(cat "$EVID_DIR/analysis/ping.txt")
+
+## Critério de sucesso
+- NG Setup recente no AMF
+- UE encontra/seleciona célula e RRC connected
+- Registration Accept
+- PDU Session Establishment Accept
+- Interface TUN criada
+EOF
+
+echo "PROMPT_GNB_05J FINALIZADO"

@@ -1,0 +1,431 @@
+PROMPT_TRISLA_O5B_TRANSPORT_CONTRACT_MODEL
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Formalizar o contrato canônico do domínio Transporte da TriSLA utilizando exclusivamente as evidências produzidas em:
+
+evidencias_trisla_o5a_transport_discovery_audit_20260606T184343Z
+
+O objetivo é criar:
+
+TRANSPORT_CONTRACT_SSOT_V1.md
+
+que servirá como autoridade única para a futura implementação:
+
+O5C
+Transport Binding
+
+seguindo o mesmo padrão utilizado em:
+
+* NSSF_CONTRACT_SSOT_V1
+* AMF_SMF_CONTRACT_SSOT_V1
+* UPF_CONTRACT_SSOT_V1
+* RAN_CONTRACT_SSOT_V1
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO IMPLEMENTAR NADA
+
+NÃO ALTERAR NADA
+
+NÃO MODIFICAR RUNTIME
+
+NÃO MODIFICAR ONOS
+
+NÃO MODIFICAR NASP
+
+NÃO MODIFICAR SLA-AGENT
+
+NÃO MODIFICAR DECISION ENGINE
+
+Somente formalizar o contrato.
+
+====================================================
+BASELINE O5A
+============
+
+ONOS_DISCOVERED = YES
+
+TRANSPORT_DOMAIN_DISCOVERED = YES
+
+ONOS_REST_AVAILABLE = YES
+
+DEVICES = 0
+
+LINKS = 0
+
+FLOWS = 0
+
+INTENTS = 1 FAILED
+
+TRANSPORT_CORRELATION_FEASIBLE = YES
+
+ONOS_INTEGRATION_FEASIBLE = YES
+
+====================================================
+FASE 1 — DEFINIÇÃO DO DOMÍNIO
+=============================
+
+Responder formalmente:
+
+O que é o domínio Transporte na TriSLA?
+
+Separar:
+
+A)
+Transporte real observado
+
+B)
+Transporte inferido
+
+C)
+Transporte futuro
+
+Gerar:
+
+analysis/transport_domain_definition.md
+
+====================================================
+FASE 2 — FONTES AUTORITATIVAS
+=============================
+
+Catalogar fontes.
+
+Classificar:
+
+PRIMARY
+
+SECONDARY
+
+DERIVED
+
+Exemplo:
+
+ONOS REST
+
+Topology
+
+Intents
+
+Flows
+
+RTT probe
+
+Latency
+
+Jitter
+
+Packet loss
+
+Gerar:
+
+analysis/transport_authority_sources.md
+
+====================================================
+FASE 3 — HEALTH MODEL
+=====================
+
+Definir modelo oficial:
+
+FRESH
+
+STALE
+
+FAILED
+
+UNKNOWN
+
+Determinar critérios.
+
+Gerar:
+
+analysis/transport_health_model.md
+
+====================================================
+FASE 4 — OBSERVATION MODEL
+==========================
+
+Definir exatamente:
+
+o que pode ser observado.
+
+o que não pode ser observado.
+
+o que é apenas inferido.
+
+Gerar:
+
+analysis/transport_observation_model.md
+
+====================================================
+FASE 5 — CORRELATION MODEL
+==========================
+
+Determinar quais joins são válidos.
+
+Exemplos:
+
+NSI
+↓
+transport_ref
+
+transport_ref
+↓
+ONOS controller
+
+controller
+↓
+intent inventory
+
+controller
+↓
+topology
+
+controller
+↓
+flow count
+
+Responder:
+
+quais correlações são válidas hoje.
+
+Gerar:
+
+analysis/transport_correlation_model.md
+
+====================================================
+FASE 6 — PERSISTENCE MODEL
+==========================
+
+Projetar annotation oficial.
+
+Nome proposto:
+
+trisla.io/transport-binding
+
+Avaliar e aprovar ou corrigir.
+
+Definir:
+
+schema
+
+versionamento
+
+campos
+
+Gerar:
+
+analysis/transport_persistence_model.md
+
+====================================================
+FASE 7 — BINDING PHASE MODEL
+============================
+
+Avaliar progressão:
+
+METADATA_ONLY
+↓
+NSSF_SELECTED
+↓
+AMF_OBSERVED
+↓
+SMF_OBSERVED
+↓
+PDU_CORRELATED
+↓
+UPF_OBSERVED
+↓
+USER_PLANE_CORRELATED
+↓
+RAN_OBSERVED
+↓
+ACCESS_CORRELATED
+↓
+TRANSPORT_OBSERVED
+↓
+TRANSPORT_CORRELATED
+
+Validar ou corrigir.
+
+Gerar:
+
+analysis/transport_binding_phase_model.md
+
+====================================================
+FASE 8 — FRESHNESS POLICY
+=========================
+
+Definir:
+
+observation_window
+
+stale_threshold
+
+controller unavailable
+
+authentication failure
+
+REST timeout
+
+empty topology
+
+failed intent
+
+Gerar:
+
+analysis/transport_freshness_policy.md
+
+====================================================
+FASE 9 — ALINHAMENTO 3GPP
+=========================
+
+Mapear:
+
+23.501
+
+23.502
+
+28.541
+
+28.533
+
+28.550
+
+Responder:
+
+como o domínio Transporte se encaixa na TriSLA.
+
+Gerar:
+
+analysis/transport_3gpp_contract_alignment.md
+
+====================================================
+FASE 10 — ALINHAMENTO O-RAN
+===========================
+
+Responder:
+
+como ONOS representa o domínio Transporte.
+
+como o binding será compatível com:
+
+SMO
+
+O1
+
+Transport Management
+
+Gerar:
+
+analysis/transport_oran_contract_alignment.md
+
+====================================================
+FASE 11 — ALINHAMENTO ETSI ZSM
+==============================
+
+Responder:
+
+como o binding Transporte contribui para:
+
+Cross-domain orchestration
+
+Service Assurance
+
+Closed Loop
+
+Governance
+
+Gerar:
+
+analysis/transport_zsm_contract_alignment.md
+
+====================================================
+FASE 12 — SSOT MASTER
+=====================
+
+Produzir:
+
+analysis/TRANSPORT_CONTRACT_SSOT_V1.md
+
+Documento autoritativo.
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+TRANSPORT_CONTRACT_APPROVED = YES/NO
+
+TRANSPORT_HEALTH_MODEL_APPROVED = YES/NO
+
+TRANSPORT_CORRELATION_MODEL_APPROVED = YES/NO
+
+TRANSPORT_PERSISTENCE_MODEL_APPROVED = YES/NO
+
+TRANSPORT_BINDING_PHASE_APPROVED = YES/NO
+
+READY_FOR_O5C = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/transport_domain_definition.md
+
+analysis/transport_authority_sources.md
+
+analysis/transport_health_model.md
+
+analysis/transport_observation_model.md
+
+analysis/transport_correlation_model.md
+
+analysis/transport_persistence_model.md
+
+analysis/transport_binding_phase_model.md
+
+analysis/transport_freshness_policy.md
+
+analysis/transport_3gpp_contract_alignment.md
+
+analysis/transport_oran_contract_alignment.md
+
+analysis/transport_zsm_contract_alignment.md
+
+analysis/TRANSPORT_CONTRACT_SSOT_V1.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_O5C = YES
+
+autorizar:
+
+O5C
+Transport Binding Implementation
+com observação REST do ONOS, correlação e persistência, sem controle de fluxos, sem criação de intents e sem alteração da rede.

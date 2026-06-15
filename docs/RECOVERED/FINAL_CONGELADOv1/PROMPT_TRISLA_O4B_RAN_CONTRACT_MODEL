@@ -1,0 +1,489 @@
+PROMPT_TRISLA_O4B_RAN_CONTRACT_MODEL
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Formalizar o contrato SSOT da fase O4 entre:
+
+TriSLA
+↓
+NSSF Selection
+↓
+AMF Binding
+↓
+SMF Binding
+↓
+UPF Binding
+↓
+RAN Binding
+
+alinhado às especificações:
+
+* 3GPP TS 23.501
+* 3GPP TS 23.502
+* 3GPP TS 38.300
+* 3GPP TS 38.401
+* 3GPP TS 38.413 (NGAP)
+* O-RAN Architecture
+* ETSI ZSM
+
+IMPORTANTE
+
+Esta fase NÃO implementa integração.
+
+Esta fase NÃO altera:
+
+* UERANSIM
+* gNB
+* AMF
+* SMF
+* UPF
+* Free5GC
+* TriSLA Runtime
+
+O objetivo é congelar o contrato canônico que servirá de base para O4C.
+
+Toda conclusão deve ser baseada em:
+
+* evidências O4A
+* runtime real
+* logs AMF
+* logs UERANSIM
+* NGAP observado
+* telemetria RAN observada
+
+Nunca em hipóteses.
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+O1C_APPROVED = YES
+
+O2C_APPROVED = YES
+
+O3C_APPROVED = YES
+
+O4A_APPROVED = YES
+
+RAN_DISCOVERED = YES
+
+UE_CONTEXT_DISCOVERED = YES
+
+NGAP_FLOW_DISCOVERED = YES
+
+RAN_BINDING_FEASIBLE = YES
+
+====================================================
+FASE 1 — MODELO 3GPP DE REFERÊNCIA
+==================================
+
+Mapear os elementos observados para:
+
+3GPP TS 38.413
+
+3GPP TS 38.401
+
+3GPP TS 23.502
+
+Identificar:
+
+gNB
+
+UE Context
+
+NGAP Context
+
+RAN UE NGAP ID
+
+AMF UE NGAP ID
+
+PLMN
+
+TAC
+
+Cell
+
+S-NSSAI
+
+Registration Context
+
+Gerar:
+
+analysis/o4b_3gpp_reference_model.md
+
+====================================================
+FASE 2 — CONTRATO RAN
+=====================
+
+Congelar:
+
+campos observados
+
+gNB
+
+UE
+
+NGAP
+
+Registration
+
+S-NSSAI
+
+QoS Context
+
+Identificar:
+
+campos persistíveis
+
+campos transitórios
+
+campos descartáveis
+
+Gerar:
+
+analysis/o4b_ran_contract.md
+
+====================================================
+FASE 3 — POLÍTICA DE FRESHNESS
+==============================
+
+Foi observado:
+
+gNB em CrashLoop
+
+logs históricos válidos
+
+telemetria parcial
+
+Definir:
+
+source_of_truth
+
+freshness window
+
+stale detection
+
+fallback policy
+
+missing policy
+
+Gerar:
+
+analysis/o4b_freshness_policy.md
+
+====================================================
+FASE 4 — MATRIZ DE CORRELAÇÃO
+=============================
+
+Construir:
+
+TriSLA
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+
+Mapear:
+
+sst
+
+sd
+
+dnn
+
+nsiId
+
+session_id
+
+supi
+
+ue_ip
+
+selected_upf
+
+gnb_id
+
+ran_ue_ngap_id
+
+amf_ue_ngap_id
+
+correlation_status
+
+Gerar:
+
+analysis/o4b_correlation_matrix.md
+
+====================================================
+FASE 5 — MODELO DE PERSISTÊNCIA
+===============================
+
+Definir annotation:
+
+trisla.io/ran-binding
+
+Estrutura preliminar:
+
+{
+"contract_version":"1.0",
+"binding_status":"OBSERVED",
+"gnb_id":"...",
+"ran_ue_ngap_id":"...",
+"amf_ue_ngap_id":"...",
+"serving_snssai":"...",
+"registration_state":"...",
+"freshness_source":"...",
+"stale_status":"..."
+}
+
+Definir:
+
+campos obrigatórios
+
+campos opcionais
+
+timestamps
+
+Gerar:
+
+analysis/o4b_persistence_model.md
+
+====================================================
+FASE 6 — TELEMETRIA RAN
+=======================
+
+Determinar:
+
+quais métricas podem ser persistidas.
+
+quais métricas devem permanecer apenas observacionais.
+
+Distinguir:
+
+telemetria proxy
+
+vs
+
+telemetria 3GPP nativa
+
+Gerar:
+
+analysis/o4b_ran_telemetry_policy.md
+
+====================================================
+FASE 7 — ALINHAMENTO O-RAN
+==========================
+
+Verificar:
+
+O1
+
+A1
+
+E2
+
+Near-RT RIC
+
+Non-RT RIC
+
+SMO
+
+Responder:
+
+o contrato RAN proposto é compatível com evolução O-RAN?
+
+Gerar:
+
+analysis/o4b_oran_alignment.md
+
+====================================================
+FASE 8 — ALINHAMENTO ETSI ZSM
+=============================
+
+Verificar:
+
+Service Context
+
+Service Assurance
+
+Closed Loop
+
+Governance
+
+Automation
+
+Responder:
+
+o contrato RAN proposto é compatível com ETSI ZSM?
+
+Gerar:
+
+analysis/o4b_zsm_alignment.md
+
+====================================================
+FASE 9 — GAP ANALYSIS
+=====================
+
+Determinar:
+
+o que existe hoje.
+
+o que O4C precisará implementar.
+
+o que deve permanecer metadata.
+
+o que nunca deve controlar.
+
+Gerar:
+
+analysis/o4b_gap_matrix.md
+
+====================================================
+FASE 10 — O4C TARGET DESIGN
+===========================
+
+SEM IMPLEMENTAR.
+
+Definir arquitetura alvo:
+
+TriSLA
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN Binding
+
+IMPORTANTE
+
+TriSLA NÃO controla:
+
+gNB
+
+UE
+
+NGAP
+
+RRC
+
+RAN
+
+TriSLA apenas:
+
+observa
+correlaciona
+persiste
+
+Gerar:
+
+analysis/O4C_TARGET_DESIGN.md
+
+====================================================
+SSOT FINAL
+==========
+
+Produzir:
+
+RAN_CONTRACT_SSOT_V1.md
+
+Este documento será a autoridade única para O4C.
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/o4b_3gpp_reference_model.md
+
+analysis/o4b_ran_contract.md
+
+analysis/o4b_freshness_policy.md
+
+analysis/o4b_correlation_matrix.md
+
+analysis/o4b_persistence_model.md
+
+analysis/o4b_ran_telemetry_policy.md
+
+analysis/o4b_oran_alignment.md
+
+analysis/o4b_zsm_alignment.md
+
+analysis/o4b_gap_matrix.md
+
+analysis/O4C_TARGET_DESIGN.md
+
+analysis/RAN_CONTRACT_SSOT_V1.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+RAN_CONTRACT_APPROVED = YES/NO
+
+FRESHNESS_POLICY_APPROVED = YES/NO
+
+CORRELATION_MODEL_APPROVED = YES/NO
+
+PERSISTENCE_MODEL_APPROVED = YES/NO
+
+RAN_TELEMETRY_POLICY_APPROVED = YES/NO
+
+ORAN_ALIGNMENT_APPROVED = YES/NO
+
+ETSI_ZSM_ALIGNMENT_APPROVED = YES/NO
+
+READY_FOR_O4C = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_O4C = YES
+
+iniciar:
+
+O4C_RAN_BINDING_IMPLEMENTATION
+
+seguindo rigorosamente:
+
+RAN_CONTRACT_SSOT_V1.md
+
+UPF_CONTRACT_SSOT_V1.md
+
+AMF_SMF_CONTRACT_SSOT_V1.md
+
+NSSF_CONTRACT_SSOT_V1.md
+
+sem alterar o comportamento operacional da RAN e sem regressão dos baselines O1C, O2C e O3C.

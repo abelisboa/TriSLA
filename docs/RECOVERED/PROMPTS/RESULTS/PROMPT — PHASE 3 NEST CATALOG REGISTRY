@@ -1,0 +1,182 @@
+# PROMPT — PHASE 3 NEST CATALOG REGISTRY
+
+Operar sob:
+
+* TRISLA_EVOLUTION_MASTER_PLAN_V1 v1.2
+* PROMPT 3 Governance
+* Phase 2 aprovada
+
+Status de entrada:
+
+MASTER_PLAN_V1_2_APPROVED = TRUE
+
+PHASE_0B_APPROVED = TRUE
+
+PHASE_1_APPROVED = TRUE
+
+PHASE_2_APPROVED = TRUE
+
+FASE_3_PHASE_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Criar a governança completa do catálogo NEST.
+
+Sem alterar comportamento operacional.
+
+---
+
+# Modo
+
+LOW RISK
+
+Mudanças permitidas:
+
+* novos arquivos
+* novos manifests
+* novos registries
+* novos schemas
+* documentação
+
+Mudanças proibidas:
+
+* runtime
+* deployments
+* digests
+* APIs
+* SEM-CSMF
+* Decision Engine
+* ML-NSMF
+* SLA-Agent
+
+---
+
+# Atividade 1
+
+Criar NEST Catalog Registry governado.
+
+Registrar:
+
+* catalog_id
+* version
+* source
+* checksum
+* lineage
+
+---
+
+# Atividade 2
+
+Criar NEST Compliance Registry.
+
+Mapear:
+
+* NEST profiles
+* slice types
+* referências 3GPP
+
+Registrar explicitamente:
+
+```text
+3GPP TS 28.541
+3GPP TS 28.533
+```
+
+quando aplicável.
+
+---
+
+# Atividade 3
+
+Criar NEST Traceability Registry.
+
+Mapear:
+
+```text
+GST
+↓
+NEST
+↓
+Operational Profile
+```
+
+---
+
+# Atividade 4
+
+Criar NEST Governance Manifest.
+
+Registrar:
+
+* owner
+* approval date
+* version
+* baseline relationship
+
+---
+
+# Atividade 5
+
+Documentar divergências conhecidas.
+
+Somente registrar.
+
+Não corrigir.
+
+---
+
+# Testes obrigatórios
+
+Validar:
+
+* nenhum digest mudou
+* nenhum deployment mudou
+* nenhum pod reiniciou
+* nenhuma API mudou
+* nenhum endpoint mudou
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_fase3_<timestamp>/
+
+Contendo:
+
+* NEST Catalog Registry
+* NEST Compliance Registry
+* NEST Traceability Registry
+* NEST Governance Manifest
+* Validation Report
+
+---
+
+# Critério de sucesso
+
+RUNTIME_BEHAVIOR = IDENTICAL
+
+NEST_CATALOG_GOVERNED = TRUE
+
+DEPLOYMENT_CONSISTENCY_GATE = PASS_WITH_TRACEABILITY
+
+---
+
+# Resultado final
+
+Produzir:
+
+PHASE_3_COMPLETION_REPORT
+
+Finalizar com:
+
+PHASE_3_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar a Fase 4.
+
+Aguardar aprovação humana.

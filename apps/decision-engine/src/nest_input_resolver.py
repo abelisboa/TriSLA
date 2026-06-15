@@ -1,5 +1,8 @@
 """
 M1 — Resolve NestSubset for /evaluate when SEM sends nest_id without nest dict.
+
+Wave 3A G3-C: inbound ``nest`` body on SLAEvaluateInput is echo-only at ingress.
+Decision paths always receive a minimal NestSubset derived from ``nest_id`` only.
 """
 from __future__ import annotations
 
@@ -33,20 +36,21 @@ def _nest_from_dict(raw: Dict[str, Any]) -> Optional[NestSubset]:
     return NestSubset(**payload)
 
 
+def extract_inbound_nest(sla_input: SLAEvaluateInput) -> Optional[Dict[str, Any]]:
+    """Return raw inbound nest dict for echo/traceability (not for decision rules)."""
+    nest_raw = sla_input.nest
+    if isinstance(nest_raw, dict) and nest_raw:
+        return dict(nest_raw)
+    return None
+
+
 def resolve_nest_for_evaluate(sla_input: SLAEvaluateInput) -> Optional[NestSubset]:
     """
     Map SLAEvaluateInput to NestSubset for DecisionInput.
 
-    Priority:
-    1. Explicit ``nest`` dict when present (unchanged legacy path).
-    2. Top-level ``nest_id`` from SEM (PNL path — M1 fix).
+    Wave 3A: always minimal from ``nest_id`` — inbound ``nest`` body is ignored
+    here so decision/score/confidence paths cannot consume slice resources.
     """
-    nest_raw = sla_input.nest
-    if isinstance(nest_raw, dict) and nest_raw:
-        resolved = _nest_from_dict(nest_raw)
-        if resolved is not None:
-            return resolved
-
     nest_id = (sla_input.nest_id or "").strip()
     if not nest_id:
         return None

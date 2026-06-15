@@ -1,0 +1,107 @@
+# =========================================================
+# PROMPT_IFACE_05_BUILD_DEPLOY_DIGEST (CORRIGIDO)
+# =========================================================
+
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_interfaces_deploy"
+mkdir -p "$OUT"
+
+# =========================================================
+# FASE 1 — BUILD
+# =========================================================
+
+TS=$(date -u +%Y%m%dT%H%M%SZ)
+
+IMAGE="ghcr.io/abelisboa/trisla-decision-engine:${TS}"
+
+echo "[BUILD] $IMAGE"
+
+podman build --format docker \
+  -t $IMAGE \
+  -f apps/decision-engine/Dockerfile \
+  apps/decision-engine || exit 1
+
+# =========================================================
+# FASE 2 — PUSH
+# =========================================================
+
+echo "[PUSH] GHCR"
+
+podman push $IMAGE || exit 1
+
+# =========================================================
+# FASE 3 — DIGEST REMOTO (OBRIGATÓRIO)
+# =========================================================
+
+echo "[DIGEST] Obtendo digest remoto"
+
+DE_DIGEST=$(skopeo inspect \
+  --authfile ~/.config/containers/auth.json \
+  docker://$IMAGE | jq -r .Digest)
+
+if [ -z "$DE_DIGEST" ] || [ "$DE_DIGEST" = "null" ]; then
+  echo "[ERRO] Digest inválido"
+  exit 1
+fi
+
+echo "DIGEST=$DE_DIGEST" | tee "$OUT/digest.txt"
+
+FULL_IMAGE="ghcr.io/abelisboa/trisla-decision-engine@${DE_DIGEST}"
+
+# =========================================================
+# FASE 4 — DEPLOY DIGEST-ONLY
+# =========================================================
+
+echo "[DEPLOY] $FULL_IMAGE"
+
+kubectl -n trisla set image deployment/trisla-decision-engine \
+  decision-engine=$FULL_IMAGE || exit 1
+
+# =========================================================
+# FASE 5 — ROLLOUT
+# =========================================================
+
+kubectl -n trisla rollout status deployment/trisla-decision-engine \
+  --timeout=240s || exit 1
+
+# =========================================================
+# FASE 6 — CONFIRMAR SPEC
+# =========================================================
+
+echo "[VERIFY] Deployment spec image"
+
+kubectl -n trisla get deployment trisla-decision-engine \
+  -o jsonpath='{.spec.template.spec.containers[0].image}'; echo \
+  | tee "$OUT/deployment_image.txt"
+
+# =========================================================
+# FASE 7 — CONFIRMAR RUNTIME
+# =========================================================
+
+echo "[VERIFY] Pod imageID"
+
+kubectl -n trisla get pods -o json \
+  | jq -r '.items[] 
+    | select(.metadata.name | contains("decision-engine")) 
+    | .status.containerStatuses[0].imageID' \
+  | tee "$OUT/pod_image.txt"
+
+# =========================================================
+# FASE 8 — CONSISTÊNCIA FINAL
+# =========================================================
+
+echo "[CHECK] Validar consistência digest"
+
+grep "$DE_DIGEST" "$OUT/deployment_image.txt" >/dev/null || {
+  echo "[ERRO] Deployment não usa digest esperado"
+  exit 1
+}
+
+grep "$DE_DIGEST" "$OUT/pod_image.txt" >/dev/null || {
+  echo "[ERRO] Pod não está usando digest esperado"
+  exit 1
+}
+
+echo "[OK] Deploy validado com digest remoto"

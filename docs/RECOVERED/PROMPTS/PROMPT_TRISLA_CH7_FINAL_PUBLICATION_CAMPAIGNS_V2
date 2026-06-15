@@ -1,0 +1,538 @@
+# =========================================================
+# PROMPT_TRISLA_CH7_FINAL_PUBLICATION_CAMPAIGNS_V1
+# =========================================================
+
+# MISSÃO
+# Executar as campanhas FINAIS e DEFINITIVAS necessárias
+# para transformar o Capítulo 7 do paper TriSLA em uma
+# seção publication-ready em nível IEEE Q1.
+#
+# O objetivo NÃO é gerar mais gráficos.
+# O objetivo é FECHAR definitivamente:
+#
+# 1. PRB sensitivity realism
+# 2. ACCEPT/REJECT/RENOGOTIATE boundary behavior
+# 3. multidomain variability
+# 4. governance/runtime consistency
+# 5. statistical robustness
+# 6. publication-grade freeze
+#
+# O resultado final deve sustentar, COM EVIDÊNCIAS REAIS:
+#
+# - PRB influences SLA decision
+# - telemetry influences admission
+# - multidomain conditions affect feasibility
+# - ACCEPT/REJECT boundaries are operational
+# - runtime governance is consistent
+# - ML/XAI inference is real
+# - SLA-Agent lifecycle supervision is active
+# - all datasets are publication-clean
+#
+# O operador NÃO deve:
+# - inventar variabilidade;
+# - gerar dados sintéticos;
+# - interpolar artificialmente;
+# - suavizar curvas;
+# - usar datasets contaminados;
+# - misturar campanhas incompatíveis.
+#
+# =========================================================
+# OBJETIVO FINAL
+# =========================================================
+
+# Ao final desta campanha deve existir:
+#
+# 1. dataset publication-grade
+# 2. figuras publication-grade
+# 3. PRB sensitivity real
+# 4. multidomain boundary evidence
+# 5. governance clean dataset
+# 6. runtime clean freeze
+# 7. statistical validation
+# 8. claims fully supported
+# 9. Section 7 ready for writing
+
+# =========================================================
+# BASES OBRIGATÓRIAS
+# =========================================================
+
+BASE_FREEZE=evidencias_final_e2e_accept_batch_20260515T110538Z
+BASE_ML=evidencias_ml_xai_runtime_activation_20260515T203800Z
+BASE_BC=evidencias_trisla_blockchain_governance_audit_20260515T204916Z
+BASE_SLA=evidencias_trisla_sla_agent_audit_20260515T210547Z
+BASE_V62=evidencias_resultados_trisla_baseline_v13_2
+
+# =========================================================
+# MODO
+# =========================================================
+
+# READ-ONLY por padrão.
+#
+# PERMITIDO:
+# - reexecutar campanhas;
+# - port-forward;
+# - coletar telemetria;
+# - escalar deployment existente;
+# - rerun de workload;
+# - rerun de scripts;
+# - coleta Prometheus;
+# - geração de figuras;
+# - geração de CSV;
+# - estatística.
+#
+# PROIBIDO:
+# - rebuild;
+# - alterar thresholds;
+# - alterar pesos;
+# - alterar arquitetura;
+# - alterar lógica;
+# - alterar digest;
+# - alterar PromQL SSOT;
+# - alterar runtime behavior.
+
+# =========================================================
+# INÍCIO
+# =========================================================
+
+ssh node006
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+TS=$(date -u +%Y%m%dT%H%M%SZ)
+OUT=evidencias_trisla_ch7_final_publication_${TS}
+
+mkdir -p \
+${OUT}/prb_campaign \
+${OUT}/boundary_campaign \
+${OUT}/governance_filtering \
+${OUT}/statistics \
+${OUT}/freeze \
+${OUT}/figures \
+${OUT}/dataset \
+${OUT}/analysis \
+${OUT}/runtime \
+${OUT}/validation \
+${OUT}/correction_plan \
+${OUT}/paper_ready
+
+# =========================================================
+# FASE 1 — RUNTIME PRECHECK
+# =========================================================
+
+kubectl get pods -A -o wide \
+> ${OUT}/runtime/all_pods.txt
+
+kubectl get deploy -n trisla -o wide \
+> ${OUT}/runtime/trisla_deployments.txt
+
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 \
+> ${OUT}/runtime/pf_backend.log 2>&1 &
+
+PF_PID=$!
+
+sleep 10
+
+curl -s http://localhost:18001/api/v1/health/global \
+| tee ${OUT}/validation/global_health.json
+
+jq . ${OUT}/validation/global_health.json >/dev/null || {
+  echo "INVALID GLOBAL HEALTH JSON" \
+  > ${OUT}/correction_plan/global_health_failure.md
+}
+
+# =========================================================
+# FASE 2 — PRB SENSITIVITY CAMPAIGN
+# =========================================================
+
+# OBJETIVO:
+# Gerar variabilidade REAL de PRB.
+#
+# A campanha DEVE demonstrar:
+#
+# - influência operacional do PRB;
+# - correlação PRB ↔ decision_score;
+# - mudança de comportamento admission;
+# - sensibilidade multidomínio;
+# - efeito estatístico real.
+#
+# NÃO usar:
+# - mock;
+# - interpolação;
+# - simulação fake.
+#
+# Deve utilizar:
+# - UERANSIM;
+# - my5G-RANTester;
+# - tráfego real;
+# - telemetria real Prometheus.
+
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# 1. PRB std > 0
+# 2. PRB range significativo
+# 3. decision_score variability
+# 4. Pearson != 0
+# 5. Spearman != 0
+# 6. múltiplos regimes:
+#    - low pressure
+#    - medium pressure
+#    - congestion
+#
+# 7. mínimo:
+#    - 100 amostras
+#
+# 8. cada amostra deve conter:
+#    - PRB
+#    - decision_score
+#    - latency
+#    - slice_type
+#    - telemetry_complete
+#    - decision
+#    - tx_hash
+#    - sla_agent_status
+
+# =========================================================
+# EXECUÇÃO PRB
+# =========================================================
+
+# Reutilizar:
+# scientific_multidomain_ieee_campaign.py
+#
+# sem alterar:
+# - thresholds;
+# - pesos;
+# - lógica;
+# - score mode.
+
+# Se ML estiver OFFLINE:
+#
+# permitido:
+# kubectl -n trisla scale deploy/trisla-ml-nsmf --replicas=1
+#
+# DESDE QUE:
+# - digest permaneça idêntico;
+# - rollback seja documentado.
+
+# =========================================================
+# VALIDAÇÃO PRB
+# =========================================================
+
+# Gerar:
+#
+# analysis/prb_validation.md
+#
+# contendo:
+#
+# - PRB std
+# - PRB min/max
+# - Pearson
+# - Spearman
+# - score variability
+# - regimes detectados
+# - congestion evidence
+# - figure quality
+# - publication readiness
+#
+# HARD FAIL se:
+# - std=0
+# - score constante
+# - Pearson≈0
+# - sem variabilidade.
+
+# =========================================================
+# FIGURAS PRB
+# =========================================================
+
+# Gerar:
+#
+# 1. PRB vs decision_score
+# 2. PRB sensitivity curve
+# 3. PRB distribution
+# 4. PRB regimes over time
+# 5. slice-aware PRB behavior
+# 6. multidomain PRB correlation matrix
+
+# =========================================================
+# FASE 3 — BOUNDARY CAMPAIGN
+# =========================================================
+
+# OBJETIVO:
+# Demonstrar boundaries reais:
+#
+# - ACCEPT
+# - REJECT
+# - RENEGOTIATE
+#
+# sob:
+# - pressão RAN;
+# - degradação TN;
+# - degradação Core;
+# - combinações multidomínio.
+
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve existir:
+#
+# - variabilidade real;
+# - boundaries visíveis;
+# - zonas de transição;
+# - sensitivity behavior;
+# - multidomain influence.
+#
+# Mínimo:
+#
+# - 30 ACCEPT
+# - 30 REJECT
+# - 30 RENEGOTIATE
+#
+# ou justificar tecnicamente impossibilidade.
+
+# =========================================================
+# VALIDAÇÃO BOUNDARY
+# =========================================================
+
+# Gerar:
+#
+# analysis/boundary_validation.md
+#
+# contendo:
+#
+# - distribution per class
+# - separability
+# - overlap
+# - confidence intervals
+# - score regions
+# - multidomain triggers
+# - PRB influence
+# - transport influence
+# - core influence
+
+# =========================================================
+# FIGURAS BOUNDARY
+# =========================================================
+
+# Gerar:
+#
+# 1. ACCEPT/REJECT/RENOGOTIATE regions
+# 2. decision boundary heatmap
+# 3. multidomain sensitivity surface
+# 4. PRB boundary behavior
+# 5. TN degradation impact
+# 6. Core degradation impact
+# 7. slice-aware class separation
+
+# =========================================================
+# FASE 4 — GOVERNANCE/RUNTIME FILTERING
+# =========================================================
+
+# OBJETIVO:
+# Eliminar datasets contaminados.
+#
+# NÃO misturar:
+# - BASE_V62 antigos
+# - BLOCKCHAIN_FAILED
+# - SKIPPED_PIPELINE_INCOMPLETE
+# - campanhas incompatíveis.
+#
+# O dataset publication-ready deve conter:
+#
+# - somente runtime válido;
+# - somente tx_hash válidos;
+# - somente BC COMMITTED;
+# - somente telemetry_complete=true;
+# - somente SLA-Agent OK;
+# - somente datasets consistentes.
+
+# =========================================================
+# VALIDAR GOVERNANCE
+# =========================================================
+
+# HARD REQUIREMENTS:
+#
+# - tx_hash únicos
+# - BC COMMITTED consistente
+# - governance chain íntegra
+# - runtime alignment
+#
+# Gerar:
+#
+# analysis/governance_validation.md
+
+# =========================================================
+# FIGURAS GOVERNANCE
+# =========================================================
+
+# Gerar:
+#
+# 1. tx_hash timeline
+# 2. governance success ratio
+# 3. lifecycle persistence
+# 4. BC confirmation distribution
+# 5. runtime governance consistency
+
+# =========================================================
+# FASE 5 — SLA-AGENT VALIDATION
+# =========================================================
+
+# OBJETIVO:
+# Demonstrar lifecycle supervision real.
+#
+# Validar:
+#
+# - ingest;
+# - runtime supervision;
+# - telemetry reassessment;
+# - lifecycle continuity;
+# - monitoring coherence.
+
+# =========================================================
+# FIGURAS SLA-AGENT
+# =========================================================
+
+# Gerar:
+#
+# 1. lifecycle supervision timeline
+# 2. supervision consistency
+# 3. telemetry reassessment flow
+# 4. runtime supervision coverage
+
+# =========================================================
+# FASE 6 — ML/XAI VALIDATION
+# =========================================================
+
+# OBJETIVO:
+# Confirmar:
+#
+# - online inference;
+# - non-fallback inference;
+# - SHAP operational;
+# - confidence variability;
+# - explainability consistency.
+
+# HARD REQUIREMENTS:
+#
+# - ml_risk_score != 0.5 constante
+# - SHAP ativo
+# - confidence variability
+# - online inference real
+
+# =========================================================
+# FIGURAS ML/XAI
+# =========================================================
+
+# Gerar:
+#
+# 1. ML risk distribution
+# 2. ML confidence distribution
+# 3. SHAP contribution ranking
+# 4. feature importance
+# 5. online inference variability
+
+# =========================================================
+# FASE 7 — ESTATÍSTICA DEFINITIVA
+# =========================================================
+
+# Gerar:
+#
+# - média
+# - mediana
+# - std
+# - IQR
+# - Pearson
+# - Spearman
+# - bootstrap
+# - confidence intervals
+# - sensitivity analysis
+# - outlier analysis
+# - class separability
+# - correlation matrix
+
+# APENAS usando:
+# publication-clean datasets.
+
+# =========================================================
+# FASE 8 — PUBLICATION-READY FREEZE
+# =========================================================
+
+# Gerar freeze final:
+#
+# - runtime snapshot
+# - digest matrix
+# - deployment snapshot
+# - telemetry snapshot
+# - governance snapshot
+# - ML/XAI snapshot
+# - SLA-Agent snapshot
+
+kubectl get deploy,svc,pods -A -o wide \
+> ${OUT}/freeze/final_runtime_snapshot.txt
+
+kubectl get deploy,svc,pods -n trisla -o yaml \
+> ${OUT}/freeze/trisla_runtime_freeze.yaml
+
+# =========================================================
+# FASE 9 — PUBLICATION VALIDATION
+# =========================================================
+
+# O operador DEVE responder:
+#
+# 1. PRB influence comprovado?
+# 2. Boundary behavior comprovado?
+# 3. Multidomain sensitivity comprovada?
+# 4. Governance consistente?
+# 5. Runtime consistente?
+# 6. ML/XAI operacional?
+# 7. SLA-Agent supervision operacional?
+# 8. Datasets publication-clean?
+# 9. Figuras Q1-ready?
+# 10. Claims sustentados?
+# 11. O Chapter 7 pode ser escrito?
+# 12. O paper superou NASP experimentalmente?
+
+# =========================================================
+# FASE 10 — RELATÓRIO FINAL
+# =========================================================
+
+# Gerar:
+#
+# analysis/FINAL_PUBLICATION_REPORT.md
+#
+# contendo:
+#
+# - status científico;
+# - readiness;
+# - gaps restantes;
+# - claims permitidos;
+# - claims proibidos;
+# - figuras aprovadas;
+# - figuras descartadas;
+# - tabelas aprovadas;
+# - estatística validada;
+# - consistência runtime;
+# - publication verdict.
+#
+# Também gerar:
+#
+# analysis/SECTION7_READY.md
+#
+# contendo:
+#
+# - datasets finais;
+# - figuras finais;
+# - tabelas finais;
+# - claims válidos;
+# - estrutura recomendada da Section 7.
+
+# =========================================================
+# FINALIZAÇÃO
+# =========================================================
+
+find ${OUT} -type f | sort \
+> ${OUT}/analysis/MANIFEST.txt
+
+kill ${PF_PID} 2>/dev/null || true
+
+echo "TRISLA CH7 FINAL PUBLICATION CAMPAIGNS COMPLETED: ${OUT}"

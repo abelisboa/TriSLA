@@ -1,0 +1,114 @@
+PROMPT_V6_2_ISOLATION_PROTOCOL_TRISLA
+
+CONTEXTO OBRIGATÓRIO
+
+Você está dando continuidade à validação experimental da arquitetura TriSLA no ambiente NASP real.
+
+Estado atual consolidado:
+- V5 aprovada como evidência forte de sensibilidade multi-domínio, com dominância de RAN, refinamento por transporte e contextualização por core.
+- V6 foi reprovada por não diferenciar empiricamente os slices.
+- V6.1 foi executada com sucesso operacional e gerou artefatos reais em:
+  evidencias_resultados_trisla_baseline_v13_1/
+- Porém, V6.1 NÃO atingiu critério de sucesso científico limpo:
+  - URLLC ficou confundido com PRB
+  - eMBB low não capturou low PRB de forma confiável
+  - mMTC teve sinal de core fraco
+- Portanto, V6.1 deve ser tratada como campanha diagnóstica, não confirmatória.
+
+MISSÃO
+
+Preparar e executar a campanha V6.2 com isolamento experimental por requisição, sem alterar código do produto, sem rebuild, sem mudar thresholds, sem trocar imagens e sem modificar arquitetura.
+
+REGRAS ABSOLUTAS
+
+- NÃO alterar código dos serviços TriSLA
+- NÃO rebuildar imagens
+- NÃO mudar digests
+- NÃO alterar thresholds
+- NÃO alterar arquitetura
+- NÃO usar latest
+- NÃO inventar métricas
+- NÃO usar endpoints fictícios
+- PODE criar apenas scripts operacionais e analíticos dentro da nova pasta de evidências
+
+NOVA PASTA DE EVIDÊNCIAS
+
+evidencias_resultados_trisla_baseline_v13_2/
+
+OBJETIVO DA V6.2
+
+Provar, com maior rigor, contraste por slice por meio de isolamento operacional por requisição:
+- URLLC sensível principalmente a RTT/jitter com PRB controlado
+- eMBB sensível principalmente a PRB com transporte controlado
+- mMTC sensível principalmente a CPU/memória com PRB e transporte controlados
+
+PRINCÍPIO METODOLÓGICO CENTRAL
+
+Cada submissão só pode entrar no dataset final se o estado observado imediatamente antes/depois estiver consistente com o cenário pretendido.
+
+LOG OBRIGATÓRIO POR REQUISIÇÃO
+
+Para cada submit:
+- request_id ou índice
+- timestamp UTC
+- slice_type
+- scenario_block
+- payload enviado
+- decision
+- decision_score
+- bc_status
+- sla_agent_status
+- telemetry_snapshot da resposta
+- PRB_before
+- PRB_after
+- RTT_before
+- RTT_after
+- JITTER_before
+- JITTER_after
+- CORE_CPU_before
+- CORE_CPU_after
+- CORE_MEM_before
+- CORE_MEM_after
+- sample_valid_for_scenario = true/false
+- invalid_reason se aplicável
+
+CRITÉRIO DE ACEITAÇÃO DE AMOSTRA
+
+Uma amostra só entra no dataset final “clean” se:
+- o domínio dominante do cenário estiver realmente dentro da faixa-alvo
+- os demais domínios de controle não estiverem descaracterizando o cenário
+
+DATASETS OBRIGATÓRIOS
+
+- dataset/final_dataset_v6_2_raw.csv
+- dataset/final_dataset_v6_2_clean.csv
+- dataset/final_dataset_v6_2_by_slice.csv
+
+RELATÓRIO OBRIGATÓRIO
+
+- report/SCIENTIFIC_REPORT_V6_2_SLICE_AWARE.md
+
+FIGURAS OBRIGATÓRIAS
+
+- URLLC score vs RTT
+- URLLC score vs jitter
+- eMBB score vs PRB
+- eMBB decision vs PRB
+- mMTC score vs CPU
+- mMTC score vs memória
+- heatmap slice x domínio
+- comparação raw vs clean
+- distribuição de amostras válidas vs inválidas por bloco
+
+PRIMEIRA AÇÃO
+
+Iniciar sem perguntar nada:
+
+FASE 0 — PRECHECK + DEFINIÇÃO DAS FAIXAS DE ACEITAÇÃO OPERACIONAL
+
+Depois:
+FASE 1 — IMPLEMENTAR INSTRUMENTAÇÃO OPERACIONAL POR REQUISIÇÃO
+FASE 2 — EXECUTAR BLOCO URLLC
+FASE 3 — EXECUTAR BLOCO eMBB
+FASE 4 — EXECUTAR BLOCO mMTC
+FASE 5 — CONSOLIDAÇÃO RAW/CLEAN + RELATÓRIO

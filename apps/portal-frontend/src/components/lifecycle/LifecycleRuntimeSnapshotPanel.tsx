@@ -1,12 +1,12 @@
 import { displayField } from "../../lib/submitResponse";
 import {
-  coreRowsForLifecycle,
-  isRuntimeSnapshotPopulated,
-  parseTelemetrySnapshot,
-  ranRowsForLifecycle,
-  transportRowsForLifecycle,
-  type TelemetrySnapshotV2,
-} from "../../lib/lifecycleRuntimeSnapshot";
+  isObservedSnapshotPopulated,
+  observedCoreRows,
+  observedRanRows,
+  observedTransportRows,
+  type ObservedTelemetryRow,
+} from "../../lib/observedTelemetry";
+import { parseTelemetrySnapshot, type TelemetrySnapshotV2 } from "../../lib/lifecycleRuntimeSnapshot";
 
 type Props = {
   snapshot: unknown;
@@ -19,7 +19,7 @@ function DomainSection({
   rows,
 }: {
   title: string;
-  rows: Array<{ label: string; value: unknown }>;
+  rows: ObservedTelemetryRow[];
 }) {
   if (rows.length === 0) {
     return (
@@ -36,7 +36,7 @@ function DomainSection({
         {rows.map(({ label, value }) => (
           <div key={label} className="trisla-status-row">
             <dt>{label}</dt>
-            <dd>{displayField(value)}</dd>
+            <dd>{value}</dd>
           </div>
         ))}
       </dl>
@@ -46,17 +46,24 @@ function DomainSection({
 
 export function LifecycleRuntimeSnapshotPanel({ snapshot, loading, error }: Props) {
   const snap: TelemetrySnapshotV2 | undefined = parseTelemetrySnapshot(snapshot);
+  const populated = isObservedSnapshotPopulated({
+    ran: snap?.ran,
+    transport: snap?.transport,
+    core: snap?.core,
+  });
 
   return (
     <section className="trisla-status-card" aria-label="Runtime Snapshot">
-      <h2>Runtime Snapshot</h2>
-      <p className="trisla-muted">Multidomain telemetry from runtime status (contract v2).</p>
+      <h2>Multidomain Telemetry</h2>
+      <p className="trisla-muted">
+        Observed runtime metrics only — compliance evaluation is shown separately.
+      </p>
       {loading && <p className="trisla-muted">Loading runtime snapshot…</p>}
       {error && <p className="trisla-error">{error}</p>}
-      {!loading && !error && !isRuntimeSnapshotPopulated(snap) && (
+      {!loading && !error && !populated && (
         <p className="trisla-muted">Runtime snapshot not available for this intent.</p>
       )}
-      {!loading && !error && isRuntimeSnapshotPopulated(snap) && snap && (
+      {!loading && !error && populated && snap && (
         <>
           <dl>
             <div className="trisla-status-row">
@@ -67,14 +74,10 @@ export function LifecycleRuntimeSnapshotPanel({ snapshot, loading, error }: Prop
               <dt>timestamp</dt>
               <dd>{displayField(snap.timestamp)}</dd>
             </div>
-            <div className="trisla-status-row">
-              <dt>telemetry_contract_version</dt>
-              <dd>{displayField(snap.telemetry_contract_version)}</dd>
-            </div>
           </dl>
-          <DomainSection title="RAN" rows={ranRowsForLifecycle(snap.ran)} />
-          <DomainSection title="Transport" rows={transportRowsForLifecycle(snap.transport)} />
-          <DomainSection title="Core" rows={coreRowsForLifecycle(snap.core)} />
+          <DomainSection title="RAN" rows={observedRanRows(snap.ran)} />
+          <DomainSection title="Transport" rows={observedTransportRows(snap.transport)} />
+          <DomainSection title="CORE" rows={observedCoreRows(snap.core)} />
         </>
       )}
     </section>
