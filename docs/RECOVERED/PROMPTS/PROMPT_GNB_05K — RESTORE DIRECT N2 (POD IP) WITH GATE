@@ -1,0 +1,181 @@
+# =========================================================
+# PROMPT_GNB_05K — RESTORE DIRECT N2 (POD IP) WITH GATE
+# =========================================================
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+export EVID_DIR="$(pwd)/evidencias_gnb_real/single_ue_attach_05k"
+mkdir -p "$EVID_DIR"/{analysis,logs,config}
+
+date -u > "$EVID_DIR/analysis/start_time.txt"
+hostname > "$EVID_DIR/analysis/host.txt"
+
+# =========================================================
+# FASE 0 — LIMPEZA CONTROLADA
+# =========================================================
+pkill -f "nr-ue" || true
+pkill -f "gnb -c" || true
+pkill -f "srsran.*gnb" || true
+sleep 3
+
+ps aux | grep -Ei 'gnb|nr-ue|ueransim' | grep -v grep \
+  > "$EVID_DIR/analysis/processes_after_cleanup.txt" || true
+
+# =========================================================
+# FASE 1 — IDENTIFICAR AMF (POD IP REAL)
+# =========================================================
+AMF_NS=$(cat evidencias_gnb_real/n2_fix_03/analysis/amf_namespace.txt)
+
+AMF_POD=$(kubectl -n "$AMF_NS" get pods -o wide \
+  | grep -i amf | awk '{print $1}' | head -n1)
+
+AMF_POD_IP=$(kubectl -n "$AMF_NS" get pod "$AMF_POD" \
+  -o jsonpath='{.status.podIP}')
+
+echo "$AMF_NS"     > "$EVID_DIR/analysis/amf_namespace.txt"
+echo "$AMF_POD"    > "$EVID_DIR/analysis/amf_pod.txt"
+echo "$AMF_POD_IP" > "$EVID_DIR/analysis/amf_pod_ip.txt"
+
+test -n "$AMF_POD_IP" || {
+  echo "[ERRO] AMF_POD_IP vazio" > "$EVID_DIR/analysis/error.txt"
+  exit 1
+}
+
+# =========================================================
+# FASE 2 — GERAR gNB.yaml (ALINHADO AO 04C)
+# =========================================================
+PLMN="20893"
+TAC="1"
+SST="1"
+SD="010203"
+
+HOST_IP=$(ip route get "$AMF_POD_IP" | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1); exit}')
+
+cat > "$EVID_DIR/config/gnb.yaml" <<EOF
+cu_cp:
+  amf:
+    addr: ${AMF_POD_IP}
+    port: 38412
+    bind_addr: ${HOST_IP}
+    supported_tracking_areas:
+      - tac: ${TAC}
+        plmn_list:
+          - plmn: "${PLMN}"
+            tai_slice_support_list:
+              - sst: ${SST}
+                sd: ${SD}
+
+cell_cfg:
+  plmn: "${PLMN}"
+  tac: ${TAC}
+  pci: 1
+EOF
+
+cat "$EVID_DIR/config/gnb.yaml" > "$EVID_DIR/analysis/gnb_config_used.txt"
+
+# =========================================================
+# FASE 3 — SUBIR gNB
+# =========================================================
+docker run --rm \
+  --network host \
+  -v "$EVID_DIR/config/gnb.yaml:/gnb.yaml" \
+  softwareradiosystems/srsran-project \
+  gnb -c /gnb.yaml \
+  > "$EVID_DIR/logs/gnb.log" 2>&1 &
+
+GNB_PID=$!
+echo "$GNB_PID" > "$EVID_DIR/analysis/gnb_pid.txt"
+
+sleep 20
+
+# =========================================================
+# FASE 4 — EXTRAIR NGAP (gNB)
+# =========================================================
+grep -Ei 'N2: Connection|NG Setup|SCTP|gNB started|error|fail' \
+  "$EVID_DIR/logs/gnb.log" \
+  > "$EVID_DIR/analysis/gnb_ngap_extract.txt" || true
+
+# Gate 1: gNB iniciado
+if ! grep -q "gNB started" "$EVID_DIR/logs/gnb.log"; then
+  echo "[ERRO] gNB não iniciou" > "$EVID_DIR/analysis/error.txt"
+  kill "$GNB_PID" 2>/dev/null || true
+  exit 1
+fi
+
+# =========================================================
+# FASE 5 — VALIDAR NG SETUP NO AMF (TEMPO REAL)
+# =========================================================
+kubectl -n "$AMF_NS" logs "$AMF_POD" --since=90s \
+  > "$EVID_DIR/logs/amf_ngap.log" 2>&1 || true
+
+grep -Ei 'SCTP Accept|NGSetupRequest|NG-Setup response' \
+  "$EVID_DIR/logs/amf_ngap.log" \
+  > "$EVID_DIR/analysis/amf_ngap_extract.txt" || true
+
+# Gate 2: NG Setup comprovado
+if ! grep -q "NG-Setup response" "$EVID_DIR/logs/amf_ngap.log"; then
+  echo "[ERRO] NG Setup não confirmado nesta execução" \
+    > "$EVID_DIR/analysis/error.txt"
+  kill "$GNB_PID" 2>/dev/null || true
+  exit 1
+fi
+
+# =========================================================
+# FASE 6 — (OPCIONAL) SUBIR UE APÓS NG OK
+# =========================================================
+LOCAL_UE_IMG=$(cat evidencias_gnb_real/single_ue_attach_05h/analysis/local_image.txt)
+UE_CFG_SRC="evidencias_gnb_real/single_ue_attach_05h/config/ue.yaml"
+
+if [ -f "$UE_CFG_SRC" ]; then
+  cp "$UE_CFG_SRC" "$EVID_DIR/config/ue.yaml"
+
+  docker run --rm \
+    --network host \
+    --cap-add NET_ADMIN \
+    --device /dev/net/tun \
+    -v "$EVID_DIR/config/ue.yaml:/ue.yaml" \
+    "$LOCAL_UE_IMG" \
+    -c /ue.yaml \
+    > "$EVID_DIR/logs/ue.log" 2>&1 &
+
+  UE_PID=$!
+  echo "$UE_PID" > "$EVID_DIR/analysis/ue_pid.txt"
+
+  sleep 40
+
+  grep -Ei 'cell|selected|rrc|registration|pdu|session|accept|reject|fail|error' \
+    "$EVID_DIR/logs/ue.log" \
+    > "$EVID_DIR/analysis/ue_extract.txt" || true
+
+  kill "$UE_PID" 2>/dev/null || true
+fi
+
+# =========================================================
+# FINALIZAÇÃO
+# =========================================================
+kill "$GNB_PID" 2>/dev/null || true
+date -u > "$EVID_DIR/analysis/end_time.txt"
+
+# =========================================================
+# RELATÓRIO
+# =========================================================
+cat > "$EVID_DIR/RELATORIO_GNB_05K.md" <<EOF
+# RELATORIO GNB_05K — DIRECT POD IP
+
+AMF POD IP: ${AMF_POD_IP}
+
+## gNB NGAP
+$(cat "$EVID_DIR/analysis/gnb_ngap_extract.txt")
+
+## AMF NGAP
+$(cat "$EVID_DIR/analysis/amf_ngap_extract.txt")
+
+## UE (se executado)
+$(cat "$EVID_DIR/analysis/ue_extract.txt" 2>/dev/null)
+
+## STATUS
+- NG Setup confirmado nesta execução
+- Caminho N2 via Pod IP restaurado
+EOF
+
+echo "PROMPT_GNB_05K FINALIZADO"

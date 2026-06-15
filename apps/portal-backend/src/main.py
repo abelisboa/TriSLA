@@ -8,6 +8,7 @@ import threading
 
 from src.config import settings
 from src.routers import sla, modules, prometheus
+from src.api.interfaces.i1_routes import router as i1_router
 from src.services.nasp import check_all_nasp_modules, check_sem_csmf, check_bc_nssmf
 
 # Configure logging
@@ -63,8 +64,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
-    description="API para gerenciamento de SLA em redes 5G/O-RAN",
+    title="TRISLA - SLA Assurance for 5G/O-RAN Networks",
+    description="API for SLA management in 5G/O-RAN networks",
     version="1.0.2",
     lifespan=lifespan,
 )
@@ -82,12 +83,14 @@ app.add_middleware(
 app.include_router(sla.router, prefix="/api/v1/sla", tags=["SLA"])
 app.include_router(modules.router, prefix="/api/v1/modules", tags=["Modules"])
 app.include_router(prometheus.router, prefix="/api/v1/prometheus", tags=["Prometheus"])
+# RC-P19-002: mount TriSLA I1 runtime interface routes (router carries /api/v1/interfaces prefix).
+app.include_router(i1_router)
 
 
 @app.get("/")
 async def root():
     return {
-        "name": "TRISLA - GARANTIA DE SLA EM REDES 5G/O-RAN",
+        "name": "TRISLA - SLA Assurance for 5G/O-RAN Networks",
         "version": "1.0.2",
         "status": "running"
     }

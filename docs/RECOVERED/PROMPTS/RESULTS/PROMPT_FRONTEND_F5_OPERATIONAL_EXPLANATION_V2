@@ -1,0 +1,498 @@
+# PROMPT_FRONTEND_F5_OPERATIONAL_EXPLANATION_V2
+
+## STATUS
+
+Fase autorizada após:
+
+* F0_APPROVED
+* F1_APPROVED
+* REAL_PAYLOAD_FREEZE_APPROVED
+* F2_APPROVED
+* F3_APPROVED
+* F4_APPROVED
+* XAI_AUDIT_APPROVED
+
+Baseline oficial:
+
+frontend_f4_20260529T180756Z/
+
+Registrar:
+
+```text
+BASELINE_FRONTEND_VERSION = F4_APPROVED
+```
+
+---
+
+# OBJETIVO
+
+Executar:
+
+F5 — Operational Explanation
+
+utilizando exclusivamente informações reais já disponíveis no runtime TriSLA.
+
+O objetivo NÃO é implementar um painel SHAP.
+
+O objetivo NÃO é implementar um painel LIME.
+
+O objetivo NÃO é implementar um painel XAI formal.
+
+O objetivo é tornar visível e compreensível ao usuário a explicação operacional já produzida pelo sistema.
+
+---
+
+# DECISÃO ARQUITETURAL OBRIGATÓRIA
+
+A auditoria:
+
+xai_audit_20260529T181711Z/
+
+comprovou:
+
+## Existe no código ML-NSMF
+
+* SHAP
+* LIME
+* Feature Importance
+* Predictor Explain
+
+## Não existe no payload live de submit
+
+* shap_values
+* lime_explanation
+* feature_importance
+* attribution vectors
+
+Portanto:
+
+```text
+ML-NSMF XAI
+EXISTE
+
+Portal Submit Payload
+NÃO EXPÕE
+```
+
+Consequentemente:
+
+F5 NÃO pode renderizar SHAP/LIME.
+
+---
+
+# FONTES OBRIGATÓRIAS
+
+Consultar obrigatoriamente:
+
+xai_audit_20260529T181711Z/
+
+Arquivos:
+
+* XAI_AUDIT_SUMMARY.md
+* XAI_CODE_INVENTORY.md
+* XAI_ENDPOINTS_INVENTORY.md
+* XAI_PAYLOAD_FIELD_MAP.md
+* XAI_MODULE_CLASSIFICATION.md
+* XAI_FRONTEND_F5_RECOMMENDATION.md
+
+Consultar também:
+
+real_payload_freeze_20260529T174930Z/
+
+frontend_f2_20260529T175654Z/
+
+frontend_f3_20260529T180234Z/
+
+frontend_f4_20260529T180756Z/
+
+REAL_API_SCHEMA.md
+
+FRONTEND_FIELD_MAP.md
+
+---
+
+# FASE 0 — F4 FREEZE
+
+Antes de qualquer alteração.
+
+Criar:
+
+frontend_f5_YYYYMMDDTHHMMSSZ/
+
+Gerar:
+
+F4_BASELINE_FREEZE.md
+
+Registrar:
+
+* commit atual
+* branch atual
+* build status
+* lockfile hash
+* F4 deliverables
+* baseline version
+
+Registrar explicitamente:
+
+```text
+BASELINE_FRONTEND_VERSION = F4_APPROVED
+```
+
+Nenhuma alteração antes do freeze.
+
+---
+
+# REGRA MAIS IMPORTANTE
+
+F5 NÃO PODE:
+
+* criar endpoint novo
+* criar payload novo
+* criar cálculo novo
+* criar métrica nova
+* criar SHAP chart
+* criar LIME chart
+* criar feature attribution chart
+* chamar endpoint /api/v1/xai/*
+* usar ui-dashboard legado
+* inventar dominant_metric
+* inventar threshold_triggered
+* inferir causalidade
+* modificar backend
+
+---
+
+# ESCOPO FUNCIONAL DE F5
+
+Expandir:
+
+OperationalExplanationPanel
+
+presente no F4.
+
+O restante do dashboard permanece inalterado.
+
+---
+
+# GRUPO 1 — DECISION REASONS
+
+Renderizar:
+
+```text
+reason_codes
+```
+
+Regras:
+
+* manter códigos originais
+* exibir todos
+* não remover
+* não resumir
+
+Se existir label amigável:
+
+mostrar:
+
+```text
+INPUT_DEGRADED
+High input degradation detected
+```
+
+O código original deve permanecer visível.
+
+---
+
+# GRUPO 2 — OPERATIONAL EXPLANATION
+
+Renderizar:
+
+```text
+decision_explanation_plain
+```
+
+```text
+system_xai_explanation
+```
+
+```text
+reasoning
+```
+
+Somente se existirem.
+
+Regras:
+
+* mostrar texto original
+* não reescrever
+* não resumir
+* não reinterpretar
+
+---
+
+# GRUPO 3 — CONTRIBUTING FACTORS
+
+Renderizar:
+
+```text
+contributing_factors
+```
+
+Formato:
+
+Tabela simples.
+
+Exemplo:
+
+| Factor | Value |
+| ------ | ----- |
+| PRB    | 0.82  |
+| CPU    | 0.61  |
+
+Somente valores existentes.
+
+Não calcular nada.
+
+Não ordenar artificialmente.
+
+Não chamar de SHAP.
+
+Título obrigatório:
+
+```text
+Operational Contributing Factors
+```
+
+---
+
+# GRUPO 4 — THRESHOLDS USED
+
+Renderizar:
+
+```text
+thresholds_used
+```
+
+Se existir.
+
+Formato:
+
+Tabela.
+
+Exibir exatamente os thresholds recebidos.
+
+Não recalcular.
+
+Não inferir.
+
+Se não existir:
+
+```text
+Not available
+```
+
+---
+
+# GRUPO 5 — CONFIDENCE BREAKDOWN
+
+Renderizar separadamente:
+
+## Decision Confidence
+
+```text
+confidence
+```
+
+## ML Confidence
+
+```text
+metadata.ml_confidence
+```
+
+Regras:
+
+Não combinar.
+
+Não somar.
+
+Não fazer média.
+
+Não substituir.
+
+Exibir exatamente como recebido.
+
+Exemplo:
+
+```text
+Decision Confidence: 0.00
+ML Confidence: 0.89
+```
+
+---
+
+# GRUPO 6 — EXPLANATION SCOPE
+
+Adicionar nota informativa discreta:
+
+```text
+This panel presents operational explanations available in the live admission workflow.
+Formal SHAP/LIME explanations implemented in ML-NSMF are not exposed by the current submit endpoint.
+```
+
+Objetivo:
+
+Evitar overclaim.
+
+Não afirmar ausência de SHAP/LIME.
+
+---
+
+# FLUXO /PNL
+
+Não alterar:
+
+Interpret
+↓
+Preview
+↓
+Confirm
+↓
+Submit
+
+Pode exibir semantic explanation já existente.
+
+Não misturar:
+
+Semantic Explanation
+
+com
+
+Operational Explanation
+
+---
+
+# VALIDAÇÃO
+
+Executar:
+
+URLLC
+
+eMBB
+
+mMTC
+
+Validar:
+
+* reason_codes renderizados
+* contributing_factors renderizados
+* decision_explanation_plain renderizado
+* system_xai_explanation renderizado
+* reasoning renderizado
+* thresholds_used renderizado quando existir
+* confidence separado corretamente
+* ml_confidence separado corretamente
+
+---
+
+# NÃO REGRESSÃO
+
+Validar:
+
+/template
+
+/pnl
+
+F2
+
+F3
+
+F4
+
+continuam funcionando.
+
+Validar:
+
+* nenhum endpoint novo
+* nenhum payload novo
+* nenhum campo removido
+
+---
+
+# BUILD
+
+Executar:
+
+```bash
+npm ci
+npm run build
+```
+
+Registrar resultado.
+
+---
+
+# NÃO DEPLOYAR
+
+Proibido:
+
+* build de imagem
+* push
+* digest
+* rollout
+* alteração Kubernetes
+
+Parar após validação local.
+
+---
+
+# ENTREGÁVEIS
+
+frontend_f5_YYYYMMDDTHHMMSSZ/
+
+Arquivos obrigatórios:
+
+* F4_BASELINE_FREEZE.md
+* F5_XAI_AUDIT_BINDING.md
+* F5_COMPONENT_CHANGES.md
+* F5_FIELD_VALIDATION.md
+* F5_NON_REGRESSION.md
+* F5_BUILD_VALIDATION.md
+* f5_validation_urllc.json
+* f5_validation_embb.json
+* f5_validation_mmtc.json
+* FINAL_VERDICT.md
+
+---
+
+# CRITÉRIO DE APROVAÇÃO
+
+F5_APPROVED somente se:
+
+1. Apenas campos reais forem utilizados.
+2. Nenhum SHAP/LIME for inventado.
+3. Nenhum endpoint novo for criado.
+4. Nenhum payload novo for criado.
+5. Operational Explanation estiver expandido.
+6. confidence e ml_confidence estiverem separados.
+7. F2, F3 e F4 continuarem funcionando.
+8. Build funcionar.
+9. Nenhum deploy for executado.
+
+Encerrar com:
+
+```text
+F5_APPROVED
+```
+
+ou
+
+```text
+F5_PARTIAL
+```
+
+ou
+
+```text
+F5_FAILED
+```
+
+com justificativa objetiva baseada no runtime real.

@@ -510,7 +510,7 @@ class NASPService:
                 if e.response.status_code == 404:
                     raise HTTPException(
                         status_code=404,
-                        detail=f"SLA {sla_id} não encontrado no NASP",
+                        detail=f"SLA {sla_id} not found in NASP",
                     ) from e
                 logger.error("SEM-CSMF status HTTP %s: %s", e.response.status_code, e.response.text)
                 raise HTTPException(

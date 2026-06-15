@@ -1,0 +1,192 @@
+# =========================================================
+# PROMPT_TRISLA_12A_V4_1 — DATASET CIENTÍFICO COMPLETO
+# =========================================================
+
+set -euo pipefail
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_trisla_12a_dataset_dense_v4_1"
+mkdir -p "$OUT"/{dataset,analysis,logs,tmp}
+
+date -u > "$OUT/analysis/start.txt"
+
+PORT=18001
+PF_LOG="$OUT/logs/portforward.log"
+
+if ! lsof -i :$PORT >/dev/null 2>&1; then
+  kubectl -n trisla port-forward svc/trisla-portal-backend $PORT:8001 \
+    > "$PF_LOG" 2>&1 &
+  PF_PID=$!
+  echo $PF_PID > "$OUT/tmp/pf_pid.txt"
+  sleep 5
+fi
+
+URL="http://localhost:$PORT/api/v1/sla/submit"
+
+RAW_VALID="$OUT/dataset/raw_valid.json"
+RAW_ALL="$OUT/dataset/raw_all.json"
+TRACE="$OUT/dataset/trace.csv"
+
+: > "$RAW_VALID"
+: > "$RAW_ALL"
+echo "timestamp,slice,regime,attempt,http_code,status" > "$TRACE"
+
+TOTAL=0
+VALID=0
+ERR429=0
+ERR500=0
+DISCARDED=0
+
+# =========================================================
+# FUNÇÃO COM JITTER + TRACE
+# =========================================================
+
+call_api() {
+  local payload="$1"
+  local slice="$2"
+  local regime="$3"
+
+  local attempt=0
+  local max_attempts=5
+
+  while [ $attempt -lt $max_attempts ]; do
+
+    RESP=$(curl -s -w "\nHTTP:%{http_code}" \
+      --max-time 30 \
+      -X POST "$URL" \
+      -H "Content-Type: application/json" \
+      -d "$payload")
+
+    BODY=$(echo "$RESP" | sed '$d')
+    CODE=$(echo "$RESP" | tail -n1 | cut -d: -f2)
+
+    TOTAL=$((TOTAL + 1))
+
+    echo "$BODY" >> "$RAW_ALL"
+    echo "" >> "$RAW_ALL"
+
+    if [ "$CODE" = "200" ]; then
+      VALID=$((VALID + 1))
+      echo "$BODY" >> "$RAW_VALID"
+      echo "" >> "$RAW_VALID"
+
+      echo "$(date -u),$slice,$regime,$attempt,200,VALID" >> "$TRACE"
+      return 0
+    fi
+
+    if [ "$CODE" = "429" ]; then
+      ERR429=$((ERR429 + 1))
+
+      # backoff + jitter
+      BASE=$((2 ** attempt))
+      JITTER=$(awk 'BEGIN{srand(); print rand()}')
+      sleep "$(echo "$BASE + $JITTER" | bc)"
+
+      echo "$(date -u),$slice,$regime,$attempt,429,RETRY" >> "$TRACE"
+    else
+      ERR500=$((ERR500 + 1))
+      DISCARDED=$((DISCARDED + 1))
+
+      echo "$(date -u),$slice,$regime,$attempt,$CODE,ERROR" >> "$TRACE"
+      return 0
+    fi
+
+    attempt=$((attempt + 1))
+  done
+
+  DISCARDED=$((DISCARDED + 1))
+}
+
+run() {
+  call_api "$1" "$2" "$3"
+  sleep 0.5
+}
+
+# =========================================================
+# EXECUÇÃO (REGIME AGORA REAL)
+# =========================================================
+
+for lat in 2 5 10 20 40; do
+  for regime in LOW MEDIUM HIGH; do
+    for i in {1..4}; do
+      run "{
+        \"template_id\":\"urllc\",
+        \"form_values\":{
+          \"latency\":$lat,
+          \"reliability\":99.999,
+          \"throughput\":50,
+          \"device_count\":10,
+          \"regime\":\"$regime\"
+        }
+      }" "URLLC" "$regime"
+    done
+  done
+done
+
+for tp in 100 200 300 500 800; do
+  for regime in LOW MEDIUM HIGH; do
+    for i in {1..4}; do
+      run "{
+        \"template_id\":\"embb\",
+        \"form_values\":{
+          \"latency\":40,
+          \"reliability\":99.9,
+          \"throughput\":$tp,
+          \"device_count\":50,
+          \"regime\":\"$regime\"
+        }
+      }" "eMBB" "$regime"
+    done
+  done
+done
+
+for dev in 100 300 600 1000 2000; do
+  for regime in LOW MEDIUM HIGH; do
+    for i in {1..4}; do
+      run "{
+        \"template_id\":\"mmtc\",
+        \"form_values\":{
+          \"latency\":100,
+          \"reliability\":99,
+          \"throughput\":10,
+          \"device_count\":$dev,
+          \"regime\":\"$regime\"
+        }
+      }" "mMTC" "$regime"
+    done
+  done
+done
+
+# cleanup
+if [ -f "$OUT/tmp/pf_pid.txt" ]; then
+  kill "$(cat $OUT/tmp/pf_pid.txt)" 2>/dev/null || true
+fi
+
+# =========================================================
+# VALIDAÇÃO CIENTÍFICA
+# =========================================================
+
+python3 <<'PY'
+import json
+from pathlib import Path
+
+base = Path("evidencias_trisla_12a_dataset_dense_v4_1")
+
+valid = list(open(base/"dataset/raw_valid.json"))
+n_valid = len([l for l in valid if l.strip()])
+
+with open(base/"analysis/quality_report.txt","w") as f:
+    f.write(f"VALID_SAMPLES={n_valid}\n")
+    if n_valid >= 180:
+        f.write("STATUS=OK\n")
+    else:
+        f.write("STATUS=INSUFFICIENT\n")
+PY
+
+echo "TOTAL=$TOTAL VALID=$VALID 429=$ERR429 ERR=$ERR500 DISC=$DISCARDED" \
+> "$OUT/analysis/http_summary.txt"
+
+date -u > "$OUT/analysis/end.txt"
+
+echo "DATASET V4.1 GERADO"

@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
-from domain_compliance import compute_all_domains_compliance
+from domain_compliance import build_domain_explainability, compute_all_domains_compliance
 
 ASSURANCE_COMPLIANT = "COMPLIANT"
 ASSURANCE_WARNING = "WARNING"
@@ -336,6 +336,7 @@ def evaluate_runtime_assurance(
             "transport": (compliance.get("transport") or {}).get("compliance"),
             "core": (compliance.get("core") or {}).get("compliance"),
         },
+        "domain_explainability": build_domain_explainability(compliance),
     }
 
     governance_event = None

@@ -1,0 +1,798 @@
+# =========================================================
+# PROMPT_TRISLA_MAXIMIZE_PAPER_RUNTIME_FINAL_V1
+# =========================================================
+
+# MISSÃO
+# Executar a campanha científica FINAL do TriSLA
+# após o fechamento completo da cadeia causal runtime:
+#
+# tráfego real
+# →
+# peer net1
+# →
+# proxy throughput
+# →
+# PRB runtime
+# →
+# telemetry_snapshot
+# →
+# ran_prb_utilization_input
+# →
+# Decision Engine.
+#
+# =========================================================
+# OBJETIVO CIENTÍFICO
+# =========================================================
+
+# Produzir:
+#
+# dataset publication-grade
+#
+# totalmente baseado em:
+#
+# runtime causal legítimo.
+#
+# =========================================================
+# CONTEXTO
+# =========================================================
+
+# Já foi comprovado:
+#
+# - throughput UE real;
+# - forwarding UPF real;
+# - peer observability;
+# - proxy throughput;
+# - PRB > 0;
+# - variabilidade temporal;
+# - std > 0;
+# - telemetry propagation;
+# - DE runtime integration;
+# - ausência de simulator;
+# - ausência de synthetic telemetry.
+#
+# O principal bloqueio experimental do Chapter 7
+# foi resolvido.
+#
+# =========================================================
+# OBJETIVO FINAL
+# =========================================================
+
+# Gerar:
+#
+# Section 7 publication-ready
+#
+# com:
+#
+# - causalidade runtime;
+# - boundary real;
+# - variabilidade PRB;
+# - runtime multidomain behavior;
+# - governance operacional;
+# - SLA-Agent operacional;
+# - ML/XAI runtime;
+# - figuras IEEE.
+#
+# =========================================================
+# REGRAS ABSOLUTAS
+# =========================================================
+
+# PROIBIDO:
+#
+# - simulator;
+# - /set;
+# - fake PRB;
+# - synthetic telemetry;
+# - alterar thresholds;
+# - alterar Decision Engine;
+# - alterar HARD_PRB;
+# - alterar score logic;
+# - alterar arquitetura;
+# - latest;
+# - mutable tags;
+# - imagem local;
+# - deploy sem digest SHA256.
+#
+# =========================================================
+# PRINCÍPIO
+# =========================================================
+
+# TODAS as métricas:
+#
+# devem derivar:
+#
+# exclusivamente
+#
+# de:
+#
+# runtime real.
+#
+# =========================================================
+# EXECUÇÃO CONTROLADA
+# =========================================================
+
+# Cada fase:
+#
+# - gera evidências;
+# - gera freeze;
+# - gera rollback;
+# - gera validação;
+# - gera dataset;
+# - gera figuras;
+# - valida estatística;
+# - para obrigatoriamente.
+#
+# NÃO avançar automaticamente.
+
+# =========================================================
+# INÍCIO
+# =========================================================
+
+ssh node006
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+TS=$(date -u +%Y%m%dT%H%M%SZ)
+OUT=evidencias_trisla_maximize_paper_runtime_final_${TS}
+
+mkdir -p \
+${OUT}/phase_1_runtime_freeze \
+${OUT}/phase_2_low_load \
+${OUT}/phase_3_medium_load \
+${OUT}/phase_4_high_load \
+${OUT}/phase_5_boundary \
+${OUT}/phase_6_ml_xai \
+${OUT}/phase_7_governance \
+${OUT}/phase_8_sla_agent \
+${OUT}/phase_9_statistics \
+${OUT}/phase_10_figures \
+${OUT}/dataset \
+${OUT}/paper_ready \
+${OUT}/freeze \
+${OUT}/analysis \
+${OUT}/rollback \
+${OUT}/logs
+
+# =========================================================
+# PHASE 1 — RUNTIME FREEZE
+# =========================================================
+
+# OBJETIVO
+#
+# Congelar:
+#
+# runtime publication baseline.
+#
+# =========================================================
+# COLETAS
+# =========================================================
+
+kubectl get deploy,svc,pods -A -o wide \
+> ${OUT}/phase_1_runtime_freeze/runtime_before.txt
+
+kubectl get deploy,svc,pods -A -o yaml \
+> ${OUT}/phase_1_runtime_freeze/runtime_before.yaml
+
+kubectl -n trisla describe deploy \
+> ${OUT}/phase_1_runtime_freeze/trisla_deployments.txt
+
+# =========================================================
+# HEALTH
+# =========================================================
+
+kubectl -n trisla port-forward \
+svc/trisla-portal-backend 18001:8001 \
+> ${OUT}/logs/pf_backend.log 2>&1 &
+
+PF_BACK=$!
+
+sleep 10
+
+curl -s http://localhost:18001/api/v1/health/global \
+| tee ${OUT}/phase_1_runtime_freeze/global_health.json
+
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_1_runtime_freeze/RUNTIME_FREEZE.md
+#
+# contendo:
+#
+# - runtime baseline;
+# - active digests;
+# - runtime readiness;
+# - observability chain status.
+#
+# Veredito:
+#
+# RUNTIME_FREEZE_SUCCESS
+# ou
+# RUNTIME_FREEZE_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_1_APPROVED
+
+# =========================================================
+# PHASE 2 — LOW LOAD CAMPAIGN
+# =========================================================
+
+# OBJETIVO
+#
+# Executar:
+#
+# campanha causal low-load.
+#
+# =========================================================
+# CARGA
+# =========================================================
+
+# UDP:
+#
+# 10–20 Mbps
+#
+# =========================================================
+# REQUISITOS
+# =========================================================
+
+# Deve validar:
+#
+# - PRB > 0;
+# - variabilidade;
+# - telemetry propagation;
+# - DE integration;
+# - governance;
+# - SLA-Agent.
+#
+# =========================================================
+# SUBMISSÕES
+# =========================================================
+
+# >= 30 submissões
+#
+# DURANTE:
+#
+# tráfego ativo.
+#
+# =========================================================
+# EVIDÊNCIAS
+# =========================================================
+
+# Salvar:
+#
+# JSON bruto
+#
+# de todas submissões.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_2_low_load/LOW_LOAD.md
+#
+# contendo:
+#
+# - throughput;
+# - PRB distribution;
+# - telemetry propagation;
+# - DE behavior;
+# - governance status;
+# - SLA-Agent status.
+#
+# Veredito:
+#
+# LOW_LOAD_SUCCESS
+# ou
+# LOW_LOAD_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_2_APPROVED
+
+# =========================================================
+# PHASE 3 — MEDIUM LOAD CAMPAIGN
+# =========================================================
+
+# OBJETIVO
+#
+# Executar:
+#
+# campanha causal medium-load.
+#
+# =========================================================
+# CARGA
+# =========================================================
+
+# UDP:
+#
+# 30–50 Mbps
+#
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve demonstrar:
+#
+# - aumento PRB;
+# - aumento variabilidade;
+# - resposta temporal;
+# - propagation stability.
+#
+# =========================================================
+# SUBMISSÕES
+# =========================================================
+
+# >= 30 submissões
+#
+# DURANTE:
+#
+# tráfego ativo.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_3_medium_load/MEDIUM_LOAD.md
+#
+# contendo:
+#
+# - throughput;
+# - PRB evolution;
+# - telemetry propagation;
+# - runtime consistency;
+# - DE response.
+#
+# Veredito:
+#
+# MEDIUM_LOAD_SUCCESS
+# ou
+# MEDIUM_LOAD_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_3_APPROVED
+
+# =========================================================
+# PHASE 4 — HIGH LOAD CAMPAIGN
+# =========================================================
+
+# OBJETIVO
+#
+# Executar:
+#
+# campanha causal high-load.
+#
+# =========================================================
+# CARGA
+# =========================================================
+
+# UDP:
+#
+# 70–100 Mbps
+#
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve validar:
+#
+# - PRB elevado;
+# - boundary pressure;
+# - std > 0;
+# - runtime causality;
+# - sustained response.
+#
+# =========================================================
+# SUBMISSÕES
+# =========================================================
+
+# >= 30 submissões
+#
+# DURANTE:
+#
+# tráfego ativo.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_4_high_load/HIGH_LOAD.md
+#
+# contendo:
+#
+# - throughput;
+# - PRB range;
+# - temporal response;
+# - runtime causality;
+# - DE response.
+#
+# Veredito:
+#
+# HIGH_LOAD_SUCCESS
+# ou
+# HIGH_LOAD_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_4_APPROVED
+
+# =========================================================
+# PHASE 5 — BOUNDARY VALIDATION
+# =========================================================
+
+# OBJETIVO
+#
+# Validar:
+#
+# ACCEPT
+# /
+# RENEGOTIATE
+# /
+# REJECT
+#
+# sob:
+#
+# pressão runtime real.
+#
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve gerar:
+#
+# boundary runtime real.
+#
+# NÃO:
+#
+# boundary sintético.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_5_boundary/BOUNDARY.md
+#
+# contendo:
+#
+# - class distribution;
+# - PRB boundary;
+# - runtime causality;
+# - DE response curves.
+#
+# Veredito:
+#
+# BOUNDARY_SUCCESS
+# ou
+# BOUNDARY_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_5_APPROVED
+
+# =========================================================
+# PHASE 6 — ML/XAI VALIDATION
+# =========================================================
+
+# OBJETIVO
+#
+# Validar:
+#
+# ML/XAI runtime
+#
+# sob:
+#
+# telemetry causal legítima.
+#
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve validar:
+#
+# - non-fallback inference;
+# - confidence values;
+# - SHAP/XAI runtime;
+# - operational consistency.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_6_ml_xai/ML_XAI.md
+#
+# contendo:
+#
+# - runtime ML;
+# - confidence;
+# - SHAP;
+# - operational inference.
+#
+# Veredito:
+#
+# ML_XAI_SUCCESS
+# ou
+# ML_XAI_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_6_APPROVED
+
+# =========================================================
+# PHASE 7 — GOVERNANCE VALIDATION
+# =========================================================
+
+# OBJETIVO
+#
+# Validar:
+#
+# blockchain governance
+#
+# sob:
+#
+# runtime causal final.
+#
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve validar:
+#
+# - tx_hash únicos;
+# - COMMITTED;
+# - governance continuity.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_7_governance/GOVERNANCE.md
+#
+# contendo:
+#
+# - tx distribution;
+# - governance continuity;
+# - blockchain operational status.
+#
+# Veredito:
+#
+# GOVERNANCE_SUCCESS
+# ou
+# GOVERNANCE_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_7_APPROVED
+
+# =========================================================
+# PHASE 8 — SLA-AGENT VALIDATION
+# =========================================================
+
+# OBJETIVO
+#
+# Validar:
+#
+# SLA-Agent runtime continuity.
+#
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve validar:
+#
+# - SLA-Agent OK;
+# - pipeline continuity;
+# - runtime lifecycle.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_8_sla_agent/SLA_AGENT.md
+#
+# contendo:
+#
+# - SLA-Agent continuity;
+# - pipeline status;
+# - runtime lifecycle.
+#
+# Veredito:
+#
+# SLA_AGENT_SUCCESS
+# ou
+# SLA_AGENT_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_8_APPROVED
+
+# =========================================================
+# PHASE 9 — STATISTICS
+# =========================================================
+
+# OBJETIVO
+#
+# Gerar:
+#
+# validação estatística publication-grade.
+#
+# =========================================================
+# HARD REQUIREMENTS
+# =========================================================
+
+# Deve produzir:
+#
+# - correlação;
+# - std;
+# - variance;
+# - PRB sensitivity;
+# - runtime distributions;
+# - confidence analysis.
+#
+# =========================================================
+# GERAR RELATÓRIO
+# =========================================================
+
+# Gerar:
+#
+# phase_9_statistics/STATISTICS.md
+#
+# contendo:
+#
+# - statistical validation;
+# - runtime consistency;
+# - causal distributions;
+# - confidence analysis.
+#
+# Veredito:
+#
+# STATISTICS_SUCCESS
+# ou
+# STATISTICS_FAILED
+
+# =========================================================
+# HARD STOP
+# =========================================================
+
+# NÃO avançar.
+#
+# Aguardar:
+#
+# PHASE_9_APPROVED
+
+# =========================================================
+# PHASE 10 — FIGURES + PAPER READY
+# =========================================================
+
+# OBJETIVO
+#
+# Gerar:
+#
+# Section 7 publication-ready.
+#
+# =========================================================
+# FIGURAS
+# =========================================================
+
+# Deve gerar:
+#
+# - PRB evolution;
+# - runtime throughput;
+# - boundary;
+# - DE distributions;
+# - governance;
+# - ML/XAI;
+# - SLA-Agent continuity;
+# - runtime propagation.
+#
+# =========================================================
+# REQUISITOS
+# =========================================================
+
+# Figuras:
+#
+# - IEEE;
+# - 300 dpi;
+# - publication-ready;
+# - sem synthetic data.
+#
+# =========================================================
+# GERAR RELATÓRIO FINAL
+# =========================================================
+
+# Gerar:
+#
+# phase_10_figures/PUBLICATION_READY.md
+#
+# contendo:
+#
+# - figure inventory;
+# - dataset inventory;
+# - publication readiness;
+# - Chapter 7 readiness;
+# - maximize-paper verdict.
+#
+# Veredito:
+#
+# PUBLICATION_READY_SUCCESS
+# ou
+# PUBLICATION_READY_FAILED
+
+# =========================================================
+# FREEZE FINAL
+# =========================================================
+
+kubectl get deploy,svc,pods -A -o wide \
+> ${OUT}/freeze/runtime_after.txt
+
+kubectl get deploy,svc,pods -A -o yaml \
+> ${OUT}/freeze/runtime_after.yaml
+
+find ${OUT} -type f | sort \
+> ${OUT}/analysis/MANIFEST.txt
+
+kill ${PF_BACK} 2>/dev/null || true
+
+echo "TRISLA MAXIMIZE PAPER RUNTIME FINAL COMPLETED: ${OUT}"

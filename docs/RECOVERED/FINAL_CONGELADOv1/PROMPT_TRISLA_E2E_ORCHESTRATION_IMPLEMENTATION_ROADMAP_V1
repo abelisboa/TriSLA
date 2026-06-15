@@ -1,0 +1,494 @@
+PROMPT_TRISLA_E2E_ORCHESTRATION_IMPLEMENTATION_ROADMAP_V1
+
+MODO:
+ENGENHARIA DEVOPS SÊNIOR + ENGENHARIA IA SÊNIOR
+
+OBJETIVO:
+Evoluir a TriSLA do estado atual:
+
+ACCEPT
+↓
+NSI/NSSI TriSLA
+↓
+Kubernetes namespace/quota/netpol
+↓
+Blockchain
+↓
+SLA-Agent Runtime Assurance
+
+para uma orquestração 5G/O-RAN fim-a-fim controlada:
+
+ACCEPT
+↓
+NSI/NSSI
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN/UERANSIM
+↓
+ONOS
+↓
+Runtime Assurance por slice
+
+SEM REGRESSÃO DO QUE JÁ ESTÁ CONSOLIDADO.
+
+====================================================
+REGRAS ABSOLUTAS
+====================================================
+
+1. NÃO quebrar o fluxo atual ACCEPT → NSI/NSSI.
+2. NÃO alterar thresholds científicos congelados.
+3. NÃO alterar campanhas científicas congeladas.
+4. NÃO remover funcionalidades existentes.
+5. NÃO fazer deploy local.
+6. NÃO usar docker build local.
+7. NÃO aplicar kubectl apply improvisado.
+8. TODO build deve vir do GitHub remoto.
+9. TODO deploy deve ser por digest.
+10. Acesso obrigatório via:
+
+ssh node006
+
+11. Nunca usar:
+
+ssh node1
+
+12. Toda mudança deve ser incremental.
+13. Toda fase deve gerar evidência.
+14. Toda fase deve ter rollback.
+15. Se algo falhar, restaurar último estado aprovado.
+
+====================================================
+ESTADO ATUAL COMPROVADO
+====================================================
+
+CURRENT_ORCHESTRATION_LEVEL = TRISLA_NSI_NSSI
+
+Já existe:
+
+- ACCEPT → POST /api/v1/nsi/instantiate
+- CR NetworkSliceInstance
+- 3 NSSI por NSI
+- namespace ns-{id}
+- ResourceQuota
+- NetworkPolicy
+- BC register
+- SLA-Agent runtime assurance
+- RAN-I1 implementada
+- TN-I1 implementada
+- CN-I1 implementada
+- NASP Adapter funcional
+- Portal funcional
+- Decision Engine funcional
+- BC-NSSMF funcional
+- Hyperledger Besu funcional
+- Grafana final aprovado
+- Portal final aprovado
+
+Infraestrutura 5G existente, mas desacoplada:
+
+- NSSF Running
+- AMF Running
+- SMF Running
+- UPF Running
+- UERANSIM gNB/UE Running
+- ONOS Running
+
+Lacuna central:
+
+NSI/NSSI TriSLA ainda não possui binding operacional com:
+
+- S-NSSAI
+- DNN
+- NSSF
+- AMF
+- SMF
+- UPF
+- RAN
+- ONOS
+
+====================================================
+FASE E2E-O6 — SSOT DE MAPEAMENTO NSI/NSSI → 5GC
+====================================================
+
+OBJETIVO:
+Criar a fonte oficial de verdade para mapear cada NSI/NSSI TriSLA para parâmetros 5G.
+
+Implementar sem quebrar fluxo atual.
+
+Criar tabela/arquivo/config:
+
+nest_id
+slice_type
+sst
+sd
+dnn
+nssf_ref
+amf_ref
+smf_ref
+upf_ref
+ran_ref
+transport_ref
+
+Exemplo:
+
+URLLC:
+sst=1
+sd=000001
+dnn=urllc
+
+eMBB:
+sst=1
+sd=000002
+dnn=embb
+
+mMTC:
+sst=1
+sd=000003
+dnn=mmtc
+
+VALIDAÇÃO:
+- ACCEPT continua criando NSI/NSSI.
+- Cada NSI passa a carregar metadata 5G.
+- Nenhuma chamada real para NSSF ainda.
+- Apenas enriquecimento seguro.
+
+EVIDÊNCIAS:
+analysis/e2e_o6_mapping_validation.md
+runtime/nsi_with_5g_metadata.json
+rollback/e2e_o6_rollback.md
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O6_MAPPING_APPROVED
+
+====================================================
+FASE E2E-O1 — NSSF ADAPTER
+====================================================
+
+OBJETIVO:
+Criar integração controlada entre NSI/NSSI TriSLA e NSSF.
+
+Implementar adapter sem alterar Decision Engine diretamente.
+
+Fluxo alvo:
+
+ACCEPT
+↓
+NSI/NSSI
+↓
+Mapping SSOT
+↓
+NSSF Adapter
+↓
+NSSF nsselection
+
+VALIDAÇÃO:
+- NSSF recebe/consulta S-NSSAI correspondente.
+- Logs NSSF mostram seleção coerente.
+- NSI armazena nssf_selection_result.
+- Falha no NSSF não quebra NSI atual; deve cair em fallback seguro.
+
+EVIDÊNCIAS:
+analysis/e2e_o1_nssf_adapter.md
+logs/nssf_selection.log
+runtime/nsi_nssf_binding.json
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O1_NSSF_BINDING_APPROVED
+
+====================================================
+FASE E2E-O2 — AMF/SMF SLICE BINDING
+====================================================
+
+OBJETIVO:
+Vincular a seleção NSSF ao AMF/SMF.
+
+Validar:
+
+- AMF reconhece NSSAI/S-NSSAI.
+- SMF reconhece DNN/S-NSSAI.
+- Config continua compatível com Free5GC.
+- Sem reinício destrutivo de core.
+
+VALIDAÇÃO:
+- Logs AMF mostram slice selection.
+- Logs SMF mostram DNN/S-NSSAI.
+- NSI registra amf_binding e smf_binding.
+
+EVIDÊNCIAS:
+analysis/e2e_o2_amf_smf_binding.md
+logs/amf_slice_selection.log
+logs/smf_dnn_binding.log
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O2_AMF_SMF_BINDING_APPROVED
+
+====================================================
+FASE E2E-O3 — UPF/DNN BINDING
+====================================================
+
+OBJETIVO:
+Associar DNN por slice ao UPF.
+
+Validar:
+
+- UPF reconhece DNN.
+- Sessão PDU usa DNN correto.
+- NSI registra upf_binding.
+- Métricas continuam funcionando.
+
+EVIDÊNCIAS:
+analysis/e2e_o3_upf_binding.md
+logs/upf_dnn.log
+runtime/pdu_session_binding.json
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O3_UPF_DNN_BINDING_APPROVED
+
+====================================================
+FASE E2E-O4 — UERANSIM S-NSSAI BINDING
+====================================================
+
+OBJETIVO:
+Vincular UE/gNB ao S-NSSAI derivado do NSI.
+
+Validar:
+
+- UE possui S-NSSAI correto.
+- gNB conecta ao AMF com slice compatível.
+- NG Setup permanece OK.
+- UE registra sem regressão.
+
+EVIDÊNCIAS:
+analysis/e2e_o4_ueransim_binding.md
+logs/gnb_ngsetup.log
+logs/ue_registration.log
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O4_UERANSIM_SNSSAI_APPROVED
+
+====================================================
+FASE E2E-O5 — ONOS TRANSPORT BINDING
+====================================================
+
+OBJETIVO:
+Ligar TN-I1 ao ONOS para criar path/intent de transporte associado ao slice.
+
+Validar:
+
+- ONOS REST usado por código real.
+- Intent/flow criado por slice.
+- transport_ref registrado no NSI.
+- Falha ONOS não derruba ACCEPT; fallback seguro.
+
+EVIDÊNCIAS:
+analysis/e2e_o5_onos_binding.md
+runtime/onos_intents.json
+logs/onos_transport.log
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O5_ONOS_TRANSPORT_APPROVED
+
+====================================================
+FASE E2E-O7 — TELEMETRIA POR SLICE
+====================================================
+
+OBJETIVO:
+Evoluir telemetria compartilhada para telemetria associada ao NSI/S-NSSAI.
+
+Implementar:
+
+- ran metrics por slice quando disponível;
+- core metrics por S-NSSAI/DNN quando disponível;
+- transport metrics por ONOS intent/path;
+- telemetry_snapshot enriquecido com nsi_id.
+
+VALIDAÇÃO:
+- telemetry_snapshot contém nsi_id.
+- runtime_assurance vincula métrica ao slice.
+- Portal continua funcionando.
+
+EVIDÊNCIAS:
+analysis/e2e_o7_slice_telemetry.md
+runtime/telemetry_snapshot_by_nsi.json
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O7_SLICE_TELEMETRY_APPROVED
+
+====================================================
+FASE E2E-O8 — SLA-AGENT CONTROLLED ACTIONS
+====================================================
+
+OBJETIVO:
+Ativar ações controladas do SLA-Agent com segurança.
+
+Não ativar auto-remediação ampla.
+
+Apenas ações explícitas, rastreáveis e reversíveis.
+
+Implementar:
+
+- action_plan
+- dry-run
+- approval gate
+- execution log
+- rollback action
+
+VALIDAÇÃO:
+- SLA-Agent gera plano.
+- Execução apenas quando permitida.
+- Registro em blockchain/governance.
+- Portal mostra ação e status.
+
+EVIDÊNCIAS:
+analysis/e2e_o8_sla_agent_actions.md
+runtime/action_plan.json
+runtime/action_execution_log.json
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O8_CONTROLLED_ACTIONS_APPROVED
+
+====================================================
+FASE E2E-O9 — VALIDAÇÃO E2E COMPLETA
+====================================================
+
+OBJETIVO:
+Executar fluxo completo:
+
+ACCEPT
+↓
+NSI/NSSI
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN/UERANSIM
+↓
+ONOS
+↓
+Runtime Assurance
+↓
+Governance
+
+Cenários:
+
+D1 URLLC
+D2 mMTC
+D6 eMBB
+
+VALIDAR:
+- intent_id
+- decision_score
+- nsi_id
+- nssi_id
+- sst/sd/dnn
+- nssf_selection
+- amf_binding
+- smf_binding
+- upf_binding
+- ran_binding
+- onos_binding
+- tx_hash
+- block_number
+- runtime_assurance
+- telemetry_snapshot_by_nsi
+
+EVIDÊNCIAS:
+demo_e2e_5g_orchestration_final/
+analysis/e2e_o9_validation.md
+
+CRITÉRIO DE CONCLUSÃO:
+E2E_O9_FULL_VALIDATION_APPROVED
+
+====================================================
+FASE E2E-O10 — FREEZE EVIDENCE
+====================================================
+
+OBJETIVO:
+Congelar evidências finais da evolução.
+
+Gerar:
+
+- MANIFEST.json
+- checksums
+- runtime baseline
+- imagens por digest
+- comandos executados
+- logs
+- métricas
+- screenshots
+- rollback plan
+- final verdict
+
+EVIDÊNCIAS:
+evidencias_trisla_e2e_orchestration_final_<timestamp>
+
+CRITÉRIO DE CONCLUSÃO:
+TRISLA_FULL_E2E_ORCHESTRATION_FREEZE_APPROVED
+
+====================================================
+REGRAS DE IMPLEMENTAÇÃO
+====================================================
+
+Para cada fase:
+
+1. Criar branch dedicada.
+2. Alterar o mínimo possível.
+3. Preferir adapters.
+4. Não acoplar diretamente Decision Engine ao Free5GC.
+5. Não quebrar fluxo atual ACCEPT → NSI/NSSI.
+6. Manter fallback seguro.
+7. Gerar testes.
+8. Gerar evidências.
+9. Fazer build remoto via GitHub.
+10. Deploy por digest.
+11. Validar runtime.
+12. Só avançar com veredito APPROVED.
+
+====================================================
+ORDEM OFICIAL
+====================================================
+
+1. E2E-O6 — Mapping SSOT
+2. E2E-O1 — NSSF Adapter
+3. E2E-O2 — AMF/SMF Binding
+4. E2E-O3 — UPF/DNN Binding
+5. E2E-O4 — UERANSIM S-NSSAI Binding
+6. E2E-O5 — ONOS Transport Binding
+7. E2E-O7 — Telemetria por Slice
+8. E2E-O8 — SLA-Agent Controlled Actions
+9. E2E-O9 — Validação E2E completa
+10. E2E-O10 — Freeze final
+
+====================================================
+VEREDITO ESPERADO AO FINAL
+====================================================
+
+CURRENT_ORCHESTRATION_LEVEL = FULL_5G_E2E
+
+NSSF_INTEGRATED = YES
+AMF_INTEGRATED = YES
+SMF_INTEGRATED = YES
+UPF_INTEGRATED = YES
+RAN_INTEGRATED = YES
+ONOS_INTEGRATED = YES
+
+NSI_NSSI_TO_5GC_MAPPING = YES
+S_NSSAI_RUNTIME_BINDING = YES
+DNN_BINDING = YES
+PDU_SESSION_BINDING = YES
+TRANSPORT_PATH_BINDING = YES
+
+FULL_E2E_ORCHESTRATION_SUPPORTED_NOW = YES
+EVIDENCE_CONFIDENCE = HIGH

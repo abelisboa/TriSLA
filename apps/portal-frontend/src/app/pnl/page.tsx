@@ -54,7 +54,7 @@ export default function CreateSlaPnlPage() {
   async function handleInterpret(e: FormEvent) {
     e.preventDefault();
     if (!intentText.trim()) {
-      setInterpretError("Natural Language Request não pode ser vazio");
+      setInterpretError("Natural language request cannot be empty");
       setInterpretStatus("error");
       return;
     }

@@ -336,9 +336,12 @@ class MetricsCollector:
                 if not isinstance(core_metrics, dict):
                     core_metrics = {}
                 all_metrics["core"] = {
-                    "upf": dict(core_metrics),
+                    "amf": core_metrics.get("amf"),
+                    "smf": core_metrics.get("smf"),
+                    "upf": {},
+                    "connectivity_source": core_metrics.get("source"),
                     "amf_endpoint": self.nasp_client.core_amf_endpoint,
-                    "smf_endpoint": self.nasp_client.core_smf_endpoint
+                    "smf_endpoint": self.nasp_client.core_smf_endpoint,
                 }
             except Exception as e:
                 all_metrics["core"] = {

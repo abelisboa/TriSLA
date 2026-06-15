@@ -1,0 +1,144 @@
+# =========================================================
+# PROMPT_LOAD_TEST_04
+# Pressão controlada em RAN (PRB) — sem alterar código
+# =========================================================
+
+# MISSÃO
+# Induzir aumento real de utilização de PRB via geração de tráfego UE
+# e observar impacto na decisão do TriSLA.
+
+# OBJETIVO
+# Forçar aumento de PRB → alterar M_t → observar queda de score ou REJECT
+
+# REGRAS ABSOLUTAS
+# 1. NÃO alterar código
+# 2. NÃO alterar thresholds
+# 3. NÃO alterar deploy
+# 4. NÃO alterar Decision Engine
+# 5. Apenas gerar carga real na RAN
+# 6. Reversível (cleanup obrigatório)
+
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g || exit 1
+
+OUT="evidencias_load_test_v4_ran_pressure"
+mkdir -p "$OUT/raw" "$OUT/analysis" "$OUT/logs"
+
+# =========================================================
+# FASE 0 — BASELINE TELEMETRIA
+# =========================================================
+
+echo "[FASE 0] Baseline PRB"
+
+kubectl -n monitoring port-forward svc/prometheus-kube-prometheus-prometheus 19090:9090 \
+  > "$OUT/logs/pf_prom.log" 2>&1 &
+
+PF_PROM=$!
+sleep 3
+
+curl -s "http://localhost:19090/api/v1/query?query=avg(trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"})" \
+  | tee "$OUT/raw/prb_before.json"
+
+# =========================================================
+# FASE 1 — GERAR TRÁFEGO RAN (UERANSIM)
+# =========================================================
+
+echo "[FASE 1] Iniciando carga RAN"
+
+kubectl -n trisla run ueransim-load \
+  --image=docker.io/free5gc/ueransim:v4.2.1-x86_64 \
+  --restart=Never \
+  -- /bin/bash -c "
+    for i in \$(seq 1 20); do
+      ./nr-ue -c config/free5gc-ue.yaml &
+    done;
+    wait
+  " \
+  > "$OUT/logs/ueransim_create.log" 2>&1
+
+sleep 15
+
+kubectl -n trisla get pod ueransim-load -o wide \
+  | tee "$OUT/analysis/ueransim_pod.txt"
+
+# =========================================================
+# FASE 2 — VALIDAR AUMENTO DE PRB
+# =========================================================
+
+echo "[FASE 2] PRB durante carga"
+
+curl -s "http://localhost:19090/api/v1/query?query=avg(trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"})" \
+  | tee "$OUT/raw/prb_during.json"
+
+# =========================================================
+# FASE 3 — EXECUTAR SUBMITS SOB PRESSÃO
+# =========================================================
+
+echo "[FASE 3] Submits sob pressão"
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 \
+  > "$OUT/logs/pf_backend.log" 2>&1 &
+
+PF_API=$!
+sleep 3
+
+URL="http://localhost:18001/api/v1/sla/submit"
+
+for i in $(seq 1 30); do
+  curl -s -X POST "$URL" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "template_id": "standard",
+      "tenant_id": "ran-pressure-'$i'",
+      "form_values": {
+        "latency": 5,
+        "reliability": 99.999,
+        "throughput": 50
+      }
+    }' \
+    > "$OUT/raw/pressure_$i.json"
+
+  echo "[REQ] $i"
+  sleep 1
+done
+
+# =========================================================
+# FASE 4 — TELEMETRIA FINAL
+# =========================================================
+
+echo "[FASE 4] PRB após carga"
+
+curl -s "http://localhost:19090/api/v1/query?query=avg(trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"})" \
+  | tee "$OUT/raw/prb_after.json"
+
+# =========================================================
+# FASE 5 — CLEANUP
+# =========================================================
+
+echo "[FASE 5] Cleanup"
+
+kubectl -n trisla delete pod ueransim-load --ignore-not-found=true \
+  | tee "$OUT/logs/ueransim_delete.log"
+
+kill $PF_API 2>/dev/null
+kill $PF_PROM 2>/dev/null
+
+# =========================================================
+# FASE 6 — DATASET
+# =========================================================
+
+echo "decision,score,prb" > "$OUT/analysis/dataset.csv"
+
+for f in $OUT/raw/pressure_*.json; do
+  jq -r '
+    [
+      .decision,
+      .metadata.decision_score,
+      .metadata.telemetry_snapshot.ran.prb_utilization
+    ] | @csv
+  ' "$f" >> "$OUT/analysis/dataset.csv"
+done
+
+echo "[OK] LOAD_TEST_04 concluído"

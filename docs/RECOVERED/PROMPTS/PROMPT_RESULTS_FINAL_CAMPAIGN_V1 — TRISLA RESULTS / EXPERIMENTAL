@@ -1,0 +1,510 @@
+# PROMPT_RESULTS_FINAL_CAMPAIGN_V1 — TRISLA RESULTS / EXPERIMENTAL EVALUATION (SSOT-CONTROLLED)
+
+OBJETIVO:
+Executar a campanha FINAL da seção RESULTS / EXPERIMENTAL EVALUATION do artigo TriSLA utilizando EXCLUSIVAMENTE datasets, evidências e freezes oficiais SSOT previamente auditados e aprovados.
+
+A campanha deve:
+
+* provar;
+* demonstrar;
+* correlacionar;
+* quantificar;
+* evidenciar;
+
+a hipótese científica central do TriSLA.
+
+====================================================================
+HIPÓTESE CENTRAL OBRIGATÓRIA
+============================
+
+Toda a campanha deve convergir explicitamente para:
+
+"TriSLA can determine SLA feasibility before orchestration execution using multidomain telemetry correlation while preserving runtime consistency."
+
+====================================================================
+FREEZE OFICIAL OBRIGATÓRIO
+==========================
+
+USAR SOMENTE:
+
+evidencias_trisla_phase6_ssot_controlled_execution_20260517T154849Z
+
+====================================================================
+DATASET BASELINE OFICIAL
+========================
+
+Dataset principal obrigatório:
+
+DS-P6
+(final_dataset_v6.csv)
+
+Características:
+
+* 150 execuções reais
+* runtime multidomínio
+* monotonicidade validada
+* PRB dominance validado
+* correlação ≈ -0.944
+* NASP-hard+
+* freeze SSOT oficial
+
+====================================================================
+DATASETS COMPLEMENTARES AUTORIZADOS
+===================================
+
+Somente quando necessário:
+
+(A)
+Slice-aware:
+
+* evidencias_resultados_trisla_baseline_v11/
+* v13/v62
+* tri-slice datasets
+
+(B)
+Explainability:
+
+* ROC/AUC datasets
+
+(C)
+Operational metrics:
+
+* evidencias_metricas_operacionais/
+
+====================================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO:
+
+* inventar métricas;
+* gerar dados sintéticos;
+* interpolar artificialmente;
+* misturar datasets incompatíveis;
+* sobrescrever freezes;
+* modificar datasets SSOT;
+* usar campanhas fora do freeze oficial;
+* criar figuras sem hipótese científica explícita.
+
+====================================================================
+ESTRUTURA CIENTÍFICA OBRIGATÓRIA
+================================
+
+A sequência de resultados DEVE seguir:
+
+1. Multidomain Telemetry Influence
+2. Preventive SLA Feasibility
+3. Slice-Aware Behavior
+4. Runtime Consistency
+5. Closed-Loop Supervision
+6. Explainability
+7. Governance Continuity
+
+====================================================================
+CAMPANHA OBRIGATÓRIA DE FIGURAS
+===============================
+
+====================================================================
+FIGURA R1 — PRB vs FEASIBILITY SCORE
+====================================
+
+OBJETIVO:
+Provar que:
+
+* telemetria influencia decisão;
+* feasibility é dinâmica;
+* admission é preventiva.
+
+TIPO:
+Scatter plot + regression line
+
+DATASET:
+DS-P6
+
+X:
+RAN PRB utilization
+
+Y:
+Decision score
+
+FORMATO:
+SVG + PNG IEEE
+
+VALIDAÇÃO OBRIGATÓRIA:
+
+* correlação negativa forte;
+* monotonicidade preservada;
+* ausência de inversões anômalas;
+* coerência com freeze oficial;
+* score reduz conforme PRB aumenta.
+
+REPROVAR se:
+
+* correlação fraca;
+* comportamento não monotônico;
+* outliers sem explicação;
+* score inconsistente.
+
+SOMENTE APROVAR se:
+
+* confirmar dominance PRB;
+* reforçar preventive admission.
+
+====================================================================
+FIGURA R2 — ACCEPT / RENEGOTIATE / REJECT REGIONS
+=================================================
+
+OBJETIVO:
+Demonstrar preventive feasibility before orchestration.
+
+TIPO:
+Decision-region chart
+
+DATASET:
+DS-P6
+
+MOSTRAR:
+
+* ACCEPT
+* RENEGOTIATE
+* REJECT
+
+VALIDAÇÃO:
+
+* regiões claramente separadas;
+* thresholds coerentes;
+* sem overlap inconsistente;
+* alinhamento com hard gates oficiais.
+
+REPROVAR:
+
+* classes misturadas;
+* regiões confusas;
+* thresholds incoerentes.
+
+====================================================================
+FIGURA R3 — MULTIDOMAIN TELEMETRY CORRELATION
+=============================================
+
+OBJETIVO:
+Demonstrar influência multidomínio.
+
+TIPO:
+Correlation heatmap
+
+DATASET:
+DS-P6
+
+MÉTRICAS:
+
+* PRB
+* RTT
+* jitter
+* CPU
+* memory
+* score
+* confidence
+
+VALIDAÇÃO:
+
+* PRB dominante;
+* RTT/jitter influentes;
+* coerência causal;
+* ausência de correlação absurda.
+
+REPROVAR:
+
+* heatmap aleatório;
+* dominância incoerente;
+* métricas sem relação operacional.
+
+====================================================================
+FIGURA R4 — SLICE-AWARE DIFFERENTIATION
+=======================================
+
+OBJETIVO:
+Demonstrar comportamento diferenciável:
+
+* URLLC
+* eMBB
+* mMTC
+
+TIPO:
+Boxplot / violin plot
+
+DATASET:
+Slice-aware datasets oficiais
+
+MOSTRAR:
+diferença de feasibility behavior.
+
+VALIDAÇÃO:
+
+* separabilidade visível;
+* comportamento coerente;
+* diferenças estatisticamente defensáveis.
+
+REPROVAR:
+
+* slices indistinguíveis;
+* comportamento aleatório;
+* overlap excessivo.
+
+====================================================================
+FIGURA R5 — RUNTIME CONSISTENCY
+===============================
+
+OBJETIVO:
+Provar:
+admission consistency after orchestration.
+
+TIPO:
+Timeline / paired consistency plot
+
+MOSTRAR:
+
+* admission decision
+* runtime reassessment
+* telemetry refresh
+* runtime validation
+
+VALIDAÇÃO:
+
+* coerência admission/runtime;
+* reassessment consistente;
+* closed-loop funcional.
+
+REPROVAR:
+
+* divergência incoerente;
+* reassessment contraditório.
+
+====================================================================
+FIGURA R6 — CLOSED-LOOP SUPERVISION
+===================================
+
+OBJETIVO:
+Provar:
+runtime supervision remains active.
+
+TIPO:
+Workflow runtime evidence chart
+
+MOSTRAR:
+
+* telemetry reassessment
+* runtime drift
+* SLA-Agent activity
+* runtime evidence persistence
+
+VALIDAÇÃO:
+
+* loop operacional explícito;
+* reassessment contínuo;
+* runtime evidence coerente.
+
+REPROVAR:
+
+* supervision decorativa;
+* ausência de continuidade runtime.
+
+====================================================================
+FIGURA R7 — EXPLAINABILITY / SCORE INFLUENCE
+============================================
+
+OBJETIVO:
+Provar:
+Decision Engine is not opaque.
+
+TIPO:
+Feature importance / influence chart
+
+MOSTRAR:
+
+* dominant metrics
+* score influence
+* confidence behavior
+* runtime reasoning influence
+
+VALIDAÇÃO:
+
+* PRB dominante;
+* métricas coerentes;
+* explainability defensável.
+
+REPROVAR:
+
+* importância incoerente;
+* comportamento aleatório.
+
+====================================================================
+FIGURA R8 — ROC / AUC VALIDATION
+================================
+
+OBJETIVO:
+Demonstrar separabilidade decisional.
+
+TIPO:
+ROC curve
+
+MOSTRAR:
+
+* AUC
+* separabilidade
+* robustness
+
+VALIDAÇÃO:
+
+* AUC coerente;
+* curvas consistentes;
+* sem overfitting evidente.
+
+REPROVAR:
+
+* ROC degenerada;
+* inconsistência estatística.
+
+====================================================================
+FIGURA R9 — GOVERNANCE CONTINUITY
+=================================
+
+OBJETIVO:
+Provar:
+governance remains operational after deployment.
+
+TIPO:
+Governance lifecycle flow
+
+MOSTRAR:
+
+* tx_hash
+* reassessment evidence
+* runtime persistence
+* governance continuity
+
+VALIDAÇÃO:
+
+* continuidade operacional;
+* governance integrada;
+* sincronismo runtime/governance.
+
+REPROVAR:
+
+* governance decorativa;
+* ausência de runtime evidence.
+
+====================================================================
+FORMATO OBRIGATÓRIO DAS FIGURAS
+===============================
+
+Gerar:
+
+* SVG IEEE
+* PNG 300 dpi
+* fundo branco
+* sem poluição visual
+* tipografia consistente
+* proporção IEEE
+* nomenclatura padronizada
+
+====================================================================
+VALIDAÇÃO AUTOMÁTICA OBRIGATÓRIA
+================================
+
+PARA CADA FIGURA:
+
+1. Gerar figura
+2. Validar hipótese científica
+3. Validar coerência estatística
+4. Validar coerência visual
+5. Validar alinhamento SSOT
+6. Validar alinhamento com arquitetura
+7. Validar alinhamento com sequence diagram
+8. Validar alinhamento com runtime real
+
+SE REPROVADA:
+
+* regenerar;
+* recalibrar;
+* revalidar;
+* repetir até aprovação.
+
+NUNCA finalizar figura reprovada.
+
+====================================================================
+APROVAÇÃO OBRIGATÓRIA
+=====================
+
+Uma figura SOMENTE pode ser aprovada quando:
+
+(A)
+provar explicitamente a hipótese correspondente;
+
+(B)
+estar alinhada com:
+
+* runtime;
+* datasets oficiais;
+* arquitetura;
+* sequence diagram;
+
+(C)
+não possuir:
+
+* inconsistências;
+* regressões;
+* ambiguidades científicas.
+
+====================================================================
+DATASET FINAL CONSOLIDADO
+=========================
+
+Ao final da campanha:
+
+Gerar dataset científico consolidado único contendo:
+
+* todas figuras aprovadas;
+* métricas derivadas;
+* mapeamento hipótese ↔ figura;
+* origem SSOT;
+* datasets utilizados;
+* validações executadas.
+
+====================================================================
+ENTREGÁVEIS FINAIS OBRIGATÓRIOS
+===============================
+
+1. Figuras finais aprovadas
+2. SVGs IEEE
+3. PNGs 300 dpi
+4. Dataset consolidado
+5. Relatório de validação científica
+6. Relatório de hipóteses provadas
+7. Relatório:
+
+* hipóteses fortes
+* hipóteses parciais
+* limitações restantes
+
+====================================================================
+A CAMPANHA SOMENTE TERMINA QUANDO:
+==================================
+
+(A)
+TODAS as figuras forem aprovadas;
+
+(B)
+TODAS as hipóteses forem validadas;
+
+(C)
+a narrativa convergir explicitamente para:
+
+"TriSLA can determine SLA feasibility before orchestration execution using multidomain telemetry correlation while preserving runtime consistency."
+
+(D)
+não existirem:
+
+* figuras incoerentes;
+* métricas inconsistentes;
+* regressões;
+* ou hipóteses sem evidência.

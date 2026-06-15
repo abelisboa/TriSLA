@@ -50,6 +50,8 @@ export type SlaRuntimeStatusResponse = {
     }>;
     end_to_end?: boolean;
   };
+  service_type?: string;
+  sla_requirements?: Record<string, unknown>;
 };
 
 /** POST /api/v1/sla/revalidate-telemetry — audited response shape. */

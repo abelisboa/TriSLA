@@ -1,0 +1,235 @@
+# PROMPT — PHASE 43 WAVE 4N EMBB COUNTERFACTUAL OPERATIONAL IMPACT ANALYSIS
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 42 aprovada
+* Wave 1 Freeze ativo
+* Wave 3A Freeze ativo
+* Wave 4 Freeze ativo
+
+Status:
+
+PHASE_43_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Avaliar o impacto operacional contrafactual dos flips eMBB observados pelo classificador v7.
+
+Responder:
+
+Os 16 eMBB → RENEGOTIATE seriam operacionalmente desejáveis ou seriam rejeição/renegociação excessiva?
+
+Não executar promoção.
+
+Não executar retraining.
+
+Não alterar modelos.
+
+Não alterar runtime.
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+Snapshot obrigatório:
+
+[t-1s, t]
+
+SNAPSHOT_MAX_AGE = 35s
+
+---
+
+# Fontes obrigatórias
+
+evidencias_trisla_phase40_runtime_shadow_*
+
+evidencias_trisla_phase41_embb_flip_analysis_*
+
+evidencias_trisla_phase42_embb_boundary_analysis_*
+
+ACTION_FLIP_MATRIX.json
+
+SHADOW_PARITY_MATRIX.json
+
+EMBB_PROBABILITY_REPORT.md
+
+EMBB_DECISION_BOUNDARY_ANALYSIS.md
+
+BOUNDARY_ANALYSIS_DATA.json
+
+golden_vectors_v1.json
+
+RESULTS_FREEZE_MAIN
+
+---
+
+# Escopo
+
+Read-only.
+
+Sem replay novo.
+
+Sem runtime shadow novo.
+
+Sem deploy.
+
+Sem promoção.
+
+Sem retraining.
+
+---
+
+# Investigações obrigatórias
+
+CFA-1
+
+Para cada um dos 16 eMBB → RENEGOTIATE, avaliar:
+
+telemetry_snapshot
+
+transport jitter
+
+latency
+
+throughput
+
+packet loss
+
+core availability
+
+RAN PRB
+
+---
+
+CFA-2
+
+Comparar decisão ACTIVE ACCEPT com SHADOW RENEGOTIATE.
+
+---
+
+CFA-3
+
+Avaliar se havia evidência operacional de degradação suficiente para justificar RENEGOTIATE.
+
+---
+
+CFA-4
+
+Classificar cada flip:
+
+DESIRABLE_PREVENTIVE_RENEGOTIATION
+
+OVER_CONSERVATIVE_RENEGOTIATION
+
+INCONCLUSIVE
+
+---
+
+CFA-5
+
+Avaliar impacto agregado em:
+
+acceptance rate
+
+false renegotiation risk
+
+SLA protection
+
+eMBB service availability
+
+---
+
+CFA-6
+
+Atualizar bloqueadores de promoção.
+
+---
+
+# Produzir
+
+EMBB_COUNTERFACTUAL_IMPACT_ANALYSIS.md
+
+EMBB_FLIP_CLASSIFICATION_MATRIX.json
+
+EMBB_OPERATIONAL_DEGRADATION_REPORT.md
+
+EMBB_ACCEPTANCE_IMPACT_REPORT.md
+
+PROMOTION_BLOCKER_UPDATE_V3.json
+
+---
+
+# Critérios
+
+COUNTERFACTUAL_ANALYSIS_COMPLETE = TRUE
+
+EMBB_FLIPS_CLASSIFIED = TRUE
+
+PROMOTION_BLOCKER_REFINED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase43_embb_counterfactual_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_43_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Promotion.
+
+Não iniciar Retraining.
+
+Não executar Runtime Shadow adicional.
+
+Aguardar aprovação humana.

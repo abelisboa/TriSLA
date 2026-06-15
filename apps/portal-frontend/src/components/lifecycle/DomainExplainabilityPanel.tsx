@@ -49,7 +49,7 @@ function FieldRow({
 }
 
 function MetricCard({ row }: { row: DomainMetricExplainability }) {
-  const name = metricDisplayName(row.metric);
+  const name = metricDisplayName(row.metric, row);
   const status = row.status ?? "Unknown";
   const statusTip = STATUS_TOOLTIPS[status] ?? "";
 

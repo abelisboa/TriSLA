@@ -102,6 +102,38 @@ spec:
         # Telemetria real (PROMPT_STELEMETRY_REAL_ACTIVATION)
         - name: PROMETHEUS_URL
           value: {{ .Values.naspAdapter.prometheusUrl | default "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090" | quote }}
+        # O6 — slice service binding SSOT (metadata only)
+        {{- $ssb := .Values.naspAdapter.sliceServiceBinding | default dict }}
+        - name: SLICE_SERVICE_BINDING_ENABLED
+          value: {{ $ssb.enabled | default true | quote }}
+        # O1C — NSSF Adapter (default off — no regression)
+        {{- $nssf := .Values.naspAdapter.nssfAdapter | default dict }}
+        - name: NSSF_ADAPTER_ENABLED
+          value: {{ $nssf.enabled | default false | quote }}
+        # O2C — AMF/SMF Binding (default off — no regression)
+        {{- $o2c := .Values.naspAdapter.amfSmfBinding | default dict }}
+        - name: AMF_BINDING_ENABLED
+          value: {{ $o2c.amfEnabled | default false | quote }}
+        - name: SMF_BINDING_ENABLED
+          value: {{ $o2c.smfEnabled | default false | quote }}
+        # O3C — UPF Binding (default off — no regression)
+        {{- $o3c := .Values.naspAdapter.upfBinding | default dict }}
+        - name: UPF_BINDING_ENABLED
+          value: {{ $o3c.enabled | default false | quote }}
+        # O4C — RAN Binding (default off — no regression)
+        {{- $o4c := .Values.naspAdapter.ranBinding | default dict }}
+        - name: RAN_BINDING_ENABLED
+          value: {{ $o4c.enabled | default false | quote }}
+        # O5C — Transport Binding (default off — no regression)
+        {{- $o5c := .Values.naspAdapter.transportBinding | default dict }}
+        - name: TRANSPORT_BINDING_ENABLED
+          value: {{ $o5c.enabled | default false | quote }}
+        # O6 — Per-Slice Multidomain Metrics Export (default off — no regression)
+        {{- $o6 := .Values.naspAdapter.multidomainMetricsExport | default dict }}
+        - name: MULTIDOMAIN_METRICS_EXPORT_ENABLED
+          value: {{ $o6.enabled | default false | quote }}
+        - name: MULTIDOMAIN_METRICS_REFRESH_SECONDS
+          value: {{ $o6.refreshSeconds | default 30 | quote }}
         livenessProbe:
           httpGet:
             path: /health

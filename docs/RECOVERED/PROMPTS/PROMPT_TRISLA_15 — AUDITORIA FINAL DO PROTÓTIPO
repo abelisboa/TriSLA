@@ -1,0 +1,102 @@
+# =========================================================
+# PROMPT_TRISLA_15 — AUDITORIA FINAL DO PROTÓTIPO
+# =========================================================
+# MISSÃO:
+# Mapear completamente o protótipo TriSLA atualizado:
+# - módulos reais
+# - fluxos internos
+# - interfaces REST
+# - lógica do decision engine
+# - uso de telemetria
+# - integração entre componentes
+#
+# SAÍDA:
+# evidencias_trisla_15_prototype_audit/
+# =========================================================
+
+set -euo pipefail
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_trisla_15_prototype_audit"
+mkdir -p "$OUT"/{modules,flows,interfaces,decision,telemetry,analysis}
+
+# =========================================================
+# 1. ESTRUTURA DO PROJETO
+# =========================================================
+
+tree -L 3 apps > "$OUT/modules/project_tree.txt"
+
+find apps -name "*.py" > "$OUT/modules/python_files.txt"
+
+# =========================================================
+# 2. MÓDULOS E SERVIÇOS
+# =========================================================
+
+kubectl -n trisla get deployments > "$OUT/modules/deployments.txt"
+kubectl -n trisla get pods > "$OUT/modules/pods.txt"
+kubectl -n trisla get svc > "$OUT/modules/services.txt"
+
+# =========================================================
+# 3. INTERFACES REST
+# =========================================================
+
+grep -R --binary-files=without-match "FastAPI" -n apps > "$OUT/interfaces/fastapi.txt" || true
+grep -R --binary-files=without-match "@app" -n apps > "$OUT/interfaces/endpoints.txt" || true
+
+# =========================================================
+# 4. FLUXO DE DECISÃO
+# =========================================================
+
+grep -R --binary-files=without-match "decision" -n apps/decision-engine > "$OUT/decision/decision_logic.txt"
+grep -R --binary-files=without-match "slice" -n apps/decision-engine > "$OUT/decision/slice_logic.txt"
+grep -R --binary-files=without-match "risk" -n apps/decision-engine > "$OUT/decision/risk_logic.txt"
+
+# =========================================================
+# 5. TELEMETRIA
+# =========================================================
+
+grep -R --binary-files=without-match "telemetry" -n apps > "$OUT/telemetry/telemetry_usage.txt"
+grep -R --binary-files=without-match "prometheus" -n apps > "$OUT/telemetry/prometheus_usage.txt"
+
+# =========================================================
+# 6. SNAPSHOT REAL
+# =========================================================
+
+if ! kubectl -n trisla logs -l app=trisla-decision-engine --tail=200 \
+  > "$OUT/flows/decision_logs.txt" 2>&1; then
+  echo "[AUDIT] kubectl logs indisponível (pod/container pode estar terminado)." \
+    >> "$OUT/flows/decision_logs.txt"
+fi
+
+# =========================================================
+# 7. ANÁLISE AUTOMÁTICA
+# =========================================================
+
+python3 <<'PY'
+from pathlib import Path
+
+out = Path("evidencias_trisla_15_prototype_audit/analysis")
+
+report = []
+
+report.append("=== PROTOTYPE AUDIT SUMMARY ===\n")
+
+report.append("1. Modules detected\n")
+report.append(open("evidencias_trisla_15_prototype_audit/modules/deployments.txt").read())
+
+report.append("\n2. Decision logic signals\n")
+report.append(open("evidencias_trisla_15_prototype_audit/decision/slice_logic.txt").read()[:2000])
+
+report.append("\n3. Telemetry usage\n")
+report.append(open("evidencias_trisla_15_prototype_audit/telemetry/telemetry_usage.txt").read()[:2000])
+
+out.mkdir(parents=True, exist_ok=True)
+
+with open(out / "summary.txt", "w") as f:
+    f.write("\n".join(report))
+
+print("AUDITORIA FINAL CONCLUIDA")
+PY
+
+echo "PROMPT_TRISLA_15 FINALIZADO"

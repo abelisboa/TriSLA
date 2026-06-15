@@ -1,81 +1,68 @@
-# Portal Frontend
+# Portal Frontend Navigation Hub
 
-**IMPORTANT**: The Portal Frontend is a visualization and interaction layer, not part of the TriSLA control logic. It provides a web-based interface for users to submit SLA requests and view decision outcomes, but does not implement any business logic or decision-making capabilities.
+This README is a navigation hub for Portal Frontend documentation. It is not the
+operational SSOT. The canonical operational module reference is:
 
-## Purpose
+```text
+docs/modules/portal-frontend.md
+```
 
-The Portal Frontend exists to:
+## Runtime Identity
 
-1. **Collect User Input**: Provide web forms for users to submit SLA requirements (via template or natural language)
-2. **Display Decision Outcomes**: Present decision results (ACCEPT, RENEG, REJECT) with justification and blockchain data
-3. **Monitor SLA Status**: Show SLA lifecycle status and real-time metrics
-4. **Visualize Module Health**: Display health status of TriSLA modules
-5. **Present XAI Artifacts**: Display explainability artifacts when available
+Portal Frontend is the user interface and workflow visualization layer. It
+presents decisions, governance evidence, runtime state, telemetry views, and
+observability data returned through Portal Backend.
 
-## What It Does NOT Do
+Portal Frontend does not decide SLA, does not produce governance, does not
+produce runtime assurance, does not produce explainability, and does not produce
+telemetry.
 
-- **Does not implement business logic** (delegated to Portal Backend and TriSLA modules)
-- **Does not make admission decisions** (Decision Engine responsibility)
-- **Does not process semantic intent** (SEM-CSMF responsibility)
-- **Does not perform ML predictions** (ML-NSMF responsibility)
-- **Does not manage SLA lifecycle** (SLA-Agent responsibility)
-- **Does not register on-chain** (BC-NSSMF responsibility)
-- **Does not process requests server-side** (all processing delegated to Portal Backend)
+## Direct Integration
 
-## Relationship to Portal Backend
+```text
+Frontend
+|
+Portal Backend
+```
 
-The Portal Frontend is a **thin client** that:
+Portal Frontend does not directly call SEM-CSMF, Decision Engine, BC-NSSMF, or
+SLA-Agent.
 
-- Makes HTTP requests to Portal Backend REST API
-- Displays responses from Portal Backend
-- Handles user interactions and form validation (client-side only)
-- Manages UI state and navigation
+## Main Navigation
 
-All business logic, validation, and orchestration is handled by Portal Backend.
+```text
+/
+/pnl
+/template
+/sla-lifecycle?view=admission
+/sla-lifecycle?view=runtime
+/monitoring
+/administration
+```
 
-## Supported Workflows
+Auxiliary route:
 
-### SLA Submission
+```text
+/metrics
+```
 
-1. **Template-based Submission**: User selects a template (URLLC, eMBB, mMTC) and fills form fields
-2. **Natural Language Submission**: User enters intent text in natural language (PLN)
-3. **Form Validation**: Client-side validation of required fields and formats
-4. **API Call**: Frontend calls  or 
-5. **Result Display**: Frontend displays decision outcome and redirects to result page
+Reserved active route outside the main menu and not hot path:
 
-### Monitoring
+```text
+/defense
+```
 
-1. **Status Retrieval**: Frontend calls  to retrieve lifecycle status
-2. **Metrics Retrieval**: Frontend calls  to retrieve performance metrics
-3. **Auto-refresh**: Frontend polls status/metrics endpoints at configurable intervals
+## Runtime Stack
 
-## Technical Stack
+Active runtime stack: Next.js 15 App Router, React 18, React Context, and
+`sessionStorage` for the admission operational snapshot cache.
 
-- **Framework**: Next.js 15 (React 18)
-- **State Management**: Zustand
-- **API Client**: Custom  function using native  API
-- **Styling**: Tailwind CSS with Radix UI components
-- **Build**: Next.js standalone output for containerized deployment
+Zustand is not implemented in the current runtime.
 
-## Deployment
+## References
 
-The Portal Frontend is deployed via Helm as part of the TriSLA Portal chart:
-
-
-
-Configuration is provided through Helm values under  section in .
-
-## Observability
-
-- **Browser Console Logs**: Client-side errors and API call failures
-- **Network Traces**: Browser DevTools network tab shows all API requests/responses
-- **Error Boundaries**: React error boundaries catch and log component errors
-
-## Documentation
-
-- **[Architecture Overview](../../ARCHITECTURE.md)** — System-level architecture
-- **[Installation Guide](../../INSTALLATION.md)** — Canonical installation procedures
-
-## Implementation Basis
-
-This documentation is based on the real TriSLA implementation in  and deployment configuration in .
+- Canonical module document: `docs/modules/portal-frontend.md`
+- Portal Backend module: `docs/modules/portal-backend.md`
+- Observability module: `docs/modules/observability.md`
+- Telemetry module: `docs/modules/telemetry.md`
+- Architecture reference: `docs/portal/architecture/portal_architecture.md`

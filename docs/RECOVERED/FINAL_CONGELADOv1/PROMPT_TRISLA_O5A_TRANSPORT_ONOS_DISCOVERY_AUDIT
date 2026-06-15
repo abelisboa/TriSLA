@@ -1,0 +1,488 @@
+PROMPT_TRISLA_O5A_TRANSPORT_ONOS_DISCOVERY_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Executar auditoria profunda do domínio Transporte para descobrir exatamente:
+
+* como o ONOS está implantado
+* quais APIs estão disponíveis
+* quais informações de rede podem ser observadas
+* quais intents, paths, flows e topologias existem
+* como o domínio Transporte pode ser correlacionado com os bindings já implementados
+
+O objetivo é preparar a futura fase:
+
+O5C
+Transport Binding
+
+seguindo o mesmo padrão:
+
+O1A → O1B → O1C
+O2A → O2B → O2C
+O3A → O3B → O3C
+O4A → O4B → O4C
+
+Toda conclusão deve ser baseada exclusivamente em:
+
+* runtime real
+* ONOS real
+* nasp-transport
+* Prometheus
+* logs
+* APIs
+* topologia descoberta
+
+Nunca em documentação externa.
+
+====================================================
+BASELINE CONGELADO
+==================
+
+O1C_FREEZE = APPROVED
+
+O2C_FREEZE = APPROVED
+
+O3C_FREEZE = APPROVED
+
+O4C_FREEZE = APPROVED
+
+CURRENT_ARCHITECTURE_STATUS =
+
+ACCESS_CORRELATED
+
+====================================================
+CADEIA ATUAL
+============
+
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+ACCESS_CORRELATED
+
+====================================================
+OBJETIVO O5
+===========
+
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+TRANSPORT
+↓
+MULTIDOMAIN_CORRELATED
+
+====================================================
+FASE 1 — INVENTÁRIO ONOS
+========================
+
+Identificar:
+
+Pods
+
+Deployments
+
+Services
+
+Images
+
+Versions
+
+Namespaces
+
+Ports
+
+Executar:
+
+kubectl get pods
+
+kubectl get svc
+
+kubectl describe pod
+
+Gerar:
+
+analysis/onos_inventory.md
+
+====================================================
+FASE 2 — AUDITORIA APIs ONOS
+============================
+
+Descobrir:
+
+REST APIs
+
+Authentication
+
+Available endpoints
+
+Resources
+
+Executar:
+
+curl
+
+REST inventory
+
+Gerar:
+
+analysis/onos_api_inventory.md
+
+====================================================
+FASE 3 — AUDITORIA TOPOLOGIA
+============================
+
+Verificar:
+
+devices
+
+links
+
+hosts
+
+topology
+
+clusters
+
+Gerar:
+
+analysis/onos_topology_audit.md
+
+====================================================
+FASE 4 — AUDITORIA FLOWS
+========================
+
+Verificar:
+
+flows
+
+intents
+
+path selection
+
+routing entries
+
+Responder:
+
+há flows ativos?
+
+há intents ativos?
+
+há path computation?
+
+Gerar:
+
+analysis/onos_flows_audit.md
+
+====================================================
+FASE 5 — AUDITORIA NASP-TRANSPORT
+=================================
+
+Auditar:
+
+nasp-transport
+
+transport probes
+
+RTT
+
+latency
+
+jitter
+
+packet loss
+
+throughput
+
+Gerar:
+
+analysis/nasp_transport_audit.md
+
+====================================================
+FASE 6 — CORRELAÇÃO TRANSPORTE
+==============================
+
+Verificar se existe correlação possível entre:
+
+session_id
+
+fresh_ue_ip
+
+upf_gtpu_addr
+
+supi
+
+selected_upf
+
+transport_ref
+
+onos endpoint
+
+path
+
+flow
+
+intent
+
+Gerar:
+
+analysis/transport_correlation_matrix.md
+
+====================================================
+FASE 7 — TELEMETRIA TRANSPORTE
+==============================
+
+Inventariar:
+
+RTT
+
+latency
+
+jitter
+
+packet loss
+
+availability
+
+reliability
+
+bandwidth
+
+Responder:
+
+quais métricas são reais?
+
+quais métricas são derivadas?
+
+Gerar:
+
+analysis/transport_telemetry_inventory.md
+
+====================================================
+FASE 8 — ALINHAMENTO 3GPP
+=========================
+
+Mapear aderência:
+
+TS 23.501
+
+TS 23.502
+
+TS 28.541
+
+TS 28.533
+
+TS 28.550
+
+Responder:
+
+como o domínio Transporte se encaixa no modelo atual.
+
+Gerar:
+
+analysis/transport_3gpp_alignment.md
+
+====================================================
+FASE 9 — ALINHAMENTO O-RAN
+==========================
+
+Verificar:
+
+SMO
+
+O1
+
+Transport Management
+
+Near-RT RIC
+
+Non-RT RIC
+
+Responder:
+
+como ONOS poderá representar o domínio Transporte na TriSLA.
+
+Gerar:
+
+analysis/transport_oran_alignment.md
+
+====================================================
+FASE 10 — ALINHAMENTO ETSI ZSM
+==============================
+
+Verificar:
+
+Cross-domain orchestration
+
+Transport domain
+
+Service assurance
+
+Closed-loop
+
+Automation
+
+Gerar:
+
+analysis/transport_zsm_alignment.md
+
+====================================================
+FASE 11 — GAP ANALYSIS
+======================
+
+Determinar:
+
+o que existe hoje.
+
+o que falta.
+
+o que pode ser observado.
+
+o que pode ser correlacionado.
+
+o que não deve ser controlado.
+
+Gerar:
+
+analysis/transport_gap_matrix.md
+
+====================================================
+FASE 12 — PROPOSTA O5B
+======================
+
+SEM IMPLEMENTAR.
+
+Definir arquitetura alvo:
+
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+TRANSPORT
+
+IMPORTANTE
+
+TriSLA NÃO controla:
+
+ONOS
+
+switches
+
+flows
+
+routing
+
+transport network
+
+TriSLA apenas:
+
+observa
+correlaciona
+persiste
+
+Gerar:
+
+analysis/o5b_target_design.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/onos_inventory.md
+
+analysis/onos_api_inventory.md
+
+analysis/onos_topology_audit.md
+
+analysis/onos_flows_audit.md
+
+analysis/nasp_transport_audit.md
+
+analysis/transport_correlation_matrix.md
+
+analysis/transport_telemetry_inventory.md
+
+analysis/transport_3gpp_alignment.md
+
+analysis/transport_oran_alignment.md
+
+analysis/transport_zsm_alignment.md
+
+analysis/transport_gap_matrix.md
+
+analysis/o5b_target_design.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+ONOS_DISCOVERED = YES/NO
+
+TRANSPORT_DOMAIN_DISCOVERED = YES/NO
+
+TRANSPORT_TELEMETRY_DISCOVERED = YES/NO
+
+TRANSPORT_CORRELATION_FEASIBLE = YES/NO
+
+ONOS_INTEGRATION_FEASIBLE = YES/NO
+
+TRANSPORT_BINDING_FEASIBLE = YES/NO
+
+RECOMMENDED_NEXT_PHASE =
+
+O5B_TRANSPORT_CONTRACT_MODEL
+
+ou
+
+O5C_TRANSPORT_BINDING_IMPLEMENTATION
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+IMPORTANTE
+==========
+
+Não implementar nada.
+
+Não alterar nada.
+
+Não integrar nada.
+
+Somente descobrir, provar e documentar o comportamento real do domínio Transporte e ONOS para suportar a próxima fase da evolução da TriSLA.

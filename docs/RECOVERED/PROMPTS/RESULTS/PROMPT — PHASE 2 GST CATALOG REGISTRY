@@ -1,0 +1,186 @@
+# PROMPT — PHASE 2 GST CATALOG REGISTRY
+
+Operar sob:
+
+* TRISLA_EVOLUTION_MASTER_PLAN_V1 v1.2
+* PROMPT 3 Governance
+* Phase 1 aprovada
+
+Status de entrada:
+
+MASTER_PLAN_V1_2_APPROVED = TRUE
+
+PHASE_0B_APPROVED = TRUE
+
+PHASE_1_APPROVED = TRUE
+
+FASE_2_PHASE_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Transformar o GST Registry criado na Fase 1 em um catálogo governado.
+
+Sem alterar comportamento operacional.
+
+---
+
+# Modo
+
+LOW RISK
+
+Mudanças permitidas:
+
+* novos arquivos
+* novos schemas
+* novos manifests
+* novos documentos
+* novos registries
+
+Mudanças proibidas:
+
+* runtime
+* APIs
+* SEM-CSMF
+* Decision Engine
+* ML-NSMF
+* SLA-Agent
+
+---
+
+# Atividade 1
+
+Expandir GST Catalog.
+
+Registrar:
+
+* catalog_id
+* version
+* source
+* checksum
+* lineage
+
+---
+
+# Atividade 2
+
+Criar GST Compliance Registry.
+
+Mapear:
+
+* eMBB
+* URLLC
+* mMTC
+
+com referência explícita:
+
+```text
+GSMA NG.116
+```
+
+---
+
+# Atividade 3
+
+Criar GST Traceability Registry.
+
+Mapear:
+
+```text
+GST
+↓
+Ontology
+↓
+NEST
+```
+
+---
+
+# Atividade 4
+
+Criar GST Governance Manifest.
+
+Registrar:
+
+* owner
+* version
+* approval date
+* baseline relationship
+
+---
+
+# Atividade 5
+
+Documentar divergências conhecidas.
+
+Exemplo:
+
+```text
+eMBB
+
+GST Catalog
+100 Mbps
+
+Ontology Fallback
+1000 Mbps
+```
+
+Somente documentar.
+
+Não corrigir.
+
+---
+
+# Testes obrigatórios
+
+Validar:
+
+* nenhum digest mudou
+* nenhum deployment mudou
+* nenhum pod reiniciou
+* nenhum endpoint mudou
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_fase2_<timestamp>/
+
+Contendo:
+
+* GST Catalog Registry
+* GST Compliance Registry
+* GST Traceability Registry
+* GST Governance Manifest
+* Validation Report
+
+---
+
+# Critério de sucesso
+
+RUNTIME_BEHAVIOR = IDENTICAL
+
+GST_CATALOG_GOVERNED = TRUE
+
+DEPLOYMENT_CONSISTENCY_GATE = PASS_WITH_TRACEABILITY
+
+---
+
+# Resultado final
+
+Produzir:
+
+PHASE_2_COMPLETION_REPORT
+
+Finalizar com:
+
+PHASE_2_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar a Fase 3.
+
+Aguardar aprovação humana.

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 
 class SLAInterpretRequest(BaseModel):
@@ -22,7 +22,7 @@ class SLASubmitRequest(BaseModel):
     def validate_template_id(cls, v: str) -> str:
         """Validar template_id"""
         if not v or not v.strip():
-            raise ValueError('Template ID não pode ser vazio')
+            raise ValueError('Template ID cannot be empty')
         return v.strip()
     
     @field_validator('form_values')
@@ -30,7 +30,7 @@ class SLASubmitRequest(BaseModel):
     def validate_form_values(cls, v: Dict[str, Any]) -> Dict[str, Any]:
         """Validar e transformar form_values"""
         if not v:
-            raise ValueError('Form values não podem ser vazios')
+            raise ValueError('Form values cannot be empty')
         
         # Transformar valores numéricos para formato correto
         form_values_corrigidos = {}
@@ -50,7 +50,7 @@ class SLASubmitRequest(BaseModel):
 
 
 class SLAStatusResponse(BaseModel):
-    """Resposta com status do SLA (REAL do NASP)"""
+    """Resposta com status do SLA (REAL do NASP) — alinhada a GET /api/v1/sla/status/{sla_id}."""
     sla_id: str
     status: str
     tenant_id: str
@@ -58,8 +58,17 @@ class SLAStatusResponse(BaseModel):
     nest_id: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
+    admission_decision: Optional[str] = None
+    runtime_lifecycle_enabled: Optional[bool] = None
+    admission_telemetry_snapshot: Optional[Dict[str, Any]] = None
+    admission_decision_evidence: Optional[List[Dict[str, Any]]] = None
+    admission_reasoning: Optional[str] = None
     telemetry_snapshot: Optional[Dict[str, Any]] = None
     runtime_assurance: Optional[Dict[str, Any]] = None
+    operational_summary: Optional[Dict[str, Any]] = None
+    traceability: Optional[Dict[str, Any]] = None
+    service_type: Optional[str] = None
+    sla_requirements: Optional[Dict[str, Any]] = None
 
 
 class SLAMetricsResponse(BaseModel):
@@ -145,7 +154,7 @@ class SLARevalidateTelemetryRequest(BaseModel):
     @classmethod
     def _strip_intent(cls, v: str) -> str:
         if not v or not str(v).strip():
-            raise ValueError("intent_id obrigatório")
+            raise ValueError("intent_id is required")
         return str(v).strip()
 
 

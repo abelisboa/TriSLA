@@ -1,0 +1,181 @@
+# =========================================================
+# PROMPT_TRISLA_14 — FINAL FIGURES FOR RESULTS SECTION
+# =========================================================
+# MISSÃO:
+# Gerar figuras finais para a Seção 7 com base em dados reais
+#
+# GERA:
+# - decision_by_slice.png
+# - score_boxplot_by_slice.png
+# - score_vs_decision_final.png
+# - decision_domain_matrix_final.png
+# - dataset_quality_summary.txt (+ opcional PNG)
+# - e2e_latency_distribution.png (SE existir)
+# =========================================================
+
+set -euo pipefail
+
+BASE="evidencias_trisla_12a_dataset_dense_v4_3"
+OUT="$BASE/final_figures"
+
+mkdir -p "$OUT"/{figures,analysis}
+
+python3 <<'PY'
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+import json
+
+base = Path("evidencias_trisla_12a_dataset_dense_v4_3")
+out = base / "final_figures"
+
+df = pd.read_csv(base / "dataset/clean_dataset.csv")
+plan = pd.read_csv(base / "dataset/experiment_plan.csv")
+
+# =========================================================
+# ALINHAMENTO
+# =========================================================
+
+df["sample_id"] = range(1, len(df)+1)
+df = df.merge(plan, on="sample_id", how="inner")
+
+if len(df) != len(plan):
+    raise RuntimeError("Erro: desalinhamento dataset vs plano")
+
+# =========================================================
+# FIGURA 1 — DECISION BY SLICE
+# =========================================================
+
+decision_counts = pd.crosstab(df["service_type"], df["decision"])
+decision_counts.plot(kind="bar", stacked=True)
+
+plt.title("Decision Distribution by Slice")
+plt.xlabel("Slice Type")
+plt.ylabel("Count")
+plt.legend(title="Decision")
+plt.tight_layout()
+plt.savefig(out / "figures/decision_by_slice.png")
+plt.close()
+
+# =========================================================
+# FIGURA 2 — SCORE BOXPLOT POR SLICE
+# =========================================================
+
+df.boxplot(column="decision_score", by="service_type")
+
+plt.title("Decision Score by Slice")
+plt.suptitle("")
+plt.xlabel("Slice Type")
+plt.ylabel("Decision Score")
+plt.tight_layout()
+plt.savefig(out / "figures/score_boxplot_by_slice.png")
+plt.close()
+
+# =========================================================
+# FIGURA 3 — SCORE × DECISÃO
+# =========================================================
+
+color_map = {
+    "ACCEPT": "green",
+    "RENEGOTIATE": "orange",
+    "REJECT": "red"
+}
+
+df_sorted = df.sort_values("decision_score")
+
+plt.figure()
+for decision, group in df_sorted.groupby("decision"):
+    plt.scatter(
+        group.index,
+        group["decision_score"],
+        label=decision,
+        c=color_map.get(decision, "blue")
+    )
+
+plt.legend()
+plt.xlabel("Sample Index")
+plt.ylabel("Decision Score")
+plt.title("Score vs Decision")
+plt.tight_layout()
+plt.savefig(out / "figures/score_vs_decision_final.png")
+plt.close()
+
+# =========================================================
+# FIGURA 4 — MATRIZ DECISÃO × DOMÍNIO
+# =========================================================
+
+def infer_domain(row):
+    if row["dominant_parameter"] == "latency":
+        return "Transport"
+    elif row["dominant_parameter"] == "throughput":
+        return "RAN"
+    elif row["dominant_parameter"] == "device_count":
+        return "Core"
+    return "Unknown"
+
+df["inferred_domain"] = df.apply(infer_domain, axis=1)
+
+matrix = pd.crosstab(df["decision"], df["inferred_domain"])
+
+plt.figure()
+plt.imshow(matrix, aspect='auto')
+plt.colorbar()
+plt.xticks(range(len(matrix.columns)), matrix.columns)
+plt.yticks(range(len(matrix.index)), matrix.index)
+plt.title("Decision vs Domain")
+plt.tight_layout()
+plt.savefig(out / "figures/decision_domain_matrix_final.png")
+plt.close()
+
+matrix.to_csv(out / "analysis/decision_domain_matrix_final.csv")
+
+# =========================================================
+# FIGURA 5 — DATASET QUALITY SUMMARY
+# =========================================================
+
+qr = (base / "analysis/quality_report.txt").read_text()
+
+with open(out / "analysis/dataset_quality_summary.txt", "w") as f:
+    f.write(qr)
+
+# =========================================================
+# FIGURA 6 — LATÊNCIA (SE EXISTIR)
+# =========================================================
+
+latency_found = False
+
+for line in open(base / "dataset/raw_valid.json"):
+    try:
+        j = json.loads(line)
+        md = j.get("metadata", {})
+        if "decision_time_ms" in md:
+            latency_found = True
+            break
+    except:
+        pass
+
+if latency_found:
+    latencies = []
+    for line in open(base / "dataset/raw_valid.json"):
+        try:
+            j = json.loads(line)
+            lat = j.get("metadata", {}).get("decision_time_ms")
+            if lat:
+                latencies.append(lat)
+        except:
+            pass
+
+    if latencies:
+        plt.figure()
+        plt.hist(latencies, bins=20)
+        plt.title("E2E Decision Latency Distribution")
+        plt.xlabel("Latency (ms)")
+        plt.ylabel("Frequency")
+        plt.tight_layout()
+        plt.savefig(out / "figures/e2e_latency_distribution.png")
+        plt.close()
+
+print("FIGURAS FINAIS GERADAS COM SUCESSO")
+PY
+
+echo "PROMPT_TRISLA_14 FINALIZADO"

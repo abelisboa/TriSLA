@@ -1,0 +1,184 @@
+PROMPT_TRISLA_O8C_W2C_CONTROLLED_DOMAIN_ACTION_READINESS_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+OBJETIVO
+
+Determinar qual será a primeira ação real de domínio da TriSLA.
+
+A auditoria deve validar:
+
+viabilidade técnica
+
+risco operacional
+
+aderência normativa
+
+rollback
+
+reversibilidade
+
+evidência científica
+
+====================================================
+BASELINE
+========
+
+O1C–O7D = FROZEN
+
+O8A = APPROVED
+
+O8B = APPROVED
+
+O8C Wave1 = APPROVED
+
+O8C W2A = APPROVED
+
+O8C W2B = APPROVED
+
+CURRENT_STATUS
+
+AUTHORIZED
++
+EXECUTED
++
+VERIFIED
++
+ROLLED_BACK
+
+====================================================
+FASE 1
+======
+
+Inventariar ações elegíveis:
+
+ACT-ORCH-005
+
+ACT-TN-002
+
+ACT-TN-003
+
+ACT-RAN-003
+
+====================================================
+FASE 2
+======
+
+Avaliar risco operacional.
+
+Classificar:
+
+LOW
+
+MEDIUM
+
+HIGH
+
+====================================================
+FASE 3
+======
+
+Avaliar rollback.
+
+Responder:
+
+rollback automático?
+
+rollback manual?
+
+rollback impossível?
+
+====================================================
+FASE 4
+======
+
+Avaliar aderência:
+
+3GPP
+
+O-RAN
+
+ETSI ZSM
+
+====================================================
+FASE 5
+======
+
+Auditar ONOS.
+
+Validar:
+
+POST real
+
+DELETE real
+
+rollback
+
+cleanup
+
+====================================================
+FASE 6
+======
+
+Auditar Admission Control.
+
+Validar:
+
+controle
+
+limitação
+
+reversão
+
+impacto
+
+====================================================
+FASE 7
+======
+
+Auditar RAN.
+
+Validar:
+
+existe API?
+
+existe controle?
+
+ou permanece conceitual?
+
+====================================================
+FASE 8
+======
+
+Escolher UMA ação.
+
+====================================================
+FASE 9
+======
+
+Definir plano de implementação.
+
+====================================================
+FASE 10
+=======
+
+Veredito.
+
+Emitir:
+
+FIRST_REAL_ACTION = <ação>
+
+ACTION_RISK = LOW/MEDIUM/HIGH
+
+ROLLBACK_READY = YES/NO
+
+READY_FOR_REAL_EXECUTION = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH

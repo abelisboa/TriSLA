@@ -1,0 +1,467 @@
+PROMPT_TRISLA_O7C_PROMETHEUS_SCRAPE_AND_RECORDING_RULES
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+OBJETIVO
+
+Implementar a fase:
+
+O7C
+Prometheus Scrape & Recording Rules
+
+conforme definido em:
+
+* O7A Grafana/Prometheus Discovery Audit
+* O7B Observability Contract Model
+
+====================================================
+OBJETIVO ESTRATÉGICO
+====================
+
+Transformar:
+
+O6 Metrics Export
+
+em
+
+Prometheus Visibility
+
+garantindo que as métricas da TriSLA sejam:
+
+* descobertas
+* ingeridas
+* agregadas
+* preparadas para dashboards O7D
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO alterar:
+
+Decision Engine logic
+
+SEM-CSMF logic
+
+ML-NSMF logic
+
+Blockchain logic
+
+SLA-Agent logic
+
+NSSF binding
+
+AMF binding
+
+SMF binding
+
+UPF binding
+
+RAN binding
+
+Transport binding
+
+Admission thresholds
+
+Datasets
+
+====================================================
+PERMITIDO
+=========
+
+Prometheus
+
+ServiceMonitor
+
+Recording Rules
+
+Exporters
+
+Metric Exposure
+
+====================================================
+BASELINE
+========
+
+CURRENT_ARCHITECTURE_STATUS
+
+TRANSPORT_CORRELATED
+
+Digest ativo:
+
+sha256:bb1e44097a40f93257281eb9ed5b601b233cb0537e5bfe9935aa53b500d9a32e
+
+O6 exporta:
+
+27 métricas
+
+O7A confirmou:
+
+ServiceMonitor mismatch
+
+====================================================
+FASE 1 — SERVICE MONITOR FIX
+============================
+
+Corrigir:
+
+trisla-nasp-adapter-metrics
+
+Validar:
+
+Prometheus target UP
+
+Namespace correto
+
+Datasource correto
+
+Gerar:
+
+analysis/o7c_service_monitor_fix.md
+
+====================================================
+FASE 2 — SCRAPE VALIDATION
+==========================
+
+Provar ingestão.
+
+Validar:
+
+trisla_binding_phase
+
+trisla_transport_binding_status
+
+trisla_nssf_selection_status
+
+trisla_amf_binding_status
+
+trisla_smf_binding_status
+
+trisla_upf_binding_status
+
+trisla_ran_binding_status
+
+Gerar:
+
+analysis/o7c_scrape_validation.md
+
+====================================================
+FASE 3 — METRIC CLASSIFICATION
+==============================
+
+Classificar todas métricas TriSLA:
+
+EXPORTED
+
+DERIVED
+
+MISSING
+
+NOT_IMPLEMENTED
+
+Para:
+
+SEM-CSMF
+
+ML-NSMF
+
+Decision Engine
+
+BC-NSSMF
+
+SLA-Agent
+
+NASP Adapter
+
+Binding Chain
+
+Gerar:
+
+analysis/o7c_metric_classification.md
+
+====================================================
+FASE 4 — RECORDING RULES
+========================
+
+Implementar as 21 regras aprovadas no O7B.
+
+Agrupar:
+
+SERVICE_ORCHESTRATION
+
+SERVICE_ASSURANCE
+
+INTELLIGENCE
+
+GOVERNANCE
+
+MULTIDOMAIN_CORRELATION
+
+Gerar:
+
+analysis/o7c_recording_rules_validation.md
+
+====================================================
+FASE 5 — AGGREGATED METRICS
+===========================
+
+Criar métricas agregadas oficiais.
+
+Exemplos:
+
+slice_service_binding_total
+
+slice_service_correlation_total
+
+service_assurance_compliance_pct
+
+governance_commit_success_pct
+
+multidomain_domain_health_score
+
+network_slice_lifecycle_completion_pct
+
+Gerar:
+
+analysis/o7c_aggregated_metrics.md
+
+====================================================
+FASE 6 — PROMETHEUS QUERY VALIDATION
+====================================
+
+Executar consultas.
+
+Capturar:
+
+sample count
+
+series count
+
+labels
+
+últimos valores
+
+Gerar:
+
+analysis/o7c_promql_validation.md
+
+====================================================
+FASE 7 — MODULE VISIBILITY AUDIT
+================================
+
+Responder:
+
+SEM-CSMF visível?
+
+ML-NSMF visível?
+
+Decision visível?
+
+Blockchain visível?
+
+SLA-Agent visível?
+
+Binding Chain visível?
+
+Para cada módulo:
+
+VISIBLE
+
+PARTIAL
+
+MISSING
+
+Gerar:
+
+analysis/o7c_module_visibility.md
+
+====================================================
+FASE 8 — CARDINALITY AUDIT
+==========================
+
+Validar:
+
+intent_id
+
+nsi_id
+
+supi
+
+session_id
+
+tx_hash
+
+Confirmar:
+
+sem explosão de cardinalidade
+
+Gerar:
+
+analysis/o7c_cardinality_validation.md
+
+====================================================
+FASE 9 — BUILD OFICIAL
+======================
+
+Fluxo obrigatório:
+
+Git
+↓
+GitHub
+↓
+GHCR
+↓
+Digest
+
+Nunca latest.
+
+Gerar:
+
+analysis/o7c_build_validation.md
+
+====================================================
+FASE 10 — DEPLOY OFICIAL
+========================
+
+Executar:
+
+ssh node006
+
+Deploy por digest.
+
+Gerar:
+
+analysis/o7c_deploy_validation.md
+
+====================================================
+FASE 11 — RUNTIME VALIDATION
+============================
+
+Executar:
+
+D1
+
+D2
+
+D6
+
+Validar:
+
+métricas chegam ao Prometheus
+
+recording rules calculam
+
+binding chain permanece intacta
+
+Gerar:
+
+analysis/o7c_runtime_validation.md
+
+====================================================
+FASE 12 — REGRESSION AUDIT
+==========================
+
+Validar:
+
+Portal
+
+Grafana
+
+Prometheus
+
+Decision Engine
+
+SEM
+
+ML
+
+BC
+
+SLA-Agent
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+Sem regressão.
+
+====================================================
+FASE 13 — EVIDENCE PACK
+=======================
+
+Gerar:
+
+evidencias_trisla_o7c_prometheus_scrape_recording_rules_<timestamp>
+
+Conteúdo:
+
+analysis/
+
+runtime/
+
+rollback/
+
+MANIFEST.json
+
+checksums
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+SERVICE_MONITOR_FIXED = YES/NO
+
+PROMETHEUS_SCRAPE_WORKING = YES/NO
+
+RECORDING_RULES_DEPLOYED = YES/NO
+
+SEM_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+ML_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+DECISION_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+BLOCKCHAIN_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+SLA_AGENT_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+MULTIDOMAIN_VISIBILITY = COMPLETE/PARTIAL/LOW
+
+PROMETHEUS_READY_FOR_GRAFANA = YES/NO
+
+REGRESSION = NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+PROMETHEUS_READY_FOR_GRAFANA = YES
+
+iniciar:
+
+O7D
+Grafana Dashboard Implementation
+
+utilizando os 6 dashboards oficiais aprovados no O7B:
+
+* Network Slice Service Orchestration
+* Closed-Loop Service Assurance
+* Intent Translation and Intelligence
+* Governance and Smart Contract Enforcement
+* RAN and Transport Service Correlation
+* Multidomain Service Lifecycle

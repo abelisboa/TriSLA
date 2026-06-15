@@ -1,0 +1,312 @@
+# =========================================================
+# PROMPT_LOAD_TEST_06
+# Saturação forte controlada — multi-UE/data-plane
+# =========================================================
+
+# MISSÃO
+# Aumentar a pressão operacional já observada no LOAD_TEST_05,
+# buscando deslocar a decisão de ACCEPT/RENEGOTIATE para possível REJECT,
+# sem alterar código, thresholds, deploy ou manifests.
+
+# REGRAS ABSOLUTAS
+# 1. NÃO alterar código
+# 2. NÃO alterar thresholds
+# 3. NÃO alterar deploy
+# 4. NÃO alterar manifests
+# 5. NÃO simular PRB
+# 6. NÃO deixar tráfego residual
+# 7. Abort se health/global falhar
+# 8. Cleanup obrigatório
+
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_load_test_v6_strong_saturation"
+mkdir -p "$OUT/raw" "$OUT/analysis" "$OUT/logs"
+
+PROM_URL='http://localhost:19090/api/v1/query?query=avg(trisla_ran_prb_utilization{job="trisla-ran-ue-upf-proxy"})'
+API_URL='http://localhost:18001/api/v1/sla/submit'
+
+# =========================================================
+# FASE 0 — PORT-FORWARD
+# =========================================================
+
+kubectl -n monitoring port-forward svc/prometheus-kube-prometheus-prometheus 19090:9090 \
+  > "$OUT/logs/pf_prom.log" 2>&1 &
+PF_PROM=$!
+
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 \
+  > "$OUT/logs/pf_backend.log" 2>&1 &
+PF_API=$!
+
+sleep 3
+
+curl -s http://localhost:18001/api/v1/health/global \
+  | tee "$OUT/raw/health_before.json"
+
+curl -s "$PROM_URL" | tee "$OUT/raw/prb_before.json"
+
+# =========================================================
+# FASE 1 — VALIDAR UEs COM DATA-PLANE
+# =========================================================
+
+kubectl get pods -A -o wide \
+  | egrep -i 'ue|ueransim|rantester|gnb|upf|free5gc' \
+  | tee "$OUT/analysis/ran_related_pods.txt"
+
+UE_LIST=$(kubectl get pods -A --no-headers \
+  | awk 'tolower($0) ~ /ue|ueransim|rantester/ && $4=="Running" {print $1","$2}')
+
+if [ -z "$UE_LIST" ]; then
+  echo "[ABORT] Nenhum UE/RANTester Running encontrado" | tee "$OUT/analysis/abort_reason.txt"
+  kill $PF_PROM $PF_API 2>/dev/null
+  exit 0
+fi
+
+echo "$UE_LIST" | tee "$OUT/analysis/ue_candidates.txt"
+
+VALID_UE_FILE="$OUT/analysis/ue_validated_list.txt"
+: > "$VALID_UE_FILE"
+
+echo "$UE_LIST" | head -n 10 | while IFS= read -r entry; do
+  NS=$(echo "$entry" | cut -d, -f1)
+  POD=$(echo "$entry" | cut -d, -f2)
+
+  kubectl -n "$NS" exec "$POD" -- ip addr \
+    > "$OUT/analysis/ip_addr_${NS}_${POD}.txt" 2>&1 || true
+
+  if grep -E 'uetun|tun' "$OUT/analysis/ip_addr_${NS}_${POD}.txt" >/dev/null; then
+    echo "$NS,$POD" >> "$VALID_UE_FILE"
+  fi
+done
+
+if [ ! -s "$VALID_UE_FILE" ]; then
+  echo "[ABORT] Nenhum UE com uetun/tun ativo" | tee "$OUT/analysis/abort_reason.txt"
+  kill $PF_PROM $PF_API 2>/dev/null
+  exit 0
+fi
+
+# =========================================================
+# FASE 2 — TARGET UPF + CONECTIVIDADE
+# =========================================================
+
+TARGET_IP=$(kubectl get pods -A -o wide --no-headers \
+  | awk 'tolower($0) ~ /upf/ && $4=="Running" {print $7; exit}')
+
+if [ -z "$TARGET_IP" ]; then
+  echo "[ABORT] Nenhum UPF Running encontrado" | tee "$OUT/analysis/abort_reason.txt"
+  kill $PF_PROM $PF_API 2>/dev/null
+  exit 0
+fi
+
+echo "TARGET_IP=$TARGET_IP" | tee "$OUT/analysis/target_ip.txt"
+
+CONNECT_OK_FILE="$OUT/analysis/ue_connectivity_ok.txt"
+: > "$CONNECT_OK_FILE"
+
+while IFS= read -r entry; do
+  NS=$(echo "$entry" | cut -d, -f1)
+  POD=$(echo "$entry" | cut -d, -f2)
+
+  kubectl -n "$NS" exec "$POD" -- sh -c "ping -c 3 $TARGET_IP" \
+    > "$OUT/analysis/ping_${NS}_${POD}.txt" 2>&1 || true
+
+  if grep -i "0% packet loss" "$OUT/analysis/ping_${NS}_${POD}.txt" >/dev/null; then
+    echo "$NS,$POD" >> "$CONNECT_OK_FILE"
+  fi
+done < "$VALID_UE_FILE"
+
+if [ ! -s "$CONNECT_OK_FILE" ]; then
+  echo "[ABORT] Nenhum UE alcança o UPF" | tee "$OUT/analysis/abort_reason.txt"
+  kill $PF_PROM $PF_API 2>/dev/null
+  exit 0
+fi
+
+# =========================================================
+# FASE 3 — CARGA FORTE CONTROLADA
+# =========================================================
+
+echo "[FASE 3] Iniciando saturação forte via ping paralelo"
+
+curl -s "$PROM_URL" | tee "$OUT/raw/prb_preload.json"
+
+while IFS= read -r entry; do
+  NS=$(echo "$entry" | cut -d, -f1)
+  POD=$(echo "$entry" | cut -d, -f2)
+
+  kubectl -n "$NS" exec "$POD" -- sh -c "
+    pkill -f trisla_v6_load || true
+    for i in \$(seq 1 6); do
+      (timeout 240 sh -c 'while true; do ping -c 1 -s 1400 $TARGET_IP >/dev/null 2>&1; done' >/tmp/trisla_v6_load_\$i.log 2>&1 &)
+    done
+  " || true
+done < "$CONNECT_OK_FILE"
+
+sleep 30
+
+curl -s "$PROM_URL" | tee "$OUT/raw/prb_during_30s.json"
+
+# =========================================================
+# FASE 4 — SUBMITS SOB SATURAÇÃO FORTE
+# =========================================================
+
+cat > "$OUT/analysis/runtime_progress.log" << 'EOF'
+id,http,decision,score,band,prb
+EOF
+
+for i in $(seq 1 60); do
+  FILE="$OUT/raw/submit_$i.json"
+  STATUS_FILE="$OUT/raw/submit_$i.status"
+
+  HTTP_CODE=$(curl -s -o "$FILE" -w "%{http_code}" \
+    -X POST "$API_URL" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "template_id": "standard",
+      "tenant_id": "strong-saturation-'$i'",
+      "form_values": {
+        "latency": 5,
+        "reliability": 99.999,
+        "throughput": 50
+      }
+    }')
+
+  echo "$HTTP_CODE" > "$STATUS_FILE"
+
+  DEC=$(jq -r '.decision // "null"' "$FILE")
+  SCORE=$(jq -r '.metadata.decision_score // .metadata.decision_snapshot.decision_score // .decision_score // "null"' "$FILE")
+  BAND=$(jq -r '.metadata.decision_band // .metadata.decision_snapshot.decision_band // "null"' "$FILE")
+  PRB=$(jq -r '.metadata.telemetry_snapshot.ran.prb_utilization // "null"' "$FILE")
+
+  echo "$i,$HTTP_CODE,$DEC,$SCORE,$BAND,$PRB" | tee -a "$OUT/analysis/runtime_progress.log"
+
+  if [ "$HTTP_CODE" != "200" ]; then
+    echo "[WARN] HTTP != 200 no request $i"
+  fi
+
+  if [ $((i % 10)) -eq 0 ]; then
+    curl -s "$PROM_URL" | tee "$OUT/raw/prb_mid_$i.json" >/dev/null
+    curl -s http://localhost:18001/api/v1/health/global \
+      | tee "$OUT/raw/health_mid_$i.json" >/dev/null
+  fi
+
+  sleep 1
+done
+
+curl -s "$PROM_URL" | tee "$OUT/raw/prb_during_end.json"
+
+# =========================================================
+# FASE 5 — CLEANUP
+# =========================================================
+
+echo "[FASE 5] Cleanup de carga"
+
+while IFS= read -r entry; do
+  NS=$(echo "$entry" | cut -d, -f1)
+  POD=$(echo "$entry" | cut -d, -f2)
+
+  kubectl -n "$NS" exec "$POD" -- sh -c "
+    pkill -f trisla_v6_load || true
+    pkill -f 'ping -c 1 -s 1400' || true
+  " || true
+done < "$CONNECT_OK_FILE"
+
+sleep 15
+
+curl -s "$PROM_URL" | tee "$OUT/raw/prb_after.json"
+curl -s http://localhost:18001/api/v1/health/global \
+  | tee "$OUT/raw/health_after.json"
+
+# =========================================================
+# FASE 6 — DATASET
+# =========================================================
+
+cat > "$OUT/analysis/dataset.csv" << 'EOF'
+id,http_status,decision,score,decision_band,prb,rtt,jitter,core_cpu,nasp_status,bc_status,sla_agent_status,telemetry_complete,reason_codes
+EOF
+
+for f in "$OUT"/raw/submit_*.json; do
+  ID=$(basename "$f" .json | cut -d_ -f2)
+  STATUS=$(cat "$OUT/raw/submit_${ID}.status" 2>/dev/null || echo "NA")
+
+  jq -r --arg id "$ID" --arg http "$STATUS" '
+    [
+      $id,
+      $http,
+      (.decision // ""),
+      (.metadata.decision_score // .metadata.decision_snapshot.decision_score // .decision_score // ""),
+      (.metadata.decision_band // .metadata.decision_snapshot.decision_band // ""),
+      (.metadata.telemetry_snapshot.ran.prb_utilization // ""),
+      (.metadata.telemetry_snapshot.transport.rtt_ms // .metadata.telemetry_snapshot.transport.rtt // ""),
+      (.metadata.telemetry_snapshot.transport.jitter_ms // .metadata.telemetry_snapshot.transport.jitter // ""),
+      (.metadata.telemetry_snapshot.core.cpu_utilization // .metadata.telemetry_snapshot.core.cpu // ""),
+      (.metadata.nasp_orchestration_status // ""),
+      (.bc_status // ""),
+      (.sla_agent_status // ""),
+      (.metadata.telemetry_complete // .telemetry_complete // ""),
+      ((.metadata.reason_codes // .metadata.decision_snapshot.reason_codes // []) | join("|"))
+    ] | @csv
+  ' "$f" >> "$OUT/analysis/dataset.csv"
+done
+
+# =========================================================
+# FASE 7 — RESUMOS
+# =========================================================
+
+python3 - << 'PY'
+import json
+import pandas as pd
+from pathlib import Path
+
+out = Path("evidencias_load_test_v6_strong_saturation/analysis")
+raw = Path("evidencias_load_test_v6_strong_saturation/raw")
+
+df = pd.read_csv(out / "dataset.csv")
+
+df.to_csv(out / "dataset_requests_only.csv", index=False)
+
+decision_summary = df.groupby("decision").size().reset_index(name="count")
+decision_summary.to_csv(out / "decision_summary.csv", index=False)
+
+numeric_cols = ["score", "prb", "rtt", "jitter", "core_cpu"]
+for c in numeric_cols:
+    df[c] = pd.to_numeric(df[c], errors="coerce")
+
+summary = df[numeric_cols].agg(["count", "mean", "std", "min", "max"])
+summary.to_csv(out / "metric_summary.csv")
+
+with open(out / "summary.txt", "w") as f:
+    f.write("=== decision_summary ===\n")
+    f.write(decision_summary.to_string(index=False))
+    f.write("\n\n=== metric_summary ===\n")
+    f.write(summary.to_string())
+    f.write("\n\n=== http_status ===\n")
+    f.write(df.groupby("http_status").size().to_string())
+
+print(decision_summary.to_string(index=False))
+print(summary.to_string())
+PY
+
+# =========================================================
+# FASE 8 — INTERFACE LOGS
+# =========================================================
+
+kubectl -n trisla logs deployment/trisla-decision-engine --tail=5000 \
+  | grep INTERFACE \
+  | tee "$OUT/analysis/interface_logs_tail.txt"
+
+{
+  echo "CN-I1=$(grep -c 'CN-I1' "$OUT/analysis/interface_logs_tail.txt" || true)"
+  echo "OBS-I1=$(grep -c 'OBS-I1' "$OUT/analysis/interface_logs_tail.txt" || true)"
+  echo "RAN-I1=$(grep -c 'RAN-I1' "$OUT/analysis/interface_logs_tail.txt" || true)"
+  echo "TN-I1=$(grep -c 'TN-I1' "$OUT/analysis/interface_logs_tail.txt" || true)"
+  echo "BC-I1=$(grep -c 'BC-I1' "$OUT/analysis/interface_logs_tail.txt" || true)"
+} | tee "$OUT/analysis/interface_log_counts.txt"
+
+kubectl -n trisla get pods -o wide | tee "$OUT/analysis/pods_after.txt"
+
+kill $PF_PROM $PF_API 2>/dev/null
+
+echo "[OK] LOAD_TEST_06 concluído"
+echo "Dataset: $OUT/analysis/dataset.csv"
+echo "Resumo:  $OUT/analysis/summary.txt"

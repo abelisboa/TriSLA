@@ -1,0 +1,412 @@
+PROMPT_TRISLA_ARCHITECTURE_EVOLUTION_AUDIT_O6
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+SEM DEPLOY
+SEM ALTERAÇÃO DE CÓDIGO
+SEM COMMIT
+SEM PUSH
+
+OBJETIVO
+
+Executar auditoria arquitetural estratégica da TriSLA após o congelamento O1C–O5C para definir oficialmente o roadmap O6→O10.
+
+A evolução deve priorizar:
+
+1. maior alinhamento com 3GPP;
+2. maior alinhamento com O-RAN;
+3. maior alinhamento com ETSI ZSM;
+4. transformação dos pontos parciais em capacidades completas;
+5. exposição de métricas reais no Prometheus;
+6. visualização do potencial da TriSLA no Grafana por meio de gráficos operacionais.
+
+====================================================
+BASELINE CONGELADO
+==================
+
+O1C = NSSF Selection — APPROVED
+O2C = AMF/SMF Binding — APPROVED
+O3C = UPF Binding — APPROVED
+O4C = RAN Binding — APPROVED
+O5C = Transport Binding — APPROVED
+
+Estado atual:
+
+NSI/NSSI
+↓
+Slice Service Binding
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+↓
+RAN
+↓
+TRANSPORT
+↓
+TRANSPORT_CORRELATED
+
+Digest ativo:
+
+ghcr.io/abelisboa/trisla-nasp-adapter@sha256:bb1e44097a40f93257281eb9ed5b601b233cb0537e5bfe9935aa53b500d9a32e
+
+====================================================
+FASE 1 — INVENTÁRIO DO ESTADO ATUAL
+===================================
+
+Mapear tudo que já está implementado:
+
+* NSI/NSSI
+* Slice Service Binding
+* NSSF Selection
+* AMF Binding
+* SMF Binding
+* UPF Binding
+* RAN Binding
+* Transport Binding
+* Blockchain
+* SLA-Agent Assurance
+* Portal
+* Grafana
+* Prometheus
+
+Gerar:
+
+analysis/o6_current_state_inventory.md
+
+====================================================
+FASE 2 — GAP 3GPP
+=================
+
+Auditar aderência a:
+
+* TS 23.501
+* TS 23.502
+* TS 28.541
+* TS 28.533
+* TS 28.550
+* TS 29.244
+* TS 29.503
+* TS 29.518
+* TS 29.520
+
+Responder:
+
+O que já está alinhado?
+
+O que ainda está parcial?
+
+O que falta para maior aderência 3GPP?
+
+Gerar:
+
+analysis/o6_3gpp_gap_audit.md
+
+====================================================
+FASE 3 — GAP O-RAN
+==================
+
+Auditar aderência a:
+
+* SMO
+* Non-RT RIC
+* Near-RT RIC
+* O1
+* A1
+* E2
+* rApps
+* xApps
+* RAN intelligence
+* policy guidance
+
+Responder:
+
+O que existe?
+
+O que é apenas conceitual?
+
+O que falta para a TriSLA se aproximar mais de O-RAN?
+
+Gerar:
+
+analysis/o6_oran_gap_audit.md
+
+====================================================
+FASE 4 — GAP ETSI ZSM
+=====================
+
+Auditar aderência a:
+
+* closed-loop service assurance
+* service orchestration
+* intent-driven management
+* autonomous domain coordination
+* cross-domain observability
+* governance
+* automated action control
+
+Responder:
+
+O que está completo?
+
+O que está parcial?
+
+O que falta para ZSM mais forte?
+
+Gerar:
+
+analysis/o6_zsm_gap_audit.md
+
+====================================================
+FASE 5 — AUDITORIA DOS PONTOS PARCIAIS
+======================================
+
+Auditar especialmente:
+
+* SLA-Agent actions
+* closed-loop actuation
+* Prometheus exporters
+* Grafana dashboards
+* per-slice telemetry
+* decision metrics
+* blockchain metrics
+* runtime assurance metrics
+* core metrics
+* transport metrics
+* O-RAN native integration
+
+Para cada item responder:
+
+STATUS = COMPLETE / PARTIAL / MISSING
+
+O que falta?
+
+Qual fase deve resolver?
+
+Gerar:
+
+analysis/o6_partial_capabilities_audit.md
+
+====================================================
+FASE 6 — PROMETHEUS METRICS GAP
+===============================
+
+Auditar quais métricas existem hoje no Prometheus e quais faltam expor.
+
+Obrigatório avaliar:
+
+* decision_score
+* decision_status
+* intent_id
+* nsi_id
+* slice_type
+* binding_phase
+* nssf_selection_status
+* amf_binding_status
+* smf_binding_status
+* upf_binding_status
+* ran_binding_status
+* transport_binding_status
+* runtime_assurance_status
+* blockchain_commit_status
+* tx_hash availability
+* block_number availability
+* domain_compliance
+* sla_compliance
+* drift_status
+* violations
+* controller_health
+* topology_state
+* failed_intents
+
+Gerar:
+
+analysis/o6_prometheus_metrics_gap.md
+
+====================================================
+FASE 7 — GRAFANA VISUALIZATION GAP
+==================================
+
+Auditar o dashboard atual e definir quais gráficos devem existir para demonstrar o potencial da TriSLA.
+
+Obrigatório propor gráficos para:
+
+* fluxo E2E por intent_id;
+* decision_score por slice;
+* binding_phase por NSI;
+* status NSSF/AMF/SMF/UPF/RAN/Transport;
+* timeline de ACCEPT → TRANSPORT_CORRELATED;
+* SLA-Agent assurance;
+* blockchain commits;
+* transport topology status;
+* domain compliance;
+* violations/drift;
+* multidomain correlation heatmap;
+* per-slice telemetry.
+
+Gerar:
+
+analysis/o6_grafana_gap_and_panel_plan.md
+
+====================================================
+FASE 8 — ROADMAP CANDIDATO O6→O10
+=================================
+
+Comparar opções:
+
+A) Per-Slice Multidomain Telemetry Exporters
+
+B) Prometheus Metrics Expansion
+
+C) Grafana Multidomain Visualization
+
+D) SLA-Agent Controlled Actions
+
+E) O-RAN Native Integration
+
+F) ZSM Closed-Loop Automation
+
+G) Scientific Validation Campaign V3
+
+Classificar por:
+
+* ganho científico;
+* ganho arquitetural;
+* alinhamento 3GPP;
+* alinhamento O-RAN;
+* alinhamento ZSM;
+* risco de regressão;
+* dependências;
+* impacto visual/demonstração.
+
+Gerar:
+
+analysis/o6_roadmap_candidate_matrix.md
+
+====================================================
+FASE 9 — ROADMAP OFICIAL O6→O10
+===============================
+
+Definir roadmap oficial.
+
+Sugestão a ser validada:
+
+O6 — Per-Slice Multidomain Metrics Export
+O7 — Prometheus/Grafana Observability Expansion
+O8 — SLA-Agent Controlled Actions
+O9 — Full Multidomain E2E Validation Campaign
+O10 — Final Architecture Freeze & Scientific Evidence Package
+
+Para cada fase definir:
+
+* objetivo;
+* escopo;
+* fora de escopo;
+* componentes afetados;
+* métricas esperadas;
+* gráficos esperados;
+* critérios de conclusão;
+* risco;
+* rollback.
+
+Gerar:
+
+analysis/OFFICIAL_ROADMAP_O6_O10.md
+
+====================================================
+FASE 10 — VEREDITO EXECUTIVO
+============================
+
+Responder objetivamente:
+
+1. A TriSLA já está suficientemente alinhada a 3GPP/O-RAN/ZSM?
+
+2. Se não, por quê?
+
+3. O que precisa ser feito para completar os pontos parciais?
+
+4. Qual deve ser a próxima fase oficial?
+
+5. Quais métricas precisam aparecer no Prometheus?
+
+6. Quais gráficos precisam aparecer no Grafana?
+
+Gerar:
+
+analysis/o6_executive_recommendation.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/o6_current_state_inventory.md
+analysis/o6_3gpp_gap_audit.md
+analysis/o6_oran_gap_audit.md
+analysis/o6_zsm_gap_audit.md
+analysis/o6_partial_capabilities_audit.md
+analysis/o6_prometheus_metrics_gap.md
+analysis/o6_grafana_gap_and_panel_plan.md
+analysis/o6_roadmap_candidate_matrix.md
+analysis/OFFICIAL_ROADMAP_O6_O10.md
+analysis/o6_executive_recommendation.md
+analysis/final_verdict.md
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+CURRENT_ARCHITECTURE_STATUS = ...
+
+THREE_GPP_ALIGNMENT = COMPLETE / PARTIAL / LOW
+
+ORAN_ALIGNMENT = COMPLETE / PARTIAL / LOW
+
+ETSI_ZSM_ALIGNMENT = COMPLETE / PARTIAL / LOW
+
+PROMETHEUS_VISIBILITY = COMPLETE / PARTIAL / LOW
+
+GRAFANA_VISIBILITY = COMPLETE / PARTIAL / LOW
+
+SLA_AGENT_ACTIONS_STATUS = COMPLETE / PARTIAL / MISSING
+
+CLOSED_LOOP_STATUS = COMPLETE / PARTIAL / MISSING
+
+RECOMMENDED_O6 = ...
+
+RECOMMENDED_O7 = ...
+
+RECOMMENDED_O8 = ...
+
+RECOMMENDED_O9 = ...
+
+RECOMMENDED_O10 = ...
+
+NEXT_PHASE_READY = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+REGRA FINAL
+===========
+
+Não implementar nada.
+
+Apenas auditar, classificar, priorizar e congelar o roadmap O6→O10 com foco em:
+
+3GPP
+O-RAN
+ETSI ZSM
+Prometheus
+Grafana
+SLA-Agent
+Closed-loop assurance
+e demonstração visual do potencial da TriSLA.

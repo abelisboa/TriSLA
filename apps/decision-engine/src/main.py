@@ -121,7 +121,9 @@ from decision_persistence import persist_decision_evidence
 
 from service import DecisionService
 from models import DecisionResult, DecisionInput, SLAIntent, NestSubset, SLAEvaluateInput
-from nest_input_resolver import resolve_nest_for_evaluate
+from i01_metadata_echo import echo_inbound_metadata
+from i01_nest_echo import echo_inbound_nest
+from nest_input_resolver import extract_inbound_nest, resolve_nest_for_evaluate
 from config import config
 from nasp_adapter_client import NASPAdapterClient
 from portal_backend_client import PortalBackendClient
@@ -291,6 +293,9 @@ async def evaluate_sla(sla_input: SLAEvaluateInput):
         decision_result = await decision_service.process_decision_from_input(
             decision_input
         )
+
+        echo_inbound_metadata(decision_result, sla_input.metadata)
+        echo_inbound_nest(decision_result, extract_inbound_nest(sla_input))
 
         decisions_storage[decision_result.decision_id] = decision_result.dict()
 

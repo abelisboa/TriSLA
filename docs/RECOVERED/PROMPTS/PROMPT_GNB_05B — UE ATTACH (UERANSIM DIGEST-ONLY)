@@ -1,0 +1,172 @@
+# =========================================================
+# PROMPT_GNB_05B — UE ATTACH (UERANSIM DIGEST-ONLY)
+# =========================================================
+
+# MISSÃO
+# Executar UE real (UERANSIM) usando imagem por DIGEST remoto,
+# validando attach e PDU session sem ambiguidade de versão.
+
+# REGRAS ABSOLUTAS
+# - PROIBIDO usar latest ou tags
+# - OBRIGATÓRIO usar digest remoto validado
+# - O digest deve ser obtido via skopeo
+# - NÃO alterar AMF
+# - NÃO alterar TriSLA
+# - Evidência completa obrigatória
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+export EVID_DIR="evidencias_gnb_real/single_ue_attach_05b"
+mkdir -p "$EVID_DIR"/{analysis,logs,config}
+
+date -u > "$EVID_DIR/analysis/start_time.txt"
+
+# =========================================================
+# FASE 1 — DEFINIR IMAGEM BASE (SEM DIGEST)
+# =========================================================
+
+UE_IMAGE_BASE="docker.io/free5gc/ueransim"
+
+echo "$UE_IMAGE_BASE" > "$EVID_DIR/analysis/ue_image_base.txt"
+
+# =========================================================
+# FASE 2 — OBTER DIGEST REMOTO (OBRIGATÓRIO)
+# =========================================================
+
+UE_DIGEST=$(skopeo inspect \
+docker://$UE_IMAGE_BASE | jq -r .Digest)
+
+echo "$UE_DIGEST" > "$EVID_DIR/analysis/ue_image_digest.txt"
+
+test -n "$UE_DIGEST" || {
+  echo "[ERRO] Não foi possível obter digest da imagem UE"
+  exit 1
+}
+
+# =========================================================
+# FASE 3 — DEFINIR IMAGEM FINAL (DIGEST ONLY)
+# =========================================================
+
+UE_IMAGE="${UE_IMAGE_BASE}@${UE_DIGEST}"
+
+echo "$UE_IMAGE" > "$EVID_DIR/analysis/ue_image_final.txt"
+
+# =========================================================
+# FASE 4 — VALIDAR PULL REMOTO (ANTI-FALHA)
+# =========================================================
+
+docker pull "$UE_IMAGE" \
+  > "$EVID_DIR/analysis/docker_pull.txt" 2>&1 || {
+  echo "[ERRO] Falha ao puxar imagem por digest"
+  exit 1
+}
+
+# =========================================================
+# FASE 5 — CONFIG UE (ALINHADA)
+# =========================================================
+
+cat > "$EVID_DIR/config/ue.yaml" <<EOF
+supi: "imsi-208930000000001"
+mcc: "208"
+mnc: "93"
+
+key: "8baf473f2f8fd09487cccbd7097c6862"
+opc: "8e27b6af0e692e750f32667a3b14605d"
+
+amf: "8000"
+
+gnbSearchList:
+  - 127.0.0.1
+
+sessions:
+  - type: "IPv4"
+    apn: "internet"
+    slice:
+      sst: 1
+      sd: "010203"
+EOF
+
+cat "$EVID_DIR/config/ue.yaml" > "$EVID_DIR/analysis/ue_config.txt"
+
+# =========================================================
+# FASE 6 — EXECUTAR UE (DIGEST GARANTIDO)
+# =========================================================
+
+docker run --rm \
+  --network host \
+  --cap-add NET_ADMIN \
+  --device /dev/net/tun \
+  -v "$EVID_DIR/config/ue.yaml:/ue.yaml" \
+  "$UE_IMAGE" \
+  nr-ue -c /ue.yaml \
+  > "$EVID_DIR/logs/ue.log" 2>&1 &
+
+UE_PID=$!
+echo "$UE_PID" > "$EVID_DIR/analysis/ue_pid.txt"
+
+sleep 40
+
+# =========================================================
+# FASE 7 — COLETAR LOGS AMF
+# =========================================================
+
+AMF_NS=$(cat evidencias_gnb_real/n2_fix_03/analysis/amf_namespace.txt)
+AMF_POD=$(kubectl -n "$AMF_NS" get pods -o name | grep -i amf | head -n1 | sed 's#pod/##')
+
+kubectl -n "$AMF_NS" logs "$AMF_POD" --since=60s \
+  > "$EVID_DIR/logs/amf.log"
+
+# =========================================================
+# FASE 8 — EXTRAÇÃO DE EVIDÊNCIAS
+# =========================================================
+
+grep -Ei 'registration|registered|pdu|session|establish|accept|reject|error' \
+  "$EVID_DIR/logs/ue.log" \
+  > "$EVID_DIR/analysis/ue_extract.txt" || true
+
+grep -Ei 'registration|authentication|pdu|session|supi|accept|reject' \
+  "$EVID_DIR/logs/amf.log" \
+  > "$EVID_DIR/analysis/amf_extract.txt" || true
+
+ip link | grep -Ei 'tun|ue' \
+  > "$EVID_DIR/analysis/tun_interfaces.txt" || true
+
+# =========================================================
+# FINALIZAÇÃO
+# =========================================================
+
+kill "$UE_PID" 2>/dev/null || true
+
+date -u > "$EVID_DIR/analysis/end_time.txt"
+
+# =========================================================
+# RELATÓRIO FINAL
+# =========================================================
+
+cat > "$EVID_DIR/RELATORIO_GNB_05B.md" <<EOF
+# RELATORIO GNB_05B — UE ATTACH (DIGEST ONLY)
+
+## Imagem UE
+Base: $(cat $EVID_DIR/analysis/ue_image_base.txt)
+Digest: $(cat $EVID_DIR/analysis/ue_image_digest.txt)
+Final: $(cat $EVID_DIR/analysis/ue_image_final.txt)
+
+## UE LOG
+$(cat $EVID_DIR/analysis/ue_extract.txt)
+
+## AMF LOG
+$(cat $EVID_DIR/analysis/amf_extract.txt)
+
+## Interfaces UE
+$(cat $EVID_DIR/analysis/tun_interfaces.txt)
+
+## RESULTADO
+
+SUCESSO se:
+- Registration Accept
+- PDU Session Establishment Accept
+- interface tun criada
+
+EOF
+
+echo "PROMPT_GNB_05B FINALIZADO"

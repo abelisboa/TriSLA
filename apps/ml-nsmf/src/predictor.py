@@ -77,24 +77,50 @@ REGISTRY_DIR_DEFAULT = "/app/models/registry"
 class RiskPredictor:
     """Previsor de risco usando ML. Modelo e scaler obrigatórios (S34.2)."""
 
-    def __init__(self, model_path: Optional[str] = None, scaler_path: Optional[str] = None):
-        model_path, scaler_path = self._resolve_model_paths(model_path, scaler_path)
+    def __init__(
+        self,
+        model_path: Optional[str] = None,
+        scaler_path: Optional[str] = None,
+        *,
+        pin_paths: bool = False,
+        role: str = "default",
+        load_classifier: Optional[bool] = None,
+        classifier_path: Optional[str] = None,
+    ):
+        self.role = role
+        if pin_paths:
+            mp = model_path or MODEL_PATH_DEFAULT
+            sp = scaler_path or SCALER_PATH_DEFAULT
+        else:
+            mp, sp = self._resolve_model_paths(model_path, scaler_path)
         self.model = None
         self.scaler = None
         self.feature_columns = None
         self.model_metadata = None
-        self.model_path = model_path
-        self.scaler_path = scaler_path
+        self.model_path = mp
+        self.scaler_path = sp
 
-        self.model = self._load_model(model_path)
-        self.scaler = self._load_scaler(scaler_path)
+        self.model = self._load_model(mp)
+        self.scaler = self._load_scaler(sp)
         self._load_metadata()
         self.classifier_bundle: Optional[Dict[str, Any]] = None
-        self._load_decision_classifier_optional()
+        if load_classifier is None:
+            if role == "candidate":
+                load_classifier = True
+            elif role == "active":
+                load_classifier = False
+            else:
+                load_classifier = True
+        if load_classifier:
+            self._load_decision_classifier_optional(classifier_path)
+        else:
+            logger.info("[ML] Classifier load skipped for role=%s", role)
 
-    def _load_decision_classifier_optional(self) -> None:
+    def _load_decision_classifier_optional(self, explicit_path: Optional[str] = None) -> None:
         """Carrega decision_classifier.pkl se existir (FASE 11 — híbrido). Opcional."""
         candidates = []
+        if explicit_path:
+            candidates.append(explicit_path)
         env = os.getenv("ML_DECISION_CLASSIFIER_PATH")
         if env:
             candidates.append(env)
@@ -102,6 +128,9 @@ class RiskPredictor:
         # Dev tree: apps/ml-nsmf/src/predictor.py → parents[3] = repo root. In image /app/src only → parents[3] invalid.
         try:
             candidates.append(str(Path(__file__).resolve().parents[3] / "artifacts" / "decision_classifier.pkl"))
+            candidates.append(
+                str(Path(__file__).resolve().parents[1] / "models" / "decision_classifier.pkl")
+            )
         except IndexError:
             pass
         for p in candidates:

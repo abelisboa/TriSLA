@@ -1,0 +1,101 @@
+# =========================================
+# PROMPT_21_V7 — COLETA MÉTRICAS NASP-LEVEL
+# =========================================
+
+# MISSÃO
+# Executar coleta VALIDADA de métricas operacionais E2E do TriSLA,
+# utilizando EXCLUSIVAMENTE o script oficial do repositório.
+
+# SINGLE SOURCE OF TRUTH (SSOT)
+# scripts/prompt21_nasp_metrics_collection.sh
+
+# =========================================
+# REGRAS CRÍTICAS (INVIOLÁVEIS)
+# =========================================
+
+# Cada execução DEVE garantir:
+# ✔ HTTP 200
+# ✔ .decision presente
+# ✔ .metadata.telemetry_snapshot presente
+
+# PROIBIDO:
+# ❌ usar apenas /health como critério de sucesso
+# ❌ registrar medições inválidas
+# ❌ continuar execução após falha
+
+# CRITÉRIO DE INVALIDAÇÃO:
+# ❌ qualquer valor "-1" ou "-1.0" em decision_time.txt invalida o experimento
+
+# ARTEFATOS ESPERADOS:
+# evidencias_metricas_operacionais/raw/*
+# evidencias_metricas_operacionais/analysis/summary.json
+
+# =========================================
+# FASE 0 — ENTRADA PADRÃO
+# =========================================
+
+ssh node006
+
+cd /home/porvir5g/gtp5g/trisla
+
+export KUBECONFIG=/tmp/kubeconfig.node2
+
+# =========================================
+# FASE 1 — PRÉ-VALIDAÇÃO DO AMBIENTE
+# =========================================
+
+echo "[FASE 1] Validando cluster"
+
+kubectl get nodes || exit 1
+kubectl get ns trisla || exit 1
+kubectl -n trisla get pods
+
+# Regra do experimento: ambiente íntegro
+kubectl -n trisla get pods | awk 'NR>1 && $3!="Running" {print "[ERRO] Pod não Running:", $0; exit 1}'
+
+echo "[OK] Ambiente validado"
+
+# =========================================
+# FASE 2 — EXECUÇÃO DA COLETA OFICIAL
+# =========================================
+
+echo "[FASE 2] Executando coleta oficial (SSOT)"
+
+bash scripts/prompt21_nasp_metrics_collection.sh
+
+# =========================================
+# FASE 3 — VALIDAÇÃO DOS ARTEFATOS
+# =========================================
+
+RAW_DIR="evidencias_metricas_operacionais/raw"
+ANALYSIS_DIR="evidencias_metricas_operacionais/analysis"
+
+echo "[FASE 3] Verificando artefatos"
+
+ls -lah "$RAW_DIR" || exit 1
+ls -lah "$ANALYSIS_DIR" || exit 1
+
+# =========================================
+# FASE 4 — VALIDAÇÃO DE INTEGRIDADE
+# =========================================
+
+echo "[FASE 4] Validando decision_time"
+
+if grep -E '^-1(\.0)?$' "$RAW_DIR/decision_time.txt"; then
+  echo "[ERRO] decision_time contém valores inválidos"
+  exit 1
+fi
+
+echo "[FASE 4] Validando summary.json"
+
+cat "$ANALYSIS_DIR/summary.json" | jq || exit 1
+
+# =========================================
+# FASE 5 — OUTPUT FINAL
+# =========================================
+
+echo "[RESULTADO] Métricas operacionais"
+
+cat "$ANALYSIS_DIR/summary.json"
+
+echo "[SUCCESS] Coleta válida — pronta para análise científica"

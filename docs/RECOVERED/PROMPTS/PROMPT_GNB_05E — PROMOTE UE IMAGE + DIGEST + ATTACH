@@ -1,0 +1,159 @@
+# =========================================================
+# PROMPT_GNB_05E — PROMOTE UE IMAGE + DIGEST + ATTACH
+# =========================================================
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+export EVID_DIR="evidencias_gnb_real/single_ue_attach_05e"
+mkdir -p "$EVID_DIR"/{analysis,logs,config}
+
+TS=$(date -u +%Y%m%dT%H%M%SZ)
+
+# =========================================================
+# FASE 1 — IDENTIFICAR IMAGEM LOCAL
+# =========================================================
+
+LOCAL_IMG=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -i ueransim | head -n1)
+
+echo "$LOCAL_IMG" > "$EVID_DIR/analysis/local_image.txt"
+
+test -n "$LOCAL_IMG" || {
+  echo "[ERRO] imagem local não encontrada"
+  exit 1
+}
+
+# =========================================================
+# FASE 2 — TAG PARA GHCR
+# =========================================================
+
+GHCR_IMAGE="ghcr.io/abelisboa/trisla-ueransim:${TS}"
+
+docker tag "$LOCAL_IMG" "$GHCR_IMAGE"
+
+echo "$GHCR_IMAGE" > "$EVID_DIR/analysis/ghcr_image.txt"
+
+# =========================================================
+# FASE 3 — PUSH PARA GHCR
+# =========================================================
+
+docker push "$GHCR_IMAGE" \
+  > "$EVID_DIR/analysis/push.txt" 2>&1 || {
+  echo "[ERRO] falha no push GHCR"
+  exit 1
+}
+
+# =========================================================
+# FASE 4 — OBTER DIGEST REMOTO (PADRÃO PROJETO)
+# =========================================================
+
+UE_DIGEST=$(skopeo inspect \
+--authfile ~/.config/containers/auth.json \
+docker://$GHCR_IMAGE | jq -r .Digest)
+
+echo "$UE_DIGEST" > "$EVID_DIR/analysis/digest.txt"
+
+test -n "$UE_DIGEST" || {
+  echo "[ERRO] digest não obtido"
+  exit 1
+}
+
+UE_IMAGE="ghcr.io/abelisboa/trisla-ueransim@${UE_DIGEST}"
+
+echo "$UE_IMAGE" > "$EVID_DIR/analysis/final_image.txt"
+
+# =========================================================
+# FASE 5 — VALIDAR BINÁRIO
+# =========================================================
+
+docker run --rm "$UE_IMAGE" sh -c '
+which nr-ue || which nrue || which ueransim
+' > "$EVID_DIR/analysis/binary.txt" 2>&1
+
+# =========================================================
+# FASE 6 — CONFIG UE
+# =========================================================
+
+cat > "$EVID_DIR/config/ue.yaml" <<EOF
+supi: "imsi-208930000000001"
+mcc: "208"
+mnc: "93"
+
+key: "8baf473f2f8fd09487cccbd7097c6862"
+opc: "8e27b6af0e692e750f32667a3b14605d"
+
+gnbSearchList:
+  - 127.0.0.1
+
+sessions:
+  - type: "IPv4"
+    apn: "internet"
+    slice:
+      sst: 1
+      sd: "010203"
+EOF
+
+# =========================================================
+# FASE 7 — EXECUTAR UE (AGORA CORRETO)
+# =========================================================
+
+UE_BIN=$(cat "$EVID_DIR/analysis/binary.txt" | head -n1)
+
+docker run --rm \
+  --network host \
+  --cap-add NET_ADMIN \
+  --device /dev/net/tun \
+  -v "$EVID_DIR/config/ue.yaml:/ue.yaml" \
+  "$UE_IMAGE" \
+  "$UE_BIN" -c /ue.yaml \
+  > "$EVID_DIR/logs/ue.log" 2>&1 &
+
+UE_PID=$!
+sleep 40
+
+# =========================================================
+# FASE 8 — LOGS AMF
+# =========================================================
+
+AMF_NS=$(cat evidencias_gnb_real/n2_fix_03/analysis/amf_namespace.txt)
+AMF_POD=$(kubectl -n "$AMF_NS" get pods -o name | grep -i amf | head -n1 | sed 's#pod/##')
+
+kubectl -n "$AMF_NS" logs "$AMF_POD" --since=60s \
+  > "$EVID_DIR/logs/amf.log"
+
+# =========================================================
+# FASE 9 — EXTRAÇÃO
+# =========================================================
+
+grep -Ei 'registration|pdu|session|accept|reject' "$EVID_DIR/logs/ue.log" \
+  > "$EVID_DIR/analysis/ue_extract.txt"
+
+grep -Ei 'registration|pdu|session|accept|reject' "$EVID_DIR/logs/amf.log" \
+  > "$EVID_DIR/analysis/amf_extract.txt"
+
+ip link | grep -Ei 'tun|ue' > "$EVID_DIR/analysis/tun.txt"
+
+kill $UE_PID 2>/dev/null
+
+# =========================================================
+# RELATORIO
+# =========================================================
+
+cat > "$EVID_DIR/RELATORIO_GNB_05E.md" <<EOF
+Imagem final:
+$(cat $EVID_DIR/analysis/final_image.txt)
+
+Digest:
+$(cat $EVID_DIR/analysis/digest.txt)
+
+Binário:
+$(cat $EVID_DIR/analysis/binary.txt)
+
+UE:
+$(cat $EVID_DIR/analysis/ue_extract.txt)
+
+AMF:
+$(cat $EVID_DIR/analysis/amf_extract.txt)
+
+TUN:
+$(cat $EVID_DIR/analysis/tun.txt)
+EOF

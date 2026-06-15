@@ -1,0 +1,47 @@
+contract_version: RAN_CONTRACT_SSOT_V1
+amf:
+  core_namespace_env: NASP_FREE5GC_NAMESPACE
+  core_namespace: ns-1274485
+  pod_label: nf=amf
+  log_tail_lines: 3000
+  observation_window_seconds: 300
+ueransim:
+  ran_namespace_env: GATE_3GPP_UERANSIM_NAMESPACE
+  ran_namespace: ueransim
+  pod_label: app=ueransim-singlepod
+  gnb_container: gnb
+  ue_container: ue
+  log_tail_lines: 500
+lab:
+  default_supi: "imsi-208930000000001"
+  gnb_id: "00000001"
+  plmn:
+    mcc: "208"
+    mnc: "93"
+  pdu_snssai:
+    sst: 1
+    sd: "010203"
+  dnn: internet
+  nci: "0x000000010"
+  tac: 1
+  ran_ref: "ueransim-gnb.ueransim.svc.cluster.local"
+  gnb_pod_ip: "10.233.75.7"
+  user_plane_nsi_id: "22"
+freshness:
+  gnb_id_source_priority:
+    - amf
+    - config
+  ngap_id_source_priority:
+    - amf
+  stale_threshold_seconds: 600
+correlation:
+  orchestration_nsi_ids: ["11", "12", "13"]
+  allow_context_split: true
+  join_keys:
+    - supi
+    - session_id
+    - dnn
+fallback:
+  never_block_instantiate: true
+feature_flags:
+  ran_env: RAN_BINDING_ENABLED

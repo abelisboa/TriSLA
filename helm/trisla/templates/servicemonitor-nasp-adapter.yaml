@@ -1,0 +1,25 @@
+{{- if and .Values.naspAdapter.enabled .Values.naspAdapter.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: trisla-nasp-adapter-metrics-servicemonitor
+  namespace: monitoring
+  labels:
+    release: monitoring
+    app.kubernetes.io/part-of: trisla
+    app.kubernetes.io/managed-by: Helm
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.global.namespace }}
+  selector:
+    matchLabels:
+      app: trisla-nasp-adapter-metrics
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: {{ .Values.naspAdapter.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: {{ .Values.naspAdapter.serviceMonitor.scrapeTimeout | default "25s" }}
+      honorLabels: true
+      sampleLimit: {{ .Values.naspAdapter.serviceMonitor.sampleLimit | default 50000 }}
+{{- end }}

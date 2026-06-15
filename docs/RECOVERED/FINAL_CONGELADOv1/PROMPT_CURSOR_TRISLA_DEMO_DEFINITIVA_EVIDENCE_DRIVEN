@@ -1,0 +1,293 @@
+PROMPT_CURSOR_TRISLA_DEMO_DEFINITIVA_EVIDENCE_DRIVEN
+
+OBJETIVO
+
+Construir a demonstração definitiva da TriSLA baseada exclusivamente:
+
+* no baseline congelado
+* nas evidências aprovadas
+* no runtime real
+* sem hipóteses
+* sem exemplos fictícios
+
+MISSÃO
+
+Gerar o documento final:
+
+TRISLA_DEMO_OPERACIONAL_DEFINITIVA.md
+
+que será utilizado:
+
+* na defesa
+* em apresentações
+* em artigos
+* em demonstrações futuras
+
+REGRAS
+
+1. Não alterar runtime.
+2. Não alterar TriSLA.
+3. Não alterar Free5GC.
+4. Não alterar Kubernetes.
+5. Somente auditoria e documentação.
+6. Utilizar apenas dados congelados.
+7. Utilizar apenas namespaces reais.
+8. Utilizar apenas pods reais.
+9. Utilizar apenas métricas reais.
+10. Utilizar apenas APIs reais.
+
+---
+
+FASE 1
+
+Mapear todos os passos da demonstração.
+
+Gerar:
+
+01_demo_global_flow.md
+
+---
+
+FASE 2
+
+Para cada etapa:
+
+Infra
+
+Core
+
+RAN
+
+Transporte
+
+Telemetria
+
+SEM-CSMF
+
+Decision Engine
+
+SLA-Agent
+
+Blockchain
+
+Runtime Assurance
+
+Observabilidade
+
+Evidências
+
+Gerar:
+
+* objetivo
+* comando
+* resultado esperado
+* logs relevantes
+* evidência associada
+
+---
+
+FASE 3
+
+Criar roteiro de execução por terminal.
+
+Gerar:
+
+02_demo_terminal_script.md
+
+Formato:
+
+PASSO
+
+COMANDO
+
+O QUE ACONTECE
+
+O QUE MOSTRAR
+
+---
+
+FASE 4
+
+Criar roteiro de análise de logs.
+
+Gerar:
+
+03_demo_log_analysis.md
+
+Mapear:
+
+Portal Backend
+
+SEM-CSMF
+
+ML-NSMF
+
+Decision Engine
+
+SLA-Agent
+
+NASP Adapter
+
+BC-NSSMF
+
+Besu
+
+AMF
+
+SMF
+
+UPF
+
+gNB
+
+UE
+
+ONOS
+
+Prometheus
+
+Para cada um:
+
+* comando
+* log esperado
+* interpretação
+
+---
+
+FASE 5
+
+Criar roteiro de observabilidade.
+
+Gerar:
+
+04_demo_observability.md
+
+Mapear:
+
+PRB
+
+Latency
+
+Throughput
+
+CPU
+
+Memory
+
+Availability
+
+RTT
+
+Jitter
+
+e respectivas consultas Prometheus reais.
+
+---
+
+FASE 6
+
+Criar roteiro de submissão SLA.
+
+Gerar:
+
+05_demo_sla_submission.md
+
+Para:
+
+URLLC
+
+eMBB
+
+mMTC
+
+Mostrar:
+
+texto da intenção
+
+saída SEM-CSMF
+
+GST
+
+NEST
+
+Decision Score
+
+Decisão final
+
+---
+
+FASE 7
+
+Criar roteiro de explicação matemática.
+
+Gerar:
+
+06_demo_math_traceability.md
+
+Mapear:
+
+fórmula
+
+variáveis
+
+implementação
+
+arquivo
+
+referência bibliográfica
+
+origem:
+
+3GPP
+
+GSMA
+
+O-RAN
+
+ETSI
+
+ou artigo científico
+
+---
+
+FASE 8
+
+Criar roteiro de defesa.
+
+Gerar:
+
+07_demo_defense_guide.md
+
+Pergunta
+
+Resposta
+
+Evidência
+
+Comando
+
+---
+
+FASE 9
+
+Consolidar.
+
+Gerar:
+
+TRISLA_DEMO_OPERACIONAL_DEFINITIVA.md
+
+Documento único contendo:
+
+* roteiro completo
+* comandos
+* logs
+* métricas
+* matemática
+* observabilidade
+* defesa
+
+---
+
+ENCERRAR COM
+
+TRISLA_DEMO_OPERACIONAL_DEFINITIVA_APPROVED

@@ -1,0 +1,208 @@
+PROMPT_TRISLA_ACT_TN_002_LIVE_FINAL_PREFLIGHT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM COMMIT
+
+SEM PUSH
+
+SEM EXECUTAR INTENT REAL
+
+SEM POST ONOS
+
+SEM DELETE ONOS
+
+OBJETIVO
+
+Executar pre-flight final do ACT-TN-002 LIVE usando o pod atual do SLA-Agent já reconstruído e implantado com:
+
+TN002_LIVE_ENABLED=false
+
+Validar exclusivamente o estado atual do runtime, e não evidências do pod anterior.
+
+====================================================
+BASELINE ATUAL
+==============
+
+Imagem atual:
+
+sha256:ca46e4a...
+
+LIVE stack presente.
+
+TN002_LIVE_ENABLED=false.
+
+ACT-TN-002 LIVE ainda não autorizado.
+
+====================================================
+FASE 1 — POD CURRENT STATE
+==========================
+
+Identificar pod atual.
+
+Validar:
+
+image digest
+
+env vars
+
+PYTHONPATH
+
+módulos actuation
+
+Presença obrigatória:
+
+onos_post
+
+onos_delete
+
+tn002_live
+
+topology_gate
+
+rollback_engine
+
+Gerar:
+
+analysis/tn002_final_preflight_current_pod.md
+
+====================================================
+FASE 2 — FEATURE FLAG SAFETY
+============================
+
+Confirmar:
+
+TN002_LIVE_ENABLED=false
+
+TN002_LIVE_DRYRUN_FALLBACK=true
+
+Nenhuma execução live possível.
+
+Gerar:
+
+analysis/tn002_final_preflight_flags.md
+
+====================================================
+FASE 3 — ONOS CLIENT READINESS
+==============================
+
+Validar apenas em modo seguro:
+
+POST client importável
+
+DELETE client importável
+
+rollback engine importável
+
+Não executar POST.
+
+Não executar DELETE.
+
+Gerar:
+
+analysis/tn002_final_preflight_client_readiness.md
+
+====================================================
+FASE 4 — TOPOLOGY GATE
+======================
+
+Validar gate:
+
+devices
+
+links
+
+hosts
+
+flows
+
+Se topology EMPTY:
+
+LIVE_ALLOWED=false
+
+Gerar:
+
+analysis/tn002_final_preflight_topology_gate.md
+
+====================================================
+FASE 5 — ROLLBACK READINESS
+===========================
+
+Validar:
+
+delete_intent disponível
+
+rollback_reference
+
+rollback_status
+
+rollback metadata
+
+Sem DELETE real.
+
+Gerar:
+
+analysis/tn002_final_preflight_rollback.md
+
+====================================================
+FASE 6 — GOVERNANCE READINESS
+=============================
+
+Validar:
+
+AUTH_OPERATOR
+
+EXECUTING
+
+VERIFY
+
+ROLLED_BACK
+
+TTL
+
+Gerar:
+
+analysis/tn002_final_preflight_governance.md
+
+====================================================
+FASE 7 — VEREDITO FINAL
+=======================
+
+Emitir:
+
+CURRENT_POD_VALIDATED = YES/NO
+
+LIVE_STACK_PRESENT = YES/NO
+
+FEATURE_FLAG_SAFE = YES/NO
+
+ONOS_POST_READY = YES/NO
+
+ONOS_DELETE_READY = YES/NO
+
+ROLLBACK_READY = YES/NO
+
+TOPOLOGY_READY = YES/NO
+
+LIVE_EXECUTION_ALLOWED = YES/NO
+
+READY_FOR_ACT_TN_002_LIVE = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+REGRA FINAL
+===========
+
+Se TOPOLOGY_READY=NO, então:
+
+LIVE_EXECUTION_ALLOWED=NO
+
+Mesmo que POST/DELETE estejam implementados.
+
+Nenhuma mutação ONOS deve ocorrer nesta fase.

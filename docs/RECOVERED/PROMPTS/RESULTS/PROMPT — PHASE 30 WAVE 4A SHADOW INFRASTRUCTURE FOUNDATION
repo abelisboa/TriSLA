@@ -1,0 +1,237 @@
+# PROMPT — PHASE 30 WAVE 4A SHADOW INFRASTRUCTURE FOUNDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 29 concluída
+* Wave 1 Freeze
+* Wave 2 Freeze
+* Wave 3A Freeze
+
+Status:
+
+PHASE_30_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Preparar a infraestrutura necessária para Shadow Validation.
+
+Não executar shadow.
+
+Não promover modelos.
+
+Não realizar retraining.
+
+---
+
+# Fluxo obrigatório
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+e simultaneamente:
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OpenTelemetry
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# Escopo
+
+Model Registry
+
+Shadow Validation Framework
+
+Promotion Governance
+
+Retraining Governance
+
+ML-NSMF
+
+---
+
+# Atividade 1
+
+Auditar arquitetura necessária para:
+
+dual-load
+
+modelo ativo
+
+modelo candidato
+
+---
+
+# Atividade 2
+
+Definir:
+
+golden_vectors_v1
+
+origem
+
+formato
+
+lineage
+
+checksums
+
+---
+
+# Atividade 3
+
+Definir:
+
+shadow logger
+
+payload
+
+armazenamento
+
+traceabilidade
+
+retenção
+
+---
+
+# Atividade 4
+
+Definir:
+
+candidate lifecycle
+
+SCIENTIFIC_BASELINE
+↓
+CANDIDATE
+↓
+SHADOW
+
+---
+
+# Atividade 5
+
+Mapear mudanças necessárias no ML-NSMF
+
+sem implementar
+
+---
+
+# Atividade 6
+
+Mapear mudanças necessárias em:
+
+Model Registry
+
+Baseline Registry
+
+Change Control
+
+---
+
+# Proibido
+
+Deploy
+
+Build
+
+Promotion
+
+Retraining
+
+Shadow Execution
+
+Model Replacement
+
+Digest Changes
+
+Runtime Changes
+
+G3-D
+
+Semantic Consumers
+
+---
+
+# Entregáveis
+
+SHADOW_INFRASTRUCTURE_FOUNDATION.md
+
+DUAL_LOAD_ARCHITECTURE.md
+
+GOLDEN_VECTOR_SPECIFICATION.md
+
+SHADOW_LOGGER_SPECIFICATION.md
+
+CANDIDATE_LIFECYCLE_PLAN.md
+
+PHASE_30_COMPLETION_REPORT.md
+
+---
+
+# Critérios de aprovação
+
+SHADOW_INFRASTRUCTURE_DESIGNED = TRUE
+
+DUAL_LOAD_DEFINED = TRUE
+
+GOLDEN_VECTOR_SPEC_DEFINED = TRUE
+
+SHADOW_LOGGER_DEFINED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+SHADOW_EXECUTION = NOT_STARTED
+
+---
+
+# Evidências
+
+evidencias_trisla_phase30_shadow_foundation_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_30_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não executar Shadow.
+
+Não promover modelos.
+
+Não iniciar Retraining.
+
+Aguardar aprovação humana.

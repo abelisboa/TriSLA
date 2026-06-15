@@ -18,6 +18,7 @@ import httpx
 from src.config import settings
 from src.telemetry.contract_v2 import apply_telemetry_contract_v2
 from src.telemetry.promql_ssot import PROMQL_SSOT
+from src.telemetry.reliability_proxy import reliability_pct_from_packet_loss
 from src.utils.prometheus_response import safe_extract_result
 
 logger = logging.getLogger(__name__)
@@ -137,6 +138,33 @@ async def _query_range_mean(
         return None
 
 
+async def _query_instant_scalar(
+    client: httpx.AsyncClient,
+    query: str,
+) -> Optional[float]:
+    """Instant query for ratio/rate expressions (Sprint 7C packet_loss_pct)."""
+    url = f"{_prom_base_url()}/api/v1/query"
+    try:
+        r = await client.get(url, params={"query": query}, timeout=httpx.Timeout(2.0))
+        r.raise_for_status()
+        data = r.json()
+        if not isinstance(data, dict) or data.get("status") != "success":
+            return None
+        results = safe_extract_result(data)
+        if not results:
+            return None
+        val = results[0].get("value")
+        if not val or len(val) < 2:
+            return None
+        out = float(val[1])
+        if out != out:  # NaN
+            return None
+        return out
+    except Exception as exc:
+        logger.warning("[TELEMETRY] prometheus query instant failed query=%s err=%s", query[:80], exc)
+        return None
+
+
 async def _query_range_spread_ms(
     client: httpx.AsyncClient,
     query: str,
@@ -177,9 +205,14 @@ async def collect_domain_metrics_async(
         "execution_id": execution_id,
         "timestamp": timestamp_decision_iso
         or datetime.now(timezone.utc).isoformat(),
-        "ran": {"prb_utilization": None, "latency": None},
-        "transport": {"rtt": None, "jitter": None},
-        "core": {"cpu": None, "memory": None},
+        "ran": {"prb_utilization": None, "latency": None, "reliability_pct": None},
+        "transport": {
+            "rtt": None,
+            "jitter": None,
+            "bandwidth_mbps": None,
+            "packet_loss_pct": None,
+        },
+        "core": {"cpu": None, "memory": None, "availability_pct": None},
     }
 
     queries = {
@@ -189,6 +222,7 @@ async def collect_domain_metrics_async(
         "trans_jit": (_promql("TRANSPORT_JITTER"), "transport", "jitter"),
         "core_cpu": (_promql("CORE_CPU"), "core", "cpu"),
         "core_mem": (_promql("CORE_MEMORY"), "core", "memory"),
+        "trans_bw": (_promql("TRANSPORT_BANDWIDTH_MBPS"), "transport", "bandwidth_mbps"),
     }
 
     t0 = time.perf_counter()
@@ -226,6 +260,33 @@ async def collect_domain_metrics_async(
                 sp = await _query_range_spread_ms(client, spread_q, t_start, t_end, "1s")
                 if sp is not None:
                     snapshot["transport"]["jitter"] = sp
+
+            pl_q = _promql("TRANSPORT_PACKET_LOSS_PCT")
+            if pl_q:
+                pl = await _query_instant_scalar(client, pl_q)
+                if pl is not None:
+                    snapshot["transport"]["packet_loss_pct"] = pl
+
+            if snapshot["ran"].get("reliability_pct") is None:
+                pl_obs = snapshot["transport"].get("packet_loss_pct")
+                if pl_obs is not None:
+                    snapshot["ran"]["reliability_pct"] = reliability_pct_from_packet_loss(
+                        float(pl_obs)
+                    )
+                else:
+                    rel_q = _promql("RELIABILITY_PROXY_PCT")
+                    if rel_q:
+                        rel = await _query_instant_scalar(client, rel_q)
+                        if rel is not None:
+                            snapshot["ran"]["reliability_pct"] = max(
+                                0.0, min(100.0, float(rel))
+                            )
+
+            av_q = _promql("CORE_AVAILABILITY_PCT")
+            if av_q and snapshot["core"].get("availability_pct") is None:
+                av = await _query_instant_scalar(client, av_q)
+                if av is not None:
+                    snapshot["core"]["availability_pct"] = av
 
     try:
         await asyncio.wait_for(run_queries(), timeout=3.0)

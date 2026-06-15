@@ -1,0 +1,221 @@
+# PROMPT — PHASE 46 WAVE 4 FINAL GOVERNANCE CLOSURE
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Wave 1 Operational Freeze
+* Wave 3A Operational Freeze
+* Wave 4 Closed
+* Results Freeze Main
+* Architecture Freeze
+* Scientific Baseline Freeze
+
+---
+
+# Estado oficial
+
+WAVE1_FINAL_STATUS = CLOSED_OPERATIONAL_FREEZE
+
+WAVE2_FINAL_STATUS = CLOSED
+
+WAVE3A_FINAL_STATUS = CLOSED_OPERATIONAL_FREEZE
+
+WAVE4_FINAL_STATUS = CLOSED_NOT_PROMOTABLE
+
+---
+
+# Fluxo obrigatório TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+Proibido alterar esta sequência.
+
+Qualquer proposta que modifique este fluxo deve ser classificada como:
+
+ARCHITECTURAL_CHANGE
+
+e interrompida para aprovação humana.
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+Política congelada:
+
+snapshot window = [t-1s,t]
+
+step = 1s
+
+SNAPSHOT_MAX_AGE = 35s
+
+Qualquer análise futura deve validar explicitamente esta cadeia antes de aprovar mudanças.
+
+---
+
+# Objetivo
+
+Encerrar formalmente a trilha de Shadow Validation e consolidar o estado governado do ML-NSMF.
+
+---
+
+# Fontes obrigatórias
+
+evidencias_trisla_phase29_shadow_readiness_*
+
+evidencias_trisla_phase30_shadow_foundation_*
+
+evidencias_trisla_phase31_golden_vectors_*
+
+evidencias_trisla_phase32_dual_load_*
+
+evidencias_trisla_phase33_shadow_logger_*
+
+evidencias_trisla_phase34_offline_replay_*
+
+evidencias_trisla_phase35_offline_replay_*
+
+evidencias_trisla_phase36_replay_analysis_*
+
+evidencias_trisla_phase37_model_divergence_*
+
+evidencias_trisla_phase38_model_comparability_*
+
+evidencias_trisla_phase39_pm2_validation_*
+
+evidencias_trisla_phase40_runtime_shadow_*
+
+evidencias_trisla_phase41_embb_flip_analysis_*
+
+evidencias_trisla_phase42_embb_boundary_analysis_*
+
+evidencias_trisla_phase43_embb_counterfactual_*
+
+evidencias_trisla_phase44_operational_calibration_*
+
+evidencias_trisla_phase45_wave4_final_consolidation_*
+
+---
+
+# Atividade 1
+
+Emitir classificação final consolidada do:
+
+BUNDLE-SCI-001
+
+---
+
+# Atividade 2
+
+Validar consistência entre:
+
+PM-1
+PM-2
+PM-3
+PM-4
+PM-5
+PM-6
+
+e registries finais.
+
+---
+
+# Atividade 3
+
+Produzir:
+
+MODEL_GOVERNANCE_FINAL_STATE.md
+
+---
+
+# Atividade 4
+
+Produzir:
+
+WAVE4_EXECUTIVE_SUMMARY.md
+
+com:
+
+* conquistas
+* limitações
+* blockers
+* lessons learned
+
+---
+
+# Atividade 5
+
+Produzir:
+
+FUTURE_RESEARCH_CANDIDATES.md
+
+somente como catálogo de oportunidades
+
+sem iniciar execução.
+
+---
+
+# Critérios
+
+MODEL_GOVERNANCE_CLOSED = TRUE
+
+WAVE4_FULLY_CLOSED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+NO_PROMOTION = TRUE
+
+NO_RETRAINING = TRUE
+
+---
+
+# Resultado esperado
+
+PHASE_46_STATUS = READY_FOR_REVIEW
+
+MODEL_GOVERNANCE_STATUS = CLOSED
+
+WAVE4_STATUS = ARCHIVED
+
+Parar.
+
+Não iniciar Wave 5.
+
+Não iniciar Promotion.
+
+Não iniciar Retraining.
+
+Aguardar aprovação humana.

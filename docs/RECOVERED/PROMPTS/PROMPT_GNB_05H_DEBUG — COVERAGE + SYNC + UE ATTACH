@@ -1,0 +1,235 @@
+# =========================================================
+# PROMPT_GNB_05H_DEBUG — COVERAGE + SYNC + UE ATTACH
+# =========================================================
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+export EVID_DIR="$(pwd)/evidencias_gnb_real/single_ue_attach_05h_debug"
+mkdir -p "$EVID_DIR"/{analysis,logs,config}
+
+date -u > "$EVID_DIR/analysis/start_time.txt"
+hostname > "$EVID_DIR/analysis/host.txt"
+
+# =========================================================
+# FASE 1 — LIMPEZA CONTROLADA
+# =========================================================
+
+pkill -f "nr-ue" || true
+pkill -f "gnb -c" || true
+pkill -f "srsran.*gnb" || true
+sleep 3
+
+ps aux | grep -Ei 'gnb|nr-ue|ueransim' | grep -v grep \
+  > "$EVID_DIR/analysis/processes_after_cleanup.txt" || true
+
+# =========================================================
+# FASE 2 — IDENTIFICAR IMAGEM UE LOCAL
+# =========================================================
+
+LOCAL_UE_IMG=$(cat evidencias_gnb_real/single_ue_attach_05h/analysis/local_image.txt)
+
+echo "$LOCAL_UE_IMG" > "$EVID_DIR/analysis/local_ue_image.txt"
+
+docker run --rm --entrypoint /bin/sh "$LOCAL_UE_IMG" -c 'which nr-ue && nr-ue --version 2>/dev/null || true' \
+  > "$EVID_DIR/analysis/ue_binary_check.txt" 2>&1 || true
+
+# =========================================================
+# FASE 3 — PREPARAR CONFIG gNB VALIDADA
+# =========================================================
+
+GNB_CONFIG_SRC="evidencias_gnb_real/ng_setup_04c/config/gnb.yaml"
+
+test -f "$GNB_CONFIG_SRC" || {
+  echo "[ERRO] Config gNB validada não encontrada"
+  exit 1
+}
+
+cp "$GNB_CONFIG_SRC" "$EVID_DIR/config/gnb.yaml"
+
+cat "$EVID_DIR/config/gnb.yaml" > "$EVID_DIR/analysis/gnb_config_used.txt"
+
+# =========================================================
+# FASE 4 — PREPARAR CONFIG UE VALIDADA
+# =========================================================
+
+UE_CONFIG_SRC="evidencias_gnb_real/single_ue_attach_05h/config/ue.yaml"
+
+test -f "$UE_CONFIG_SRC" || {
+  echo "[ERRO] Config UE validada não encontrada"
+  exit 1
+}
+
+cp "$UE_CONFIG_SRC" "$EVID_DIR/config/ue.yaml"
+
+cat "$EVID_DIR/config/ue.yaml" > "$EVID_DIR/analysis/ue_config_used.txt"
+
+# =========================================================
+# FASE 5 — INICIAR gNB E VALIDAR NG SETUP
+# =========================================================
+
+docker run --rm \
+  --network host \
+  -v "$EVID_DIR/config/gnb.yaml:/gnb.yaml" \
+  softwareradiosystems/srsran-project \
+  gnb -c /gnb.yaml \
+  > "$EVID_DIR/logs/gnb.log" 2>&1 &
+
+GNB_PID=$!
+echo "$GNB_PID" > "$EVID_DIR/analysis/gnb_pid.txt"
+
+sleep 15
+
+grep -Ei 'N2: Connection|NG Setup|gNB started|cell|pci|plmn|tac|error|fail' \
+  "$EVID_DIR/logs/gnb.log" \
+  > "$EVID_DIR/analysis/gnb_start_extract.txt" || true
+
+if ! grep -q "gNB started" "$EVID_DIR/logs/gnb.log"; then
+  echo "[ERRO] gNB não iniciou corretamente" > "$EVID_DIR/analysis/error.txt"
+  kill "$GNB_PID" 2>/dev/null || true
+  exit 1
+fi
+
+# =========================================================
+# FASE 6 — INICIAR UE COM gNB ATIVO
+# =========================================================
+
+docker run --rm \
+  --network host \
+  --cap-add NET_ADMIN \
+  --device /dev/net/tun \
+  -v "$EVID_DIR/config/ue.yaml:/ue.yaml" \
+  "$LOCAL_UE_IMG" \
+  -c /ue.yaml \
+  > "$EVID_DIR/logs/ue.log" 2>&1 &
+
+UE_PID=$!
+echo "$UE_PID" > "$EVID_DIR/analysis/ue_pid.txt"
+
+sleep 50
+
+# =========================================================
+# FASE 7 — COLETAR LOGS CORE RECENTES
+# =========================================================
+
+AMF_NS=$(cat evidencias_gnb_real/n2_fix_03/analysis/amf_namespace.txt)
+AMF_POD=$(kubectl -n "$AMF_NS" get pods -o name | grep -i amf | head -n1 | sed 's#pod/##')
+
+SMF_NS=$(kubectl get pods -A | grep -i smf | awk '{print $1}' | head -n1)
+SMF_POD=$(kubectl get pods -A | grep -i smf | awk '{print $2}' | head -n1)
+
+UPF_NS=$(kubectl get pods -A | grep -i upf | awk '{print $1}' | head -n1)
+UPF_POD=$(kubectl get pods -A | grep -i upf | awk '{print $2}' | head -n1)
+
+kubectl -n "$AMF_NS" logs "$AMF_POD" --since=90s \
+  > "$EVID_DIR/logs/amf.log" 2>&1 || true
+
+kubectl -n "$SMF_NS" logs "$SMF_POD" --since=90s \
+  > "$EVID_DIR/logs/smf.log" 2>&1 || true
+
+kubectl -n "$UPF_NS" logs "$UPF_POD" --since=90s \
+  > "$EVID_DIR/logs/upf.log" 2>&1 || true
+
+# =========================================================
+# FASE 8 — EXTRAÇÕES TÉCNICAS
+# =========================================================
+
+grep -Ei 'cell|selected|coverage|plmn|rrc|nas|registration|authentication|security|pdu|session|accept|reject|fail|error' \
+  "$EVID_DIR/logs/ue.log" \
+  > "$EVID_DIR/analysis/ue_extract.txt" || true
+
+grep -Ei 'ue|rrc|ngap|pdu|session|registration|connected|error|fail' \
+  "$EVID_DIR/logs/gnb.log" \
+  > "$EVID_DIR/analysis/gnb_extract.txt" || true
+
+grep -Ei 'registration|authentication|security|pdu|session|supi|imsi|accept|reject|fail|error' \
+  "$EVID_DIR/logs/amf.log" \
+  > "$EVID_DIR/analysis/amf_extract.txt" || true
+
+grep -Ei 'pdu|session|dnn|snssai|n4|pfcp|accept|reject|fail|error' \
+  "$EVID_DIR/logs/smf.log" \
+  > "$EVID_DIR/analysis/smf_extract.txt" || true
+
+grep -Ei 'pfcp|pdr|far|qer|gtp|n3|session|created|fail|error' \
+  "$EVID_DIR/logs/upf.log" \
+  > "$EVID_DIR/analysis/upf_extract.txt" || true
+
+ip a > "$EVID_DIR/analysis/ip_after.txt" 2>&1 || true
+ip route > "$EVID_DIR/analysis/routes_after.txt" 2>&1 || true
+ip link | grep -Ei 'tun|ue|uesim' > "$EVID_DIR/analysis/tun_interfaces.txt" || true
+
+# =========================================================
+# FASE 9 — TESTE DE DADOS SE HOUVER INTERFACE UE
+# =========================================================
+
+UE_IF=$(ip -o link | awk -F': ' '/tun|ue|uesim/ {print $2; exit}')
+echo "$UE_IF" > "$EVID_DIR/analysis/ue_interface.txt"
+
+if [ -n "$UE_IF" ]; then
+  ping -I "$UE_IF" -c 5 8.8.8.8 \
+    > "$EVID_DIR/analysis/ping_ue_if.txt" 2>&1 || true
+else
+  echo "Nenhuma interface UE/TUN detectada" > "$EVID_DIR/analysis/ping_ue_if.txt"
+fi
+
+# =========================================================
+# FASE 10 — ENCERRAMENTO
+# =========================================================
+
+kill "$UE_PID" 2>/dev/null || true
+kill "$GNB_PID" 2>/dev/null || true
+
+date -u > "$EVID_DIR/analysis/end_time.txt"
+
+# =========================================================
+# FASE 11 — RELATÓRIO FINAL
+# =========================================================
+
+cat > "$EVID_DIR/RELATORIO_GNB_05H_DEBUG.md" <<EOF
+# RELATÓRIO GNB_05H_DEBUG — COVERAGE AND SYNC
+
+## Objetivo
+Validar UE único com gNB ativo simultaneamente, corrigindo falha anterior de seleção de célula.
+
+## Imagem UE
+$(cat "$EVID_DIR/analysis/local_ue_image.txt")
+
+## gNB start
+$(cat "$EVID_DIR/analysis/gnb_start_extract.txt")
+
+## gNB runtime
+$(cat "$EVID_DIR/analysis/gnb_extract.txt")
+
+## UE runtime
+$(cat "$EVID_DIR/analysis/ue_extract.txt")
+
+## AMF
+$(cat "$EVID_DIR/analysis/amf_extract.txt")
+
+## SMF
+$(cat "$EVID_DIR/analysis/smf_extract.txt")
+
+## UPF
+$(cat "$EVID_DIR/analysis/upf_extract.txt")
+
+## Interfaces UE/TUN
+$(cat "$EVID_DIR/analysis/tun_interfaces.txt")
+
+## Ping UE
+$(cat "$EVID_DIR/analysis/ping_ue_if.txt")
+
+## Critério de sucesso
+SUCESSO se houver:
+- célula encontrada/selecionada pelo UE;
+- RRC connected;
+- Registration Accept;
+- PDU Session Establishment Accept;
+- interface UE/TUN criada.
+
+FALHA se persistir:
+- PLMN selection failure;
+- no cells in coverage;
+- no suitable cell found;
+- ausência de eventos no AMF.
+EOF
+
+echo "PROMPT_GNB_05H_DEBUG FINALIZADO"

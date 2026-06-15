@@ -1,0 +1,300 @@
+PROMPT_TRISLA_O8C_W2B_ONOS_INTENT_DRY_RUN
+
+MODO:
+CONTROLLED IMPLEMENTATION
+
+OBJETIVO
+
+Implementar ACT-TN-002 em modo DRY-RUN.
+
+ATENÇÃO:
+
+Nenhum intent será enviado ao ONOS.
+
+Nenhuma rota será criada.
+
+Nenhum fluxo será instalado.
+
+Nenhuma alteração ocorrerá na rede.
+
+O objetivo é validar:
+
+Authorize
+↓
+Execute
+↓
+Verify
+↓
+Rollback
+
+utilizando payloads ONOS sintéticos.
+
+====================================================
+BASELINE
+========
+
+O1C–O7D = FROZEN
+
+O8A = APPROVED
+
+O8B = APPROVED
+
+O8C Wave1 = APPROVED
+
+O8C W2A = APPROVED
+
+Digest ativo:
+
+sha256:2641a3618da2f1212c4006d11729a94b0f961952cd7afeabaa5aed0c60a454cc
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+PROIBIDO
+
+POST /onos/v1/intents
+
+DELETE /onos/v1/intents
+
+PUT /onos/v1/intents
+
+Criar flows
+
+Criar intents
+
+Modificar ONOS
+
+Modificar tráfego
+
+Modificar Core
+
+Modificar RAN
+
+Modificar Transport
+
+====================================================
+PERMITIDO
+=========
+
+GET ONOS
+
+Payload generation
+
+Payload validation
+
+Governance
+
+Audit trail
+
+Prometheus
+
+Grafana
+
+Verify
+
+Rollback metadata
+
+====================================================
+FASE 1 — ACT-TN-002 SCHEMA
+==========================
+
+Implementar:
+
+ActuationRequest
+
+action_type:
+
+ACT-TN-002
+
+action_domain:
+
+TRANSPORT
+
+risk_level:
+
+CONTROLLED
+
+Gerar:
+
+analysis/o8c_w2b_schema.md
+
+====================================================
+FASE 2 — INTENT PAYLOAD MODEL
+=============================
+
+Gerar payload ONOS sintético.
+
+Persistir:
+
+intent_type
+
+src
+
+dst
+
+constraints
+
+bandwidth
+
+priority
+
+Sem envio.
+
+Gerar:
+
+analysis/o8c_w2b_payload_model.md
+
+====================================================
+FASE 3 — AUTHORIZATION
+======================
+
+Obrigatório:
+
+AUTH_OPERATOR
+
+Sem AUTH_OPERATOR:
+
+AUTH_DENIED
+
+====================================================
+FASE 4 — EXECUTION
+==================
+
+Executar:
+
+EXECUTING
+↓
+SUCCEEDED
+
+sem chamada ONOS.
+
+====================================================
+FASE 5 — VERIFY
+===============
+
+Executar:
+
+ACT-ASSUR-002
+
+Registrar verify.
+
+====================================================
+FASE 6 — ROLLBACK
+=================
+
+Criar rollback metadata.
+
+Sem ação de rede.
+
+====================================================
+FASE 7 — PROMETHEUS
+===================
+
+Exportar:
+
+trisla_transport_dryrun_total
+
+trisla_transport_dryrun_success_total
+
+trisla_transport_dryrun_verify_total
+
+====================================================
+FASE 8 — GRAFANA
+================
+
+Atualizar:
+
+DB-GOV-001
+
+DB-LIFE-001
+
+====================================================
+FASE 9 — REGRESSION
+===================
+
+Validar:
+
+Portal
+
+SEM
+
+ML
+
+DE
+
+BC
+
+SLA-Agent
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+RAN
+
+Transport
+
+Sem regressão.
+
+====================================================
+FASE 10 — BUILD
+===============
+
+Git
+↓
+GitHub
+↓
+GHCR
+↓
+Digest
+
+Nunca latest.
+
+====================================================
+FASE 11 — DEPLOY
+================
+
+Obrigatório:
+
+ssh node006
+
+Deploy por digest.
+
+====================================================
+FASE 12 — EVIDENCE PACK
+=======================
+
+Gerar:
+
+evidencias_trisla_o8c_w2b_onos_intent_dryrun_<timestamp>
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+ACT_TN_002_IMPLEMENTED = YES/NO
+
+AUTHORIZATION_VALIDATED = YES/NO
+
+EXECUTION_VALIDATED = YES/NO
+
+VERIFY_VALIDATED = YES/NO
+
+ROLLBACK_VALIDATED = YES/NO
+
+ONOS_MUTATION = NO
+
+DOMAIN_MUTATION = NO
+
+REGRESSION = NO
+
+READY_FOR_W2C = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH

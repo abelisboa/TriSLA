@@ -1,0 +1,212 @@
+PROMPT_CURSOR_TRISLA_DATASET_FINAL_E_ANALISE_V1
+(DATASET CIENTÍFICO + ANÁLISE SLA-AWARE POR SLICE)
+
+🎯 MISSÃO
+
+Gerar dataset científico final do TriSLA e realizar análise estatística para demonstrar:
+
+1. Diferenciação entre URLLC, eMBB e mMTC
+2. Impacto dos domínios (RAN, Transporte, Core)
+3. SLA-awareness no nível de score
+4. Sensibilidade do sistema a condições de rede
+
+---
+
+# 🚨 REGRAS ABSOLUTAS
+
+❌ NÃO alterar código
+❌ NÃO alterar thresholds
+❌ NÃO alterar pesos
+❌ NÃO alterar arquitetura
+❌ NÃO usar dados sintéticos
+❌ NÃO misturar cenários
+
+✔ usar apenas endpoint real:
+POST /api/v1/sla/submit
+
+✔ manter controle experimental
+✔ evidência obrigatória
+
+---
+
+# 📁 OUTPUT
+
+Salvar em:
+
+evidencias_resultados_trisla_baseline_v11/
+
+## Dataset
+- dataset/dataset_trisla_final.csv
+- dataset/dataset_trisla_final.json
+
+## Análise
+- analysis/statistical_analysis.txt
+- analysis/slice_score_analysis.csv
+
+## Figuras
+- figures/score_by_slice.png
+- figures/score_distribution.png
+- figures/sensitivity_analysis.png
+
+---
+
+# =========================
+# 🧪 FASE 1 — EXECUÇÃO DOS REGIMES
+# =========================
+
+Executar:
+
+### REGIME 1 — RAN variável
+- PRB: baixo / médio / alto
+
+### REGIME 2 — Transporte variável
+- RTT/jitter em níveis crescente
+
+### REGIME 3 — Core variável
+- CPU/mem em níveis crescente
+
+---
+
+## Para cada regime:
+
+Executar:
+
+- URLLC
+- eMBB
+- mMTC
+
+---
+
+## Volume recomendado
+
+- 30 amostras por regime × slice
+- total ≈ 270 execuções
+
+sleep 4s entre requests
+
+---
+
+# =========================
+# 📊 FASE 2 — CAMPOS DO DATASET
+# =========================
+
+Cada linha:
+
+## Identificação
+- execution_id
+- scenario
+- slice_type
+
+## Entrada
+- latency
+- reliability
+- throughput
+- device_count
+
+## Telemetria real
+- ran_prb_utilization
+- transport_rtt
+- transport_jitter
+- core_cpu
+- core_memory
+
+## Decisão
+- decision
+- decision_score
+- decision_band
+- decision_mode
+
+## Explicabilidade
+- reason_codes
+- telemetry_complete
+
+---
+
+# =========================
+# 📈 FASE 3 — ANÁLISE ESTATÍSTICA
+# =========================
+
+## 1. Score médio por slice
+
+Calcular:
+
+- média
+- desvio padrão
+- intervalo
+
+---
+
+## 2. Comparação entre slices
+
+Comparar:
+
+- URLLC vs eMBB
+- URLLC vs mMTC
+- eMBB vs mMTC
+
+---
+
+## 3. Correlação
+
+- PRB vs decision_score
+- RTT vs decision_score
+- CPU vs decision_score
+
+---
+
+## 4. Sensibilidade
+
+Medir:
+
+Δ score / Δ variável
+
+para cada domínio
+
+---
+
+# =========================
+# 📊 FASE 4 — FIGURAS IEEE
+# =========================
+
+Gerar:
+
+## 1. Score por slice
+- boxplot
+
+## 2. Distribuição
+- histograma por slice
+
+## 3. Sensibilidade
+- curvas de impacto
+
+---
+
+# =========================
+# 🧠 FASE 5 — INTERPRETAÇÃO
+# =========================
+
+Responder:
+
+1. Há diferença estatística entre slices?
+2. Qual slice tem menor score médio?
+3. URLLC é mais penalizado?
+4. Transporte impacta score?
+5. Core atua como fator secundário?
+
+---
+
+# =========================
+# ❌ CRITÉRIOS DE FALHA
+# =========================
+
+- dataset inconsistente
+- ausência de variação de score
+- telemetria ausente
+
+---
+
+# =========================
+# 💬 FRASE FINAL OBRIGATÓRIA
+# =========================
+
+“A continuidade do TriSLA será conduzida com base em evidências reais, validação incremental e aderência estrita à arquitetura proposta, evitando regressões e garantindo consistência científica.”

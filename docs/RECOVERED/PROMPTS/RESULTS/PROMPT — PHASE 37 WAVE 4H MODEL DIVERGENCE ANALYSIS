@@ -1,0 +1,269 @@
+# PROMPT — PHASE 37 WAVE 4H MODEL DIVERGENCE ANALYSIS
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 36 aprovada
+* Wave 1 Freeze ativo
+* Wave 3A Freeze ativo
+* Wave 4 Replay concluída
+
+Status:
+
+PHASE_37_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Identificar a causa exata da divergência entre:
+
+ACTIVE_RUNTIME
+
+BUNDLE-OP-001
+
+e
+
+CANDIDATE
+
+BUNDLE-SCI-001
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+Nenhuma análise pode assumir fluxo diferente.
+
+Nenhum documento pode remover:
+
+* NASP Adapter
+* 5GC
+* ONOS
+* UERANSIM
+* Prometheus
+* OTLP
+* SLA-Agent
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# Baselines obrigatórios
+
+RESULTS_FREEZE_MAIN
+
+golden_vectors_v1.json
+
+golden_vectors_manifest_v1.json
+
+MODEL_REGISTRY_V1.json
+
+MODEL_PROMOTION_REGISTRY.json
+
+SHADOW_VALIDATION_REGISTRY.json
+
+OFFLINE_REPLAY_ANALYSIS_REPORT.md
+
+PARITY_MATRIX.json
+
+---
+
+# Escopo
+
+Análise apenas.
+
+Read-only.
+
+Nenhuma implementação.
+
+Nenhum deploy.
+
+Nenhum replay novo.
+
+Nenhum shadow runtime.
+
+Nenhuma promoção.
+
+Nenhum retraining.
+
+---
+
+# Investigações obrigatórias
+
+D1
+
+Feature vector comparison
+
+ACTIVE vs CANDIDATE
+
+---
+
+D2
+
+Pre-processing comparison
+
+Scaler
+Normalization
+Feature ordering
+
+---
+
+D3
+
+Prediction path comparison
+
+Regressor
+
+vs
+
+Classifier v7
+
+---
+
+D4
+
+Confidence generation comparison
+
+---
+
+D5
+
+Slice analysis
+
+URLLC
+
+eMBB
+
+mMTC
+
+---
+
+D6
+
+Decision equivalence
+
+Se ambos produzem a mesma ação final.
+
+---
+
+D7
+
+Explainability equivalence
+
+SHAP
+
+LIME
+
+Top factors
+
+Dominant domain
+
+---
+
+# Produzir
+
+MODEL_DIVERGENCE_ANALYSIS.md
+
+FEATURE_PATH_COMPARISON.md
+
+CONFIDENCE_COMPARISON.md
+
+SLICE_LEVEL_ANALYSIS.md
+
+ROOT_CAUSE_REPORT.md
+
+PROMOTION_BLOCKER_MATRIX.json
+
+---
+
+# Classificações obrigatórias
+
+ROOT_CAUSE_IDENTIFIED
+
+TRUE/FALSE
+
+DIVERGENCE_TYPE
+
+ARCHITECTURAL
+
+FEATURE
+
+TRAINING
+
+SCALING
+
+CLASSIFICATION_LOGIC
+
+OTHER
+
+---
+
+# Critérios de aprovação
+
+MODEL_DIVERGENCE_ANALYZED = TRUE
+
+ROOT_CAUSE_CLASSIFIED = TRUE
+
+PROMOTION_BLOCKERS_IDENTIFIED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase37_model_divergence_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_37_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Runtime Shadow.
+
+Não iniciar Promotion.
+
+Não iniciar Retraining.
+
+Aguardar aprovação humana.

@@ -1,112 +1,73 @@
-# TriSLA Observability (SSOT)
+# TriSLA Observability Navigation Hub
 
-Observability in TriSLA is a cross-cutting architectural capability designed to expose internal system behavior, enable auditability, and support reproducibility.
+This document is a navigation hub and specialized reference after DOC-MOD-08 consolidation.
 
----
+Canonical operational entry point:
 
-## 1. Scope
+```text
+docs/modules/observability.md
+```
 
-Observability provides:
+Telemetry canonical reference:
 
-- Metrics (Prometheus)
-- Traces (OpenTelemetry)
-- Logs (structured logging)
+```text
+docs/modules/telemetry.md
+```
 
----
+PromQL specialized reference:
 
-## 2. Observability Model
+```text
+docs/PROMQL_SSOT_V2.md
+```
 
-TriSLA observability is based on:
+## Runtime Boundary
 
-- correlation identifiers (intent_id, decision_id, sla_id)
-- end-to-end traceability
-- evidence-based metrics
+Observability exposes and supports runtime monitoring, dashboards, traces, logs, health checks and evidence. It does not make decisions, execute admission, generate telemetry snapshots, or generate governance.
 
----
+```text
+Prometheus = PRIMARY OBSERVABILITY METRICS SOURCE
+OTEL = TRACING AND INSTRUMENTATION
+OTEL != telemetry_snapshot source
+```
 
-## 3. Domain Causal Metrics
+## Official Paths
 
-### RAN
-- PRB utilization (%)
-- latency (ms)
-- jitter (ms)
-- reliability (%)
+Metrics path:
 
-### Transport
-- throughput (Mbps)
-- packet loss (%)
+```text
+Applications
+↓
+Metrics
+↓
+Prometheus
+↓
+Grafana
+↓
+Operators
+```
 
-### Core
-- CPU utilization (%)
-- memory utilization (%)
-- availability (%)
+Tracing path:
 
----
+```text
+Applications
+↓
+OTEL Instrumentation
+↓
+OTEL Collector
+↓
+Tempo
+↓
+Jaeger
+```
 
-## 4. SLA Mapping
+## References
 
-| Slice | Dominant Domain |
-|------|----------------|
-| URLLC | RAN |
-| eMBB | Transport |
-| mMTC | Core |
+| Topic | Canonical / specialized document |
+|-------|----------------------------------|
+| Operational observability | `docs/modules/observability.md` |
+| Runtime telemetry and `telemetry_snapshot` | `docs/modules/telemetry.md` |
+| PromQL expressions | `docs/PROMQL_SSOT_V2.md` |
+| Grafana dashboards | `grafana/MANIFEST.json`, `grafana/O7E_PROVISIONING.md` |
+| Recording rules | `monitoring/o7c-trisla-recording-rules.yaml` |
 
----
-
-## 5. Metrics Stack
-
-- Prometheus
-- OpenTelemetry
-- Grafana (optional)
-
----
-
-## 6. Traceability
-
-Each request propagates:
-
-- intent_id
-- decision_id
-- trace_id
-
----
-
-## 7. Decision Flow Observability
-
-SEM-CSMF → ML-NSMF → Decision Engine → BC-NSSMF → SLA-Agent
-
----
-
-## 8. Observability Guarantees
-
-- does not alter decision logic
-- full pipeline traceability
-- reproducible signals
-
----
-
-## 9. Troubleshooting Signals
-
-- missing metrics → Prometheus config
-- missing traces → OTEL collector
-- inconsistent IDs → propagation issue
-
----
-
-## 10. Installation Reference
-
-→ ../INSTALLATION.md
-
-## Multi-Domain SLA Influence Model
-
-The global SLA risk can be decomposed as:
-
-$$
-R_{total} = \alpha \cdot R_{ran} + \beta \cdot R_{transport} + \gamma \cdot R_{core}
-$$
-
-This formulation reflects the empirical behavior observed in TriSLA:
-
-- URLLC → dominated by Transport (latency/jitter)  
-- eMBB → dominated by RAN (PRB)  
-- mMTC → dominated by Core (CPU/memory)  
+Historical conceptual descriptions in this file were consolidated into `docs/modules/observability.md` to avoid duplication and contradictions.

@@ -1,0 +1,505 @@
+PROMPT_TRISLA_E2E_O3A_UPF_DISCOVERY_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Executar auditoria profunda do comportamento real do:
+
+SMF
+↓
+UPF
+↓
+PDU Session Data Path
+
+para descobrir exatamente como o plano de usuário está sendo estabelecido e quais informações poderão ser utilizadas pela futura fase:
+
+E2E-O3C
+UPF Binding
+
+Toda conclusão deve ser baseada exclusivamente em:
+
+* runtime real
+* logs
+* configurações
+* sessões PDU ativas
+* PFCP
+* Free5GC
+* UERANSIM
+
+Nunca em documentação externa.
+
+====================================================
+BASELINE OBRIGATÓRIO
+====================
+
+O1C_APPROVED = YES
+
+O2C_APPROVED = YES
+
+O3_READY = YES
+
+CURRENT_ORCHESTRATION_LEVEL =
+
+NSI/NSSI
++
+SLICE_SERVICE_BINDING
++
+NSSF_SELECTION
++
+AMF_OBSERVED
++
+SMF_OBSERVED
++
+PDU_CORRELATED
+
+Entradas persistidas em O2C:
+
+session_id
+
+ue_ip
+
+selected_upf
+
+dnn
+
+correlation_status
+
+====================================================
+FASE 1 — INVENTÁRIO UPF
+=======================
+
+Identificar:
+
+pod
+
+service
+
+image
+
+version
+
+namespace
+
+interfaces
+
+N3
+
+N4
+
+GTP-U
+
+PFCP
+
+IPs
+
+Executar:
+
+kubectl get pods
+
+kubectl get svc
+
+kubectl describe pod
+
+Gerar:
+
+analysis/upf_inventory.md
+
+====================================================
+FASE 2 — INVENTÁRIO PFCP
+========================
+
+Determinar:
+
+como o SMF estabelece PFCP com o UPF.
+
+Capturar:
+
+PFCP Session Establishment
+
+PFCP Session Modification
+
+PFCP Session Deletion
+
+Endpoints
+
+N4 Address
+
+UPF IDs
+
+Gerar:
+
+analysis/pfcp_discovery.md
+
+====================================================
+FASE 3 — AUDITORIA SMF → UPF
+============================
+
+Mapear:
+
+SMF
+↓
+UPF
+
+durante criação de PDU Session.
+
+Capturar:
+
+session_id
+
+ue_ip
+
+dnn
+
+snssai
+
+upf
+
+pfcp
+
+Gerar:
+
+analysis/smf_to_upf_flow.md
+
+====================================================
+FASE 4 — AUDITORIA UPF
+======================
+
+Determinar:
+
+o que o UPF conhece sobre:
+
+UE
+
+Session
+
+DNN
+
+Slice
+
+QoS
+
+UP Tunnel
+
+Gerar:
+
+analysis/upf_runtime_model.md
+
+====================================================
+FASE 5 — AUDITORIA UERANSIM
+===========================
+
+Correlacionar:
+
+SUPI
+
+PDU Session
+
+UE IP
+
+DNN
+
+UPF
+
+Verificar:
+
+o caminho completo:
+
+UE
+↓
+gNB
+↓
+AMF
+↓
+SMF
+↓
+UPF
+
+Gerar:
+
+analysis/user_plane_trace.md
+
+====================================================
+FASE 6 — MATRIZ DE CORRELAÇÃO
+=============================
+
+Construir:
+
+TriSLA
+↓
+NSSF
+↓
+AMF
+↓
+SMF
+↓
+UPF
+
+Mapear:
+
+sst
+
+sd
+
+dnn
+
+nsiId
+
+session_id
+
+ue_ip
+
+selected_upf
+
+upf_n4_addr
+
+correlation_status
+
+Gerar:
+
+analysis/upf_correlation_matrix.md
+
+====================================================
+FASE 7 — CAMPOS PERSISTÍVEIS
+============================
+
+Determinar o que O3C poderá armazenar.
+
+Exemplos:
+
+upf_id
+
+upf_n4_addr
+
+upf_gtpu_addr
+
+pfcp_session
+
+session_state
+
+traffic_anchor
+
+routing_context
+
+Responder:
+
+quais são estáveis?
+
+quais são transitórios?
+
+Gerar:
+
+analysis/upf_persistence_model.md
+
+====================================================
+FASE 8 — ALINHAMENTO 3GPP
+=========================
+
+Mapear evidências para:
+
+3GPP TS 23.501
+
+3GPP TS 23.502
+
+3GPP TS 29.244 (PFCP)
+
+Responder:
+
+o modelo observado é compatível?
+
+Gerar:
+
+analysis/upf_3gpp_alignment.md
+
+====================================================
+FASE 9 — ALINHAMENTO O-RAN
+==========================
+
+Verificar:
+
+compatibilidade arquitetural com:
+
+SMO
+
+O1
+
+A1
+
+E2
+
+Near-RT RIC
+
+Non-RT RIC
+
+Responder:
+
+como O3 se encaixa na evolução O-RAN da TriSLA.
+
+Gerar:
+
+analysis/upf_oran_alignment.md
+
+====================================================
+FASE 10 — ALINHAMENTO ETSI ZSM
+==============================
+
+Verificar:
+
+Service Assurance
+
+Closed Loop
+
+Service Context
+
+Automation
+
+Governance
+
+Responder:
+
+como UPF Binding contribui para o ciclo ZSM.
+
+Gerar:
+
+analysis/upf_zsm_alignment.md
+
+====================================================
+FASE 11 — GAP ANALYSIS
+======================
+
+Determinar:
+
+o que existe hoje.
+
+o que O3C precisará implementar.
+
+o que não deve ser implementado.
+
+o que deve permanecer somente como metadata.
+
+Gerar:
+
+analysis/upf_gap_matrix.md
+
+====================================================
+FASE 12 — PROPOSTA O3C
+======================
+
+SEM IMPLEMENTAR.
+
+Definir arquitetura alvo:
+
+TriSLA
+↓
+NSSF Selection
+↓
+AMF Binding
+↓
+SMF Binding
+↓
+UPF Binding
+↓
+Metadata Persistence
+
+IMPORTANTE
+
+TriSLA NÃO controla:
+
+UPF
+
+PFCP
+
+SMF
+
+TriSLA apenas:
+
+observa
+correlaciona
+persiste
+
+Gerar:
+
+analysis/o3c_target_design.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/upf_inventory.md
+
+analysis/pfcp_discovery.md
+
+analysis/smf_to_upf_flow.md
+
+analysis/upf_runtime_model.md
+
+analysis/user_plane_trace.md
+
+analysis/upf_correlation_matrix.md
+
+analysis/upf_persistence_model.md
+
+analysis/upf_3gpp_alignment.md
+
+analysis/upf_oran_alignment.md
+
+analysis/upf_zsm_alignment.md
+
+analysis/upf_gap_matrix.md
+
+analysis/o3c_target_design.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+UPF_DISCOVERED = YES/NO
+
+PFCP_DISCOVERED = YES/NO
+
+SMF_UPF_FLOW_DISCOVERED = YES/NO
+
+USER_PLANE_TRACE_DISCOVERED = YES/NO
+
+TRISLA_UPF_COMPATIBLE = YES/NO
+
+UPF_BINDING_FEASIBLE = YES/NO
+
+RECOMMENDED_NEXT_PHASE =
+
+E2E-O3B_UPF_CONTRACT_MODEL
+
+ou
+
+E2E-O3C_UPF_BINDING_IMPLEMENTATION
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+IMPORTANTE
+==========
+
+Não implementar nada.
+
+Não alterar nada.
+
+Não integrar nada.
+
+Somente descobrir, provar e documentar o comportamento real do UPF para suportar a próxima fase da evolução da TriSLA.

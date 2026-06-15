@@ -4,8 +4,9 @@
 frontend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-frontend
-    tag: v3.11.2
-    pullPolicy: Always
+    tag: ''
+    digest: "sha256:e05ec6b7a849f8dcaaf4732b87b4539e52e21b820e0b6de25dba254dc58fa15e"
+    pullPolicy: IfNotPresent
   nodePort: 32001
   replicaCount: 1
   env:
@@ -15,8 +16,9 @@ frontend:
 backend:
   image:
     repository: ghcr.io/abelisboa/trisla-portal-backend
-    tag: v3.11.2
-    pullPolicy: Always
+    tag: ''
+    digest: "sha256:5f89b5acbf332252bfec5fd0e5b0db6f249e41f698cf286fd15c59f255279492"
+    pullPolicy: IfNotPresent
   nodePort: 32002
   replicaCount: 1
   env:

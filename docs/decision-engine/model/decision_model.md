@@ -1,52 +1,43 @@
-# Decision Engine Mathematical Model
+# Decision Engine — Research Model
+
+> **NOT OPERATIONAL SSOT**
+>
+> Operational admission logic, thresholds, env vars, and runtime behavior are defined in [`docs/modules/decision-engine.md`](../../modules/decision-engine.md) and implemented in `apps/decision-engine/src/engine.py` + `decision_thresholds.py`.
+>
+> This document preserves the **scientific / dissertation** formulation. It must not be used for deployment, troubleshooting, or integration.
+
+---
 
 ## 1. Problem Definition
 
 Determine whether an SLA request should be accepted based on:
 
 - Network state (multi-domain)
-- Predicted risk
+- Predicted risk from ML-NSMF
 - Policy constraints
 
 ---
 
-## 2. Variables
-
-Let:
+## 2. Variables (research notation)
 
 $$
-R_{ran} = PRB_{utilization}
-$$
-
-$$
-R_{transport} = latency + jitter
-$$
-
-$$
+R_{ran} = PRB_{utilization}, \quad
+R_{transport} = latency + jitter, \quad
 R_{core} = cpu + memory
-$$
-
-$$
-score \in [0,1]
 $$
 
 ---
 
-## 3. Multi-Domain Risk Aggregation
-
-The system implicitly evaluates:
-
-**Multi-Domain Risk Aggregation**
+## 3. Multi-Domain Risk Aggregation (conceptual)
 
 $$
 R_{total} = \alpha \cdot R_{ran} + \beta \cdot R_{transport} + \gamma \cdot R_{core}
 $$
 
-Where:
+Research weights $\alpha, \beta, \gamma$ are slice-dependent in the paper narrative.  
+**Runtime fixed weights** (operational): RAN 0.70, Transport 0.20, Core 0.10 — see canonical module doc.
 
-alpha, beta, gamma are adaptive weights (not fixed).
-
-PRB-sensitive adjustment:
+PRB-sensitive adjustment (research):
 
 $$
 R_{final} = \min \left(1,\ R_{adj} + \alpha_{prb} \cdot PRB_{norm} \right)
@@ -54,66 +45,30 @@ $$
 
 ---
 
-## 4. Decision Function
-
-The final decision is defined as:
-
-**Decision Function**
+## 4. Decision Function (research abstraction)
 
 $$
-Decision =
-\begin{cases}
-ACCEPT & \text{if } score \leq T_{accept} \\
-RENEGOTIATE & \text{if } T_{accept} < score < T_{reject} \\
-REJECT & \text{if } score \geq T_{reject}
-\end{cases}
+Decision \in \{\text{ACCEPT},\ \text{RENEGOTIATE},\ \text{REJECT}\}
 $$
 
-Typical thresholds:
-
-$$
-T_{accept} = 0.4,\quad T_{reject} = 0.7
-$$
+Operational slice thresholds (URLLC / eMBB / mMTC) and hard PRB gates are **not** reproduced here — see `decision_thresholds.py` and canonical module doc.
 
 ---
 
-## 5. Interpretation
+## 5. Multi-Domain Influence (research narrative)
 
-- Low score -> system can sustain SLA  
-- High score -> high probability of SLA violation  
+Dominance varies by slice in the dissertation:
 
----
+- URLLC → transport latency sensitivity
+- eMBB → RAN utilization
+- mMTC → core resource availability
 
-## 6. Multi-Domain Influence
-
-The dominance of each domain varies by slice:
-
-- URLLC → Transport  
-- eMBB → RAN  
-- mMTC → Core  
+Runtime domain lists and scoring are implemented in `engine._apply_decision_rules`.
 
 ---
 
-## 7. Relation to Research Question
+## 6. Relation to Research Question
 
-The decision model evaluates SLA feasibility at request time by integrating:
+The decision model evaluates SLA feasibility at request time by integrating current resource signals, ML-predicted risk, and service requirements — enabling real-time admission control in multi-domain 5G networks.
 
-- current resource availability  
-- predicted risk  
-- service requirements  
-
-Thus enabling real-time admission control.
-
----
-
-## 8. Conclusion
-
-The Decision Engine provides a deterministic mapping:
-
-**Formal Definition**
-
-$$
-Decision = f(SLA, R_{ran}, R_{transport}, R_{core}, score)
-$$
-
-enabling SLA-aware operation in multi-domain 5G networks.
+For evidence and frozen digest: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.

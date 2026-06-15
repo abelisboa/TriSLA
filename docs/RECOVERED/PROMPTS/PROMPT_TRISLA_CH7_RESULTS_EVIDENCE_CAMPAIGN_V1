@@ -1,0 +1,514 @@
+# =========================================================
+# PROMPT_TRISLA_CH7_RESULTS_EVIDENCE_CAMPAIGN_V1
+# =========================================================
+
+# MISSÃO
+# Executar a campanha DEFINITIVA de evidências, datasets,
+# análises estatísticas e figuras do Capítulo 7 do paper TriSLA.
+#
+# O objetivo NÃO é apenas coletar artefatos.
+# O objetivo é VALIDAR, AUDITAR, CORRIGIR inconsistências,
+# IDENTIFICAR lacunas e GARANTIR que todos os gráficos,
+# datasets e resultados finais sejam reais, consistentes,
+# reproduzíveis e publicáveis em nível Q1/IEEE.
+#
+# Toda saída deve ser:
+# - validada;
+# - auditada;
+# - coerente com runtime;
+# - coerente com arquitetura;
+# - coerente com freeze;
+# - coerente com campanhas anteriores;
+# - coerente com NASP-level methodology.
+#
+# CASO ALGUM RESULTADO NÃO EXISTA,
+# NÃO ESTEJA COMPLETO,
+# NÃO TENHA VARIABILIDADE,
+# NÃO TENHA TELEMETRIA REAL,
+# NÃO TENHA SIGNIFICÂNCIA,
+# OU NÃO ATINJA O OBJETIVO DO PAPER:
+#
+# O fluxo DEVE:
+# 1. detectar o problema;
+# 2. explicar tecnicamente a causa;
+# 3. mostrar evidências;
+# 4. propor plano de correção;
+# 5. informar exatamente o que precisa ser ajustado;
+# 6. informar se a limitação é:
+#    - arquitetura;
+#    - runtime;
+#    - dataset;
+#    - telemetria;
+#    - RAN;
+#    - TN;
+#    - ML/XAI;
+#    - SLA-Agent;
+#    - blockchain;
+#    - coleta;
+#    - escala;
+#    - ausência de variabilidade;
+#    - ou erro operacional.
+#
+# NÃO INVENTAR.
+# NÃO MAQUIAR.
+# NÃO GERAR FIGURA VAZIA.
+# NÃO FORÇAR INTERPRETAÇÃO.
+#
+# =========================================================
+# OBJETIVO CIENTÍFICO DO CAPÍTULO 7
+# =========================================================
+
+# O Capítulo 7 deve provar, com evidências reais:
+
+# 1. TriSLA executa SLA-aware admission E2E em ambiente real;
+# 2. decisões usam telemetria multidomínio real;
+# 3. admission ocorre BEFORE provisioning;
+# 4. PRB influencia decisão;
+# 5. score responde a condições da infraestrutura;
+# 6. explainability é operacional;
+# 7. ML online funciona em runtime;
+# 8. blockchain registra lifecycle real;
+# 9. SLA-Agent supervisiona o lifecycle;
+# 10. pipeline completo funciona:
+#     Portal → SEM → ML/DE → NASP → BC → SLA-Agent
+# 11. resultados são reproduzíveis;
+# 12. datasets são reais;
+# 13. figuras representam comportamento real;
+# 14. runtime está alinhado ao paper;
+# 15. campanha é publicável em nível Q1.
+
+# =========================================================
+# FONTES OBRIGATÓRIAS
+# =========================================================
+
+BASE_1=evidencias_final_publication_artifact_20260515T112034Z
+BASE_2=evidencias_final_e2e_accept_batch_20260515T110538Z
+BASE_3=evidencias_core_ran_ready_for_nasp_20260515T104025Z
+BASE_4=evidencias_ml_xai_runtime_activation_20260515T203800Z
+BASE_5=evidencias_trisla_blockchain_governance_audit_20260515T204916Z
+BASE_6=evidencias_trisla_sla_agent_audit_20260515T210547Z
+BASE_7=evidencias_resultados_trisla_baseline_v13_2
+
+# =========================================================
+# MODO DE EXECUÇÃO
+# =========================================================
+
+# READ-ONLY por padrão.
+#
+# É permitido:
+# - port-forward;
+# - curl;
+# - leitura runtime;
+# - Prometheus query;
+# - análise;
+# - geração de CSV;
+# - geração de PNG/PDF;
+# - geração de tabelas;
+# - geração de relatórios;
+# - análise estatística.
+#
+# NÃO é permitido:
+# - alterar thresholds;
+# - mudar pesos;
+# - rebuild;
+# - alterar código;
+# - alterar arquitetura;
+# - alterar Helm;
+# - alterar PromQL;
+# - alterar JSON runtime;
+# - alterar datasets originais;
+# - alterar BC;
+# - alterar namespaces;
+# - alterar topology.
+#
+# EXCEÇÃO:
+# Se alguma funcionalidade NECESSÁRIA ao paper
+# estiver OFFLINE mas já implementada,
+# o operador pode APENAS:
+#
+# - escalar deployment já existente;
+# - religar serviço existente;
+# - reexecutar coleta;
+#
+# DESDE QUE:
+# - sem rebuild;
+# - sem mudança de digest;
+# - sem mudança de lógica;
+# - sem mudança de threshold;
+# - sem alteração arquitetural.
+#
+# TODA alteração operacional deve:
+# - ser justificada;
+# - ser evidenciada;
+# - ter rollback documentado.
+
+# =========================================================
+# INÍCIO
+# =========================================================
+
+ssh node006
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+TS=$(date -u +%Y%m%dT%H%M%SZ)
+OUT=evidencias_trisla_ch7_q1_final_${TS}
+
+mkdir -p \
+${OUT}/analysis \
+${OUT}/dataset \
+${OUT}/figures \
+${OUT}/tables \
+${OUT}/runtime \
+${OUT}/freeze \
+${OUT}/validation \
+${OUT}/logs \
+${OUT}/paper_assets \
+${OUT}/correction_plan
+
+# =========================================================
+# FASE 1 — AUDITORIA DE PRÉ-CONDIÇÕES
+# =========================================================
+
+kubectl get pods -A -o wide \
+> ${OUT}/runtime/all_pods.txt
+
+kubectl get deploy -n trisla -o wide \
+> ${OUT}/runtime/trisla_deployments.txt
+
+kubectl get svc -A -o wide \
+> ${OUT}/runtime/all_services.txt
+
+kubectl -n trisla port-forward svc/trisla-portal-backend 18001:8001 \
+> ${OUT}/logs/pf_backend.log 2>&1 &
+
+PF_PID=$!
+
+sleep 10
+
+curl -s http://localhost:18001/api/v1/health/global \
+| tee ${OUT}/validation/global_health.json
+
+jq . ${OUT}/validation/global_health.json >/dev/null || {
+  cat > ${OUT}/correction_plan/health_failure.md << EOF
+Global health endpoint returned invalid JSON.
+The environment cannot be considered publishable.
+Investigate:
+- backend runtime;
+- port-forward;
+- service exposure;
+- API stability.
+EOF
+}
+
+# =========================================================
+# FASE 2 — CONSOLIDAÇÃO DOS DATASETS
+# =========================================================
+
+find ${BASE_2} -iname "*.csv" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+find ${BASE_2} -iname "*.json" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+
+find ${BASE_4} -iname "*.csv" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+find ${BASE_4} -iname "*.json" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+
+find ${BASE_5} -iname "*.csv" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+find ${BASE_5} -iname "*.json" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+
+find ${BASE_6} -iname "*.csv" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+find ${BASE_6} -iname "*.json" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+
+find ${BASE_7} -iname "*.csv" -exec cp {} ${OUT}/dataset/ \; 2>/dev/null || true
+
+# =========================================================
+# FASE 3 — DETECÇÃO AUTOMÁTICA DE PROBLEMAS
+# =========================================================
+
+# O fluxo DEVE detectar:
+#
+# - score constante
+# - ausência de variabilidade
+# - PRB estático
+# - tx_hash repetido
+# - ML fallback
+# - SHAP inativo
+# - telemetry_complete=false
+# - BC COMMITTED ausente
+# - SLA-Agent inconsistente
+# - figuras vazias
+# - datasets insuficientes
+# - ausência de REJECT/RENOGOTIATE
+# - ausência de correlação
+# - ausência de sensibilidade
+# - ausência de efeito multidomínio
+# - latência inconsistente
+# - runtime desalinhado
+
+python3 << 'PYEOF'
+import os, glob, json, pandas as pd, numpy as np
+
+OUT=os.environ["OUT"]
+
+problems=[]
+
+jsons=glob.glob(f"{OUT}/dataset/*.json")
+
+rows=[]
+
+for f in jsons:
+    try:
+        j=json.load(open(f))
+        meta=j.get("metadata",{})
+        rows.append({
+            "file":os.path.basename(f),
+            "decision":j.get("decision"),
+            "decision_score":meta.get("decision_score"),
+            "ml_risk_score":meta.get("ml_risk_score"),
+            "telemetry_complete":meta.get("telemetry_complete"),
+            "tx_hash":meta.get("tx_hash"),
+            "bc_status":meta.get("bc_status"),
+            "sla_agent_status":meta.get("sla_agent_status")
+        })
+    except:
+        pass
+
+df=pd.DataFrame(rows)
+
+if len(df)==0:
+    problems.append("No valid JSON datasets found.")
+
+if "decision_score" in df:
+    vals=pd.to_numeric(df["decision_score"], errors="coerce").dropna()
+    if len(vals)>1 and vals.std()==0:
+        problems.append("Decision score has zero variability.")
+
+if "ml_risk_score" in df:
+    vals=pd.to_numeric(df["ml_risk_score"], errors="coerce").dropna()
+    if len(vals)>0 and (vals==0.5).all():
+        problems.append("ML fallback detected in all runs.")
+
+if "tx_hash" in df:
+    hashes=df["tx_hash"].dropna()
+    if len(hashes)>0 and hashes.nunique()!=len(hashes):
+        problems.append("Repeated tx_hash detected.")
+
+if "telemetry_complete" in df:
+    if (df["telemetry_complete"]==False).any():
+        problems.append("telemetry_complete=false detected.")
+
+if "bc_status" in df:
+    if (~df["bc_status"].astype(str).str.contains("COMMITTED|SUCCESS", na=False)).any():
+        problems.append("Blockchain commitment inconsistency detected.")
+
+if "sla_agent_status" in df:
+    if (~df["sla_agent_status"].astype(str).str.contains("OK", na=False)).any():
+        problems.append("SLA-Agent inconsistency detected.")
+
+with open(f"{OUT}/analysis/problem_detection_report.md","w") as fp:
+    fp.write("# Problem Detection Report\n\n")
+    if problems:
+        for p in problems:
+            fp.write(f"- {p}\n")
+    else:
+        fp.write("No critical scientific inconsistencies detected.\n")
+
+for idx,p in enumerate(problems):
+    with open(f"{OUT}/correction_plan/problem_{idx+1}.md","w") as fp:
+        fp.write(f"# {p}\n\n")
+        fp.write("Root cause investigation required.\n")
+        fp.write("The result cannot be considered Q1-ready until resolved.\n")
+
+print("Problems:",problems)
+PYEOF
+
+# =========================================================
+# FASE 4 — ATIVAÇÃO CONTROLADA DE SERVIÇOS OFFLINE
+# =========================================================
+
+# Se ML estiver OFFLINE mas já implementado:
+#
+# - escalar somente replicas;
+# - sem rebuild;
+# - sem alterar digest;
+# - sem alterar código.
+#
+# Depois:
+# - reexecutar coleta;
+# - validar SHAP;
+# - validar inference;
+# - validar non-fallback score.
+#
+# Toda alteração deve:
+# - gerar evidência;
+# - gerar rollback;
+# - gerar justificativa científica.
+
+# =========================================================
+# FASE 5 — GERAÇÃO DAS FIGURAS Q1
+# =========================================================
+
+# TODAS as figuras devem:
+#
+# - usar dados reais;
+# - possuir variabilidade;
+# - possuir significado científico;
+# - possuir ligação direta com arquitetura;
+# - possuir ligação direta com SLA-aware admission;
+# - ser publication-ready;
+# - 300 dpi;
+# - estilo IEEE;
+# - sem poluição visual;
+# - sem gráficos vazios;
+# - sem curvas artificiais.
+
+# FIGURAS OBRIGATÓRIAS:
+#
+# 1. E2E SLA admission latency
+# 2. Decision score vs PRB utilization
+# 3. Decision score distribution
+# 4. ML risk distribution
+# 5. ML confidence distribution
+# 6. SHAP/XAI contribution ranking
+# 7. Telemetry completeness
+# 8. Governance tx_hash validation
+# 9. Runtime pipeline success ratio
+# 10. Slice-aware behavior
+# 11. Sensitivity under multidomain conditions
+# 12. ACCEPT/REJECT/RENOGOTIATE boundary
+# 13. SLA-Agent lifecycle supervision
+# 14. Blockchain governance persistence
+# 15. Runtime multidomain telemetry snapshot
+# 16. PRB sensitivity curve
+# 17. Transport degradation sensitivity
+# 18. Core-domain operational influence
+# 19. E2E runtime workflow timing
+# 20. Correlation matrix (RAN/TN/CN vs decision score)
+
+# =========================================================
+# FASE 6 — HARD VALIDATION DAS FIGURAS
+# =========================================================
+
+# Para CADA figura:
+#
+# gerar:
+#
+# analysis/<figure>_validation.md
+#
+# contendo:
+#
+# - dataset usado;
+# - variáveis;
+# - número de amostras;
+# - variabilidade;
+# - correlação;
+# - validade científica;
+# - classificação:
+#   - Q1-ready;
+#   - weak;
+#   - misleading;
+#   - insufficient;
+#   - redundant.
+#
+# Se a figura NÃO for Q1:
+#
+# explicar:
+# - causa;
+# - impacto;
+# - correção necessária;
+# - necessidade de nova campanha.
+
+# =========================================================
+# FASE 7 — TABELAS OBRIGATÓRIAS
+# =========================================================
+
+# Gerar:
+#
+# 1. runtime summary
+# 2. ML/XAI summary
+# 3. governance summary
+# 4. SLA-Agent summary
+# 5. telemetry summary
+# 6. slice-aware summary
+# 7. freeze/runtime consistency
+# 8. statistical summary
+# 9. reproducibility summary
+# 10. deployment consistency
+
+# =========================================================
+# FASE 8 — ESTATÍSTICA
+# =========================================================
+
+# Gerar:
+#
+# - média
+# - mediana
+# - std
+# - IQR
+# - Pearson
+# - Spearman
+# - bootstrap
+# - sensitivity analysis
+# - confidence intervals
+# - correlation matrix
+# - outlier analysis
+#
+# APENAS usando dados reais.
+
+# =========================================================
+# FASE 9 — CHECK FINAL DE PUBLICAÇÃO
+# =========================================================
+
+# O operador DEVE responder:
+#
+# 1. O capítulo 7 está publicável?
+# 2. Quais figuras realmente são Q1?
+# 3. Quais devem ser descartadas?
+# 4. Quais campanhas precisam ser refeitas?
+# 5. O dataset é suficiente?
+# 6. O runtime sustenta os claims?
+# 7. Existem claims arriscados?
+# 8. Existem inconsistências?
+# 9. Existe algum gráfico enganoso?
+# 10. O paper está acima do NASP?
+
+# =========================================================
+# FASE 10 — RELATÓRIO FINAL
+# =========================================================
+
+# Gerar:
+#
+# analysis/FINAL_Q1_CH7_REPORT.md
+#
+# contendo:
+#
+# - resumo executivo;
+# - resultados fortes;
+# - resultados fracos;
+# - lacunas;
+# - riscos científicos;
+# - readiness:
+#   - IEEE Network;
+#   - Computer Networks;
+#   - TNSM;
+#   - TMC.
+#
+# Também gerar:
+#
+# analysis/CLAIMS_ALLOWED.md
+#
+# contendo APENAS claims suportados
+# por datasets reais e evidências runtime.
+
+# =========================================================
+# FREEZE FINAL
+# =========================================================
+
+kubectl get pods,svc,deploy -A -o wide \
+> ${OUT}/runtime/final_runtime_snapshot.txt
+
+kubectl get deploy,svc,pods -n trisla -o yaml \
+> ${OUT}/freeze/trisla_runtime_freeze.yaml
+
+find ${OUT} -type f | sort \
+> ${OUT}/analysis/MANIFEST.txt
+
+kill ${PF_PID} 2>/dev/null || true
+
+echo "TRISLA CH7 Q1 FINAL CAMPAIGN COMPLETED: ${OUT}"

@@ -1,0 +1,380 @@
+# PROMPT — UPDATE REQUIRED ON TRISLA_EVOLUTION_MASTER_PLAN_V1 (DEPLOYMENT & INFRASTRUCTURE FREEZE PROTECTION)
+
+Você deve atualizar novamente o documento:
+
+```text
+docs/TRISLA_EVOLUTION_MASTER_PLAN_V1.md
+```
+
+Objetivo:
+
+Fortalecer a governança operacional do TriSLA para eliminar definitivamente o risco de divergência entre:
+
+* código
+* imagem
+* digest
+* deployment
+* pod
+* runtime
+
+Nenhuma implementação deve ser realizada.
+
+Nenhum build.
+
+Nenhum deploy.
+
+Nenhuma alteração de runtime.
+
+Somente atualização documental do plano mestre.
+
+---
+
+# NOVA SEÇÃO OBRIGATÓRIA
+
+Adicionar:
+
+```text
+DEPLOYMENT FREEZE PROTECTION
+```
+
+## Objetivo
+
+Impedir divergência entre:
+
+* código fonte
+* imagem construída
+* digest aprovado
+* deployment Kubernetes
+* runtime efetivamente executado
+
+---
+
+## Problemas históricos que devem ser prevenidos
+
+Exemplos observados anteriormente:
+
+* patch presente no Git mas ausente no runtime
+* digest correto no repositório mas diferente no cluster
+* frontend atualizado e backend antigo
+* values divergentes entre ambientes
+* deployment usando imagem diferente da aprovada
+
+---
+
+## Regras
+
+Nenhuma fase poderá:
+
+* substituir imagens
+* alterar digest
+* alterar deployments
+
+sem:
+
+1. evidência
+2. validação
+3. aprovação humana
+
+---
+
+## Evidência obrigatória
+
+Criar:
+
+```text
+Deployment Baseline
+```
+
+contendo:
+
+* deployment
+* imagem
+* digest
+* namespace
+* replicas
+* data de aprovação
+
+---
+
+# NOVA SEÇÃO OBRIGATÓRIA
+
+Adicionar:
+
+```text
+INFRASTRUCTURE FREEZE PROTECTION
+```
+
+## Objetivo
+
+Proteger a infraestrutura operacional utilizada pelo TriSLA.
+
+---
+
+## Escopo
+
+Inventariar:
+
+* namespaces
+* services
+* ingress
+* configmaps
+* secrets referenciados
+* PVCs
+* volumes
+* service accounts
+* network policies
+
+---
+
+## Regras
+
+Nenhuma fase poderá alterar infraestrutura sem:
+
+1. análise de impacto
+2. evidência
+3. aprovação humana
+
+---
+
+## Evidência obrigatória
+
+Criar:
+
+```text
+Infrastructure Baseline
+```
+
+contendo:
+
+* inventário completo
+* checksums
+* estado atual
+* relacionamentos
+
+---
+
+# ATUALIZAÇÃO OBRIGATÓRIA DA FASE 0
+
+Expandir novamente os entregáveis.
+
+Além dos itens já existentes:
+
+1. Architecture Inventory
+2. Runtime Inventory
+3. API Inventory
+4. Semantic Inventory
+5. Model Inventory
+6. Dataset Inventory
+7. Hardcoded Values Inventory
+8. Scientific Freeze Traceability Matrix
+
+Adicionar:
+
+---
+
+## 9. Deployment Inventory
+
+Mapear:
+
+### Deployments
+
+* nome
+* namespace
+* imagem
+* digest
+* replicas
+
+### Relação
+
+```text
+Code
+↓
+Image
+↓
+Digest
+↓
+Deployment
+↓
+Pod
+```
+
+para todos os componentes críticos.
+
+---
+
+## 10. Infrastructure Baseline
+
+Mapear:
+
+### Namespaces
+
+### Services
+
+### Ingress
+
+### ConfigMaps
+
+### Secrets Referenciados
+
+### PVCs
+
+### Volumes
+
+### Service Accounts
+
+### Network Policies
+
+---
+
+## 11. Helm Inventory
+
+Mapear:
+
+### values.yaml
+
+### values-nasp.yaml
+
+### outros values encontrados
+
+Identificar:
+
+* divergências
+* sobreposições
+* parâmetros conflitantes
+
+---
+
+## 12. Runtime Deployment Consistency Matrix
+
+Produzir matriz obrigatória:
+
+```text
+Repository
+↓
+Build
+↓
+Image
+↓
+Digest
+↓
+Deployment
+↓
+Pod
+```
+
+para:
+
+* SEM-CSMF
+* ML-NSMF
+* Decision Engine
+* SLA-Agent
+* BC-NSSMF
+* NASP Adapter
+* Portal Backend
+* Portal Frontend
+
+---
+
+# NOVA REGRA DE APROVAÇÃO DA FASE 0
+
+A Fase 0 somente poderá ser considerada concluída se entregar:
+
+```text
+Architecture Inventory
+Runtime Inventory
+API Inventory
+Semantic Inventory
+Model Inventory
+Dataset Inventory
+Hardcoded Values Inventory
+Scientific Freeze Traceability Matrix
+
+Deployment Inventory
+Infrastructure Baseline
+Helm Inventory
+Runtime Deployment Consistency Matrix
+```
+
+Todos obrigatórios.
+
+---
+
+# NOVA REGRA DE GATE
+
+A Fase 1 não poderá iniciar se existir qualquer divergência não explicada entre:
+
+```text
+Git Repository
+Image
+Digest
+Deployment
+Runtime
+```
+
+---
+
+# NOVA REGRA DE EXECUÇÃO
+
+Durante a Fase 0 devem ser identificados explicitamente:
+
+### Drift de Código
+
+### Drift de Imagem
+
+### Drift de Digest
+
+### Drift de Helm
+
+### Drift de Runtime
+
+Classificar:
+
+```text
+CRITICAL
+HIGH
+MEDIUM
+LOW
+```
+
+e registrar evidências.
+
+---
+
+# RESULTADO ESPERADO
+
+Atualizar:
+
+```text
+docs/TRISLA_EVOLUTION_MASTER_PLAN_V1.md
+```
+
+Atualizar:
+
+```text
+docs/MASTER_PLAN_UPDATE_REPORT.md
+```
+
+Criar nova seção:
+
+```text
+Deployment Freeze Protection
+Infrastructure Freeze Protection
+```
+
+Atualizar os entregáveis obrigatórios da Fase 0.
+
+Finalizar com:
+
+```text
+MASTER_PLAN_STATUS = UPDATED_V1_2
+```
+
+Parar.
+
+Não iniciar a Fase 0.
+
+Não executar auditorias.
+
+Não realizar alterações em runtime.
+
+Aguardar aprovação humana explícita.

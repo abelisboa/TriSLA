@@ -1,0 +1,195 @@
+{
+  "phase": "NAD-EXEC-15",
+  "timestamp_utc": "2026-05-18T00:17:17.785493Z",
+  "verdict": "NAD_EXEC_TRACK_FROZEN",
+  "companion_verdicts": {
+    "core_exec": "CORE_EXEC_RELEASED",
+    "next_mechanism": "NEW_OPERATIONAL_CONTENTION_MECHANISM_REQUIRED"
+  },
+  "consolidation_only": true,
+  "active_digest": "sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6",
+  "decision_engine_image": "ghcr.io/abelisboa/trisla-decision-engine@sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6",
+  "track_integrity": {
+    "phases": [
+      {
+        "phase": "NAD-EXEC-01",
+        "pack": "evidencias_trisla_nad_exec_01_admission_boundary_audit_20260517T194306Z",
+        "exists": true,
+        "verdict": "ADMISSION_BOUNDARY_ROOT_CAUSE_IDENTIFIED"
+      },
+      {
+        "phase": "NAD-EXEC-02",
+        "pack": "evidencias_trisla_nad_exec_02_safe_boundary_engineering_design_20260517T194811Z",
+        "exists": true,
+        "verdict": "SAFE_BOUNDARY_ENGINEERING_DESIGN_FROZEN"
+      },
+      {
+        "phase": "NAD-EXEC-03",
+        "pack": "evidencias_trisla_nad_exec_03_pre_implementation_regression_audit_20260517T195459Z",
+        "exists": true,
+        "verdict": "PRE_IMPLEMENTATION_REGRESSION_AUDIT_COMPLETE"
+      },
+      {
+        "phase": "NAD-EXEC-04",
+        "pack": "evidencias_trisla_nad_exec_04_controlled_boundary_runtime_implementation_20260517T200018Z",
+        "exists": true,
+        "verdict": "CONTROLLED_BOUNDARY_RUNTIME_IMPLEMENTATION_COMPLETE"
+      },
+      {
+        "phase": "NAD-EXEC-05",
+        "pack": "evidencias_trisla_nad_exec_05_liminal_scoremode_campaign_20260517T201420Z",
+        "exists": true,
+        "verdict": "LIMINAL_SCOREMODE_CAMPAIGN_COMPLETE"
+      },
+      {
+        "phase": "NAD-EXEC-06",
+        "pack": "evidencias_trisla_nad_exec_06_liminal_admission_divergence_validation_20260517T212719Z",
+        "exists": true,
+        "verdict": "LIMINAL_DIVERGENCE_NOT_VALIDATED_OPERATING_POINT_INSUFFICIENT"
+      },
+      {
+        "phase": "NAD-EXEC-07",
+        "pack": "evidencias_trisla_nad_exec_07_higher_stress_liminal_campaign_design_20260517T213344Z",
+        "exists": true,
+        "verdict": "HIGHER_STRESS_LIMINAL_CAMPAIGN_DESIGN_FROZEN"
+      },
+      {
+        "phase": "NAD-EXEC-08",
+        "pack": "evidencias_trisla_nad_exec_08_higher_stress_runtime_control_implementation_20260517T213834Z",
+        "exists": true,
+        "verdict": "HIGHER_STRESS_RUNTIME_CONTROL_IMPLEMENTATION_COMPLETE"
+      },
+      {
+        "phase": "NAD-EXEC-09",
+        "pack": "evidencias_trisla_nad_exec_09_nad_liminal_02_campaign_execution_20260517T214300Z",
+        "exists": true,
+        "verdict": "NAD_LIMINAL_02_CAMPAIGN_EXECUTION_COMPLETE"
+      },
+      {
+        "phase": "NAD-EXEC-10",
+        "pack": "evidencias_trisla_nad_exec_10_higher_stress_divergence_validation_20260517T224540Z",
+        "exists": true,
+        "verdict": "LIMINAL_DIVERGENCE_NOT_VALIDATED_SCORE_TARGET_NOT_REACHED"
+      },
+      {
+        "phase": "NAD-EXEC-11",
+        "pack": "evidencias_trisla_nad_exec_11_pressure_feasibility_liminal_design_20260517T225528Z",
+        "exists": true,
+        "verdict": "PRESSURE_FEASIBILITY_LIMINAL_DESIGN_FROZEN"
+      },
+      {
+        "phase": "NAD-EXEC-12",
+        "pack": "evidencias_trisla_nad_exec_12_pressure_feasibility_runtime_control_implementation_20260517T230027Z",
+        "exists": true,
+        "verdict": "PRESSURE_FEASIBILITY_RUNTIME_CONTROLS_FROZEN"
+      },
+      {
+        "phase": "NAD-EXEC-13",
+        "pack": "evidencias_trisla_nad_exec_13_nad_liminal_03_campaign_execution_20260517T230528Z",
+        "exists": true,
+        "verdict": "NAD_LIMINAL_03_NO_DIVERGENCE"
+      },
+      {
+        "phase": "NAD-EXEC-14",
+        "pack": "evidencias_trisla_nad_exec_14_nad_liminal_03_divergence_validation_20260518T001327Z",
+        "exists": true,
+        "verdict": "NAD_LIMINAL_03_DIVERGENCE_NOT_VALIDATED_NO_ROWS"
+      }
+    ],
+    "all_present": true
+  },
+  "claim_matrix": {
+    "PROVEN": [
+      "PRB hard-gate governance preserved across campaigns (INV-PRB)",
+      "PRB\u2191 \u2192 score\u2193 monotonicity in score_mode strata (INV-MONO)",
+      "Frozen digest runtime throughout NAD-EXEC (`ca600174\u2026`)",
+      "Same-state triplet methodology valid (URLLC\u2192eMBB\u2192mMTC)",
+      "Bounded decision_score runtime (no unbounded collapse)",
+      "Transport-informed score_mode path active (P2 term)",
+      "Reviewer-safe negative results documented without threshold manipulation",
+      "Campaign controls (PRB abort, score_mode guard) function as designed"
+    ],
+    "PARTIALLY_SUPPORTED": [
+      "Partial PRB 18\u201324% corridor entry (LIMINAL-02, ~19% score_mode rows)",
+      "Slice-specific score ranges (same-state drift ~0.02 mean, no admission drift)",
+      "Multidomain telemetry present but not balanced for admission crossing"
+    ],
+    "OPERATIONALLY_UNATTAINED": [
+      "Liminal score band 0.52\u20130.58",
+      "resource_pressure \u2265 0.30 with feasibility \u2264 0.55 simultaneously",
+      "score_mode-only admission divergence under frozen math",
+      "Robust boundary crossing at accept/reneg thresholds"
+    ],
+    "UNSUPPORTED": [
+      "Robust score_mode-only admission divergence",
+      "Balanced multidomain runtime admission",
+      "Core-driven admission divergence",
+      "Orchestration-driven admission divergence",
+      "Normative GSMA compliance from NAD campaigns alone"
+    ],
+    "FORBIDDEN": [
+      "Claiming divergence from 0-row LIMINAL-03 dataset",
+      "Fake band crossings or synthetic labels",
+      "Threshold/gate/weight changes post-hoc",
+      "Reinterpreting guard-blocked runs as positive divergence"
+    ]
+  },
+  "campaign_arc": [
+    {
+      "id": "NAD-LIMINAL-01",
+      "exec": "05",
+      "n_rows": 300,
+      "admission_drift": 0,
+      "prb_max": 15.5,
+      "score_min": 0.74
+    },
+    {
+      "id": "NAD-LIMINAL-02",
+      "exec": "09",
+      "n_rows": 210,
+      "admission_drift": 0,
+      "prb_max": 30.9,
+      "score_min": 0.698
+    },
+    {
+      "id": "NAD-LIMINAL-03",
+      "exec": "13",
+      "n_rows": 0,
+      "admission_drift": 0,
+      "prb_max": null,
+      "score_min": null
+    }
+  ],
+  "mandatory_answers": {
+    "Q1_nad_exec_executed_correctly": true,
+    "Q2_math_runtime_regression": false,
+    "Q3_prb_governance_dominant": true,
+    "Q4_robust_divergence_proof": false,
+    "Q4_boundary_crossing_proof": false,
+    "Q4_scoremode_admission_divergence": false,
+    "Q5_pressure_feasibility_without_new_mechanism": false,
+    "Q6_limitant_primary": "operational_pressure_and_feasibility_envelope",
+    "Q6_limitant_secondary": "infrastructure_orchestration_not_saturated_math",
+    "Q7_redundant_campaigns_without_mechanism": true,
+    "Q8_core_exec_may_start": true,
+    "Q9_final_scientific_status": "NAD_EXEC_SATURATION_POINT_REACHED"
+  },
+  "phase_verdicts": {
+    "phase1": "NAD_EXEC_TRACK_INTEGRITY_CONFIRMED",
+    "phase2": "SCIENTIFIC_CLAIM_MATRIX_FROZEN",
+    "phase3": "OPERATIONAL_PRESSURE_LIMITATION_CONFIRMED",
+    "phase4": "DIVERGENCE_STATUS_CONSOLIDATED",
+    "phase5": "REGRESSION_NOT_DETECTED",
+    "phase6": "NEW_OPERATIONAL_CONTENTION_MECHANISM_REQUIRED",
+    "phase7": "CORE_EXEC_RELEASED",
+    "phase8": "REVIEWER_SAFE_FINAL_INTERPRETATION_READY",
+    "phase9": "NAD_EXEC_TRACK_FROZEN"
+  },
+  "next_prompt_options": [
+    "PROMPT_TRISLA_CORE_EXEC_01_CORE_ATTRIBUTION_AUDIT_V1",
+    "PROMPT_TRISLA_NCM_EXEC_01_OPERATIONAL_CONTENTION_DESIGN_V1"
+  ],
+  "recommended_next_prompt": "PROMPT_TRISLA_CORE_EXEC_01_CORE_ATTRIBUTION_AUDIT_V1",
+  "approval_required": "NAD_EXEC_15_APPROVED",
+  "hard_stop": true
+}

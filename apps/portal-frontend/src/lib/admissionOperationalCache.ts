@@ -58,16 +58,29 @@ function asOptionalString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value : undefined;
 }
 
-export function cacheAdmissionOperationalSnapshot(response: SubmitResponse): void {
+function payloadLabel(metadata: Record<string, unknown> | undefined, key: string): string | undefined {
+  if (!metadata) return undefined;
+  const direct = asOptionalString(metadata[key]);
+  if (direct) return direct;
+  const summary = metadata.operational_summary;
+  if (summary && typeof summary === "object") {
+    return asOptionalString((summary as Record<string, unknown>)[key]);
+  }
+  return undefined;
+}
+
+export function buildAdmissionOperationalSnapshot(
+  response: SubmitResponse,
+): AdmissionOperationalSnapshot | null {
   const intentId = response.intent_id;
-  if (!intentId || typeof intentId !== "string") return;
+  if (!intentId || typeof intentId !== "string") return null;
   const metadata = asMetadata(response);
   const nestId = response.nest_id ?? metadata?.nest_id;
   const distributedTrace =
     metadata?.distributed_traceability && typeof metadata.distributed_traceability === "object"
       ? (metadata.distributed_traceability as AdmissionOperationalSnapshot["distributed_traceability"])
       : undefined;
-  const snapshot: AdmissionOperationalSnapshot = {
+  return {
     intent_id: intentId,
     decision: response.decision,
     bc_status: asOptionalString(response.bc_status),
@@ -81,15 +94,10 @@ export function cacheAdmissionOperationalSnapshot(response: SubmitResponse): voi
         (metadata?.governance_event as { governance_event_id?: unknown } | undefined)
           ?.governance_event_id,
     ),
-    semantic_validation: response.decision === "ACCEPT" ? "Passed" : "Review required",
-    gst_generated: nestId ? "Yes" : "Not available",
-    nest_generated: nestId ? "Yes" : "Not available",
-    semantic_fill:
-      metadata?.telemetry_complete === true || metadata?.canonical_sla
-        ? "Applied"
-        : metadata?.telemetry_snapshot
-          ? "Applied"
-          : "Not available",
+    semantic_validation: payloadLabel(metadata, "semantic_validation"),
+    gst_generated: payloadLabel(metadata, "gst_generated"),
+    nest_generated: payloadLabel(metadata, "nest_generated"),
+    semantic_fill: payloadLabel(metadata, "semantic_fill"),
     trace_id: asOptionalString(metadata?.trace_id ?? distributedTrace?.trace_id),
     decision_evidence: decisionEvidenceFromSubmit(response),
     admission_compliance_percent:
@@ -110,8 +118,13 @@ export function cacheAdmissionOperationalSnapshot(response: SubmitResponse): voi
     distributed_traceability: distributedTrace,
     cached_at: new Date().toISOString(),
   };
+}
+
+export function cacheAdmissionOperationalSnapshot(response: SubmitResponse): void {
+  const snapshot = buildAdmissionOperationalSnapshot(response);
+  if (!snapshot) return;
   const store = readStore();
-  store[intentId] = snapshot;
+  store[snapshot.intent_id] = snapshot;
   writeStore(store);
 }
 

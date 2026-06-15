@@ -1,39 +1,9 @@
-# SEM-CSMF - Semantic-enhanced Communication Service Management Function
+# SEM-CSMF
 
-Módulo responsável por receber intents, validar semanticamente e gerar NEST.
+Documentation: [`docs/modules/sem-csmf.md`](../../docs/modules/sem-csmf.md) (operational entry) · [`docs/sem-csmf/`](../../docs/sem-csmf/README.md) (specialized references)
 
-## Estrutura
+Implementation: `apps/sem-csmf/src/main.py` (FastAPI v3.10.0)
 
-```
-apps/sem-csmf/
-├── src/
-│   ├── main.py              # Aplicação FastAPI
-│   ├── grpc_server.py       # Servidor gRPC (I-01)
-│   ├── intent_processor.py  # Processamento de intents
-│   ├── ontology/
-│   │   ├── parser.py        # Parser de ontologias
-│   │   └── matcher.py       # Match semântico
-│   ├── nest_generator.py    # Geração de NEST
-│   └── models/
-│       ├── intent.py        # Modelos de intent
-│       └── nest.py          # Modelos de NEST
-├── tests/
-├── Dockerfile
-├── requirements.txt
-└── README.md
-```
+Pipeline: Intent → Ontology → GST → NEST → semantic fill → canonical SLA → **I-01 HTTP** → Decision Engine
 
-## Pipeline
-
-1. Intent → Ontology (validação semântica)
-2. Ontology → GST (Generation Service Template)
-3. GST → NEST (Network Slice Template)
-4. NEST → Subset (subconjunto para módulos)
-5. Metadados → I-01 → Decision Engine
-
-## Interface I-01
-
-- **Protocolo**: gRPC
-- **Endpoint**: Recepção de intents
-- **Metadados**: Enviados para Decision Engine
-
+Interface I-01: **HTTP POST `/evaluate`** (`decision_engine_client.py`). gRPC and Kafka are legacy/traceability only.

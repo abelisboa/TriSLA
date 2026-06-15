@@ -1,0 +1,9 @@
+# Reports validation — 2026-05-18T14:36:56.894656+00:00
+required:
+  diagnosis_report.md: PASS
+  citation_audit_report.md: PASS
+  camera_ready_validation.md: PASS
+  APPROVED_CLAIMS_BLOCK.md: PASS
+  FORBIDDEN_CLAIMS_REMOVED.md: PASS
+
+OVERALL: PASS

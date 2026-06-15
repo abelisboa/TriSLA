@@ -1,0 +1,299 @@
+PROMPT_TRISLA_REFACTOR_O6_TO_3GPP_NOMENCLATURE_V1
+
+MODO:
+READ-ONLY ANALYSIS + SAFE REFACTOR PLAN
+
+NÃO EXECUTAR BUILD
+NÃO EXECUTAR DEPLOY
+NÃO EXECUTAR COMMIT
+NÃO EXECUTAR PUSH
+
+OBJETIVO
+
+Antes de validar runtime da Fase O6, revisar toda a nomenclatura implementada e alinhar os artefatos ao ecossistema:
+
+* 3GPP
+* GSMA
+* O-RAN
+* ETSI
+
+evitando que nomenclaturas temporárias de desenvolvimento ("e2e", "5g_mapping", etc.) se tornem parte permanente do runtime da TriSLA.
+
+IMPORTANTE
+
+O objetivo NÃO é alterar comportamento.
+
+O objetivo é:
+
+* revisar nomenclatura
+* identificar impactos
+* gerar plano de refatoração seguro
+* evitar regressão
+
+====================================================
+FASE 1 — INVENTÁRIO COMPLETO
+============================
+
+Localizar todas ocorrências:
+
+e2e
+
+e2e_5g_mapping
+
+five_g_mapping
+
+E2E_5G_MAPPING_ENABLED
+
+trisla.io/e2e-5g-mapping
+
+/api/v1/e2e/
+
+E2E-O6
+
+mapping_ssot
+
+Resolver
+
+Gerar:
+
+analysis/o6_naming_inventory.md
+
+Contendo:
+
+arquivo
+linha
+uso
+impacto
+
+====================================================
+FASE 2 — ANÁLISE DE ALINHAMENTO PADRÕES
+=======================================
+
+Avaliar aderência aos conceitos:
+
+3GPP
+
+GST
+
+NEST
+
+NSI
+
+NSSI
+
+NSSAI
+
+S-NSSAI
+
+DNN
+
+Service Profile
+
+Slice Profile
+
+NSSF
+
+SMO
+
+O-RAN
+
+ETSI ZSM
+
+Responder:
+
+A nomenclatura atual:
+
+* está alinhada?
+* é temporária?
+* é interna?
+* deveria ser exposta via API?
+
+Gerar:
+
+analysis/o6_standards_alignment.md
+
+====================================================
+FASE 3 — PROPOSTA DE RENOMEAÇÃO
+===============================
+
+Gerar tabela:
+
+ATUAL
+↓
+PROPOSTO
+
+Exemplo:
+
+e2e_5g_mapping_ssot.json
+↓
+slice_service_binding_ssot.json
+
+e2e_mapping_ssot.py
+↓
+slice_service_binding.py
+
+GET /api/v1/e2e/mapping/ssot
+↓
+GET /api/v1/slice-service-binding/ssot
+
+GET /api/v1/e2e/mapping/resolve
+↓
+GET /api/v1/slice-service-binding/resolve
+
+trisla.io/e2e-5g-mapping
+↓
+trisla.io/slice-service-binding
+
+E2E_5G_MAPPING_ENABLED
+↓
+SLICE_SERVICE_BINDING_ENABLED
+
+five_g_mapping
+↓
+slice_service_binding
+
+====================================================
+FASE 4 — IMPACTO DE COMPATIBILIDADE
+===================================
+
+Para cada renomeação responder:
+
+Afeta:
+
+Portal Backend?
+Decision Engine?
+NASP Adapter?
+SEM-CSMF?
+ML-NSMF?
+BC-NSSMF?
+SLA-Agent?
+CRDs?
+Helm?
+Grafana?
+Prometheus?
+Evidências congeladas?
+
+Classificar:
+
+SAFE
+MEDIUM
+HIGH RISK
+
+Gerar:
+
+analysis/o6_refactor_impact.md
+
+====================================================
+FASE 5 — PLANO DE MIGRAÇÃO SEGURA
+=================================
+
+Definir estratégia:
+
+Opção A
+Dual naming temporário
+
+Opção B
+Refatoração direta
+
+Opção C
+Alias + depreciação
+
+Recomendar a melhor.
+
+Obrigatório:
+
+Não quebrar:
+
+ACCEPT
+NSI
+NSSI
+Runtime Assurance
+Portal
+Blockchain
+
+Gerar:
+
+analysis/o6_safe_migration_plan.md
+
+====================================================
+FASE 6 — VALIDAÇÃO CONTRA ROADMAP
+=================================
+
+Verificar compatibilidade futura com:
+
+NSSF Adapter
+
+AMF Binding
+
+SMF Binding
+
+UPF Binding
+
+UERANSIM Binding
+
+ONOS Binding
+
+Telemetria por Slice
+
+SLA-Agent Actions
+
+Responder:
+
+A nomenclatura proposta continua válida até FULL_5G_E2E?
+
+SIM ou NÃO
+
+Gerar:
+
+analysis/o6_roadmap_compatibility.md
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+CURRENT_NAMING_ACCEPTABLE = YES/NO
+
+CURRENT_NAMING_SHOULD_BE_REFACTORED = YES/NO
+
+REFATOR_BEFORE_DEPLOY = YES/NO
+
+REFATOR_AFTER_RUNTIME_VALIDATION = YES/NO
+
+RECOMMENDED_CANONICAL_NAME =
+
+RECOMMENDED_API_PATH =
+
+RECOMMENDED_CR_ANNOTATION =
+
+RECOMMENDED_FEATURE_FLAG =
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/o6_naming_inventory.md
+
+analysis/o6_standards_alignment.md
+
+analysis/o6_refactor_impact.md
+
+analysis/o6_safe_migration_plan.md
+
+analysis/o6_roadmap_compatibility.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+IMPORTANTE:
+
+Não alterar código.
+Não fazer commit.
+Não fazer push.
+Não fazer deploy.
+
+Apenas determinar se a nomenclatura O6 deve ser corrigida ANTES do deploy e qual deve ser o padrão canônico definitivo alinhado a 3GPP/O-RAN/ETSI.

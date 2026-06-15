@@ -43,7 +43,10 @@ export function AdmissionDashboard({ response }: Props) {
           <AdmissionOverviewPanel response={response} />
         </DashboardSection>
         <DashboardSection id="section-service-profile" level={2}>
-          <ServiceProfilePanel response={response} />
+          <ServiceProfilePanel
+            slaRequirements={response.sla_requirements}
+            serviceType={response.service_type}
+          />
         </DashboardSection>
       </div>
 

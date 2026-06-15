@@ -1,0 +1,614 @@
+# ============================================================
+# PROMPT_IEEE_FIGURES_V3 — STATISTICAL VALIDATION LAYER
+# ============================================================
+
+# MISSÃO
+# Elevar o pacote final de figuras TriSLA para nível de publicação forte,
+# adicionando uma camada estatística formal e verificável sobre a SSOT final.
+
+# SSOT OBRIGATÓRIA
+# Trabalhar EXCLUSIVAMENTE sobre:
+#   evidencias_resultados_trisla_final/figures_ieee
+# e
+#   evidencias_resultados_trisla_final/figures_ieee_v2
+#
+# Não usar pastas baseline antigas.
+# Não usar dados simulados.
+# Não alterar datasets de origem.
+# Não substituir conclusões por narrativa inventada.
+
+# OBJETIVO
+# 1. Gerar validação estatística complementar das figuras finais
+# 2. Produzir novas figuras estatísticas em PNG + PDF
+# 3. Produzir relatório técnico-científico final
+# 4. Somente finalizar se tudo for aprovado cientificamente
+
+# ============================================================
+# REGRA ABSOLUTA DE NÃO PARADA
+# ============================================================
+
+# ❌ PROIBIDO:
+# - parar após gerar arquivos sem validar
+# - inventar dados ausentes
+# - usar amostras sintéticas
+# - seguir adiante se houver erro estatístico grave
+# - aprovar figura cientificamente fraca
+
+# ✅ OBRIGATÓRIO:
+# - validar cada artefato
+# - registrar falhas
+# - corrigir quando possível sem alterar a SSOT
+# - exportar tudo em PNG + PDF
+# - produzir parecer final APPROVED / REJECTED
+
+# ============================================================
+# FASE 0 — CONTEXTO E PASTAS
+# ============================================================
+
+ROOT="evidencias_resultados_trisla_final"
+FIG_SSOT="${ROOT}/figures_ieee"
+FIG_V2="${ROOT}/figures_ieee_v2"
+OUT="${ROOT}/figures_ieee_v3"
+ANALYSIS="${OUT}/analysis"
+LOGS="${OUT}/logs"
+DATA="${OUT}/derived_data"
+
+mkdir -p "${OUT}" "${ANALYSIS}" "${LOGS}" "${DATA}"
+
+echo "[INFO] SSOT figures: ${FIG_SSOT}" | tee "${LOGS}/phase0_context.txt"
+echo "[INFO] V2 figures:   ${FIG_V2}"   | tee -a "${LOGS}/phase0_context.txt"
+
+# ============================================================
+# FASE 1 — DESCOBERTA DOS DADOS REAIS
+# ============================================================
+
+# Encontrar dataset(s) reais para reanálise estatística.
+# Prioridade:
+# 1. dataset(s) consolidados finais usados nas figuras aprovadas
+# 2. CSVs em evidencias_resultados_trisla_final
+# 3. manifestos / summaries / reports da campanha final
+
+find "${ROOT}" -type f \( -name "*.csv" -o -name "*.json" -o -name "*.txt" \) | sort > "${DATA}/candidate_files.txt"
+
+echo "[INFO] Arquivos candidatos salvos em ${DATA}/candidate_files.txt"
+
+# ============================================================
+# FASE 2 — SCRIPT DE VALIDAÇÃO ESTATÍSTICA
+# ============================================================
+
+cat > "${OUT}/run_statistical_validation.py" << 'PYEOF'
+import os
+import re
+import json
+import math
+import glob
+import hashlib
+import warnings
+import datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from scipy.stats import pearsonr, spearmanr, ks_2samp, mannwhitneyu, ttest_ind
+from sklearn.metrics import roc_curve, auc, roc_auc_score
+
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+ROOT = Path("evidencias_resultados_trisla_final")
+OUT = ROOT / "figures_ieee_v3"
+ANALYSIS = OUT / "analysis"
+DATA = OUT / "derived_data"
+LOGS = OUT / "logs"
+
+ANALYSIS.mkdir(parents=True, exist_ok=True)
+DATA.mkdir(parents=True, exist_ok=True)
+LOGS.mkdir(parents=True, exist_ok=True)
+
+plt.rcParams["font.family"] = "DejaVu Serif"
+plt.rcParams["axes.titlesize"] = 10
+plt.rcParams["axes.labelsize"] = 9
+plt.rcParams["xtick.labelsize"] = 8
+plt.rcParams["ytick.labelsize"] = 8
+plt.rcParams["legend.fontsize"] = 8
+
+COL_ACCEPT = "#1f77b4"
+COL_RENEG  = "#ff7f0e"
+COL_REJECT = "#d62728"
+
+def save_fig(fig, basepath):
+    fig.savefig(str(basepath) + ".png", dpi=300, bbox_inches="tight")
+    fig.savefig(str(basepath) + ".pdf", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+def now_utc():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+def load_candidate_tables():
+    candidates = list(ROOT.rglob("*.csv"))
+    loaded = []
+    for f in candidates:
+        try:
+            df = pd.read_csv(f)
+            loaded.append((f, df))
+        except Exception:
+            pass
+    return loaded
+
+def score_like_columns(df):
+    cols = {c.lower(): c for c in df.columns}
+    out = {}
+    for key in cols:
+        if "score" in key:
+            out["score"] = cols[key]
+        if "decision" == key or key.endswith("decision"):
+            out["decision"] = cols[key]
+        if "prb" in key:
+            out["prb"] = cols[key]
+        if "rtt" in key or "latency" in key:
+            if "transport" in key or "rtt" in key:
+                out["rtt"] = cols[key]
+        if "jitter" in key:
+            out["jitter"] = cols[key]
+        if "slice" in key:
+            out["slice"] = cols[key]
+        if "orchestration" in key and ("success" in key or "status" in key):
+            out["orch"] = cols[key]
+        if "bc_status" in key or ("blockchain" in key and "status" in key):
+            out["bc"] = cols[key]
+    return out
+
+def normalize_decision(x):
+    s = str(x).strip().upper()
+    if "ACCEPT" in s:
+        return "ACCEPT"
+    if "RENEG" in s:
+        return "RENEGOTIATE"
+    if "REJECT" in s:
+        return "REJECT"
+    return s
+
+def choose_best_dataset(loaded):
+    # Heurística: dataset com score + decision + prb e pelo menos 20 linhas
+    best = None
+    best_score = -1
+    for f, df in loaded:
+        cols = score_like_columns(df)
+        score = 0
+        if "score" in cols: score += 3
+        if "decision" in cols: score += 3
+        if "prb" in cols: score += 2
+        if "rtt" in cols: score += 1
+        if "slice" in cols: score += 1
+        if len(df) >= 20: score += 2
+        if score > best_score:
+            best_score = score
+            best = (f, df, cols)
+    return best, best_score
+
+loaded = load_candidate_tables()
+if not loaded:
+    raise SystemExit("[ERRO] Nenhum CSV real encontrado na árvore final.")
+
+(best, best_score) = choose_best_dataset(loaded)
+if best is None:
+    raise SystemExit("[ERRO] Não foi possível escolher dataset candidato.")
+dataset_path, df, cols = best
+
+with open(LOGS / "selected_dataset.txt", "w") as f:
+    f.write(f"timestamp_utc: {now_utc()}\n")
+    f.write(f"selected_dataset: {dataset_path}\n")
+    f.write(f"score: {best_score}\n")
+    f.write(f"columns: {list(df.columns)}\n")
+    f.write(f"mapped_cols: {cols}\n")
+    f.write(f"rows: {len(df)}\n")
+
+required = ["score", "decision"]
+missing = [c for c in required if c not in cols]
+if missing:
+    raise SystemExit(f"[ERRO] Dataset selecionado não contém colunas mínimas: {missing}")
+
+score_col = cols["score"]
+decision_col = cols["decision"]
+
+df = df.copy()
+df["decision_norm"] = df[decision_col].map(normalize_decision)
+df["decision_score"] = pd.to_numeric(df[score_col], errors="coerce")
+
+for maybe in ["prb", "rtt", "jitter"]:
+    if maybe in cols:
+        df[maybe] = pd.to_numeric(df[cols[maybe]], errors="coerce")
+
+if "slice" in cols:
+    df["slice_norm"] = df[cols["slice"]].astype(str).str.upper()
+else:
+    df["slice_norm"] = "UNKNOWN"
+
+df_valid = df.dropna(subset=["decision_score"]).copy()
+
+# ------------------------------------------------------------
+# FASE 2.1 — RESUMO DESCRITIVO
+# ------------------------------------------------------------
+
+summary = {
+    "timestamp_utc": now_utc(),
+    "dataset_path": str(dataset_path),
+    "rows_total": int(len(df)),
+    "rows_valid_score": int(len(df_valid)),
+    "decision_counts": df_valid["decision_norm"].value_counts(dropna=False).to_dict(),
+    "slice_counts": df_valid["slice_norm"].value_counts(dropna=False).to_dict(),
+}
+
+(Path(DATA) / "summary_v3.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+# ------------------------------------------------------------
+# FASE 2.2 — IC 95% POR CLASSE
+# ------------------------------------------------------------
+
+def ci95(arr):
+    arr = np.array(arr, dtype=float)
+    arr = arr[~np.isnan(arr)]
+    n = len(arr)
+    if n == 0:
+        return (np.nan, np.nan, np.nan, 0)
+    mean = arr.mean()
+    if n == 1:
+        return (mean, mean, mean, 1)
+    std = arr.std(ddof=1)
+    se = std / math.sqrt(n)
+    delta = 1.96 * se
+    return (mean, mean - delta, mean + delta, n)
+
+classes = ["ACCEPT", "RENEGOTIATE", "REJECT"]
+ci_rows = []
+for c in classes:
+    vals = df_valid.loc[df_valid["decision_norm"] == c, "decision_score"].values
+    mean, lo, hi, n = ci95(vals)
+    ci_rows.append({"class": c, "n": n, "mean": mean, "ci95_low": lo, "ci95_high": hi})
+
+ci_df = pd.DataFrame(ci_rows)
+ci_df.to_csv(DATA / "decision_score_ci95_by_class.csv", index=False)
+
+fig = plt.figure(figsize=(6.5, 3.2))
+ax = fig.add_subplot(111)
+x = np.arange(len(ci_df))
+ax.errorbar(x, ci_df["mean"], 
+            yerr=[ci_df["mean"] - ci_df["ci95_low"], ci_df["ci95_high"] - ci_df["mean"]],
+            fmt='o', capsize=5)
+ax.set_xticks(x)
+ax.set_xticklabels(ci_df["class"])
+ax.set_ylabel("Decision Score (a.u.)")
+ax.set_title("Mean Decision Score with 95% CI by Class")
+ax.grid(True, linestyle="--", alpha=0.3)
+save_fig(fig, OUT / "fig_v3_01_decision_score_ci95_by_class")
+
+# ------------------------------------------------------------
+# FASE 2.3 — TESTES ENTRE CLASSES
+# ------------------------------------------------------------
+
+test_rows = []
+pairs = [("ACCEPT", "RENEGOTIATE"), ("ACCEPT", "REJECT"), ("RENEGOTIATE", "REJECT")]
+for a, b in pairs:
+    xa = df_valid.loc[df_valid["decision_norm"] == a, "decision_score"].dropna().values
+    xb = df_valid.loc[df_valid["decision_norm"] == b, "decision_score"].dropna().values
+    if len(xa) >= 2 and len(xb) >= 2:
+        t_stat, t_p = ttest_ind(xa, xb, equal_var=False)
+        try:
+            mw_stat, mw_p = mannwhitneyu(xa, xb, alternative="two-sided")
+        except Exception:
+            mw_stat, mw_p = np.nan, np.nan
+        try:
+            ks_stat, ks_p = ks_2samp(xa, xb)
+        except Exception:
+            ks_stat, ks_p = np.nan, np.nan
+    else:
+        t_stat = t_p = mw_stat = mw_p = ks_stat = ks_p = np.nan
+    test_rows.append({
+        "pair": f"{a} vs {b}",
+        "t_stat": t_stat,
+        "t_p": t_p,
+        "mw_stat": mw_stat,
+        "mw_p": mw_p,
+        "ks_stat": ks_stat,
+        "ks_p": ks_p,
+        "n_a": len(xa),
+        "n_b": len(xb),
+    })
+
+tests_df = pd.DataFrame(test_rows)
+tests_df.to_csv(DATA / "decision_class_stat_tests.csv", index=False)
+
+# ------------------------------------------------------------
+# FASE 2.4 — ROC / AUC
+# ------------------------------------------------------------
+
+# Cenário 1: ACCEPT vs NÃO-ACCEPT
+roc_rows = []
+if df_valid["decision_norm"].isin(["ACCEPT", "RENEGOTIATE", "REJECT"]).sum() >= 10:
+    y_true = (df_valid["decision_norm"] == "ACCEPT").astype(int).values
+    y_score = -df_valid["decision_score"].values  # score menor favorece ACCEPT
+    try:
+        fpr, tpr, _ = roc_curve(y_true, y_score)
+        roc_auc = auc(fpr, tpr)
+
+        fig = plt.figure(figsize=(6.5, 3.2))
+        ax = fig.add_subplot(111)
+        ax.plot(fpr, tpr, label=f"AUC = {roc_auc:.3f}")
+        ax.plot([0,1], [0,1], linestyle="--")
+        ax.set_xlabel("False Positive Rate")
+        ax.set_ylabel("True Positive Rate")
+        ax.set_title("ROC Curve — ACCEPT vs NON-ACCEPT")
+        ax.grid(True, linestyle="--", alpha=0.3)
+        ax.legend()
+        save_fig(fig, OUT / "fig_v3_02_roc_accept_vs_nonaccept")
+
+        roc_rows.append({"scenario": "ACCEPT_vs_NONACCEPT", "auc": roc_auc})
+    except Exception as e:
+        roc_rows.append({"scenario": "ACCEPT_vs_NONACCEPT", "auc": np.nan, "error": str(e)})
+
+roc_df = pd.DataFrame(roc_rows)
+roc_df.to_csv(DATA / "roc_auc_results.csv", index=False)
+
+# ------------------------------------------------------------
+# FASE 2.5 — BOOTSTRAP DE CORRELAÇÃO
+# ------------------------------------------------------------
+
+boot_rows = []
+if "prb" in df_valid.columns:
+    sub = df_valid.dropna(subset=["decision_score", "prb"]).copy()
+    if len(sub) >= 10:
+        rng = np.random.default_rng(42)
+        vals = []
+        x = sub["prb"].values
+        y = sub["decision_score"].values
+        for _ in range(2000):
+            idx = rng.integers(0, len(sub), len(sub))
+            try:
+                r, _ = pearsonr(x[idx], y[idx])
+                vals.append(r)
+            except Exception:
+                pass
+        vals = np.array(vals, dtype=float)
+        vals = vals[~np.isnan(vals)]
+        if len(vals) > 0:
+            mean_r = vals.mean()
+            lo = np.quantile(vals, 0.025)
+            hi = np.quantile(vals, 0.975)
+            boot_rows.append({"metric": "prb_vs_score", "mean_r": mean_r, "ci95_low": lo, "ci95_high": hi, "n_boot": len(vals)})
+
+            fig = plt.figure(figsize=(6.5, 3.2))
+            ax = fig.add_subplot(111)
+            ax.hist(vals, bins=30, density=True)
+            ax.axvline(mean_r, linestyle="--", label=f"mean={mean_r:.3f}")
+            ax.axvline(lo, linestyle=":")
+            ax.axvline(hi, linestyle=":")
+            ax.set_xlabel("Bootstrap Pearson r")
+            ax.set_ylabel("Density")
+            ax.set_title("Bootstrap Distribution — PRB vs Decision Score")
+            ax.grid(True, linestyle="--", alpha=0.3)
+            ax.legend()
+            save_fig(fig, OUT / "fig_v3_03_bootstrap_prb_vs_score")
+
+boot_df = pd.DataFrame(boot_rows)
+boot_df.to_csv(DATA / "bootstrap_correlation_results.csv", index=False)
+
+# ------------------------------------------------------------
+# FASE 2.6 — ROBUSTEZ A RUÍDO PEQUENO
+# ------------------------------------------------------------
+
+robust_rows = []
+if "prb" in df_valid.columns and len(df_valid.dropna(subset=["prb", "decision_score"])) >= 10:
+    sub = df_valid.dropna(subset=["prb", "decision_score"]).copy()
+    x = sub["prb"].values.astype(float)
+    y = sub["decision_score"].values.astype(float)
+    base_r, _ = pearsonr(x, y)
+
+    rng = np.random.default_rng(7)
+    noise_levels = [0.01, 0.02, 0.05]
+    for nl in noise_levels:
+        rs = []
+        for _ in range(500):
+            noisy = x * (1 + rng.normal(0, nl, size=len(x)))
+            try:
+                r, _ = pearsonr(noisy, y)
+                rs.append(r)
+            except Exception:
+                pass
+        rs = np.array(rs)
+        robust_rows.append({
+            "noise_level_fraction": nl,
+            "mean_r": float(np.nanmean(rs)),
+            "std_r": float(np.nanstd(rs)),
+            "base_r": float(base_r)
+        })
+
+    robust_df = pd.DataFrame(robust_rows)
+    robust_df.to_csv(DATA / "robustness_noise_prb.csv", index=False)
+
+    fig = plt.figure(figsize=(6.5, 3.2))
+    ax = fig.add_subplot(111)
+    ax.errorbar(robust_df["noise_level_fraction"], robust_df["mean_r"], yerr=robust_df["std_r"], fmt='o-')
+    ax.axhline(base_r, linestyle="--", label=f"base r={base_r:.3f}")
+    ax.set_xlabel("Relative Noise Level")
+    ax.set_ylabel("Pearson r")
+    ax.set_title("Robustness of PRB Correlation under Small Noise")
+    ax.grid(True, linestyle="--", alpha=0.3)
+    ax.legend()
+    save_fig(fig, OUT / "fig_v3_04_robustness_prb_small_noise")
+
+# ------------------------------------------------------------
+# FASE 2.7 — SCORE POR SLICE COM IC
+# ------------------------------------------------------------
+
+if "slice_norm" in df_valid.columns:
+    rows = []
+    for s in sorted(df_valid["slice_norm"].dropna().unique()):
+        vals = df_valid.loc[df_valid["slice_norm"] == s, "decision_score"].dropna().values
+        mean, lo, hi, n = ci95(vals)
+        rows.append({"slice": s, "n": n, "mean": mean, "ci95_low": lo, "ci95_high": hi})
+    slice_ci_df = pd.DataFrame(rows)
+    slice_ci_df.to_csv(DATA / "decision_score_ci95_by_slice.csv", index=False)
+
+    fig = plt.figure(figsize=(6.5, 3.2))
+    ax = fig.add_subplot(111)
+    x = np.arange(len(slice_ci_df))
+    ax.errorbar(x, slice_ci_df["mean"],
+                yerr=[slice_ci_df["mean"] - slice_ci_df["ci95_low"], slice_ci_df["ci95_high"] - slice_ci_df["mean"]],
+                fmt='o', capsize=5)
+    ax.set_xticks(x)
+    ax.set_xticklabels(slice_ci_df["slice"], rotation=0)
+    ax.set_ylabel("Decision Score (a.u.)")
+    ax.set_title("Mean Decision Score with 95% CI by Slice Type")
+    ax.grid(True, linestyle="--", alpha=0.3)
+    save_fig(fig, OUT / "fig_v3_05_decision_score_ci95_by_slice")
+
+# ------------------------------------------------------------
+# FASE 2.8 — PARECER CIENTÍFICO FINAL
+# ------------------------------------------------------------
+
+lines = []
+lines.append("TRISLA — IEEE FIGURES V3 STATISTICAL VALIDATION")
+lines.append(f"timestamp_utc: {now_utc()}")
+lines.append(f"dataset_path: {dataset_path}")
+lines.append("")
+
+# Regras de aprovação
+approved = True
+
+# Regra A: separação entre classes
+if len(tests_df) > 0:
+    strong_sep = (tests_df["mw_p"] < 0.05).fillna(False).sum()
+    lines.append(f"[CHECK] Class separation significant pairs (Mann-Whitney p<0.05): {strong_sep}/{len(tests_df)}")
+    if strong_sep < 2:
+        approved = False
+        lines.append("[FAIL] Separação estatística insuficiente entre classes.")
+    else:
+        lines.append("[OK] Separação estatística entre classes confirmada.")
+
+# Regra B: robustez PRB
+if len(boot_df) > 0:
+    r_mean = boot_df.iloc[0]["mean_r"]
+    lines.append(f"[CHECK] Bootstrap mean correlation PRB vs score: {r_mean:.4f}")
+    if r_mean < 0.7:
+        approved = False
+        lines.append("[FAIL] Correlação PRB vs score insuficiente.")
+    else:
+        lines.append("[OK] Correlação PRB vs score robusta.")
+
+# Regra C: ROC mínimo
+if len(roc_df) > 0 and not pd.isna(roc_df.iloc[0]["auc"]):
+    roc_auc = roc_df.iloc[0]["auc"]
+    lines.append(f"[CHECK] ROC AUC ACCEPT vs NON-ACCEPT: {roc_auc:.4f}")
+    if roc_auc < 0.80:
+        approved = False
+        lines.append("[FAIL] Separabilidade ROC insuficiente.")
+    else:
+        lines.append("[OK] Separabilidade ROC adequada.")
+else:
+    lines.append("[WARN] ROC não pôde ser calculada.")
+
+# Regra D: coerência slice-aware
+if (DATA / "decision_score_ci95_by_slice.csv").exists():
+    lines.append("[OK] Slice-aware summary generated.")
+else:
+    lines.append("[WARN] Slice-aware summary not generated.")
+
+lines.append("")
+if approved:
+    lines.append("STATUS FINAL: APPROVED SCIENTIFICALLY")
+else:
+    lines.append("STATUS FINAL: REJECTED — REQUIRES REVIEW")
+
+(ANALYSIS / "STATISTICAL_REVIEW_REPORT_V3.txt").write_text("\n".join(lines), encoding="utf-8")
+
+manifest = {
+    "timestamp_utc": now_utc(),
+    "dataset_path": str(dataset_path),
+    "generated_figures": sorted([p.name for p in OUT.glob("fig_v3_*.png")]),
+    "generated_tables": sorted([p.name for p in DATA.glob("*.csv")]),
+    "approved": approved,
+}
+(OUT / "MANIFEST_V3.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+print("[OK] V3 concluído.")
+print(json.dumps(manifest, indent=2))
+PYEOF
+
+# ============================================================
+# FASE 3 — EXECUÇÃO
+# ============================================================
+
+python3 "${OUT}/run_statistical_validation.py" | tee "${LOGS}/run_v3.log"
+
+# ============================================================
+# FASE 4 — VALIDAÇÃO PÓS-EXECUÇÃO
+# ============================================================
+
+echo "[CHECK] Validando artefatos V3..."
+
+test -f "${ANALYSIS}/STATISTICAL_REVIEW_REPORT_V3.txt" || { echo "[ERRO] Relatório V3 ausente"; exit 1; }
+test -f "${OUT}/MANIFEST_V3.json" || { echo "[ERRO] Manifest V3 ausente"; exit 1; }
+
+PNG_COUNT=$(find "${OUT}" -maxdepth 1 -type f -name "fig_v3_*.png" | wc -l)
+PDF_COUNT=$(find "${OUT}" -maxdepth 1 -type f -name "fig_v3_*.pdf" | wc -l)
+
+echo "[INFO] fig_v3 PNG: ${PNG_COUNT}"
+echo "[INFO] fig_v3 PDF: ${PDF_COUNT}"
+
+if [ "${PNG_COUNT}" -lt 4 ]; then
+  echo "[ERRO] Número insuficiente de figuras V3 geradas"
+  exit 1
+fi
+
+if [ "${PDF_COUNT}" -ne "${PNG_COUNT}" ]; then
+  echo "[ERRO] PNG/PDF inconsistente"
+  exit 1
+fi
+
+# ============================================================
+# FASE 5 — GATE FINAL DE APROVAÇÃO
+# ============================================================
+
+if grep -q "STATUS FINAL: APPROVED SCIENTIFICALLY" "${ANALYSIS}/STATISTICAL_REVIEW_REPORT_V3.txt"; then
+  echo "[OK] V3 aprovado cientificamente."
+else
+  echo "[FALHA] V3 rejeitado. Não avançar para uso em paper."
+  exit 1
+fi
+
+# ============================================================
+# FASE 6 — SUMÁRIO FINAL
+# ============================================================
+
+cat << EOF > "${OUT}/README_V3.txt"
+TriSLA IEEE Figures V3
+======================
+
+Este pacote contém a camada estatística complementar das figuras finais do TriSLA.
+
+Conteúdo:
+- fig_v3_01_decision_score_ci95_by_class.(png|pdf)
+- fig_v3_02_roc_accept_vs_nonaccept.(png|pdf)
+- fig_v3_03_bootstrap_prb_vs_score.(png|pdf)
+- fig_v3_04_robustness_prb_small_noise.(png|pdf)
+- fig_v3_05_decision_score_ci95_by_slice.(png|pdf) [quando aplicável]
+
+Tabelas:
+- decision_score_ci95_by_class.csv
+- decision_class_stat_tests.csv
+- roc_auc_results.csv
+- bootstrap_correlation_results.csv
+- robustness_noise_prb.csv
+- decision_score_ci95_by_slice.csv [quando aplicável]
+
+Relatórios:
+- analysis/STATISTICAL_REVIEW_REPORT_V3.txt
+- MANIFEST_V3.json
+
+Regra de uso:
+Somente utilizar este pacote se o relatório final contiver:
+STATUS FINAL: APPROVED SCIENTIFICALLY
+EOF
+
+echo "PROMPT_IEEE_FIGURES_V3 FINALIZADO COM SUCESSO"

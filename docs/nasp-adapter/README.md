@@ -1,51 +1,25 @@
-# NASP Adapter — Platform Integration and Metric Normalization Layer
+# NASP Adapter — Documentation Index
 
-## 1. Overview
+Integration and orchestration layer connecting TriSLA to Kubernetes, Free5GC, Prometheus, and multidomain infrastructure.
 
-The NASP Adapter is the integration layer responsible for connecting the TriSLA architecture with real network infrastructure.
+## Operational reference
 
-It provides a normalized, consistent, and observable view of multi-domain network resources.
+**[`docs/modules/nasp-adapter.md`](../modules/nasp-adapter.md)** — REST catalog, runtime paths, digest pin, integrations, capacity accounting, env vars.
 
----
+Use that document for operations, integration, and freeze alignment. This directory holds specialized references only.
 
-## 2. Role in TriSLA
+## Documentation map
 
-The NASP Adapter operates as the boundary between:
+| Directory | Content |
+|-----------|---------|
+| [`architecture/`](architecture/nasp_adapter_architecture.md) | Components, K8s CRDs, background services |
+| [`integration/`](integration/nasp_integration.md) | Free5GC, Prometheus, Portal, SEM, K8s |
+| [`interfaces/`](interfaces/interfaces.md) | REST ingress and caller contracts |
+| [`model/`](model/metric_normalization_model.md) | MDCE / multidomain metric model |
+| [`observability/`](observability/observability.md) | Prometheus, OTEL, PRB, MDCE |
 
-- Logical SLA decisions
-- Physical network state
+## Scope boundary
 
----
+NASP Adapter **does not** perform SLA admission. Decision authority remains in the Decision Engine (via SEM-CSMF); on-chain registration is handled by BC-NSSMF after successful orchestration.
 
-## 3. Core Function
-
-The module performs:
-
-- Metric collection from real infrastructure
-- Metric normalization across domains
-- Execution of platform-level actions
-- Exposure of a stable API
-
----
-
-## 4. Domains Covered
-
-- RAN (radio metrics)
-- Transport (latency, jitter)
-- Core (CPU, memory, network)
-
----
-
-## 5. Research Contribution
-
-The NASP Adapter enables:
-
-- Real-world validation of SLA feasibility
-- Continuous observability of system state
-- Experimental reproducibility
-
----
-
-## 6. Summary
-
-The NASP Adapter transforms heterogeneous infrastructure metrics into a unified representation, enabling consistent SLA evaluation and system validation.
+Implementation: `apps/nasp-adapter/src/`

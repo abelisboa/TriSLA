@@ -1,0 +1,481 @@
+# PROMPT MASTER — REARQUITETURA TRI-SLA SEM REGRESSÃO
+# PERFIL: DevOps Sênior + Engenheiro de IA + Arquiteto de Sistemas
+# OBJETIVO: Corrigir separação de responsabilidades do TriSLA
+# MODO: FASEADO, EVIDENCE-FIRST, BUILD/DEPLOY POR DIGEST GHCR
+# ENTRYPOINT OBRIGATÓRIO: ssh node006
+
+Você deve atuar como engenheiro DevOps sênior, engenheiro de IA e arquiteto de software. O objetivo NÃO é mexer no paper. O objetivo é corrigir a arquitetura operacional do TriSLA sem regressão, movendo responsabilidades atualmente concentradas no Portal Backend para os componentes corretos:
+
+- Portal Backend: northbound API ingress/egress, validação de entrada, compatibilidade de endpoint.
+- Decision Engine: decisão, política, scoring, lifecycle transition, trigger de orquestração.
+- SLA-Agent: runtime reassessment, telemetry refresh, drift_summary, remediation_evidence, runtime continuity.
+- NASP Adapter: execução/coordenação de orquestração.
+- BC-NSSMF: lifecycle/governance registration.
+- Prometheus/telemetry layer: fonte de métricas.
+
+=====================================================================
+REGRA ZERO — NÃO COMEÇAR IMPLEMENTAÇÃO SEM GUIA
+=====================================================================
+
+Antes de qualquer alteração de código, você deve gerar obrigatoriamente o arquivo:
+
+docs/REFACTOR_TRISLA_RESPONSIBILITY_GUIDE.md
+
+Esse guia deve conter:
+
+1. Diagnóstico da situação atual.
+2. Evidências atuais obrigatórias.
+3. Mapa de responsabilidades atual.
+4. Mapa de responsabilidades alvo.
+5. Fases de refatoração.
+6. Critérios de entrada e saída de cada fase.
+7. Testes de não regressão.
+8. Plano de rollback.
+9. Regras de build.
+10. Regras de deploy por digest remoto GHCR.
+11. Matriz de riscos.
+12. O que NÃO deve ser alterado.
+13. Como atualizar runbook e evidências.
+
+Somente depois de gerar esse guia, prosseguir fase por fase.
+
+=====================================================================
+EVIDÊNCIAS ATUAIS OBRIGATÓRIAS
+=====================================================================
+
+Você deve consultar e preservar o histórico abaixo antes de qualquer alteração:
+
+1. Auditoria de responsabilidades:
+   evidencias_auditoria_responsabilidades_20260511T190246Z
+
+Principais conclusões já conhecidas:
+- Portal Backend executa orchestration trigger.
+- Portal Backend executa SLA lifecycle registration.
+- Portal Backend executa runtime reassessment.
+- Portal Backend executa telemetry refresh.
+- Portal Backend gera drift_summary.
+- Portal Backend gera remediation_evidence.
+- Decision Engine executa decisão, score, thresholds, policy e risk.
+- SLA-Agent não apareceu como módulo operacional separado no escopo auditado.
+
+Arquivos importantes:
+- backend/backend_runtime_actions.txt
+- decision_engine/runtime_logic.txt
+- sla_agent/runtime_logic.txt
+- analysis/api_flows.txt
+
+2. Auditoria V2:
+   evidencias_auditoria_v2_20260509T145459Z
+
+3. Auditoria V3:
+   evidencias_auditoria_v3_20260509T150018Z
+
+4. Auditoria leve:
+   evidencias_auditoria_leve_20260509T145125Z
+
+5. Evidências recentes do paper/protótipo:
+   procurar também por:
+   evidencias_resultados_trisla_baseline_*
+   evidencias_metricas_operacionais
+   evidencias_baseline_oficial
+   docs/TRISLA_MASTER_RUNBOOK.md
+   docs/TRISLA_INFRA_SSOT.md
+   docs/TRISLA_E2E_FLOW_CANONICAL.md
+   docs/modules/
+
+=====================================================================
+REGRAS ABSOLUTAS DE AMBIENTE
+=====================================================================
+
+- Usar sempre:
+  ssh node006
+
+- Diretório:
+  cd /home/porvir5g/gtp5g/trisla
+
+- Namespace:
+  trisla
+
+- Não acessar diretamente node1.
+- Não usar :latest.
+- Não fazer deploy por tag.
+- Deploy somente por digest remoto GHCR.
+- Não alterar thresholds sem justificativa e evidência.
+- Não remover comportamento existente.
+- Não quebrar endpoints públicos.
+- Não trocar contratos JSON sem camada de compatibilidade.
+- Não executar refatoração ampla sem testes intermediários.
+- Não executar rollout sem imagem digest.
+- Não apagar evidências antigas.
+- Não sobrescrever runbook sem backup.
+
+=====================================================================
+REGRAS DE BUILD E DEPLOY
+=====================================================================
+
+Para qualquer serviço alterado:
+
+TS=$(date -u +%Y%m%dT%H%M%SZ)
+
+Imagem:
+ghcr.io/abelisboa/<nome-servico>:${TS}
+
+Build:
+podman build --format docker \
+  -t ghcr.io/abelisboa/<nome-servico>:${TS} \
+  -f <Dockerfile> <context>
+
+Push:
+podman push ghcr.io/abelisboa/<nome-servico>:${TS}
+
+Digest remoto:
+DIGEST=$(skopeo inspect \
+  --authfile ~/.config/containers/auth.json \
+  docker://ghcr.io/abelisboa/<nome-servico>:${TS} \
+  | jq -r .Digest)
+
+Se skopeo falhar por token GHCR, usar fallback documentado:
+podman inspect ghcr.io/abelisboa/<nome-servico>:${TS}
+ou docker inspect RepoDigests, registrando a evidência.
+
+Deploy:
+kubectl -n trisla set image deployment/<deployment> \
+  <container>=ghcr.io/abelisboa/<nome-servico>@${DIGEST}
+
+Rollout:
+kubectl -n trisla rollout status deployment/<deployment> --timeout=240s
+
+Validar:
+kubectl -n trisla get deployment <deployment> -o yaml
+kubectl -n trisla get pods -o wide
+kubectl -n trisla get deployment -o jsonpath='{range .items[*]}{.metadata.name}{" => "}{.spec.template.spec.containers[*].image}{"\n"}{end}'
+
+=====================================================================
+FASE 0 — BASELINE E FREEZE ANTES DE QUALQUER MUDANÇA
+=====================================================================
+
+Criar diretório:
+
+TS=$(date -u +%Y%m%dT%H%M%SZ)
+OUT="evidencias_refactor_responsabilidades_${TS}"
+mkdir -p ${OUT}/{baseline,analysis,backend,decision_engine,sla_agent,tests,deploy,rollback,docs}
+
+Coletar:
+
+kubectl -n trisla get pods -o wide > ${OUT}/baseline/pods.txt
+kubectl -n trisla get deployments > ${OUT}/baseline/deployments.txt
+kubectl -n trisla get svc > ${OUT}/baseline/services.txt
+kubectl -n trisla get deployment -o yaml > ${OUT}/baseline/deployments.yaml
+kubectl -n trisla get deployment -o jsonpath='{range .items[*]}{.metadata.name}{" => "}{.spec.template.spec.containers[*].image}{"\n"}{end}' > ${OUT}/baseline/images.txt
+git status > ${OUT}/baseline/git_status.txt
+git rev-parse HEAD > ${OUT}/baseline/git_head.txt
+
+Criar backup dos arquivos que serão alterados:
+
+apps/portal-backend/src/routers/sla.py
+apps/portal-backend/src/services/nasp.py
+apps/portal-backend/src/telemetry/*
+apps/decision-engine/src/*
+helm/trisla/*
+docs/*
+
+Salvar em:
+${OUT}/rollback/
+
+=====================================================================
+FASE 1 — GUIA OBRIGATÓRIO
+=====================================================================
+
+Criar:
+
+docs/REFACTOR_TRISLA_RESPONSIBILITY_GUIDE.md
+
+O guia deve declarar explicitamente:
+
+Situação atual:
+- Portal Backend está concentrando responsabilidades operacionais.
+- Decision Engine está limitado a decisão/policy/risk.
+- SLA-Agent não está operacionalizado como serviço separado segundo auditoria.
+
+Arquitetura alvo:
+- Portal Backend permanece compatível com APIs públicas.
+- Decision Engine assume lifecycle transition e orchestration decision/trigger.
+- SLA-Agent assume revalidation, drift_summary e remediation_evidence.
+- Backend passa a delegar.
+
+Critério:
+nenhum endpoint público pode quebrar.
+
+=====================================================================
+FASE 2 — EXTRAÇÃO DO SLA-AGENT SEM QUEBRAR BACKEND
+=====================================================================
+
+Objetivo:
+Mover progressivamente do Portal Backend para SLA-Agent:
+
+- /revalidate-telemetry logic
+- telemetry refresh
+- telemetry snapshot comparison
+- drift_summary generation
+- remediation_evidence generation
+- revalidation_status
+
+Estratégia segura:
+1. Criar ou completar apps/sla-agent.
+2. Implementar serviço FastAPI ou equivalente.
+3. Criar endpoint interno:
+   POST /api/v1/agent/revalidate-telemetry
+4. Reaproveitar lógica existente do backend com mínima alteração.
+5. Manter o endpoint público no Portal Backend:
+   POST /api/v1/sla/revalidate-telemetry
+6. O backend deve apenas delegar para o SLA-Agent.
+7. Se SLA-Agent falhar, backend pode usar fallback temporário, mas deve registrar:
+   delegated=false
+   fallback_reason=<motivo>
+
+Critérios de sucesso:
+- Resposta JSON preservada.
+- drift_summary preservado.
+- remediation_evidence preservado.
+- metadata preservado.
+- status preservado.
+- Nenhuma regressão em /api/v1/sla/submit.
+- Evidência comparativa antes/depois.
+
+Gerar evidências:
+${OUT}/sla_agent/before_response.json
+${OUT}/sla_agent/after_response.json
+${OUT}/sla_agent/diff_response.txt
+${OUT}/sla_agent/delegation_logs.txt
+
+=====================================================================
+FASE 3 — DECISION ENGINE ASSUME ORCHESTRATION DECISION
+=====================================================================
+
+Objetivo:
+Mover do backend para Decision Engine:
+
+- orchestration trigger decision;
+- lifecycle transition decision;
+- emissão de reason_codes;
+- metadados de decisão para orchestration.
+
+Estratégia segura:
+1. Backend continua recebendo /api/v1/sla/submit.
+2. Backend chama SEM-CSMF como antes.
+3. Backend chama Decision Engine.
+4. Decision Engine deve retornar decisão enriquecida:
+   - decision
+   - score
+   - reason_codes
+   - risk_score
+   - orchestration_required
+   - lifecycle_state
+   - orchestration_payload ou orchestration_intent
+5. Backend não decide se orquestra.
+6. Backend apenas executa/delega a ação definida pelo Decision Engine.
+7. NASP Adapter continua responsável pela execução técnica da orquestração.
+
+Não transformar Decision Engine em megamonólito.
+Decision Engine decide e coordena logicamente.
+NASP Adapter executa.
+
+Critérios:
+- /api/v1/sla/submit mantém contrato.
+- decision_score preservado.
+- reason_codes preservados.
+- telemetry_snapshot preservado.
+- nasp_orchestration_status preservado.
+- lifecycle_state preservado.
+
+Evidências:
+${OUT}/decision_engine/before_submit.json
+${OUT}/decision_engine/after_submit.json
+${OUT}/decision_engine/decision_payload.json
+${OUT}/decision_engine/orchestration_payload.json
+${OUT}/decision_engine/diff_submit.txt
+
+=====================================================================
+FASE 4 — LIFECYCLE REGISTRATION VIA COMPONENTE CORRETO
+=====================================================================
+
+Objetivo:
+Separar lifecycle registration de backend.
+
+Destino correto:
+- Decision Engine define lifecycle transition.
+- BC-NSSMF registra lifecycle/governance.
+- Backend apenas repassa/retorna.
+
+Implementar:
+- Decision Engine gera lifecycle event.
+- BC-NSSMF registra.
+- Backend não constrói lifecycle como autoridade.
+
+Critérios:
+- tx_hash preservado.
+- metadata preservada.
+- lifecycle registration preservado.
+- sem regressão em governance.
+
+Evidências:
+${OUT}/governance/lifecycle_before.json
+${OUT}/governance/lifecycle_after.json
+${OUT}/governance/tx_hash.txt
+
+=====================================================================
+FASE 5 — TESTES DE NÃO REGRESSÃO
+=====================================================================
+
+Executar no mínimo:
+
+1. Health global:
+curl -s http://localhost:18001/api/v1/health/global || true
+
+2. Submit eMBB:
+POST /api/v1/sla/submit
+
+3. Submit URLLC:
+POST /api/v1/sla/submit
+
+4. Submit mMTC:
+POST /api/v1/sla/submit
+
+5. Revalidate telemetry:
+POST /api/v1/sla/revalidate-telemetry
+
+Validar em cada resposta:
+- decision existe;
+- metadata.telemetry_snapshot existe;
+- reason_codes existem;
+- drift_summary existe quando aplicável;
+- remediation_evidence existe quando aplicável;
+- tx_hash existe quando aplicável;
+- delegated_to_sla_agent=true para revalidation;
+- decision_engine_orchestration_authority=true para orchestration decision.
+
+Salvar:
+${OUT}/tests/*.json
+${OUT}/tests/validation_summary.txt
+
+=====================================================================
+FASE 6 — BUILD E DEPLOY POR DIGEST
+=====================================================================
+
+Para cada serviço alterado:
+- portal-backend
+- decision-engine
+- sla-agent
+- bc-nssmf se alterado
+
+Gerar imagem GHCR por timestamp.
+Fazer push.
+Resolver digest remoto.
+Deploy por digest.
+Validar rollout.
+
+Nunca usar tag como imagem final.
+
+Salvar:
+${OUT}/deploy/build_logs.txt
+${OUT}/deploy/push_logs.txt
+${OUT}/deploy/digests.txt
+${OUT}/deploy/rollout_status.txt
+${OUT}/deploy/images_after.txt
+
+=====================================================================
+FASE 7 — DOCUMENTAÇÃO E RUNBOOK
+=====================================================================
+
+Atualizar sem apagar histórico:
+
+docs/REFACTOR_TRISLA_RESPONSIBILITY_GUIDE.md
+docs/TRISLA_MASTER_RUNBOOK.md
+docs/TRISLA_E2E_FLOW_CANONICAL.md
+docs/modules/portal-backend.md
+docs/modules/decision-engine.md
+docs/modules/sla-agent-layer.md
+docs/modules/bc-nssmf.md
+
+Registrar:
+- antes;
+- depois;
+- responsabilidades;
+- endpoints;
+- evidências;
+- rollback;
+- limitações.
+
+=====================================================================
+FASE 8 — RELATÓRIO FINAL
+=====================================================================
+
+Gerar:
+
+${OUT}/analysis/FINAL_REFACTOR_REPORT.md
+
+Com:
+
+1. Resumo executivo.
+2. O que foi alterado.
+3. O que não foi alterado.
+4. Responsabilidades antes/depois.
+5. Evidências de build/deploy.
+6. Evidências de teste.
+7. Riscos remanescentes.
+8. Rollback.
+9. Impacto no paper.
+10. Próximas fases.
+
+=====================================================================
+CRITÉRIOS DE ACEITAÇÃO FINAL
+=====================================================================
+
+A refatoração só pode ser considerada concluída se:
+
+- Portal Backend não for mais autoridade de drift_summary.
+- Portal Backend não for mais autoridade de remediation_evidence.
+- SLA-Agent executar runtime reassessment.
+- Decision Engine definir orchestration decision.
+- NASP Adapter continuar executando orquestração.
+- BC-NSSMF preservar governance.
+- APIs públicas continuarem compatíveis.
+- Deploy estiver por digest GHCR.
+- Evidências estiverem congeladas.
+- Runbook estiver atualizado.
+- Testes URLLC/eMBB/mMTC passarem.
+
+=====================================================================
+ROLLBACK
+=====================================================================
+
+Se qualquer fase quebrar:
+
+1. Interromper imediatamente.
+2. Não avançar para próxima fase.
+3. Restaurar imagem anterior por digest coletado em baseline.
+4. Restaurar arquivos de backup.
+5. Registrar erro em:
+   ${OUT}/rollback/ROLLBACK_REPORT.md
+6. Não mascarar falha.
+
+=====================================================================
+IMPORTANTE
+=====================================================================
+
+Não tente fazer tudo em uma alteração gigante.
+
+Execute em fases:
+
+1. Guia.
+2. SLA-Agent extraction.
+3. Decision Engine orchestration authority.
+4. Governance lifecycle cleanup.
+5. Tests.
+6. Digest deploy.
+7. Docs.
+8. Report.
+
+Cada fase deve produzir evidências antes da próxima.
+
+Comece agora pela FASE 0 e FASE 1.

@@ -1,0 +1,453 @@
+# =========================================================
+# PROMPT_TRISLA_12A_V4_3 — DATASET CIENTÍFICO AUDITÁVEL
+# =========================================================
+# MISSÃO:
+# Gerar dataset científico denso para análise slice-aware multidomínio
+# com:
+# - >= 180 amostras válidas;
+# - taxa de sucesso > 95%;
+# - JSON válido em todas as amostras válidas;
+# - rastreabilidade por amostra;
+# - análise automática de qualidade.
+#
+# REGRAS:
+# - NÃO alterar código;
+# - NÃO alterar thresholds;
+# - NÃO alterar deployments;
+# - NÃO usar flood agressivo;
+# - usar pipeline real /api/v1/sla/submit.
+# =========================================================
+
+set -euo pipefail
+
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_trisla_12a_dataset_dense_v4_3"
+export OUT
+
+mkdir -p "$OUT"/{dataset,analysis,logs,tmp}
+
+date -u > "$OUT/analysis/start.txt"
+
+PORT=18001
+PF_CREATED=0
+PF_LOG="$OUT/logs/portforward.log"
+
+cleanup() {
+  if [ "$PF_CREATED" = "1" ] && [ -f "$OUT/tmp/pf_pid.txt" ]; then
+    kill "$(cat "$OUT/tmp/pf_pid.txt")" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+
+# =========================================================
+# FASE 0 — SNAPSHOT DO RUNTIME
+# =========================================================
+
+kubectl -n trisla get deployment trisla-decision-engine \
+  -o jsonpath='{.spec.template.spec.containers[0].image}' \
+  > "$OUT/analysis/decision_engine_deployment_image.txt" 2>/dev/null || true
+
+kubectl -n trisla get pods -l app=trisla-decision-engine -o json \
+  | jq -r '.items[].status.containerStatuses[].imageID' \
+  > "$OUT/analysis/decision_engine_pod_image_ids.txt" 2>/dev/null || true
+
+kubectl -n trisla get pods -o wide \
+  > "$OUT/analysis/pods_before.txt" 2>/dev/null || true
+
+# =========================================================
+# FASE 1 — PORT-FORWARD SEGURO
+# =========================================================
+
+if ! (lsof -i :"$PORT" >/dev/null 2>&1 || ss -ltn 2>/dev/null | grep -q ":$PORT "); then
+  kubectl -n trisla port-forward svc/trisla-portal-backend "$PORT":8001 \
+    > "$PF_LOG" 2>&1 &
+  PF_PID=$!
+  PF_CREATED=1
+  echo "$PF_PID" > "$OUT/tmp/pf_pid.txt"
+  sleep 5
+else
+  echo "[INFO] Port $PORT already in use; not creating port-forward" \
+    > "$OUT/logs/portforward_existing.txt"
+fi
+
+URL="http://localhost:$PORT/api/v1/sla/submit"
+HEALTH="http://localhost:$PORT/api/v1/health/global"
+
+curl -sf --max-time 10 "$HEALTH" \
+  > "$OUT/analysis/health_before.txt"
+
+# =========================================================
+# FASE 2 — ARQUIVOS DE SAÍDA
+# =========================================================
+
+RAW_VALID="$OUT/dataset/raw_valid.json"
+RAW_ALL="$OUT/dataset/raw_all.json"
+TRACE="$OUT/dataset/trace.csv"
+PLAN="$OUT/dataset/experiment_plan.csv"
+
+: > "$RAW_VALID"
+: > "$RAW_ALL"
+
+echo "sample_id,timestamp,slice,regime,attempt,http_code,curl_rc,status" > "$TRACE"
+echo "sample_id,slice,regime,dominant_parameter,dominant_value,template_id" > "$PLAN"
+
+TOTAL_ATTEMPTS=0
+VALID=0
+ERR429=0
+ERR_OTHER=0
+DISCARDED=0
+SAMPLE_ID=0
+
+# =========================================================
+# FASE 3 — FUNÇÕES ROBUSTAS
+# =========================================================
+
+jitter_sleep() {
+  python3 - <<'PY'
+import random, time
+time.sleep(random.uniform(0.15, 0.85))
+PY
+}
+
+call_api() {
+  local sample_id="$1"
+  local payload="$2"
+  local slice="$3"
+  local regime="$4"
+
+  local attempt=0
+  local max_attempts=5
+  local body=""
+  local code=""
+  local rc=0
+
+  while [ "$attempt" -lt "$max_attempts" ]; do
+
+    set +e
+    RESP=$(curl -s -w "\nHTTP:%{http_code}" \
+      --max-time 30 \
+      -X POST "$URL" \
+      -H "Content-Type: application/json" \
+      -d "$payload")
+    rc=$?
+    set -e
+
+    TOTAL_ATTEMPTS=$((TOTAL_ATTEMPTS + 1))
+
+    if [ "$rc" -ne 0 ]; then
+      body="{\"error\":\"curl_failed\",\"curl_rc\":$rc}"
+      code="CURL_$rc"
+    else
+      body=$(echo "$RESP" | sed '$d')
+      code=$(echo "$RESP" | tail -n1 | cut -d: -f2)
+    fi
+
+    echo "$body" >> "$RAW_ALL"
+    echo "" >> "$RAW_ALL"
+
+    if [ "$code" = "200" ]; then
+      VALID=$((VALID + 1))
+      echo "$body" >> "$RAW_VALID"
+      echo "" >> "$RAW_VALID"
+      echo "$sample_id,$(date -u),$slice,$regime,$attempt,200,$rc,VALID" >> "$TRACE"
+      return 0
+    fi
+
+    if [ "$code" = "429" ]; then
+      ERR429=$((ERR429 + 1))
+      echo "$sample_id,$(date -u),$slice,$regime,$attempt,429,$rc,RETRY" >> "$TRACE"
+      sleep $((2 ** attempt))
+      jitter_sleep
+    else
+      ERR_OTHER=$((ERR_OTHER + 1))
+      DISCARDED=$((DISCARDED + 1))
+      echo "$sample_id,$(date -u),$slice,$regime,$attempt,$code,$rc,ERROR" >> "$TRACE"
+      return 0
+    fi
+
+    attempt=$((attempt + 1))
+  done
+
+  DISCARDED=$((DISCARDED + 1))
+  echo "$sample_id,$(date -u),$slice,$regime,$attempt,MAX_RETRY,0,DISCARDED" >> "$TRACE"
+  return 0
+}
+
+run_sample() {
+  local payload="$1"
+  local slice="$2"
+  local regime="$3"
+  local param="$4"
+  local value="$5"
+  local template="$6"
+
+  SAMPLE_ID=$((SAMPLE_ID + 1))
+
+  echo "$SAMPLE_ID,$slice,$regime,$param,$value,$template" >> "$PLAN"
+
+  call_api "$SAMPLE_ID" "$payload" "$slice" "$regime"
+
+  sleep 0.6
+}
+
+# =========================================================
+# FASE 4 — GERAÇÃO DO DATASET
+# 3 slices × 5 níveis × 3 regimes × 4 reps = 180 amostras-base
+# =========================================================
+
+for lat in 2 5 10 20 40; do
+  for regime in LOW MEDIUM HIGH; do
+    for i in {1..4}; do
+      run_sample "{
+        \"template_id\":\"urllc\",
+        \"form_values\":{
+          \"latency\":$lat,
+          \"reliability\":99.999,
+          \"throughput\":50,
+          \"device_count\":10,
+          \"regime\":\"$regime\"
+        }
+      }" "URLLC" "$regime" "latency" "$lat" "urllc"
+    done
+  done
+done
+
+for tp in 100 200 300 500 800; do
+  for regime in LOW MEDIUM HIGH; do
+    for i in {1..4}; do
+      run_sample "{
+        \"template_id\":\"embb\",
+        \"form_values\":{
+          \"latency\":40,
+          \"reliability\":99.9,
+          \"throughput\":$tp,
+          \"device_count\":50,
+          \"regime\":\"$regime\"
+        }
+      }" "eMBB" "$regime" "throughput" "$tp" "embb"
+    done
+  done
+done
+
+for dev in 100 300 600 1000 2000; do
+  for regime in LOW MEDIUM HIGH; do
+    for i in {1..4}; do
+      run_sample "{
+        \"template_id\":\"mmtc\",
+        \"form_values\":{
+          \"latency\":100,
+          \"reliability\":99,
+          \"throughput\":10,
+          \"device_count\":$dev,
+          \"regime\":\"$regime\"
+        }
+      }" "mMTC" "$regime" "device_count" "$dev" "mmtc"
+    done
+  done
+done
+
+# =========================================================
+# FASE 5 — HEALTH AFTER ANTES DO CLEANUP
+# =========================================================
+
+curl -sf --max-time 10 "$HEALTH" \
+  > "$OUT/analysis/health_after.txt" || true
+
+kubectl -n trisla get pods -o wide \
+  > "$OUT/analysis/pods_after.txt" 2>/dev/null || true
+
+# =========================================================
+# FASE 6 — SUMÁRIO HTTP DE EXECUÇÃO
+# =========================================================
+
+echo "BASE_SAMPLES=$SAMPLE_ID TOTAL_ATTEMPTS=$TOTAL_ATTEMPTS VALID=$VALID 429=$ERR429 ERR_OTHER=$ERR_OTHER DISCARDED=$DISCARDED" \
+  > "$OUT/analysis/http_summary.txt"
+
+# =========================================================
+# FASE 7 — ANÁLISE CIENTÍFICA AUTOMÁTICA
+# =========================================================
+
+python3 <<'PY'
+import os
+import csv
+import json
+from pathlib import Path
+from collections import Counter, defaultdict
+
+base = Path(os.environ["OUT"])
+
+raw_valid = base / "dataset" / "raw_valid.json"
+trace_path = base / "dataset" / "trace.csv"
+plan_path = base / "dataset" / "experiment_plan.csv"
+
+valid_lines = [l for l in raw_valid.read_text().splitlines() if l.strip()]
+
+trace_rows = []
+with trace_path.open() as f:
+    reader = csv.DictReader(f)
+    trace_rows = list(reader)
+
+plan_rows = []
+with plan_path.open() as f:
+    reader = csv.DictReader(f)
+    plan_rows = list(reader)
+
+base_samples = len(plan_rows)
+total_attempts = len(trace_rows)
+valid = len(valid_lines)
+
+valid_ratio_attempts = valid / total_attempts if total_attempts else 0.0
+valid_ratio_base = valid / base_samples if base_samples else 0.0
+
+decisions = []
+service_types = []
+invalid_json_valid_lines = 0
+parsed = []
+
+for line in valid_lines:
+    try:
+        j = json.loads(line)
+        parsed.append(j)
+        decisions.append(j.get("decision"))
+        service_types.append(j.get("service_type"))
+    except Exception:
+        invalid_json_valid_lines += 1
+
+decision_counter = Counter(decisions)
+slice_counter = Counter(service_types)
+
+trace_status = Counter(r.get("status") for r in trace_rows)
+http_counter = Counter(r.get("http_code") for r in trace_rows)
+
+# Estatística por slice e decisão
+by_slice = defaultdict(list)
+for j in parsed:
+    by_slice[j.get("service_type")].append(j)
+
+stats_by_slice_path = base / "analysis" / "stats_by_slice.csv"
+with stats_by_slice_path.open("w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["slice", "total", "accept", "renegotiate", "reject", "mean_score", "min_score", "max_score"])
+    for slice_name, rows in sorted(by_slice.items()):
+        scores = []
+        c = Counter()
+        for j in rows:
+            c[j.get("decision")] += 1
+            md = j.get("metadata", {}) or {}
+            score = md.get("decision_score")
+            try:
+                scores.append(float(score))
+            except Exception:
+                pass
+        w.writerow([
+            slice_name,
+            len(rows),
+            c.get("ACCEPT", 0),
+            c.get("RENEGOTIATE", 0),
+            c.get("REJECT", 0),
+            round(sum(scores)/len(scores), 6) if scores else "",
+            round(min(scores), 6) if scores else "",
+            round(max(scores), 6) if scores else "",
+        ])
+
+# Critérios científicos
+crit_n = valid >= 180
+crit_ratio = valid_ratio_attempts > 0.95
+crit_json = invalid_json_valid_lines == 0
+crit_balance = all(slice_counter.get(s, 0) >= 55 for s in ["URLLC", "eMBB", "mMTC"])
+
+status = "OK" if (crit_n and crit_ratio and crit_json and crit_balance) else "FAIL"
+
+reasons = []
+if not crit_n:
+    reasons.append(f"VALID<180 (VALID={valid})")
+if not crit_ratio:
+    reasons.append(f"VALID_RATIO_ATTEMPTS<=0.95 ({valid_ratio_attempts:.4f})")
+if not crit_json:
+    reasons.append(f"INVALID_JSON_VALID_LINES={invalid_json_valid_lines}")
+if not crit_balance:
+    reasons.append(f"UNBALANCED_SLICES={dict(slice_counter)}")
+
+status_reason = "ALL_CRITERIA_MET" if not reasons else " | ".join(reasons)
+
+with (base / "analysis" / "quality_report.txt").open("w") as f:
+    f.write(f"BASE_SAMPLES={base_samples}\n")
+    f.write(f"TOTAL_ATTEMPTS={total_attempts}\n")
+    f.write(f"VALID={valid}\n")
+    f.write(f"VALID_RATIO_ATTEMPTS={valid_ratio_attempts:.4f}\n")
+    f.write(f"VALID_RATIO_BASE={valid_ratio_base:.4f}\n")
+    f.write(f"INVALID_JSON_VALID_LINES={invalid_json_valid_lines}\n\n")
+
+    f.write("HTTP_CODES:\n")
+    f.write(str(dict(http_counter)) + "\n\n")
+
+    f.write("TRACE_STATUS:\n")
+    f.write(str(dict(trace_status)) + "\n\n")
+
+    f.write("DECISIONS:\n")
+    f.write(str(dict(decision_counter)) + "\n\n")
+
+    f.write("SLICES:\n")
+    f.write(str(dict(slice_counter)) + "\n\n")
+
+    f.write(f"STATUS={status}\n")
+    f.write(f"STATUS_REASON={status_reason}\n")
+
+# Dataset tabular limpo para análises posteriores
+csv_out = base / "dataset" / "clean_dataset.csv"
+with csv_out.open("w", newline="") as f:
+    fieldnames = [
+        "service_type",
+        "decision",
+        "decision_score",
+        "template_id",
+        "latency",
+        "reliability",
+        "throughput",
+        "device_count",
+        "regime",
+        "bottleneck_domain",
+        "reason_codes",
+    ]
+    w = csv.DictWriter(f, fieldnames=fieldnames)
+    w.writeheader()
+
+    for j in parsed:
+        md = j.get("metadata", {}) or {}
+        fv = j.get("form_values", {}) or {}
+        reason = j.get("reason_codes") or md.get("reason_codes") or []
+        if isinstance(reason, list):
+            reason = ";".join(map(str, reason))
+
+        w.writerow({
+            "service_type": j.get("service_type"),
+            "decision": j.get("decision"),
+            "decision_score": md.get("decision_score"),
+            "template_id": j.get("template_id"),
+            "latency": fv.get("latency"),
+            "reliability": fv.get("reliability"),
+            "throughput": fv.get("throughput"),
+            "device_count": fv.get("device_count"),
+            "regime": fv.get("regime"),
+            "bottleneck_domain": md.get("bottleneck_domain"),
+            "reason_codes": reason,
+        })
+PY
+
+date -u > "$OUT/analysis/end.txt"
+
+# =========================================================
+# FASE 8 — VEREDITO FINAL
+# =========================================================
+
+STATUS=$(grep '^STATUS=' "$OUT/analysis/quality_report.txt" | cut -d= -f2)
+STATUS_REASON=$(grep '^STATUS_REASON=' "$OUT/analysis/quality_report.txt" | cut -d= -f2-)
+
+if [ "$STATUS" != "OK" ]; then
+  echo "CRITERIOS CIENTIFICOS NAO ATINGIDOS"
+  echo "$STATUS_REASON"
+  exit 1
+fi
+
+echo "PROMPT_TRISLA_12A_V4_3 FINALIZADO COM SUCESSO"

@@ -146,7 +146,7 @@ export function formatDomainMetricsState(
 ): string {
   if (status === "loading") return "Loading…";
   if (status === "error") {
-    return errorMessage ?? "erro ao consultar fonte real";
+    return errorMessage ?? "error retrieving source data";
   }
   if (status !== "ready") return "Not available";
   if (!payload || isEmptyMetricsObject(payload)) {

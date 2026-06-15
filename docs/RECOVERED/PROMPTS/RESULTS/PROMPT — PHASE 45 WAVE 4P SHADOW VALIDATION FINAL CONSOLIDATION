@@ -1,0 +1,255 @@
+# PROMPT — PHASE 45 WAVE 4P SHADOW VALIDATION FINAL CONSOLIDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 44 concluída
+* Wave 1 Freeze ativo
+* Wave 3A Freeze ativo
+* Wave 4 Freeze ativo
+
+Status:
+
+PHASE_45_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Consolidar formalmente todos os resultados da Wave 4 Shadow Validation e encerrar a avaliação operacional do BUNDLE-SCI-001.
+
+Não promover modelos.
+
+Não executar retraining.
+
+Não alterar modelos.
+
+Não alterar runtime.
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+---
+
+# Cadeia obrigatória de telemetria
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OTLP
+↓
+SLA-Agent
+↓
+Decision Engine
+
+Snapshot obrigatório:
+
+[t-1s, t]
+
+SNAPSHOT_MAX_AGE = 35s
+
+---
+
+# Fontes obrigatórias
+
+evidencias_trisla_phase35_offline_replay_*
+
+evidencias_trisla_phase36_replay_analysis_*
+
+evidencias_trisla_phase37_model_divergence_*
+
+evidencias_trisla_phase38_model_comparability_*
+
+evidencias_trisla_phase39_pm2_validation_*
+
+evidencias_trisla_phase40_runtime_shadow_*
+
+evidencias_trisla_phase41_embb_flip_analysis_*
+
+evidencias_trisla_phase42_embb_boundary_analysis_*
+
+evidencias_trisla_phase43_embb_counterfactual_*
+
+evidencias_trisla_phase44_operational_calibration_*
+
+model-registry/
+
+shadow-validation/
+
+promotion/
+
+retraining/
+
+baseline-registry/
+
+change-control-registry/
+
+---
+
+# Escopo
+
+Read-only.
+
+Consolidação documental e registries.
+
+Sem deploy.
+
+Sem shadow novo.
+
+Sem replay novo.
+
+Sem promoção.
+
+Sem retraining.
+
+---
+
+# Atividade 1
+
+Consolidar resultados:
+
+PM-1
+
+PM-2
+
+PM-4
+
+PM-5
+
+PM-6
+
+---
+
+# Atividade 2
+
+Classificar oficialmente:
+
+BUNDLE-SCI-001
+
+como:
+
+SCIENTIFIC_BASELINE
+
+NOT_PROMOTABLE
+
+OPERATIONAL_VALUE_OBSERVED
+
+PROMOTION_BLOCKED
+
+---
+
+# Atividade 3
+
+Registrar causas de bloqueio:
+
+PM-4 flip rate 31.7%
+
+eMBB flip rate 85%
+
+confidence cliff 0.72
+
+no viable confidence-only calibration
+
+scenario-aware policy requires DE change
+
+---
+
+# Atividade 4
+
+Atualizar:
+
+MODEL_PROMOTION_REGISTRY.json
+
+SHADOW_VALIDATION_REGISTRY.json
+
+PROMOTION_BLOCKER_MATRIX.json
+
+PROMOTION_BLOCKER_UPDATE_FINAL.json
+
+---
+
+# Atividade 5
+
+Criar:
+
+WAVE4_SHADOW_VALIDATION_FINAL_REPORT.md
+
+---
+
+# Atividade 6
+
+Criar:
+
+BUNDLE_SCI_001_FINAL_ASSESSMENT.md
+
+---
+
+# Atividade 7
+
+Criar:
+
+WAVE4_LESSONS_LEARNED.md
+
+---
+
+# Critérios
+
+WAVE4_RESULTS_CONSOLIDATED = TRUE
+
+BUNDLE_SCI_001_CLASSIFIED = TRUE
+
+PROMOTION_BLOCKED_REGISTERED = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase45_wave4_final_consolidation_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_45_STATUS = READY_FOR_REVIEW
+
+WAVE4_FINAL_STATUS = CLOSED_NOT_PROMOTABLE
+
+Parar.
+
+Não iniciar Promotion.
+
+Não iniciar Retraining.
+
+Não iniciar nova Wave automaticamente.
+
+Aguardar aprovação humana.

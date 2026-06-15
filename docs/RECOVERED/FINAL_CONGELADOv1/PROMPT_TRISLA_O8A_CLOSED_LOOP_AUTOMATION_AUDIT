@@ -1,0 +1,502 @@
+PROMPT_TRISLA_O8A_CLOSED_LOOP_AUTOMATION_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Executar uma auditoria estratégica completa da capacidade de automação da TriSLA após o congelamento de:
+
+O1C
+O2C
+O3C
+O4C
+O5C
+O6
+O7A
+O7B
+O7C
+O7D
+
+O objetivo é determinar com precisão:
+
+* o nível real de Closed-Loop Automation existente;
+* o grau de alinhamento com 3GPP;
+* o grau de alinhamento com O-RAN;
+* o grau de alinhamento com ETSI ZSM;
+* quais ações são reais;
+* quais ações são simuladas;
+* quais ações são apenas conceituais;
+* qual é o roadmap correto para atingir automação multidomínio auditável.
+
+====================================================
+BASELINE CONGELADO
+==================
+
+CURRENT_ARCHITECTURE_STATUS
+
+TRANSPORT_CORRELATED
+
+O1C–O7D = FROZEN
+
+PROMETHEUS_ALIGNMENT_APPROVED = YES
+
+GRAFANA_ALIGNMENT_APPROVED = YES
+
+SCIENTIFIC_VISIBILITY_APPROVED = YES
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+NÃO IMPLEMENTAR
+
+NÃO ALTERAR CÓDIGO
+
+NÃO ALTERAR DASHBOARDS
+
+NÃO ALTERAR PROMETHEUS
+
+NÃO ALTERAR GRAFANA
+
+NÃO ALTERAR HELM
+
+NÃO ALTERAR SLA-AGENT
+
+NÃO ALTERAR DECISION ENGINE
+
+Somente auditoria.
+
+====================================================
+FASE 1 — CLOSED LOOP INVENTORY
+==============================
+
+Mapear todo o fluxo:
+
+Observe
+
+Analyze
+
+Decide
+
+Act
+
+Verify
+
+Identificar:
+
+implementado
+
+parcial
+
+conceitual
+
+Gerar:
+
+analysis/o8a_closed_loop_inventory.md
+
+====================================================
+FASE 2 — SLA-AGENT AUDIT
+========================
+
+Auditar:
+
+SLA-Agent
+
+runtime assurance
+
+recommendations
+
+actions
+
+actuation
+
+Classificar:
+
+REAL_ACTION
+
+SIMULATION
+
+SCAFFOLD
+
+NOT_IMPLEMENTED
+
+Gerar:
+
+analysis/o8a_sla_agent_audit.md
+
+====================================================
+FASE 3 — DECISION ENGINE AUDIT
+==============================
+
+Determinar:
+
+O que o DE faz após ACCEPT?
+
+O que o DE faz após REJECT?
+
+O que o DE faz após RENEGOTIATE?
+
+Existe chamada para ação automática?
+
+Existe callback?
+
+Existe workflow?
+
+Gerar:
+
+analysis/o8a_decision_engine_actuation.md
+
+====================================================
+FASE 4 — GOVERNANCE AUDIT
+=========================
+
+Auditar BC-NSSMF.
+
+Responder:
+
+Blockchain apenas registra?
+
+Blockchain autoriza ações?
+
+Blockchain pode bloquear ações?
+
+Blockchain participa do closed-loop?
+
+Gerar:
+
+analysis/o8a_governance_audit.md
+
+====================================================
+FASE 5 — NSSF / CORE ACTION AUDIT
+=================================
+
+Auditar:
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+Responder:
+
+TriSLA apenas observa?
+
+TriSLA configura?
+
+TriSLA altera?
+
+TriSLA provisiona?
+
+TriSLA remove?
+
+Gerar:
+
+analysis/o8a_core_action_audit.md
+
+====================================================
+FASE 6 — RAN ACTION AUDIT
+=========================
+
+Auditar:
+
+gNB
+
+UERANSIM
+
+RAN binding
+
+Responder:
+
+Existe ação automática?
+
+Existe reconfiguração?
+
+Existe controle?
+
+Ou apenas observação?
+
+Gerar:
+
+analysis/o8a_ran_action_audit.md
+
+====================================================
+FASE 7 — TRANSPORT ACTION AUDIT
+===============================
+
+Auditar:
+
+ONOS
+
+Transport Binding
+
+Responder:
+
+Existe criação de flow?
+
+Existe criação de intent?
+
+Existe alteração de rota?
+
+Existe engenharia de tráfego?
+
+Ou apenas observação?
+
+Gerar:
+
+analysis/o8a_transport_action_audit.md
+
+====================================================
+FASE 8 — ETSI ZSM GAP ANALYSIS
+==============================
+
+Comparar TriSLA com:
+
+Observe
+
+Analyze
+
+Decide
+
+Act
+
+Closed Loop
+
+Autonomous Management
+
+Classificar:
+
+FULL
+
+PARTIAL
+
+NONE
+
+Gerar:
+
+analysis/o8a_zsm_gap_analysis.md
+
+====================================================
+FASE 9 — 3GPP GAP ANALYSIS
+==========================
+
+Comparar com:
+
+TS 28.541
+
+TS 28.533
+
+TS 28.550
+
+NSMF
+
+NSSMF
+
+Closed Loop
+
+Slice Lifecycle
+
+Gerar:
+
+analysis/o8a_3gpp_gap_analysis.md
+
+====================================================
+FASE 10 — O-RAN GAP ANALYSIS
+============================
+
+Comparar com:
+
+SMO
+
+Non-RT RIC
+
+Near-RT RIC
+
+A1
+
+O1
+
+E2
+
+rApps
+
+xApps
+
+Classificar:
+
+REAL
+
+PARTIAL
+
+CONCEPTUAL
+
+Gerar:
+
+analysis/o8a_oran_gap_analysis.md
+
+====================================================
+FASE 11 — ACTION CATALOG
+========================
+
+Construir catálogo.
+
+Para cada ação:
+
+ação
+
+domínio
+
+risco
+
+impacto
+
+reversibilidade
+
+automação possível
+
+Exemplos:
+
+NSI scale
+
+NSSI scale
+
+Admission throttle
+
+Slice reconfiguration
+
+Transport reroute
+
+Intent reoptimization
+
+Gerar:
+
+analysis/o8a_action_catalog.md
+
+====================================================
+FASE 12 — ROADMAP O8B–O10
+=========================
+
+Definir evolução.
+
+Priorizar:
+
+menor risco
+
+maior aderência normativa
+
+maior ganho científico
+
+Gerar:
+
+analysis/o8a_roadmap_o8b_o10.md
+
+====================================================
+FASE 13 — EXECUTIVE VERDICT
+===========================
+
+Responder:
+
+Qual o nível atual de automação?
+
+O que já é real?
+
+O que é simulado?
+
+O que falta para atingir Closed Loop?
+
+Qual é o principal gap?
+
+Qual deve ser a próxima implementação?
+
+Gerar:
+
+analysis/o8a_executive_verdict.md
+
+====================================================
+ENTREGÁVEIS
+===========
+
+analysis/o8a_closed_loop_inventory.md
+
+analysis/o8a_sla_agent_audit.md
+
+analysis/o8a_decision_engine_actuation.md
+
+analysis/o8a_governance_audit.md
+
+analysis/o8a_core_action_audit.md
+
+analysis/o8a_ran_action_audit.md
+
+analysis/o8a_transport_action_audit.md
+
+analysis/o8a_zsm_gap_analysis.md
+
+analysis/o8a_3gpp_gap_analysis.md
+
+analysis/o8a_oran_gap_analysis.md
+
+analysis/o8a_action_catalog.md
+
+analysis/o8a_roadmap_o8b_o10.md
+
+analysis/o8a_executive_verdict.md
+
+analysis/final_verdict.md
+
+MANIFEST.json
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+CLOSED_LOOP_LEVEL = HIGH/MEDIUM/LOW
+
+OBSERVE_LEVEL = HIGH/MEDIUM/LOW
+
+ANALYZE_LEVEL = HIGH/MEDIUM/LOW
+
+DECIDE_LEVEL = HIGH/MEDIUM/LOW
+
+ACT_LEVEL = HIGH/MEDIUM/LOW
+
+VERIFY_LEVEL = HIGH/MEDIUM/LOW
+
+THREE_GPP_ALIGNMENT = HIGH/MEDIUM/LOW
+
+ORAN_ALIGNMENT = HIGH/MEDIUM/LOW
+
+ETSI_ZSM_ALIGNMENT = HIGH/MEDIUM/LOW
+
+REAL_AUTOMATION = YES/NO
+
+SIMULATION_DEPENDENCY = YES/NO
+
+READY_FOR_O8B = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH
+
+====================================================
+PRÓXIMA FASE
+============
+
+Somente se:
+
+READY_FOR_O8B = YES
+
+propor a implementação de automação controlada, auditável e reversível, preservando integralmente a baseline congelada O1C–O7D.

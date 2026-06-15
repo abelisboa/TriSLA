@@ -32,12 +32,14 @@ import {
 } from "../../lib/operatorLabels";
 import type { SlaRuntimeStatusResponse } from "../../lib/runtimeSupervision";
 import { LifecycleRuntimeSnapshotPanel } from "../../components/lifecycle/LifecycleRuntimeSnapshotPanel";
+import { ComplianceEvaluationPanel } from "../../components/lifecycle/ComplianceEvaluationPanel";
 import { RuntimeAssurancePanel } from "../../components/lifecycle/RuntimeAssurancePanel";
 import { parseRuntimeAssurance } from "../../lib/runtimeAssurance";
 import { LIFECYCLE_ACTIVE_EXPLANATION } from "../../lib/runtimeAssuranceStateModel";
 import { DecisionEvidencePanel } from "../../components/consistency/DecisionEvidencePanel";
 import { BlockchainCommitCard } from "../../components/consistency/BlockchainCommitCard";
 import { GovernanceClarityPanel } from "../../components/consistency/GovernanceClarityPanel";
+import { ServiceProfilePanel } from "../../components/admission-dashboard/ServiceProfilePanel";
 import { AdmissionOnlyBanner } from "../../components/gating/AdmissionOnlyBanner";
 import { WhyRejectedPanel } from "../../components/gating/WhyRejectedPanel";
 import { RenegotiationProposalPanel } from "../../components/gating/RenegotiationProposalPanel";
@@ -142,8 +144,8 @@ function SlaLifecycleContent() {
   }, [intentQuery, statusData, admissionDecision, setPortalNavContext]);
 
   const semanticValidation = operational?.semantic_validation ?? "Not available";
-  const gstGenerated = operational?.gst_generated ?? (statusData?.nest_id ? "Yes" : "Not available");
-  const nestGenerated = operational?.nest_generated ?? (statusData?.nest_id ? "Yes" : "Not available");
+  const gstGenerated = operational?.gst_generated ?? "Not available";
+  const nestGenerated = operational?.nest_generated ?? "Not available";
   const semanticFill = operational?.semantic_fill ?? "Not available";
   const mlConfidenceDisplay =
     operational?.ml_confidence != null
@@ -314,6 +316,13 @@ function SlaLifecycleContent() {
           </section>
         ) : null}
 
+        {show("serviceProfile") && statusData ? (
+          <ServiceProfilePanel
+            slaRequirements={statusData.sla_requirements}
+            serviceType={statusData.service_type}
+          />
+        ) : null}
+
         {show("mlDecision") ? (
           <section className="trisla-status-card" aria-label="ML Decision">
             <h2>ML Decision</h2>
@@ -417,11 +426,17 @@ function SlaLifecycleContent() {
         />
       ) : null}
 
+      {show("runtimeCompliance") ? (
+        <ComplianceEvaluationPanel
+          assurance={parsedAssurance}
+          admissionCompliancePercent={parsedAssurance?.admission_compliance_percent}
+        />
+      ) : null}
+
       {show("runtimeAssurance") ? (
         <RuntimeAssurancePanel
           assurance={parsedAssurance}
           onChainEvidence={onChainEvidence}
-          telemetrySnapshot={snapshotForPanel}
           traceContext={{
             intent_id: statusData?.intent_id ?? (intentQuery.trim() || undefined),
             nest_id: statusData?.nest_id,

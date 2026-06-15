@@ -1,0 +1,374 @@
+{
+  "phase": "PAPER-CONSOLIDATION-TRACK-01",
+  "timestamp_utc": "2026-05-18T03:14:29.473784Z",
+  "verdict": "FINAL_REVIEWER_SAFE_PROGRAM_READY",
+  "science_outcomes": {
+    "program": "FINAL_REVIEWER_SAFE_PROGRAM_READY",
+    "runtime_model": "FINAL_RUNTIME_MODEL_FROZEN",
+    "reviewer_safe_model": "FINAL_REVIEWER_SAFE_MODEL_FROZEN",
+    "taxonomy": "FINAL_RUNTIME_TAXONOMY_FROZEN"
+  },
+  "program_status": "FINAL_REVIEWER_SAFE_PROGRAM_READY",
+  "active_digest": "sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6",
+  "program_tracks": {
+    "ssot": {
+      "pack": "evidencias_trisla_phase6_ssot_controlled_execution_20260517T154849Z",
+      "summary": null,
+      "role": "master baseline \u00b7 frozen digest \u00b7 controlled execution"
+    },
+    "sr09": {
+      "pack": "evidencias_trisla_sr_exec_09_final_program_freeze_20260517T192637Z",
+      "summary": "analysis/final_program_freeze_summary.json",
+      "role": "preventive SLA-aware runtime \u00b7 research question substantially answered"
+    },
+    "nad15": {
+      "pack": "evidencias_trisla_nad_exec_15_final_freeze_20260518T001715Z",
+      "summary": "analysis/nad_exec_final_freeze_summary.json",
+      "role": "no robust admission divergence under frozen guards"
+    },
+    "core09": {
+      "pack": "evidencias_trisla_core_exec_09_core_track_final_freeze_20260518T012114Z",
+      "summary": "analysis/core_exec_final_freeze_summary.json",
+      "role": "core observable/contributive \u00b7 not admission-causal"
+    },
+    "ncm06": {
+      "pack": "evidencias_trisla_ncm_exec_06_ncm_track_final_freeze_20260518T022058Z",
+      "summary": "analysis/ncm_track_final_freeze_summary.json",
+      "role": "orchestration HTTP latency observable \u00b7 pressure/feasibility not orch-driven"
+    },
+    "life06": {
+      "pack": "evidencias_trisla_life_exec_06_lifecycle_track_final_freeze_20260518T024647Z",
+      "summary": "analysis/life_exec_track_final_freeze_summary.json",
+      "role": "persistent/reconciliatory lifecycle \u00b7 not continuous/causal"
+    },
+    "orch04": {
+      "pack": "evidencias_trisla_orch_exec_04_orchestration_track_final_freeze_20260518T030553Z",
+      "summary": "analysis/orch_exec_track_final_freeze_summary.json",
+      "role": "detached orchestration runtime \u00b7 admission-before-orchestration"
+    }
+  },
+  "program_integrity": {
+    "tracks": [
+      {
+        "track": "ssot",
+        "pack": "evidencias_trisla_phase6_ssot_controlled_execution_20260517T154849Z",
+        "exists": true,
+        "summary_exists": null,
+        "verdict": null,
+        "role": "master baseline \u00b7 frozen digest \u00b7 controlled execution"
+      },
+      {
+        "track": "sr09",
+        "pack": "evidencias_trisla_sr_exec_09_final_program_freeze_20260517T192637Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "FINAL_PROGRAM_BASELINE_FROZEN",
+        "role": "preventive SLA-aware runtime \u00b7 research question substantially answered"
+      },
+      {
+        "track": "nad15",
+        "pack": "evidencias_trisla_nad_exec_15_final_freeze_20260518T001715Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "NAD_EXEC_TRACK_FROZEN",
+        "role": "no robust admission divergence under frozen guards"
+      },
+      {
+        "track": "core09",
+        "pack": "evidencias_trisla_core_exec_09_core_track_final_freeze_20260518T012114Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "CORE_EXEC_TRACK_FROZEN",
+        "role": "core observable/contributive \u00b7 not admission-causal"
+      },
+      {
+        "track": "ncm06",
+        "pack": "evidencias_trisla_ncm_exec_06_ncm_track_final_freeze_20260518T022058Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "NCM_EXEC_TRACK_FROZEN",
+        "role": "orchestration HTTP latency observable \u00b7 pressure/feasibility not orch-driven"
+      },
+      {
+        "track": "life06",
+        "pack": "evidencias_trisla_life_exec_06_lifecycle_track_final_freeze_20260518T024647Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "LIFE_EXEC_TRACK_FROZEN",
+        "role": "persistent/reconciliatory lifecycle \u00b7 not continuous/causal"
+      },
+      {
+        "track": "orch04",
+        "pack": "evidencias_trisla_orch_exec_04_orchestration_track_final_freeze_20260518T030553Z",
+        "exists": true,
+        "summary_exists": true,
+        "verdict": "ORCH_EXEC_TRACK_FROZEN",
+        "role": "detached orchestration runtime \u00b7 admission-before-orchestration"
+      }
+    ],
+    "all_packs_present": true,
+    "all_summaries_present": true,
+    "digest_consistent": true,
+    "digests_seen": [
+      "sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6"
+    ]
+  },
+  "taxonomy": {
+    "OBSERVABLE": "Runtime behavior measurable at submit/reconcile without claiming closed-loop causality",
+    "CONTRIBUTIVE": "Domain metrics inform scoring/audit but do not drive admission under frozen math",
+    "RECONCILIATORY": "Background loops correct CRD/TTL/orphan state detached from DE recomputation",
+    "PERSISTENT": "State survives across requests in SEM/CRD/BC stores",
+    "GOVERNED": "Semantic + immutable constraints (DE metadata, BC chain) without continuous enforcement loop",
+    "DETACHED": "Subsystem operates without feedback into admission/pressure/score paths",
+    "PARTIAL": "Evidence exists but incomplete or contention/latency-only",
+    "NON_CAUSAL": "Formal negative: no proven closed-loop influence on admission decisions",
+    "CAUSAL": "Reserved for future work only \u2014 not claimed under frozen digest"
+  },
+  "taxonomy_application": [
+    {
+      "domain": "admission (DE)",
+      "labels": [
+        "OBSERVABLE",
+        "PREVENTIVE",
+        "NON_CAUSAL"
+      ],
+      "note": "PRB-governed score_mode; no robust tri-slice divergence (NAD)"
+    },
+    {
+      "domain": "pressure/feasibility",
+      "labels": [
+        "OBSERVABLE",
+        "NON_CAUSAL"
+      ],
+      "note": "resource_pressure_v1 from telemetry snapshot; not orch/lifecycle-driven"
+    },
+    {
+      "domain": "CORE",
+      "labels": [
+        "OBSERVABLE",
+        "CONTRIBUTIVE",
+        "NON_CAUSAL"
+      ],
+      "note": "UPF/core metrics present; contention effect not observed"
+    },
+    {
+      "domain": "NCM/orchestration HTTP",
+      "labels": [
+        "OBSERVABLE",
+        "PARTIAL"
+      ],
+      "note": "~9\u00d7 latency under burst; not pressure-causal"
+    },
+    {
+      "domain": "LIFE",
+      "labels": [
+        "PERSISTENT",
+        "RECONCILIATORY",
+        "PARTIAL",
+        "NON_CAUSAL"
+      ],
+      "note": "NASP reconcile real; no continuous reevaluation"
+    },
+    {
+      "domain": "ORCH",
+      "labels": [
+        "DETACHED",
+        "OPERATIONAL",
+        "RECONCILIATORY",
+        "PERSISTENT",
+        "NON_CAUSAL"
+      ],
+      "note": "CRD authority; no DE callback"
+    },
+    {
+      "domain": "governance (BC)",
+      "labels": [
+        "PERSISTENT",
+        "GOVERNED"
+      ],
+      "note": "immutable at submit; not continuous SLA loop"
+    }
+  ],
+  "proven_claims": [
+    "Preventive SLA-aware admission under frozen digest (score_mode + PRB hard gates; SR-09)",
+    "RAN-dominant hybrid admission with feasibility/resource-headroom awareness (n=450 NASP-hard+)",
+    "Transport-informed scoring (w_transport P2) without multidomain-balanced causality",
+    "Runtime tri-slice score differentiation under same network_state_id (score_mode triplets)",
+    "DE authoritative admission/score before orchestration (ORCH admission-before-orchestration)",
+    "Detached orchestration: Portal\u2192NASP\u2192CRD without feedback to DE/pressure/score (ORCH-04)",
+    "NASP NSI watch + 60s capacity reconciler with 10k+ reservation CRDs (LIFE/ORCH)",
+    "BC-NSSMF immutable governance lineage at submit (LIFE)",
+    "SEM SQLite semantic persistence (intents/nests/slices)",
+    "Scientific characterization of non-causal multidomain/runtime limits (negative-results contribution)",
+    "Orchestration HTTP latency observable under operational contention (~9\u00d7 baseline, NCM-06)",
+    "Core domain observability without admission-causal effect (CORE-09)"
+  ],
+  "partial_claims": [
+    "Slice-specific admission labels (score proven; same-state admission divergence limited, NAD/SR)",
+    "Operational orchestration/lifecycle continuity (latency, metadata; not closed-loop)",
+    "Lifecycle governance (multi-store fragmented; portal GET /sla absent)",
+    "Core/transport contribution to score narrative (informed terms active; not dominant)",
+    "NCM pressure/feasibility movement under orch burst (guards skipped; not orch-causal)"
+  ],
+  "not_proven_claims": [
+    "Robust tri-slice admission divergence without path stratification",
+    "Balanced multidomain runtime dominance",
+    "Core-driven or orchestration-driven admission",
+    "Orchestration-driven resource_pressure or feasibility",
+    "Continuous lifecycle governance or autonomous reevaluation",
+    "Closed-loop orchestration or lifecycle causality",
+    "Normative 3GPP/ETSI/O-RAN compliance"
+  ],
+  "forbidden_claims": [
+    "closed-loop causality (orchestration or lifecycle)",
+    "autonomous runtime SLA reevaluation",
+    "orchestration-driven admission/pressure/score/reevaluation",
+    "core-driven admission divergence",
+    "multidomain balanced causality",
+    "robust admission divergence without stratification",
+    "continuous lifecycle governance",
+    "runtime orchestration causality",
+    "synthetic callbacks or fake telemetry under frozen digest",
+    "weakened PRB guards or post-hoc threshold tuning"
+  ],
+  "structural_limitations": [
+    "LIMIT-PROG-01: admission-before-orchestration ordering (invariant)",
+    "LIMIT-PROG-02: no orchestration\u2192DE feedback (architectural)",
+    "LIMIT-PROG-03: no lifecycle-pressure coupling (frozen math)",
+    "LIMIT-PROG-04: fragmented persistence (no unified SLA registry)",
+    "LIMIT-PROG-05: NAD liminal divergence not validated at operating point",
+    "LIMIT-PROG-06: CORE contention not observed as admission driver",
+    "LIMIT-PROG-07: SLA-Agent Kafka loop unwired (implementation gap)",
+    "LIMIT-PROG-08: portal GET /api/v1/sla absent (404)"
+  ],
+  "future_work": {
+    "implementation_required": [
+      "orchestration\u2192DE callbacks",
+      "SLA-Agent continuous reevaluation loop + durable store",
+      "unified lifecycle/SLA registry API",
+      "core pressure coupling experiments (new digest only)"
+    ],
+    "research_required": [
+      "causal multidomain runtime under alternative math",
+      "admission divergence at validated liminal operating points",
+      "lifecycle-driven pressure (likely negative under frozen formula)",
+      "orchestration closed-loop causality"
+    ],
+    "forbidden_under_frozen_digest": [
+      "fake telemetry / synthetic divergence",
+      "weakened PRB / guard changes",
+      "post-hoc threshold tuning",
+      "claiming causality without new wired paths"
+    ]
+  },
+  "paper_contributions": [
+    "Preventive, PRB-governed SLA-aware admission architecture with frozen reproducible digest",
+    "Empirical multidomain characterization showing RAN/transport-informed scoring without balanced causality",
+    "Detached orchestration + reconciliatory lifecycle model with explicit causal boundaries",
+    "Negative-results contribution: what does NOT close the loop (NAD, CORE, NCM, ORCH, LIFE)",
+    "Immutable blockchain governance hook at submit coupled to semantic intent persistence"
+  ],
+  "cross_track": [
+    {
+      "track": "SR",
+      "finding": "preventive SLA-aware runtime substantially answered",
+      "convergence": "baseline framing for all tracks"
+    },
+    {
+      "track": "NAD",
+      "finding": "no robust admission divergence",
+      "convergence": "admission NON_CAUSAL across slice labels at guards"
+    },
+    {
+      "track": "CORE",
+      "finding": "observable not causal",
+      "convergence": "CONTRIBUTIVE only"
+    },
+    {
+      "track": "NCM",
+      "finding": "orchestration latency partial",
+      "convergence": "OPERATIONAL not pressure-causal"
+    },
+    {
+      "track": "LIFE",
+      "finding": "reconciliatory not continuous",
+      "convergence": "RECONCILIATORY+PERSISTENT"
+    },
+    {
+      "track": "ORCH",
+      "finding": "detached orchestration",
+      "convergence": "DETACHED invariant"
+    },
+    {
+      "track": "SSOT",
+      "finding": "single digest monotonicity",
+      "convergence": "no regression across tracks"
+    }
+  ],
+  "mandatory_questions": {
+    "Q1_program_consistent": true,
+    "Q2_regression": false,
+    "Q3_runtime_causal": false,
+    "Q4_runtime_preventive": true,
+    "Q5_runtime_reconciliatory": true,
+    "Q6_runtime_multidomain_causal": false,
+    "Q7_proven_claims": [
+      "Preventive SLA-aware admission under frozen digest (score_mode + PRB hard gates; SR-09)",
+      "RAN-dominant hybrid admission with feasibility/resource-headroom awareness (n=450 NASP-hard+)",
+      "Transport-informed scoring (w_transport P2) without multidomain-balanced causality",
+      "Runtime tri-slice score differentiation under same network_state_id (score_mode triplets)",
+      "DE authoritative admission/score before orchestration (ORCH admission-before-orchestration)",
+      "Detached orchestration: Portal\u2192NASP\u2192CRD without feedback to DE/pressure/score (ORCH-04)",
+      "NASP NSI watch + 60s capacity reconciler with 10k+ reservation CRDs (LIFE/ORCH)",
+      "BC-NSSMF immutable governance lineage at submit (LIFE)",
+      "SEM SQLite semantic persistence (intents/nests/slices)",
+      "Scientific characterization of non-causal multidomain/runtime limits (negative-results contribution)",
+      "Orchestration HTTP latency observable under operational contention (~9\u00d7 baseline, NCM-06)",
+      "Core domain observability without admission-causal effect (CORE-09)"
+    ],
+    "Q8_forbidden_claims": [
+      "closed-loop causality (orchestration or lifecycle)",
+      "autonomous runtime SLA reevaluation",
+      "orchestration-driven admission/pressure/score/reevaluation",
+      "core-driven admission divergence",
+      "multidomain balanced causality",
+      "robust admission divergence without stratification",
+      "continuous lifecycle governance",
+      "runtime orchestration causality",
+      "synthetic callbacks or fake telemetry under frozen digest",
+      "weakened PRB guards or post-hoc threshold tuning"
+    ],
+    "Q9_structural_limitations": [
+      "LIMIT-PROG-01: admission-before-orchestration ordering (invariant)",
+      "LIMIT-PROG-02: no orchestration\u2192DE feedback (architectural)",
+      "LIMIT-PROG-03: no lifecycle-pressure coupling (frozen math)",
+      "LIMIT-PROG-04: fragmented persistence (no unified SLA registry)",
+      "LIMIT-PROG-05: NAD liminal divergence not validated at operating point",
+      "LIMIT-PROG-06: CORE contention not observed as admission driver",
+      "LIMIT-PROG-07: SLA-Agent Kafka loop unwired (implementation gap)",
+      "LIMIT-PROG-08: portal GET /api/v1/sla absent (404)"
+    ],
+    "Q10_final_scientific_contribution": "Preventive SLA-aware admission with PRB governance, multidomain observability, detached orchestration/reconciliation, immutable submit governance, and formal characterization of non-causal runtime boundaries under frozen digest."
+  },
+  "phase_verdicts": {
+    "phase_1": "TRISLA_PROGRAM_INTEGRITY_VALIDATED",
+    "phase_2": "CROSS_TRACK_SCIENTIFIC_ALIGNMENT_CONFIRMED",
+    "phase_3": "FINAL_RUNTIME_TAXONOMY_FROZEN",
+    "phase_4": "FINAL_REVIEWER_SAFE_MODEL_FROZEN",
+    "phase_5": "FORBIDDEN_CLAIMS_FROZEN",
+    "phase_6": "FINAL_RUNTIME_MODEL_FROZEN",
+    "phase_7": "LIMITATIONS_AND_FUTURE_WORK_FROZEN",
+    "phase_8": "PAPER_POSITIONING_FROZEN",
+    "phase_9": "FINAL_REVIEWER_SAFE_PROGRAM_READY"
+  },
+  "next_tracks": [
+    "PAPER_WRITING_TRACK",
+    "IMPLEMENTATION_TRACK"
+  ],
+  "approval_required": "PAPER_CONSOLIDATION_TRACK_01_APPROVED",
+  "hard_stop": true,
+  "global_program_state": "PAPER_CONSOLIDATION_PENDING_APPROVAL",
+  "consolidation_only": true,
+  "decision_engine_image": "ghcr.io/abelisboa/trisla-decision-engine@sha256:ca60017448ab18d469ac5c9be4d9ccdb78c02c844b16e16463dd09e91ae9b6b6",
+  "runtime_freeze_ok": true
+}

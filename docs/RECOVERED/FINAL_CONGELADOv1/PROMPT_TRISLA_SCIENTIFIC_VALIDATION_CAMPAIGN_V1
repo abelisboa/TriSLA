@@ -1,0 +1,521 @@
+PROMPT_TRISLA_SCIENTIFIC_VALIDATION_CAMPAIGN_V1
+
+PAPEL
+
+Atue como:
+
+* Senior Research Engineer
+* Senior Network Scientist
+* Senior O-RAN Engineer
+* Senior Free5GC Engineer
+* Senior AI Engineer
+* Senior Observability Engineer
+* Senior Experimental Methodology Reviewer
+
+OBJETIVO
+
+Executar a campanha científica definitiva de validação da arquitetura TriSLA utilizando exclusivamente o ambiente congelado em:
+
+* TRISLA_RUNTIME_BASELINE_FREEZE_APPROVED
+* UPF_GTP5G_PDU_ACCEPT_FINAL_FIX_APPROVED
+* TRISLA_DEMO_OPERACIONAL_DEFINITIVA_APPROVED
+
+A campanha deve produzir evidências científicas reproduzíveis para:
+
+* Dissertação
+* Artigo científico
+* Defesa
+* Resultados experimentais finais
+
+IMPORTANTE
+
+NÃO alterar:
+
+* Free5GC
+* UERANSIM
+* Kubernetes
+* TriSLA
+* Decision Engine
+* Thresholds
+* PromQL
+* ML-NSMF
+* SEM-CSMF
+* BC-NSSMF
+
+Esta campanha é:
+
+* observacional
+* experimental
+* baseada em evidências
+
+Não é fase de desenvolvimento.
+
+---
+
+## BASELINE OBRIGATÓRIO
+
+Utilizar exclusivamente:
+
+evidencias_trisla_runtime_baseline_operacional_final_20260603T215746Z
+
+e
+
+evidencias_trisla_demo_operacional_definitiva_20260603T220000Z
+
+como referência oficial.
+
+Nenhuma alteração fora desse baseline.
+
+---
+
+## QUESTÃO CIENTÍFICA PRINCIPAL
+
+A TriSLA consegue avaliar corretamente a viabilidade de SLAs em tempo de solicitação utilizando informações multidomínio de:
+
+* RAN
+* Transporte
+* Core
+
+antes da implantação do serviço?
+
+---
+
+## HIPÓTESE H1
+
+A combinação:
+
+* SEM-CSMF
+* Decision Engine
+* SLA-Agent
+* Blockchain
+
+permite decisões SLA-aware mais consistentes do que abordagens reativas.
+
+---
+
+FASE 1
+CRIAR PACOTE OFICIAL
+--------------------
+
+Criar:
+
+evidencias_trisla_scientific_validation_campaign_v1_YYYYMMDDTHHMMSSZ
+
+Estrutura:
+
+00_baseline/
+01_datasets/
+02_campaigns/
+03_analysis/
+04_statistics/
+05_figures/
+06_tables/
+07_discussion/
+08_final_report/
+
+---
+
+FASE 2
+INVENTÁRIO DE MÉTRICAS DISPONÍVEIS
+----------------------------------
+
+Mapear todas as métricas reais disponíveis.
+
+Prometheus:
+
+trisla_ran_prb_utilization
+
+trisla_ran_latency_ms
+
+trisla_ran_ue_proxy_throughput_bps
+
+probe_success
+
+probe_duration_seconds
+
+container_cpu_usage_seconds_total
+
+container_memory_usage_bytes
+
+e demais métricas usadas pelo Decision Engine.
+
+Gerar:
+
+03_analysis/metrics_inventory.md
+
+---
+
+FASE 3
+MATRIZ DE CENÁRIOS
+------------------
+
+Construir matriz experimental.
+
+Slice Types:
+
+* URLLC
+* eMBB
+* mMTC
+
+Condições:
+
+A. Baseline
+
+B. Leve pressão
+
+C. Média pressão
+
+D. Alta pressão
+
+Matriz:
+
+| Slice | Cenário |
+| ----- | ------- |
+| URLLC | A,B,C,D |
+| eMBB  | A,B,C,D |
+| mMTC  | A,B,C,D |
+
+Gerar:
+
+02_campaigns/scenario_matrix.md
+
+---
+
+FASE 4
+CAMPANHA URLLC
+--------------
+
+Executar múltiplas submissões.
+
+Coletar:
+
+* score
+* decisão
+* tx_hash
+* PRB
+* RTT
+* CPU
+* Memory
+* Availability
+
+Registrar:
+
+dataset_urllc.csv
+
+Gerar:
+
+03_analysis/urllc_analysis.md
+
+---
+
+FASE 5
+CAMPANHA eMBB
+-------------
+
+Mesmo procedimento.
+
+Gerar:
+
+dataset_embb.csv
+
+03_analysis/embb_analysis.md
+
+---
+
+FASE 6
+CAMPANHA mMTC
+-------------
+
+Mesmo procedimento.
+
+Gerar:
+
+dataset_mmtc.csv
+
+03_analysis/mmtc_analysis.md
+
+---
+
+FASE 7
+VALIDAÇÃO DE CONSISTÊNCIA
+-------------------------
+
+Responder:
+
+Decisões repetidas produzem o mesmo resultado?
+
+Executar:
+
+* repetibilidade
+* estabilidade
+
+Gerar:
+
+03_analysis/repeatability_analysis.md
+
+---
+
+FASE 8
+VALIDAÇÃO MULTIDOMÍNIO
+----------------------
+
+Verificar contribuição de:
+
+RAN
+
+Transporte
+
+Core
+
+para a decisão.
+
+Responder:
+
+Qual domínio influencia mais?
+
+Gerar:
+
+03_analysis/domain_contribution_analysis.md
+
+---
+
+FASE 9
+EXPLICABILIDADE
+---------------
+
+Extrair:
+
+* Decision Score
+* Resource Pressure
+* Resource Headroom
+* Feasibility
+* Compliance
+
+Mapear:
+
+entrada
+→ cálculo
+→ saída
+
+Gerar:
+
+03_analysis/explainability_analysis.md
+
+---
+
+FASE 10
+VALIDAÇÃO BLOCKCHAIN
+--------------------
+
+Para cada decisão:
+
+validar:
+
+decision_id
+
+tx_hash
+
+timestamp
+
+resultado
+
+Gerar:
+
+03_analysis/blockchain_auditability.md
+
+---
+
+FASE 11
+ANÁLISE ESTATÍSTICA
+-------------------
+
+Calcular:
+
+* média
+* mediana
+* desvio padrão
+* correlação
+* regressão
+* bootstrap
+
+Quando aplicável.
+
+Gerar:
+
+04_statistics/statistical_validation.md
+
+---
+
+FASE 12
+FIGURAS CIENTÍFICAS
+-------------------
+
+Gerar figuras IEEE:
+
+1.
+
+Decision Score vs PRB
+
+2.
+
+Decision Score vs RTT
+
+3.
+
+Decision Score vs CPU
+
+4.
+
+Decision Score vs Availability
+
+5.
+
+Decision Distribution
+
+6.
+
+Domain Contribution
+
+7.
+
+Blockchain Traceability
+
+Salvar:
+
+05_figures/
+
+PNG + PDF
+
+---
+
+FASE 13
+TABELAS CIENTÍFICAS
+-------------------
+
+Gerar:
+
+1.
+
+Experimental Scenarios
+
+2.
+
+Decision Outcomes
+
+3.
+
+Domain Metrics
+
+4.
+
+Statistical Summary
+
+5.
+
+Blockchain Validation
+
+Salvar:
+
+06_tables/
+
+---
+
+FASE 14
+DISCUSSÃO
+---------
+
+Responder:
+
+1.
+
+A TriSLA funciona?
+
+2.
+
+A TriSLA é consistente?
+
+3.
+
+A TriSLA é explicável?
+
+4.
+
+A TriSLA é auditável?
+
+5.
+
+A TriSLA é multidomínio?
+
+6.
+
+A TriSLA é SLA-aware?
+
+Gerar:
+
+07_discussion/discussion.md
+
+---
+
+FASE 15
+RELATÓRIO FINAL
+---------------
+
+Gerar:
+
+08_final_report/TRISLA_SCIENTIFIC_VALIDATION_REPORT.md
+
+Estrutura:
+
+1. Objetivo
+
+2. Metodologia
+
+3. Cenários
+
+4. Coleta
+
+5. Resultados
+
+6. Estatística
+
+7. Explicabilidade
+
+8. Blockchain
+
+9. Discussão
+
+10. Limitações
+
+11. Conclusões
+
+12. Trabalhos futuros
+
+---
+
+## CRITÉRIOS DE APROVAÇÃO
+
+A campanha será aprovada somente se demonstrar com evidências:
+
+✓ funcionamento operacional
+
+✓ coerência das decisões
+
+✓ influência multidomínio
+
+✓ rastreabilidade blockchain
+
+✓ repetibilidade
+
+✓ consistência estatística
+
+✓ explicabilidade
+
+---
+
+## ENCERRAR SOMENTE COM
+
+TRISLA_SCIENTIFIC_VALIDATION_CAMPAIGN_APPROVED
+
+ou
+
+SCIENTIFIC_VALIDATION_BLOCKED_WITH_EVIDENCE

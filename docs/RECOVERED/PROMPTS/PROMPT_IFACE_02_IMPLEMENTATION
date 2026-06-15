@@ -1,0 +1,157 @@
+# =========================================================
+# PROMPT_IFACE_02_IMPLEMENTATION
+# Interface Layer — Implementação Explícita (Wrappers)
+# =========================================================
+
+# MISSÃO
+# Implementar a Interface Layer (RAN-I1, TN-I1, CN-I1, OBS-I1, BC-I1)
+# como WRAPPERS EXPLÍCITOS no código, em modo controlado, sem regressão.
+
+# OBJETIVO
+# Tornar a Interface Layer observável e acionável em runtime,
+# preservando 100% do comportamento atual do sistema.
+
+# =========================================================
+# REGRAS INVIOLÁVEIS (NÃO REGRESSÃO)
+# =========================================================
+# 1. NÃO alterar endpoints REST existentes
+# 2. NÃO alterar payloads existentes
+# 3. NÃO alterar fluxo: SEM → Decision → ML → NASP → BC → SLA-Agent
+# 4. NÃO remover chamadas existentes
+# 5. NÃO introduzir gateway
+# 6. NÃO alterar Kubernetes (exceto se autorizado no final)
+# 7. WRAPPERS DEVEM ser passivos (shadow por default)
+# 8. FEATURE FLAGS obrigatórias
+# 9. Qualquer erro → abortar
+# 10. Build/deploy somente por digest remoto GHCR (se autorizado)
+
+# =========================================================
+# CONTEXTO
+# =========================================================
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+# =========================================================
+# FASE 1 — ESTRUTURA DE CÓDIGO
+# =========================================================
+
+echo "[FASE 1] Criando estrutura de Interface Layer..."
+
+mkdir -p apps/decision-engine/src/interfaces
+mkdir -p apps/decision-engine/src/interfaces/schemas
+mkdir -p apps/decision-engine/src/interfaces/config
+
+# =========================================================
+# FASE 2 — FEATURE FLAGS
+# =========================================================
+
+cat > apps/decision-engine/src/interfaces/config/interface_flags.py << 'EOF'
+import os
+
+INTERFACE_LAYER_ENABLED = os.getenv("INTERFACE_LAYER_ENABLED", "false").lower() == "true"
+INTERFACE_LAYER_MODE = os.getenv("INTERFACE_LAYER_MODE", "shadow")  # shadow | active | off
+EOF
+
+# =========================================================
+# FASE 3 — BASE WRAPPER
+# =========================================================
+
+cat > apps/decision-engine/src/interfaces/base_interface.py << 'EOF'
+import logging
+logger = logging.getLogger("trisla.interfaces")
+
+def log_interface(interface_id, payload):
+    logger.info(f"[INTERFACE] {interface_id} invoked")
+EOF
+
+# =========================================================
+# FASE 4 — CN-I1 (CORE ORCHESTRATION)
+# =========================================================
+
+cat > apps/decision-engine/src/interfaces/cn_i1.py << 'EOF'
+from .base_interface import log_interface
+
+class CNI1Interface:
+    def __init__(self, nasp_adapter):
+        self.nasp = nasp_adapter
+
+    def instantiate_slice(self, sla):
+        log_interface("CN-I1", sla)
+        return self.nasp.instantiate(sla)
+EOF
+
+# =========================================================
+# FASE 5 — OBS-I1 (TELEMETRY)
+# =========================================================
+
+cat > apps/decision-engine/src/interfaces/obs_i1.py << 'EOF'
+from .base_interface import log_interface
+
+class OBSI1Interface:
+    def __init__(self, telemetry_collector):
+        self.collector = telemetry_collector
+
+    def get_snapshot(self):
+        data = self.collector()
+        log_interface("OBS-I1", data)
+        return data
+EOF
+
+# =========================================================
+# FASE 6 — BC-I1 (BLOCKCHAIN)
+# =========================================================
+
+cat > apps/decision-engine/src/interfaces/bc_i1.py << 'EOF'
+from .base_interface import log_interface
+
+class BCI1Interface:
+    def __init__(self, bc_client):
+        self.bc = bc_client
+
+    def record(self, decision):
+        log_interface("BC-I1", decision)
+        return self.bc.commit(decision)
+EOF
+
+# =========================================================
+# FASE 7 — INTEGRAÇÃO CONTROLADA (PATCH)
+# =========================================================
+
+echo "[FASE 7] Instrução de integração (manual assistida)..."
+
+cat << 'EOF'
+
+# INTEGRAÇÃO (FAZER MANUALMENTE COM CUIDADO)
+
+# Exemplo dentro do Decision Engine:
+
+from interfaces.config.interface_flags import INTERFACE_LAYER_ENABLED, INTERFACE_LAYER_MODE
+from interfaces.cn_i1 import CNI1Interface
+
+if INTERFACE_LAYER_ENABLED:
+    cn_i1 = CNI1Interface(nasp_adapter)
+
+    if INTERFACE_LAYER_MODE == "shadow":
+        # Executa wrapper + caminho original
+        cn_i1.instantiate_slice(sla)
+        result = nasp_adapter.instantiate(sla)
+
+    elif INTERFACE_LAYER_MODE == "active":
+        result = cn_i1.instantiate_slice(sla)
+
+    else:
+        result = nasp_adapter.instantiate(sla)
+else:
+    result = nasp_adapter.instantiate(sla)
+
+EOF
+
+# =========================================================
+# FASE 8 — VALIDAÇÃO LOCAL (SEM DEPLOY)
+# =========================================================
+
+echo "[FASE 8] Validação de estrutura..."
+
+ls apps/decision-engine/src/interfaces/
+
+echo "[OK] Wrappers criados sem alteração de runtime"

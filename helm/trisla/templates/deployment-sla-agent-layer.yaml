@@ -45,6 +45,32 @@ spec:
           value: {{ .Values.slaAgentLayer.env.KAFKA_ENABLED | default "false" | quote }}
         - name: KAFKA_BROKERS
           value: {{ .Values.slaAgentLayer.env.KAFKA_BROKERS | default "" | quote }}
+        - name: CLOSED_LOOP_ACTUATION_AUDIT_ENABLED
+          value: {{ .Values.slaAgentLayer.env.CLOSED_LOOP_ACTUATION_AUDIT_ENABLED | default "false" | quote }}
+        - name: CLOSED_LOOP_ACTUATION_ENABLED
+          value: {{ .Values.slaAgentLayer.env.CLOSED_LOOP_ACTUATION_ENABLED | default "false" | quote }}
+        - name: ACTUATION_AUDIT_STORE_PATH
+          value: {{ .Values.slaAgentLayer.env.ACTUATION_AUDIT_STORE_PATH | default "/tmp/trisla_actuation_audit" | quote }}
+        - name: ACTUATION_REQUEST_TTL_SECONDS
+          value: {{ .Values.slaAgentLayer.env.ACTUATION_REQUEST_TTL_SECONDS | default "300" | quote }}
+        - name: ACTUATION_AUTHORIZATION_TIMEOUT_SECONDS
+          value: {{ .Values.slaAgentLayer.env.ACTUATION_AUTHORIZATION_TIMEOUT_SECONDS | default "300" | quote }}
+        - name: ACTUATION_EXECUTION_TIMEOUT_SECONDS
+          value: {{ .Values.slaAgentLayer.env.ACTUATION_EXECUTION_TIMEOUT_SECONDS | default "120" | quote }}
+        - name: CLOSED_LOOP_TRANSPORT_DRYRUN_ENABLED
+          value: {{ .Values.slaAgentLayer.env.CLOSED_LOOP_TRANSPORT_DRYRUN_ENABLED | default "true" | quote }}
+        - name: TN002_LIVE_ENABLED
+          value: {{ .Values.slaAgentLayer.env.TN002_LIVE_ENABLED | default "false" | quote }}
+        - name: TN002_LIVE_DRYRUN_FALLBACK
+          value: {{ .Values.slaAgentLayer.env.TN002_LIVE_DRYRUN_FALLBACK | default "true" | quote }}
+        - name: TN002_FAILED_INTENT_CLEANUP_ENABLED
+          value: {{ .Values.slaAgentLayer.env.TN002_FAILED_INTENT_CLEANUP_ENABLED | default "false" | quote }}
+        - name: ONOS_REST_URL
+          value: {{ .Values.slaAgentLayer.env.ONOS_REST_URL | default "http://onos.nasp-transport.svc.cluster.local:8181" | quote }}
+        - name: ONOS_REST_AUTH
+          value: {{ .Values.slaAgentLayer.env.ONOS_REST_AUTH | default "onos:rocks" | quote }}
+        - name: ADMISSION_THROTTLE_STORE_PATH
+          value: {{ .Values.slaAgentLayer.env.ADMISSION_THROTTLE_STORE_PATH | default "/tmp/trisla_admission_throttle" | quote }}
         livenessProbe:
           httpGet:
             path: /health

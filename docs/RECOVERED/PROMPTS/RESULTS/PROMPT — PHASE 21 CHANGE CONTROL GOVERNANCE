@@ -1,0 +1,208 @@
+# PROMPT — PHASE 21 CHANGE CONTROL GOVERNANCE
+
+Operar sob:
+
+* TRISLA_EVOLUTION_MASTER_PLAN_V1 v1.2
+* PROMPT 3 Governance
+* Phase 20 aprovada
+
+Status de entrada:
+
+MASTER_PLAN_V1_2_APPROVED = TRUE
+
+PHASE_1_APPROVED = TRUE
+PHASE_2_APPROVED = TRUE
+PHASE_3_APPROVED = TRUE
+PHASE_4_APPROVED = TRUE
+PHASE_5_APPROVED = TRUE
+PHASE_6_APPROVED = TRUE
+PHASE_7_APPROVED = TRUE
+PHASE_8_APPROVED = TRUE
+PHASE_9_APPROVED = TRUE
+PHASE_10_APPROVED = TRUE
+PHASE_11_APPROVED = TRUE
+PHASE_12_APPROVED = TRUE
+PHASE_13_APPROVED = TRUE
+PHASE_14_APPROVED = TRUE
+PHASE_15_APPROVED = TRUE
+PHASE_16_APPROVED = TRUE
+PHASE_17_APPROVED = TRUE
+PHASE_18_APPROVED = TRUE
+PHASE_19_APPROVED = TRUE
+PHASE_20_APPROVED = TRUE
+
+FASE_21_PHASE_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Criar a governança formal de Change Control.
+
+Sem alterar runtime.
+
+---
+
+# Modo
+
+STRICT READ ONLY
+
+---
+
+# Proibido
+
+* build
+* deploy
+* patch
+* alteração de digests
+* alteração de modelos
+* alteração de registries
+* alteração de helm
+
+---
+
+# Atividade 1
+
+Criar:
+
+CHANGE_CONTROL_GOVERNANCE.md
+
+---
+
+# Atividade 2
+
+Criar:
+
+CHANGE_REQUEST_TEMPLATE.md
+
+---
+
+# Atividade 3
+
+Criar:
+
+CHANGE_CLASSIFICATION_MATRIX.json
+
+Classificar:
+
+STANDARD
+
+NORMAL
+
+HIGH_RISK
+
+SCIENTIFIC_IMPACT
+
+EMERGENCY
+
+---
+
+# Atividade 4
+
+Criar:
+
+APPROVAL_WORKFLOW.md
+
+---
+
+# Atividade 5
+
+Mapear:
+
+Semantic Registry
+
+Model Registry
+
+Baseline Registry
+
+I-01 Registry
+
+Deployment Baseline
+
+Runtime Baseline
+
+---
+
+# Atividade 6
+
+Definir:
+
+Mandatory Evidence Gates
+
+Mandatory Rollback Gates
+
+Mandatory Validation Gates
+
+---
+
+# Atividade 7
+
+Criar:
+
+CHANGE_CONTROL_REGISTRY.json
+
+---
+
+# Atividade 8
+
+Criar:
+
+CHANGE_TRACEABILITY_MATRIX.json
+
+---
+
+# Testes obrigatórios
+
+Validar:
+
+* nenhum digest mudou
+* nenhum deployment mudou
+* nenhum pod reiniciou
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_fase21_<timestamp>/
+
+Contendo:
+
+* governance
+* workflow
+* registry
+* traceability
+* validation_report
+
+---
+
+# Critério de sucesso
+
+CHANGE_CONTROL_GOVERNANCE_READY = TRUE
+
+NO_RUNTIME_CHANGE = TRUE
+
+RUNTIME_BEHAVIOR = IDENTICAL
+
+---
+
+# Resultado final
+
+Produzir:
+
+PHASE_21_COMPLETION_REPORT
+
+Finalizar com:
+
+PHASE_21_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar correções.
+
+Não alterar registries.
+
+Não alterar deploys.
+
+Aguardar aprovação humana.

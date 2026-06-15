@@ -20,6 +20,7 @@ from resource_evaluator import ResourceEvaluator
 from decision_snapshot import build_decision_snapshot
 from system_xai import explain_decision
 from decision_persistence import persist_decision_evidence
+from decision_evidence import attach_decision_evidence_metadata
 from decision_thresholds import thresholds_for_slice
 import logging
 import json
@@ -224,6 +225,12 @@ class DecisionEngine:
                     logger.warning(f"Kafka error for {intent_id}: {kafka_error}")
                 decision_result.metadata["decision_snapshot"] = snapshot
                 decision_result.metadata["system_xai_explanation"] = explanation
+                attach_decision_evidence_metadata(
+                    decision_result.metadata,
+                    reasoning=reasoning,
+                    xai_bundle=xai_bundle,
+                    context=context if isinstance(context, dict) else None,
+                )
             except Exception as e:
                 logger.error(f"PROMPT_S30 error for {intent_id}: {e}", exc_info=True)
             
@@ -725,6 +732,7 @@ class DecisionEngine:
         )
         final_label = _action_to_label(decision)
         divergence = bool(cls_str) and str(cls_str).strip().upper() != threshold_decision_str
+        ml_risk_for_prb = slice_adjusted
 
         print(
             f"[HYBRID DECISION] prb={ran_prb_raw} ml={ml_risk_for_prb:.4f} "

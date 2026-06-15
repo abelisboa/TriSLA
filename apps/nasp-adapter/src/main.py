@@ -191,6 +191,7 @@ def _sanitize_nsi_payload(nsi_spec: dict) -> dict:
     nsi_id = nsi_spec.get("nsiId") or nsi_spec.get("nsi_id") or nsi_spec.get("intent_id")
     service_profile = nsi_spec.get("serviceProfile") or nsi_spec.get("service_profile") or nsi_spec.get("service_type")
     tenant_id = nsi_spec.get("tenantId") or nsi_spec.get("tenant_id") or "default"
+    nest_id = nsi_spec.get("nestId") or nsi_spec.get("nest_id")
 
     # nssai: manter apenas sst/sd se existir
     nssai = nsi_spec.get("nssai") or {}
@@ -222,6 +223,8 @@ def _sanitize_nsi_payload(nsi_spec: dict) -> dict:
         "nssai": clean_nssai,
         "sla": clean_sla,
     }
+    if nest_id:
+        out["nestId"] = nest_id
 
     # suporte a reserveOnly (cap accounting TTL tests)
     if nsi_spec.get("_reserveOnly") is True:
@@ -361,6 +364,29 @@ async def startup_event():
         logger.info("[BOOTSTRAP] NSI Watch Controller STARTED")
         logger.info(f"[BOOTSTRAP] Watch thread is alive: {watch_thread.is_alive()}")
         logger.info(f"[BOOTSTRAP] Watch thread name: {watch_thread.name}")
+
+        # Sprint 8G — real NASP Core connectivity (AMF/SMF SBI, ns-1274485)
+        connected = await nasp_client.connect()
+        logger.info(
+            "[BOOTSTRAP] NASP connectivity probe complete nasp_connected=%s detail=%s",
+            connected,
+            nasp_client.get_connectivity_detail(),
+        )
+
+        # O6 — Per-slice multidomain metrics export (read-only, default off)
+        try:
+            from multidomain_metrics_exporter import (
+                multidomain_metrics_export_enabled,
+                start_multidomain_metrics_exporter,
+            )
+
+            if multidomain_metrics_export_enabled():
+                start_multidomain_metrics_exporter()
+                logger.info("[BOOTSTRAP] O6 multidomain metrics exporter STARTED")
+            else:
+                logger.info("[BOOTSTRAP] O6 multidomain metrics export disabled")
+        except Exception as o6_exc:
+            logger.warning("[BOOTSTRAP] O6 metrics exporter skipped: %s", o6_exc)
         
     except Exception as e:
         logger.exception("[BOOTSTRAP] FAILED to start NSI Watch Controller")
@@ -373,7 +399,8 @@ async def health():
     return {
         "status": "healthy",
         "module": "nasp-adapter",
-        "nasp_connected": nasp_client.is_connected()
+        "nasp_connected": nasp_client.is_connected(),
+        "nasp_connectivity": nasp_client.get_connectivity_detail(),
     }
 
 
@@ -468,6 +495,436 @@ async def post_3gpp_gate(payload: dict = None):
         return result
 
 
+@app.get("/api/v1/slice-service-binding/ssot")
+async def get_slice_service_binding_ssot():
+    """O6: expõe SSOT slice service binding (read-only, sem side-effects)."""
+    from slice_service_binding import load_mapping_config, slice_service_binding_enabled
+
+    cfg = load_mapping_config()
+    return {
+        "enabled": slice_service_binding_enabled(),
+        "mapping_version": cfg.get("mapping_version"),
+        "binding_phase": "METADATA_ONLY",
+        "profiles": cfg.get("profiles"),
+    }
+
+
+@app.get("/api/v1/slice-service-binding/resolve")
+async def resolve_slice_service_binding_endpoint(
+    service_profile: str = "eMBB",
+    nsi_id: str = "",
+    nest_id: str = "",
+):
+    """O6: resolve slice service binding para um perfil (preview, sem instantiate)."""
+    from slice_service_binding import resolve_slice_service_binding
+
+    return resolve_slice_service_binding(
+        service_profile=service_profile,
+        nsi_id=nsi_id or None,
+        nest_id=nest_id or None,
+    )
+
+
+@app.post("/api/v1/slice-service-binding/nssf/select")
+async def nssf_select_endpoint(payload: dict):
+    """O1C: executa NSSF selection para um slice_service_binding (non-blocking preview)."""
+    from nssf_adapter import (
+        nssf_adapter_enabled,
+        parse_nssf_selection_annotation,
+        select_nssf_slice,
+    )
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        profile = payload.get("service_profile") or payload.get("slice_type") or "eMBB"
+        ssb = resolve_slice_service_binding(
+            service_profile=profile,
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    force = bool((payload.get("options") or {}).get("force_refresh"))
+    result = select_nssf_slice(ssb, force_refresh=force)
+    binding = result.get("binding", ssb)
+    ann = parse_nssf_selection_annotation(result.get("nssf_selection_annotation"))
+    return {
+        "enabled": nssf_adapter_enabled(),
+        "skipped": result.get("skipped", False),
+        "slice_service_binding": binding,
+        "nssf_selection": ann or binding.get("nssf_selection"),
+        "binding_phase": binding.get("binding_phase", "METADATA_ONLY"),
+    }
+
+
+@app.get("/api/v1/slice-service-binding/nssf/status/{nsi_id}")
+async def nssf_status_endpoint(nsi_id: str):
+    """O1C: lê status NSSF selection de NSI existente."""
+    from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
+    from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
+
+    try:
+        nsi = nsi_controller.custom_api.get_namespaced_custom_object(
+            group="trisla.io",
+            version="v1",
+            namespace=nsi_controller.namespace,
+            plural="networksliceinstances",
+            name=nsi_id,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail=f"NSI not found: {exc}") from exc
+
+    ann = (nsi.get("metadata") or {}).get("annotations") or {}
+    ssb = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+    nssf_sel = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
+    return {
+        "nsi_id": nsi_id,
+        "binding_phase": (ssb or {}).get("binding_phase", "METADATA_ONLY"),
+        "nssf_selection": nssf_sel or (ssb or {}).get("nssf_selection"),
+        "integration_flags": (ssb or {}).get("integration_flags"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/amf/observe")
+async def amf_observe_endpoint(payload: dict):
+    """O2C: AMF read-only observation (log parse or cluster fetch)."""
+    from amf_binding_adapter import amf_binding_enabled, parse_amf_binding_annotation, observe_amf_binding
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    log_text = payload.get("log_text")
+    result = observe_amf_binding(ssb, log_text=log_text)
+    ann = parse_amf_binding_annotation(result.get("amf_binding_annotation"))
+    return {
+        "enabled": amf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "amf_binding": ann or result.get("amf_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/smf/observe")
+async def smf_observe_endpoint(payload: dict):
+    """O2C: SMF read-only observation (log parse or cluster fetch)."""
+    from smf_binding_adapter import parse_smf_binding_annotation, observe_smf_binding, smf_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    log_text = payload.get("log_text")
+    result = observe_smf_binding(ssb, log_text=log_text)
+    ann = parse_smf_binding_annotation(result.get("smf_binding_annotation"))
+    return {
+        "enabled": smf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "smf_binding": ann or result.get("smf_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/pdu/correlate")
+async def pdu_correlate_endpoint(payload: dict):
+    """O2C: AMF+SMF observe and correlate."""
+    from amf_smf_correlation import (
+        parse_pdu_session_summary_annotation,
+        run_amf_smf_binding,
+    )
+    from amf_binding_adapter import amf_binding_enabled
+    from smf_binding_adapter import smf_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = run_amf_smf_binding(
+        ssb,
+        nssf_selection=payload.get("nssf_selection"),
+        amf_log_text=payload.get("amf_log_text"),
+        smf_log_text=payload.get("smf_log_text"),
+    )
+    summary = parse_pdu_session_summary_annotation(result.get("pdu_session_summary_annotation"))
+    return {
+        "amf_enabled": amf_binding_enabled(),
+        "smf_enabled": smf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "binding_phase": (result.get("binding") or {}).get("binding_phase"),
+        "correlation_status": result.get("correlation_status"),
+        "slice_service_binding": result.get("binding"),
+        "pdu_session_summary": summary,
+    }
+
+
+@app.post("/api/v1/slice-service-binding/upf/observe")
+async def upf_observe_endpoint(payload: dict):
+    """O3C: UPF read-only observation (log parse or cluster fetch)."""
+    from upf_binding_adapter import parse_upf_binding_annotation, observe_upf_binding, upf_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    log_text = payload.get("log_text")
+    result = observe_upf_binding(
+        ssb,
+        log_text=log_text,
+        correlation_status=payload.get("correlation_status", "UNKNOWN"),
+        session_id=payload.get("session_id"),
+    )
+    ann = parse_upf_binding_annotation(result.get("upf_binding_annotation"))
+    return {
+        "enabled": upf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "upf_binding": ann or result.get("upf_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/user-plane/correlate")
+async def user_plane_correlate_endpoint(payload: dict):
+    """O3C: UPF observe + user plane correlation with freshness."""
+    from upf_correlation import run_upf_user_plane_binding
+    from upf_binding_adapter import upf_binding_enabled, parse_upf_binding_annotation
+    from amf_binding_adapter import parse_amf_binding_annotation
+    from smf_binding_adapter import parse_smf_binding_annotation
+    from amf_smf_correlation import parse_pdu_session_summary_annotation
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = run_upf_user_plane_binding(
+        ssb,
+        nssf_selection=payload.get("nssf_selection"),
+        amf_binding=payload.get("amf_binding"),
+        smf_binding=payload.get("smf_binding"),
+        pdu_session_summary=payload.get("pdu_session_summary"),
+        upf_log_text=payload.get("upf_log_text"),
+    )
+    summary = parse_pdu_session_summary_annotation(result.get("pdu_session_summary_annotation"))
+    upf = parse_upf_binding_annotation(result.get("upf_binding_annotation"))
+    return {
+        "upf_enabled": upf_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "binding_phase": (result.get("binding") or {}).get("binding_phase"),
+        "correlation_status": result.get("correlation_status"),
+        "fresh_ue_ip": result.get("fresh_ue_ip"),
+        "freshness_source": result.get("freshness_source"),
+        "slice_service_binding": result.get("binding"),
+        "upf_binding": upf,
+        "pdu_session_summary": summary,
+    }
+
+
+@app.post("/api/v1/slice-service-binding/ran/observe")
+async def ran_observe_endpoint(payload: dict):
+    """O4C: RAN read-only observation (AMF NGAP log parse or cluster fetch)."""
+    from ran_binding_adapter import parse_ran_binding_annotation, observe_ran_binding, ran_binding_enabled
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = observe_ran_binding(
+        ssb,
+        amf_log_text=payload.get("amf_log_text") or payload.get("log_text"),
+        gnb_log_text=payload.get("gnb_log_text"),
+        correlation_status=payload.get("correlation_status", "UNKNOWN"),
+        target_supi=payload.get("supi"),
+    )
+    ann = parse_ran_binding_annotation(result.get("ran_binding_annotation"))
+    return {
+        "enabled": ran_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "ran_binding": ann or result.get("ran_binding"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/access/correlate")
+async def access_correlate_endpoint(payload: dict):
+    """O4C: RAN observe + access correlation with O2C/O3C chain."""
+    from ran_correlation import run_ran_access_binding
+    from ran_binding_adapter import ran_binding_enabled, parse_ran_binding_annotation
+    from amf_binding_adapter import parse_amf_binding_annotation
+    from smf_binding_adapter import parse_smf_binding_annotation
+    from upf_binding_adapter import parse_upf_binding_annotation
+    from amf_smf_correlation import parse_pdu_session_summary_annotation
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = run_ran_access_binding(
+        ssb,
+        nssf_selection=payload.get("nssf_selection"),
+        amf_binding=payload.get("amf_binding"),
+        smf_binding=payload.get("smf_binding"),
+        upf_binding=payload.get("upf_binding"),
+        pdu_session_summary=payload.get("pdu_session_summary"),
+        amf_log_text=payload.get("amf_log_text"),
+        gnb_log_text=payload.get("gnb_log_text"),
+    )
+    summary = parse_pdu_session_summary_annotation(result.get("pdu_session_summary_annotation"))
+    ran = parse_ran_binding_annotation(result.get("ran_binding_annotation"))
+    return {
+        "ran_enabled": ran_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "binding_phase": (result.get("binding") or {}).get("binding_phase"),
+        "correlation_status": result.get("correlation_status"),
+        "access_correlated": result.get("access_correlated"),
+        "slice_service_binding": result.get("binding"),
+        "ran_binding": ran,
+        "pdu_session_summary": summary,
+    }
+
+
+@app.post("/api/v1/slice-service-binding/transport/observe")
+async def transport_observe_endpoint(payload: dict):
+    """O5C: ONOS read-only REST observation."""
+    from transport_binding_adapter import (
+        parse_transport_binding_annotation,
+        observe_transport_binding,
+        transport_binding_enabled,
+    )
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = observe_transport_binding(
+        ssb,
+        snapshot_inject=payload.get("snapshot_inject"),
+        correlation_status=payload.get("correlation_status", "UNKNOWN"),
+    )
+    ann = parse_transport_binding_annotation(result.get("transport_binding_annotation"))
+    return {
+        "enabled": transport_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "success": result.get("success", False),
+        "transport_binding": ann or result.get("transport_binding"),
+        "snapshot": result.get("snapshot"),
+    }
+
+
+@app.post("/api/v1/slice-service-binding/transport/correlate")
+async def transport_correlate_endpoint(payload: dict):
+    """O5C: ONOS observe + transport correlation with O1C–O4C chain."""
+    from transport_correlation import run_transport_binding
+    from transport_binding_adapter import transport_binding_enabled, parse_transport_binding_annotation
+    from amf_binding_adapter import parse_amf_binding_annotation
+    from smf_binding_adapter import parse_smf_binding_annotation
+    from upf_binding_adapter import parse_upf_binding_annotation
+    from ran_binding_adapter import parse_ran_binding_annotation
+    from amf_smf_correlation import parse_pdu_session_summary_annotation
+    from slice_service_binding import resolve_slice_service_binding
+
+    ssb = payload.get("slice_service_binding")
+    if not isinstance(ssb, dict):
+        ssb = resolve_slice_service_binding(
+            service_profile=payload.get("service_profile") or "eMBB",
+            nsi_id=payload.get("nsi_id"),
+            nest_id=payload.get("nest_id"),
+        )
+    result = run_transport_binding(
+        ssb,
+        nssf_selection=payload.get("nssf_selection"),
+        amf_binding=payload.get("amf_binding"),
+        smf_binding=payload.get("smf_binding"),
+        upf_binding=payload.get("upf_binding"),
+        ran_binding=payload.get("ran_binding"),
+        pdu_session_summary=payload.get("pdu_session_summary"),
+        snapshot_inject=payload.get("snapshot_inject"),
+    )
+    summary = parse_pdu_session_summary_annotation(result.get("pdu_session_summary_annotation"))
+    transport = parse_transport_binding_annotation(result.get("transport_binding_annotation"))
+    return {
+        "transport_enabled": transport_binding_enabled(),
+        "skipped": result.get("skipped", False),
+        "binding_phase": (result.get("binding") or {}).get("binding_phase"),
+        "correlation_status": result.get("correlation_status"),
+        "transport_correlated": result.get("transport_correlated"),
+        "slice_service_binding": result.get("binding"),
+        "transport_binding": transport,
+        "pdu_session_summary": summary,
+    }
+
+
+@app.get("/api/v1/slice-service-binding/binding/status/{nsi_id}")
+async def binding_status_endpoint(nsi_id: str):
+    """O2C: full binding status for NSI."""
+    from amf_binding_adapter import AMF_BINDING_ANNOTATION_KEY, parse_amf_binding_annotation
+    from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
+    from amf_smf_correlation import PDU_SESSION_SUMMARY_ANNOTATION_KEY, parse_pdu_session_summary_annotation
+    from upf_binding_adapter import UPF_BINDING_ANNOTATION_KEY, parse_upf_binding_annotation
+    from ran_binding_adapter import RAN_BINDING_ANNOTATION_KEY, parse_ran_binding_annotation
+    from transport_binding_adapter import TRANSPORT_BINDING_ANNOTATION_KEY, parse_transport_binding_annotation
+    from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
+    from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
+
+    try:
+        nsi = nsi_controller.custom_api.get_namespaced_custom_object(
+            group="trisla.io",
+            version="v1",
+            namespace=nsi_controller.namespace,
+            plural="networksliceinstances",
+            name=nsi_id,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail=f"NSI not found: {exc}") from exc
+
+    ann = (nsi.get("metadata") or {}).get("annotations") or {}
+    ssb = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+    return {
+        "nsi_id": nsi_id,
+        "binding_phase": (ssb or {}).get("binding_phase", "METADATA_ONLY"),
+        "correlation_status": (ssb or {}).get("correlation_status"),
+        "integration_flags": (ssb or {}).get("integration_flags"),
+        "nssf_selection": parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY)),
+        "amf_binding": parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY)),
+        "smf_binding": parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY)),
+        "upf_binding": parse_upf_binding_annotation(ann.get(UPF_BINDING_ANNOTATION_KEY)),
+        "ran_binding": parse_ran_binding_annotation(ann.get(RAN_BINDING_ANNOTATION_KEY)),
+        "transport_binding": parse_transport_binding_annotation(ann.get(TRANSPORT_BINDING_ANNOTATION_KEY)),
+        "pdu_session_summary": parse_pdu_session_summary_annotation(
+            ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
+        ),
+    }
+
+
 @app.post("/api/v1/nsi/instantiate")
 async def instantiate_nsi(nsi_spec: dict):
     """
@@ -555,10 +1012,67 @@ async def instantiate_nsi(nsi_spec: dict):
                 nsi_spec.get("nsiId"),
             )
 
+            slice_service_binding = None
+            nssf_selection = None
+            amf_binding = None
+            smf_binding = None
+            upf_binding = None
+            ran_binding = None
+            transport_binding = None
+            pdu_session_summary = None
+            binding_phase = "METADATA_ONLY"
+            try:
+                from amf_binding_adapter import AMF_BINDING_ANNOTATION_KEY, parse_amf_binding_annotation
+                from smf_binding_adapter import SMF_BINDING_ANNOTATION_KEY, parse_smf_binding_annotation
+                from upf_binding_adapter import UPF_BINDING_ANNOTATION_KEY, parse_upf_binding_annotation
+                from ran_binding_adapter import RAN_BINDING_ANNOTATION_KEY, parse_ran_binding_annotation
+                from transport_binding_adapter import (
+                    TRANSPORT_BINDING_ANNOTATION_KEY,
+                    parse_transport_binding_annotation,
+                )
+                from amf_smf_correlation import (
+                    PDU_SESSION_SUMMARY_ANNOTATION_KEY,
+                    parse_pdu_session_summary_annotation,
+                )
+                from nssf_adapter import NSSF_SELECTION_ANNOTATION_KEY, parse_nssf_selection_annotation
+                from slice_service_binding import MAPPING_ANNOTATION_KEY, parse_mapping_annotation
+
+                fresh = nsi_controller.custom_api.get_namespaced_custom_object(
+                    group="trisla.io",
+                    version="v1",
+                    namespace=nsi_controller.namespace,
+                    plural="networksliceinstances",
+                    name=nsi_id,
+                )
+                ann = (fresh.get("metadata") or {}).get("annotations") or {}
+                slice_service_binding = parse_mapping_annotation(ann.get(MAPPING_ANNOTATION_KEY))
+                nssf_selection = parse_nssf_selection_annotation(ann.get(NSSF_SELECTION_ANNOTATION_KEY))
+                amf_binding = parse_amf_binding_annotation(ann.get(AMF_BINDING_ANNOTATION_KEY))
+                smf_binding = parse_smf_binding_annotation(ann.get(SMF_BINDING_ANNOTATION_KEY))
+                upf_binding = parse_upf_binding_annotation(ann.get(UPF_BINDING_ANNOTATION_KEY))
+                ran_binding = parse_ran_binding_annotation(ann.get(RAN_BINDING_ANNOTATION_KEY))
+                transport_binding = parse_transport_binding_annotation(ann.get(TRANSPORT_BINDING_ANNOTATION_KEY))
+                pdu_session_summary = parse_pdu_session_summary_annotation(
+                    ann.get(PDU_SESSION_SUMMARY_ANNOTATION_KEY)
+                )
+                if slice_service_binding:
+                    binding_phase = slice_service_binding.get("binding_phase", binding_phase)
+            except Exception:
+                slice_service_binding = None
+
             return {
                 "success": True,
                 "nsi": created_nsi,
-                "message": "NSI instantiated successfully"
+                "slice_service_binding": slice_service_binding,
+                "nssf_selection": nssf_selection,
+                "amf_binding": amf_binding,
+                "smf_binding": smf_binding,
+                "upf_binding": upf_binding,
+                "ran_binding": ran_binding,
+                "transport_binding": transport_binding,
+                "pdu_session_summary": pdu_session_summary,
+                "binding_phase": binding_phase,
+                "message": "NSI instantiated successfully",
             }
 
         except HTTPException:

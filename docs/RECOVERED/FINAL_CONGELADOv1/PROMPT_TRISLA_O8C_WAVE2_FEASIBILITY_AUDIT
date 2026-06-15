@@ -1,0 +1,352 @@
+PROMPT_TRISLA_O8C_WAVE2_FEASIBILITY_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM COMMIT
+
+SEM PUSH
+
+OBJETIVO
+
+Validar a viabilidade real das ações da Wave 2 definidas em O8B antes de qualquer implementação.
+
+Determinar:
+
+o que é possível executar hoje
+
+o que depende de integração futura
+
+o que é incompatível com a arquitetura atual
+
+o que aumenta aderência a 3GPP, O-RAN e ETSI ZSM
+
+sem quebrar a baseline O1C–O8C Wave 1.
+
+====================================================
+BASELINE
+========
+
+O1C–O7D = FROZEN
+
+O8A = APPROVED
+
+O8B = APPROVED
+
+O8C Wave 1 = APPROVED
+
+CURRENT_ARCHITECTURE_STATUS
+
+TRANSPORT_CORRELATED
++
+AUTHORIZED_CLOSED_LOOP
+
+====================================================
+REGRAS ABSOLUTAS
+================
+
+Somente auditoria.
+
+Não alterar:
+
+Decision Engine
+
+SLA-Agent
+
+Prometheus
+
+Grafana
+
+ONOS
+
+Core
+
+RAN
+
+Blockchain
+
+====================================================
+FASE 1 — WAVE 2 ACTION INVENTORY
+================================
+
+Inventariar todas as ações classificadas como:
+
+SAFE
+
+CONTROLLED
+
+HIGH_RISK
+
+em O8B.
+
+Gerar:
+
+analysis/o8c_wave2_action_inventory.md
+
+====================================================
+FASE 2 — DOMAIN FEASIBILITY
+===========================
+
+Avaliar por domínio:
+
+Orchestration
+
+Assurance
+
+Core
+
+RAN
+
+Transport
+
+Governance
+
+Intelligence
+
+Classificar:
+
+IMPLEMENTABLE_NOW
+
+REQUIRES_INTEGRATION
+
+NOT_FEASIBLE
+
+Gerar:
+
+analysis/o8c_wave2_domain_feasibility.md
+
+====================================================
+FASE 3 — TRANSPORT ACTION AUDIT
+===============================
+
+Auditar ONOS.
+
+Responder:
+
+Existe API disponível?
+
+Existe autenticação válida?
+
+Existe suporte a intents?
+
+Existe suporte a path control?
+
+Existe rollback?
+
+Classificar:
+
+DRY_RUN_ONLY
+
+CONTROLLED_ACTION
+
+HIGH_RISK
+
+Gerar:
+
+analysis/o8c_wave2_transport_feasibility.md
+
+====================================================
+FASE 4 — CORE ACTION AUDIT
+==========================
+
+Auditar:
+
+NSSF
+
+AMF
+
+SMF
+
+UPF
+
+Responder:
+
+Existe API operacional?
+
+Existe configuração dinâmica?
+
+Existe mecanismo seguro de rollback?
+
+Gerar:
+
+analysis/o8c_wave2_core_feasibility.md
+
+====================================================
+FASE 5 — RAN ACTION AUDIT
+=========================
+
+Auditar:
+
+UERANSIM
+
+gNB
+
+RAN telemetry
+
+Responder:
+
+Existe qualquer ação possível?
+
+Ou apenas observação?
+
+Gerar:
+
+analysis/o8c_wave2_ran_feasibility.md
+
+====================================================
+FASE 6 — GOVERNANCE GATE AUDIT
+==============================
+
+Validar se Wave 1 já suporta:
+
+AUTH_POLICY
+
+AUTH_OPERATOR
+
+AUTH_GOVERNANCE
+
+rollback
+
+expire
+
+deny
+
+Gerar:
+
+analysis/o8c_wave2_governance_gate_audit.md
+
+====================================================
+FASE 7 — ZSM ALIGNMENT IMPACT
+=============================
+
+Para cada ação:
+
+quanto aumenta:
+
+Observe
+
+Analyze
+
+Decide
+
+Act
+
+Govern
+
+Gerar:
+
+analysis/o8c_wave2_zsm_impact.md
+
+====================================================
+FASE 8 — 3GPP ALIGNMENT IMPACT
+==============================
+
+Avaliar impacto em:
+
+TS 28.541
+
+TS 28.533
+
+NSMF
+
+NSSMF
+
+Slice Lifecycle
+
+Gerar:
+
+analysis/o8c_wave2_3gpp_impact.md
+
+====================================================
+FASE 9 — O-RAN ALIGNMENT IMPACT
+===============================
+
+Avaliar impacto em:
+
+SMO
+
+O1
+
+A1
+
+RIC
+
+rApps
+
+xApps
+
+Gerar:
+
+analysis/o8c_wave2_oran_impact.md
+
+====================================================
+FASE 10 — RECOMMENDED FIRST ACTION
+==================================
+
+Escolher apenas UMA ação para Wave 2.
+
+Critérios:
+
+menor risco
+
+maior valor científico
+
+maior aderência normativa
+
+rollback simples
+
+Gerar:
+
+analysis/o8c_wave2_recommended_first_action.md
+
+====================================================
+FASE 11 — EXECUTIVE VERDICT
+===========================
+
+Responder:
+
+Qual ação deve ser implementada primeiro?
+
+Qual ação deve permanecer em dry-run?
+
+Qual ação deve ser proibida?
+
+Qual ação aumenta mais o alinhamento:
+
+3GPP
+
+O-RAN
+
+ETSI ZSM
+
+Gerar:
+
+analysis/o8c_wave2_executive_verdict.md
+
+====================================================
+VEREDITO FINAL
+==============
+
+Emitir:
+
+WAVE2_FEASIBLE = YES/NO
+
+FIRST_ACTION_DEFINED = YES/NO
+
+TRANSPORT_ACTION_READY = YES/NO
+
+CORE_ACTION_READY = YES/NO
+
+RAN_ACTION_READY = YES/NO
+
+GOVERNANCE_READY = YES/NO
+
+READY_FOR_WAVE2_IMPLEMENTATION = YES/NO
+
+EVIDENCE_CONFIDENCE = HIGH

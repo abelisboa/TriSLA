@@ -181,7 +181,11 @@ class SLAEvaluateInput(BaseModel):
         default=None,
         description="Telemetria opcional (ex.: ran.prb_utilization) propagada pelo SEM-CSMF",
     )
-    
+    metadata: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Inbound metadata bag from SEM (Wave 1 G3-A — echo-only at DE ingress)",
+    )
+
     class Config:
         json_schema_extra = {
             "example": {

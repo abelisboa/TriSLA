@@ -1,0 +1,206 @@
+# PROMPT 1 — TRISLA EVOLUTION MASTER GOVERNANCE PLAN
+
+Você é um Arquiteto Principal de Plataforma, DevOps Sênior, MLOps Engineer e Especialista em 5G/O-RAN/ETSI ZSM/GSMA NEST.
+
+Sua missão NÃO é implementar imediatamente.
+
+Sua primeira missão é produzir um documento mestre denominado:
+
+TRISLA_EVOLUTION_MASTER_PLAN_V1
+
+Objetivo:
+
+Planejar a evolução controlada do TriSLA sem regressão e sem comprometer:
+
+* runtime atual;
+* baseline científico;
+* resultados congelados;
+* arquitetura validada;
+* rastreabilidade;
+* governança.
+
+## Contexto Obrigatório
+
+O ambiente atual possui:
+
+* SEM-CSMF
+* ML-NSMF
+* Decision Engine
+* NASP Adapter
+* BC-NSSMF
+* SLA-Agent Layer
+* Hyperledger Besu
+* Prometheus
+* Kubernetes
+
+Problemas identificados:
+
+1. GST/NEST parcialmente gerados por templates simplificados.
+2. Valores hardcoded:
+
+   * 100 Mbps
+   * 1 Gbps
+   * 1 ms
+   * 0.99999
+3. Ausência de Semantic Registry.
+4. Ausência de Model Registry.
+5. Ausência de Runtime Baseline Registry.
+6. Ausência de Dataset Registry.
+7. Ausência de Shadow Validation.
+8. Ausência de Retraining Governance.
+9. Divergência potencial entre runtime e baseline científico.
+
+## Entregável Inicial
+
+Antes de qualquer implementação gerar:
+
+### Fase 0
+
+Architecture Audit
+
+Produzir:
+
+* inventário completo
+* diagrama de dependências
+* mapa de componentes
+* mapa de integrações
+* mapa de APIs
+* mapa de dados
+* mapa de modelos
+* mapa de pipelines
+
+Sem alterar nada.
+
+## Estrutura Obrigatória
+
+O plano deve ser dividido em fases independentes.
+
+Cada fase deve conter:
+
+### Objetivo
+
+### Escopo
+
+### Componentes Impactados
+
+### Riscos
+
+### Critérios de Aprovação
+
+### Evidências Necessárias
+
+### Testes Necessários
+
+### Estratégia de Rollback
+
+### Build Strategy
+
+### Deploy Strategy
+
+### Validation Strategy
+
+### Exit Gate
+
+## Sequência Obrigatória
+
+FASE 0
+Architecture Audit
+
+FASE 1
+Semantic Registry
+
+FASE 2
+GST Catalog Registry
+
+FASE 3
+NEST Catalog Registry
+
+FASE 4
+Ontology Governance Registry
+
+FASE 5
+Model Registry
+
+FASE 6
+Runtime Baseline Registry
+
+FASE 7
+Dataset Registry
+
+FASE 8
+Dataset Builder
+
+FASE 9
+Decision Policy Registry
+
+FASE 10
+Shadow Validation Framework
+
+FASE 11
+Training Pipeline
+
+FASE 12
+Candidate Model Validation
+
+FASE 13
+Controlled Promotion Pipeline
+
+FASE 14
+Runtime Drift Detection
+
+FASE 15
+Controlled Retraining Governance
+
+## Regras Obrigatórias
+
+Nenhuma fase pode iniciar antes da aprovação formal da fase anterior.
+
+Nenhuma fase pode:
+
+* modificar produção diretamente;
+* alterar Decision Engine;
+* alterar ML-NSMF;
+* alterar SEM-CSMF;
+* alterar SLA-Agent;
+
+antes da aprovação da fase correspondente.
+
+## Regras de Deploy
+
+Somente:
+
+* build por digest
+* push GHCR
+* deploy remoto
+* digest pinning
+
+Nunca:
+
+* latest
+* tags mutáveis
+* rollout sem digest
+
+## Regras de Evidência
+
+Cada fase deve gerar:
+
+evidencias_trisla_<fase>_<timestamp>
+
+contendo:
+
+* arquitetura
+* logs
+* manifests
+* screenshots
+* validações
+* rollback plan
+
+## Critério Final
+
+Ao concluir o documento mestre, NÃO implementar.
+
+Parar.
+
+Aguardar aprovação humana.
+
+Somente após aprovação do plano poderá ser iniciada a Fase 0.

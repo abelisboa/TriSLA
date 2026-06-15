@@ -1,0 +1,32 @@
+# =========================================================
+# PROMPT_IFACE_07_LOG_FIX
+# Fix de duplicação de logs Interface Layer
+# =========================================================
+
+export KUBECONFIG=/tmp/kubeconfig.node2
+cd /home/porvir5g/gtp5g/trisla || exit 1
+
+OUT="evidencias_interfaces_log_fix"
+mkdir -p "$OUT"
+
+# FASE 1 — BACKUP
+cp apps/decision-engine/src/interfaces/base_interface.py \
+   "$OUT/base_interface.py.before"
+
+# FASE 2 — PATCH (apenas propagate)
+sed -i 's/logger.propagate = True/logger.propagate = False/' \
+  apps/decision-engine/src/interfaces/base_interface.py
+
+# FASE 3 — VERIFICAR
+grep "propagate" apps/decision-engine/src/interfaces/base_interface.py \
+  | tee "$OUT/propagate_check.txt"
+
+# FASE 4 — COMPILE CHECK
+python3 -m py_compile \
+  apps/decision-engine/src/interfaces/base_interface.py || exit 1
+
+# FASE 5 — DIFF
+git diff apps/decision-engine/src/interfaces/base_interface.py \
+  | tee "$OUT/diff.txt"
+
+echo "[OK] Fix preparado — apenas logging, sem impacto funcional"

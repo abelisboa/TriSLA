@@ -1,0 +1,547 @@
+PROMPT_CURSOR_TRISLA_RUNTIME_BASELINE_FREEZE_V1
+
+PAPEL
+
+Atue como:
+
+* Senior DevOps Engineer
+* Senior Kubernetes Engineer
+* Senior Free5GC Engineer
+* Senior O-RAN Engineer
+* Senior NASP Engineer
+* Senior TriSLA Runtime Engineer
+
+OBJETIVO
+
+Congelar oficialmente o primeiro baseline operacional completo do ambiente TriSLA/NASP após a correção definitiva do Core/RAN/UPF.
+
+IMPORTANTE
+
+NÃO executar mudanças.
+
+NÃO alterar imagens.
+
+NÃO alterar ConfigMaps.
+
+NÃO alterar manifests.
+
+NÃO alterar TriSLA.
+
+NÃO alterar Free5GC.
+
+Esta é uma fase exclusivamente de:
+
+* documentação
+* coleta de evidências
+* freeze operacional
+* atualização de runbooks
+* preparação da demo final
+
+---
+
+## ESTADO COMPROVADO
+
+Veredito:
+
+UPF_GTP5G_PDU_ACCEPT_FINAL_FIX_APPROVED
+
+Causa raiz final:
+
+gtp5g carregado porém corrompido em node2
+
+Erro:
+
+gtp5g_newlink:
+Failed to create a hash table
+
+Consequência:
+
+UPF
+→ Create PDR Error
+
+SMF
+→ não emitia N1N2
+
+UE
+→ sem PDU Accept
+
+Correção:
+
+1.
+
+Scale DOWN do UPF
+
+2.
+
+rmmod gtp5g
+
+3.
+
+modprobe gtp5g
+
+4.
+
+Subida do UPF
+
+5.
+
+Sincronização do nodeID SMF
+
+Resultado:
+
+NG Setup OK
+
+Registration OK
+
+UDR sm-data 200
+
+PCF 201
+
+CreateSmContext 201
+
+PFCP OK
+
+PDU Session Establishment Accept OK
+
+uesimtun0 OK
+
+Ping Internet OK
+
+TriSLA OK
+
+---
+
+FASE 1
+CRIAR BASELINE OFICIAL
+----------------------
+
+Criar:
+
+evidencias_trisla_runtime_baseline_operacional_final_YYYYMMDDTHHMMSSZ
+
+Salvar:
+
+kubectl get nodes -o wide
+
+kubectl get pods -A -o wide
+
+kubectl get svc -A
+
+kubectl get endpoints -A
+
+kubectl get cm -A
+
+kubectl get deployments -A
+
+kubectl get sts -A
+
+kubectl get pvc -A
+
+kubectl get pv
+
+---
+
+FASE 2
+CONGELAR IMAGENS
+----------------
+
+Gerar:
+
+runtime_images_inventory.md
+
+Coletar:
+
+kubectl get pods -A 
+-o jsonpath='{range .items[*]}{.metadata.namespace}{"/"}{.metadata.name}{" => "}{range .spec.containers[*]}{.image}{" "}{end}{"\n"}{end}'
+
+Registrar:
+
+Namespace
+
+Pod
+
+Container
+
+Imagem
+
+Tag
+
+Digest (quando disponível)
+
+---
+
+FASE 3
+CONGELAR CONFIGURAÇÃO FREE5GC
+-----------------------------
+
+Salvar:
+
+AMF
+
+SMF
+
+UPF
+
+NRF
+
+UDR
+
+UDM
+
+AUSF
+
+PCF
+
+NSSF
+
+ConfigMaps completos.
+
+Criar:
+
+free5gc_runtime_baseline.md
+
+Registrar:
+
+PLMN
+
+TAC
+
+SST
+
+SD
+
+DNN
+
+NodeID
+
+UPF IP
+
+AMF IP
+
+N2 endpoint
+
+PFCP endpoint
+
+---
+
+FASE 4
+CONGELAR CONFIGURAÇÃO UERANSIM
+------------------------------
+
+Salvar:
+
+ConfigMap:
+
+ueransim-singlepod-config
+
+Registrar:
+
+gnb.yaml
+
+ue.yaml
+
+Gerar:
+
+ran_runtime_baseline.md
+
+Registrar:
+
+PLMN
+
+TAC
+
+NCI
+
+AMF endpoint
+
+Slice
+
+SUPI
+
+APN
+
+---
+
+FASE 5
+CONGELAR CONFIGURAÇÃO TRISLA
+----------------------------
+
+Salvar:
+
+portal-backend
+
+sem-csmf
+
+ml-nsmf
+
+decision-engine
+
+sla-agent
+
+nasp-adapter
+
+bc-nssmf
+
+besu
+
+frontend
+
+Gerar:
+
+trisla_runtime_baseline.md
+
+Registrar:
+
+pods
+
+services
+
+ports
+
+health endpoints
+
+Prometheus jobs
+
+---
+
+FASE 6
+CONGELAR TELEMETRIA
+-------------------
+
+Validar:
+
+curl -s http://localhost:19090/-/healthy
+
+Consultar:
+
+trisla_ran_prb_utilization
+
+trisla_ran_latency_ms
+
+trisla_ran_ue_proxy_throughput_bps
+
+probe_success
+
+Registrar resultados.
+
+Gerar:
+
+telemetry_baseline.md
+
+---
+
+FASE 7
+CONGELAR VALIDAÇÃO E2E
+----------------------
+
+Executar coleta read-only:
+
+UE
+
+gNB
+
+AMF
+
+SMF
+
+UPF
+
+Validar evidências:
+
+NG Setup successful
+
+Registration Accept
+
+PDU Session Establishment Accept
+
+uesimtun0
+
+ping Internet
+
+Gerar:
+
+e2e_validation_baseline.md
+
+---
+
+FASE 8
+ATUALIZAR RUNBOOK
+-----------------
+
+Atualizar:
+
+TRISLA_MASTER_RUNBOOK.md
+
+Adicionar seção:
+
+UPF_GTP5G_RUNTIME_RECOVERY
+
+Conteúdo mínimo:
+
+Sintoma:
+
+Wrong 5G GTP interface upfgtp
+
+NetlinkSockOpen fail
+
+Create PDR Error
+
+Diagnóstico:
+
+dmesg | grep gtp5g
+
+Correção:
+
+kubectl scale sts upf-free5gc-upf-upf -n ns-1274485 --replicas=0
+
+sudo rmmod gtp5g
+
+sudo modprobe gtp5g
+
+kubectl scale sts upf-free5gc-upf-upf -n ns-1274485 --replicas=1
+
+Validar:
+
+uesimtun0
+
+PDU Accept
+
+ping Internet
+
+---
+
+FASE 9
+PREPARAR DEMO FINAL
+-------------------
+
+Gerar:
+
+TRISLA_FINAL_DEMO_SEQUENCE.md
+
+Com sequência completa:
+
+1.
+
+Validação Infraestrutura
+
+2.
+
+Validação Core
+
+3.
+
+Validação RAN
+
+4.
+
+Validação Transporte
+
+5.
+
+Validação Telemetria
+
+6.
+
+Submissão SLA
+
+7.
+
+SEM-CSMF
+
+8.
+
+Decision Engine
+
+9.
+
+SLA-Agent
+
+10.
+
+Blockchain
+
+11.
+
+Runtime Assurance
+
+12.
+
+Observabilidade
+
+13.
+
+Aceitação SLA
+
+14.
+
+Monitoramento contínuo
+
+15.
+
+Evidências
+
+Cada passo deve conter:
+
+comando
+
+resultado esperado
+
+logs relevantes
+
+evidência associada
+
+---
+
+FASE 10
+ENTREGA
+-------
+
+Gerar:
+
+RUNTIME_BASELINE_FREEZE_FINAL_REPORT.md
+
+Conteúdo:
+
+1.
+
+Arquitetura congelada
+
+2.
+
+Imagens congeladas
+
+3.
+
+Configurações congeladas
+
+4.
+
+Telemetria congelada
+
+5.
+
+Fluxo E2E validado
+
+6.
+
+Correção definitiva gtp5g
+
+7.
+
+Runbook atualizado
+
+8.
+
+Demo preparada
+
+9.
+
+Riscos remanescentes
+
+10.
+
+Próximas fases
+
+ENCERRAR COM:
+
+TRISLA_RUNTIME_BASELINE_FREEZE_APPROVED

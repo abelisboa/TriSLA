@@ -1,0 +1,237 @@
+# PROMPT — PHASE 25C POST-DEPLOY STABILIZATION AND FULL E2E TELEMETRY VALIDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 25B concluída
+* Wave 1 implantada
+* Nenhuma Wave 2 autorizada
+
+Status:
+
+PHASE_25B_APPROVED = TRUE
+
+PHASE_25C_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Validar estabilidade operacional do runtime após a Wave 1 e confirmar que toda a cadeia E2E do TriSLA continua íntegra.
+
+---
+
+# REGRA OBRIGATÓRIA
+
+É proibido utilizar fluxo simplificado.
+
+Todo relatório deverá utilizar obrigatoriamente o fluxo operacional completo:
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+Portal
+
+e simultaneamente:
+
+UERANSIM
+↓
+RAN
+↓
+ONOS Transport
+↓
+5GC
+↓
+Prometheus
+↓
+OpenTelemetry
+↓
+SLA-Agent Layer
+↓
+Decision Engine
+
+---
+
+# Proibido
+
+* Nova implementação
+* Wave 2
+* Model promotion
+* Shadow validation execution
+* Retraining
+* Semantic runtime integration
+* G1
+* G2
+* G3-C
+* G3-D
+
+---
+
+# Atividade 1
+
+Validar todos os componentes do fluxo principal:
+
+* Portal Frontend
+* Portal Backend
+* SEM-CSMF
+* NASP Adapter
+* Decision Engine
+* ML-NSMF
+* BC-NSSMF
+* SLA-Agent
+
+---
+
+# Atividade 2
+
+Validar cadeia de telemetria completa:
+
+* UERANSIM
+* RAN
+* ONOS
+* 5GC
+* Prometheus
+* OpenTelemetry
+
+---
+
+# Atividade 3
+
+Confirmar recebimento de métricas:
+
+RAN:
+
+* PRB
+* UE metrics
+
+Transport:
+
+* RTT
+* Jitter
+* Packet Loss
+* Bandwidth
+
+Core:
+
+* Availability
+* Probe metrics
+
+---
+
+# Atividade 4
+
+Validar SLA-Agent:
+
+* Runtime Assurance
+* Explainability
+* Domain Compliance
+* SLA Compliance
+
+---
+
+# Atividade 5
+
+Executar submissões controladas:
+
+* ACCEPT
+* RENEGOTIATE
+* REJECT
+
+---
+
+# Atividade 6
+
+Validar governança:
+
+* Blockchain commit
+* tx_hash
+* block_number
+* lineage
+* audit chain
+
+---
+
+# Atividade 7
+
+Monitoramento operacional
+
+Mínimo:
+
+30 minutos
+
+Coletar:
+
+* erros
+* warnings
+* OTLP failures
+* Prometheus failures
+* Decision Engine exceptions
+
+---
+
+# Critérios de aprovação
+
+ALL_COMPONENTS_HEALTHY = TRUE
+
+TELEMETRY_E2E_VALIDATED = TRUE
+
+RAN_TELEMETRY_OK = TRUE
+
+TRANSPORT_TELEMETRY_OK = TRUE
+
+CORE_TELEMETRY_OK = TRUE
+
+SLA_AGENT_OK = TRUE
+
+BLOCKCHAIN_OK = TRUE
+
+NO_NEW_RUNTIME_ERRORS = TRUE
+
+ROLLBACK_NOT_REQUIRED = TRUE
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_phase25c_<timestamp>/
+
+---
+
+# Resultado final
+
+Produzir:
+
+FULL_E2E_VALIDATION_REPORT.md
+
+TELEMETRY_VALIDATION_REPORT.md
+
+POST_DEPLOY_STABILITY_REPORT.md
+
+PHASE_25C_COMPLETION_REPORT.md
+
+Finalizar com:
+
+PHASE_25C_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Wave 2.
+
+Não abrir novas fases automaticamente.
+
+Aguardar aprovação humana.

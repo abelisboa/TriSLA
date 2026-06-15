@@ -1,0 +1,160 @@
+# PROMPT — PHASE 25B CONTROLLED DEPLOYMENT VALIDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Wave 1 aprovada
+* Build digest validado
+* Hotfix audit aprovado
+
+Status:
+
+DEPLOY_APPROVAL = TRUE
+
+---
+
+# Objetivo
+
+Executar deploy controlado da Wave 1 no Decision Engine.
+
+---
+
+# Escopo
+
+Somente:
+
+trisla-decision-engine
+
+---
+
+# Digest alvo
+
+sha256:49e42558443aafa0125d9c1f651e3839e02f341cc140325c14808d638ff9b8ea
+
+---
+
+# Rollback obrigatório
+
+sha256:5695c700be9b83bd11bdf846a5762f1f9ba3dde143c73f3cec2b55472bb4caa6
+
+---
+
+# Atividade 1
+
+Capturar baseline pré-deploy:
+
+* deployment
+* pod
+* generation
+* image digest
+* logs
+
+---
+
+# Atividade 2
+
+Executar deploy controlado.
+
+---
+
+# Atividade 3
+
+Aguardar rollout completo.
+
+---
+
+# Atividade 4
+
+Executar:
+
+GET /health
+
+POST /evaluate
+
+Metadata Echo Validation
+
+---
+
+# Atividade 5
+
+Executar regressão:
+
+Decision parity
+
+ACCEPT
+
+RENEGOTIATE
+
+REJECT
+
+---
+
+# Atividade 6
+
+Validar integração:
+
+SEM-CSMF
+
+ML-NSMF
+
+Portal Backend
+
+Portal Frontend
+
+SLA-Agent
+
+BC-NSSMF
+
+---
+
+# Atividade 7
+
+Monitorar logs por no mínimo 15 minutos.
+
+---
+
+# Critérios de aprovação
+
+HEALTH_PASS = TRUE
+
+I01_PASS = TRUE
+
+METADATA_ECHO_PASS = TRUE
+
+DECISION_PARITY_PASS = TRUE
+
+NO_NEW_ERRORS = TRUE
+
+ROLLBACK_NOT_REQUIRED = TRUE
+
+---
+
+# Evidências
+
+Gerar:
+
+evidencias_trisla_wave1_deploy_<timestamp>/
+
+---
+
+# Resultado final
+
+Produzir:
+
+POST_DEPLOY_PARITY_REPORT.md
+
+RUNTIME_VALIDATION_REPORT.md
+
+PHASE_25B_COMPLETION_REPORT.md
+
+Finalizar com:
+
+PHASE_25B_STATUS = READY_FOR_REVIEW
+
+Parar.
+
+Não iniciar Wave 2.
+
+Não iniciar novas fases automaticamente.
+
+Aguardar aprovação humana.

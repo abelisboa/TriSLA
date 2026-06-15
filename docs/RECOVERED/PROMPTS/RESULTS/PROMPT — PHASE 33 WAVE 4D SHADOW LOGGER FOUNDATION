@@ -1,0 +1,229 @@
+# PROMPT — PHASE 33 WAVE 4D SHADOW LOGGER FOUNDATION
+
+Operar sob:
+
+* PROMPT 3 Governance
+* Phase 32 concluída
+* Dual Load Foundation concluída
+* Golden Vector Set congelado
+* Wave 3A Freeze ativo
+
+Status:
+
+PHASE_33_APPROVED = TRUE
+
+---
+
+# Objetivo
+
+Implementar exclusivamente a infraestrutura de Shadow Logger.
+
+Não executar shadow.
+
+Não executar candidate inference.
+
+Não comparar modelos.
+
+Não promover modelos.
+
+Não realizar retraining.
+
+---
+
+# Fluxo obrigatório do TriSLA
+
+Portal Frontend
+↓
+Portal Backend
+↓
+SEM-CSMF
+↓
+NASP Adapter
+↓
+Decision Engine
+↓
+ML-NSMF
+↓
+Decision Engine
+↓
+BC-NSSMF
+↓
+SLA-Agent
+↓
+Portal
+
+Telemetria obrigatória:
+
+UERANSIM
+↓
+RAN
+↓
+ONOS
+↓
+5GC
+↓
+Prometheus
+↓
+OpenTelemetry
+↓
+SLA-Agent
+↓
+Decision Engine
+
+---
+
+# Fontes obrigatórias
+
+evidencias_trisla_phase29_shadow_readiness_*
+
+evidencias_trisla_phase30_shadow_foundation_*
+
+evidencias_trisla_phase31_golden_vectors_*
+
+evidencias_trisla_phase32_dual_load_*
+
+model-registry/
+
+shadow-validation/
+
+baseline-registry/
+
+change-control-registry/
+
+---
+
+# Escopo permitido
+
+ML-NSMF somente
+
+---
+
+# Implementação permitida
+
+Shadow logger
+
+Shadow event schema
+
+Shadow registry hooks
+
+Structured JSON logging
+
+File sink
+
+Stdout sink
+
+OTLP sink (desabilitado por padrão)
+
+---
+
+# Proibido
+
+Shadow execution
+
+Candidate prediction
+
+Candidate scoring
+
+Parity calculation
+
+Decision replacement
+
+Promotion
+
+Retraining
+
+Portal changes
+
+Decision Engine changes
+
+SEM changes
+
+BC changes
+
+SLA-Agent changes
+
+G3-D
+
+---
+
+# Requisitos obrigatórios
+
+Shadow logger deve registrar apenas:
+
+request_id
+
+model_id
+
+bundle_id
+
+timestamp
+
+execution_context
+
+golden_vector_reference
+
+Nenhuma decisão do candidato.
+
+Nenhum score do candidato.
+
+Nenhuma confidence do candidato.
+
+---
+
+# Testes obrigatórios
+
+Logger initialization
+
+Schema validation
+
+Registry integration
+
+Golden vector reference loading
+
+Backward compatibility
+
+Regression tests
+
+---
+
+# Critérios de aprovação
+
+SHADOW_LOGGER_IMPLEMENTED = TRUE
+
+SHADOW_LOGGER_READY = TRUE
+
+NO_CANDIDATE_EXECUTION = TRUE
+
+NO_DECISION_CHANGE = TRUE
+
+NO_SCORE_CHANGE = TRUE
+
+NO_CONFIDENCE_CHANGE = TRUE
+
+NO_RUNTIME_REGRESSION = TRUE
+
+---
+
+# Evidências
+
+evidencias_trisla_phase33_shadow_logger_<timestamp>/
+
+---
+
+# Resultado final
+
+PHASE_33_STATUS = READY_FOR_REVIEW
+
+SHADOW_EXECUTION = NOT_STARTED
+
+Parar.
+
+Não iniciar Phase 34.
+
+Não executar replay.
+
+Não executar shadow.
+
+Não promover modelos.
+
+Aguardar aprovação humana.

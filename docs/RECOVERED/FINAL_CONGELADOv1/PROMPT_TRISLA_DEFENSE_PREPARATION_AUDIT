@@ -1,0 +1,165 @@
+PROMPT_TRISLA_DEFENSE_PREPARATION_AUDIT
+
+MODO:
+READ-ONLY
+
+SEM BUILD
+
+SEM DEPLOY
+
+SEM COMMIT
+
+SEM PUSH
+
+SEM ALTERAÇÃO DE CÓDIGO
+
+SEM ALTERAÇÃO DE DASHBOARDS
+
+SEM ALTERAÇÃO DE EVIDÊNCIAS
+
+OBJETIVO
+
+Transformar os resultados da auditoria de alinhamento da dissertação em um plano final de defesa.
+
+FONTES OBRIGATÓRIAS
+
+analysis/TRISLA_DISSERTATION_ALIGNMENT_AUDIT_REPORT.md
+
+analysis/TRISLA_FINAL_CONSOLIDATION_REPORT.md
+
+evidencias_trisla_dissertation_alignment_audit_*
+
+evidencias_trisla_final_architecture_consolidation_audit_*
+
+evidencias_trisla_o9c_decision_boundary_campaign_*
+
+evidencias_trisla_o7e_normative_dashboard_reorganization_*
+
+FASE 1 — CORREÇÕES PRIORITY 1
+
+Gerar checklist detalhado para:
+
+Capítulo 5:
+
+* Fluxo NLP + Ontologia híbrido
+* Remover qualquer interpretação OWL-first
+
+Capítulo 7:
+
+* Vincular explicitamente V6.2 ↔ O9B ↔ O9C
+* Relacionar gráficos estatísticos com dashboards
+
+Capítulo 8:
+
+* Ajustar H3–H7 para PARTIAL
+* O-RAN LOW
+* ACT-TN-002 infra ready, não executado
+* Separar limitações TriSLA vs laboratório
+
+Gerar:
+
+analysis/defense_priority1_checklist.md
+
+FASE 2 — CORREÇÕES PRIORITY 2
+
+Gerar checklist:
+
+* Reexportar figuras F-T1–F-T6
+* Atualizar MANIFEST_PAPER.json
+* Revisar legendas e referências cruzadas
+
+Gerar:
+
+analysis/defense_priority2_checklist.md
+
+FASE 3 — COMITÊ
+
+Listar:
+
+20 perguntas prováveis de banca
+
+Separadas por:
+
+Arquitetura
+
+IA
+
+Ontologia
+
+Blockchain
+
+O-RAN
+
+3GPP
+
+ETSI ZSM
+
+Resultados
+
+Limitações
+
+Gerar:
+
+analysis/defense_committee_questions.md
+
+FASE 4 — PONTOS SENSÍVEIS
+
+Mapear:
+
+O-RAN LOW
+
+ACT-TN-002 não executado
+
+Topologia ONOS vazia
+
+Limitações do laboratório
+
+Como responder cada ponto.
+
+Gerar:
+
+analysis/defense_sensitive_topics.md
+
+FASE 5 — NARRATIVA EXECUTIVA
+
+Construir narrativa de:
+
+5 minutos
+
+15 minutos
+
+30 minutos
+
+Gerar:
+
+analysis/defense_narrative.md
+
+FASE 6 — VEREDITO FINAL
+
+Emitir:
+
+READY_FOR_DEFENSE = YES/NO
+
+MANDATORY_CORRECTIONS = lista
+
+OPTIONAL_CORRECTIONS = lista
+
+BIGGEST_RISK_FOR_DEFENSE = item
+
+STRONGEST_CONTRIBUTION = item
+
+EVIDENCE_CONFIDENCE = HIGH
+
+RELATÓRIO FINAL
+
+analysis/TRISLA_DEFENSE_PREPARATION_REPORT.md
+
+CRITÉRIO DE SUCESSO
+
+Responder objetivamente:
+
+Se a defesa fosse amanhã, o que obrigatoriamente ainda precisa ser corrigido?
+
+O que é apenas melhoria opcional?
+
+Quais argumentos devem ser enfatizados para demonstrar a contribuição científica da TriSLA?

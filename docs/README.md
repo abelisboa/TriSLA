@@ -33,3 +33,5 @@ All installation instructions are centralized in:
 `docs/INSTALLATION.md`
 
 No other installation guides should be used.
+- Multidomain telemetry operational entry point: modules/telemetry.md
+- Runtime observability operational entry point: modules/observability.md
