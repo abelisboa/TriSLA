@@ -1,8 +1,0 @@
-# Manuscript validation — 2026-05-18T14:36:56.842960+00:00
-pack_source: evidencias_trisla_paper_writing_track_03_camera_ready_manuscript_integration_20260518T142540Z
-
-TRISLA_CAMERA_READY_MANUSCRIPT.md: PASS sha256=5f0e4b213363f429d98360af3be53d677609321fa143bbf0190a968dfedfeb45
-main.tex: PASS sha256=5719f5a03e5d384c5911254cbb908f83f8ae5a6e048c4a7aa91852ab19d7a204
-references_4.bib: PASS sha256=142b47741155852f64d2e2d0f3bcaf02cc4ff3bd4b64f07bfaa287afd1630bed
-
-OVERALL: PASS
