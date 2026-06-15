@@ -6,6 +6,8 @@ Runtime position and cross-module flow ordering are defined by [`docs/modules/in
 
 Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 
+> Implementation SSOT: `apps/portal-frontend/`. Digest SSOT: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.
+>
 > Operational Entry Point. This document is the canonical Portal Frontend
 > module reference after DOC-MOD-10. It reflects the real implementation,
 > frozen runtime, approved evidence, and implementation-first responsibility
