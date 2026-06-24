@@ -211,6 +211,44 @@ def _apply_semantic_fill_pipeline(
     )
     return sources
 
+def _duration_ms(start: float, end: float) -> float:
+    return round((end - start) * 1000.0, 4)
+
+
+def _semantic_stage_latencies_ms(
+    *,
+    t0: float,
+    normalization: tuple[float, float] | None = None,
+    semantic_fill: tuple[float, float] | None = None,
+    gst_to_nest: tuple[float, float] | None = None,
+    canonical_model: tuple[float, float] | None = None,
+    admission_preparation: tuple[float, float] | None = None,
+    end_time: float | None = None,
+) -> dict:
+    canonical_end = canonical_model[1] if canonical_model else end_time
+    final_end = end_time or (
+        admission_preparation[1]
+        if admission_preparation
+        else canonical_end
+    )
+    return {
+        "normalization_ms": _duration_ms(*normalization) if normalization else None,
+        "semantic_fill_ms": _duration_ms(*semantic_fill) if semantic_fill else None,
+        "gst_to_nest_ms": _duration_ms(*gst_to_nest) if gst_to_nest else None,
+        "canonical_model_generation_ms": (
+            _duration_ms(*canonical_model) if canonical_model else None
+        ),
+        "semantic_total_ms": (
+            _duration_ms(t0, canonical_end) if canonical_end is not None else None
+        ),
+        "admission_preparation_ms": (
+            _duration_ms(*admission_preparation) if admission_preparation else None
+        ),
+        "end_to_end_semantic_ms": (
+            _duration_ms(t0, final_end) if final_end is not None else None
+        ),
+    }
+
 
 # ============================================================
 # ENDPOINTS
@@ -245,6 +283,7 @@ async def interpret_intent(
         span.set_attribute("intent.text", intent_text[:100])  # Primeiros 100 chars
         
         try:
+            t_norm0 = time.perf_counter()
             # 1. Processar texto com NLP para inferir service_type e sla_requirements
             nlp_result = None
             if intent_processor.nlp_parser:
@@ -301,15 +340,20 @@ async def interpret_intent(
                 service_type=inferred_service_type,
                 sla_requirements=sla_requirements
             )
+            t_norm1 = time.perf_counter()
             
             # 5. Validar semanticamente
             validated_intent = await intent_processor.validate_semantic(intent, intent_text)
             
             # 6. Gerar GST e NEST
+            t_gst_nest0 = time.perf_counter()
             gst = await intent_processor.generate_gst(validated_intent)
             nest_generator = NESTGeneratorDB(db)
             nest = await nest_generator.generate_nest(gst)
+            t_gst_nest1 = time.perf_counter()
+            t_fill0 = time.perf_counter()
             _apply_semantic_fill_pipeline(validated_intent, gst, nest)
+            t_fill1 = time.perf_counter()
             
             span.set_attribute("intent.id", intent_id)
             span.set_attribute("nest.id", nest.nest_id)
@@ -322,6 +366,7 @@ async def interpret_intent(
                 merged_sla_for_canon.update(
                     validated_intent.sla_requirements.model_dump(exclude_none=True)
                 )
+            t_canon0 = time.perf_counter()
             canonical_sla = canonicalize_sla_request(
                 {
                     "service_type": validated_intent.service_type.value,
@@ -329,6 +374,24 @@ async def interpret_intent(
                     "tenant_id": tenant_id,
                     "sla_requirements": merged_sla_for_canon,
                 }
+            )
+            t_canon1 = time.perf_counter()
+            semantic_stage_latencies = _semantic_stage_latencies_ms(
+                t0=t_sem0,
+                normalization=(t_norm0, t_norm1),
+                semantic_fill=(t_fill0, t_fill1),
+                gst_to_nest=(t_gst_nest0, t_gst_nest1),
+                canonical_model=(t_canon0, t_canon1),
+                end_time=t_canon1,
+            )
+            span.set_attribute(
+                "sem_csmf.semantic_total_ms",
+                semantic_stage_latencies["semantic_total_ms"],
+            )
+            logger.info(
+                "[semantic_stage_latencies] intent=%s metrics=%s",
+                intent_id,
+                semantic_stage_latencies,
             )
             return {
                 "intent_id": intent_id,
@@ -340,6 +403,7 @@ async def interpret_intent(
                 "message": "Intent interpretado e NEST gerado com sucesso",
                 "sem_csmf_internal_latency_ms": round(sem_csmf_internal_latency_ms, 4),
                 "canonical_sla": canonical_sla,
+                "semantic_stage_latencies_ms": semantic_stage_latencies,
             }
             
         except Exception as e:
@@ -363,6 +427,8 @@ async def create_intent(
     sla_requirements será gerado internamente se não fornecido
     """
     # current_user será None se autenticação estiver desabilitada
+    t_sem_stage0 = time.perf_counter()
+    t_norm0 = time.perf_counter()
     
     # Converter service_type string para enum
     # Mapear "eMBB" para "EMBB" (enum interno)
@@ -408,6 +474,7 @@ async def create_intent(
         intent_text=request.intent,
         metadata=dict(request.metadata or {})
     )
+    t_norm1 = time.perf_counter()
     
     with tracer.start_as_current_span("process_intent") as span:
         span.set_attribute("intent.id", intent.intent_id)
@@ -428,10 +495,14 @@ async def create_intent(
             # 3–6. Pipeline semântico interno (medição isolada da chamada ao Decision Engine)
             t_sem0 = time.perf_counter()
             validated_intent = await intent_processor.validate_semantic(intent, intent_text=intent.intent_text)
+            t_gst_nest0 = time.perf_counter()
             gst = await intent_processor.generate_gst(validated_intent)
             nest_generator = NESTGeneratorDB(db)
             nest = await nest_generator.generate_nest(gst)
+            t_gst_nest1 = time.perf_counter()
+            t_fill0 = time.perf_counter()
             _apply_semantic_fill_pipeline(validated_intent, gst, nest)
+            t_fill1 = time.perf_counter()
             intent.sla_requirements = validated_intent.sla_requirements
             intent_model.sla_requirements = validated_intent.sla_requirements.model_dump()
             db.commit()
@@ -443,6 +514,7 @@ async def create_intent(
                 metadata = merged_metadata
             semantic_latency_ms = float((time.perf_counter() - t_sem0) * 1000.0)
 
+            t_canon0 = time.perf_counter()
             canonical_sla = canonicalize_sla_request(
                 {
                     "service_type": request.service_type,
@@ -452,9 +524,21 @@ async def create_intent(
                     "metadata": upstream_metadata,
                 }
             )
+            t_canon1 = time.perf_counter()
             metadata["canonical_sla"] = canonical_sla
 
             # 7. Enviar metadados via I-01 (HTTP) para Decision Engine
+            t_admission0 = time.perf_counter()
+            semantic_stage_latencies = _semantic_stage_latencies_ms(
+                t0=t_sem_stage0,
+                normalization=(t_norm0, t_norm1),
+                semantic_fill=(t_fill0, t_fill1),
+                gst_to_nest=(t_gst_nest0, t_gst_nest1),
+                canonical_model=(t_canon0, t_canon1),
+                admission_preparation=(t_canon1, t_admission0),
+                end_time=t_admission0,
+            )
+            metadata["semantic_stage_latencies_ms"] = semantic_stage_latencies
             decision_response = await decision_engine_client.send_nest_metadata(
                 intent_id=intent.intent_id,
                 nest_id=nest.nest_id,
@@ -464,7 +548,8 @@ async def create_intent(
                 if validated_intent.sla_requirements
                 else {},
                 nest_status=nest.status.value,
-                metadata=metadata
+                metadata=metadata,
+                nest=nest,
             )
             
             span.set_attribute("nest.id", nest.nest_id)
@@ -484,6 +569,7 @@ async def create_intent(
                     "ml_confidence", decision_response.get("ml_confidence")
                 )
             _resp_meta["canonical_sla"] = canonical_sla
+            _resp_meta["semantic_stage_latencies_ms"] = semantic_stage_latencies
 
             from observability.distributed_trace import (
                 build_distributed_traceability,
@@ -505,6 +591,15 @@ async def create_intent(
                 _resp_meta["distributed_traceability"] = build_distributed_traceability(
                     upstream_trace, hops
                 )
+            span.set_attribute(
+                "sem_csmf.semantic_total_ms",
+                semantic_stage_latencies["semantic_total_ms"],
+            )
+            logger.info(
+                "[semantic_stage_latencies] intent=%s metrics=%s",
+                intent.intent_id,
+                semantic_stage_latencies,
+            )
             intent_model.extra_metadata = _resp_meta
             db.commit()
 

@@ -1,0 +1,130 @@
+# Patch Group A Build Authorization
+
+Phase: PHASE-I5A PATCH_GROUP_A_BUILD_AUTHORIZATION
+
+Execution mode: formal authorization only. No git add, commit, push, build, digest generation, deploy, data collection, evidence generation, or campaign execution performed.
+
+## Mandatory Validation
+
+```text
+HOST_VALIDATION = PASS
+HOST_EXPECTED = node1
+HOST_OBSERVED = node1
+REPOSITORY_VALIDATION = PASS
+REPOSITORY_EXPECTED = /home/porvir5g/gtp5g/trisla
+REPOSITORY_OBSERVED = /home/porvir5g/gtp5g/trisla
+WORKTREE_VALIDATION = PASS
+ISOLATED_WORKTREE = /home/porvir5g/gtp5g/trisla_patch_group_a_isolated
+ISOLATED_WORKTREE_CREATED = YES
+PATCH_GROUP_A_ISOLATION_VALIDATED = YES
+TRACEABILITY_RESTORED = YES
+BUILD_READY_AFTER_ISOLATION = YES
+DIGEST_BASELINE_VALIDATED = PASS
+```
+
+## Digest Baseline
+
+```text
+SEM_CSMF_CURRENT_RUNTIME_DIGEST = sha256:1af16f60f1414a5a630f8792caa6540b52e42d1a4f4da8631069efb2f9bb3b23
+SEM_CSMF_ROLLBACK_DIGEST = sha256:38fb2396aec9de4bcf9ba430dce70bed0791976e3c6975160ea89101af5c830a
+```
+
+## Approved Scope
+
+```text
+apps/sem-csmf/src/main.py
+interpret_intent
+create_intent
+semantic_stage_latencies_ms additive timing block
+PATCH_GROUP_A governance and traceability reports
+PHASE-I4F and PHASE-I5A governance reports
+```
+
+## Approved Worktree
+
+```text
+WORKTREE_PATH = /home/porvir5g/gtp5g/trisla_patch_group_a_isolated
+WORKTREE_BRANCH = phase-i4f-patch-group-a-isolated-20260624
+WORKTREE_HEAD = 9ddd90889d491720ae806ea211c25b6c939adf78
+```
+
+## Approved Traceability
+
+```text
+GIT_TRACEABILITY = PASS
+GITHUB_TRACEABILITY = PASS
+DIGEST_TRACEABILITY = PASS
+ROLLBACK_TRACEABILITY = PASS
+SSOT_TRACEABILITY = PASS
+EVIDENCE_TRACEABILITY = PASS
+TRACEABILITY_RESTORED = YES
+```
+
+## Commit Decision
+
+```text
+PATCH_GROUP_A_ONLY_COMMIT = YES
+AUTHORIZED_FOR_COMMIT = YES
+COMMIT_EXECUTED = NO
+GIT_ADD_EXECUTED = NO
+GITHUB_PUSH_EXECUTED = NO
+```
+
+## Build Decision
+
+```text
+PATCH_GROUP_A_ONLY_BUILD = YES
+BUILD_GOVERNANCE_VALIDATED = YES
+BUILD_RISK_ACCEPTABLE = YES
+PATCH_GROUP_A_BUILD_AUTHORIZED = YES
+AUTHORIZED_FOR_BUILD = YES
+BUILD_EXECUTED = NO
+```
+
+## Explicit Non-Authorizations
+
+```text
+AUTHORIZED_FOR_DIGEST_GENERATION = NO
+AUTHORIZED_FOR_DEPLOY = NO
+AUTHORIZED_FOR_DATA_COLLECTION = NO
+AUTHORIZED_FOR_CAMPAIGN = NO
+AUTHORIZED_FOR_SCIENTIFIC_EVIDENCE_GENERATION = NO
+```
+
+## Permanent Rule for Future Phases
+
+```text
+1. Executar ssh node006
+2. Confirmar hostname=node1
+3. Confirmar repositório=/home/porvir5g/gtp5g/trisla
+4. Validar digest baseline
+5. Somente então iniciar a fase
+
+Qualquer desvio:
+PARAR IMEDIATAMENTE
+```
+
+## Final Verdict
+
+```text
+HOST_VALIDATION = PASS
+REPOSITORY_VALIDATION = PASS
+DIGEST_BASELINE_VALIDATED = PASS
+PATCH_GROUP_A_ONLY_BUILD = YES
+PATCH_GROUP_A_ONLY_COMMIT = YES
+TRACEABILITY_RESTORED = YES
+BUILD_GOVERNANCE_VALIDATED = YES
+BUILD_RISK_ACCEPTABLE = YES
+PATCH_GROUP_A_BUILD_AUTHORIZED = YES
+AUTHORIZED_FOR_COMMIT = YES
+AUTHORIZED_FOR_BUILD = YES
+AUTHORIZED_FOR_DIGEST_GENERATION = NO
+AUTHORIZED_FOR_DEPLOY = NO
+NO_BUILD_PERFORMED = TRUE
+NO_DIGEST_GENERATED = TRUE
+NO_DEPLOY_PERFORMED = TRUE
+NO_DATA_COLLECTION_PERFORMED = TRUE
+NO_CAMPAIGN_EXECUTED = TRUE
+MANUAL_APPROVAL_REQUIRED = YES
+NEXT_ALLOWED_PHASE = PATCH_GROUP_A_COMMIT_AND_BUILD
+```

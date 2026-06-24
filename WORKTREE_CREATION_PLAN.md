@@ -1,0 +1,148 @@
+# Worktree Creation Plan
+
+Phase: PHASE-I4F WORKTREE_ISOLATED_ENVIRONMENT_CREATION
+
+Execution timestamp: 2026-06-24T05:47:50-0300
+
+## Mandatory Validations
+
+```text
+HOST_VALIDATION = PASS
+HOST_EXPECTED = node1
+HOST_OBSERVED = node1
+REPOSITORY_VALIDATION = PASS
+REPOSITORY_EXPECTED = /home/porvir5g/gtp5g/trisla
+REPOSITORY_OBSERVED = /home/porvir5g/gtp5g/trisla
+WORKTREE_REMEDIATION_AUTHORIZED = YES
+AUTHORIZED_TO_CREATE_ISOLATED_WORKTREE = YES
+AUTHORIZED_FOR_BUILD = NO
+AUTHORIZED_FOR_DIGEST = NO
+AUTHORIZED_FOR_DEPLOY = NO
+DIGEST_BASELINE_VALIDATED = PASS
+```
+
+## Baseline Digests
+
+```text
+CURRENT_RUNTIME_DIGEST = sha256:1af16f60f1414a5a630f8792caa6540b52e42d1a4f4da8631069efb2f9bb3b23
+ROLLBACK_DIGEST = sha256:38fb2396aec9de4bcf9ba430dce70bed0791976e3c6975160ea89101af5c830a
+```
+
+## Creation Inputs
+
+```text
+worktree path = /home/porvir5g/gtp5g/trisla_patch_group_a_isolated
+branch source = e2e-o6-mapping-ssot
+HEAD source = /home/porvir5g/gtp5g/trisla
+commit source = 9ddd90889d491720ae806ea211c25b6c939adf78
+new branch = phase-i4f-patch-group-a-isolated-20260624
+```
+
+## Isolated Transfer Scope
+
+PATCH_GROUP_A code:
+
+```text
+apps/sem-csmf/src/main.py
+```
+
+PATCH_GROUP_A reports and governance artifacts:
+
+```text
+PATCH_GROUP_A_AUTHORIZATION.md
+PATCH_GROUP_A_BOUNDARY_CONFIRMATION.md
+PATCH_GROUP_A_BUILD_DEPLOY_FREEZE.md
+PATCH_GROUP_A_BUILD_READINESS.md
+PATCH_GROUP_A_BUILD_REVIEW.md
+PATCH_GROUP_A_CLEAN_COMMIT_STRATEGY.md
+PATCH_GROUP_A_CODE_DIFF.md
+PATCH_GROUP_A_COMMIT_ISOLATION_PLAN.md
+PATCH_GROUP_A_DATASET_EVOLUTION_FREEZE.md
+PATCH_GROUP_A_DATASET_REVIEW.md
+PATCH_GROUP_A_DEPLOY_REVIEW.md
+PATCH_GROUP_A_DIGEST_BASELINE.md
+PATCH_GROUP_A_FILE_CONFORMITY.md
+PATCH_GROUP_A_FILE_FREEZE.md
+PATCH_GROUP_A_FILE_IMPACT.md
+PATCH_GROUP_A_FREEZE_SPEC.md
+PATCH_GROUP_A_FUNCTION_CONFORMITY.md
+PATCH_GROUP_A_FUNCTION_FREEZE.md
+PATCH_GROUP_A_FUNCTIONAL_SAFETY.md
+PATCH_GROUP_A_GIT_AUDIT.md
+PATCH_GROUP_A_IMPLEMENTATION_EFFORT.md
+PATCH_GROUP_A_IMPLEMENTATION_PACKAGE.md
+PATCH_GROUP_A_IMPLEMENTATION_REPORT.md
+PATCH_GROUP_A_IMPLEMENTATION_REVIEW.md
+PATCH_GROUP_A_ISOLATION_AUDIT.md
+PATCH_GROUP_A_METRIC_CONFORMITY.md
+PATCH_GROUP_A_METRIC_FREEZE_CONFIRMATION.md
+PATCH_GROUP_A_PAYLOAD_CONFORMITY.md
+PATCH_GROUP_A_PAYLOAD_FREEZE.md
+PATCH_GROUP_A_PAYLOAD_REVIEW.md
+PATCH_GROUP_A_POST_IMPLEMENTATION_AUDIT.md
+PATCH_GROUP_A_PYCACHE_AUDIT.md
+PATCH_GROUP_A_RISK_REVIEW.md
+PATCH_GROUP_A_ROLLBACK_PLAN.md
+PATCH_GROUP_A_SAFETY_AUDIT.md
+PATCH_GROUP_A_SCHEMA_DIFF.md
+PATCH_GROUP_A_STATIC_QUALITY.md
+PATCH_GROUP_A_TRACEABLE_EXECUTION_PATH.md
+WORKTREE_REMEDIATION_AUTHORIZATION.md
+WORKTREE_REMEDIATION_DESIGN.md
+```
+
+Phase-I4F reports to be created in the isolated worktree:
+
+```text
+WORKTREE_CREATION_PLAN.md
+WORKTREE_CREATION_REPORT.md
+PATCH_GROUP_A_ISOLATION_VALIDATION.md
+CLEAN_WORKTREE_VALIDATION.md
+PATCH_GROUP_A_COMMIT_READINESS.md
+POST_ISOLATION_BUILD_REVIEW.md
+POST_ISOLATION_TRACEABILITY_REVIEW.md
+WORKTREE_ISOLATED_ENVIRONMENT_REPORT.md
+```
+
+## Excluded Scope
+
+```text
+legacy source changes
+legacy docs/evidence changes
+legacy Helm changes
+__pycache__ directories
+virtualenvs
+temporary directories
+runtime/generated local files
+build artifacts
+deployment artifacts
+scientific evidence artifacts
+```
+
+## Procedure
+
+```text
+1. Create a git worktree at the approved isolated path from commit source.
+2. Use a new isolated branch rooted at the source commit.
+3. Transfer only PATCH_GROUP_A code and selected governance/report files.
+4. Keep __pycache__, virtualenv, temporary, legacy, runtime, build, digest, deploy, campaign, and dataset artifacts out of scope.
+5. Validate git status, git diff --stat, and git diff --name-only inside the isolated worktree.
+6. Stop before commit, build, digest, deploy, campaign, dataset collection, or scientific evidence generation.
+```
+
+## Plan Verdict
+
+```text
+WORKTREE_CREATION_PLAN_DEFINED = YES
+ISOLATED_WORKTREE_CREATION_AUTHORIZED = YES
+PATCH_GROUP_A_TRANSFER_SCOPE_DEFINED = YES
+AUTHORIZED_FOR_BUILD = NO
+AUTHORIZED_FOR_DIGEST = NO
+AUTHORIZED_FOR_DEPLOY = NO
+NO_BUILD_PERFORMED = TRUE
+NO_DIGEST_GENERATED = TRUE
+NO_DEPLOY_PERFORMED = TRUE
+NO_DATA_COLLECTION_PERFORMED = TRUE
+NO_CAMPAIGN_EXECUTED = TRUE
+NEXT_ALLOWED_ACTION = ISOLATED_WORKTREE_CREATION
+```
