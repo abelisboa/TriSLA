@@ -15,7 +15,7 @@ Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 
 ## Canonical Governance Reference
 
-For the cross-module governance contract, use [`docs/modules/governance.md`](governance.md). Portal Backend is the **Governance Metadata Authority**: it derives and propagates `governance_registration_*` fields from BC-NSSMF evidence and persists them through SEM-CSMF.
+Cross-module flow and evidence boundaries are documented in [`docs/modules/interfaces.md`](interfaces.md). Portal Backend is the **Governance Metadata Authority**: it derives and propagates `governance_registration_*` fields from BC-NSSMF evidence and persists them through SEM-CSMF.
 
 ## Official Identity
 

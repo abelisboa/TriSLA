@@ -41,7 +41,8 @@ const Monitoring: React.FC = () => {
 
   useEffect(() => {
     // WebSocket para métricas em tempo real
-    const ws = new WebSocket('ws://localhost:8080/ws/metrics');
+    const wsBase = (import.meta as any).env.VITE_WS_BASE_URL || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`;
+    const ws = new WebSocket(`${wsBase}/ws/metrics`);
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'metric') {

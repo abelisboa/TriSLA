@@ -1,0 +1,21 @@
+{{- if .Values.ranUeUpfProxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trisla.name" . }}-ran-ue-upf-proxy
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app.kubernetes.io/name: trisla-ran-ue-upf-proxy
+spec:
+  type: {{ .Values.ranUeUpfProxy.service.type }}
+  selector:
+    app.kubernetes.io/name: trisla-ran-ue-upf-proxy
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: metrics
+      port: {{ .Values.ranUeUpfProxy.service.port }}
+      targetPort: metrics
+      protocol: TCP
+{{- end }}
+

@@ -1,24 +1,36 @@
-# SLA-Agent Layer - Documentation Index
+# SLA-Agent Layer
 
-**Operational reference:** [`docs/modules/sla-agent-layer.md`](../modules/sla-agent-layer.md)
+The SLA-Agent Layer provides cross-domain metric collection, SLO evaluation, runtime state evaluation, coordination, and controlled actuation-state management.
 
-This directory is a navigation hub for specialized SLA-Agent references only. Runtime role, REST catalog, hot paths, telemetry truth, compliance, explainability, assurance, governance boundaries, integrations, observability, and persistence are documented in the operational module doc, not duplicated here.
+## Runtime contract
 
-## Contents
+| Item | Value |
+|---|---|
+| Service | `trisla-sla-agent-layer` |
+| Kubernetes type | `ClusterIP` |
+| Port | `8084` |
+| Liveness | `GET /health` |
+| Readiness | `GET /health` |
+| Metrics | `GET /metrics` |
 
-| Document | Purpose |
-|----------|---------|
-| [`interfaces/interfaces.md`](interfaces/interfaces.md) | Primary Portal -> SLA-Agent revalidation interface and endpoint classifications |
-| [`architecture/sla_agent_architecture.md`](architecture/sla_agent_architecture.md) | Minimal architecture pointer to the canonical operational entry point |
-| [`model/slo_evaluation_model.md`](model/slo_evaluation_model.md) | Research-only SLO model; not the operational SSOT |
-| [`pipeline/lifecycle_execution.md`](pipeline/lifecycle_execution.md) | Runtime pipeline pointer and hot-path summary |
-| [`observability/observability.md`](observability/observability.md) | Observability notes for metrics and tracing |
+The running service reports healthy RAN, transport, and core agents.
 
-## External SSOT (read-only)
+## Functional areas
 
-- `apps/sla-agent-layer/src/` - implementation
-- `apps/sla-agent-layer/src/main.py` - REST endpoint registration
-- `apps/sla-agent-layer/src/revalidate/` - telemetry reassessment implementation
-- `apps/sla-agent-layer/src/domain_compliance.py` - compliance and explainability rows
-- `apps/sla-agent-layer/src/runtime_slo_evaluator.py` - runtime assurance evaluation
-- `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json` - operational digest
+| Area | API prefix |
+|---|---|
+| Domain collection and actions | `/api/v1/agents` |
+| Aggregate metrics and SLOs | `/api/v1/metrics`, `/api/v1/slos` |
+| Coordination | `/api/v1/coordinate`, `/api/v1/policies/federated` |
+| Runtime evaluation | `/api/v1/runtime-assurance/evaluate` |
+| Revalidation | `/api/v1/agent/revalidate-telemetry` |
+| Pipeline events | `/api/v1/ingest/pipeline-event` |
+| Admission and actuation records | `/api/v1/admission`, `/api/v1/actuation` |
+
+## Documentation
+
+- [Architecture](architecture/sla_agent_architecture.md)
+- [REST interfaces](interfaces/interfaces.md)
+- [Lifecycle execution](pipeline/lifecycle_execution.md)
+- [Observability](observability/observability.md)
+- [Application source](../../apps/sla-agent-layer/src/main.py)

@@ -30,17 +30,6 @@ OUTPUT_JSON = os.path.join(BASE_DIR, "contracts", "contract_address.json")
 # -------------------------------------------------------------------
 RPC_URL = os.environ.get("TRISLA_RPC_URL", "http://127.0.0.1:8545")
 
-# -------------------------------------------------------------------
-# CHAVE PRIVADA
-# - Em DEV: usa a chave padrão do Besu (--network=dev)
-# - Em PRODUÇÃO: usar TRISLA_PRIVATE_KEY (ou secret externo)
-# -------------------------------------------------------------------
-DEFAULT_DEV_PRIVATE_KEY = (
-    "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113b37c7e5e25f8fcd6f5a3d4e8"
-)
-DEFAULT_DEV_ADDRESS = "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1"
-
-
 def _normalize_hex_key(key: str) -> str:
     """
     Normaliza uma chave hex:
@@ -74,9 +63,8 @@ def _normalize_hex_key(key: str) -> str:
 def get_private_key() -> str:
     """
     Ordem de prioridade:
-    1) TRISLA_PRIVATE_KEY  (modo produção)
-    2) TRISLA_DEV_PRIVATE_KEY (override explícito em DEV)
-    3) DEFAULT_DEV_PRIVATE_KEY (modo dev padrão Besu)
+    1) TRISLA_PRIVATE_KEY
+    2) TRISLA_DEV_PRIVATE_KEY (somente quando configurada explicitamente)
     """
     env_prod = os.environ.get("TRISLA_PRIVATE_KEY")
     env_dev = os.environ.get("TRISLA_DEV_PRIVATE_KEY")
@@ -89,8 +77,9 @@ def get_private_key() -> str:
         print("[TriSLA][BC] Usando TRISLA_DEV_PRIVATE_KEY (override DEV).")
         return _normalize_hex_key(env_dev)
 
-    print("[TriSLA][BC] Usando DEFAULT_DEV_PRIVATE_KEY (modo DEV).")
-    return _normalize_hex_key(DEFAULT_DEV_PRIVATE_KEY)
+    raise RuntimeError(
+        "Configure TRISLA_PRIVATE_KEY ou TRISLA_DEV_PRIVATE_KEY por secret externo."
+    )
 
 
 def load_contract() -> str:
@@ -160,31 +149,13 @@ def deploy() -> None:
     balance_eth = w3.from_wei(balance, "ether")
     print(f"[TriSLA] Saldo da conta: {balance_eth} ETH ({balance} wei)")
 
-    # Em modo DEV, usar sempre a conta padrão pré-financiada do Besu
-    if os.environ.get("TRISLA_PRIVATE_KEY") is None:
-        # Chave privada padrão do Besu dev mode (conta pré-financiada)
-        BESU_DEFAULT_KEY = "0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"
-        try:
-            acct = w3.eth.account.from_key(BESU_DEFAULT_KEY)
-            from_addr = acct.address
-            balance = w3.eth.get_balance(from_addr)
-            balance_eth = w3.from_wei(balance, "ether")
-            print(f"[TriSLA] Usando conta padrão Besu DEV: {from_addr} (saldo: {balance_eth} ETH)")
-            private_key = BESU_DEFAULT_KEY
-        except Exception as e:
-            print(f"[TriSLA][BC] ERRO: Não foi possível usar conta padrão: {e}")
-            raise
-
     if balance < w3.to_wei("0.01", "ether"):
         raise RuntimeError(
             f"Saldo insuficiente: {balance_eth} ETH. "
             "Necessário pelo menos 0.01 ETH para deploy."
         )
 
-    if DEFAULT_DEV_ADDRESS.lower() == from_addr.lower():
-        print("[TriSLA][BC] AVISO: conta DEV padrão do Besu em uso (modo desenvolvimento).")
-    else:
-        print("[TriSLA][BC] Conta NÃO é a DEV padrão — cenário compatível com produção.")
+    print("[TriSLA][BC] Conta carregada exclusivamente de configuração externa.")
 
     chain_id_str = os.environ.get("TRISLA_CHAIN_ID", "1337")
     try:

@@ -1,66 +1,39 @@
-# SLA Lifecycle Execution
+# SLA-Agent Lifecycle Execution
 
-**Canonical pipeline reference:** [`docs/modules/sla-agent-layer.md`](../../modules/sla-agent-layer.md)
-
-## Primary runtime path
+## Observation and evaluation
 
 ```text
-Portal
-↓
-Revalidate
-↓
-Runtime Assurance
-↓
-Portal
+Telemetry input
+    │
+    ├─ collect RAN, transport, and core values
+    ├─ evaluate configured SLOs
+    ├─ evaluate service-profile requirements
+    ├─ compare with a reference snapshot when supplied
+    └─ return runtime state and recommendation
 ```
 
-Expanded operational path:
+Runtime evaluation can return compliant, warning, at-risk, or violated states according to current telemetry, supplied requirements, and detected conditions.
+
+## Coordination
+
+`POST /api/v1/coordinate` dispatches an action to selected domain agents or to all configured agents. `POST /api/v1/policies/federated` applies ordered domain actions and returns per-domain outcomes and a success rate.
+
+## Actuation record lifecycle
 
 ```text
-Portal
-    ↓
-POST /sla/revalidate-telemetry
-    ↓
-SLA-Agent
-POST /api/v1/agent/revalidate-telemetry
-    ↓
-Prometheus Collector
-    ↓
-Compliance
-    ↓
-Explainability
-    ↓
-Runtime Assurance
-    ↓
-Portal
+request → authorize → execute → verify
+                    ├─ rollback
+                    └─ expire
 ```
 
-## Conditional ingest path
+Each transition uses a request identifier. Records can be retrieved individually or listed. The public chart keeps closed-loop domain mutation disabled by default, so enabling external actions requires an explicit deployment configuration decision.
 
-```text
-Portal
-    ↓
-ACCEPT
-+
-ORCHESTRATION SUCCESS
-+
-BC COMMITTED
-    ↓
-POST /api/v1/ingest/pipeline-event
-    ↓
-Runtime Assurance
-    ↓
-Portal
-```
+## Pipeline integration
 
-## Removed as primary documentation path
+`POST /api/v1/ingest/pipeline-event` records a submitted lifecycle event and can trigger SLO evaluation. `POST /api/v1/agent/revalidate-telemetry` provides the revalidation boundary used by the Portal Backend.
 
-```text
-Decision Engine
-↓
-Kafka
-↓
-SLA-Agent
-```
+## References
 
-Kafka and federated/domain-agent execution are not documented as the production hot path for DOC-MOD-06.
+- [API implementation](../../../apps/sla-agent-layer/src/main.py)
+- [Coordinator](../../../apps/sla-agent-layer/src/agent_coordinator.py)
+- [Runtime evaluator](../../../apps/sla-agent-layer/src/runtime_slo_evaluator.py)

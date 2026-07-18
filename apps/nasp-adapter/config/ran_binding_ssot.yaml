@@ -1,7 +1,7 @@
 contract_version: RAN_CONTRACT_SSOT_V1
 amf:
   core_namespace_env: NASP_FREE5GC_NAMESPACE
-  core_namespace: ns-1274485
+  core_namespace: free5gc
   pod_label: nf=amf
   log_tail_lines: 3000
   observation_window_seconds: 300
@@ -25,7 +25,7 @@ lab:
   nci: "0x000000010"
   tac: 1
   ran_ref: "ueransim-gnb.ueransim.svc.cluster.local"
-  gnb_pod_ip: "10.233.75.7"
+  gnb_pod_ip: ""
   user_plane_nsi_id: "22"
 freshness:
   gnb_id_source_priority:

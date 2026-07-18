@@ -16,7 +16,7 @@ Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 
 ## Canonical Governance Reference
 
-For the cross-module governance contract, use [`docs/modules/governance.md`](governance.md). Portal Frontend is the **Governance Visualization Layer**: it renders governance evidence and metadata, but does not generate them.
+Cross-module flow and evidence boundaries are documented in [`docs/modules/interfaces.md`](interfaces.md). Portal Frontend is the **Governance Visualization Layer**: it renders governance evidence and metadata, but does not generate them.
 
 ## Official Identity
 

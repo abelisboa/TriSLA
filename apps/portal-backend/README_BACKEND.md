@@ -1,83 +1,31 @@
-# Portal Backend Developer Reference
+# Portal Backend
 
-This file is a developer reference for the Portal Backend implementation. It is
-not the operational SSOT.
+The Portal Backend is the HTTP gateway used by the TriSLA web application. It validates portal requests, coordinates SLA submission, exposes service and telemetry status, and forwards work to the platform services.
 
-Canonical operational documentation lives at:
+## Service
 
-```text
-docs/modules/portal-backend.md
-```
+- Framework: FastAPI 1.0.2
+- HTTP port: `8001`
+- Container entry point: `src.main:app`
+- Kubernetes service: `trisla-portal-backend`
 
-## Scope
+## Primary API groups
 
-Use this README for local development orientation only. Runtime truth,
-authority boundaries, active API classification, governance, admission, runtime
-assurance, explainability, persistence, and evidence alignment are defined in
-the canonical module document.
+| Prefix | Purpose |
+|---|---|
+| `/api/v1/sla` | Interpret, submit, inspect, and revalidate SLAs |
+| `/api/v1/modules` | Platform module status and metrics |
+| `/api/v1/prometheus` | Prometheus queries and summaries |
+| `/api/v1/interfaces` | RAN, transport, and core interface metrics |
 
-## Official Runtime Role
+Service health is available at `GET /health`; platform-wide health is available at `GET /api/v1/health/global`; Prometheus output is available at `GET /metrics`.
 
-Portal Backend provides:
+See the [Portal Backend documentation](../../docs/portal/backend/README.md) for the complete client route table and request examples.
 
-- Ingress
-- Orchestration relay
-- Response aggregation
-- Metadata propagation
-- Frontend backend API layer
+## Source
 
-Portal Backend does not decide SLA, does not execute admission logic, does not
-produce governance, and does not produce runtime assurance.
-
-## Canonical Admission Path
-
-```text
-Frontend
-|
-Portal Backend
-|
-SEM-CSMF
-|
-Decision Engine (internal orchestration)
-|
-SEM-CSMF
-|
-Portal Backend
-|
-Frontend
-```
-
-Portal Backend does not call `/evaluate` as the canonical admission path.
-
-## Active API Groups
-
-The public runtime API surface is the set mounted by
-`apps/portal-backend/src/main.py`:
-
-```text
-/api/v1/sla/*
-/api/v1/modules/*
-/api/v1/prometheus/*
-/api/v1/interfaces/*
-/health
-/api/v1/health
-/api/v1/health/global
-/metrics
-/nasp/diagnostics
-```
-
-Implemented routers that are not mounted by `main.py` are not public APIs.
-
-## Local Development Notes
-
-Common local development tasks may include installing dependencies, running the
-FastAPI application, and exercising mounted routes. Keep local scripts and
-port-forward instructions subordinate to the canonical runtime documentation.
-Do not use this file to redefine module authority, deployment truth, or SSOT
-state.
-
-## References
-
-- Canonical module document: `docs/modules/portal-backend.md`
-- Navigation hub: `docs/portal/backend/README.md`
-- Observability module: `docs/modules/observability.md`
+- [FastAPI application](src/main.py)
+- [SLA routes](src/routers/sla.py)
+- [SLA schemas](src/schemas/sla.py)
+- [Service configuration](src/config.py)
+- [NASP client service](src/services/nasp.py)

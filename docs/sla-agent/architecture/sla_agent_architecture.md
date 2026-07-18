@@ -1,32 +1,46 @@
-# SLA-Agent Layer Architecture
+# SLA-Agent Architecture
 
-**Canonical architecture reference:** [`docs/modules/sla-agent-layer.md`](../../modules/sla-agent-layer.md)
-
-The SLA-Agent is the Temporal Reassessment and Runtime Assurance Authority. This file is intentionally minimal to avoid duplicating the canonical operational document.
-
-## Runtime summary
+## Component view
 
 ```text
-Portal Backend
-    -> POST /api/v1/agent/revalidate-telemetry
-SLA-Agent
-    -> Prometheus Collector
-    -> Compliance
-    -> Explainability
-    -> Runtime Assurance
-    -> Portal Backend
+Portal Backend and platform services
+                 │ HTTP :8084
+                 ▼
+          SLA-Agent FastAPI
+                 │
+       ┌─────────┼─────────┐
+       ▼         ▼         ▼
+   RAN agent  Transport  Core agent
+       └─────────┼─────────┘
+                 ▼
+        Agent Coordinator
+                 │
+        runtime evaluation
+                 │
+        actuation record flow
 ```
 
-## Boundary summary
+The FastAPI layer exposes health, metrics, domain operations, coordination, runtime evaluation, revalidation, and actuation records. `AgentCoordinator` selects domain agents, aggregates results, and evaluates configured SLOs.
 
-| Component / path | Status |
-|------------------|--------|
-| Portal Backend caller | ACTIVE |
-| Prometheus Collector | PRIMARY |
-| Domain Agents | CONDITIONAL / SECONDARY |
-| Kafka Consumer | NOT STARTED |
-| Federated Policies | NOT HOT PATH |
-| Actuation | CONDITIONAL / NOT WIRED |
-| Research S29 endpoints | RESEARCH / NOT HOT PATH |
+Runtime evaluation consumes telemetry and SLA requirements, computes domain and service-profile conditions, detects drift when a reference snapshot is supplied, and returns a state and recommendation.
 
-Do not document `Legacy Kafka-mediated SLA-Agent chain` or domain agents as the primary runtime architecture.
+## Dependencies
+
+The Helm Deployment configures:
+
+- NASP Adapter at port `8085`;
+- BC-NSSMF at port `8083`;
+- Kafka brokers when event transport is enabled;
+- Prometheus for current telemetry queries in the live deployment;
+- an OTLP endpoint for traces.
+
+## Deployment
+
+The service is `ClusterIP` on port `8084`. The container uses the same port. Liveness and readiness both call `/health`. The current chart defaults keep domain mutation disabled while retaining actuation record endpoints.
+
+## References
+
+- [Application entrypoint](../../../apps/sla-agent-layer/src/main.py)
+- [Agent coordinator](../../../apps/sla-agent-layer/src/agent_coordinator.py)
+- [Runtime evaluator](../../../apps/sla-agent-layer/src/runtime_slo_evaluator.py)
+- [Helm Deployment](../../../helm/trisla/templates/deployment-sla-agent-layer.yaml)

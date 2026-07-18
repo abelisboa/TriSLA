@@ -1,55 +1,37 @@
 # BC-NSSMF Interfaces
 
-> Specialized reference. Canonical cross-module interface truth: [`docs/modules/interfaces.md`](../../modules/interfaces.md).
-
-**Operational reference:** [`docs/modules/bc-nssmf.md`](../../modules/bc-nssmf.md)
-
-## Primary interface — HTTP I-04 (ACTIVE)
-
-| Method | Path | Classification |
-|--------|------|----------------|
-| **POST** | **`/api/v1/register-sla`** | **SOLE COMMIT INGRESS** |
-
-**Primary caller:** Portal Backend — `apps/portal-backend/src/services/nasp.py`
+Base service address inside the cluster:
 
 ```text
-Portal Backend
-    ↓ POST http://trisla-bc-nssmf:8083/api/v1/register-sla
-BC-NSSMF
-    ↓ SLAContract.registerSLA()
-Hyperledger Besu
+http://trisla-bc-nssmf:8083
 ```
 
-**Not the primary caller:** Decision Engine does **not** call BC-NSSMF HTTP on the production hot path. DE may use `bc_client` for direct Besu Web3 when `BC_ENABLED=true` in the Decision Engine pod — **NOT HOT PATH**, default stub.
+## Service endpoints
 
-## Active REST endpoints
+| Method | Path | Request | Success behavior |
+|---|---|---|---|
+| `GET` | `/health` | None | Reports service mode and RPC connectivity |
+| `GET` | `/health/ready` | None | Confirms RPC and signing-account readiness |
+| `GET` | `/metrics` | None | Returns Prometheus text format |
+| `POST` | `/api/v1/register-sla` | JSON object | Returns commit status, transaction hash, block number, and identifiers |
+| `POST` | `/api/v1/update-sla-status` | `sla_id`, `status` | Commits a supported status transition |
+| `GET` | `/api/v1/get-sla/{sla_id}` | Numeric path parameter | Returns stored customer, service, status, and timestamps |
+| `POST` | `/api/v1/execute-contract` | `operation`, optional `function` and `args` | Validates `DEPLOY` or `EXECUTE` and returns the current operation result |
 
-| Method | Path | Notes |
-|--------|------|-------|
-| GET | `/health` | Liveness probe |
-| GET | `/health/ready` | Readiness — RPC + wallet |
-| GET | `/metrics` | Prometheus |
-| POST | `/api/v1/register-sla` | On-chain SLA registration |
-| POST | `/api/v1/update-sla-status` | Status update (not Portal submit path) |
-| GET | `/api/v1/get-sla/{sla_id}` | On-chain read |
+Supported status strings for `/api/v1/update-sla-status` are `CREATED`, `ACTIVE`, `VIOLATED`, `RENEGOTIATED`, and `CLOSED`.
 
-## Stub
+`/api/v1/register-sla` accepts the current `slo_set` or `sla_requirements` forms and the compatibility `slos` form. An empty or invalid SLO collection is rejected.
 
-| Method | Path | Status |
-|--------|------|--------|
-| POST | `/api/v1/execute-contract` | **NOT HOT PATH** — simulated JSON only |
+## Read-only checks
 
-## Not implemented
+```bash
+curl http://trisla-bc-nssmf:8083/health
+curl http://trisla-bc-nssmf:8083/health/ready
+```
 
-| Method | Path | Status |
-|--------|------|--------|
-| POST | `/api/v1/governance-event` | **NOT IMPLEMENTED** |
+OpenAPI is available from `/openapi.json` when the service is reachable.
 
-## Non-hot-path interfaces
+## Source
 
-| Interface | Status |
-|-----------|--------|
-| Kafka I-04 (`trisla-i04-decisions`) | **NOT HOT PATH** — `DecisionConsumer` not started |
-| gRPC | **NOT HOT PATH** — placeholder |
-| Legacy REST `/bc/*` (`api_rest.py`) | **LEGACY / NOT WIRED** |
-| MetricsOracle (NASP metrics) | **NOT HOT PATH** — stub only |
+- [FastAPI implementation](../../../apps/bc-nssmf/src/main.py)
+- [Request models](../../../apps/bc-nssmf/src/models.py)

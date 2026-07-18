@@ -26,9 +26,6 @@ spec:
       imagePullSecrets:
         {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
 
-      nodeSelector:
-        kubernetes.io/hostname: node1
-
       containers:
       - name: bc-nssmf
         image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.bcNssmf.image) }}
@@ -79,8 +76,8 @@ spec:
         - name: BC_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
-              name: bc-nssmf-wallet
-              key: privateKey
+              name: {{ .Values.bcNssmf.wallet.existingSecret | quote }}
+              key: {{ .Values.bcNssmf.wallet.key | quote }}
 
         # Contract SSOT
         - name: CONTRACT_ADDRESS_PATH
@@ -125,7 +122,7 @@ spec:
       volumes:
       - name: bc-wallet
         secret:
-          secretName: bc-nssmf-wallet
+          secretName: {{ .Values.bcNssmf.wallet.existingSecret | quote }}
 
       - name: bc-contract
         configMap:

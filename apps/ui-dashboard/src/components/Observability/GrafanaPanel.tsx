@@ -7,8 +7,7 @@ import React from 'react';
  *   cookie_samesite e autenticação adequada, ou utilizar backend-proxy.
  */
 const GrafanaPanel: React.FC = () => {
-  // Ajuste conforme seu endpoint exposto (port-forward, ingress, etc.)
-  const grafanaUrl = "http://localhost:3000/d/trisla-super-dashboard";
+  const grafanaUrl = (import.meta as any).env.VITE_GRAFANA_URL || "/grafana/d/trisla-super-dashboard";
 
   return (
     <div style={{ width: "100%", height: "90vh" }}>

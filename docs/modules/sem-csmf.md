@@ -9,7 +9,7 @@ Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 
 ## Canonical Governance Reference
 
-For the cross-module governance contract, use [`docs/modules/governance.md`](governance.md). SEM-CSMF is the **Governance Metadata Persistence Layer**: it merges allowed governance keys into intent `extra_metadata` through `PATCH /api/v1/intents/{intent_id}/governance-metadata`.
+Cross-module flow and evidence boundaries are documented in [`docs/modules/interfaces.md`](interfaces.md). SEM-CSMF is the **Governance Metadata Persistence Layer**: it merges allowed governance keys into intent `extra_metadata` through `PATCH /api/v1/intents/{intent_id}/governance-metadata`.
 
 Telemetry canonical reference: [docs/modules/telemetry.md](telemetry.md). SEM-CSMF forwards  and conditional  to Decision Engine.
 

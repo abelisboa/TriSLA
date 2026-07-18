@@ -1,25 +1,31 @@
-# SEM-CSMF — Documentation Index
+# SEM-CSMF
 
-Semantic interpretation layer of TriSLA: transforms SLA intents into ontology-validated GST/NEST artifacts and forwards structured input to the Decision Engine.
+SEM-CSMF is the intent-processing entry point for TriSLA. It accepts structured or free-form SLA requests, validates and fills SLA requirements, generates GST and NEST objects, persists them, and sends an evaluation request to the Decision Engine.
 
-## Operational entry point
+## Runtime contract
 
-**[`docs/modules/sem-csmf.md`](../modules/sem-csmf.md)** — REST catalog, runtime paths, digest pin, integrations, env vars.
+- HTTP service: `8080`
+- Health: `GET /health`
+- Metrics: `GET /metrics`
+- Primary submission: `POST /api/v1/intents`
+- Text interpretation: `POST /api/v1/interpret`
+- Kubernetes service: `trisla-sem-csmf`
+- Database: `DATABASE_URL`, with SQLite used when the variable is absent
 
-Use that document for operations, integration, and freeze alignment. This directory holds specialized references only.
+The Decision Engine endpoint is configured by `DECISION_ENGINE_URL`. Its default value is the in-cluster `trisla-decision-engine` service and `/evaluate` path.
 
-## Documentation map
+## Documentation
 
-| Directory | Content |
-|-----------|---------|
-| [`architecture/`](architecture/sem_csmf_architecture.md) | Components, code layout, processing layers |
-| [`pipeline/`](pipeline/processing_pipeline.md) | Full runtime lifecycle (single in-depth pipeline reference) |
-| [`interfaces/`](interfaces/interfaces.md) | I-01 HTTP SSOT, REST ingress, I-02/I-01 gRPC legacy |
-| [`ontology/`](ontology/README.md) | OWL semantic model index |
-| [`examples/`](examples/usage_and_reproducibility.md) | Runnable patterns, env vars, tests, troubleshooting |
+- [Architecture](architecture/sem_csmf_architecture.md)
+- [HTTP interface](interfaces/interfaces.md)
+- [Processing flow](pipeline/processing_pipeline.md)
+- [Ontology components](ontology/README.md)
+- [Semantic model reference](ontology/semantic_model_reference.md)
+- [Usage examples](examples/usage_and_reproducibility.md)
 
-## Scope boundary
+## Implementation
 
-SEM-CSMF **does not** perform final SLA admission. Decision authority remains in the Decision Engine; orchestration and on-chain registration occur downstream via Portal relay.
-
-Implementation: `apps/sem-csmf/src/`
+- [Application](../../apps/sem-csmf/src/main.py)
+- [Intent processor](../../apps/sem-csmf/src/intent_processor.py)
+- [NEST generator](../../apps/sem-csmf/src/nest_generator_db.py)
+- [Decision Engine client](../../apps/sem-csmf/src/decision_engine_client.py)

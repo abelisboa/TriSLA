@@ -1,21 +1,36 @@
-# BC-NSSMF — Documentation Index
+# BC-NSSMF
 
-**Operational reference:** [`docs/modules/bc-nssmf.md`](../modules/bc-nssmf.md)
+BC-NSSMF records SLA state through a Hyperledger Besu network. It exposes a FastAPI service for registration, status changes, lookup, and contract-operation requests.
 
-This directory holds specialized references only. Commit path, governance truth, smart contracts, transaction flow, and integrations are documented in the operational module doc — not duplicated here.
+## Runtime contract
 
-## Contents
+| Item | Value |
+|---|---|
+| Service | `trisla-bc-nssmf` |
+| Kubernetes type | `ClusterIP` |
+| Port | `8083` |
+| Liveness | `GET /health` |
+| Readiness | `GET /health/ready` |
+| Metrics | `GET /metrics` |
+| Besu RPC | `http://trisla-besu:8545` |
 
-| Document | Purpose |
-|----------|---------|
-| [`interfaces/interfaces.md`](interfaces/interfaces.md) | HTTP I-04 primary contract; Portal as caller |
-| [`blockchain/besu_integration.md`](blockchain/besu_integration.md) | Besu/QBFT cluster configuration |
-| [`contracts/sla_contract_model.md`](contracts/sla_contract_model.md) | Research model — **NOT RUNTIME SLAContract.sol** |
-| [`architecture/bc_nssmf_architecture.md`](architecture/bc_nssmf_architecture.md) | Pointer to canonical architecture |
-| [`pipeline/sla_lifecycle.md`](pipeline/sla_lifecycle.md) | Non-hot-path summary / pointer |
+`/health` reports whether blockchain support and RPC connectivity are available. `/health/ready` additionally checks RPC access and the configured signing account. Transaction endpoints return an error when the service is operating without blockchain connectivity.
 
-## External SSOT (read-only)
+## API
 
-- `apps/bc-nssmf/src/` — implementation
-- `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json` — operational digest `sha256:b0db5eef…`
-- `apps/portal-backend/src/services/nasp.py` — production BC caller
+| Method | Path | Purpose |
+|---|---|---|
+| `POST` | `/api/v1/register-sla` | Register SLA content and wait for a successful transaction receipt |
+| `POST` | `/api/v1/update-sla-status` | Change the stored SLA status |
+| `GET` | `/api/v1/get-sla/{sla_id}` | Read an SLA by numeric identifier |
+| `POST` | `/api/v1/execute-contract` | Validate a contract-operation request and return its result |
+
+The registration response includes the transaction hash, block number, SLA identifier, and commit status when the transaction succeeds.
+
+## Documentation
+
+- [Architecture](architecture/bc_nssmf_architecture.md)
+- [REST interfaces](interfaces/interfaces.md)
+- [SLA lifecycle](pipeline/sla_lifecycle.md)
+- [Besu integration](blockchain/besu_integration.md)
+- [Application entrypoint](../../apps/bc-nssmf/src/main.py)

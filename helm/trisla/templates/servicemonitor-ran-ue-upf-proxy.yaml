@@ -1,0 +1,25 @@
+{{- if and .Values.ranUeUpfProxy.enabled .Values.ranUeUpfProxy.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "trisla.name" . }}-ran-ue-upf-proxy
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app.kubernetes.io/name: trisla-ran-ue-upf-proxy
+spec:
+  jobLabel: app.kubernetes.io/name
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trisla-ran-ue-upf-proxy
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.global.namespace }}
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: {{ .Values.ranUeUpfProxy.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.ranUeUpfProxy.serviceMonitor.scrapeTimeout }}
+{{- end }}
+

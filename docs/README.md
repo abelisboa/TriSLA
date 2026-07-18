@@ -313,7 +313,6 @@ docs/modules/telemetry.md
 docs/modules/observability.md
 docs/modules/portal-backend.md
 docs/modules/portal-frontend.md
-docs/modules/governance.md
 docs/modules/interfaces.md
 ```
 
@@ -322,10 +321,15 @@ docs/modules/interfaces.md
 TriSLA is aligned with the dissertation and frozen scientific article, and uses standards and platforms as conceptual or implementation references where evidenced:
 
 - TriSLA Dissertation, especially the frozen prototype, results, implications, and limitations chapters.
-- TriSLA scientific paper, "TriSLA: A Tri-Dimensional SLA-Aware Orchestration Architecture for O-RAN Networks with Explainable AI and Blockchain Compliance".
+- TriSLA scientific publication, "TriSLA: A Tri-Dimensional SLA-Aware Orchestration Architecture for O-RAN Networks with Explainable AI and Blockchain Compliance".
 - 3GPP network slicing and management references, including TS 28.541 where applicable.
 - GSMA NG.116 for GST/canonical SLA alignment.
 - O-RAN Alliance architecture references for open RAN architectural context.
 - ETSI ZSM for zero-touch service management concepts.
 - Hyperledger Besu for permissioned blockchain execution.
 - NASP as the Network Slice as a Service Platform integration context.
+
+
+## Public Deployment Configuration
+
+The public release contains no private wallet or workstation-specific network defaults. Supply the BC-NSMF wallet through a Kubernetes Secret and configure `bcNssmf.wallet.existingSecret` and `bcNssmf.wallet.key`. Set `network.interface`, `network.nodeIP`, and `network.gateway` for the target environment. The RAN/UE/UPF telemetry proxy is disabled by default; enable `ranUeUpfProxy.enabled` only after providing an immutable public image digest and deployment-specific endpoints.

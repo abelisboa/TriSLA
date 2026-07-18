@@ -1,7 +1,7 @@
 # Telemetry Layer
 
 > **Operational entry point** for TriSLA multidomain telemetry.
-> Specialized PromQL reference: [`docs/PROMQL_SSOT_V2.md`](../PROMQL_SSOT_V2.md).
+> PromQL definitions are maintained with the active collectors and Helm monitoring resources.
 > Implementation SSOT: `apps/portal-backend/src/telemetry/`, `apps/sla-agent-layer/src/revalidate/`, `apps/sem-csmf/src/decision_engine_client.py`, `apps/decision-engine/src/`, and `apps/nasp-adapter/src/metrics_collector.py`.
 
 
@@ -103,13 +103,7 @@ core
 
 ### Snapshot Window
 
-| Policy | Value | Source / status |
-|--------|-------|-----------------|
-| Replay/offline SSOT policy | `snapshot_window = [t-1s,t]`, `step = 1s` | `apps/ml-nsmf/src/replay_snapshot.py`, `offline_replay_config.py` |
-| Current Portal/SLA-Agent collector implementation | `[t-2s,t]`, `step = 1s` | `apps/portal-backend/src/telemetry/collector.py`, `apps/sla-agent-layer/src/revalidate/collector.py` |
-| Snapshot max age | `SNAPSHOT_MAX_AGE = 35s` | Replay/offline snapshot policy |
-
-Implementation-first note: the live collectors currently use `[t-2s,t]`. The `[t-1s,t]` value is the replay/SSOT policy and must not be documented as live collector behavior until code changes.
+The live Portal and SLA-Agent collectors query `[t-2s,t]` at a one-second step. Replay and shadow-specific snapshot policies are not part of the public runtime.
 
 ## Telemetry Contracts Runtime Truth
 
@@ -186,7 +180,7 @@ Exporters and sources:
 | service metrics | ACTIVE |
 | trisla-prb-simulator | LAB / FALLBACK ONLY |
 
-`docs/PROMQL_SSOT_V2.md` remains the specialized PromQL reference. This document is the operational telemetry entry point.
+This document is the operational telemetry entry point for the public release.
 
 ## OTEL Runtime Truth
 
@@ -316,3 +310,8 @@ NO TELEMETRY DATABASE
 ## Canonical Observability Reference
 
 Canonical observability reference: docs/modules/observability.md defines Prometheus/Grafana/OTEL/Alertmanager/health/evidence boundaries; telemetry_snapshot remains defined here.
+
+
+## Public Release Packaging
+
+The active telemetry proxy implementation is packaged at `apps/ran-ue-upf-proxy/` and has opt-in Helm resources under `helm/trisla/templates/`. It is disabled by default. Operators must supply an immutable image digest and environment-specific RAN, UE, and UPF endpoints before enabling `ranUeUpfProxy.enabled`. The PRB simulator is retained only as an explicit lab fallback and is not the production source.

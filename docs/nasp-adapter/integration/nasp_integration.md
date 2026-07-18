@@ -1,83 +1,38 @@
-# NASP Integration
+# NASP Adapter Integration
 
-> Operational entry: [`docs/modules/nasp-adapter.md`](../../modules/nasp-adapter.md).
+## Portal Backend
 
-## 1. Portal Backend
+The Portal Backend calls `POST /api/v1/nsi/instantiate` after an accepted SLA requires orchestration. It may also read NASP metrics and submit supported NASP actions.
 
-| Item | Value |
-|------|-------|
-| Direction | Portal → NASP Adapter |
-| Endpoint | `POST /api/v1/nsi/instantiate` |
-| Env (Portal) | `NASP_ADAPTER_URL` → `http://trisla-nasp-adapter:8085` |
-| Trigger | ACCEPT + `orchestration_required` |
-| Code | `apps/portal-backend/src/services/nasp.py` |
+## SEM-CSMF
 
-Portal orchestrates after Decision Engine response; NASP is not in the SEM→DE admission chain.
+`POST /api/v1/sla/register` forwards an SLA registration to SEM-CSMF `POST /api/v1/intents/register`. The `SEM_CSMF_URL` variable selects the SEM-CSMF service.
 
-## 2. SEM-CSMF
+## Kubernetes
 
-| Item | Value |
-|------|-------|
-| Direction | NASP Adapter → SEM-CSMF |
-| Endpoint | `POST /api/v1/intents/register` |
-| Ingress at NASP | `POST /api/v1/sla/register` |
-| Env | `SEM_CSMF_URL` |
+The adapter uses the Kubernetes Custom Objects API to manage `NetworkSliceInstance` resources in the `trisla.io/v1` API group. The deployment uses an in-cluster service account and starts a resource watch thread with the application.
 
-Relay only — NASP forwards registration payload; SEM persists intent metadata.
+## Core network
 
-## 3. Kubernetes
+In `NASP_MODE=real`, the NASP client resolves AMF, SMF, NRF, and optional UPF service endpoints. The health response reports the configured core namespace and connectivity probe results.
 
-| Item | Value |
-|------|-------|
-| API | CustomObjectsApi (in-cluster) |
-| CRDs | `NetworkSliceInstance`, `TriSLAReservation` (`trisla.io/v1`) |
-| Controller | `NSIController`, `ReservationStore` |
-| Watch | `nsi_watch_controller` (background) |
+## RAN and transport
 
-NASP Adapter requires in-cluster credentials for production provisioning.
+Optional endpoints can observe and correlate RAN access, core sessions, user-plane data, and transport state. Their corresponding Helm flags are disabled by default unless explicitly enabled.
 
-## 4. Prometheus
+## Prometheus
 
-| Item | Value |
-|------|-------|
-| Env | `PROMETHEUS_URL` |
-| Default | `http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090` |
-| Usage | CPU/mem/UE proxy queries; MDCE multidomain endpoint |
-| Export | `trisla_ran_prb_utilization` gauge |
+`PROMETHEUS_URL` configures metric queries. The adapter exposes service metrics at `/metrics`, collected NASP measurements at `/api/v1/nasp/metrics`, and a multidomain view at `/api/v1/metrics/multidomain`.
 
-Prometheus metrics feed Portal telemetry collection and SEM PRB resolution (via Portal proxy), not a direct DE→NASP API path.
+## Main configuration
 
-## 5. Free5GC (Core)
-
-| Item | Value |
-|------|-------|
-| Mode | `NASP_MODE=real` (default) or `mock` |
-| Namespace | `ns-1274485` |
-| Endpoints | AMF/SMF SBI via `NASPClient` / `nasp_connectivity.py` |
-| Startup | Connectivity probe on boot |
-
-Env overrides: `NASP_CORE_AMF_ENDPOINT`, `NASP_CORE_SMF_ENDPOINT`, `NASP_FREE5GC_NAMESPACE`, etc.
-
-## 6. ONOS (Transport — O5C)
-
-| Item | Value |
-|------|-------|
-| Adapter | `transport_binding_adapter.py` |
-| Default REST | `http://onos.nasp-transport.svc.cluster.local:8181` |
-| Env | `TRANSPORT_BINDING_ENABLED`, `ONOS_REST_URL` |
-
-Read-only observation and correlation; `binding_phase: METADATA_ONLY`.
-
-## 7. UERANSIM (RAN — O4C)
-
-| Item | Value |
-|------|-------|
-| Adapter | `ran_binding_adapter.py` |
-| Namespace | `ueransim` (default via `SSB_RAN_NAMESPACE`) |
-| Env | `RAN_BINDING_ENABLED` |
-
-RAN binding via AMF NGAP log parse or cluster fetch.
-
-## 8. Integration Summary
-
-NASP Adapter integrates upward with Portal (orchestration) and SEM (registration), and downward with Kubernetes, Prometheus, Free5GC, ONOS, and UERANSIM. Decision Engine integration is **indirect** via Portal orchestration policy, not direct HTTP.
+| Variable | Purpose |
+|---|---|
+| `SEM_CSMF_URL` | SEM-CSMF base URL |
+| `NASP_MODE` | Select real or mock endpoint resolution |
+| `NASP_CORE_AMF_ENDPOINT` | AMF service endpoint |
+| `NASP_CORE_SMF_ENDPOINT` | SMF service endpoint |
+| `NASP_CORE_NRF_ENDPOINT` | NRF service endpoint |
+| `PROMETHEUS_URL` | Prometheus service URL |
+| `GATE_3GPP_ENABLED` | Require readiness checks before instantiation |
+| `CAPACITY_ACCOUNTING_ENABLED` | Enable capacity reservations |
