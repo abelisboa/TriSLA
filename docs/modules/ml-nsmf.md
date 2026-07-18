@@ -9,9 +9,8 @@ Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 Telemetry canonical reference: [docs/modules/telemetry.md](telemetry.md). ML-NSMF receives feature payloads from Decision Engine; its Prometheus client is not the prediction hot path.
 
 > **Operational entry point** for the TriSLA Machine Learning Network Slice Management Function.
-> Deep dives: [`docs/ml-nsmf/`](../ml-nsmf/README.md) (interfaces, research model, examples).
-> Implementation SSOT: `apps/ml-nsmf/`. Digest SSOT: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.
-> Model traceability: `model-registry/traceability/MODEL_TRACEABILITY_MATRIX.json`.
+> Deep dives: [`docs/ml-nsmf/`](../ml-nsmf/README.md) (interfaces and examples).
+> Implementation SSOT: `apps/ml-nsmf/`.
 
 ## Role (frozen architecture)
 
@@ -60,13 +59,12 @@ Portal Backend → SEM-CSMF → Decision Engine POST /evaluate
 | App version | `3.10.0` (`apps/ml-nsmf/src/main.py`) |
 | Wave 1 / Wave 3A | **Unchanged** at operational freeze |
 
-Source: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.
 
 ## REST API catalog
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/health` | Liveness — includes `dual_load` status |
+| GET | `/health` | Liveness — includes active model status |
 | GET | `/metrics` | Prometheus scrape |
 | **POST** | **`/api/v1/predict`** | **SOLE INFERENCE INGRESS** — feature dict → prediction + explanation |
 
@@ -166,8 +164,7 @@ Top-level:
 |-------|----------|--------|
 | **Random Forest Regressor** | `viability_model.pkl` | **ACTIVE** — BUNDLE-OP-001 production runtime |
 | **StandardScaler** | `scaler.pkl` | **ACTIVE** — required at startup (S34.2) |
-| **Decision classifier** | `decision_classifier.pkl` | **CONDITIONAL** — **IMPLEMENTED / NOT HOT PATH** per `MODEL_TRACEABILITY_MATRIX.json`; regression-only path when absent |
-| **Candidate bundle** | BUNDLE-SCI-001 | **NOT HOT PATH** — loaded only when `ML_DUAL_LOAD_ENABLED=true`; never in DE response |
+| **Decision classifier** | `decision_classifier.pkl` | **CONDITIONAL** — used when the optional local artifact is supplied; regression-only path when absent |
 | LSTM | — | **NOT IMPLEMENTED** |
 | GRU | — | **NOT IMPLEMENTED** |
 | XGBoost | — | **NOT IMPLEMENTED** |
@@ -246,21 +243,17 @@ No federated modules, aggregation, client models, or global model sync exist in 
 | Continuous learning | **NO** |
 | Scheduled retraining | **NO** |
 | Runtime retraining | **NO** |
-| Manual offline training | **YES** — `apps/ml-nsmf/training/train_model.py`, `train_multiclass_classifier_v6.py` |
+| Manual offline training | **YES** — `apps/ml-nsmf/training/train_model.py` |
 
-Artifacts are baked into the container image or registry at deploy; loaded once at service startup.
+Artifacts are baked into the container image at deploy; loaded once at service startup.
 
-## Dual load
+## Active model runtime
 
 | Component | Status |
 |-----------|--------|
-| `DualLoadService` | **ACTIVE** — wraps all `/api/v1/predict` calls |
-| Active predictor (BUNDLE-OP-001) | **ACTIVE** — sole decision authority for responses |
-| Candidate model (BUNDLE-SCI-001) | **NOT HOT PATH** — load/validate only; `participates_in_decision: false` |
-| Shadow validation | **CONDITIONAL / NOT HOT PATH** (`SHADOW_VALIDATION_ENABLED=false`) — `ShadowLogger` metadata only |
-| Offline replay | **NOT HOT PATH** — `OfflineReplayEngine`; prepare/validate; optional execute when enabled |
-
-Env: `ML_DUAL_LOAD_ENABLED=false` (default).
+| `DualLoadService` | **ACTIVE** — wraps `/api/v1/predict` with the single public active model |
+| Active predictor (BUNDLE-OP-001) | **ACTIVE** — sole model loaded and sole decision authority |
+| Candidate, replay, and shadow workflows | **NOT INCLUDED** in the public release |
 
 ## Integrations
 
@@ -270,7 +263,6 @@ Env: `ML_DUAL_LOAD_ENABLED=false` (default).
 | **PredictionProducer** (Kafka) | **CONDITIONAL** — called after predict; **CONDITIONAL / NOT HOT PATH** (`KAFKA_ENABLED=false`) |
 | **PrometheusClient** | **NOT HOT PATH** — instantiated in `main.py`, never called on predict |
 | **MetricsConsumer** (Kafka) | **NOT HOT PATH** — instantiated, never called |
-| **runtime_shadow_executor** | **NOT HOT PATH** — shadow validation tooling |
 | **SEM-CSMF direct** | **NOT HOT PATH** — no Kafka intake from SEM in production |
 
 ## Observability
@@ -280,16 +272,14 @@ Env: `ML_DUAL_LOAD_ENABLED=false` (default).
 | **Prometheus** | `trisla_http_requests_total`, `trisla_http_request_duration_seconds`; `GET /metrics` |
 | **OTEL** | FastAPI instrumentation; `OTEL_EXPORTER_OTLP_ENDPOINT` |
 | **Spans** | `predict_risk`, `normalize_metrics`, `explain_prediction`, `send_prediction_i03` |
-| **Logs** | `[ML_PREDICT]`, `[ML] Loading...`, `[DUAL_LOAD]` |
+| **Logs** | `[ML_PREDICT]`, `[ML] Loading...`, `[ML_ACTIVE]` |
 | **Inference metrics** | `prediction_latency_ms`, `model_used` in response body |
 
 ## Persistence
 
 | Store | Notes |
 |-------|-------|
-| Model artifacts | Pickle files — `/app/models/` or `ML_MODEL_REGISTRY_DIR` |
-| File registry | `current_model.txt` pointer (legacy fallback) |
-| Shadow logs | File sink when shadow logger enabled |
+| Model artifacts | Active model and scaler pickle files under `/app/models/` or explicit active-path variables |
 | XAI logs | Optional `XAI_LOG_DIR`, `XAI_CSV_DIR` — not wired in main hot path |
 
 **NO SQL · NO ORM · NO FEATURE STORE**
@@ -310,10 +300,7 @@ Env: `ML_DUAL_LOAD_ENABLED=false` (default).
 | `ML_NSMF_HTTP_URL` (DE side) | `http://127.0.0.1:8081` | DE client target |
 | `ML_ACTIVE_MODEL_PATH` | `/app/models/viability_model.pkl` | Active regressor |
 | `ML_ACTIVE_SCALER_PATH` | `/app/models/scaler.pkl` | Active scaler |
-| `ML_MODEL_REGISTRY_DIR` | `/app/models/registry` | Registry pointer |
 | `ML_DECISION_CLASSIFIER_PATH` | optional | Classifier override |
-| `ML_DUAL_LOAD_ENABLED` | `false` | Candidate bundle load |
-| `SHADOW_VALIDATION_ENABLED` | `false` | Shadow logger |
 | `KAFKA_ENABLED` | `false` | Async prediction publish |
 
 ## Related documentation
@@ -321,14 +308,12 @@ Env: `ML_DUAL_LOAD_ENABLED=false` (default).
 | Topic | Location |
 |-------|----------|
 | HTTP interface (I-05) | [`docs/ml-nsmf/interfaces/interfaces.md`](../ml-nsmf/interfaces/interfaces.md) |
-| Research model | [`docs/ml-nsmf/model/ml_model.md`](../ml-nsmf/model/ml_model.md) — **NOT OPERATIONAL SSOT** |
 | Offline training examples | [`docs/ml-nsmf/examples/usage_examples.md`](../ml-nsmf/examples/usage_examples.md) |
 | DE admission (consumer) | [`docs/modules/decision-engine.md`](decision-engine.md) |
-| Model traceability | `model-registry/traceability/MODEL_TRACEABILITY_MATRIX.json` |
 
 ## Canonical Telemetry Reference
 
-Canonical telemetry reference: docs/modules/telemetry.md defines telemetry_snapshot freshness, replay/offline window policy, and the distinction between runtime telemetry and ML feature objects.
+Canonical telemetry reference: docs/modules/telemetry.md defines telemetry_snapshot freshness and the distinction between runtime telemetry and ML feature objects.
 
 ## Canonical Observability Reference
 

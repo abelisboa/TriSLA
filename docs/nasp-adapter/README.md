@@ -1,25 +1,27 @@
-# NASP Adapter — Documentation Index
+# NASP Adapter
 
-Integration and orchestration layer connecting TriSLA to Kubernetes, Free5GC, Prometheus, and multidomain infrastructure.
+The NASP Adapter is the platform integration service for network-slice provisioning and domain observations. It creates Kubernetes Network Slice Instance resources, communicates with core-network services, exposes telemetry, and provides optional RAN and transport correlation operations.
 
-## Operational reference
+## Runtime contract
 
-**[`docs/modules/nasp-adapter.md`](../modules/nasp-adapter.md)** — REST catalog, runtime paths, digest pin, integrations, capacity accounting, env vars.
+- HTTP service: `8085`
+- Health: `GET /health`
+- Metrics: `GET /metrics`
+- NSI creation: `POST /api/v1/nsi/instantiate`
+- Kubernetes service: `trisla-nasp-adapter`
 
-Use that document for operations, integration, and freeze alignment. This directory holds specialized references only.
+The live service reports connectivity to AMF, SMF, and NRF through its health response. The Helm deployment supplies an in-cluster service account and enables the core readiness check and capacity accounting settings.
 
-## Documentation map
+## Documentation
 
-| Directory | Content |
-|-----------|---------|
-| [`architecture/`](architecture/nasp_adapter_architecture.md) | Components, K8s CRDs, background services |
-| [`integration/`](integration/nasp_integration.md) | Free5GC, Prometheus, Portal, SEM, K8s |
-| [`interfaces/`](interfaces/interfaces.md) | REST ingress and caller contracts |
-| [`model/`](model/metric_normalization_model.md) | MDCE / multidomain metric model |
-| [`observability/`](observability/observability.md) | Prometheus, OTEL, PRB, MDCE |
+- [Architecture](architecture/nasp_adapter_architecture.md)
+- [Integration](integration/nasp_integration.md)
+- [HTTP interface](interfaces/interfaces.md)
+- [SLA normalization](model/metric_normalization_model.md)
+- [Observability](observability/observability.md)
 
-## Scope boundary
+## Implementation
 
-NASP Adapter **does not** perform SLA admission. Decision authority remains in the Decision Engine (via SEM-CSMF); on-chain registration is handled by BC-NSSMF after successful orchestration.
-
-Implementation: `apps/nasp-adapter/src/`
+- [Application](../../apps/nasp-adapter/src/main.py)
+- [NASP client](../../apps/nasp-adapter/src/nasp_client.py)
+- [NSI controller](../../apps/nasp-adapter/src/controllers/nsi_controller.py)

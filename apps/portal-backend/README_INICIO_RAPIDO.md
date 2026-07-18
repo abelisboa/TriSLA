@@ -1,56 +1,52 @@
 # INÍCIO RÁPIDO — BACKEND TRI-SLA PORTAL LIGHT
 
-## 🚀 COMANDO ÚNICO PARA TUDO
+## Início rápido
 
 ```bash
-cd trisla-portal/backend && bash corrigir_tudo.sh && source venv/bin/activate && bash start_backend.sh
+cd apps/portal-backend
+bash instalar_dependencias.sh
+bash start_backend.sh
 ```
 
 ---
 
-## 📋 PASSOS SIMPLES
+## Passos
 
-### 1. Corrigir Tudo
+### 1. Instalar dependências
+
 ```bash
-bash corrigir_tudo.sh
+bash instalar_dependencias.sh
 ```
 
-### 2. Ativar Ambiente
-```bash
-source venv/bin/activate
-```
+### 2. Iniciar o backend
 
-### 3. Iniciar Backend
 ```bash
 bash start_backend.sh
 ```
 
 ---
 
-## ✅ VALIDAÇÃO RÁPIDA
+## Validação rápida
 
 ```bash
-bash validar_backend_completo.sh
+curl --fail http://localhost:8001/health
 ```
 
 ---
 
-## 🐛 SE ALGO DER ERRADO
+## Solução de problemas
 
-Execute novamente:
+Recrie o ambiente público e reinstale as dependências:
+
 ```bash
-bash corrigir_tudo.sh
+python3 -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-Este script corrige TUDO automaticamente:
-- ✅ CRLF → LF
-- ✅ Recria venv
-- ✅ Instala dependências
-- ✅ Valida imports
-- ✅ Corrige permissões
+Depois, execute novamente `bash start_backend.sh`.
 
 ---
 
-**Backend estará em: http://localhost:8001**
-
-*Última atualização: 2025-01-15*
+**Backend:** http://localhost:8001

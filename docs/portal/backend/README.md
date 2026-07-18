@@ -1,73 +1,78 @@
-# Portal Backend Navigation Hub
+# Portal Backend API
 
-This README is a navigation hub for Portal Backend documentation. It is not the
-operational SSOT. The canonical operational module reference is:
+Base port: `8001`. The deployed NodePort is `32002`.
 
-```text
-docs/modules/portal-backend.md
+## Service and health
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/` | Service name, version, and status |
+| `GET` | `/health` | Backend health |
+| `GET` | `/api/v1/health` | Versioned backend health |
+| `GET` | `/api/v1/health/global` | Reachability summary for platform services |
+| `GET` | `/nasp/diagnostics` | Per-service connectivity details |
+| `GET` | `/metrics` | Prometheus metrics |
+
+## SLA operations
+
+| Method | Path | Purpose |
+|---|---|---|
+| `POST` | `/api/v1/sla/interpret` | Interpret free-form SLA text through SEM-CSMF |
+| `POST` | `/api/v1/sla/submit` | Submit a structured SLA and return the admission result |
+| `GET` | `/api/v1/sla/status/{sla_id}` | Retrieve SLA status and runtime fields |
+| `GET` | `/api/v1/sla/metrics/{sla_id}` | Retrieve SLA metrics |
+| `POST` | `/api/v1/sla/revalidate-telemetry` | Collect a new telemetry snapshot and compare it with a reference |
+
+Interpret request:
+
+```json
+{
+  "intent_text": "Create a low-latency slice",
+  "tenant_id": "tenant-001"
+}
 ```
 
-## Runtime Identity
+Submit request:
 
-Portal Backend is the frontend-facing API layer for TriSLA. It provides:
-
-- Ingress
-- Orchestration relay
-- Response aggregation
-- Metadata propagation
-- Frontend backend API layer
-
-Portal Backend does not decide SLA, does not produce governance, and does not
-produce runtime assurance.
-
-## Canonical Flow
-
-```text
-Frontend
-|
-Portal Backend
-|
-SEM-CSMF
-|
-Decision Engine
-|
-Portal Backend
-|
-BC-NSSMF
-|
-SLA-Agent
-|
-Frontend
+```json
+{
+  "template_id": "URLLC",
+  "tenant_id": "tenant-001",
+  "form_values": {
+    "service_type": "URLLC",
+    "latency": "10ms",
+    "reliability": 0.99999
+  },
+  "metadata": {}
+}
 ```
 
-Portal Backend calls SEM-CSMF in the canonical admission path. Decision Engine
-is reached indirectly through SEM-CSMF internal orchestration.
+## Module and telemetry operations
 
-## Active API Groups
+| Method | Path |
+|---|---|
+| `GET` | `/api/v1/modules/` |
+| `GET` | `/api/v1/modules/{module}` |
+| `GET` | `/api/v1/modules/{module}/metrics` |
+| `GET` | `/api/v1/modules/{module}/status` |
+| `GET` | `/api/v1/interfaces/ran-i1/metrics` |
+| `GET` | `/api/v1/interfaces/tn-i1/metrics` |
+| `GET` | `/api/v1/interfaces/cn-i1/metrics` |
+| `GET` | `/api/v1/prometheus/` |
+| `GET` | `/api/v1/prometheus/query` |
+| `GET` | `/api/v1/prometheus/query_range` |
+| `GET` | `/api/v1/prometheus/summary` |
+| `GET` | `/api/v1/prometheus/targets` |
 
-Only APIs mounted by `apps/portal-backend/src/main.py` are public runtime APIs:
+## Configuration
 
-```text
-/api/v1/sla/*
-/api/v1/modules/*
-/api/v1/prometheus/*
-/api/v1/interfaces/*
-/health
-/api/v1/health
-/api/v1/health/global
-/metrics
-/nasp/diagnostics
-```
+| Variable | Default service |
+|---|---|
+| `SEM_CSMF_URL` | `http://trisla-sem-csmf:8080` |
+| `ML_NSMF_URL` | `http://trisla-ml-nsmf:8081` |
+| `DECISION_ENGINE_URL` | `http://trisla-decision-engine:8082` |
+| `BC_NSSMF_URL` | `http://trisla-bc-nssmf:8083` |
+| `SLA_AGENT_URL` | `http://trisla-sla-agent-layer:8084` |
+| `PROMETHEUS_URL` | `http://prometheus-operated.monitoring:9090` |
 
-Routers such as `contracts`, `health`, `intents`, `loki`, `slas`, `slos`,
-`tempo`, and `xai` may exist in the codebase, but they are not public Portal
-Backend APIs unless mounted by `main.py`.
-
-## References
-
-- Canonical module document: `docs/modules/portal-backend.md`
-- Observability module: `docs/modules/observability.md`
-- Runtime/architecture SSOT references: `MASTER_SSOT_POINTER.md`,
-  `docs/TRISLA_MASTER_RUNBOOK.md`, `docs/TRISLA_INFRA_SSOT.md`,
-  `docs/TRISLA_E2E_FLOW_CANONICAL.md`
-- Developer reference: `apps/portal-backend/README_BACKEND.md`
+The route and schema implementations are in [`main.py`](../../../apps/portal-backend/src/main.py), [`routers/sla.py`](../../../apps/portal-backend/src/routers/sla.py), and [`schemas/sla.py`](../../../apps/portal-backend/src/schemas/sla.py).

@@ -24,7 +24,7 @@
   ],
   "risk_formula": "v7_calibrated",
   "training_origin": {
-    "dataset": "/home/porvir5g/gtp5g/trisla/artifacts/ml_training_dataset_v6_controlled.csv",
+    "dataset": "externally_supplied_training_dataset",
     "real_and_bootstrap_mixed": true,
     "bootstrap_for_training_only": true
   },
@@ -145,7 +145,6 @@
     "risk_std_gt_0": true,
     "slice_stability_ok": true
   },
-  "scientific_status": "ML_VALIDATED_FOR_PAPER",
-  "ml_status": "ML_VALIDATED_FOR_PAPER",
+  "runtime_status": "ACTIVE_RUNTIME_MODEL",
   "trained_at_utc": "2026-03-25T18:42:48.682563+00:00"
 }

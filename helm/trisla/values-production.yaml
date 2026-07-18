@@ -10,6 +10,17 @@ network:
   nodeIP: "<NODE_IP>"  # Ex: 192.168.10.16
   gateway: "<GATEWAY_IP>"  # Ex: 192.168.10.1
 
+ranUeUpfProxy:
+  enabled: false  # Enable after publishing the proxy image and setting its digest.
+  image:
+    repository: trisla-ran-ue-upf-proxy
+    digest: "<PROXY_IMAGE_DIGEST>"
+  prometheusUrl: "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+  namespace: "<RAN_NAMESPACE>"
+  n6PeerPod: "<N6_PEER_POD>"
+  n6Interface: "<N6_INTERFACE>"
+
+
 # Configurações de PRODUÇÃO REAL
 production:
   enabled: true
@@ -72,6 +83,9 @@ decisionEngine:
 
 bcNssmf:
   replicas: 2
+  wallet:
+    existingSecret: "<BC_NSSMF_WALLET_SECRET>"
+    key: privateKey
   resources:
     requests:
       cpu: 1000m

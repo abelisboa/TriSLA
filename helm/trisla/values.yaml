@@ -1,11 +1,14 @@
 global:
   imageRegistry: ghcr.io/abelisboa
   namespace: trisla
+  imagePullSecrets: []
+  ghcrUser: ""
+  ghcrToken: ""
 
 network:
-  interface: my5g
-  nodeIP: 192.168.10.16
-  gateway: 192.168.10.1
+  interface: ""
+  nodeIP: ""
+  gateway: ""
 
 semCsmf:
   enabled: true
@@ -104,6 +107,9 @@ bcNssmf:
   env:
     BC_ENABLED: 'true'
     BC_TX_RECEIPT_TIMEOUT: '120'
+  wallet:
+    existingSecret: bc-nssmf-wallet
+    key: privateKey
   resources:
     requests:
       cpu: 500m
@@ -268,6 +274,30 @@ uiDashboard:
             pathType: Prefix
   replicas: 2
 
+ranUeUpfProxy:
+  enabled: false
+  image:
+    repository: trisla-ran-ue-upf-proxy
+    tag: ""
+    digest: ""
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9102
+  replicas: 1
+  prometheusUrl: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+  namespace: free5gc
+  upfPodRegex: "upf.*"
+  uePodRegex: "rantester.*"
+  n6PeerPod: dnn-n6-iperf-peer
+  n6Interface: net1
+  rateWindow: 2m
+  maxThroughputBps: "100000000"
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+
 trafficExporter:
   enabled: true
   image:
@@ -306,7 +336,7 @@ grafana:
   image:
     repository: grafana/grafana
     tag: 10.2.3
-  adminPassword: admin
+  adminPassword: ""
 
 production:
   enabled: true

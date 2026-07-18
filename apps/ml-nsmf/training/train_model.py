@@ -4,7 +4,6 @@ Treina modelo Random Forest para predição de viabilidade de SLA
 """
 
 import pandas as pd
-import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler
@@ -81,36 +80,14 @@ def main():
     print("TREINAMENTO DO MODELO ML-NSMF")
     print("=" * 60)
     
-    # 1. Carregar dataset
-    dataset_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "data/datasets/trisla_ml_dataset.csv"
-    )
-    
-    try:
-        df = load_dataset(dataset_path)
-    except FileNotFoundError:
-        print(f"ERRO: Dataset não encontrado em {dataset_path}")
-        print("Criando dataset de exemplo...")
-        # Criar dataset de exemplo
-        n_samples = 1000
-        df = pd.DataFrame({
-            'latency': np.random.uniform(1, 100, n_samples),
-            'throughput': np.random.uniform(1, 1000, n_samples),
-            'reliability': np.random.uniform(0.9, 1.0, n_samples),
-            'jitter': np.random.uniform(0.1, 10, n_samples),
-            'packet_loss': np.random.uniform(0.001, 0.1, n_samples),
-            'cpu_utilization': np.random.uniform(0.3, 0.9, n_samples),
-            'memory_utilization': np.random.uniform(0.3, 0.9, n_samples),
-            'network_bandwidth_available': np.random.uniform(100, 1000, n_samples),
-            'active_slices_count': np.random.randint(1, 20, n_samples),
-            'slice_type_encoded': np.random.randint(1, 4, n_samples),
-            'viability_score': np.random.uniform(0.5, 1.0, n_samples)
-        })
-        os.makedirs(os.path.dirname(dataset_path), exist_ok=True)
-        df.to_csv(dataset_path, index=False)
-        print(f"Dataset de exemplo criado: {dataset_path}")
-    
+    # 1. Carregar dataset público explicitamente configurado
+    dataset_path = os.environ.get("TRISLA_ML_TRAINING_DATASET", "").strip()
+    if not dataset_path:
+        raise RuntimeError(
+            "TRISLA_ML_TRAINING_DATASET deve apontar para um dataset público explícito."
+        )
+    df = load_dataset(dataset_path)
+
     # 2. Feature engineering
     df = engineer_features(df)
     

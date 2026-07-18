@@ -1,25 +1,24 @@
-# TriSLA Ontology — Semantic Foundation
+# SEM-CSMF Ontology Components
 
-## Overview
+SEM-CSMF uses ontology resources to validate SLA requirements and help map them to a supported service type.
 
-The ontology defines the semantic model used by SEM-CSMF to interpret and validate SLA intents.
+## Runtime resources
 
-## Role
+The loader checks these packaged files in order:
 
-- Map intent → slice type
-- Validate constraints
-- Enable reasoning
-- Supply KPI fallbacks for semantic fill (`services/semantic_resolver.py`)
+1. `apps/sem-csmf/src/ontology/trisla_complete.owl`
+2. `apps/sem-csmf/src/ontology/trisla.ttl`
 
-Runtime loader prefers `apps/sem-csmf/src/ontology/trisla_complete.owl`, then `trisla.ttl`.
+If the ontology library or resource cannot be loaded, the reasoner uses its implemented value-based mapping for service-type inference.
 
-## Documentation
+## Components
 
-| Document | Content |
-|----------|---------|
-| [`semantic_model_reference.md`](semantic_model_reference.md) | Class hierarchy, properties, SPARQL, Protégé steps |
-| [`../pipeline/processing_pipeline.md`](../pipeline/processing_pipeline.md) | Semantic fill and validation lifecycle |
-| [`../interfaces/interfaces.md`](../interfaces/interfaces.md) | I-01 output contracts |
-| [`../../modules/sem-csmf.md`](../../modules/sem-csmf.md) | Operational entry point |
+| Source | Purpose |
+|---|---|
+| [`loader.py`](../../../apps/sem-csmf/src/ontology/loader.py) | Load OWL or TTL data and execute queries |
+| [`reasoner.py`](../../../apps/sem-csmf/src/ontology/reasoner.py) | Infer service type and validate SLA values |
+| [`matcher.py`](../../../apps/sem-csmf/src/ontology/matcher.py) | Match parsed intent data to supported concepts |
+| [`parser.py`](../../../apps/sem-csmf/src/ontology/parser.py) | Convert intent data for matching |
+| [`cache.py`](../../../apps/sem-csmf/src/ontology/cache.py) | Cache reasoner results |
 
-Semantic output feeds NEST generation and I-01 HTTP dispatch to the Decision Engine.
+See the [semantic model reference](semantic_model_reference.md) for supported inputs and behavior.

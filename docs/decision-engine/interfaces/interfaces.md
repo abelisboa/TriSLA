@@ -1,77 +1,71 @@
-# Decision Engine Interfaces
+# Decision Engine HTTP Interface
 
-> Specialized reference. Canonical cross-module interface truth: [`docs/modules/interfaces.md`](../../modules/interfaces.md).
+Base port: `8082`.
 
-> **Operational entry point:** [`docs/modules/decision-engine.md`](../../modules/decision-engine.md)
+## Endpoints
 
-## I-01 Ingress (Production SSOT)
+| Method | Path | Response |
+|---|---|---|
+| `GET` | `/health` | Service status, Kafka state, and gRPC listener state |
+| `GET` | `/metrics` | Prometheus text format |
+| `POST` | `/evaluate` | `DecisionResult` JSON |
 
-| Property | Value |
-|----------|-------|
-| Transport | HTTP |
-| Method | `POST` |
-| Path | `/evaluate` |
-| Port | `8082` |
-| Classification | **SOLE ADMISSION INGRESS** |
-| Model | `SLAEvaluateInput` (`apps/decision-engine/src/models.py`) |
-| Caller | SEM-CSMF (`apps/sem-csmf/src/decision_engine_client.py`) |
+## Evaluate an SLA
 
-### Input fields — consume vs echo
+`POST /evaluate` accepts the `SLAEvaluateInput` model.
 
-| Field | Required | Consumed by rules | Notes |
-|-------|----------|-------------------|-------|
-| `intent_id` | Yes | Yes | Top-level correlation |
-| `intent` | Yes | Yes | Coerced to `SLAIntent` |
-| `nest_id` | No | Yes | Minimal `NestSubset` via `resolve_nest_for_evaluate` |
-| `nest` | No | **No (echo only)** | Wave 3A G3-C — echoed in `DecisionResult.metadata.inbound_nest`; body **not** used for rules |
-| `context` | No | Yes | Duration, optional telemetry features |
-| `context.telemetry_features` | No | Conditional | Used only when `DECISION_SCORE_MODE=true` |
-| `telemetry_snapshot` | No | Yes | PRB / RTT / CPU / MEM — supplied by SEM; **not** fetched via Prometheus on hot path |
-| `metadata` | No | **No (echo only)** | Wave 1 G3-A — echoed in `DecisionResult.metadata.inbound_metadata` |
+```json
+{
+  "intent_id": "intent-001",
+  "nest_id": "nest-001",
+  "intent": {
+    "intent_id": "intent-001",
+    "tenant_id": "tenant-001",
+    "service_type": "URLLC",
+    "sla_requirements": {
+      "latency": "10ms",
+      "reliability": 0.999
+    }
+  },
+  "nest": {
+    "nest_id": "nest-001",
+    "intent_id": "intent-001",
+    "network_slices": [],
+    "resources": {},
+    "status": "generated"
+  },
+  "telemetry_snapshot": {
+    "ran": {"prb_utilization": 35.0},
+    "transport": {"latency_ms": 8.0},
+    "core": {"cpu_utilization": 40.0, "memory_utilization": 50.0}
+  },
+  "context": {}
+}
+```
 
-**Governance:** Root `metadata` MUST NOT be copied into `SLAIntent.metadata` or passed to `_apply_decision_rules`.
+Required top-level fields are `intent_id` and `intent`. `nest_id`, `nest`, `context`, `telemetry_snapshot`, and `metadata` are optional.
 
-### Legacy transport
+The response contains `decision_id`, `intent_id`, `action`, `reasoning`, `confidence`, and `timestamp`. It may also contain the NEST identifier, ML risk fields, affected domains, SLOs, and decision metadata.
 
-gRPC `:50051` / `SendNESTMetadata` — **TRACEABILITY_ONLY**. Not production SSOT. Uses legacy `RuleEngine`, not `engine._apply_decision_rules`.
+Action values are:
 
----
+- `AC`: accept
+- `RENEG`: request revised SLA constraints
+- `REJ`: reject
 
-## Downstream call (DE → ML-NSMF)
+Example:
 
-| Property | Value |
-|----------|-------|
-| Interface | I-05 (HTTP) |
-| Method | `POST` |
-| Path | `/api/v1/predict` |
-| Client | `apps/decision-engine/src/ml_client.py` |
-| Runtime | **ACTIVE** on every `/evaluate` |
+```bash
+curl -sS http://localhost:8082/evaluate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "intent_id":"intent-001",
+    "intent":{
+      "intent_id":"intent-001",
+      "service_type":"eMBB",
+      "sla_requirements":{"throughput":"100Mbps"}
+    }
+  }'
+```
 
----
-
-## Output
-
-| Destination | Transport | Runtime |
-|-------------|-----------|---------|
-| SEM-CSMF | HTTP response (`DecisionResult`) | **ACTIVE** |
-| BC-NSSMF | `bc_client.register_sla_on_chain` | **CONDITIONAL** (`BC_ENABLED`) |
-| Kafka (`trisla-decision-events`) | Producer | **CONDITIONAL** (`KAFKA_ENABLED=false` default) |
-| SLA-Agent | — | **Not direct** — Portal/BC path |
-
-### Output metadata (hot path)
-
-`DecisionResult.metadata` is enriched on `/evaluate` by:
-
-- `engine.py` / `service.py` — XAI bundle fields, ML scores, domain scores
-- `decision_snapshot.py` — `decision_snapshot`
-- `system_xai.py` — `system_xai_explanation`
-- `decision_evidence.py` — `decision_evidence[]`
-- `i01_metadata_echo.py` — `inbound_metadata`
-- `i01_nest_echo.py` — `inbound_nest`
-
-**Not enriched on hot path** (modules exist, not wired):
-
-- `orchestration_authority.py` — orchestration authority fields
-- `lifecycle_authority.py` — `lifecycle_event`, `governance_event`
-
-See [Governance runtime truth](../../modules/decision-engine.md#governance-runtime-truth) in the canonical module doc.
+The implementation contract is defined in [`models.py`](../../../apps/decision-engine/src/models.py) and [`main.py`](../../../apps/decision-engine/src/main.py).

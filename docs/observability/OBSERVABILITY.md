@@ -1,73 +1,46 @@
-# TriSLA Observability Navigation Hub
+# Observability
 
-This document is a navigation hub and specialized reference after DOC-MOD-08 consolidation.
+TriSLA exposes application health, Prometheus metrics, and optional OTLP traces. The public chart also contains selected Prometheus Operator resources.
 
-Canonical operational entry point:
+## Application endpoints
 
-```text
-docs/modules/observability.md
+| Component | Port | Health | Metrics |
+|---|---:|---|---|
+| BC-NSSMF | `8083` | `/health`, `/health/ready` | `/metrics` |
+| SLA-Agent Layer | `8084` | `/health` | `/metrics` |
+| NASP Adapter | `8085` | `/health` | `/metrics` |
+| Traffic Exporter | `9105` | `/health` | `/metrics` |
+
+Other FastAPI services also expose `/health` and `/metrics` according to their module documentation.
+
+## Metrics collection
+
+The main Helm chart renders:
+
+- the Traffic Exporter Deployment and Service;
+- a ServiceMonitor for SEM-CSMF;
+- a metrics Service for NASP Adapter;
+- Prometheus recording rules used by the platform.
+
+The Prometheus, Grafana, OpenTelemetry Collector, Jaeger, and Tempo workloads visible in the live environment are separate operational deployments. The main chart does not render those workloads.
+
+## Traces
+
+Instrumented services can export spans through OTLP. Export initialization is designed not to block service startup when the collector is unavailable. Trace storage and query interfaces depend on the separately deployed monitoring stack.
+
+## Verification commands
+
+```bash
+kubectl get pods -n monitoring
+kubectl get servicemonitors -n trisla
+kubectl get prometheusrules -n trisla
 ```
 
-Telemetry canonical reference:
-
-```text
-docs/modules/telemetry.md
-```
-
-PromQL specialized reference:
-
-```text
-docs/PROMQL_SSOT_V2.md
-```
-
-## Runtime Boundary
-
-Observability exposes and supports runtime monitoring, dashboards, traces, logs, health checks and evidence. It does not make decisions, execute admission, generate telemetry snapshots, or generate governance.
-
-```text
-Prometheus = PRIMARY OBSERVABILITY METRICS SOURCE
-OTEL = TRACING AND INSTRUMENTATION
-OTEL != telemetry_snapshot source
-```
-
-## Official Paths
-
-Metrics path:
-
-```text
-Applications
-↓
-Metrics
-↓
-Prometheus
-↓
-Grafana
-↓
-Operators
-```
-
-Tracing path:
-
-```text
-Applications
-↓
-OTEL Instrumentation
-↓
-OTEL Collector
-↓
-Tempo
-↓
-Jaeger
-```
+For a service reachable through cluster networking, query `/health` before `/metrics`.
 
 ## References
 
-| Topic | Canonical / specialized document |
-|-------|----------------------------------|
-| Operational observability | `docs/modules/observability.md` |
-| Runtime telemetry and `telemetry_snapshot` | `docs/modules/telemetry.md` |
-| PromQL expressions | `docs/PROMQL_SSOT_V2.md` |
-| Grafana dashboards | `grafana/MANIFEST.json`, `grafana/O7E_PROVISIONING.md` |
-| Recording rules | `monitoring/o7c-trisla-recording-rules.yaml` |
-
-Historical conceptual descriptions in this file were consolidated into `docs/modules/observability.md` to avoid duplication and contradictions.
+- [Traffic Exporter source](../../apps/traffic-exporter/app/main.py)
+- [Traffic Exporter Helm template](../../helm/trisla/templates/traffic-exporter.yaml)
+- [Recording rules](../../helm/trisla/templates/prometheusrule-trisla-recording.yaml)
+- [SEM-CSMF ServiceMonitor](../../helm/trisla/templates/servicemonitor-sem-csmf.yaml)

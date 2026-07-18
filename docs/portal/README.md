@@ -1,42 +1,29 @@
-# TriSLA Portal — Interaction and Workload Injection Layer
+# TriSLA Portal
 
-Canonical module references: [`docs/modules/portal-backend.md`](../modules/portal-backend.md) and [`docs/modules/portal-frontend.md`](../modules/portal-frontend.md).
-Canonical interface reference: [`docs/modules/interfaces.md`](../modules/interfaces.md).
+The TriSLA Portal provides a web interface and an HTTP gateway for submitting SLA requests, viewing admission results, checking platform health, and inspecting runtime telemetry.
 
-## 1. Overview
+## Components
 
-The TriSLA Portal is the interaction layer between users and the TriSLA architecture.
+| Component | Runtime | Role |
+|---|---|---|
+| Portal Frontend | Next.js | Browser interface and same-origin API proxy |
+| Portal Backend | FastAPI on `8001` | SLA gateway, status API, and service coordination |
 
-It provides controlled input submission and visualization of SLA evaluation results.
+The frontend proxies `/api/v1/*` and `/nasp/*` requests to the backend. The backend calls SEM-CSMF, ML-NSMF, Decision Engine, BC-NSSMF, SLA-Agent Layer, NASP Adapter, and Prometheus as required by each operation.
 
----
+## User workflow
 
-## 2. Scientific Role
+1. Enter free-form SLA text or select a structured template.
+2. Review the interpreted service type and SLA requirements.
+3. Submit the SLA for admission.
+4. Review the decision, reasoning, service status, and telemetry.
+5. For accepted SLAs, inspect runtime lifecycle information and request telemetry revalidation when needed.
 
-The Portal is not part of the decision logic.
+## Documentation
 
-Instead, it acts as:
+- [Portal Backend API](backend/README.md)
 
-- Input injection interface
-- Controlled workload generator
-- Observation interface for results
+## Implementation
 
----
-
-## 3. Components
-
-- Portal Backend (API Gateway)
-- Portal Frontend (User Interface)
-
----
-
-## 4. Role in Architecture
-
-User → Portal → TriSLA Core
-
----
-
-## 5. Contribution
-
-The Portal enables reproducible experiments by standardizing input and capturing outputs.
-
+- [Portal Backend](../../apps/portal-backend/src/main.py)
+- [Portal Frontend](../../apps/portal-frontend/src/app/page.tsx)

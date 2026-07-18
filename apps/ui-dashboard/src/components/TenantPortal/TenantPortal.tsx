@@ -49,7 +49,8 @@ const TenantPortal: React.FC = () => {
   useEffect(() => {
     loadRequests();
     // WebSocket para atualizações em tempo real
-    const ws = new WebSocket('ws://localhost:8080/ws/tenant');
+    const wsBase = (import.meta as any).env.VITE_WS_BASE_URL || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`;
+    const ws = new WebSocket(`${wsBase}/ws/tenant`);
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'request_update') {

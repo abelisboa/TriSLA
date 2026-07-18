@@ -1,21 +1,26 @@
-# ML-NSMF — Documentation Index
+# ML-NSMF
 
-**Operational reference:** [`docs/modules/ml-nsmf.md`](../modules/ml-nsmf.md)
+ML-NSMF provides the prediction service used by the Decision Engine. It normalizes an SLA feature payload, runs the active model, derives risk values, and returns an explanation.
 
-This directory holds specialized references only. Inference path, models, XAI, training, and integrations are documented in the operational module doc — not duplicated here.
+## Runtime contract
 
-## Contents
+- HTTP service: `8081`
+- Health: `GET /health`
+- Metrics: `GET /metrics`
+- Prediction: `POST /api/v1/predict`
+- Kubernetes service: `trisla-ml-nsmf`
 
-| Document | Purpose |
-|----------|---------|
-| [`interfaces/interfaces.md`](interfaces/interfaces.md) | HTTP I-05 primary contract; conditional Kafka |
-| [`architecture/ml_nsmf_architecture.md`](architecture/ml_nsmf_architecture.md) | Pointer to canonical architecture |
-| [`model/ml_model.md`](model/ml_model.md) | Research model — **NOT OPERATIONAL SSOT** |
-| [`pipeline/prediction_pipeline.md`](pipeline/prediction_pipeline.md) | Hot path summary / pointer |
-| [`examples/usage_examples.md`](examples/usage_examples.md) | Offline training and local predictor checks |
+The service requires a valid model and scaler at startup. The container includes the model assets used by the active predictor. Kafka output is optional and controlled by `KAFKA_ENABLED`.
 
-## External SSOT (read-only)
+## Documentation
 
-- `apps/ml-nsmf/src/` — implementation
-- `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json` — operational digest
-- `model-registry/traceability/MODEL_TRACEABILITY_MATRIX.json` — prod vs scientific models
+- [Architecture](architecture/ml_nsmf_architecture.md)
+- [HTTP interface](interfaces/interfaces.md)
+- [Prediction flow](pipeline/prediction_pipeline.md)
+- [Usage examples](examples/usage_examples.md)
+
+## Implementation
+
+- [Application](../../apps/ml-nsmf/src/main.py)
+- [Predictor](../../apps/ml-nsmf/src/predictor.py)
+- [Prediction pipeline](../../apps/ml-nsmf/src/prediction_pipeline.py)

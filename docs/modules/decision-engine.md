@@ -9,12 +9,12 @@ Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 
 ## Canonical Governance Reference
 
-For the cross-module governance contract, use [`docs/modules/governance.md`](governance.md). Decision Engine owns admission decision evidence; governance enrichment helpers are classified as partial/not wired unless the implementation wires them into the runtime hot path.
+Decision Engine owns admission-decision evidence. Cross-module flow and evidence boundaries are documented in [`docs/modules/interfaces.md`](interfaces.md).
 
 Telemetry canonical reference: [docs/modules/telemetry.md](telemetry.md). Admission telemetry arrives through ; Decision Engine does not query Prometheus on the  hot path.
 
 > **Operational entry point** for the TriSLA Decision Engine (SLA admission control).
-> Deep dives: [`docs/decision-engine/`](../decision-engine/README.md) (interfaces, research model).
+> Deep dives: [`docs/decision-engine/`](../decision-engine/README.md) (interfaces).
 > Implementation SSOT: `apps/decision-engine/`. Digest SSOT: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.
 
 ## Role (frozen architecture)
@@ -278,6 +278,7 @@ Env: `TRISLA_EVIDENCE_DIR`.
 |----------|---------|------|
 | `ML_NSMF_HTTP_URL` | `http://127.0.0.1:8081` | ML predict endpoint |
 | `BC_ENABLED` | `false` | Blockchain registration |
+| `TRISLA_PRIVATE_KEY` | none | Required external signing key when blockchain registration is enabled |
 | `KAFKA_ENABLED` | `false` | Async decision events |
 | `POLICY_GOVERNED_MODE` | `true` | Operational admission mode |
 | `DECISION_SCORE_MODE` | `false` | Alternate score-based admission |
@@ -294,7 +295,6 @@ Env: `TRISLA_EVIDENCE_DIR`.
 | Topic | Location |
 |-------|----------|
 | I-01 field SSOT | [`docs/decision-engine/interfaces/interfaces.md`](../decision-engine/interfaces/interfaces.md) |
-| Research / scientific model | [`docs/decision-engine/model/decision_model.md`](../decision-engine/model/decision_model.md) — **NOT OPERATIONAL SSOT** |
 | I-01 schema registry | `interface-registry/i01/I01_SCHEMA_REGISTRY.json` |
 | Wave 3A freeze | `baseline-registry/WAVE3A_OPERATIONAL_FREEZE.md` |
 

@@ -1,68 +1,41 @@
-# Portal Frontend Navigation Hub
+# Portal Frontend
 
-This README is a navigation hub for Portal Frontend documentation. It is not the
-operational SSOT. The canonical operational module reference is:
+The Portal Frontend is a Next.js application that presents platform health, SLA creation, admission results, runtime status, and domain telemetry.
 
-```text
-docs/modules/portal-frontend.md
-```
+## User pages
 
-## Runtime Identity
+| Path | Purpose |
+|---|---|
+| `/` | Platform overview |
+| `/pnl` | Free-form SLA entry |
+| `/template` | Structured SLA entry |
+| `/sla-lifecycle?view=admission` | Admission result |
+| `/sla-lifecycle?view=runtime` | Runtime lifecycle for accepted SLAs |
+| `/monitoring` | Domain telemetry |
+| `/administration` | Platform administration view |
 
-Portal Frontend is the user interface and workflow visualization layer. It
-presents decisions, governance evidence, runtime state, telemetry views, and
-observability data returned through Portal Backend.
+`/metrics` redirects to `/monitoring`; `/defense` redirects to `/`.
 
-Portal Frontend does not decide SLA, does not produce governance, does not
-produce runtime assurance, does not produce explainability, and does not produce
-telemetry.
+## Backend communication
 
-## Direct Integration
+The frontend proxies `/api/v1/*` and `/nasp/*` to the Portal Backend. Browser calls use same-origin paths by default.
 
-```text
-Frontend
-|
-Portal Backend
-```
+Configuration precedence:
 
-Portal Frontend does not directly call SEM-CSMF, Decision Engine, BC-NSSMF, or
-SLA-Agent.
+1. Browser override: `NEXT_PUBLIC_TRISLA_API_BASE_URL`
+2. Server override: `TRISLA_API_BASE_URL`
+3. Server service URL: `BACKEND_URL`
+4. Default: `http://trisla-portal-backend:8001`
 
-## Main Navigation
+The request timeout used by the shared API client is 30 seconds. Optional dashboard data may be shown as unavailable without blocking the rest of the page.
 
-```text
-/
-/pnl
-/template
-/sla-lifecycle?view=admission
-/sla-lifecycle?view=runtime
-/monitoring
-/administration
-```
+## Runtime
 
-Auxiliary route:
+The Next.js standalone server and container listen on port `3000`. Kubernetes liveness and readiness probes use port `3000`. The service publishes port `80`, forwards to target port `3000`, and uses NodePort `32001`.
 
-```text
-/metrics
-```
+## Source
 
-Reserved active route outside the main menu and not hot path:
-
-```text
-/defense
-```
-
-## Runtime Stack
-
-Active runtime stack: Next.js 15 App Router, React 18, React Context, and
-`sessionStorage` for the admission operational snapshot cache.
-
-Zustand is not implemented in the current runtime.
-
-## References
-
-- Canonical module document: `docs/modules/portal-frontend.md`
-- Portal Backend module: `docs/modules/portal-backend.md`
-- Observability module: `docs/modules/observability.md`
-- Telemetry module: `docs/modules/telemetry.md`
-- Architecture reference: `docs/portal/architecture/portal_architecture.md`
+- [API client](../../../apps/portal-frontend/src/lib/api.ts)
+- [Endpoint catalog](../../../apps/portal-frontend/src/lib/endpoints.ts)
+- [API proxy](../../../apps/portal-frontend/src/app/api/v1/%5B...path%5D/route.ts)
+- [Navigation](../../../apps/portal-frontend/src/components/layout/Sidebar.tsx)

@@ -41,7 +41,7 @@ fi
 echo -e "${BLUE}[1/4] Ativando ambiente virtual...${NC}"
 source venv/bin/activate 2>/dev/null || . venv/bin/activate 2>/dev/null || {
     echo -e "${RED}❌ Erro ao ativar venv${NC}"
-    echo -e "${YELLOW}Execute: bash setup_backend.sh${NC}"
+    echo -e "${YELLOW}Execute: bash instalar_dependencias.sh${NC}"
     exit 1
 }
 echo -e "${GREEN}✅ Venv ativado${NC}"
@@ -69,7 +69,7 @@ echo ""
 echo -e "${BLUE}[3/4] Validando imports...${NC}"
 python -c "from src.main import app; print('✅ App OK')" 2>/dev/null || {
     echo -e "${RED}❌ Erro ao importar app!${NC}"
-    echo -e "${YELLOW}Execute: bash setup_backend.sh para recriar ambiente${NC}"
+    echo -e "${YELLOW}Execute: bash instalar_dependencias.sh para recriar o ambiente${NC}"
     exit 1
 }
 echo -e "${GREEN}✅ Imports OK${NC}"

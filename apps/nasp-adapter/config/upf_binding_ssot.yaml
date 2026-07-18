@@ -1,15 +1,15 @@
 contract_version: UPF_CONTRACT_SSOT_V1
 upf:
   core_namespace_env: NASP_FREE5GC_NAMESPACE
-  core_namespace: ns-1274485
+  core_namespace: free5gc
   pod_label: nf=upf
   log_tail_lines: 3000
   observation_window_seconds: 300
 lab:
   upf_node_name: UPF
-  upf_n4_addr: "10.233.75.38"
-  upf_gtpu_addr: "10.233.75.38"
-  upf_n6_addr: "192.168.100.74"
+  upf_n4_addr: ""
+  upf_gtpu_addr: ""
+  upf_n6_addr: ""
   default_supi: "imsi-208930000000001"
   pdu_snssai:
     sst: 1

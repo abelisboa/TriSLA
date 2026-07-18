@@ -1,68 +1,68 @@
-# ML-NSMF Interfaces
+# ML-NSMF HTTP Interface
 
-> Specialized reference. Canonical cross-module interface truth: [`docs/modules/interfaces.md`](../../modules/interfaces.md).
+Base port: `8081`.
 
-> **Operational entry point:** [`docs/modules/ml-nsmf.md`](../../modules/ml-nsmf.md)
+## Endpoints
 
-## Primary — HTTP I-05 (Production SSOT)
+| Method | Path | Response |
+|---|---|---|
+| `GET` | `/health` | Service and active model status |
+| `GET` | `/metrics` | Prometheus text format |
+| `POST` | `/api/v1/predict` | Prediction and explanation JSON |
 
-| Property | Value |
-|----------|-------|
-| Direction | Decision Engine → ML-NSMF |
-| Transport | HTTP |
-| Method | `POST` |
-| Path | `/api/v1/predict` |
-| Port | `8081` |
-| Classification | **SOLE INFERENCE INGRESS** |
-| Client | `apps/decision-engine/src/ml_client.py` |
-| Server | `apps/ml-nsmf/src/main.py` → `DualLoadService.predict` |
+## Prediction request
 
-### Request
+`POST /api/v1/predict` accepts a JSON object. The Decision Engine supplies these primary fields:
 
-JSON feature dict (see canonical doc § Request contract). Built by DE from SLA intent + context. Some telemetry fields are **sent but not consumed** by ML feature builder.
+| Field | Meaning |
+|---|---|
+| `intent_id` | SLA intent identifier |
+| `correlation_id` | Request correlation identifier |
+| `slice_type` | `eMBB`, `URLLC`, or `mMTC` |
+| `latency` | Maximum latency in milliseconds |
+| `throughput` | Requested throughput in Mbps |
+| `reliability` | Reliability ratio |
+| `jitter` | Jitter in milliseconds |
+| `packet_loss` | Packet-loss ratio |
+| `cpu_utilization` | CPU utilization ratio |
+| `memory_utilization` | Memory utilization ratio |
+| `network_bandwidth_available` | Available bandwidth in Mbps |
+| `active_slices_count` | Number of active slices |
+| `ran_prb_utilization` | RAN PRB utilization |
+| `transport_latency_ms` | Transport latency |
+| `core_cpu_utilization` | Core CPU utilization ratio |
+| `core_memory_utilization` | Core memory utilization |
 
-### Response
+Example:
 
 ```json
 {
-  "latency_ms": <float>,
-  "prediction": { "risk_score", "viability_score", "slice_adjusted_risk_score", ... },
-  "explanation": { "method", "features_importance", "reasoning", "top_factors", ... }
+  "intent_id": "intent-001",
+  "correlation_id": "request-001",
+  "slice_type": "URLLC",
+  "latency": 10,
+  "throughput": 100,
+  "reliability": 0.999,
+  "jitter": 2,
+  "packet_loss": 0.001,
+  "cpu_utilization": 0.35,
+  "memory_utilization": 0.40,
+  "network_bandwidth_available": 1000,
+  "active_slices_count": 2
 }
 ```
 
-ML-NSMF **does not** return final SLA decisions. DE maps scores to ACCEPT / RENEG / REJECT.
+## Prediction response
 
----
+The response contains two objects:
 
-## Conditional — Kafka Producer (I-03 legacy async)
+- `prediction`: `risk_score`, `risk_level`, `viability_score`, `confidence`, latency, timestamp, model metadata, and timing values.
+- `explanation`: explanation method, feature importance values, reasoning, and explanation timing.
 
-| Property | Value |
-|----------|-------|
-| Direction | ML-NSMF → (optional) async consumers |
-| Topic | `trisla-ml-predictions` |
-| Runtime | **CONDITIONAL** — `KAFKA_ENABLED=false` by default |
-| Hot path | **NO** — HTTP response is authoritative; producer is fire-and-forget side effect after predict |
+Risk mapping performed by the predictor:
 
-Also defined (not called from `/predict` hot path): `trisla-ml-xai` via `send_xai_explanation`.
+- `risk_score > 0.7`: `high`
+- `risk_score > 0.4`: `medium`
+- otherwise: `low`
 
----
-
-## Not production SSOT
-
-| Path | Status |
-|------|--------|
-| SEM-CSMF → Kafka → ML-NSMF | **OBSOLETE** — SEM does not push to ML via Kafka in production; DE calls HTTP |
-| Kafka consumer `nasp-metrics` | **CONDITIONAL / NOT HOT PATH** — `MetricsConsumer` not invoked on predict |
-| Direct Portal / SEM → ML | **NOT IMPLEMENTED** on admission path |
-
----
-
-## Integration summary (frozen)
-
-```text
-Decision Engine POST /evaluate
-    → POST /api/v1/predict (ML-NSMF)
-    → HTTP response
-    → Decision Engine admission rules
-```
+The endpoint implementation is in [`main.py`](../../../apps/ml-nsmf/src/main.py).

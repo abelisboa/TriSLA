@@ -1,65 +1,64 @@
-# SLA-Agent Interfaces
+# SLA-Agent REST Interfaces
 
-> Specialized reference. Canonical cross-module interface truth: [`docs/modules/interfaces.md`](../../modules/interfaces.md).
-
-**Canonical reference:** [`docs/modules/sla-agent-layer.md`](../../modules/sla-agent-layer.md)
-
-## Primary interface
-
-| Caller | Method | Path | Classification |
-|--------|--------|------|----------------|
-| Portal Backend | POST | `/api/v1/agent/revalidate-telemetry` | PRIMARY / SOLE REVALIDATE AUTHORITY |
-
-Portal Backend exposes its public revalidation route and delegates the reassessment to the SLA-Agent internal endpoint. The SLA-Agent then collects telemetry, evaluates compliance, generates explainability, runs runtime assurance, and returns the result to the Portal.
+Base service address inside the cluster:
 
 ```text
-Portal Backend
-    -> POST /api/v1/agent/revalidate-telemetry
-SLA-Agent
-    -> Prometheus Collector
-    -> Compliance
-    -> Explainability
-    -> Runtime Assurance
-    -> Portal Backend
+http://trisla-sla-agent-layer:8084
 ```
 
-## Conditional pipeline interface
+## Health and metrics
 
-| Caller | Method | Path | Classification |
-|--------|--------|------|----------------|
-| Portal Backend | POST | `/api/v1/ingest/pipeline-event` | CONDITIONAL |
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/health` | Report service and domain-agent health |
+| `GET` | `/metrics` | Return Prometheus metrics |
 
-Active only after:
+## Domain and coordination APIs
 
-```text
-ACCEPT
-+
-ORCHESTRATION SUCCESS
-+
-BC COMMITTED
+| Method | Path |
+|---|---|
+| `POST` | `/api/v1/agents/ran/collect` |
+| `POST` | `/api/v1/agents/ran/action` |
+| `POST` | `/api/v1/agents/transport/collect` |
+| `POST` | `/api/v1/agents/transport/action` |
+| `POST` | `/api/v1/agents/core/collect` |
+| `POST` | `/api/v1/agents/core/action` |
+| `GET` | `/api/v1/metrics/realtime` |
+| `GET` | `/api/v1/slos` |
+| `POST` | `/api/v1/coordinate` |
+| `POST` | `/api/v1/policies/federated` |
+
+## Runtime and pipeline APIs
+
+| Method | Path | Purpose |
+|---|---|---|
+| `POST` | `/api/v1/runtime-assurance/evaluate` | Evaluate current telemetry against SLA requirements |
+| `POST` | `/api/v1/agent/revalidate-telemetry` | Revalidate a telemetry snapshot |
+| `POST` | `/api/v1/ingest/pipeline-event` | Receive a pipeline lifecycle event |
+| `GET` | `/api/v1/admission/gate` | Return the current admission gate state |
+
+## Actuation record APIs
+
+| Method | Path |
+|---|---|
+| `POST` | `/api/v1/actuation/request` |
+| `POST` | `/api/v1/actuation/authorize` |
+| `POST` | `/api/v1/actuation/execute` |
+| `POST` | `/api/v1/actuation/verify` |
+| `POST` | `/api/v1/actuation/rollback` |
+| `POST` | `/api/v1/actuation/expire` |
+| `GET` | `/api/v1/actuation/records/{request_id}` |
+| `GET` | `/api/v1/actuation/records` |
+
+## Read-only checks
+
+```bash
+curl http://trisla-sla-agent-layer:8084/health
+curl http://trisla-sla-agent-layer:8084/api/v1/slos
 ```
 
-## Other runtime interfaces
+OpenAPI is available at `/openapi.json` when the service is reachable. Request schemas for state-changing endpoints are defined there.
 
-| Method | Path | Classification |
-|--------|------|----------------|
-| GET | `/health` | ACTIVE |
-| GET | `/metrics` | ACTIVE |
-| POST | `/api/v1/runtime-assurance/evaluate` | ACTIVE |
-| POST | `/api/v1/agents/ran/collect` | CONDITIONAL / NOT HOT PATH |
-| POST | `/api/v1/agents/transport/collect` | CONDITIONAL / NOT HOT PATH |
-| POST | `/api/v1/agents/core/collect` | CONDITIONAL / NOT HOT PATH |
-| POST | `/api/v1/coordinate` | CONDITIONAL / NOT HOT PATH |
-| GET | `/api/v1/slos` | CONDITIONAL / NOT HOT PATH |
-| `/api/v1/actuation/*` | CONDITIONAL / NOT WIRED |
-| POST | `/api/v1/s29/create-snapshot` | RESEARCH / NOT HOT PATH |
-| POST | `/api/v1/s29/generate-explanation` | RESEARCH / NOT HOT PATH |
+## Source
 
-## Non-primary interfaces
-
-| Interface | Status |
-|-----------|--------|
-| Legacy Kafka action ingress | NOT STARTED as production ingress |
-| Kafka I-06 / I-07 | NOT HOT PATH |
-| Legacy Kafka-mediated SLA-Agent chain | NOT PRIMARY |
-| Domain agents as primary interface | NOT PRIMARY |
+- [FastAPI implementation](../../../apps/sla-agent-layer/src/main.py)

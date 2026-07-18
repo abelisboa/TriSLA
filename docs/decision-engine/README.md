@@ -1,20 +1,27 @@
-# Decision Engine — Documentation Index
+# Decision Engine
 
-**Operational reference:** [`docs/modules/decision-engine.md`](../modules/decision-engine.md)
+The Decision Engine is the admission component for TriSLA. SEM-CSMF calls `POST /evaluate` with a normalized intent, an optional NEST, and an optional telemetry snapshot. The service obtains an ML-NSMF prediction and returns an admission action with supporting metadata.
 
-This directory holds specialized references only. Admission logic, thresholds, explainability, observability, and integrations are documented in the operational module doc — not duplicated here.
+## Runtime contract
 
-## Contents
+- HTTP service: `8082`
+- gRPC listener: `50051`
+- Health: `GET /health`
+- Metrics: `GET /metrics`
+- Evaluation: `POST /evaluate`
+- Kubernetes service: `trisla-decision-engine`
 
-| Document | Purpose |
-|----------|---------|
-| [`interfaces/interfaces.md`](interfaces/interfaces.md) | I-01 HTTP contract — field classification, Wave 1/3A echo rules |
-| [`architecture/decision_engine_architecture.md`](architecture/decision_engine_architecture.md) | Pointer to canonical architecture section |
-| [`model/decision_model.md`](model/decision_model.md) | Research / scientific model — **NOT OPERATIONAL SSOT** |
-| [`pipeline/decision_flow.md`](pipeline/decision_flow.md) | Pointer to canonical runtime path |
+The Helm chart configures `ML_NSMF_HTTP_URL` with the in-cluster ML-NSMF service address. Kafka processing is controlled by `KAFKA_ENABLED`; the HTTP evaluation path does not require a client to use Kafka.
 
-## External SSOT (read-only)
+## Documentation
 
-- `apps/decision-engine/src/` — implementation
-- `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json` — operational digest
-- `interface-registry/i01/I01_SCHEMA_REGISTRY.json` — I-01 schema
+- [Architecture](architecture/decision_engine_architecture.md)
+- [HTTP interface](interfaces/interfaces.md)
+- [Evaluation flow](pipeline/decision_flow.md)
+
+## Implementation
+
+- [Application](../../apps/decision-engine/src/main.py)
+- [Models](../../apps/decision-engine/src/models.py)
+- [Service](../../apps/decision-engine/src/service.py)
+- [Engine](../../apps/decision-engine/src/engine.py)

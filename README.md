@@ -131,7 +131,7 @@ helm/
 - [Project documentation](docs/README.md)
 - [Canonical module documentation](docs/modules/)
 - [Runtime interface chain](docs/modules/interfaces.md)
-- [Governance reference](docs/modules/governance.md)
+- [License: Apache-2.0](LICENSE)
 - [SEM-CSMF](docs/modules/sem-csmf.md)
 - [Decision Engine](docs/modules/decision-engine.md)
 - [ML-NSMF](docs/modules/ml-nsmf.md)

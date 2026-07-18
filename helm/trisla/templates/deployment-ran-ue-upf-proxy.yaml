@@ -1,0 +1,69 @@
+{{- if .Values.ranUeUpfProxy.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trisla.name" . }}-ran-ue-upf-proxy
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "trisla.labels" . | nindent 4 }}
+    app.kubernetes.io/name: trisla-ran-ue-upf-proxy
+spec:
+  replicas: {{ .Values.ranUeUpfProxy.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trisla-ran-ue-upf-proxy
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: trisla-ran-ue-upf-proxy
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: ran-ue-upf-proxy
+          image: {{ include "trisla.image" (dict "Values" .Values "image" .Values.ranUeUpfProxy.image) }}
+          imagePullPolicy: {{ .Values.ranUeUpfProxy.image.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.ranUeUpfProxy.service.port }}
+              protocol: TCP
+          env:
+            - name: PORT
+              value: {{ .Values.ranUeUpfProxy.service.port | quote }}
+            - name: PROMETHEUS_URL
+              value: {{ .Values.ranUeUpfProxy.prometheusUrl | quote }}
+            - name: RAN_PROXY_NAMESPACE
+              value: {{ .Values.ranUeUpfProxy.namespace | quote }}
+            - name: RAN_PROXY_UPF_POD_REGEX
+              value: {{ .Values.ranUeUpfProxy.upfPodRegex | quote }}
+            - name: RAN_PROXY_UE_POD_REGEX
+              value: {{ .Values.ranUeUpfProxy.uePodRegex | quote }}
+            - name: RAN_PROXY_N6_PEER_POD
+              value: {{ .Values.ranUeUpfProxy.n6PeerPod | quote }}
+            - name: RAN_PROXY_N6_INTERFACE
+              value: {{ .Values.ranUeUpfProxy.n6Interface | quote }}
+            - name: RAN_PROXY_RATE_WINDOW
+              value: {{ .Values.ranUeUpfProxy.rateWindow | quote }}
+            - name: RAN_PROXY_MAX_THROUGHPUT_BPS
+              value: {{ .Values.ranUeUpfProxy.maxThroughputBps | quote }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: metrics
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: metrics
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+{{- end }}
+

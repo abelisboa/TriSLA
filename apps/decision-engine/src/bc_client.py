@@ -68,8 +68,16 @@ else:
     from models import DecisionResult, DecisionAction
     
     tracer = trace.get_tracer(__name__)
-    
-    
+
+    def _required_private_key() -> str:
+        private_key = os.getenv("TRISLA_PRIVATE_KEY", "").strip()
+        if not private_key:
+            raise RuntimeError(
+                "TRISLA_PRIVATE_KEY deve ser fornecida por secret externo quando BC_ENABLED=true"
+            )
+        return private_key
+
+
     class BCClient:
         """
         Cliente para comunicação com BC-NSSMF (Interface I-06)
@@ -137,16 +145,8 @@ else:
                         abi=self.abi,
                     )
 
-                    accounts = self.w3.eth.accounts
-                    if accounts:
-                        self.account = accounts[0]
-                    else:
-                        from eth_account import Account
-                        private_key = os.getenv(
-                            "TRISLA_PRIVATE_KEY",
-                            "0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
-                        )
-                        self.account = Account.from_key(private_key).address
+                    from eth_account import Account
+                    self.account = Account.from_key(_required_private_key()).address
 
                     span.set_attribute("bc.contract_address", self.contract_address)
                     span.set_attribute("bc.account", self.account)
@@ -237,10 +237,7 @@ else:
                     })
                     
                     # Assinar e enviar transação
-                    private_key = os.getenv(
-                        "TRISLA_PRIVATE_KEY",
-                        "0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"
-                    )
+                    private_key = _required_private_key()
                     from eth_account import Account
                     account = Account.from_key(private_key)
                     signed_tx = account.sign_transaction(tx)
@@ -293,10 +290,7 @@ else:
                         "gasPrice": self.w3.to_wei("1", "gwei")
                     })
                     
-                    private_key = os.getenv(
-                        "TRISLA_PRIVATE_KEY",
-                        "0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"
-                    )
+                    private_key = _required_private_key()
                     from eth_account import Account
                     account = Account.from_key(private_key)
                     signed_tx = account.sign_transaction(tx)

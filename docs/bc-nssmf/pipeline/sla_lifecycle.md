@@ -1,27 +1,41 @@
-# SLA Lifecycle — BC-NSSMF
+# BC-NSSMF SLA Lifecycle
 
-**Operational reference:** [`docs/modules/bc-nssmf.md`](../../modules/bc-nssmf.md)
-
-## Production hot path
+## Registration
 
 ```text
-1. Portal Backend receives ACCEPT from SEM admission pipeline
-2. Portal orchestrates via NASP Adapter
-3. If orchestration SUCCESS → Portal POST /api/v1/register-sla
-4. BC-NSSMF submits SLAContract.registerSLA() to Besu
-5. tx_hash + block_number returned to Portal
-6. Portal composes governance metadata and PATCHes SEM (10G.4)
-7. Frontend renders Governance Panel (10G.8)
+SLA payload
+   │
+   ├─ normalize SLO collection
+   ├─ derive contract arguments
+   ├─ sign and send transaction
+   ├─ wait for receipt
+   └─ return COMMITTED only when receipt.status = 1
 ```
 
-## NOT HOT PATH — obsolete narrative
+Registration accepts supported current payloads and a compatibility payload. Latency, throughput, reliability, and slice information are converted to the integer contract representation when supplied through `sla_requirements`.
 
-The following sequence is **not** the production commit ingress:
+## Status changes
+
+The status endpoint maps these public values to the contract representation:
 
 ```text
-Decision Engine → Kafka → BC-NSSMF   ← NOT STARTED / NOT HOT PATH
+CREATED → ACTIVE → VIOLATED or RENEGOTIATED → CLOSED
 ```
 
-Kafka consumer code exists in `apps/bc-nssmf/src/kafka_consumer.py` but is never started. Decision Engine does not call BC-NSSMF HTTP on the frozen submit path.
+The API validates the supplied status before sending a transaction. A successful response includes the new status and confirmed transaction information.
 
-For full lifecycle and governance composition, see Portal `sla.py` and [`docs/TRISLA_E2E_FLOW_CANONICAL.md`](../../TRISLA_E2E_FLOW_CANONICAL.md).
+## Lookup
+
+`GET /api/v1/get-sla/{sla_id}` reads contract state and returns the customer, service name, status, creation time, and update time. A missing SLA returns `404`.
+
+## Error boundaries
+
+- Invalid payload or unsupported status: `422`.
+- Blockchain or signing infrastructure unavailable: `503`.
+- Missing SLA: `404`.
+- Unexpected processing error: `500`.
+
+## References
+
+- [API implementation](../../../apps/bc-nssmf/src/main.py)
+- [Blockchain service](../../../apps/bc-nssmf/src/service.py)
