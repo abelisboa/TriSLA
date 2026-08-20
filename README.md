@@ -1,4 +1,4 @@
-# TriSLA
+# TriSLA: A Preventive and Closed-Loop SLA-Aware Architecture for Explainable Multidomain Admission in 5G Networks
 
 ## Overview
 
@@ -7,12 +7,12 @@ multidomain admission in 5G networks. It evaluates whether a requested network
 slice can be sustained before infrastructure resources are committed and then
 uses runtime telemetry to supervise the admitted service.
 
-The current scientific baseline integrates semantic intent processing,
+TriSLA integrates semantic intent processing,
 machine-learning feasibility inference, explainable admission decisions,
 multidomain orchestration across RAN, Transport Network (TN), and 5G Core
 (5GC), and closed-loop runtime assurance.
 
-## Scientific Architecture
+## Architecture
 
 The current architecture is organized into three functional tiers:
 
@@ -26,7 +26,7 @@ The scientific interfaces are OBS-I1, RAN-I1, TN-I1, CN-I1, and SLAA-I1.
 Control-plane services communicate through synchronous REST APIs using
 structured JSON over HTTP and Kubernetes ClusterIP service discovery.
 
-## Main Components
+## Components
 
 | Component | Scientific role |
 | --- | --- |
@@ -126,7 +126,7 @@ including BC-NSSMF, Hyperledger Besu and smart-contract governance, Kafka and
 gRPC integration code, internal I-01 through I-06 runtime contracts, and an
 earlier UI dashboard. These artifacts remain available for implementation
 traceability and further experimentation, but they are not components of the
-current scientific architecture described by the updated article.
+architecture described in the current article.
 
 Relevant references include:
 
@@ -135,8 +135,8 @@ Relevant references include:
 - [Module documentation](docs/modules/)
 - [License: Apache-2.0](LICENSE)
 
-## Scientific Reference
+## Documentation
 
-The current article baseline is:
+Reference article:
 
 > TriSLA: A Preventive and Closed-Loop SLA-Aware Architecture for Explainable Multidomain Admission in 5G Networks
