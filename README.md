@@ -112,6 +112,10 @@ kubectl exec -n trisla deploy/trisla-nasp-adapter -- curl -s http://localhost:80
 
 Detailed installation, telemetry, blockchain, and admission validation steps are in [docs/README.md](docs/README.md).
 
+## Experimental Dataset
+
+The consolidated experimental dataset used in the evaluation of TriSLA is available in [`datasets/`](datasets/).
+
 ## Repository Structure
 
 ```text
