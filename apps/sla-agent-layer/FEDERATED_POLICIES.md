@@ -1,5 +1,9 @@
 # Políticas Federadas - SLA-Agent Layer
 
+> **Historical/experimental policy reference.** The internal `I-06` contract
+> documented here belongs to the preserved implementation. The current
+> scientific interface is `SLAA-I1`.
+
 ## Visão Geral
 
 Políticas federadas permitem ações coordenadas entre múltiplos domínios (RAN, Transport, Core) no SLA-Agent Layer.

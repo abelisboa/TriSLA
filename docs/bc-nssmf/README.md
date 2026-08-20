@@ -1,5 +1,9 @@
 # BC-NSSMF
 
+> **Historical implementation extension.** This material preserves the
+> blockchain prototype and its operational contract. It is not part of the
+> current scientific architecture or article-aligned pipeline.
+
 BC-NSSMF records SLA state through a Hyperledger Besu network. It exposes a FastAPI service for registration, status changes, lookup, and contract-operation requests.
 
 ## Runtime contract

@@ -1,5 +1,9 @@
 # BC-NSSMF Module
 
+> **Historical implementation extension.** This module documents a preserved
+> blockchain prototype capability. BC-NSSMF and Besu are not components of the
+> current scientific architecture or pipeline.
+
 BC-NSSMF provides the blockchain-facing SLA persistence boundary. It accepts SLA registration and status requests, signs Besu transactions, waits for successful receipts, and exposes stored SLA state.
 
 ## Public contract

@@ -1,5 +1,10 @@
 # Observability Module
 
+> **Scientific mapping.** The article-aligned stack is Prometheus, Grafana,
+> OpenTelemetry, and Jaeger in the Observability and Runtime Assurance tier.
+> Tempo is a separately deployed implementation option beyond the current
+> article baseline.
+
 TriSLA uses health endpoints, Prometheus-format metrics, and OTLP trace export to expose runtime state without changing service decisions.
 
 ## Public surfaces

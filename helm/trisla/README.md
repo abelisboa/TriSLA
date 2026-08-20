@@ -1,5 +1,9 @@
 # TriSLA Helm Chart
 
+> **Documentation level — experimental deployment configuration.** This chart
+> preserves prototype deployment settings; configuration flags do not establish
+> production validation or production readiness.
+
 Helm chart for full TriSLA deployment on Kubernetes.
 
 Initial Public Release alignment: v1.0.0.
@@ -27,7 +31,7 @@ This values file is used for real-environment deployment and includes:
 
 - NASP network settings;
 - domain controller endpoints (RAN, Transport, Core);
-- production-oriented runtime parameters.
+- deployment-oriented runtime parameters.
 
 ## Important Values
 
@@ -37,7 +41,10 @@ This values file is used for real-environment deployment and includes:
 - `network.nodeIP`: node IP used for runtime integration
 - `network.gateway`: default gateway
 
-### Production Settings
+### Experimental Deployment Configuration
+
+These names and values are preserved configuration flags; they do not by
+themselves constitute evidence of a production-validated deployment.
 
 - `production.enabled`: `true`
 - `production.simulationMode`: `false` (real execution path)

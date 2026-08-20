@@ -1,5 +1,9 @@
 # Decision Engine — Regras de Decisão Formais
 
+> **Historical/experimental policy reference.** This 2025 rule set is preserved
+> as implementation evidence; it is not the current article's scientific
+> architecture baseline.
+
 **Versão:** 3.7.4  
 **Fase:** D (Decision Engine)  
 **Data:** 2025-01-27

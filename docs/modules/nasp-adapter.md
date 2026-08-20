@@ -1,5 +1,13 @@
 # NASP Adapter
 
+## Documentation Level
+
+**Implementation / Runtime Details.** In the current scientific architecture,
+NASP Adapter / NASP forms the Execution Layer and coordinates provisioning
+through RAN-I1, TN-I1, and CN-I1 across RAN, TN, and 5GC. Internal O1C-O6,
+I-07, and blockchain references below document preserved runtime extensions and
+do not redefine the current scientific pipeline.
+
 ## Runtime Position In TriSLA Flow
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
@@ -12,7 +20,7 @@ Telemetry canonical reference: [docs/modules/telemetry.md](telemetry.md). NASP A
 > Deep dives: [`docs/nasp-adapter/`](../nasp-adapter/README.md) (architecture, integration, interfaces, model, observability).
 > Implementation SSOT: `apps/nasp-adapter/`. Digest SSOT: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.
 
-## Role (frozen architecture)
+## Role in the Preserved Public Runtime
 
 NASP Adapter is the **post-admission orchestration and infrastructure integration layer**. It provisions Network Slice Instances (NSI) on Kubernetes, exposes multidomain metrics, and relays SLA registration to SEM-CSMF.
 
@@ -30,7 +38,7 @@ NASP Adapter is the **post-admission orchestration and infrastructure integratio
 - Register on-chain (BC-NSSMF — Portal relay after orchestration)
 - Receive direct admission requests from Decision Engine
 
-Position in the frozen chain:
+Position in the preserved implementation chain:
 
 ```text
 Portal → SEM-CSMF → Decision Engine → ACCEPT

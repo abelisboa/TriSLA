@@ -1,5 +1,9 @@
 # TriSLA Portal
 
+> **Documentation level — implementation detail.** The Portal supports the
+> prototype but is not a named component of the current scientific architecture.
+> Its BC-NSSMF interaction is a preserved historical extension.
+
 The TriSLA Portal provides a web interface and an HTTP gateway for submitting SLA requests, viewing admission results, checking platform health, and inspecting runtime telemetry.
 
 ## Components

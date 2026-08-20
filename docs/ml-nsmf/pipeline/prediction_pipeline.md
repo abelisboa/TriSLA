@@ -1,5 +1,16 @@
 # ML Prediction Flow
 
+## Scientific Baseline versus Runtime Detail
+
+In the current article, the evaluated ML baseline is a Random Forest classifier
+with detailed SHAP attribution executed asynchronously in a background worker.
+The article reports a cumulative predictive latency of 231.66 ms, including
+118.59 ms of explainability overhead.
+
+The sequence below documents the preserved public runtime implementation. Its
+conditional SHAP/LIME/fallback explanation may be assembled on the request path
+and must not be presented as the scientific prototype's background SHAP path.
+
 ## Processing sequence
 
 1. The FastAPI endpoint receives the JSON feature payload.

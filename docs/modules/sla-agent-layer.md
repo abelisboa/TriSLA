@@ -1,5 +1,10 @@
 # SLA-Agent Layer Module
 
+> **Scientific mapping.** SLA-Agent is the current runtime-assurance component
+> exposed through `SLAA-I1`. The service endpoints and coordinator details below
+> are implementation documentation. Domain mutation is disabled by default in
+> the documented chart, which remains an experimental limitation.
+
 The SLA-Agent Layer coordinates RAN, transport, and core agents and provides runtime SLA evaluation, domain metrics, pipeline integration, and actuation record management.
 
 ## Public contract

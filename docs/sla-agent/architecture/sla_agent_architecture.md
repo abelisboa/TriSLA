@@ -1,5 +1,10 @@
 # SLA-Agent Architecture
 
+> **Scientific mapping.** SLA-Agent implements runtime assurance through
+> `SLAA-I1`. BC-NSSMF and Kafka dependencies shown here are preserved
+> implementation or historical extensions, not components of the current
+> scientific architecture.
+
 ## Component view
 
 ```text

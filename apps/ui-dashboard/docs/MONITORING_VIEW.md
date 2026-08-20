@@ -1,5 +1,8 @@
 # Monitoring View - SLA Dashboard
 
+> **Historical implementation UI.** This dashboard is preserved as prototype
+> evidence and is not the current scientific architecture entry point.
+
 ## Overview
 
 The Monitoring View provides real-time visibility into SLA operations, including decision statistics, service type distribution, and detailed SLA history with XAI explanations.

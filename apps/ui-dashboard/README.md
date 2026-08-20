@@ -1,5 +1,8 @@
 # UI Dashboard - TriSLA
 
+> **Historical implementation UI.** This dashboard is preserved as prototype
+> evidence and is not the current scientific architecture entry point.
+
 Interface web completa, moderna e responsiva para o TriSLA.
 
 ## Estrutura

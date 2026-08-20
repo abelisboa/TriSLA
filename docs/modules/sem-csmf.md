@@ -1,5 +1,13 @@
 # SEM-CSMF
 
+## Documentation Level
+
+**Implementation / Runtime Details.** In the current scientific architecture,
+SEM-CSMF belongs to the Intelligence Layer and performs semantic request
+processing and canonical NEST generation. References below to I-01/I-02,
+governance metadata, Kafka, or gRPC describe preserved internal implementation
+contracts or historical extensions, not the scientific interface taxonomy.
+
 ## Runtime Position In TriSLA Flow
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
@@ -17,7 +25,7 @@ Telemetry canonical reference: [docs/modules/telemetry.md](telemetry.md). SEM-CS
 > Deep dives: [`docs/sem-csmf/`](../sem-csmf/README.md) (architecture, pipeline, interfaces, ontology, examples).
 > Implementation SSOT: `apps/sem-csmf/`. Digest SSOT: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.
 
-## Role (frozen architecture)
+## Role in the Preserved Public Runtime
 
 SEM-CSMF is the **semantic front layer**. It interprets SLA intents, validates them against the ontology, materializes GST/NEST artifacts, and forwards structured input to the Decision Engine via **I-01 HTTP**.
 
@@ -36,7 +44,7 @@ SEM-CSMF is the **semantic front layer**. It interprets SLA intents, validates t
 - Orchestrate NASP or register on-chain (Portal → NASP Adapter / BC-NSSMF)
 - Publish to Kafka in the production `/intents` path (I-02 is **LEGACY** code only)
 
-Position in the frozen chain:
+Position in the preserved implementation chain:
 
 ```text
 Portal Backend → SEM-CSMF → Decision Engine (I-01 HTTP)

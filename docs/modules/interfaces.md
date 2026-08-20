@@ -1,10 +1,38 @@
 # Interfaces
 
+## Documentation Level
+
+This document contains two explicitly separate levels: the interface names used
+by the current scientific architecture and the internal contracts preserved by
+the public implementation. Internal identifiers do not redefine the scientific
+interface taxonomy.
+
+## Scientific Interfaces
+
+The current article defines these scientific interfaces:
+
+| Interface | Scientific boundary |
+| --- | --- |
+| `OBS-I1` | Multidomain telemetry and observability input used by admission and runtime assurance. |
+| `RAN-I1` | Southbound provisioning and observation for the RAN domain. |
+| `TN-I1` | Southbound provisioning and observation for the transport domain. |
+| `CN-I1` | Southbound provisioning and observation for the 5GC domain. |
+| `SLAA-I1` | Runtime-supervision initialization and assurance exchange with SLA-Agent. |
+
+The scientific control plane relies on synchronous REST APIs, structured JSON
+over HTTP, and Kubernetes `ClusterIP` service discovery.
+
+## Internal / Frozen Runtime Contracts
+
+I-01 through I-06 below are preserved implementation contract identifiers.
+They describe the frozen public runtime and are not interface names from the
+current scientific article.
+
 ## Runtime Position In TriSLA Flow
 
-This document is the canonical runtime-flow reference for module positioning and interface ordering. Other module documents point here instead of duplicating the full chain.
+This document is the implementation runtime-flow reference for module positioning and internal contract ordering. Other module documents point here instead of duplicating the full chain.
 
-> Operational Interfaces Entry Point. This document is the canonical interface
+> Operational Interfaces Entry Point. This document is the implementation interface
 > entry point for the frozen TriSLA runtime. Module-specific interface files are
 > specialized references and must not override this runtime truth.
 
@@ -37,7 +65,7 @@ TRACEABILITY_ONLY
 Runtime notes such as "hot path", "response path", or "not callback" describe
 position in the flow. They do not create new classifications.
 
-## Runtime Interface Chain
+## Preserved Implementation Runtime Chain
 
 ```text
 Portal Frontend

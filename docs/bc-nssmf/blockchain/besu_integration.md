@@ -1,5 +1,9 @@
 # Besu Integration
 
+> **Historical implementation extension.** This material preserves the
+> blockchain prototype and its operational contract. It is not part of the
+> current scientific architecture or article-aligned pipeline.
+
 BC-NSSMF uses Hyperledger Besu through HTTP JSON-RPC. The deployed network reports chain ID `1337`.
 
 ## Network endpoints

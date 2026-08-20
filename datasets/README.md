@@ -1,7 +1,9 @@
 # TriSLA Experimental Dataset
 
 This directory contains the consolidated experimental dataset used for the
-evaluation of the TriSLA architecture.
+evaluation of the TriSLA architecture. All reported evaluations use this one
+consolidated dataset, with objective-specific subsets for the different
+evaluation tasks.
 
 ## Dataset files
 
@@ -51,9 +53,13 @@ TriSLA, including data associated with:
 - end-to-end lifecycle measurements.
 
 The dataset includes measurements associated with RAN, transport, core,
-semantic processing, machine-learning inference and explainability,
-blockchain governance, admission decisions, runtime assurance, and end-to-end
-processing.
+semantic processing, machine-learning inference and explainability, admission
+decisions, runtime assurance, and end-to-end processing.
+
+The schema also preserves blockchain-governance fields from earlier
+implementation or experimental campaigns. Their presence does not make
+blockchain part of the current scientific pipeline described by the updated
+article.
 
 ## Integrity
 

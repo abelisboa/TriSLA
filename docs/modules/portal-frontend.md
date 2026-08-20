@@ -1,5 +1,10 @@
 # Portal Frontend
 
+> **Documentation level — implementation/runtime detail.** Portal Frontend is an
+> operational visualization client, not a component of the current scientific
+> architecture. Blockchain governance visualization below is a preserved
+> historical implementation extension.
+
 ## Runtime Position In TriSLA Flow
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
@@ -14,11 +19,11 @@ Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 > split.
 
 
-## Canonical Governance Reference
+## Preserved Governance Extension Reference
 
 Cross-module flow and evidence boundaries are documented in [`docs/modules/interfaces.md`](interfaces.md). Portal Frontend is the **Governance Visualization Layer**: it renders governance evidence and metadata, but does not generate them.
 
-## Official Identity
+## Implementation Identity
 
 Portal Frontend is the user-facing web interface for TriSLA workflows. Its
 official responsibility is:
@@ -45,7 +50,7 @@ its proxied API surface.
 
 ## Runtime Architecture Truth
 
-Canonical runtime flow:
+Preserved implementation flow:
 
 ```text
 Frontend

@@ -1,5 +1,10 @@
 # Telemetry Layer
 
+> **Scientific mapping.** TELEMETRY belongs to the Observability and Runtime
+> Assurance tier and exposes the article-aligned `OBS-I1` interface. The detailed
+> collectors, proxies, and internal chains below describe the preserved
+> implementation.
+
 > **Operational entry point** for TriSLA multidomain telemetry.
 > PromQL definitions are maintained with the active collectors and Helm monitoring resources.
 > Implementation SSOT: `apps/portal-backend/src/telemetry/`, `apps/sla-agent-layer/src/revalidate/`, `apps/sem-csmf/src/decision_engine_client.py`, `apps/decision-engine/src/`, and `apps/nasp-adapter/src/metrics_collector.py`.
@@ -9,7 +14,7 @@
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
 
-## Frozen Status
+## Preserved Runtime Status
 
 | Property | Status |
 |----------|--------|
@@ -46,7 +51,7 @@ The Telemetry Layer is the **Multidomain Telemetry Collection and Distribution L
 - Native 3GPP PM ingestion for unavailable metrics
 - OTEL-derived telemetry snapshots
 
-## Official Operational Chain
+## Preserved Implementation Telemetry Chain
 
 ```text
 UERANSIM

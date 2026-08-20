@@ -1,5 +1,39 @@
 # ML-NSMF
 
+## Documentation Level
+
+This page separates the **Current Scientific ML Baseline** from the
+**Preserved Runtime / Implementation Artifacts**. Both are documented from
+their respective evidence and must not be treated as the same model artifact.
+
+## Current Scientific ML Baseline
+
+The article evaluates a model-agnostic ML-NSMF whose default model
+is a scikit-learn Random Forest classifier with 320 trees, 19 features, and an
+approximate size of 0.36 MB.
+
+| Model | Article-reported accuracy |
+| --- | ---: |
+| Random Forest | `98.68 +/- 0.48%` |
+| XGBoost | `99.51 +/- 0.33%` |
+| LightGBM | `99.17 +/- 0.56%` |
+| LSTM | `92.78 +/- 1.35%` |
+| MLP | `71.81 +/- 2.00%` |
+
+The 99.51% value belongs to XGBoost; the default Random Forest result is
+98.68%. Detailed SHAP attribution runs asynchronously in a background worker
+in the scientific prototype. The article reports 4.07 ms for input
+normalization, 109.00 ms for model execution, 118.59 ms for explainability
+overhead, and 231.66 ms for the cumulative predictive pipeline.
+
+## Preserved Runtime / Implementation Artifacts
+
+The remainder of this page documents the public runtime at its frozen artifact
+digests. That runtime loads a RandomForestRegressor bundle and can execute
+conditional SHAP/LIME/fallback explanation logic. This preserved configuration
+is distinct from, and must not be substituted for, the classifier evaluated in
+the current article.
+
 ## Runtime Position In TriSLA Flow
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
@@ -12,7 +46,7 @@ Telemetry canonical reference: [docs/modules/telemetry.md](telemetry.md). ML-NSM
 > Deep dives: [`docs/ml-nsmf/`](../ml-nsmf/README.md) (interfaces and examples).
 > Implementation SSOT: `apps/ml-nsmf/`.
 
-## Role (frozen architecture)
+## Role in the Preserved Public Runtime
 
 ML-NSMF is the **predictive intelligence layer**. It receives feature payloads from the Decision Engine, runs trained model inference, and returns risk scores and explainability metadata.
 
@@ -34,7 +68,7 @@ ML-NSMF is the **predictive intelligence layer**. It receives feature payloads f
 - Retrain models at runtime
 - Run federated learning (not implemented)
 
-Position in the frozen chain:
+Position in the preserved implementation chain:
 
 ```text
 Portal Backend → SEM-CSMF → Decision Engine POST /evaluate
@@ -158,7 +192,7 @@ Top-level:
 | `dominant_domain` | Dominant stress domain |
 | `shap_available` / `lime_available` | Runtime flags |
 
-## Models
+## Preserved Runtime Models
 
 | Model | Artifact | Status |
 |-------|----------|--------|
@@ -171,7 +205,7 @@ Top-level:
 | Federated Learning | — | **NOT IMPLEMENTED** |
 | Mock / fallback model | — | **REMOVED** (missing model/scaler → startup failure) |
 
-Production regressor: `sklearn.ensemble.RandomForestRegressor` (trained offline via `apps/ml-nsmf/training/train_model.py`).
+Preserved runtime regressor: `sklearn.ensemble.RandomForestRegressor` (trained offline via `apps/ml-nsmf/training/train_model.py`).
 
 ## Feature engineering
 

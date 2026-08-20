@@ -1,5 +1,10 @@
 # Portal Backend
 
+> **Documentation level — implementation/runtime detail.** Portal Backend is an
+> operational gateway, not a component of the current scientific architecture.
+> BC-NSSMF governance calls documented below are preserved historical
+> implementation extensions.
+
 ## Runtime Position In TriSLA Flow
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
@@ -13,11 +18,11 @@ Canonical interface reference: [docs/modules/interfaces.md](interfaces.md).
 > approved evidence, and implementation-first responsibility split.
 
 
-## Canonical Governance Reference
+## Preserved Governance Extension Reference
 
 Cross-module flow and evidence boundaries are documented in [`docs/modules/interfaces.md`](interfaces.md). Portal Backend is the **Governance Metadata Authority**: it derives and propagates `governance_registration_*` fields from BC-NSSMF evidence and persists them through SEM-CSMF.
 
-## Official Identity
+## Implementation Identity
 
 Portal Backend is the TriSLA operational entry point for frontend-facing API
 traffic. Its official responsibility is:
@@ -43,7 +48,7 @@ authority for admission, governance, lifecycle, or runtime assurance.
 
 ## Runtime Architecture Truth
 
-Canonical runtime flow:
+Preserved implementation flow:
 
 ```text
 Frontend

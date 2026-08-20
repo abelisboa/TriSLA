@@ -1,5 +1,8 @@
 # XAI View - Explainable AI Visualization
 
+> **Historical implementation UI.** This dashboard is preserved as prototype
+> evidence and is not the current scientific architecture entry point.
+
 ## Overview
 
 The XAI (Explainable AI) View provides transparency into the SLA decision-making process. It displays the reasoning behind each SLA acceptance, rejection, or renegotiation recommendation.
@@ -63,10 +66,9 @@ XAI data is provided by the Decision Engine and returned in the SLA submission r
 }
 ```
 
-## Scientific Requirement
+## Historical Implementation Context
 
-This visualization is a **scientific requirement** for the TriSLA research project. It provides evidence of:
-
-1. **Transparency**: Users can understand why decisions were made
-2. **Explainability**: ML predictions are interpretable
-3. **Accountability**: Blockchain confirmation ensures immutability
+This prototype view displays decision rationale and, when available, preserved
+blockchain confirmation. In the current article, scientific accountability
+comes from explainable feature attribution and recorded decision evidence;
+blockchain confirmation is not a scientific requirement.

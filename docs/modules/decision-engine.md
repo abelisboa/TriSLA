@@ -1,5 +1,13 @@
 # Decision Engine
 
+## Documentation Level
+
+**Implementation / Runtime Details.** In the current scientific architecture,
+the Decision Engine belongs to the Intelligence Layer and evaluates predictive
+indicators and policies to produce ACCEPT, RENEGOTIATE, or REJECT. I-01,
+BC-NSSMF, Kafka, and gRPC references below are preserved implementation
+contracts or historical extensions rather than scientific components.
+
 ## Runtime Position In TriSLA Flow
 
 Runtime position and cross-module flow ordering are defined by [`docs/modules/interfaces.md`](interfaces.md). This module document does not duplicate the full chain.
@@ -17,7 +25,7 @@ Telemetry canonical reference: [docs/modules/telemetry.md](telemetry.md). Admiss
 > Deep dives: [`docs/decision-engine/`](../decision-engine/README.md) (interfaces).
 > Implementation SSOT: `apps/decision-engine/`. Digest SSOT: `baseline-registry/OPERATIONAL_BASELINE_REGISTRY.json`.
 
-## Role (frozen architecture)
+## Role in the Preserved Public Runtime
 
 The Decision Engine is the **SLA admission authority**. It receives structured intent input from SEM-CSMF via I-01 HTTP, calls ML-NSMF for risk prediction, applies policy-governed admission rules, and returns a deterministic decision (`AC`, `RENEG`, or `REJ`).
 
@@ -37,7 +45,7 @@ The Decision Engine is the **SLA admission authority**. It receives structured i
 - Register on-chain (Portal → BC-NSSMF)
 - Query Prometheus on the production `/evaluate` hot path (telemetry arrives via SEM in `telemetry_snapshot`)
 
-Position in the frozen chain:
+Position in the preserved implementation chain:
 
 ```text
 Portal Backend → SEM-CSMF → Decision Engine (I-01 HTTP /evaluate)

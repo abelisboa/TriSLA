@@ -1,6 +1,10 @@
 # Portal Architecture
 
-## Request flow
+> **Documentation level — preserved implementation architecture.** This diagram
+> includes portal and blockchain services outside the current scientific
+> pipeline; they remain useful prototype implementation details.
+
+## Preserved Implementation Request Flow
 
 ```text
 Browser

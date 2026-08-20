@@ -1,5 +1,8 @@
 # TriSLA UI Dashboard
 
+> **Historical implementation UI.** This dashboard is preserved as prototype
+> evidence and is not the current scientific architecture entry point.
+
 **Version:** 3.10.0-baseline
 
 ## Overview

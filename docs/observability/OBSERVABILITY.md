@@ -1,5 +1,9 @@
 # Observability
 
+> **Scientific mapping.** Prometheus, Grafana, OpenTelemetry, and Jaeger form the
+> article-aligned observability stack. Tempo is documented only as a separate
+> implementation deployment beyond that scientific baseline.
+
 TriSLA exposes application health, Prometheus metrics, and optional OTLP traces. The public chart also contains selected Prometheus Operator resources.
 
 ## Application endpoints
