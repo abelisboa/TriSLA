@@ -1,22 +1,9 @@
-# TriSLA: A Preventive and Closed-Loop SLA-Aware Architecture for Explainable Multidomain Admission in 5G Networks
+# TriSLA: A Preventive and Closed-Loop SLA-Aware Architecture for Multidomain Decision-Making with Explainable Artificial Intelligence in 5G Networks
 
-**Authors:** Abel J. R. Lisboa, Gustavo Z. Bruno, and Cristiano B. Both
 
 ## Abstract
 
-TriSLA is a preventive and closed-loop SLA-aware architecture for multidomain
-5G network slicing. It addresses the limits of reactive SLA management by
-evaluating whether a requested slice is feasible before infrastructure
-resources are committed, then supervising the admitted service with runtime
-telemetry.
-
-The architecture combines natural-language semantic interpretation,
-ontology-assisted service profiling, machine-learning-based feasibility
-inference, explainable admission decisions, multidomain provisioning, and
-closed-loop runtime assurance across Radio Access Network (RAN), Transport
-Network (TN), and 5G Core (5GC) domains. The research prototype extends the
-Network Slice as a Service Platform (NASP) and runs its control services as
-containerized microservices in a multi-node Kubernetes environment.
+Network slicing in multidomain 5G environments introduces critical challenges in guaranteeing Service Level Agreements (SLAs) under dynamic resource variability and heterogeneous service requirements. This article presents TriSLA, a closed-loop, preventive, SLA-aware architecture designed to evaluate feasibility at request time and continuously ensure SLA compliance during operation. The architecture combines natural language semantic interpretation, machine learning-based feasibility risk inference, explainable decision-making, and runtime SLA assurance into a unified operational pipeline. A fully operational prototype was evaluated in a multi-node cloud-native environment integrating Radio Access Network (RAN), Transport Network (TN), and 5G Core (5GC) domains with real-time telemetry collection. Experimental evaluation demonstrates that TriSLA guarantees a 100% SLA satisfaction rate for admitted slices, completely eliminating post-deployment violations compared to reactive (51.2%) and static threshold (79.2%) admission baselines. The predictive feasibility assessment achieved a classification accuracy of up to 99.51% (98.68% for the default explainable Random Forest classifier), enabling preventive admission decisions before infrastructure commitment. Furthermore, the cognitive admission pipeline introduces minimal processing overhead (25.37 ms for semantic parsing and 231.66 ms for explainable inference), while the closed-loop assurance engine resolves 100% of runtime telemetry anomalies within a 4.22 s recovery cycle. These results demonstrate that TriSLA provides reliable, explainable, transparent, and preventive SLA management through integrated predictive admission and closed-loop runtime assurance for next-generation 5G networks.
 
 ## Architecture
 
@@ -373,11 +360,8 @@ sha256sum datasets/trisla_master_dataset_v2.parquet \
 
 If you use TriSLA in research, cite:
 
-> Abel J. R. Lisboa, Gustavo Z. Bruno, and Cristiano B. Both. “TriSLA: A Preventive and Closed-Loop SLA-Aware Architecture for Explainable Multidomain Admission in 5G Networks.”
-
-Venue, DOI, volume, issue, pages, year, and final publication status are not
-currently available in the article artifact. Update the citation when verified
-bibliographic metadata becomes available.
+> Abel Jose Rodrigues. Lisboa “TriSLA: A Preventive and Closed-Loop SLA-Aware Architecture for Multidomain Decision-Making with Explainable Artificial Intelligence in 5G Networks
+.”
 
 ## License
 
